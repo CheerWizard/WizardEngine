@@ -2,7 +2,9 @@
 // Created by mecha on 28.08.2021.
 //
 
-namespace wiz {
+#pragma once
+
+namespace engine {
 
     class Application {
 
@@ -14,5 +16,7 @@ namespace wiz {
         void run();
 
     };
+
+    Application* createApplication();
 
 }
