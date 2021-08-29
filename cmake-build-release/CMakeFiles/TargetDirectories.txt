@@ -1,0 +1,11 @@
+C:/Users/mecha/CLionProjects/Wizard/cmake-build-release/CMakeFiles/edit_cache.dir
+C:/Users/mecha/CLionProjects/Wizard/cmake-build-release/CMakeFiles/rebuild_cache.dir
+C:/Users/mecha/CLionProjects/Wizard/cmake-build-release/WizardEngine/CMakeFiles/edit_cache.dir
+C:/Users/mecha/CLionProjects/Wizard/cmake-build-release/WizardEngine/CMakeFiles/WizardEngine.dir
+C:/Users/mecha/CLionProjects/Wizard/cmake-build-release/WizardEngine/CMakeFiles/rebuild_cache.dir
+C:/Users/mecha/CLionProjects/Wizard/cmake-build-release/WizardEngine/vendor/spdlog/CMakeFiles/spdlog.dir
+C:/Users/mecha/CLionProjects/Wizard/cmake-build-release/WizardEngine/vendor/spdlog/CMakeFiles/edit_cache.dir
+C:/Users/mecha/CLionProjects/Wizard/cmake-build-release/WizardEngine/vendor/spdlog/CMakeFiles/rebuild_cache.dir
+C:/Users/mecha/CLionProjects/Wizard/cmake-build-release/WizardTest/CMakeFiles/WizardTest.dir
+C:/Users/mecha/CLionProjects/Wizard/cmake-build-release/WizardTest/CMakeFiles/edit_cache.dir
+C:/Users/mecha/CLionProjects/Wizard/cmake-build-release/WizardTest/CMakeFiles/rebuild_cache.dir

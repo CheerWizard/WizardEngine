@@ -3,8 +3,9 @@
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
   <component name="CidrRootsConfiguration">
     <sourceRoots>
-      <file path="$PROJECT_DIR$/../Wizard/engine" />
-      <file path="$PROJECT_DIR$/../Wizard/test" />
+      <file path="$PROJECT_DIR$/WizardEngine" />
+      <file path="$PROJECT_DIR$/WizardEngine/vendor/spdlog" />
+      <file path="$PROJECT_DIR$/WizardTest" />
     </sourceRoots>
   </component>
 </project>
