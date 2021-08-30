@@ -152,8 +152,8 @@ WizardTest\clean: WizardTest\CMakeFiles\WizardTest.dir\clean
 # Target rules for target WizardEngine/CMakeFiles/WizardEngine.dir
 
 # All Build rule for target.
-WizardEngine\CMakeFiles\WizardEngine.dir\all: WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\all
 WizardEngine\CMakeFiles\WizardEngine.dir\all: WizardEngine\vendor\glfw\src\CMakeFiles\glfw.dir\all
+WizardEngine\CMakeFiles\WizardEngine.dir\all: WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\all
 	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\depend
 	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\CMakeFiles --progress-num=1,2 "Built target WizardEngine"
@@ -283,9 +283,9 @@ WizardEngine\vendor\glfw\src\CMakeFiles\update_mappings.dir\clean:
 # Target rules for target WizardTest/CMakeFiles/WizardTest.dir
 
 # All Build rule for target.
+WizardTest\CMakeFiles\WizardTest.dir\all: WizardEngine\vendor\glfw\src\CMakeFiles\glfw.dir\all
 WizardTest\CMakeFiles\WizardTest.dir\all: WizardEngine\CMakeFiles\WizardEngine.dir\all
 WizardTest\CMakeFiles\WizardTest.dir\all: WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\all
-WizardTest\CMakeFiles\WizardTest.dir\all: WizardEngine\vendor\glfw\src\CMakeFiles\glfw.dir\all
 	$(MAKE) $(MAKESILENT) -f WizardTest\CMakeFiles\WizardTest.dir\build.make /nologo -$(MAKEFLAGS) WizardTest\CMakeFiles\WizardTest.dir\depend
 	$(MAKE) $(MAKESILENT) -f WizardTest\CMakeFiles\WizardTest.dir\build.make /nologo -$(MAKEFLAGS) WizardTest\CMakeFiles\WizardTest.dir\build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\CMakeFiles --progress-num=3,4 "Built target WizardTest"

@@ -1,6 +1,7 @@
 //
 // Created by mecha on 28.08.2021.
 //
+#pragma once
 
 #include "Memory.h"
 #include "Window.h"

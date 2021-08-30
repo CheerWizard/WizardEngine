@@ -44,8 +44,12 @@ WizardTest/CMakeFiles/WizardTest.dir/src/TestApplication.cpp.obj
  ../WizardEngine/vendor/spdlog/include/spdlog/version.h
  C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/Engine.h
  C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Application.h
+ C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Assert.h
  C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Core.h
  C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Logger.h
+ C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Memory.h
+ C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Window.h
+ C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/events/Event.h
  C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/platform/Platform.h
  C:/Users/mecha/CLionProjects/Wizard/WizardTest/src/TestApplication.cpp
  C:/Users/mecha/CLionProjects/Wizard/WizardTest/src/TestApplication.h

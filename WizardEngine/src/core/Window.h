@@ -1,6 +1,7 @@
 //
 // Created by mecha on 29.08.2021.
 //
+#pragma once
 
 #include "events/Event.h"
 #include "Memory.h"

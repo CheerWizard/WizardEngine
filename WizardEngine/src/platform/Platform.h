@@ -1,6 +1,7 @@
 //
 // Created by mecha on 30.08.2021.
 //
+#pragma once
 
 #ifdef WIN32
 /* Windows x64/x86 */

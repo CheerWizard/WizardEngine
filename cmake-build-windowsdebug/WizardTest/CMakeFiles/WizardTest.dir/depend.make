@@ -43,8 +43,12 @@ WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngin
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\version.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\Engine.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\Application.h
+WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\Assert.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\Core.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\Logger.h
+WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\Memory.h
+WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\Window.h
+WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\events\Event.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\platform\Platform.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardTest\src\TestApplication.cpp
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardTest\src\TestApplication.h

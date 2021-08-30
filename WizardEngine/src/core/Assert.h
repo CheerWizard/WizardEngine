@@ -1,6 +1,7 @@
 //
 // Created by mecha on 30.08.2021.
 //
+#pragma once
 
 #include "Core.h"
 #include "Logger.h"
