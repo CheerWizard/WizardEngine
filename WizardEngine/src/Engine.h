@@ -5,4 +5,4 @@
  * A library sources provider.
  * */
 #include "core/Application.h"
-#include "core/Logger.h"
+#include "pch.h"

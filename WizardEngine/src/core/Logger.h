@@ -4,7 +4,10 @@
 
 #include "spdlog/spdlog.h"
 
-#include <memory>
+#include "Core.h"
+#include "Memory.h"
+
+#include <string>
 
 namespace engine {
 
@@ -18,31 +21,55 @@ namespace engine {
         static void setPattern(const std::string& pattern);
 
     public:
-        inline static std::shared_ptr<spdlog::logger>& getEngineLogger() {
-            return engineLogger;
+        inline static Ref<spdlog::logger>& getEngineLogger() {
+            return _engineLogger;
         }
-        inline static std::shared_ptr<spdlog::logger>& getClientLogger() {
-            return clientLogger;
+        inline static Ref<spdlog::logger>& getClientLogger() {
+            return _clientLogger;
         }
 
     private:
-        static std::shared_ptr<spdlog::logger>& engineLogger;
-        static std::shared_ptr<spdlog::logger>& clientLogger;
+        static Ref<spdlog::logger> _engineLogger;
+        static Ref<spdlog::logger> _clientLogger;
 
     };
 
 }
 
-// Engine log macros
-#define ENGINE_TRACE(...)     ::engine::Logger::getEngineLogger()->trace(__VA_ARSG__)
-#define ENGINE_INFO(...)     ::engine::Logger::getEngineLogger()->info(__VA_ARSG__)
-#define ENGINE_WARN(...)     ::engine::Logger::getEngineLogger()->warn(__VA_ARSG__)
-#define ENGINE_ERR(...)     ::engine::Logger::getEngineLogger()->error(__VA_ARSG__)
-#define ENGINE_CRIT(...)     ::engine::Logger::getEngineLogger()->critical(__VA_ARSG__)
+#ifdef ENABLE_LOGS
+    #define LOG_PATTERN(...)      ::engine::Logger::setPattern(__VA_ARGS__)
 
-// Client log macros
-#define CLIENT_TRACE(...)     ::engine::Logger::getClientLogger()->trace(__VA_ARSG__)
-#define CLIENT_INFO(...)     ::engine::Logger::getClientLogger()->info(__VA_ARSG__)
-#define CLIENT_WARN(...)     ::engine::Logger::getClientLogger()->warn(__VA_ARSG__)
-#define CLIENT_ERR(...)     ::engine::Logger::getClientLogger()->error(__VA_ARSG__)
-#define CLIENT_CRIT(...)     ::engine::Logger::getClientLogger()->critical(__VA_ARSG__)
+    // Engine log macros
+    #define INIT_ENGINE_LOG(...)  ::engine::Logger::createEngineLogger(__VA_ARGS__)
+    #define ENGINE_TRACE(...)     ::engine::Logger::getEngineLogger()->trace(__VA_ARSG__)
+    #define ENGINE_INFO(...)      ::engine::Logger::getEngineLogger()->info(__VA_ARSG__)
+    #define ENGINE_WARN(...)      ::engine::Logger::getEngineLogger()->warn(__VA_ARSG__)
+    #define ENGINE_ERR(...)       ::engine::Logger::getEngineLogger()->error(__VA_ARSG__)
+    #define ENGINE_CRIT(...)      ::engine::Logger::getEngineLogger()->critical(__VA_ARSG__)
+
+    // Client log macros
+    #define INIT_CLIENT_LOG(...)  ::engine::Logger::createClientLogger(__VA_ARGS__)
+    #define CLIENT_TRACE(...)     ::engine::Logger::getClientLogger()->trace(__VA_ARSG__)
+    #define CLIENT_INFO(...)      ::engine::Logger::getClientLogger()->info(__VA_ARSG__)
+    #define CLIENT_WARN(...)      ::engine::Logger::getClientLogger()->warn(__VA_ARSG__)
+    #define CLIENT_ERR(...)       ::engine::Logger::getClientLogger()->error(__VA_ARSG__)
+    #define CLIENT_CRIT(...)      ::engine::Logger::getClientLogger()->critical(__VA_ARSG__)
+#else
+    #define LOG_PATTERN(...)
+
+    // Engine log macros
+    #define INIT_ENGINE_LOG(...)
+    #define ENGINE_TRACE(...)
+    #define ENGINE_INFO(...)
+    #define ENGINE_WARN(...)
+    #define ENGINE_ERR(...)
+    #define ENGINE_CRIT(...)
+
+    // Client log macros
+    #define INIT_CLIENT_LOG(...)
+    #define CLIENT_TRACE(...)
+    #define CLIENT_INFO(...)
+    #define CLIENT_WARN(...)
+    #define CLIENT_ERR(...)
+    #define CLIENT_CRIT(...)
+#endif

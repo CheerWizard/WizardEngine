@@ -10,9 +10,9 @@ using namespace engine;
 extern Application* engine::createApplication();
 
 int main() {
-    Logger::createClientLogger("Client");
-    Logger::createEngineLogger("Engine");
-    Logger::setPattern("%^[%T] %n: %v%$");
+    INIT_CLIENT_LOG("Client");
+    INIT_ENGINE_LOG("Engine");
+    LOG_PATTERN("%^[%T] %n: %v%$");
 
     auto app = createApplication();
     app->run();

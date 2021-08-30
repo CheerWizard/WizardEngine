@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="WizardEngine"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="msvc8"/>
+		<Option virtualFolders="CMake Files\;CMake Files\WizardEngine\;CMake Files\WizardEngine\vendor\;CMake Files\WizardEngine\vendor\glfw\;CMake Files\WizardEngine\vendor\glfw\CMake\;CMake Files\WizardEngine\vendor\glfw\src\;CMake Files\WizardEngine\vendor\spdlog\;CMake Files\WizardEngine\vendor\spdlog\cmake\;CMake Files\WizardTest\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\Makefile VERBOSE=1 all"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="WizardEngine">
+				<Option output="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/WizardEngine.lib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add option="-DWIN32=1"/>
+					<Add option="-DWIN64=1"/>
+					<Add option="-DSPDLOG_COMPILED_LIB"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\Makefile VERBOSE=1 WizardEngine"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="WizardEngine/fast">
+				<Option output="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/WizardEngine.lib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add option="-DWIN32=1"/>
+					<Add option="-DWIN64=1"/>
+					<Add option="-DSPDLOG_COMPILED_LIB"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\Makefile VERBOSE=1 WizardEngine/fast"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="spdlog">
+				<Option output="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/vendor/spdlog/spdlog.lib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/vendor/spdlog"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add option="-DSPDLOG_COMPILED_LIB"/>
+					<Add option="-DWIN32=1"/>
+					<Add option="-DWIN64=1"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\spdlog\Makefile VERBOSE=1 spdlog"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\spdlog\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\spdlog\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\spdlog\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="spdlog/fast">
+				<Option output="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/vendor/spdlog/spdlog.lib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/vendor/spdlog"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add option="-DSPDLOG_COMPILED_LIB"/>
+					<Add option="-DWIN32=1"/>
+					<Add option="-DWIN64=1"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\spdlog\Makefile VERBOSE=1 spdlog/fast"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\spdlog\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\spdlog\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\spdlog\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="uninstall">
+				<Option working_dir="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/vendor/glfw"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\Makefile VERBOSE=1 uninstall"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="glfw">
+				<Option output="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/vendor/glfw/src/glfw3.lib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/vendor/glfw/src"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add option="-D_GLFW_USE_CONFIG_H"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-D_UNICODE"/>
+					<Add option="-D_CRT_SECURE_NO_WARNINGS"/>
+					<Add option="-DWIN32=1"/>
+					<Add option="-DWIN64=1"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/include"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/vendor/glfw/src"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\src\Makefile VERBOSE=1 glfw"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\src\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\src\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\src\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="glfw/fast">
+				<Option output="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/vendor/glfw/src/glfw3.lib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/vendor/glfw/src"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add option="-D_GLFW_USE_CONFIG_H"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-D_UNICODE"/>
+					<Add option="-D_CRT_SECURE_NO_WARNINGS"/>
+					<Add option="-DWIN32=1"/>
+					<Add option="-DWIN64=1"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/include"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/vendor/glfw/src"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\src\Makefile VERBOSE=1 glfw/fast"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\src\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\src\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\src\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="update_mappings">
+				<Option working_dir="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/vendor/glfw/src"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\src\Makefile VERBOSE=1 update_mappings"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\src\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\src\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsrelease\WizardEngine\vendor\glfw\src\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/Launcher.cpp">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/CMake/GenerateMappings.cmake">
+			<Option target="update_mappings"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/include/GLFW/glfw3.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/include/GLFW/glfw3native.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/context.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/egl_context.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/egl_context.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/init.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/input.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/internal.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/mappings.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/mappings.h.in">
+			<Option target="update_mappings"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/monitor.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/osmesa_context.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/osmesa_context.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/vulkan.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/wgl_context.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/wgl_context.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/win32_init.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/win32_joystick.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/win32_joystick.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/win32_monitor.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/win32_platform.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/win32_thread.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/win32_time.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/win32_window.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/window.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/async.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/async_logger-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/async_logger.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/common-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/common.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/backtracer-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/backtracer.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/circular_q.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/console_globals.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/file_helper-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/file_helper.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/fmt_helper.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/log_msg-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/log_msg.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/log_msg_buffer-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/log_msg_buffer.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/mpmc_blocking_q.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/null_mutex.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/os-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/os.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/periodic_worker-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/periodic_worker.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/registry-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/registry.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/synchronous_factory.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/tcp_client-windows.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/tcp_client.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/thread_pool-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/thread_pool.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/details/windows_include.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/bin_to_hex.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/bundled/args.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/bundled/chrono.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/bundled/color.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/bundled/compile.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/bundled/core.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/bundled/format-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/bundled/format.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/bundled/locale.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/bundled/os.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/bundled/ostream.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/bundled/printf.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/bundled/ranges.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/bundled/xchar.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/chrono.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/compile.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/fmt.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/ostr.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fmt/xchar.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/formatter.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/fwd.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/logger-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/logger.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/pattern_formatter-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/pattern_formatter.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/android_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/ansicolor_sink-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/ansicolor_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/base_sink-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/base_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/basic_file_sink-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/basic_file_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/daily_file_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/dist_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/dup_filter_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/hourly_file_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/mongo_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/msvc_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/null_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/ostream_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/qt_sinks.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/ringbuffer_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/rotating_file_sink-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/rotating_file_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/sink-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/stdout_color_sinks-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/stdout_color_sinks.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/stdout_sinks-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/stdout_sinks.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/syslog_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/systemd_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/tcp_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/win_eventlog_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/wincolor_sink-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/sinks/wincolor_sink.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/spdlog-inl.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/spdlog.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/stopwatch.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/tweakme.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include/spdlog/version.h">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/src/async.cpp">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/src/cfg.cpp">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/src/color_sinks.cpp">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/src/file_sinks.cpp">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/src/fmt.cpp">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/src/spdlog.cpp">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/src/stdout_sinks.cpp">
+			<Option target="spdlog"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/vendor/glfw/src/glfw_config.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\WizardEngine\"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\WizardEngine\vendor\glfw\"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/CMake/cmake_uninstall.cmake.in">
+			<Option virtualFolder="CMake Files\WizardEngine\vendor\glfw\CMake\"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/CMake/glfw3.pc.in">
+			<Option virtualFolder="CMake Files\WizardEngine\vendor\glfw\CMake\"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/CMake/glfw3Config.cmake.in">
+			<Option virtualFolder="CMake Files\WizardEngine\vendor\glfw\CMake\"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\WizardEngine\vendor\glfw\src\"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/src/glfw_config.h.in">
+			<Option virtualFolder="CMake Files\WizardEngine\vendor\glfw\src\"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\WizardEngine\vendor\spdlog\"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/cmake/ide.cmake">
+			<Option virtualFolder="CMake Files\WizardEngine\vendor\spdlog\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/cmake/utils.cmake">
+			<Option virtualFolder="CMake Files\WizardEngine\vendor\spdlog\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardTest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\WizardTest\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

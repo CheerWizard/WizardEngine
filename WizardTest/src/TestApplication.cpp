@@ -6,8 +6,3 @@
 engine::Application* engine::createApplication() {
     return new TestApplication();
 }
-
-void TestApplication::onCreate() {
-    engine::Logger::getClientLogger()->info("Test App has been created!");
-//    CLIENT_INFO("Test App has been created!");
-}

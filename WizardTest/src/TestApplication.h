@@ -6,7 +6,4 @@
 
 class TestApplication : public engine::Application {
 
-protected:
-    void onCreate() override;
-
 };

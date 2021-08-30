@@ -3,17 +3,23 @@
 //
 
 #include "Application.h"
-#include "Logger.h"
 
-engine::Application::Application() = default;
-engine::Application::~Application() = default;
+engine::Application::Application() {
+    _window = Window::create();
+    _window->setEventCallback(this);
+}
+
+engine::Application::~Application() {
+
+}
 
 void engine::Application::run() {
-    ENGINE_INFO("Trying to create client...")
-    onCreate();
-    ENGINE_INFO("Client has been created!")
-
-    while (true) {
-        // do nothing.
+    while (_isRunning) {
+        _window->onUpdate();
     }
+}
+
+void engine::Application::onEvent(engine::Event &event) {
+    auto eventName = event.toString();
+    ENGINE_INFO(eventName);
 }
