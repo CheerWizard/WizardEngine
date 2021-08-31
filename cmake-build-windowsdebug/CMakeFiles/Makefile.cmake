@@ -81,6 +81,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
+  "WizardEngine/CMakeFiles/WizardNetwork.dir/DependInfo.cmake"
   "WizardEngine/CMakeFiles/WizardEngine.dir/DependInfo.cmake"
   "WizardEngine/vendor/spdlog/CMakeFiles/spdlog.dir/DependInfo.cmake"
   "WizardEngine/vendor/glfw/CMakeFiles/uninstall.dir/DependInfo.cmake"

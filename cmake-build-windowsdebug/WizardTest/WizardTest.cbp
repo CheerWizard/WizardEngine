@@ -77,9 +77,6 @@
 		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardTest/src/TestApplication.cpp">
 			<Option target="WizardTest"/>
 		</Unit>
-		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardTest/src/TestApplication.h">
-			<Option target="WizardTest"/>
-		</Unit>
 		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

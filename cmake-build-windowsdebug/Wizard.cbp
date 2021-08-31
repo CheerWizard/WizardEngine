@@ -67,6 +67,68 @@
 					<DistClean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\Makefile VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
+			<Target title="WizardNetwork">
+				<Option output="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/WizardNetwork.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add option="-DDEBUG=1"/>
+					<Add option="-DWIN32=1"/>
+					<Add option="-DWIN64=1"/>
+					<Add option="-DSPDLOG_COMPILED_LIB"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/asio/asio/include"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glad/include"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/imgui"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine\Makefile VERBOSE=1 WizardNetwork"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="WizardNetwork/fast">
+				<Option output="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/WizardNetwork.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add option="-DDEBUG=1"/>
+					<Add option="-DWIN32=1"/>
+					<Add option="-DWIN64=1"/>
+					<Add option="-DSPDLOG_COMPILED_LIB"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/asio/asio/include"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glad/include"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/imgui"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine\Makefile VERBOSE=1 WizardNetwork/fast"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
 			<Target title="WizardEngine">
 				<Option output="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/WizardEngine.lib" prefix_auto="0" extension_auto="0"/>
 				<Option working_dir="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine"/>
@@ -78,6 +140,9 @@
 					<Add option="-DWIN32=1"/>
 					<Add option="-DWIN64=1"/>
 					<Add option="-DSPDLOG_COMPILED_LIB"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/asio/asio/include"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glad/include"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/imgui"/>
 					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include"/>
 					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/include"/>
 					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include"/>
@@ -106,6 +171,9 @@
 					<Add option="-DWIN32=1"/>
 					<Add option="-DWIN64=1"/>
 					<Add option="-DSPDLOG_COMPILED_LIB"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/asio/asio/include"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glad/include"/>
+					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/imgui"/>
 					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog/include"/>
 					<Add directory="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/include"/>
 					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29333\include"/>
@@ -318,7 +386,95 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/Engine.h">
+			<Option target="WizardEngine"/>
+		</Unit>
 		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/Launcher.cpp">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Application.cpp">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Application.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Assert.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Core.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/KeyCodes.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Layer.cpp">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Layer.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/LayerStack.cpp">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/LayerStack.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Logger.cpp">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Logger.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Memory.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/MouseCodes.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Time.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Window.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/events/AppEvent.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/events/Event.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/events/KeyEvent.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/events/MouseEvent.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/events/WindowEvent.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/imgui/ImguiLayer.cpp">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/imgui/ImguiLayer.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/network/Client.cpp">
+			<Option target="WizardNetwork"/>
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/network/Client.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/network/Config.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/platform/Platform.h">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/platform/windows/WindowsWindow.cpp">
+			<Option target="WizardEngine"/>
+		</Unit>
+		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/platform/windows/WindowsWindow.h">
 			<Option target="WizardEngine"/>
 		</Unit>
 		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/glfw/CMake/GenerateMappings.cmake">
@@ -694,9 +850,6 @@
 			<Option target="spdlog"/>
 		</Unit>
 		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardTest/src/TestApplication.cpp">
-			<Option target="WizardTest"/>
-		</Unit>
-		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/WizardTest/src/TestApplication.h">
 			<Option target="WizardTest"/>
 		</Unit>
 		<Unit filename="C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/glfw/src/glfw_config.h">

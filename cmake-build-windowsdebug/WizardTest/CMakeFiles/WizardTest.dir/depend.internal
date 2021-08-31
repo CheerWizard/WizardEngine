@@ -29,6 +29,7 @@ WizardTest/CMakeFiles/WizardTest.dir/src/TestApplication.cpp.obj
  ../WizardEngine/vendor/spdlog/include/spdlog/fmt/fmt.h
  ../WizardEngine/vendor/spdlog/include/spdlog/fmt/xchar.h
  ../WizardEngine/vendor/spdlog/include/spdlog/formatter.h
+ ../WizardEngine/vendor/spdlog/include/spdlog/logger-inl.h
  ../WizardEngine/vendor/spdlog/include/spdlog/logger.h
  ../WizardEngine/vendor/spdlog/include/spdlog/pattern_formatter-inl.h
  ../WizardEngine/vendor/spdlog/include/spdlog/pattern_formatter.h
@@ -46,10 +47,13 @@ WizardTest/CMakeFiles/WizardTest.dir/src/TestApplication.cpp.obj
  C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Application.h
  C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Assert.h
  C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Core.h
+ C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Layer.h
+ C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/LayerStack.h
  C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Logger.h
  C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Memory.h
+ C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Time.h
  C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Window.h
- C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/events/Event.h
+ C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/events/Event.h
  C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/platform/Platform.h
  C:/Users/mecha/CLionProjects/Wizard/WizardTest/src/TestApplication.cpp
- C:/Users/mecha/CLionProjects/Wizard/WizardTest/src/TestApplication.h
+ C:/Users/mecha/CLionProjects/Wizard/WizardTest/src/TestLayer.h

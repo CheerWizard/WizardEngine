@@ -139,6 +139,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named WizardNetwork
+
+# Build rule for target.
+WizardNetwork: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 /nologo -$(MAKEFLAGS) WizardNetwork
+.PHONY : WizardNetwork
+
+# fast build rule for target.
+WizardNetwork\fast:
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardNetwork.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardNetwork.dir\build
+.PHONY : WizardNetwork\fast
+
+#=============================================================================
 # Target rules for targets named WizardEngine
 
 # Build rule for target.
@@ -230,6 +243,7 @@ help:
 	@echo ... uninstall
 	@echo ... update_mappings
 	@echo ... WizardEngine
+	@echo ... WizardNetwork
 	@echo ... WizardTest
 	@echo ... glfw
 	@echo ... spdlog

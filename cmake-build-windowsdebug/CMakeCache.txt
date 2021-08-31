@@ -408,10 +408,112 @@ Wizard_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windows
 Wizard_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard
 
 //Value Computed by CMake
+boost_array_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/array
+
+//Value Computed by CMake
+boost_array_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/array
+
+//Value Computed by CMake
+boost_asio_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/asio
+
+//Value Computed by CMake
+boost_asio_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/asio
+
+//Value Computed by CMake
+boost_assert_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/assert
+
+//Value Computed by CMake
+boost_assert_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/assert
+
+//Value Computed by CMake
+boost_bind_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/bind
+
+//Value Computed by CMake
+boost_bind_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/bind
+
+//Value Computed by CMake
+boost_chrono_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/chrono
+
+//Value Computed by CMake
+boost_chrono_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/chrono
+
+//Value Computed by CMake
+boost_config_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/config
+
+//Value Computed by CMake
+boost_config_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/config
+
+//Value Computed by CMake
+boost_core_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/core
+
+//Value Computed by CMake
+boost_core_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/core
+
+//Value Computed by CMake
+boost_coroutine_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/coroutine
+
+//Value Computed by CMake
+boost_coroutine_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/coroutine
+
+//Value Computed by CMake
+boost_date_time_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/date_time
+
+//Value Computed by CMake
+boost_date_time_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/date_time
+
+//Value Computed by CMake
+boost_function_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/function
+
+//Value Computed by CMake
+boost_function_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/function
+
+//Value Computed by CMake
+boost_regex_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/regex
+
+//Value Computed by CMake
+boost_regex_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/regex
+
+//Value Computed by CMake
+boost_smart_ptr_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/smart_ptr
+
+//Value Computed by CMake
+boost_smart_ptr_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/smart_ptr
+
+//Value Computed by CMake
+boost_system_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/system
+
+//Value Computed by CMake
+boost_system_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/system
+
+//Value Computed by CMake
+boost_throw_exception_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/throw_exception
+
+//Value Computed by CMake
+boost_throw_exception_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/throw_exception
+
+//Value Computed by CMake
+boost_type_traits_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/type_traits
+
+//Value Computed by CMake
+boost_type_traits_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/type_traits
+
+//Value Computed by CMake
+boost_utility_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/boost/utility
+
+//Value Computed by CMake
+boost_utility_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/boost/utility
+
+//Value Computed by CMake
 spdlog_BINARY_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsdebug/WizardEngine/vendor/spdlog
 
 //Value Computed by CMake
 spdlog_SOURCE_DIR:STATIC=C:/Users/mecha/CLionProjects/Wizard/WizardEngine/vendor/spdlog
+
+//The directory containing a CMake configuration file for vendor/asio/asio.
+vendor/asio/asio_DIR:PATH=vendor/asio/asio_DIR-NOTFOUND
+
+//The directory containing a CMake configuration file for vendor/asio/include.
+vendor/asio/include_DIR:PATH=vendor/asio/include_DIR-NOTFOUND
 
 
 ########################

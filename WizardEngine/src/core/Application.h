@@ -6,7 +6,8 @@
 #include "Memory.h"
 #include "Window.h"
 #include "Logger.h"
-#include "events/Event.h"
+#include "../events/Event.h"
+#include "LayerStack.h"
 
 namespace engine {
 
@@ -20,9 +21,14 @@ namespace engine {
         void run();
         void onEvent(Event& event) override;
 
+    protected:
+        void pushLayer(Layer* layer);
+        void pushOverlay(Layer* overlay);
+
     private:
         bool _isRunning = true;
         Scope<Window> _window;
+        LayerStack _layerStack;
 
     };
 

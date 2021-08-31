@@ -33,6 +33,7 @@ WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\async.cpp.obj: ..\WizardEng
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\async.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\fmt\fmt.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\async.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\fmt\xchar.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\async.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\formatter.h
+WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\async.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\logger-inl.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\async.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\logger.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\async.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\pattern_formatter-inl.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\async.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\pattern_formatter.h
@@ -74,6 +75,7 @@ WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\cfg.cpp.obj: ..\WizardEngin
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\cfg.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\fmt\fmt.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\cfg.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\fmt\xchar.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\cfg.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\formatter.h
+WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\cfg.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\logger-inl.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\cfg.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\logger.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\cfg.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\pattern_formatter-inl.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\cfg.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\pattern_formatter.h
@@ -122,6 +124,7 @@ WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\color_sinks.cpp.obj: ..\Wiz
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\color_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\fmt\fmt.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\color_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\fmt\xchar.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\color_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\formatter.h
+WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\color_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\logger-inl.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\color_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\logger.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\color_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\pattern_formatter-inl.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\color_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\pattern_formatter.h
@@ -165,6 +168,7 @@ WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\file_sinks.cpp.obj: ..\Wiza
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\file_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\fmt\fmt.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\file_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\fmt\xchar.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\file_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\formatter.h
+WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\file_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\logger-inl.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\file_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\logger.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\file_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\pattern_formatter-inl.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\file_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\pattern_formatter.h
@@ -267,6 +271,7 @@ WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\stdout_sinks.cpp.obj: ..\Wi
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\stdout_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\fmt\fmt.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\stdout_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\fmt\xchar.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\stdout_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\formatter.h
+WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\stdout_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\logger-inl.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\stdout_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\logger.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\stdout_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\pattern_formatter-inl.h
 WizardEngine\vendor\spdlog\CMakeFiles\spdlog.dir\src\stdout_sinks.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\pattern_formatter.h

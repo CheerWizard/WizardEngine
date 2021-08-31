@@ -149,6 +149,24 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+WizardEngine\CMakeFiles\WizardNetwork.dir\rule:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardNetwork.dir\rule
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : WizardEngine\CMakeFiles\WizardNetwork.dir\rule
+
+# Convenience name for target.
+WizardNetwork: WizardEngine\CMakeFiles\WizardNetwork.dir\rule
+.PHONY : WizardNetwork
+
+# fast build rule for target.
+WizardNetwork\fast:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardNetwork.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardNetwork.dir\build
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : WizardNetwork\fast
+
+# Convenience name for target.
 WizardEngine\CMakeFiles\WizardEngine.dir\rule:
 	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\rule
@@ -196,6 +214,219 @@ src\Launcher.cpp.s:
 	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
 .PHONY : src\Launcher.cpp.s
 
+src\core\Application.obj: src\core\Application.cpp.obj
+.PHONY : src\core\Application.obj
+
+# target to build an object file
+src\core\Application.cpp.obj:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\core\Application.cpp.obj
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\core\Application.cpp.obj
+
+src\core\Application.i: src\core\Application.cpp.i
+.PHONY : src\core\Application.i
+
+# target to preprocess a source file
+src\core\Application.cpp.i:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\core\Application.cpp.i
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\core\Application.cpp.i
+
+src\core\Application.s: src\core\Application.cpp.s
+.PHONY : src\core\Application.s
+
+# target to generate assembly for a file
+src\core\Application.cpp.s:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\core\Application.cpp.s
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\core\Application.cpp.s
+
+src\core\Layer.obj: src\core\Layer.cpp.obj
+.PHONY : src\core\Layer.obj
+
+# target to build an object file
+src\core\Layer.cpp.obj:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\core\Layer.cpp.obj
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\core\Layer.cpp.obj
+
+src\core\Layer.i: src\core\Layer.cpp.i
+.PHONY : src\core\Layer.i
+
+# target to preprocess a source file
+src\core\Layer.cpp.i:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\core\Layer.cpp.i
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\core\Layer.cpp.i
+
+src\core\Layer.s: src\core\Layer.cpp.s
+.PHONY : src\core\Layer.s
+
+# target to generate assembly for a file
+src\core\Layer.cpp.s:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\core\Layer.cpp.s
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\core\Layer.cpp.s
+
+src\core\LayerStack.obj: src\core\LayerStack.cpp.obj
+.PHONY : src\core\LayerStack.obj
+
+# target to build an object file
+src\core\LayerStack.cpp.obj:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\core\LayerStack.cpp.obj
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\core\LayerStack.cpp.obj
+
+src\core\LayerStack.i: src\core\LayerStack.cpp.i
+.PHONY : src\core\LayerStack.i
+
+# target to preprocess a source file
+src\core\LayerStack.cpp.i:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\core\LayerStack.cpp.i
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\core\LayerStack.cpp.i
+
+src\core\LayerStack.s: src\core\LayerStack.cpp.s
+.PHONY : src\core\LayerStack.s
+
+# target to generate assembly for a file
+src\core\LayerStack.cpp.s:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\core\LayerStack.cpp.s
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\core\LayerStack.cpp.s
+
+src\core\Logger.obj: src\core\Logger.cpp.obj
+.PHONY : src\core\Logger.obj
+
+# target to build an object file
+src\core\Logger.cpp.obj:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\core\Logger.cpp.obj
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\core\Logger.cpp.obj
+
+src\core\Logger.i: src\core\Logger.cpp.i
+.PHONY : src\core\Logger.i
+
+# target to preprocess a source file
+src\core\Logger.cpp.i:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\core\Logger.cpp.i
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\core\Logger.cpp.i
+
+src\core\Logger.s: src\core\Logger.cpp.s
+.PHONY : src\core\Logger.s
+
+# target to generate assembly for a file
+src\core\Logger.cpp.s:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\core\Logger.cpp.s
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\core\Logger.cpp.s
+
+src\imgui\ImguiLayer.obj: src\imgui\ImguiLayer.cpp.obj
+.PHONY : src\imgui\ImguiLayer.obj
+
+# target to build an object file
+src\imgui\ImguiLayer.cpp.obj:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\imgui\ImguiLayer.cpp.obj
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\imgui\ImguiLayer.cpp.obj
+
+src\imgui\ImguiLayer.i: src\imgui\ImguiLayer.cpp.i
+.PHONY : src\imgui\ImguiLayer.i
+
+# target to preprocess a source file
+src\imgui\ImguiLayer.cpp.i:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\imgui\ImguiLayer.cpp.i
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\imgui\ImguiLayer.cpp.i
+
+src\imgui\ImguiLayer.s: src\imgui\ImguiLayer.cpp.s
+.PHONY : src\imgui\ImguiLayer.s
+
+# target to generate assembly for a file
+src\imgui\ImguiLayer.cpp.s:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\imgui\ImguiLayer.cpp.s
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\imgui\ImguiLayer.cpp.s
+
+src\network\Client.obj: src\network\Client.cpp.obj
+.PHONY : src\network\Client.obj
+
+# target to build an object file
+src\network\Client.cpp.obj:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardNetwork.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardNetwork.dir\src\network\Client.cpp.obj
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\network\Client.cpp.obj
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\network\Client.cpp.obj
+
+src\network\Client.i: src\network\Client.cpp.i
+.PHONY : src\network\Client.i
+
+# target to preprocess a source file
+src\network\Client.cpp.i:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardNetwork.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardNetwork.dir\src\network\Client.cpp.i
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\network\Client.cpp.i
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\network\Client.cpp.i
+
+src\network\Client.s: src\network\Client.cpp.s
+.PHONY : src\network\Client.s
+
+# target to generate assembly for a file
+src\network\Client.cpp.s:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardNetwork.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardNetwork.dir\src\network\Client.cpp.s
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\network\Client.cpp.s
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\network\Client.cpp.s
+
+src\platform\windows\WindowsWindow.obj: src\platform\windows\WindowsWindow.cpp.obj
+.PHONY : src\platform\windows\WindowsWindow.obj
+
+# target to build an object file
+src\platform\windows\WindowsWindow.cpp.obj:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\platform\windows\WindowsWindow.cpp.obj
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\platform\windows\WindowsWindow.cpp.obj
+
+src\platform\windows\WindowsWindow.i: src\platform\windows\WindowsWindow.cpp.i
+.PHONY : src\platform\windows\WindowsWindow.i
+
+# target to preprocess a source file
+src\platform\windows\WindowsWindow.cpp.i:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\platform\windows\WindowsWindow.cpp.i
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\platform\windows\WindowsWindow.cpp.i
+
+src\platform\windows\WindowsWindow.s: src\platform\windows\WindowsWindow.cpp.s
+.PHONY : src\platform\windows\WindowsWindow.s
+
+# target to generate assembly for a file
+src\platform\windows\WindowsWindow.cpp.s:
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug
+	$(MAKE) $(MAKESILENT) -f WizardEngine\CMakeFiles\WizardEngine.dir\build.make /nologo -$(MAKEFLAGS) WizardEngine\CMakeFiles\WizardEngine.dir\src\platform\windows\WindowsWindow.cpp.s
+	cd C:\Users\mecha\CLionProjects\Wizard\cmake-build-windowsdebug\WizardEngine
+.PHONY : src\platform\windows\WindowsWindow.cpp.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -208,9 +439,31 @@ help:
 	@echo ... list_install_components
 	@echo ... rebuild_cache
 	@echo ... WizardEngine
+	@echo ... WizardNetwork
 	@echo ... src/Launcher.obj
 	@echo ... src/Launcher.i
 	@echo ... src/Launcher.s
+	@echo ... src/core/Application.obj
+	@echo ... src/core/Application.i
+	@echo ... src/core/Application.s
+	@echo ... src/core/Layer.obj
+	@echo ... src/core/Layer.i
+	@echo ... src/core/Layer.s
+	@echo ... src/core/LayerStack.obj
+	@echo ... src/core/LayerStack.i
+	@echo ... src/core/LayerStack.s
+	@echo ... src/core/Logger.obj
+	@echo ... src/core/Logger.i
+	@echo ... src/core/Logger.s
+	@echo ... src/imgui/ImguiLayer.obj
+	@echo ... src/imgui/ImguiLayer.i
+	@echo ... src/imgui/ImguiLayer.s
+	@echo ... src/network/Client.obj
+	@echo ... src/network/Client.i
+	@echo ... src/network/Client.s
+	@echo ... src/platform/windows/WindowsWindow.obj
+	@echo ... src/platform/windows/WindowsWindow.i
+	@echo ... src/platform/windows/WindowsWindow.s
 .PHONY : help
 
 

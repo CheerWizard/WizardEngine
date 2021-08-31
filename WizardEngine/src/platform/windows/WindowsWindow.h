@@ -3,16 +3,33 @@
 //
 #pragma once
 
+#define GLFW_INCLUDE_NONE
+
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
+
 #include "../../core/Window.h"
+#include "../../core/Memory.h"
+#include "../../core/Logger.h"
+#include "../../core/Assert.h"
+
+#include "../../events/KeyEvent.h"
+#include "../../events/MouseEvent.h"
+#include "../../events/WindowEvent.h"
 
 namespace engine {
 
     class WindowsWindow : public Window {
 
     public:
-        explicit WindowsWindow(const WindowProps& windowProps) : Window(windowProps) {}
-        ~WindowsWindow() override;
+
+        WindowsWindow(const WindowProps& windowProps) : Window(windowProps) {
+            init(windowProps);
+        }
+
+        ~WindowsWindow() {
+            shutdown();
+        }
 
     public:
         void onUpdate() override;

@@ -3,7 +3,6 @@
 //
 
 #include "core/Application.h"
-#include "core/Logger.h"
 
 using namespace engine;
 

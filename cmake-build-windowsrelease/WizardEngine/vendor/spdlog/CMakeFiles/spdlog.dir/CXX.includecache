@@ -495,8 +495,8 @@ spdlog/details/os.h
 -
 vector
 -
-_engineLogger-inl.h
-../WizardEngine/vendor/spdlog/include/spdlog/_engineLogger-inl.h
+logger-inl.h
+../WizardEngine/vendor/spdlog/include/spdlog/logger-inl.h
 
 ../WizardEngine/vendor/spdlog/include/spdlog/pattern_formatter-inl.h
 spdlog/pattern_formatter.h

@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "events/Event.h"
+#include "../events/Event.h"
 #include "Memory.h"
 
 namespace engine {
@@ -66,7 +66,7 @@ namespace engine {
         }
 
     public:
-        static Scope<Window> create(const WindowProps& props = WindowProps());
+        static Scope<Window> newInstance(const WindowProps& props = WindowProps());
 
     protected:
         void onEvent(Event& event) {

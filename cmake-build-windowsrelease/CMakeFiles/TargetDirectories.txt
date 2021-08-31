@@ -6,6 +6,7 @@ C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/CMakeFiles/list_i
 C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/CMakeFiles/install/local.dir
 C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/CMakeFiles/install.dir
 C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/CMakeFiles/edit_cache.dir
+C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/CMakeFiles/WizardNetwork.dir
 C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/CMakeFiles/WizardEngine.dir
 C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/CMakeFiles/rebuild_cache.dir
 C:/Users/mecha/CLionProjects/Wizard/cmake-build-windowsrelease/WizardEngine/CMakeFiles/list_install_components.dir

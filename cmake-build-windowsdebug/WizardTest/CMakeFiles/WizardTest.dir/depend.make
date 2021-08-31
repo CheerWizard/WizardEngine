@@ -28,6 +28,7 @@ WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngin
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\fmt\fmt.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\fmt\xchar.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\formatter.h
+WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\logger-inl.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\logger.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\pattern_formatter-inl.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\vendor\spdlog\include\spdlog\pattern_formatter.h
@@ -45,11 +46,14 @@ WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngin
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\Application.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\Assert.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\Core.h
+WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\Layer.h
+WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\LayerStack.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\Logger.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\Memory.h
+WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\Time.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\Window.h
-WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\core\events\Event.h
+WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\events\Event.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardEngine\src\platform\Platform.h
 WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardTest\src\TestApplication.cpp
-WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardTest\src\TestApplication.h
+WizardTest\CMakeFiles\WizardTest.dir\src\TestApplication.cpp.obj: ..\WizardTest\src\TestLayer.h
 

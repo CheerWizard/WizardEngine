@@ -350,6 +350,18 @@ spdlog/fmt/fmt.h
 spdlog/details/log_msg.h
 -
 
+../WizardEngine/vendor/spdlog/include/spdlog/logger-inl.h
+spdlog/logger.h
+-
+spdlog/sinks/sink.h
+-
+spdlog/details/backtracer.h
+-
+spdlog/pattern_formatter.h
+-
+cstdio
+-
+
 ../WizardEngine/vendor/spdlog/include/spdlog/logger.h
 spdlog/common.h
 -
@@ -361,8 +373,8 @@ spdlog/details/os.h
 -
 vector
 -
-_engineLogger-inl.h
-../WizardEngine/vendor/spdlog/include/spdlog/_engineLogger-inl.h
+logger-inl.h
+../WizardEngine/vendor/spdlog/include/spdlog/logger-inl.h
 
 ../WizardEngine/vendor/spdlog/include/spdlog/pattern_formatter-inl.h
 spdlog/pattern_formatter.h
@@ -555,8 +567,10 @@ Window.h
 C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Window.h
 Logger.h
 C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Logger.h
-events/Event.h
-C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/events/Event.h
+../events/Event.h
+C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/events/Event.h
+LayerStack.h
+C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/LayerStack.h
 
 C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Assert.h
 Core.h
@@ -570,9 +584,23 @@ C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/platform/Platform.h
 signal.h
 -
 
+C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Layer.h
+string
+-
+Time.h
+C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Time.h
+../events/Event.h
+C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/events/Event.h
+
+C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/LayerStack.h
+vector
+-
+Layer.h
+C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Layer.h
+
 C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Logger.h
 spdlog/spdlog.h
-C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/spdlog/spdlog.h
+-
 Core.h
 C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Core.h
 Memory.h
@@ -584,18 +612,20 @@ C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Memory.h
 memory
 -
 
+C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Time.h
+
 C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Window.h
-events/Event.h
-C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/events/Event.h
+../events/Event.h
+C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/events/Event.h
 Memory.h
 C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Memory.h
 
-C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/events/Event.h
+C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/events/Event.h
 string
 -
 sstream
 -
-../Core.h
+../core/Core.h
 C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Core.h
 
 C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/platform/Platform.h
@@ -603,10 +633,14 @@ TargetConditionals.h
 -
 
 C:/Users/mecha/CLionProjects/Wizard/WizardTest/src/TestApplication.cpp
-TestApplication.h
-C:/Users/mecha/CLionProjects/Wizard/WizardTest/src/TestApplication.h
-
-C:/Users/mecha/CLionProjects/Wizard/WizardTest/src/TestApplication.h
 ../../WizardEngine/src/Engine.h
 C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/Engine.h
+TestLayer.h
+C:/Users/mecha/CLionProjects/Wizard/WizardTest/src/TestLayer.h
+
+C:/Users/mecha/CLionProjects/Wizard/WizardTest/src/TestLayer.h
+../../WizardEngine/src/core/Layer.h
+C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Layer.h
+../../WizardEngine/src/core/Logger.h
+C:/Users/mecha/CLionProjects/Wizard/WizardEngine/src/core/Logger.h
 
