@@ -1,13 +1,29 @@
 //
 // Created by mecha on 28.08.2021.
 //
-#include "TestApplication.h"
 
-engine::Application* engine::createApplication() {
-    return new TestApplication();
+#include "../../WizardEngine/src/Engine.h"
+
+#include "TestLayer.h"
+
+namespace test {
+
+    class TestApplication : public engine::Application {
+
+    public:
+
+        TestApplication() {
+            pushLayer(new TestLayer());
+        }
+
+        ~TestApplication() {
+
+        }
+
+    };
+
 }
 
-void TestApplication::onCreate() {
-    engine::Logger::getClientLogger()->info("Test App has been created!");
-//    CLIENT_INFO("Test App has been created!");
+engine::Application* engine::createApplication() {
+    return new test::TestApplication();
 }

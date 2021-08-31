@@ -7,4 +7,6 @@ file(GLOB TEST_SRC src/*.cpp)
 add_executable(WizardTest ${TEST_SRC})
 
 # linking dependencies.
-target_link_libraries(WizardTest WizardEngine)
+target_link_libraries(WizardTest PRIVATE WizardEngine)
+
+# need to fix all linking errors for WizardTest project.

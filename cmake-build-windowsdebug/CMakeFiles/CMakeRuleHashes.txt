@@ -1,0 +1,3 @@
+# Hashes of file build rules.
+e0c3afa5d1921b0f1de4e8d99f675147 WizardEngine/vendor/glfw/CMakeFiles/uninstall
+93f5c60d78d91b9d5cf51c84d98e8234 WizardEngine/vendor/glfw/src/CMakeFiles/update_mappings

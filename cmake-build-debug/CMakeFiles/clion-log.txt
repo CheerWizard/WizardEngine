@@ -1,6 +1,0 @@
-"C:\Program Files\JetBrains\CLion 2021.2\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_DEPENDS_USE_COMPILER=FALSE -G "CodeBlocks - NMake Makefiles" C:\Users\mecha\CLionProjects\Wizard
--- Build spdlog: 1.9.2
--- Build type: Debug
--- Configuring done
--- Generating done
--- Build files have been written to: C:/Users/mecha/CLionProjects/Wizard/cmake-build-debug

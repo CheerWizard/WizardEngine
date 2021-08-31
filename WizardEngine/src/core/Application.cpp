@@ -3,17 +3,49 @@
 //
 
 #include "Application.h"
-#include "Logger.h"
 
-engine::Application::Application() = default;
-engine::Application::~Application() = default;
+namespace engine {
 
-void engine::Application::run() {
-    ENGINE_INFO("Trying to create client...")
-    onCreate();
-    ENGINE_INFO("Client has been created!")
-
-    while (true) {
-        // do nothing.
+    Application::Application() {
+        _window = Window::newInstance();
+        _window->setEventCallback(this);
     }
+
+    Application::~Application() {
+
+    }
+
+    void Application::run() {
+        auto deltaTime = Time();
+        while (_isRunning) {
+            for (Layer* layer : _layerStack) {
+                layer->onUpdate(deltaTime);
+            }
+            _window->onUpdate();
+        }
+    }
+
+    void Application::onEvent(Event &event) {
+        auto eventName = event.toString();
+        ENGINE_INFO("onEvent : {0}", eventName);
+
+        for (auto it = _layerStack.end(); it != _layerStack.begin(); ) {
+            (*--it)->onEvent(event);
+
+            if (event.isHandled) {
+                break;
+            }
+        }
+    }
+
+    void Application::pushLayer(Layer *layer) {
+        ENGINE_INFO("Pushing layer : {0}", layer->getName());
+        _layerStack.pushLayer(layer);
+    }
+
+    void Application::pushOverlay(Layer *overlay) {
+        ENGINE_INFO("Pushing overlay : {0}", overlay->getName());
+        _layerStack.pushOverlay(overlay);
+    }
+
 }
