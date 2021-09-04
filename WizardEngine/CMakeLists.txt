@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 project(WizardEngine)
 
 #/ creating a library from sources.
-file(GLOB_RECURSE ENGINE_SRC src/*.cpp src/*.h)
+file(GLOB_RECURSE ENGINE_SRC src/*.cpp)
 add_library(WizardEngine ${ENGINE_SRC})
 
 #/ adding dependencies.
@@ -20,9 +20,3 @@ target_link_libraries(
         spdlog
         glfw
 )
-
-#/ creating network executable for testing.
-add_executable(WizardNetwork src/network/Client.cpp)
-target_link_libraries(WizardNetwork PRIVATE WizardEngine)
-
-# need to fix all linking errors for WizardNetwork target.

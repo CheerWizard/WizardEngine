@@ -16,7 +16,7 @@ namespace engine {
     }
 
     void Application::run() {
-        auto deltaTime = Time();
+        Time deltaTime;
         while (_isRunning) {
             for (Layer* layer : _layerStack) {
                 layer->onUpdate(deltaTime);

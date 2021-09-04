@@ -16,14 +16,13 @@ namespace test {
             pushLayer(new TestLayer());
         }
 
-        ~TestApplication() {
-
-        }
+        ~TestApplication() override = default;
 
     };
 
 }
 
 engine::Application* engine::createApplication() {
+    CLIENT_INFO("Creating TestApplication...");
     return new test::TestApplication();
 }
