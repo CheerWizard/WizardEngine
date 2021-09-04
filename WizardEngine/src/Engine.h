@@ -8,6 +8,8 @@
 #include "core/Logger.h"
 #include "core/Layer.h"
 
+#include "imgui/ImguiLayer.h"
+
 extern engine::Application* engine::createApplication();
 
 namespace engine {

@@ -23,6 +23,7 @@ namespace engine {
         void pushOverlay(Layer* overlay);
         void popLayer(Layer* layer);
         void popOverlay(Layer* overlay);
+        void onUpdate(Time deltaTime);
 
     public:
         Layers::iterator begin() { return _layers.begin(); }

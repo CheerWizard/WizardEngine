@@ -7,13 +7,12 @@
 #include "../../core/Logger.h"
 #include "../../core/Assert.h"
 
-#include "../../events/KeyEvent.h"
-#include "../../events/MouseEvent.h"
-
 #include <glad/glad.h>
 
 #define GET_WINDOW_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).windowCallback
-#define GET_EVENT_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).eventCallback
+#define GET_KEYBOARD_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).keyboardCallback
+#define GET_MOUSE_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).mouseCallback
+#define GET_CURSOR_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).cursorCallback
 
 namespace engine {
 
@@ -47,60 +46,85 @@ namespace engine {
 
         glfwSetWindowSizeCallback(_window, [](GLFWwindow* window, int width, int height) {
             auto callback = GET_WINDOW_CALLBACK(window);
+
             if (callback != nullptr) {
                 callback->onWindowResized(width, height);
             }
-            //            (*(WindowProps*)glfwGetWindowUserPointer(window)).windowCallback->onWindowResized(width, height);
         });
 
         glfwSetWindowCloseCallback(_window, [](GLFWwindow* window) {
             auto callback = GET_WINDOW_CALLBACK(window);
+
             if (callback != nullptr) {
                 callback->onWindowClosed();
             }
-            //            (*(WindowProps*)glfwGetWindowUserPointer(window)).windowCallback->onWindowClosed();
         });
 
         glfwSetKeyCallback(_window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            switch (action) {
-                case GLFW_PRESS: {
-                    KeyPressedEvent event(key, 0);
-                    break;
-                }
-                case GLFW_RELEASE: {
-                    KeyReleasedEvent event(key);
-                    break;
-                }
-                case GLFW_REPEAT: {
-                    KeyPressedEvent event(key, 1);
-                    break;
+            auto callback = GET_KEYBOARD_CALLBACK(window);
+
+            if (callback != nullptr) {
+                auto keycode = (KeyCode) key;
+
+                switch (action) {
+                    case GLFW_PRESS: {
+                        callback->onKeyPressed(keycode);
+                        break;
+                    }
+                    case GLFW_RELEASE: {
+                        callback->onKeyReleased(keycode);
+                        break;
+                    }
+                    case GLFW_REPEAT: {
+                        callback->onKeyHold(keycode);
+                        break;
+                    }
                 }
             }
         });
 
-        glfwSetCharCallback(_window, [](GLFWwindow* window, unsigned int keycode) {
-            KeyTypedEvent event(keycode);
+        glfwSetCharCallback(_window, [](GLFWwindow* window, unsigned int key) {
+            auto callback = GET_KEYBOARD_CALLBACK(window);
+            auto keycode = (KeyCode) key;
+
+            if (callback != nullptr) {
+                callback->onKeyPressed(keycode);
+            }
         });
 
         glfwSetMouseButtonCallback(_window, [](GLFWwindow* window, int button, int action, int mods) {
-            switch (action) {
-                case GLFW_PRESS: {
-                    MouseButtonPressedEvent event(button);
-                    break;
-                }
-                case GLFW_RELEASE: {
-                    MouseButtonReleasedEvent event(button);
-                    break;
+            auto callback = GET_MOUSE_CALLBACK(window);
+
+            if (callback != nullptr) {
+                auto mousecode = (MouseCode) button;
+
+                switch (action) {
+                    case GLFW_PRESS: {
+                        callback->onMousePressed(mousecode);
+                        break;
+                    }
+                    case GLFW_RELEASE: {
+                        callback->onMouseRelease(mousecode);
+                        break;
+                    }
                 }
             }
         });
 
         glfwSetScrollCallback(_window, [](GLFWwindow* window, double xOffset, double yOffset) {
-            MouseScrollEvent event((float)xOffset, (float)yOffset);
+            auto callback = GET_MOUSE_CALLBACK(window);
+
+            if (callback != nullptr) {
+                callback->onMouseScrolled(xOffset, yOffset);
+            }
         });
 
         glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xPos, double yPos) {
-            MouseMoveEvent event((float)xPos, (float)yPos);
+            auto callback = GET_CURSOR_CALLBACK(window);
+
+            if (callback != nullptr) {
+                callback->onCursorMoved(xPos, yPos);
+            }
         });
     }
 

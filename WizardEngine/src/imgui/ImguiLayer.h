@@ -4,15 +4,12 @@
 
 #pragma once
 
-#include "imgui.h"
-#include <backends/imgui_impl_opengl3.h>
-
 #include <GLFW/glfw3.h>
 
 #include "../core/KeyCodes.h"
 #include "../core/Layer.h"
 
-#include "../events/Event.h"
+#include "../core/Events.h"
 
 namespace engine {
 
@@ -20,13 +17,13 @@ namespace engine {
 
     public:
         ImGuiLayer();
-        ~ImGuiLayer();
+        ~ImGuiLayer() override = default;
 
     public:
-        void onEvent(Event& e) override;
-        void onAttach() override;
-        void onDetach() override;
+        void onCreate() override;
         void onUpdate(Time deltaTime) override;
+        void onDestroy() override;
+        void onImGuiRender() override;
 
     private:
         float _time = 0.0f;

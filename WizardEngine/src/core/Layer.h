@@ -7,28 +7,33 @@
 #include <string>
 
 #include "Time.h"
-#include "../events/Event.h"
+#include "Logger.h"
+
+#include "Events.h"
 
 namespace engine {
 
     class Layer {
 
     public:
-        explicit Layer(const std::string& name = "Layer") : mName(name) {}
-        virtual ~Layer() = default;
+
+        explicit Layer(const std::string& tag = "Layer") : tag(tag) {}
+
+        virtual ~Layer() {
+            onDestroy();
+        }
 
     public:
-        virtual void onAttach() {}
-        virtual void onDetach() {}
-        virtual void onUpdate(Time deltaTime) {}
-        virtual void onImGuiRender() {}
-        virtual void onEvent(Event& event) {}
+        virtual void onCreate();
+        virtual void onUpdate(Time deltaTime);
+        virtual void onDestroy();
+        virtual void onImGuiRender();
 
     public:
-        const std::string& getName() const { return mName; }
+        const std::string& getName() const { return tag; }
 
     protected:
-        std::string mName;
+        std::string tag;
 
     };
 

@@ -10,19 +10,13 @@ namespace test {
 
     class TestApplication : public engine::Application {
 
-    public:
-
-        TestApplication() {
-            pushLayer(new TestLayer());
-        }
-
-        ~TestApplication() override = default;
-
     protected:
 
         void onCreate() override {
             Application::onCreate();
             CLIENT_INFO("onCreate()");
+            pushOverlay(new engine::ImGuiLayer());
+            pushLayer(new TestLayer());
         }
 
         void onUpdate() override {
@@ -34,7 +28,6 @@ namespace test {
             Application::onDestroy();
             CLIENT_INFO("onDestroy()");
         }
-
 
     };
 
