@@ -6,6 +6,9 @@
 
 namespace engine {
 
+    Ref<spdlog::logger> Logger::_clientLogger;
+    Ref<spdlog::logger> Logger::_engineLogger;
+
     void Logger::createEngineLogger(const std::string &name) {
         _engineLogger = createRef<spdlog::logger>("Engine");
         spdlog::register_logger(_engineLogger);

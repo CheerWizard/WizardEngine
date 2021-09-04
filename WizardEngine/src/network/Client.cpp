@@ -22,7 +22,7 @@ void asyncRead(tcp_socket& socket) {
             });
 }
 
-int main() {
+int run() {
 
     asio::error_code errorCode;
     asio::io_context context;
