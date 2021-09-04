@@ -18,6 +18,24 @@ namespace test {
 
         ~TestApplication() override = default;
 
+    protected:
+
+        void onCreate() override {
+            Application::onCreate();
+            CLIENT_INFO("onCreate()");
+        }
+
+        void onUpdate() override {
+            Application::onUpdate();
+            CLIENT_INFO("onUpdate()");
+        }
+
+        void onDestroy() override {
+            Application::onDestroy();
+            CLIENT_INFO("onDestroy()");
+        }
+
+
     };
 
 }

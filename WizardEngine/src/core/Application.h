@@ -13,11 +13,16 @@
 
 namespace engine {
 
-    class Application : public EventCallback {
+    class Application : public EventCallback, WindowCallback {
 
     public:
-        Application();
-        virtual ~Application();
+        Application() {
+            onCreate();
+        }
+
+        virtual ~Application() {
+            onDestroy();
+        }
 
     public:
         static inline Application& getInstance() {
@@ -31,7 +36,18 @@ namespace engine {
 
     public:
         void run();
+
+    public:
         void onEvent(Event& event) override;
+
+    public:
+        void onWindowClosed() override;
+        void onWindowResized(unsigned int width, unsigned int height) override;
+
+    protected:
+        virtual void onCreate();
+        virtual void onDestroy();
+        virtual void onUpdate();
 
     protected:
         void pushLayer(Layer* layer);
