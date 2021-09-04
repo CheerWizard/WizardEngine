@@ -3,15 +3,23 @@
 //
 
 #include "ImguiLayer.h"
+#include "../core/Application.h"
+
+#include <imgui.h>
+#include <backends/imgui_impl_opengl3.h>
+
+#include "../core/KeyCodes.h"
+#include "../core/MouseCodes.h"
+
+#define IO ImGui::GetIO()
 
 namespace engine {
 
     ImGuiLayer::ImGuiLayer() : Layer("ImguiLayer") {
-
     }
 
-    void ImGuiLayer::onAttach() {
-        Layer::onAttach();
+    void ImGuiLayer::onCreate() {
+        Layer::onCreate();
 
         ImGui::CreateContext();
         ImGui::StyleColorsDark();
@@ -48,36 +56,94 @@ namespace engine {
         ImGui_ImplOpenGL3_Init("#version 410");
     }
 
-    void ImGuiLayer::onDetach() {
-        Layer::onDetach();
-    }
-
     void ImGuiLayer::onUpdate(Time deltaTime) {
         Layer::onUpdate(deltaTime);
 
+        Application& app = Application::getInstance();
+
+        auto windowWidth = app.getWindow().getWidth();
+        auto windowHeight = app.getWindow().getHeight();
+
+        IO.DisplaySize = ImVec2(windowWidth, windowHeight);
+
+        auto time = (float) glfwGetTime();
+        IO.DeltaTime = _time > 0.0f ? (time - _time) : (1.0f / 60.0f);
+        _time = time;
+
         ImGui_ImplOpenGL3_NewFrame();
         ImGui::NewFrame();
-
-        ImGuiIO& io = ImGui::GetIO();
-
-        float time = (float) glfwGetTime();
-        io.DeltaTime = _time > 0.0f ? (time - _time) : (1.0f / 60.0f);
-        _time = time;
 
         static bool show = true;
         ImGui::ShowDemoWindow(&show);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
     }
 
-    ImGuiLayer::~ImGuiLayer() {
-
+    void ImGuiLayer::onDestroy() {
+        Layer::onDestroy();
     }
 
-    void ImGuiLayer::onEvent(Event &e) {
-        Layer::onEvent(e);
+    void ImGuiLayer::onImGuiRender() {
+        Layer::onImGuiRender();
+    }
+
+    void ImGuiLayer::onWindowClosed() {
+        Layer::onWindowClosed();
+    }
+
+    void ImGuiLayer::onWindowResized(unsigned int width, unsigned int height) {
+        Layer::onWindowResized(width, height);
+        IO.DisplaySize = ImVec2(width, height);
+        IO.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
+    }
+
+    void ImGuiLayer::onKeyPressed(KeyCode keyCode) {
+        Layer::onKeyPressed(keyCode);
+
+        IO.KeysDown[keyCode] = true;
+
+        IO.KeyCtrl = IO.KeysDown[LeftControl] || IO.KeysDown[RightControl];
+        IO.KeyShift = IO.KeysDown[LeftShift] || IO.KeysDown[RightShift];
+        IO.KeyAlt = IO.KeysDown[LeftAlt] || IO.KeysDown[RightAlt];
+        IO.KeySuper = IO.KeysDown[LeftSuper] || IO.KeysDown[RightSuper];
+    }
+
+    void ImGuiLayer::onKeyHold(KeyCode keyCode) {
+        Layer::onKeyHold(keyCode);
+    }
+
+    void ImGuiLayer::onKeyReleased(KeyCode keyCode) {
+        Layer::onKeyReleased(keyCode);
+        IO.KeysDown[keyCode] = false;
+    }
+
+    void ImGuiLayer::onMousePressed(MouseCode mouseCode) {
+        Layer::onMousePressed(mouseCode);
+        IO.MouseDown[mouseCode] = true;
+    }
+
+    void ImGuiLayer::onMouseRelease(MouseCode mouseCode) {
+        Layer::onMouseRelease(mouseCode);
+        IO.MouseDown[mouseCode] = false;
+    }
+
+    void ImGuiLayer::onMouseScrolled(double xOffset, double yOffset) {
+        Layer::onMouseScrolled(xOffset, yOffset);
+        IO.MouseWheelH += xOffset;
+        IO.MouseWheel += yOffset;
+    }
+
+    void ImGuiLayer::onCursorMoved(double xPos, double yPos) {
+        Layer::onCursorMoved(xPos, yPos);
+        IO.MousePos = ImVec2(xPos, yPos);
+    }
+
+    void ImGuiLayer::onKeyTyped(KeyCode keyCode) {
+        Layer::onKeyTyped(keyCode);
+        if (keyCode > 0 && keyCode < 0x10000) {
+            IO.AddInputCharacter(keyCode);
+        }
     }
 
 }

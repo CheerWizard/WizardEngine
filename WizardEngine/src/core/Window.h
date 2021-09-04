@@ -3,18 +3,10 @@
 //
 #pragma once
 
-#include "../events/Event.h"
+#include "Events.h"
 #include "Memory.h"
 
 namespace engine {
-
-    class WindowCallback {
-
-    public:
-        virtual void onWindowClosed() = 0;
-        virtual void onWindowResized(unsigned int width, unsigned int height) = 0;
-
-    };
 
     struct WindowProps {
         std::string title;
@@ -23,10 +15,12 @@ namespace engine {
         bool vSyncEnabled;
 
         WindowCallback* windowCallback = nullptr;
-        EventCallback* eventCallback = nullptr;
+        KeyboardCallback* keyboardCallback = nullptr;
+        MouseCallback* mouseCallback = nullptr;
+        CursorCallback* cursorCallback = nullptr;
 
         explicit WindowProps(
-                const std::string& title = "Wizard Engine",
+                const std::string& title = "Wizard",
                 uint32_t width = 800,
                 uint32_t height = 600,
                 bool vSyncEnabled = false)
@@ -56,7 +50,9 @@ namespace engine {
 
         virtual void onDestroy() {
             removeWindowCallback();
-            removeEventCallback();
+            removeKeyboardCallback();
+            removeMouseCallback();
+            removeCursorCallback();
         }
 
     public:
@@ -81,20 +77,36 @@ namespace engine {
             return windowProps.vSyncEnabled;
         }
 
-        inline void setEventCallback(EventCallback *eventCallback) {
-            windowProps.eventCallback = eventCallback;
-        }
-
-        inline void removeEventCallback() {
-            windowProps.eventCallback = nullptr;
-        }
-
         inline void setWindowCallback(WindowCallback *windowCallback) {
             windowProps.windowCallback = windowCallback;
         }
 
         inline void removeWindowCallback() {
             windowProps.windowCallback = nullptr;
+        }
+
+        inline void setKeyboardCallback(KeyboardCallback *keyboardCallback) {
+            windowProps.keyboardCallback = keyboardCallback;
+        }
+
+        inline void removeKeyboardCallback() {
+            windowProps.keyboardCallback = nullptr;
+        }
+
+        inline void setMouseCallback(MouseCallback *mouseCallback) {
+            windowProps.mouseCallback = mouseCallback;
+        }
+
+        inline void removeMouseCallback() {
+            windowProps.mouseCallback = nullptr;
+        }
+
+        inline void setCursorCallback(CursorCallback *cursorCallback) {
+            windowProps.cursorCallback = cursorCallback;
+        }
+
+        inline void removeCursorCallback() {
+            windowProps.cursorCallback = nullptr;
         }
 
     protected:
