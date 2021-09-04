@@ -1,7 +1,12 @@
 //
 // Created by mecha on 31.08.2021.
 //
+
 #include "Client.h"
+
+#include <asio.hpp>
+#include <asio/ts/buffer.hpp>
+#include <asio/ts/internet.hpp>
 
 typedef asio::ip::tcp::socket tcp_socket;
 

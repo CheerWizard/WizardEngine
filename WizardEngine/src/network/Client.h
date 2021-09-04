@@ -5,10 +5,6 @@
 
 #include "Config.h"
 
-#include <asio.hpp>
-#include <asio/ts/buffer.hpp>
-#include <asio/ts/internet.hpp>
-
 #include <string>
 #include <vector>
 #include <chrono>

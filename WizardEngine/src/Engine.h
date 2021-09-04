@@ -7,6 +7,9 @@
 #include "core/Application.h"
 #include "core/Logger.h"
 #include "core/Layer.h"
+#include "core/Input.h"
+
+#include "imgui/ImguiLayer.h"
 
 extern engine::Application* engine::createApplication();
 
