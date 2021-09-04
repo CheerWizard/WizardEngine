@@ -3,19 +3,10 @@
 //
 #pragma once
 
-#define GLFW_INCLUDE_NONE
-
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
-
 #include "../../core/Window.h"
-#include "../../core/Memory.h"
-#include "../../core/Logger.h"
-#include "../../core/Assert.h"
 
-#include "../../events/KeyEvent.h"
-#include "../../events/MouseEvent.h"
-#include "../../events/WindowEvent.h"
+#define GLFW_INCLUDE_NONE
+#include "GLFW/glfw3.h"
 
 namespace engine {
 

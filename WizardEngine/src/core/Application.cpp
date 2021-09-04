@@ -6,17 +6,20 @@
 
 namespace engine {
 
+    Application* Application::_instance = nullptr;
+
     Application::Application() {
+        ENGINE_ASSERT(!_instance, "Application already created!");
+        _instance = this;
+
         _window = Window::newInstance();
         _window->setEventCallback(this);
     }
 
-    Application::~Application() {
-
-    }
+    Application::~Application() = default;
 
     void Application::run() {
-        Time deltaTime;
+        Time deltaTime = Time();
         while (_isRunning) {
             for (Layer* layer : _layerStack) {
                 layer->onUpdate(deltaTime);
