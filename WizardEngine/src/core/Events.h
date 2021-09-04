@@ -23,6 +23,7 @@ namespace engine {
         virtual void onKeyPressed(KeyCode keyCode) = 0;
         virtual void onKeyHold(KeyCode keyCode) = 0;
         virtual void onKeyReleased(KeyCode keyCode) = 0;
+        virtual void onKeyTyped(KeyCode keyCode) = 0;
     };
 
     class MouseCallback {

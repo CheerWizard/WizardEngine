@@ -25,6 +25,20 @@ namespace engine {
         void onDestroy() override;
         void onImGuiRender() override;
 
+        void onWindowClosed() override;
+        void onWindowResized(unsigned int width, unsigned int height) override;
+
+        void onKeyPressed(KeyCode keyCode) override;
+        void onKeyHold(KeyCode keyCode) override;
+        void onKeyReleased(KeyCode keyCode) override;
+        void onKeyTyped(KeyCode keyCode) override;
+
+        void onMousePressed(MouseCode mouseCode) override;
+        void onMouseRelease(MouseCode mouseCode) override;
+        void onMouseScrolled(double xOffset, double yOffset) override;
+
+        void onCursorMoved(double xPos, double yPos) override;
+
     private:
         float _time = 0.0f;
 

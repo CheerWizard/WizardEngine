@@ -49,6 +49,7 @@ namespace engine {
 
             if (callback != nullptr) {
                 callback->onWindowResized(width, height);
+                glViewport(0, 0, width, height);
             }
         });
 
@@ -88,7 +89,7 @@ namespace engine {
             auto keycode = (KeyCode) key;
 
             if (callback != nullptr) {
-                callback->onKeyPressed(keycode);
+                callback->onKeyTyped(keycode);
             }
         });
 
