@@ -20,7 +20,7 @@ namespace engine {
     public:
         virtual void onAttach() {}
         virtual void onDetach() {}
-        virtual void onUpdate(Time ts) {}
+        virtual void onUpdate(Time deltaTime) {}
         virtual void onImGuiRender() {}
         virtual void onEvent(Event& event) {}
 

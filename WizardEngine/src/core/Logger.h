@@ -3,7 +3,11 @@
 //
 #pragma once
 
+// This ignores all warnings raised inside External headers
+#pragma warning(push, 0)
 #include <spdlog/spdlog.h>
+#include <spdlog/fmt/ostr.h>
+#pragma warning(pop)
 
 #include "Core.h"
 #include "Memory.h"
@@ -22,10 +26,10 @@ namespace engine {
         static void setPattern(const std::string& pattern);
 
     public:
-        inline static Ref<spdlog::logger>& getEngineLogger() {
+        static Ref<spdlog::logger>& getEngineLogger() {
             return _engineLogger;
         }
-        inline static Ref<spdlog::logger>& getClientLogger() {
+        static Ref<spdlog::logger>& getClientLogger() {
             return _clientLogger;
         }
 

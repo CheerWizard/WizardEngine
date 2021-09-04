@@ -4,6 +4,15 @@
 
 #include "WindowsWindow.h"
 
+#include "../../core/Logger.h"
+#include "../../core/Assert.h"
+
+#include "../../events/KeyEvent.h"
+#include "../../events/MouseEvent.h"
+#include "../../events/WindowEvent.h"
+
+#include <glad/glad.h>
+
 namespace engine {
 
     Scope<Window> Window::newInstance(const WindowProps& props) {
@@ -20,7 +29,12 @@ namespace engine {
             glfwSetErrorCallback(handleError);
         }
 
-        _window = glfwCreateWindow((int)windowProps.width, (int)windowProps.height, windowProps.title.c_str(), nullptr, nullptr);
+        _window = glfwCreateWindow(
+                (int)windowProps.width,
+                (int)windowProps.height,
+                windowProps.title.c_str(),
+                nullptr,
+                nullptr);
         glfwMakeContextCurrent(_window);
 
         int gladCreated = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
