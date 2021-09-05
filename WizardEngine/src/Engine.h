@@ -15,17 +15,11 @@ extern engine::Application* engine::createApplication();
 
 namespace engine {
 
-    static void init() {
+    static void run() {
         INIT_CLIENT_LOG("Client");
         INIT_ENGINE_LOG("Engine");
         LOG_PATTERN("%^[%T] %n: %v%$");
 
-        ENGINE_INFO("Initializing...");
-
-        ENGINE_INFO("Init completed!");
-    }
-
-    static void run() {
         ENGINE_INFO("Creating Application...");
         auto app = createApplication();
         ENGINE_INFO("Application created!");

@@ -5,6 +5,5 @@
 #include "../../WizardEngine/src/Engine.h"
 
 int main() {
-    engine::init();
     engine::run();
 }
