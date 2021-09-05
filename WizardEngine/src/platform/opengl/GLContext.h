@@ -6,7 +6,8 @@
 
 #include "../../graphics/GraphicsContext.h"
 
-#include "renderer/GLRenderer.h"
+#include "render/GLRenderer.h"
+#include "shader/GLShader.h"
 
 struct GLFWwindow;
 
@@ -24,6 +25,11 @@ namespace engine {
         void clearDisplay() override;
 
         Renderer* newRenderer() override;
+
+        Ref<Shader> newShader(const std::string &filepath) override;
+        Ref<Shader> newShader(const std::string &name,
+                                      const std::string &vertexSrc,
+                                      const std::string &fragmentSrc) override;
 
     private:
         std::string getAPIName() override;

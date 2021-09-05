@@ -52,4 +52,14 @@ namespace engine {
         return new GLRenderer();
     }
 
+    Ref<Shader> GLContext::newShader(const std::string &filepath) {
+        return createRef<GLShader>();
+    }
+
+    Ref<Shader> GLContext::newShader(const std::string &name,
+                                     const std::string &vertexSrc,
+                                     const std::string &fragmentSrc) {
+        return createRef<GLShader>();
+    }
+
 }

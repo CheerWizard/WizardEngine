@@ -6,7 +6,9 @@
 
 #include "../core/Memory.h"
 #include "../core/Assert.h"
+
 #include "render/Renderer.h"
+#include "shader/Shader.h"
 
 #include <string>
 
@@ -27,6 +29,11 @@ namespace engine {
         virtual void clearDisplay() = 0;
 
         virtual Renderer* newRenderer() = 0;
+        virtual Ref<Shader> newShader(const std::string& filepath) = 0;
+        virtual Ref<Shader> newShader(
+                const std::string& name,
+                const std::string& vertexSrc,
+                const std::string& fragmentSrc) = 0;
 
     private:
         virtual std::string getAPIName() = 0;
