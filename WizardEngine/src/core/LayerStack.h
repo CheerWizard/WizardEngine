@@ -10,7 +10,7 @@
 
 namespace engine {
 
-    class LayerStack {
+    class LayerStack : public WindowCallback, KeyboardCallback, MouseCallback, CursorCallback {
 
         typedef std::vector<Layer*> Layers;
 
@@ -23,6 +23,22 @@ namespace engine {
         void pushOverlay(Layer* overlay);
         void popLayer(Layer* layer);
         void popOverlay(Layer* overlay);
+        void onUpdate(Time deltaTime);
+
+    public:
+        void onWindowClosed() override;
+        void onWindowResized(unsigned int width, unsigned int height) override;
+
+        void onKeyPressed(KeyCode keyCode) override;
+        void onKeyHold(KeyCode keyCode) override;
+        void onKeyReleased(KeyCode keyCode) override;
+        void onKeyTyped(KeyCode keyCode) override;
+
+        void onMousePressed(MouseCode mouseCode) override;
+        void onMouseRelease(MouseCode mouseCode) override;
+        void onMouseScrolled(double xOffset, double yOffset) override;
+
+        void onCursorMoved(double xPos, double yPos) override;
 
     public:
         Layers::iterator begin() { return _layers.begin(); }

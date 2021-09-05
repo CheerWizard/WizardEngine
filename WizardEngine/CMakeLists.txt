@@ -3,26 +3,34 @@ cmake_minimum_required(VERSION 3.20)
 project(WizardEngine)
 
 #/ creating a library from sources.
-file(GLOB_RECURSE ENGINE_SRC src/*.cpp src/*.h)
+file(GLOB_RECURSE ENGINE_SRC src/*.cpp)
 add_library(WizardEngine ${ENGINE_SRC})
 
 #/ adding dependencies.
-add_subdirectory(vendor/spdlog) #/ Logging.
-add_subdirectory(vendor/glfw) #/ Win managing for OpenGL/Vulkan/OpenGLES context.
-#/ adding sources explicitly.
-include_directories(vendor/asio/asio/include) #/ Networking and async IO.
-include_directories(vendor/glad/include) #/ Graphics modern API, extended from OpenGL.
-include_directories(vendor/imgui) # Immediate UI API , for debugging, profiling, creating editor, etc.
+
+#/ Logger.
+add_subdirectory(vendor/spdlog)
+
+#/ Window managing for OpenGL/Vulkan/OpenGLES context.
+add_subdirectory(vendor/glfw)
+
+#/ Graphics API, which uses OpenGL and Vulkan.
+add_subdirectory(vendor/glad)
+include_directories(vendor/glad/include)
+
+# Immediate UI API.
+add_subdirectory(vendor/imgui)
+include_directories(vendor/imgui/imgui)
+
+#/ Networking and async IO.
+add_subdirectory(vendor/asio)
+include_directories(vendor/asio/asio/include)
 
 #/ linking dependencies.
 target_link_libraries(
         WizardEngine PUBLIC
         spdlog
         glfw
+        glad
+        imgui
 )
-
-#/ creating network executable for testing.
-add_executable(WizardNetwork src/network/Client.cpp)
-target_link_libraries(WizardNetwork PRIVATE WizardEngine)
-
-# need to fix all linking errors for WizardNetwork target.
