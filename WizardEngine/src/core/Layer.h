@@ -8,8 +8,8 @@
 
 #include "Time.h"
 #include "Logger.h"
-
 #include "Events.h"
+#include "../platform/Platform.h"
 
 namespace engine {
 
@@ -27,7 +27,6 @@ namespace engine {
         virtual void onCreate();
         virtual void onUpdate(Time deltaTime);
         virtual void onDestroy();
-        virtual void onImGuiRender();
 
     public:
         void onWindowClosed() override;
@@ -45,7 +44,7 @@ namespace engine {
         void onCursorMoved(double xPos, double yPos) override;
 
     public:
-        const std::string& getName() const { return tag; }
+        const std::string& getTag() const { return tag; }
 
     protected:
         std::string tag;

@@ -4,28 +4,13 @@
 
 #include "WindowsWindow.h"
 
-#include "../../core/Logger.h"
-#include "../../core/Assert.h"
-
-#include <glad/glad.h>
-
-#define GET_WINDOW_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).windowCallback
-#define GET_KEYBOARD_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).keyboardCallback
-#define GET_MOUSE_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).mouseCallback
-#define GET_CURSOR_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).cursorCallback
-
 namespace engine {
-
-    Scope<Window> Window::newInstance(const WindowProps& props) {
-        return createScope<WindowsWindow>(props);
-    }
 
     void WindowsWindow::onCreate() {
         ENGINE_INFO("Creating window {0} ({1}, {2})", windowProps.title, windowProps.width, windowProps.height);
 
         if (!isInitialized) {
-            int glfwCreated = glfwInit();
-            ENGINE_ASSERT(glfwCreated, "Failed to initialize GLFW!")
+            ENGINE_ASSERT(glfwInit(), "Failed to initialize GLFW!")
             isInitialized = true;
             glfwSetErrorCallback(handleError);
         }
@@ -36,20 +21,17 @@ namespace engine {
                 windowProps.title.c_str(),
                 nullptr,
                 nullptr);
-        glfwMakeContextCurrent(_window);
+    }
 
-        int gladCreated = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-        ENGINE_ASSERT(gladCreated, "Failed to initialize Glad!");
-
+    void WindowsWindow::onPrepare() {
         glfwSetWindowUserPointer(_window, &windowProps);
-        enableVSync();
 
         glfwSetWindowSizeCallback(_window, [](GLFWwindow* window, int width, int height) {
             auto callback = GET_WINDOW_CALLBACK(window);
 
             if (callback != nullptr) {
                 callback->onWindowResized(width, height);
-                glViewport(0, 0, width, height);
+//                glViewport(0, 0, width, height);
             }
         });
 
@@ -97,15 +79,15 @@ namespace engine {
             auto callback = GET_MOUSE_CALLBACK(window);
 
             if (callback != nullptr) {
-                auto mousecode = (MouseCode) button;
+                auto mouseCode = (MouseCode) button;
 
                 switch (action) {
                     case GLFW_PRESS: {
-                        callback->onMousePressed(mousecode);
+                        callback->onMousePressed(mouseCode);
                         break;
                     }
                     case GLFW_RELEASE: {
-                        callback->onMouseRelease(mousecode);
+                        callback->onMouseRelease(mouseCode);
                         break;
                     }
                 }
@@ -131,9 +113,6 @@ namespace engine {
 
     void WindowsWindow::onUpdate() {
         glfwPollEvents();
-        glfwSwapBuffers(_window);
-        glClearColor(1, 0, 1, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
     }
 
     void WindowsWindow::onDestroy() {

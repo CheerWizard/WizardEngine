@@ -6,10 +6,10 @@
 
 #include <GLFW/glfw3.h>
 
-#include "../core/KeyCodes.h"
-#include "../core/Layer.h"
+#include "../core/Layout.h"
 
 #include "../core/Events.h"
+#include "../core/LayoutStack.h"
 
 namespace engine {
 
@@ -23,8 +23,15 @@ namespace engine {
         void onCreate() override;
         void onUpdate(Time deltaTime) override;
         void onDestroy() override;
-        void onImGuiRender() override;
 
+    public:
+        void setDarkTheme();
+        void pushLayout(Layout* imGuiLayout);
+        void pushOverLayout(Layout* imGuiLayout);
+        void popLayout(Layout* imGuiLayout);
+        void popOverLayout(Layout* imGuiLayout);
+
+    public:
         void onWindowClosed() override;
         void onWindowResized(unsigned int width, unsigned int height) override;
 
@@ -40,7 +47,11 @@ namespace engine {
         void onCursorMoved(double xPos, double yPos) override;
 
     private:
-        float _time = 0.0f;
+        void onBeginFrame();
+        void onEndFrame();
+
+    private:
+        LayoutStack _layoutStack;
 
     };
 

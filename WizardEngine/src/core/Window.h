@@ -5,6 +5,8 @@
 
 #include "Events.h"
 #include "Memory.h"
+#include "Logger.h"
+#include "Assert.h"
 
 namespace engine {
 
@@ -21,8 +23,8 @@ namespace engine {
 
         explicit WindowProps(
                 const std::string& title = "Wizard",
-                uint32_t width = 800,
-                uint32_t height = 600,
+                uint32_t width = 1920,
+                uint32_t height = 1080,
                 bool vSyncEnabled = false)
         : title(title), width(width), height(height), vSyncEnabled(vSyncEnabled) {
 
@@ -39,12 +41,10 @@ namespace engine {
         virtual ~Window() = default;
 
     public:
-        static Scope<Window> newInstance(const WindowProps& props = WindowProps());
-
-    public:
         virtual void* getNativeWindow() const = 0;
 
         virtual void onCreate() = 0;
+        virtual void onPrepare() = 0;
         virtual void onUpdate() = 0;
         virtual void onClose() = 0;
 
@@ -64,7 +64,6 @@ namespace engine {
         }
 
     public:
-
         inline uint32_t getWidth() const {
             return windowProps.width;
         }

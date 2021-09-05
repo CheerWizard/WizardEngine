@@ -4,12 +4,19 @@
 
 #pragma once
 
+// export core systems.
 #include "core/Application.h"
 #include "core/Logger.h"
 #include "core/Layer.h"
 #include "core/Input.h"
+#include "core/Layout.h"
+#include "core/Time.h"
 
-#include "imgui/ImguiLayer.h"
+// export ImGui system.
+#include "imgui/DemoLayout.h"
+
+// export vendor libs.
+#include "../vendor/imgui/imgui/imgui.h"
 
 extern engine::Application* engine::createApplication();
 

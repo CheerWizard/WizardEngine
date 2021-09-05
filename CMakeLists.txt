@@ -16,6 +16,18 @@ if (WIN64)
     add_definitions(-DWIN64=1)
 endif (WIN64)
 
+if (GLFW)
+    add_definitions(-DGLFW=1)
+endif(GLFW)
+
+if (GL)
+    add_definitions(-DGL=1)
+endif(GL)
+
+if (VK)
+    add_definitions(-DVK=1)
+endif(VK)
+
 # Subprojects from Wizard.
 add_subdirectory(WizardEngine)
 add_subdirectory(WizardTest)

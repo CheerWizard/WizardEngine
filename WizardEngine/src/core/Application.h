@@ -12,6 +12,18 @@
 #include "Assert.h"
 #include "Input.h"
 
+#include "../imgui/ImguiLayer.h"
+
+#include "../graphics/GraphicsContext.h"
+
+#include "../platform/Platform.h"
+
+#define APP Application::getInstance()
+#define WINDOW APP.getWindow()
+#define INPUT APP.getInput()
+#define IMGUI_LAYER APP.getImGuiLayer()
+#define GRAPHICS_CONTEXT APP.getGraphicsContext()
+
 namespace engine {
 
     class Application : public WindowCallback, KeyboardCallback, MouseCallback, CursorCallback {
@@ -27,12 +39,22 @@ namespace engine {
 
     public:
         inline Window& getWindow() {
-            return *window;
+            return *_window;
         }
 
     public:
         inline Input& getInput() {
             return *input;
+        }
+
+    public:
+        inline ImGuiLayer& getImGuiLayer() {
+            return *_imGuiLayer;
+        }
+
+    public:
+        inline GraphicsContext& getGraphicsContext() {
+            return *_graphicsContext;
         }
 
     public:
@@ -61,6 +83,11 @@ namespace engine {
     protected:
         void pushLayer(Layer* layer);
         void pushOverlay(Layer* overlay);
+        void pushLayout(Layout* imGuiLayout);
+        void pushOverLayout(Layout* imGuiLayout);
+
+    protected:
+        Scope<Input> input;
 
     private:
         static Application* _instance;
@@ -68,10 +95,10 @@ namespace engine {
     private:
         bool _isRunning = true;
         LayerStack _layerStack;
-
-    protected:
-        Scope<Window> window;
-        Scope<Input> input;
+        ImGuiLayer* _imGuiLayer;
+        Scope<Window> _window;
+        Scope<GraphicsContext> _graphicsContext;
+        Renderer* _renderer;
 
     };
 

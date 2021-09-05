@@ -8,6 +8,7 @@
 #include "MouseCodes.h"
 #include "Memory.h"
 #include "Logger.h"
+#include "../platform/Platform.h"
 
 #include <string>
 
@@ -29,9 +30,6 @@ namespace engine {
     public:
         Input() = default;;
         virtual ~Input() = default;
-
-    public:
-        static Scope<Input> newInstance();
 
     public:
         virtual bool isKeyPressed(KeyCode keyCode) = 0;

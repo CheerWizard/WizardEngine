@@ -5,15 +5,7 @@
 #include "WindowsInput.h"
 #include "../../core/Application.h"
 
-#include "GLFW/glfw3.h"
-
-#define GLFW_WINDOW static_cast<GLFWwindow*>(Application::getInstance().getWindow().getNativeWindow())
-
 namespace engine {
-
-    Scope<Input> Input::newInstance() {
-        return createScope<WindowsInput>();
-    }
 
     bool WindowsInput::isKeyPressed(KeyCode keyCode) {
         auto state = glfwGetKey(GLFW_WINDOW, keyCode);
@@ -28,7 +20,10 @@ namespace engine {
     MousePosition WindowsInput::getMousePosition() {
         double x, y;
         glfwGetCursorPos(GLFW_WINDOW, &x, &y);
-        return MousePosition((float) x, (float) y);
+        return {
+            (float) x,
+            (float) y
+        };
     }
 
 

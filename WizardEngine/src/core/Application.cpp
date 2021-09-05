@@ -4,6 +4,11 @@
 
 #include "Application.h"
 
+#include "../platform/windows/WindowsWindow.h"
+#include "../platform/windows/WindowsInput.h"
+
+#include "../platform/opengl/GLContext.h"
+
 namespace engine {
 
     Application* Application::_instance = nullptr;
@@ -19,40 +24,53 @@ namespace engine {
     void Application::onCreate() {
         ENGINE_INFO("onCreate()");
 
-        ENGINE_ASSERT(!_instance, "Application already created!");
+        ENGINE_ASSERT(!_instance, "Application already created!")
         _instance = this;
 
-        window = Window::newInstance();
-        window->onCreate();
+        _window = INIT_WINDOW(WindowProps());
+        _window->onCreate();
 
-        window->setWindowCallback(this);
-        window->setMouseCallback(this);
-        window->setKeyboardCallback(this);
-        window->setCursorCallback(this);
+        _graphicsContext = INIT_GRAPHICS_CONTEXT;
+        _graphicsContext->onCreate();
+        _graphicsContext->printInfo();
 
-        input = Input::newInstance();
+        _window->setWindowCallback(this);
+        _window->setMouseCallback(this);
+        _window->setKeyboardCallback(this);
+        _window->setCursorCallback(this);
+        _window->onPrepare();
+
+        input = INIT_INPUT;
+
+        _imGuiLayer = new ImGuiLayer();
+        pushOverlay(_imGuiLayer);
+
+        _renderer = _graphicsContext->newRenderer();
+        _renderer->onCreate();
     }
 
     void Application::onDestroy() {
         ENGINE_INFO("onDestroy()");
-        window->onDestroy();
+        _renderer->onDestroy();
+        _window->onDestroy();
     }
 
     void Application::onUpdate() {
-        ENGINE_INFO("onUpdate()");
         Time deltaTime = Time();
+        _renderer->onUpdate();
         _layerStack.onUpdate(deltaTime);
-        window->onUpdate();
-        input->getMousePosition().log();
+        _window->onUpdate();
+        _graphicsContext->swapBuffers();
+        _graphicsContext->clearDisplay();
     }
 
     void Application::pushLayer(Layer *layer) {
-        ENGINE_INFO("Pushing layer : {0}", layer->getName());
+        ENGINE_INFO("Pushing layer : {0}", layer->getTag());
         _layerStack.pushLayer(layer);
     }
 
     void Application::pushOverlay(Layer *overlay) {
-        ENGINE_INFO("Pushing overlay : {0}", overlay->getName());
+        ENGINE_INFO("Pushing overlay : {0}", overlay->getTag());
         _layerStack.pushOverlay(overlay);
     }
 
@@ -97,6 +115,14 @@ namespace engine {
 
     void Application::onKeyTyped(KeyCode keyCode) {
         _layerStack.onKeyTyped(keyCode);
+    }
+
+    void Application::pushLayout(Layout *imGuiLayout) {
+        _imGuiLayer->pushLayout(imGuiLayout);
+    }
+
+    void Application::pushOverLayout(Layout *imGuiLayout) {
+        _imGuiLayer->pushOverLayout(imGuiLayout);
     }
 
 }

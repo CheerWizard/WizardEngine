@@ -10,7 +10,7 @@
 
 namespace engine {
 
-    class LayerStack : public WindowCallback, KeyboardCallback, MouseCallback, CursorCallback {
+    class LayerStack : WindowCallback, KeyboardCallback, MouseCallback, CursorCallback {
 
         typedef std::vector<Layer*> Layers;
 
@@ -41,15 +41,15 @@ namespace engine {
         void onCursorMoved(double xPos, double yPos) override;
 
     public:
-        Layers::iterator begin() { return _layers.begin(); }
-        Layers::iterator end() { return _layers.end(); }
-        Layers::reverse_iterator rbegin() { return _layers.rbegin(); }
-        Layers::reverse_iterator rend() { return _layers.rend(); }
+        typename Layers::iterator begin() { return _layers.begin(); }
+        typename Layers::iterator end() { return _layers.end(); }
+        typename Layers::reverse_iterator rbegin() { return _layers.rbegin(); }
+        typename Layers::reverse_iterator rend() { return _layers.rend(); }
 
-        Layers::const_iterator begin() const { return _layers.begin(); }
-        Layers::const_iterator end()	const { return _layers.end(); }
-        Layers::const_reverse_iterator rbegin() const { return _layers.rbegin(); }
-        Layers::const_reverse_iterator rend() const { return _layers.rend(); }
+        typename Layers::const_iterator begin() const { return _layers.begin(); }
+        typename Layers::const_iterator end()	const { return _layers.end(); }
+        typename Layers::const_reverse_iterator rbegin() const { return _layers.rbegin(); }
+        typename Layers::const_reverse_iterator rend() const { return _layers.rend(); }
 
     private:
         Layers _layers;
