@@ -28,8 +28,12 @@ namespace engine {
 
         Ref<Shader> newShader(const std::string &filepath) override;
         Ref<Shader> newShader(const std::string &name,
-                                      const std::string &vertexSrc,
-                                      const std::string &fragmentSrc) override;
+                              const std::string &vertexSrc,
+                              const std::string &fragmentSrc) override;
+
+        Ref<VertexBuffer> newVertexBuffer(const std::vector<Vertex> &vertices, const uint32_t &size) override;
+
+        Ref<IndexBuffer> newIndexBuffer(const std::vector<int> &indices, const uint32_t &size) override;
 
     private:
         std::string getAPIName() override;

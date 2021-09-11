@@ -9,8 +9,11 @@
 
 #include "render/Renderer.h"
 #include "shader/Shader.h"
+#include "buffers/VertexBuffer.h"
+#include "buffers/IndexBuffer.h"
 
 #include <string>
+#include "vector"
 
 namespace engine {
 
@@ -29,11 +32,20 @@ namespace engine {
         virtual void clearDisplay() = 0;
 
         virtual Renderer* newRenderer() = 0;
+
         virtual Ref<Shader> newShader(const std::string& filepath) = 0;
         virtual Ref<Shader> newShader(
                 const std::string& name,
                 const std::string& vertexSrc,
                 const std::string& fragmentSrc) = 0;
+
+        virtual Ref<VertexBuffer> newVertexBuffer(
+                const std::vector<Vertex>& vertices ,
+                const uint32_t& size) = 0;
+
+        virtual Ref<IndexBuffer> newIndexBuffer(
+                const std::vector<int>& indices ,
+                const uint32_t& size) = 0;
 
     private:
         virtual std::string getAPIName() = 0;

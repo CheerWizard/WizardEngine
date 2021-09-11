@@ -17,12 +17,14 @@
 #include "../graphics/GraphicsContext.h"
 
 #include "../platform/Platform.h"
+#include "../graphics/shader/Shaders.h"
 
 #define APP Application::getInstance()
 #define WINDOW APP.getWindow()
 #define INPUT APP.getInput()
 #define IMGUI_LAYER APP.getImGuiLayer()
 #define GRAPHICS_CONTEXT APP.getGraphicsContext()
+#define SHADERS APP.getShaders()
 
 namespace engine {
 
@@ -55,6 +57,11 @@ namespace engine {
     public:
         inline GraphicsContext& getGraphicsContext() {
             return *_graphicsContext;
+        }
+
+    public:
+        inline Shaders& getShaders() {
+            return *_shaders;
         }
 
     public:
@@ -98,6 +105,7 @@ namespace engine {
         ImGuiLayer* _imGuiLayer;
         Scope<Window> _window;
         Scope<GraphicsContext> _graphicsContext;
+        Scope<Shaders> _shaders;
         Renderer* _renderer;
 
     };

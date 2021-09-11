@@ -4,30 +4,52 @@
 
 #pragma once
 
-#include "../../core/Memory.h"
-
 #include "glm/glm.hpp"
+
+#include "Uniforms.h"
+
+#include "../../core/File.h"
 
 namespace engine {
 
-    class Shader {
+    class Shader : public File {
 
     public:
-        virtual ~Shader() = default;
+        Shader(const std::string& name,
+               const std::string& vertexSrc,
+               const std::string& fragmentSrc) : name(name) {}
+
+    public:
+        explicit Shader(const std::string& filePath) : File(filePath) {}
 
     public:
         virtual void bind() = 0;
         virtual void unbind() = 0;
 
-        virtual void setInt(const std::string& name, int value) = 0;
-        virtual void setIntArray(const std::string& name, int* values, uint32_t count) = 0;
-        virtual void setFloat(const std::string& name, float value) = 0;
-        virtual void setFloat2(const std::string& name, const glm::vec2& value) = 0;
-        virtual void setFloat3(const std::string& name, const glm::vec3& value) = 0;
-        virtual void setFloat4(const std::string& name, const glm::vec4& value) = 0;
-        virtual void setMat4(const std::string& name, const glm::mat4& value) = 0;
+        virtual void setUniform(const Uniform<float>& uniform) = 0;
+        virtual void setUniform(const Uniform<int>& uniform) = 0;
+        virtual void setUniform(const Uniform<double>& uniform) = 0;
 
-        virtual const std::string& getName() const = 0;
+        virtual void setUniform(const Uniform<glm::fvec2>& uniform) = 0;
+        virtual void setUniform(const Uniform<glm::fvec3>& uniform) = 0;
+        virtual void setUniform(const Uniform<glm::fvec4>& uniform) = 0;
+
+        virtual void setUniform(const Uniform<glm::fmat2>& uniform) = 0;
+        virtual void setUniform(const Uniform<glm::fmat3>& uniform) = 0;
+        virtual void setUniform(const Uniform<glm::fmat4>& uniform) = 0;
+
+    public:
+        inline std::string& getName() {
+            return name;
+        }
+        inline void setName(const std::string& name) {
+            this->name = name;
+        }
+
+    protected:
+        std::string name;
+        uint32_t programId;
+
     };
 
 }

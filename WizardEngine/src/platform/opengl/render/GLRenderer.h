@@ -20,7 +20,7 @@ namespace engine {
         void onDestroy() override;
 
     private:
-        unsigned int _vertexArray, _vertexBuffer, _indexBuffer;
+        unsigned int _vertexArray;
 
     };
 
