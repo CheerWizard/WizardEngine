@@ -6,14 +6,16 @@
 
 #include "Shader.h"
 
-#include "../../core/Application.h"
-
 #include "string"
 #include "unordered_map"
 
 namespace engine {
 
-    class Shaders {
+    class ShaderCache {
+
+    public:
+        ShaderCache() = default;
+        ~ShaderCache() = default;
 
     public:
         void add(const std::string& name, const Ref<Shader>& shader);
@@ -22,6 +24,7 @@ namespace engine {
         Ref<Shader> load(const std::string& name, const std::string& filepath);
         Ref<Shader> get(const std::string& name);
         bool exists(const std::string& name) const;
+        void clear();
 
     private:
         std::unordered_map<std::string, Ref<Shader>> _shaders;

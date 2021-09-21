@@ -49,7 +49,7 @@
     #define INIT_WINDOW(props) createScope<WindowsWindow>(props)
     #define INIT_INPUT createScope<WindowsInput>()
 
-	#define GLFW_WINDOW static_cast<GLFWwindow*>(Application::getInstance().getWindow().getNativeWindow())
+	#define GLFW_WINDOW static_cast<GLFWwindow*>(Application::getInstance().getWindow()->getNativeWindow())
 
 	#define GET_WINDOW_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).windowCallback
     #define GET_KEYBOARD_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).keyboardCallback

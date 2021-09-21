@@ -65,7 +65,7 @@ namespace engine {
     }
 
     void ImGuiLayer::onEndFrame() {
-        IO.DisplaySize = ImVec2((float) WINDOW.getWidth(), (float) WINDOW.getHeight());
+        IO.DisplaySize = ImVec2((float) WINDOW->getWidth(), (float) WINDOW->getHeight());
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

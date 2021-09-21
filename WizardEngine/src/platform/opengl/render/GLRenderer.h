@@ -11,16 +11,17 @@ namespace engine {
     class GLRenderer : public Renderer {
 
     public:
-        GLRenderer() = default;
-        ~GLRenderer() = default;
+        GLRenderer(ShaderCache* shaderCache,
+                   GraphicsObjectCache* graphicsObjectCache,
+                   const Ref<VertexArray> &vertexArray) :
+        Renderer(shaderCache, graphicsObjectCache, vertexArray) {}
 
-    public:
-        void onCreate() override;
-        void onUpdate() override;
-        void onDestroy() override;
+        ~GLRenderer() override {
+            destroy();
+        }
 
-    private:
-        unsigned int _vertexArray;
+    protected:
+        void drawIndices(uint32_t *indices, const uint32_t &indexCount) override;
 
     };
 

@@ -6,7 +6,7 @@
 
 namespace engine {
 
-    std::string File::read() {
+    std::string File::read() const {
         std::string result;
         std::ifstream input(filePath, std::ios::in | std::ios::binary);
 
@@ -27,6 +27,15 @@ namespace engine {
         }
 
         return result;
+    }
+
+    void File::createName() {
+        // Extract name from filepath
+        auto lastSlash = filePath.find_last_of("/\\");
+        lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+        auto lastDot = filePath.rfind('.');
+        auto count = lastDot == std::string::npos ? filePath.size() - lastSlash : lastDot - lastSlash;
+        name = filePath.substr(lastSlash, count);
     }
 
 }

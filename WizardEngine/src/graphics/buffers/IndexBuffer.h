@@ -13,16 +13,14 @@ namespace engine {
     class IndexBuffer : public Buffer {
 
     public:
-        IndexBuffer(const std::vector<int>& indices, const uint32_t size) : indices(indices), size(size) {}
-        virtual ~IndexBuffer() = default;
+        IndexBuffer() = default;
+        explicit IndexBuffer(const uint32_t &indexCount) {
+            capacity = indexCount;
+        }
 
-        void bind() override;
-
-        void unbind() override;
-
-    protected:
-        std::vector<int> indices;
-        uint32_t size;
+    public:
+        virtual void allocate() = 0;
+        virtual void load(const uint32_t &indexStart, uint32_t* indices) = 0;
 
     };
 

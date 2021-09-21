@@ -42,7 +42,7 @@ void streambuf_test()
 
     ASIO_CHECK(sb.size() == 2);
 
-    asio::buffer_copy(sb.prepare(10), asio::buffer("cd", 2));
+    asio::buffer_copy(sb.onPrepare(10), asio::buffer("cd", 2));
     sb.commit(2);
 
     ASIO_CHECK(sb.size() == 4);

@@ -18,11 +18,11 @@ namespace test {
     public:
 
         void onCreate() override {
-            CLIENT_INFO("{0} : onCreate()", tag);
+            CLIENT_INFO("{0} : create()", tag);
         }
 
         void onDestroy() override {
-            CLIENT_INFO("{0} : onDestroy()", tag);
+            CLIENT_INFO("{0} : destroy()", tag);
         }
 
         void onUpdate(engine::Time deltaTime) override {

@@ -22,7 +22,7 @@ namespace engine {
             onCreate(vertexSrc, fragmentSrc);
         }
 
-        explicit GLShader(const std::string& filePath) : Shader(filePath) {
+        GLShader(const std::string& filePath) : Shader(filePath) {
             onCreate();
         }
 
@@ -32,17 +32,19 @@ namespace engine {
         void bind() override;
         void unbind() override;
 
-        void setUniform(const Uniform<float> &uniform) override;
-        void setUniform(const Uniform<int> &uniform) override;
-        void setUniform(const Uniform<double> &uniform) override;
+        void setUniform(const char* name, const float &value) override;
+        void setUniform(const char* name, const int &value) override;
+        void setUniform(const char* name, const double &value) override;
 
-        void setUniform(const Uniform<glm::fvec2> &uniform) override;
-        void setUniform(const Uniform<glm::fvec3> &uniform) override;
-        void setUniform(const Uniform<glm::fvec4> &uniform) override;
+        void setUniform(const char* name, const glm::fvec2 &value) override;
+        void setUniform(const char* name, const glm::fvec3 &value) override;
+        void setUniform(const char* name, const glm::fvec4 &value) override;
 
-        void setUniform(const Uniform<glm::fmat2> &uniform) override;
-        void setUniform(const Uniform<glm::fmat3> &uniform) override;
-        void setUniform(const Uniform<glm::fmat4> &uniform) override;
+        void setUniform(const char* name, const glm::fmat2 &value) override;
+        void setUniform(const char* name, const glm::fmat3 &value) override;
+        void setUniform(const char* name, const glm::fmat4 &value) override;
+
+        void prepare() override;
 
     private:
         static GLenum toShaderType(const std::string& type);
@@ -50,8 +52,8 @@ namespace engine {
         static bool isTypeValid(const std::string& type);
 
     private:
-        void onCreate();
         void onCreate(const std::string& vertexSrc, const std::string& fragmentSrc);
+        void onCreate();
         void getTypeSources(const std::string& sources);
         void compile();
 

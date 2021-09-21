@@ -9,15 +9,35 @@
 namespace engine {
 
     class GLVertexBuffer : public VertexBuffer {
+
+    public:
+        GLVertexBuffer() : VertexBuffer() {
+            create();
+        }
+
+        explicit GLVertexBuffer(Vertex* vertex) : VertexBuffer(vertex) {
+            create();
+        }
+
+        ~GLVertexBuffer() override {
+            destroy();
+        }
+
     public:
         void bind() override;
         void unbind() override;
 
-        void load() override;
+        void allocate() override;
+        void prepare() override;
+        void enableAttributes() override;
+        void disableAttributes() override;
 
-        void onCreate() override;
+        void load(const uint32_t &vertexStart, float *subData) override;
 
-        void onDestroy() override;
+    private:
+        void create();
+        void destroy();
+
     };
 
 }

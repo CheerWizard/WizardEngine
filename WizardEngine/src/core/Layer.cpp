@@ -7,7 +7,7 @@
 namespace engine {
 
     void Layer::onCreate() {
-        ENGINE_INFO("{0} : onCreate()", tag);
+        ENGINE_INFO("{0} : create()", tag);
     }
 
     void Layer::onUpdate(engine::Time deltaTime) {
@@ -15,7 +15,7 @@ namespace engine {
     }
 
     void Layer::onDestroy() {
-        ENGINE_INFO("{0} : onDestroy()", tag);
+        ENGINE_INFO("{0} : destroy()", tag);
     }
 
     void Layer::onWindowClosed() {

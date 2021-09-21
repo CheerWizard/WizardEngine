@@ -9,10 +9,9 @@
 
 #include "render/Renderer.h"
 #include "shader/Shader.h"
-#include "buffers/VertexBuffer.h"
-#include "buffers/IndexBuffer.h"
+#include "buffers/VertexArray.h"
 
-#include <string>
+#include "string"
 #include "vector"
 
 namespace engine {
@@ -31,7 +30,20 @@ namespace engine {
         virtual void swapBuffers() = 0;
         virtual void clearDisplay() = 0;
 
-        virtual Renderer* newRenderer() = 0;
+        virtual Ref<Renderer> newRenderer(
+                ShaderCache* shaderCache,
+                GraphicsObjectCache* graphicsObjectCache,
+                const Ref<VertexArray>& vertexArray) = 0;
+
+        virtual Ref<VertexArray> newVertexArray(
+                VertexBufferCache* vertexBufferCache,
+                const Ref<IndexBuffer>& indexBuffer) = 0;
+
+        virtual Ref<VertexBuffer> newVertexBuffer() = 0;
+        virtual Ref<VertexBuffer> newVertexBuffer(Vertex* vertex) = 0;
+
+        virtual Ref<IndexBuffer> newIndexBuffer() = 0;
+        virtual Ref<IndexBuffer> newIndexBuffer(const uint32_t &indexCount) = 0;
 
         virtual Ref<Shader> newShader(const std::string& filepath) = 0;
         virtual Ref<Shader> newShader(
@@ -39,18 +51,10 @@ namespace engine {
                 const std::string& vertexSrc,
                 const std::string& fragmentSrc) = 0;
 
-        virtual Ref<VertexBuffer> newVertexBuffer(
-                const std::vector<Vertex>& vertices ,
-                const uint32_t& size) = 0;
-
-        virtual Ref<IndexBuffer> newIndexBuffer(
-                const std::vector<int>& indices ,
-                const uint32_t& size) = 0;
-
     private:
         virtual std::string getAPIName() = 0;
-        virtual const unsigned char* getVendor() = 0;
-        virtual const unsigned char* getRenderer() = 0;
+        virtual const unsigned char* getVendorName() = 0;
+        virtual const unsigned char* getRendererName() = 0;
         virtual const unsigned char* getVersion() = 0;
 
     };

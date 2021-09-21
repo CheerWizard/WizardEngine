@@ -9,7 +9,6 @@
 namespace engine {
 
     void GLVertexBuffer::bind() {
-        glGenBuffers(1, &id);
         glBindBuffer(GL_ARRAY_BUFFER, id);
     }
 
@@ -17,19 +16,50 @@ namespace engine {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    void GLVertexBuffer::load() {
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices.size() * Vertex::getSize()), vertices, GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, Vertex::getByteSize(), nullptr);
+    void GLVertexBuffer::create() {
+        glCreateBuffers(1, &id);
     }
 
-    void GLVertexBuffer::onCreate() {
-
+    void GLVertexBuffer::destroy() {
+        glDeleteBuffers(1, &id);
     }
 
-    void GLVertexBuffer::onDestroy() {
-
+    void GLVertexBuffer::allocate() {
+        capacity = vertex->getElementCount() * vertex->getCount();
+        auto data = new float[capacity];
+        glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_DYNAMIC_DRAW);
     }
 
+    void GLVertexBuffer::prepare() {
+        auto stride = vertex->getElementCount() * sizeof(float);
+        uint32_t offset = 0;
+
+        for (Attribute* attribute : vertex->getAttributes()) {
+            glVertexAttribPointer(attribute->location,
+                                  attribute->elementCount,
+                                  GL_FLOAT,
+                                  attribute->normalized,
+                                  stride,
+                                  (GLvoid*) offset);
+            offset += attribute->elementCount * sizeof(float);
+            glVertexAttribDivisor(attribute->location, attribute->category);
+        }
+    }
+
+    void GLVertexBuffer::load(const uint32_t &vertexStart, float *subData) {
+        auto subDataOffset = vertexStart * vertex->getElementCount() * sizeof(float);
+        glBufferSubData(GL_ARRAY_BUFFER, subDataOffset, sizeof(subData), subData);
+    }
+
+    void GLVertexBuffer::enableAttributes() {
+        for (Attribute* attribute : vertex->getAttributes()) {
+            glEnableVertexAttribArray(attribute->location);
+        }
+    }
+
+    void GLVertexBuffer::disableAttributes() {
+        for (Attribute* attribute : vertex->getAttributes()) {
+            glDisableVertexAttribArray(attribute->location);
+        }
+    }
 }

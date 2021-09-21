@@ -2,6 +2,8 @@
 // Created by mecha on 28.08.2021.
 //
 
+#pragma once
+
 #include "../../WizardEngine/src/Engine.h"
 
 #include "TestLayer.h"
@@ -29,11 +31,15 @@ namespace test {
 
         void onCreate() override {
             Application::onCreate();
-            CLIENT_INFO("onCreate()");
+            CLIENT_INFO("create()");
+
             pushLayer(new TestLayer());
 
             pushLayout(new engine::DemoLayout());
             pushLayout(new TestLayout());
+
+            auto shape2dShader = loadShader("assets/shaders/shape2dShader.glsl");
+//            shape2dShader->addAttribute(engine::Attribute("position", 0));
         }
 
         void onUpdate() override {
@@ -43,7 +49,7 @@ namespace test {
 
         void onDestroy() override {
             Application::onDestroy();
-            CLIENT_INFO("onDestroy()");
+            CLIENT_INFO("destroy()");
         }
 
         void onKeyPressed(engine::KeyCode keyCode) override {

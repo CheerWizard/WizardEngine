@@ -5,7 +5,9 @@
 #pragma once
 
 #include "Buffer.h"
-#include "Vertex.h"
+
+#include "../geometry/Vertex.h"
+
 #include "vector"
 
 namespace engine {
@@ -13,12 +15,27 @@ namespace engine {
     class VertexBuffer : public Buffer {
 
     public:
-        VertexBuffer(const std::vector<Vertex>& vertices, const uint32_t& size) : vertices(vertices), size(size) {}
-        virtual ~VertexBuffer() = default;
+        VertexBuffer() = default;
+        explicit VertexBuffer(Vertex* vertex) : vertex(vertex) {}
+
+    public:
+        virtual void allocate() = 0;
+        virtual void prepare() = 0;
+        virtual void load(const uint32_t &vertexStart, float* vertices) = 0;
+        virtual void enableAttributes() = 0;
+        virtual void disableAttributes() = 0;
+
+    public:
+        inline void setVertex(Vertex* vertex) {
+            this->vertex = vertex;
+        }
+
+        inline Vertex *getVertex() const {
+            return vertex;
+        }
 
     protected:
-        std::vector<Vertex> vertices;
-        uint32_t size;
+        Vertex* vertex;
 
     };
 

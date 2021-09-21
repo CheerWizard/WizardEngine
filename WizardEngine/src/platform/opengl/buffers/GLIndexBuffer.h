@@ -10,7 +10,25 @@ namespace engine {
 
     class GLIndexBuffer : public IndexBuffer {
 
+    public:
+        GLIndexBuffer() : IndexBuffer() {}
+        explicit GLIndexBuffer(const uint32_t &indexCount) : IndexBuffer(indexCount) {
+            create();
+        }
+        ~GLIndexBuffer() override {
+            destroy();
+        }
 
+    public:
+        void bind() override;
+        void unbind() override;
+
+        void allocate() override;
+        void load(const uint32_t &indexStart, uint32_t *subData) override;
+
+    private:
+        void create();
+        void destroy();
 
     };
 

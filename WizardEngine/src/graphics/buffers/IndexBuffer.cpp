@@ -3,15 +3,3 @@
 //
 
 #include "IndexBuffer.h"
-
-namespace engine {
-
-    void IndexBuffer::bind() {
-
-    }
-
-    void IndexBuffer::unbind() {
-
-    }
-
-}

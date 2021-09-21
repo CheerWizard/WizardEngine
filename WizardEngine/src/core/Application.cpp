@@ -22,7 +22,7 @@ namespace engine {
     }
 
     void Application::onCreate() {
-        ENGINE_INFO("onCreate()");
+        ENGINE_INFO("create()");
 
         ENGINE_ASSERT(!_instance, "Application already created!")
         _instance = this;
@@ -45,14 +45,20 @@ namespace engine {
         _imGuiLayer = new ImGuiLayer();
         pushOverlay(_imGuiLayer);
 
-        _renderer = _graphicsContext->newRenderer();
-        _renderer->onCreate();
+        _shaderCache = new ShaderCache();
+
+        auto indexBuffer = _graphicsContext->newIndexBuffer();
+        auto vertexArray = _graphicsContext->newVertexArray(new VertexBufferCache(), indexBuffer);
+
+        _renderer = _graphicsContext->newRenderer(_shaderCache, _graphicsObjectCache, vertexArray);
+        _renderer->onPrepare();
     }
 
     void Application::onDestroy() {
-        ENGINE_INFO("onDestroy()");
-        _renderer->onDestroy();
+        ENGINE_INFO("destroy()");
+        _renderer.reset();
         _window->onDestroy();
+        _window.reset();
     }
 
     void Application::onUpdate() {
@@ -123,6 +129,44 @@ namespace engine {
 
     void Application::pushOverLayout(Layout *imGuiLayout) {
         _imGuiLayer->pushOverLayout(imGuiLayout);
+    }
+
+    void Application::addShader(const std::string &name, const Ref<Shader> &shader) {
+        _shaderCache->add(name, shader);
+    }
+
+    void Application::addShader(const Ref<Shader> &shader) {
+        _shaderCache->add(shader);
+    }
+
+    Ref<Shader> Application::loadShader(const std::string &filepath) {
+        return _shaderCache->load(filepath);
+    }
+
+    Ref<Shader> Application::loadShader(const std::string &name, const std::string &filepath) {
+        return _shaderCache->load(name, filepath);
+    }
+
+    Ref<Shader> Application::getShader(const std::string &name) {
+        return _shaderCache->get(name);
+    }
+
+    bool Application::shaderExists(const std::string &name) const {
+        return _shaderCache->exists(name);
+    }
+
+    void Application::loadVertices(const std::string &shaderName, const uint32_t &vertexStart, float *vertices) {
+        _renderer->loadVertices(shaderName, vertexStart, vertices);
+    }
+
+    void Application::loadIndices(const std::string &shaderName, const uint32_t &indexStart, uint32_t *indices) {
+        _renderer->loadIndices(shaderName, indexStart, indices);
+    }
+
+    void Application::loadObject(const std::string &shaderName, const Ref<GraphicsObject> &graphicsObject) {
+        _graphicsObjectCache->add(shaderName, graphicsObject);
+        _renderer->loadIndices(shaderName, graphicsObject->indicesSize, graphicsObject->indices);
+        _renderer->loadVertices(shaderName, graphicsObject->verticesSize, graphicsObject->vertices);
     }
 
 }

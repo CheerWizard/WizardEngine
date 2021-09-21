@@ -6,9 +6,9 @@
 
 #include "glm/glm.hpp"
 
-#include "Uniforms.h"
-
 #include "../../core/File.h"
+
+#include "../geometry/Vertex.h"
 
 namespace engine {
 
@@ -20,35 +20,45 @@ namespace engine {
                const std::string& fragmentSrc) : name(name) {}
 
     public:
-        explicit Shader(const std::string& filePath) : File(filePath) {}
+        Shader(const std::string& filePath) : File(filePath) {}
+
+    public:
+        inline void setVertex(Vertex* vertex) {
+            this->vertex = vertex;
+        }
+
+        inline Vertex *getVertex() const {
+            return vertex;
+        }
+
+    public:
+        uint32_t addAttribute(Attribute* attribute);
+        void replaceAttribute(const uint32_t &index, Attribute* attribute);
+        Attribute& getAttribute(const uint32_t &index) const;
+        void removeAttribute(const uint32_t &index);
 
     public:
         virtual void bind() = 0;
         virtual void unbind() = 0;
 
-        virtual void setUniform(const Uniform<float>& uniform) = 0;
-        virtual void setUniform(const Uniform<int>& uniform) = 0;
-        virtual void setUniform(const Uniform<double>& uniform) = 0;
+        virtual void prepare() = 0;
 
-        virtual void setUniform(const Uniform<glm::fvec2>& uniform) = 0;
-        virtual void setUniform(const Uniform<glm::fvec3>& uniform) = 0;
-        virtual void setUniform(const Uniform<glm::fvec4>& uniform) = 0;
+        virtual void setUniform(const char* name, const float &value) = 0;
+        virtual void setUniform(const char* name, const int &value) = 0;
+        virtual void setUniform(const char* name, const double &value) = 0;
 
-        virtual void setUniform(const Uniform<glm::fmat2>& uniform) = 0;
-        virtual void setUniform(const Uniform<glm::fmat3>& uniform) = 0;
-        virtual void setUniform(const Uniform<glm::fmat4>& uniform) = 0;
+        virtual void setUniform(const char* name, const glm::fvec2 &value) = 0;
+        virtual void setUniform(const char* name, const glm::fvec3 &value) = 0;
+        virtual void setUniform(const char* name, const glm::fvec4 &value) = 0;
 
-    public:
-        inline std::string& getName() {
-            return name;
-        }
-        inline void setName(const std::string& name) {
-            this->name = name;
-        }
+        virtual void setUniform(const char* name, const glm::fmat2 &value) = 0;
+        virtual void setUniform(const char* name, const glm::fmat3 &value) = 0;
+        virtual void setUniform(const char* name, const glm::fmat4 &value) = 0;
 
     protected:
         std::string name;
         uint32_t programId;
+        Vertex* vertex;
 
     };
 

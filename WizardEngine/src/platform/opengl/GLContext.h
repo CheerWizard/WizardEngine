@@ -9,6 +9,10 @@
 #include "render/GLRenderer.h"
 #include "shader/GLShader.h"
 
+#include "buffers/GLVertexBuffer.h"
+#include "buffers/GLIndexBuffer.h"
+#include "buffers/GLVertexArray.h"
+
 struct GLFWwindow;
 
 namespace engine {
@@ -24,21 +28,31 @@ namespace engine {
         void swapBuffers() override;
         void clearDisplay() override;
 
-        Renderer* newRenderer() override;
-
         Ref<Shader> newShader(const std::string &filepath) override;
         Ref<Shader> newShader(const std::string &name,
                               const std::string &vertexSrc,
                               const std::string &fragmentSrc) override;
 
-        Ref<VertexBuffer> newVertexBuffer(const std::vector<Vertex> &vertices, const uint32_t &size) override;
+        Ref<engine::Renderer> newRenderer(
+                ShaderCache *shaderCache,
+                GraphicsObjectCache *graphicsObjectCache,
+                const Ref<engine::VertexArray> &vertexArray) override;
 
-        Ref<IndexBuffer> newIndexBuffer(const std::vector<int> &indices, const uint32_t &size) override;
+        Ref<engine::VertexArray> newVertexArray(
+                VertexBufferCache *vertexBufferCache,
+                const Ref<engine::IndexBuffer> &indexBuffer) override;
+
+        Ref<VertexBuffer> newVertexBuffer() override;
+        Ref<VertexBuffer> newVertexBuffer(Vertex *vertex) override;
+
+        Ref<IndexBuffer> newIndexBuffer() override;
+        Ref<IndexBuffer> newIndexBuffer(const uint32_t &indexCount) override;
+
 
     private:
         std::string getAPIName() override;
-        const unsigned char *getVendor() override;
-        const unsigned char *getRenderer() override;
+        const unsigned char *getVendorName() override;
+        const unsigned char *getRendererName() override;
         const unsigned char *getVersion() override;
 
     private:

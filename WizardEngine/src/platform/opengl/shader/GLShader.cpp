@@ -58,49 +58,57 @@ namespace engine {
         glUseProgram(0);
     }
 
-    void GLShader::setUniform(const Uniform<float>& uniform) {
-        auto location = glGetUniformLocation(programId, uniform.name);
-        glUniform1f(location, uniform.value);
+    void GLShader::prepare() {
+        for (Attribute* attribute : vertex->getAttributes()) {
+            auto attributeLocation = glGetAttribLocation(programId, attribute->name);
+            glBindAttribLocation(programId, attributeLocation, attribute->name);
+            attribute->location = attributeLocation;
+        }
     }
 
-    void GLShader::setUniform(const Uniform<int> &uniform) {
-        auto location = glGetUniformLocation(programId, uniform.name);
-        glUniform1i(location, uniform.value);
+    void GLShader::setUniform(const char* name, const float &value) {
+        auto location = glGetUniformLocation(programId, name);
+        glUniform1f(location, value);
     }
 
-    void GLShader::setUniform(const Uniform<double> &uniform) {
-        auto location = glGetUniformLocation(programId, uniform.name);
-        glUniform1d(location, uniform.value);
+    void GLShader::setUniform(const char* name, const int &value) {
+        auto location = glGetUniformLocation(programId, name);
+        glUniform1i(location, value);
     }
 
-    void GLShader::setUniform(const Uniform<glm::fvec2> &uniform) {
-        auto location = glGetUniformLocation(programId, uniform.name);
-        glUniform2f(location, uniform.value.x, uniform.value.y);
+    void GLShader::setUniform(const char* name, const double &value) {
+        auto location = glGetUniformLocation(programId, name);
+        glUniform1d(location, value);
     }
 
-    void GLShader::setUniform(const Uniform<glm::fvec3> &uniform) {
-        auto location = glGetUniformLocation(programId, uniform.name);
-        glUniform3f(location, uniform.value.x, uniform.value.y, uniform.value.z);
+    void GLShader::setUniform(const char* name, const glm::fvec2 &value) {
+        auto location = glGetUniformLocation(programId, name);
+        glUniform2f(location, value.x, value.y);
     }
 
-    void GLShader::setUniform(const Uniform<glm::fvec4> &uniform) {
-        auto location = glGetUniformLocation(programId, uniform.name);
-        glUniform4f(location, uniform.value.x, uniform.value.y, uniform.value.z, uniform.value.w);
+    void GLShader::setUniform(const char* name, const glm::fvec3 &value) {
+        auto location = glGetUniformLocation(programId, name);
+        glUniform3f(location, value.x, value.y, value.z);
     }
 
-    void GLShader::setUniform(const Uniform<glm::fmat2> &uniform) {
-        auto location = glGetUniformLocation(programId, uniform.name);
-        glUniformMatrix2fv(location, 1, GL_FALSE, glm::value_ptr(uniform.value));
+    void GLShader::setUniform(const char* name, const glm::fvec4 &value) {
+        auto location = glGetUniformLocation(programId, name);
+        glUniform4f(location, value.x, value.y, value.z, value.w);
     }
 
-    void GLShader::setUniform(const Uniform<glm::fmat3> &uniform) {
-        auto location = glGetUniformLocation(programId, uniform.name);
-        glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(uniform.value));
+    void GLShader::setUniform(const char* name, const glm::fmat2 &value) {
+        auto location = glGetUniformLocation(programId, name);
+        glUniformMatrix2fv(location, 1, GL_FALSE, glm::value_ptr(value));
     }
 
-    void GLShader::setUniform(const Uniform<glm::fmat4> &uniform) {
-        auto location = glGetUniformLocation(programId, uniform.name);
-        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(uniform.value));
+    void GLShader::setUniform(const char* name, const glm::fmat3 &value) {
+        auto location = glGetUniformLocation(programId, name);
+        glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value));
+    }
+
+    void GLShader::setUniform(const char* name, const glm::fmat4 &value) {
+        auto location = glGetUniformLocation(programId, name);
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
     }
 
     void GLShader::getTypeSources(const std::string &sources) {

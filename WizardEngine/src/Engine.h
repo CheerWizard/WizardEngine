@@ -11,12 +11,21 @@
 #include "core/Input.h"
 #include "core/Layout.h"
 #include "core/Time.h"
+#include "core/Memory.h"
+
+// export Graphics systems.
+#include "graphics/GraphicsObject.h"
 
 // export ImGui system.
 #include "imgui/DemoLayout.h"
 
 // export vendor libs.
 #include "../vendor/imgui/imgui/imgui.h"
+
+#include "core/TreeCache.h"
+#include "graphics/buffers/VertexArray.h"
+#include "graphics/buffers/VertexBuffer.h"
+#include "graphics/render/Renderer.h"
 
 extern engine::Application* engine::createApplication();
 

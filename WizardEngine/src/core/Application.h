@@ -17,14 +17,18 @@
 #include "../graphics/GraphicsContext.h"
 
 #include "../platform/Platform.h"
-#include "../graphics/shader/Shaders.h"
+#include "../graphics/shader/ShaderCache.h"
+
+#include "string"
+#include "vector"
 
 #define APP Application::getInstance()
 #define WINDOW APP.getWindow()
 #define INPUT APP.getInput()
 #define IMGUI_LAYER APP.getImGuiLayer()
 #define GRAPHICS_CONTEXT APP.getGraphicsContext()
-#define SHADERS APP.getShaders()
+#define SHADERS APP.getShaderCache()
+#define GRAPHICS_OBJECTS APP.getGraphicsObjectCache()
 
 namespace engine {
 
@@ -40,28 +44,28 @@ namespace engine {
         }
 
     public:
-        inline Window& getWindow() {
-            return *_window;
+        inline const Scope<Window>& getWindow() const {
+            return _window;
         }
 
-    public:
-        inline Input& getInput() {
-            return *input;
+        inline const Scope<Input>& getInput() const {
+            return input;
         }
 
-    public:
-        inline ImGuiLayer& getImGuiLayer() {
+        inline ImGuiLayer& getImGuiLayer() const {
             return *_imGuiLayer;
         }
 
-    public:
-        inline GraphicsContext& getGraphicsContext() {
-            return *_graphicsContext;
+        inline const Scope<GraphicsContext>& getGraphicsContext() const {
+            return _graphicsContext;
         }
 
-    public:
-        inline Shaders& getShaders() {
-            return *_shaders;
+        inline ShaderCache& getShaderCache() const {
+            return *_shaderCache;
+        }
+
+        inline GraphicsObjectCache& getGraphicsObjectCache() const {
+            return *_graphicsObjectCache;
         }
 
     public:
@@ -93,6 +97,23 @@ namespace engine {
         void pushLayout(Layout* imGuiLayout);
         void pushOverLayout(Layout* imGuiLayout);
 
+        void addShader(const std::string& name, const Ref<Shader>& shader);
+        void addShader(const Ref<Shader>& shader);
+        Ref<Shader> loadShader(const std::string& filepath);
+        Ref<Shader> loadShader(const std::string& name, const std::string& filepath);
+        Ref<Shader> getShader(const std::string& name);
+        bool shaderExists(const std::string& name) const;
+
+        void loadVertices(const std::string &shaderName,
+                          const uint32_t &vertexStart,
+                          float* vertices);
+        void loadIndices(const std::string &shaderName,
+                         const uint32_t &indexStart,
+                         uint32_t* indices);
+
+        void loadObject(const std::string &shaderName,
+                        const Ref<GraphicsObject>& graphicsObject);
+
     protected:
         Scope<Input> input;
 
@@ -105,8 +126,9 @@ namespace engine {
         ImGuiLayer* _imGuiLayer;
         Scope<Window> _window;
         Scope<GraphicsContext> _graphicsContext;
-        Scope<Shaders> _shaders;
-        Renderer* _renderer;
+        Ref<Renderer> _renderer;
+        ShaderCache* _shaderCache;
+        GraphicsObjectCache* _graphicsObjectCache;
 
     };
 
