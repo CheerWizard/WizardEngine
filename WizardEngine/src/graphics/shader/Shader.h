@@ -17,10 +17,9 @@ namespace engine {
     public:
         Shader(const std::string& name,
                const std::string& vertexSrc,
-               const std::string& fragmentSrc) : name(name) {}
+               const std::string& fragmentSrc) : File(name, "") {}
 
-    public:
-        Shader(const std::string& filePath) : File(filePath) {}
+        Shader(const std::string& filePath) : File("", filePath) {}
 
     public:
         inline void setVertex(Vertex* vertex) {
@@ -56,7 +55,6 @@ namespace engine {
         virtual void setUniform(const char* name, const glm::fmat4 &value) = 0;
 
     protected:
-        std::string name;
         uint32_t programId;
         Vertex* vertex;
 

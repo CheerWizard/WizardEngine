@@ -30,16 +30,18 @@ namespace test {
     protected:
 
         void onCreate() override {
-            Application::onCreate();
             CLIENT_INFO("create()");
+            Application::onCreate();
 
             pushLayer(new TestLayer());
 
             pushLayout(new engine::DemoLayout());
             pushLayout(new TestLayout());
 
-            auto shape2dShader = loadShader("assets/shaders/shape2dShader.glsl");
-//            shape2dShader->addAttribute(engine::Attribute("position", 0));
+            CLIENT_INFO("Current workspace '{0}'", CURRENT_WORKING_DIR);
+            // todo find a way to move Assets folder from source to build output folder...
+            // todo right now we need to move manually Assets folder from source to build output, to read them properly.
+            auto shape2dShader = loadShader("assets/shaders/shape2d.glsl");
         }
 
         void onUpdate() override {
@@ -59,7 +61,6 @@ namespace test {
                 engine::Application::onWindowClosed();
             }
         }
-
     };
 
 }

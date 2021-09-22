@@ -47,6 +47,8 @@ namespace engine {
 
         _shaderCache = new ShaderCache();
 
+        _graphicsObjectCache = new GraphicsObjectCache();
+
         auto indexBuffer = _graphicsContext->newIndexBuffer();
         auto vertexArray = _graphicsContext->newVertexArray(new VertexBufferCache(), indexBuffer);
 

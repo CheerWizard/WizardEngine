@@ -17,4 +17,9 @@ namespace engine {
 
     }
 
+    void VertexArray::destroy() {
+        indexBuffer.reset();
+        vertexBufferCache->clear();
+    }
+
 }

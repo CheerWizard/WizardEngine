@@ -34,7 +34,6 @@ namespace engine {
     static void run() {
         INIT_CLIENT_LOG("Client");
         INIT_ENGINE_LOG("Engine");
-        LOG_PATTERN("%^[%T] %n: %v%$");
 
         ENGINE_INFO("Creating Application...");
         auto app = createApplication();

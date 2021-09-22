@@ -25,9 +25,11 @@ namespace engine {
         void bind() override;
         void unbind() override;
 
+    protected:
+        void destroy() override;
+
     private:
         void create();
-        void destroy();
 
     };
 

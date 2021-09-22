@@ -4,6 +4,7 @@ project(WizardTest)
 
 # creating .exe from sources.
 file(GLOB_RECURSE TEST_SRC src/*.cpp)
-add_executable(WizardTest ${TEST_SRC})
+file(GLOB_RECURSE ASSETS assets/shaders/shape2d.glsl)
+add_executable(WizardTest ${TEST_SRC} ${ASSETS})
 
 target_link_libraries(WizardTest WizardEngine)

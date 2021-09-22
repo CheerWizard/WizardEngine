@@ -9,14 +9,22 @@
 
 #include "Logger.h"
 
+#define CURRENT_WORKING_DIR engine::File::getCurrentWorkingDirectory()
+
 namespace engine {
 
     class File {
 
     public:
-        File(const std::string& filePath = "Unknown") : filePath(filePath) {
-            createName();
+        File(const std::string& name, const std::string& path) :
+                name(name),
+                path(path)
+        {
+            if (name.empty()) {
+                createName();
+            }
         }
+
         virtual ~File() = default;
 
     public:
@@ -24,11 +32,11 @@ namespace engine {
 
     public:
         inline void setFilePath(const std::string& filePath) {
-            this->filePath = filePath;
+            this->path = filePath;
         }
 
         inline std::string getFilePath() const {
-            return filePath;
+            return path;
         }
 
         inline std::string getName() const {
@@ -39,11 +47,14 @@ namespace engine {
             this->name = name;
         }
 
+    public:
+        static std::string getCurrentWorkingDirectory();
+
     protected:
         void createName();
 
     protected:
-        std::string filePath;
+        std::string path;
         std::string name;
 
     };
