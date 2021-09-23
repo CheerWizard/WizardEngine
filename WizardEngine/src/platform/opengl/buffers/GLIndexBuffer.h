@@ -11,10 +11,11 @@ namespace engine {
     class GLIndexBuffer : public IndexBuffer {
 
     public:
-        GLIndexBuffer() : IndexBuffer() {}
-        explicit GLIndexBuffer(const uint32_t &indexCount) : IndexBuffer(indexCount) {
+        explicit GLIndexBuffer(const uint32_t &indexCount = DEFAULT_INDEX_COUNT) :
+        IndexBuffer(indexCount) {
             create();
         }
+
         ~GLIndexBuffer() override {
             destroy();
         }

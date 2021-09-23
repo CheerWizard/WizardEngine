@@ -10,6 +10,7 @@
 #include "Logger.h"
 
 #define CURRENT_WORKING_DIR engine::File::getCurrentWorkingDirectory()
+#define READ_FILE(path) engine::File::read(path)
 
 namespace engine {
 
@@ -26,9 +27,6 @@ namespace engine {
         }
 
         virtual ~File() = default;
-
-    public:
-        std::string read() const;
 
     public:
         inline void setFilePath(const std::string& filePath) {
@@ -48,6 +46,10 @@ namespace engine {
         }
 
     public:
+        std::string read() const;
+
+    public:
+        static std::string read(const std::string &filePath);
         static std::string getCurrentWorkingDirectory();
 
     protected:

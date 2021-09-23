@@ -54,6 +54,19 @@ macro(copy_dir dir1 dir2)
 
 endmacro(copy_dir)
 
+# delete build directory
+macro(delete_build_dir dir)
+    set(buildDir ${CMAKE_BINARY_DIR}/${dir})
+    message(STATUS "Deleting build directory ${buildDir}")
+    file(REMOVE_RECURSE ${buildDir})
+endmacro(delete_build_dir)
+
+# delete destination dir and copy target dir into destination dir.
+macro(replace_dirs targetDir destDir)
+    delete_build_dir(${destDir})
+    copy_dir(${targetDir} ${destDir})
+endmacro(replace_dirs)
+
 # Subprojects from Wizard.
 add_subdirectory(WizardEngine)
 add_subdirectory(WizardTest)

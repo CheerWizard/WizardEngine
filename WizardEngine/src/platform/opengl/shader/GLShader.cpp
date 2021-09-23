@@ -8,61 +8,25 @@
 
 namespace engine {
 
-    GLenum GLShader::toShaderType(const std::string &type) {
-        if (type == "vertex") {
-            return GL_VERTEX_SHADER;
-        }
-
-        if (type == "fragment") {
-            return GL_FRAGMENT_SHADER;
-        }
-
-        ENGINE_ASSERT(false, "Unknown string shader type!")
-        return 0;
-    }
-
-    std::string GLShader::toStringShaderType(const GLenum &type) {
-        if (type == GL_VERTEX_SHADER) {
-            return "vertex";
-        }
-
-        if (type == GL_FRAGMENT_SHADER) {
-            return "fragment";
-        }
-
-        ENGINE_ASSERT(false, "Unknown shader type!")
-        return "";
-    }
-
-    bool GLShader::isTypeValid(const std::string& type) {
-        return type == "vertex" || type == "fragment";
-    }
-
     void GLShader::onCreate() {
-        auto sources = read();
-        getTypeSources(sources);
+        _typeSources[GL_VERTEX_SHADER] = readShader(props.vertexPath);
+        _typeSources[GL_FRAGMENT_SHADER] = readShader(props.fragmentPath);
         compile();
     }
 
-    void GLShader::onCreate(const std::string &vertexSrc, const std::string &fragmentSrc) {
-        _typeSources[GL_VERTEX_SHADER] = vertexSrc;
-        _typeSources[GL_FRAGMENT_SHADER] = fragmentSrc;
-        compile();
-    }
-
-    void GLShader::bind() {
+    void GLShader::start() {
         glUseProgram(programId);
     }
 
-    void GLShader::unbind() {
+    void GLShader::stop() {
         glUseProgram(0);
     }
 
     void GLShader::prepare() {
-        for (Attribute* attribute : vertex->getAttributes()) {
-            auto attributeLocation = glGetAttribLocation(programId, attribute->name);
-            glBindAttribLocation(programId, attributeLocation, attribute->name);
-            attribute->location = attributeLocation;
+        for (Attribute &attribute : vertex->getAttributes()) {
+            auto attributeLocation = glGetAttribLocation(programId, attribute.name);
+            glBindAttribLocation(programId, attributeLocation, attribute.name);
+            attribute.location = attributeLocation;
         }
     }
 
@@ -106,34 +70,14 @@ namespace engine {
         glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value));
     }
 
-    void GLShader::setUniform(const char* name, const glm::fmat4 &value) {
-        auto location = glGetUniformLocation(programId, name);
-        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
-    }
-
-    void GLShader::getTypeSources(const std::string &sources) {
-        const char* typeToken = "#type";
-        size_t typeTokenLength = strlen(typeToken);
-        size_t pos = sources.find(typeToken, 0);
-
-        while (pos != std::string::npos) {
-            size_t eol = sources.find_first_of("\r\n", pos);
-            ENGINE_ASSERT(eol != std::string::npos, "Syntax error!")
-
-            size_t begin = pos + typeTokenLength + 1;
-            std::string type = sources.substr(begin, eol - begin);
-            ENGINE_ASSERT(isTypeValid(type), "Invalid shader type specification!")
-
-            size_t nextLinePos = sources.find_first_not_of("\r\n", eol);
-            pos = sources.find(type, nextLinePos);
-            auto shaderType = toShaderType(type);
-            _typeSources[shaderType] = sources.substr(nextLinePos, pos - (nextLinePos == std::string::npos));
-        }
+    void GLShader::setUniform(const Mat4fUniform &mat4Uniform) {
+        auto location = glGetUniformLocation(programId, mat4Uniform.name);
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat4Uniform.value));
     }
 
     void GLShader::compile() {
-        auto _programId = glCreateProgram();
-        std::vector<GLenum> shaderIds(_typeSources.size());
+        programId = glCreateProgram();
+        _shaderIds = std::vector<GLenum>(_typeSources.size());
 
         for (auto& typeSource : _typeSources) {
             GLenum type = typeSource.first;
@@ -165,36 +109,64 @@ namespace engine {
                 return;
             }
 
-            glAttachShader(_programId, shader);
-            shaderIds.push_back(shader);
+            glAttachShader(programId, shader);
+            _shaderIds.push_back(shader);
         }
 
-        glLinkProgram(_programId);
+        glLinkProgram(programId);
         GLint isLinked = 0;
-        glGetProgramiv(_programId, GL_LINK_STATUS, (int*) &isLinked);
+        glGetProgramiv(programId, GL_LINK_STATUS, (int*) &isLinked);
+
         if (isLinked == GL_FALSE) {
             GLint maxLength = 0;
-            glGetProgramiv(_programId, GL_INFO_LOG_LENGTH, &maxLength);
+            glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &maxLength);
 
             std::vector<GLchar> infoLog(maxLength);
-            glGetProgramInfoLog(_programId, maxLength, &maxLength, &infoLog[0]);
-
-            glDeleteProgram(_programId);
-
-            for (auto shaderId : shaderIds) {
-                glDeleteShader(shaderId);
-            }
+            glGetProgramInfoLog(programId, maxLength, &maxLength, &infoLog[0]);
 
             ENGINE_ERR("{0}", infoLog.data());
             ENGINE_ASSERT(false, "Shader link failure!")
+
+            delete this;
             return;
         }
 
-        for (auto shaderId : shaderIds) {
-            glDetachShader(_programId, shaderId);
-        }
-
-        programId = _programId;
+        detachShaders();
     }
 
+    std::string GLShader::toStringShaderType(GLenum type) {
+        switch (type) {
+            case GL_VERTEX_SHADER:
+                return "Vertex";
+
+                case GL_FRAGMENT_SHADER:
+                    return "Fragment";
+
+                    default: ENGINE_ASSERT(false, "Cannot convert shader type to string!")
+        }
+    }
+
+    void GLShader::onDestroy() {
+        glDeleteProgram(programId);
+        deleteShaders();
+        _shaderIds.clear();
+        _typeSources.clear();
+        delete vertex;
+    }
+
+    void GLShader::detachShaders() {
+        for (auto shaderId : _shaderIds) {
+            glDetachShader(programId, shaderId);
+        }
+    }
+
+    void GLShader::deleteShaders() {
+        for (auto shaderId : _shaderIds) {
+            glDeleteShader(shaderId);
+        }
+    }
+
+    const char *GLShader::getExtensionName() const {
+        return ".glsl";
+    }
 }

@@ -72,6 +72,10 @@ namespace engine {
             return windowProps.height;
         }
 
+        inline float getAspectRatio() const {
+            return (float) getWidth() / (float) getHeight();
+        }
+
         inline bool isVSyncEnabled() const {
             return windowProps.vSyncEnabled;
         }

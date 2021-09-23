@@ -27,6 +27,9 @@
 #include "graphics/buffers/VertexBuffer.h"
 #include "graphics/render/Renderer.h"
 
+#include "math/ViewProjectionMatrix.h"
+#include "math/TransformMatrix.h"
+
 extern engine::Application* engine::createApplication();
 
 namespace engine {

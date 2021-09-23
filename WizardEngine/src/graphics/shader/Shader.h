@@ -10,16 +10,33 @@
 
 #include "../geometry/Vertex.h"
 
+#include "../../math/Uniform.h"
+
+#define SHADERS_PATH "assets/shaders/"
+
 namespace engine {
+
+    struct ShaderProps {
+        std::string name;
+        std::string vertexPath;
+        std::string fragmentPath;
+
+        ShaderProps(
+                const std::string& name,
+                const std::string& vertexPath,
+                const std::string& fragmentPath) :
+                name(name),
+                vertexPath(vertexPath),
+                fragmentPath(fragmentPath) {}
+    };
 
     class Shader : public File {
 
     public:
-        Shader(const std::string& name,
-               const std::string& vertexSrc,
-               const std::string& fragmentSrc) : File(name, "") {}
-
-        Shader(const std::string& filePath) : File("", filePath) {}
+        Shader(const ShaderProps& shaderProps, Vertex* vertex) :
+        File(shaderProps.name, ""),
+        vertex(vertex),
+        props(shaderProps) {}
 
     public:
         inline void setVertex(Vertex* vertex) {
@@ -30,15 +47,26 @@ namespace engine {
             return vertex;
         }
 
-    public:
-        uint32_t addAttribute(Attribute* attribute);
-        void replaceAttribute(const uint32_t &index, Attribute* attribute);
-        Attribute& getAttribute(const uint32_t &index) const;
-        void removeAttribute(const uint32_t &index);
+        inline void setProps(const ShaderProps& shaderProps) {
+            props = shaderProps;
+        }
+
+        inline const ShaderProps& getProps() const {
+            return props;
+        }
 
     public:
-        virtual void bind() = 0;
-        virtual void unbind() = 0;
+        uint32_t addAttribute(const Attribute &attribute);
+        void replaceAttribute(const uint32_t &index, const Attribute &attribute);
+        const Attribute& getAttribute(const uint32_t &index) const;
+        void removeAttribute(const uint32_t &index);
+
+    protected:
+        std::string readShader(const std::string &path) const;
+
+    public:
+        virtual void start() = 0;
+        virtual void stop() = 0;
 
         virtual void prepare() = 0;
 
@@ -52,11 +80,16 @@ namespace engine {
 
         virtual void setUniform(const char* name, const glm::fmat2 &value) = 0;
         virtual void setUniform(const char* name, const glm::fmat3 &value) = 0;
-        virtual void setUniform(const char* name, const glm::fmat4 &value) = 0;
+
+        virtual void setUniform(const Mat4fUniform &mat4Uniform) = 0;
+
+    protected:
+        virtual const char* getExtensionName() const = 0;
 
     protected:
         uint32_t programId;
         Vertex* vertex;
+        ShaderProps props;
 
     };
 

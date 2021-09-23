@@ -11,10 +11,6 @@ namespace engine {
     class GLVertexBuffer : public VertexBuffer {
 
     public:
-        GLVertexBuffer() : VertexBuffer() {
-            create();
-        }
-
         explicit GLVertexBuffer(Vertex* vertex) : VertexBuffer(vertex) {
             create();
         }

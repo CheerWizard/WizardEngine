@@ -9,25 +9,7 @@
 namespace engine {
 
     std::string File::read() const {
-        std::string result;
-        std::ifstream input(path, std::ios::in | std::ios::binary);
-
-        if (input) {
-            input.seekg(0, std::ios::end);
-            size_t size = input.tellg();
-
-            if (size != -1) {
-                result.resize(size);
-                input.seekg(0, std::ios::beg);
-                input.read(&result[0], size);
-            } else {
-                ENGINE_ERR("Could not read from file '{0}'", path);
-            }
-        } else {
-            ENGINE_ERR("Could not open file '{0}'", path);
-        }
-
-        return result;
+        return read(path);
     }
 
     void File::createName() {
@@ -43,6 +25,28 @@ namespace engine {
         char buff[FILENAME_MAX]; //create string buffer to hold path
         _getcwd(buff, FILENAME_MAX);
         return std::string(buff);
+    }
+
+    std::string File::read(const std::string &filePath) {
+        std::string result;
+        std::ifstream input(filePath, std::ios::in | std::ios::binary);
+
+        if (input) {
+            input.seekg(0, std::ios::end);
+            size_t size = input.tellg();
+
+            if (size != -1) {
+                result.resize(size);
+                input.seekg(0, std::ios::beg);
+                input.read(&result[0], size);
+            } else {
+                ENGINE_ERR("Could not read from file '{0}'", filePath);
+            }
+        } else {
+            ENGINE_ERR("Could not open file '{0}'", filePath);
+        }
+
+        return result;
     }
 
 }

@@ -15,7 +15,6 @@ namespace engine {
     class VertexBuffer : public Buffer {
 
     public:
-        VertexBuffer() = default;
         explicit VertexBuffer(Vertex* vertex) : vertex(vertex) {}
 
     public:

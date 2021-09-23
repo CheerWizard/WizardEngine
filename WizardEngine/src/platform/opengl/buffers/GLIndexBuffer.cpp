@@ -25,11 +25,13 @@ namespace engine {
     }
 
     void GLIndexBuffer::allocate() {
-        auto data = new int[capacity];
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(data), data, GL_STREAM_DRAW);
+        if (!hasCapacity()) return;
+        auto data = new uint32_t[capacity];
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(data), data, GL_DYNAMIC_DRAW);
     }
 
     void GLIndexBuffer::load(const uint32_t &indexStart, uint32_t* subData) {
+        if (!hasCapacity()) return;
         auto subDataOffset = indexStart * sizeof(uint32_t);
         glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, subDataOffset, sizeof(subData), subData);
     }

@@ -14,6 +14,8 @@
 #include "string"
 #include "vector"
 
+#define CREATE_GRAPHICS_OBJECT(shaderName) engine::createRef<engine::GraphicsObject>(engine::GraphicsObject { shaderName })
+
 namespace engine {
 
     class GraphicsContext {
@@ -39,17 +41,13 @@ namespace engine {
                 VertexBufferCache* vertexBufferCache,
                 const Ref<IndexBuffer>& indexBuffer) = 0;
 
-        virtual Ref<VertexBuffer> newVertexBuffer() = 0;
         virtual Ref<VertexBuffer> newVertexBuffer(Vertex* vertex) = 0;
 
         virtual Ref<IndexBuffer> newIndexBuffer() = 0;
         virtual Ref<IndexBuffer> newIndexBuffer(const uint32_t &indexCount) = 0;
 
-        virtual Ref<Shader> newShader(const std::string& filepath) = 0;
-        virtual Ref<Shader> newShader(
-                const std::string& name,
-                const std::string& vertexSrc,
-                const std::string& fragmentSrc) = 0;
+        virtual Ref<Shader> newShader(const ShaderProps& shaderProps,
+                                      Vertex* vertex) = 0;
 
     private:
         virtual std::string getAPIName() = 0;

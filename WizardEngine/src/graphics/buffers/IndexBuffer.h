@@ -8,13 +8,14 @@
 
 #include "vector"
 
+#define DEFAULT_INDEX_COUNT 3
+
 namespace engine {
 
     class IndexBuffer : public Buffer {
 
     public:
-        IndexBuffer() = default;
-        explicit IndexBuffer(const uint32_t &indexCount) {
+        explicit IndexBuffer(const uint32_t &indexCount = DEFAULT_INDEX_COUNT) {
             capacity = indexCount;
         }
 

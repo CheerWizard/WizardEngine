@@ -27,8 +27,6 @@
 #define INPUT APP.getInput()
 #define IMGUI_LAYER APP.getImGuiLayer()
 #define GRAPHICS_CONTEXT APP.getGraphicsContext()
-#define SHADERS APP.getShaderCache()
-#define GRAPHICS_OBJECTS APP.getGraphicsObjectCache()
 
 namespace engine {
 
@@ -60,14 +58,6 @@ namespace engine {
             return _graphicsContext;
         }
 
-        inline ShaderCache& getShaderCache() const {
-            return *_shaderCache;
-        }
-
-        inline GraphicsObjectCache& getGraphicsObjectCache() const {
-            return *_graphicsObjectCache;
-        }
-
     public:
         void run();
 
@@ -88,6 +78,7 @@ namespace engine {
 
     protected:
         virtual void onCreate();
+        virtual void onPrepare();
         virtual void onDestroy();
         virtual void onUpdate();
 
@@ -99,8 +90,7 @@ namespace engine {
 
         void addShader(const std::string& name, const Ref<Shader>& shader);
         void addShader(const Ref<Shader>& shader);
-        Ref<Shader> loadShader(const std::string& filepath);
-        Ref<Shader> loadShader(const std::string& name, const std::string& filepath);
+        Ref<Shader> loadShader(const ShaderProps& shaderProps, Vertex* vertex);
         Ref<Shader> getShader(const std::string& name);
         bool shaderExists(const std::string& name) const;
 
@@ -111,8 +101,9 @@ namespace engine {
                          const uint32_t &indexStart,
                          uint32_t* indices);
 
-        void loadObject(const std::string &shaderName,
-                        const Ref<GraphicsObject>& graphicsObject);
+        void loadObject(const Ref<GraphicsObject>& graphicsObject);
+
+        float getAspectRatio() const;
 
     protected:
         Scope<Input> input;
@@ -127,8 +118,6 @@ namespace engine {
         Scope<Window> _window;
         Scope<GraphicsContext> _graphicsContext;
         Ref<Renderer> _renderer;
-        ShaderCache* _shaderCache;
-        GraphicsObjectCache* _graphicsObjectCache;
 
     };
 

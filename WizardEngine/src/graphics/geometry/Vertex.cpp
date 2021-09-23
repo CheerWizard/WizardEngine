@@ -6,8 +6,8 @@
 
 namespace engine {
 
-    Attribute& Vertex::get(const uint32_t &index) const {
-        return *_attributes[index];
+    const Attribute& Vertex::get(const uint32_t &index) const {
+        return _attributes[index];
     }
 
     void Vertex::remove(const uint32_t &index) {
@@ -15,23 +15,14 @@ namespace engine {
     }
 
     void Vertex::destroy() {
-        _attributes.clear();
+        clear();
         _count = 0;
-    }
-
-    uint32_t Vertex::add(Attribute* attribute) {
-        _attributes.emplace_back(attribute);
-        return _attributes.size() - 1;
-    }
-
-    void Vertex::replace(const uint32_t &index, Attribute* attribute) {
-        _attributes.emplace(_attributes.begin() + index, attribute);
     }
 
     uint32_t Vertex::getElementCount() const {
         uint32_t elementCount = 0;
         for (const auto& attribute : _attributes) {
-            elementCount += attribute->elementCount;
+            elementCount += attribute.elementCount;
         }
         return elementCount;
     }
@@ -39,9 +30,23 @@ namespace engine {
     size_t Vertex::getSize() const {
         size_t size = 0;
         for (const auto& attribute : _attributes) {
-            size += attribute->elementCount * sizeof(float);
+            size += attribute.elementCount * sizeof(float);
         }
         return size;
     }
 
+    void Vertex::clear() {
+        if (!_attributes.empty()) {
+            _attributes.clear();
+        }
+    }
+
+    void Vertex::replace(const uint32_t &index, const Attribute &attribute) {
+        _attributes.emplace(_attributes.begin() + index, attribute);
+    }
+
+    uint32_t Vertex::add(const Attribute &attribute) {
+        _attributes.push_back(attribute);
+        return _attributes.size() - 1;
+    }
 }

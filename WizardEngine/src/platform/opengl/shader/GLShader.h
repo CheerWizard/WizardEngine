@@ -16,21 +16,17 @@ namespace engine {
     class GLShader : public Shader {
 
     public:
-        GLShader(const std::string& name,
-                 const std::string& vertexSrc,
-                 const std::string& fragmentSrc) : Shader(name) {
-            onCreate(vertexSrc, fragmentSrc);
-        }
-
-        GLShader(const std::string& filePath) : Shader(filePath) {
+        GLShader(const ShaderProps& shaderProps, Vertex* vertex) : Shader(shaderProps, vertex) {
             onCreate();
         }
 
-        ~GLShader() override = default;
+        ~GLShader() override {
+            onDestroy();
+        }
 
     public:
-        void bind() override;
-        void unbind() override;
+        void start() override;
+        void stop() override;
 
         void setUniform(const char* name, const float &value) override;
         void setUniform(const char* name, const int &value) override;
@@ -42,23 +38,27 @@ namespace engine {
 
         void setUniform(const char* name, const glm::fmat2 &value) override;
         void setUniform(const char* name, const glm::fmat3 &value) override;
-        void setUniform(const char* name, const glm::fmat4 &value) override;
+
+        void setUniform(const Mat4fUniform &mat4Uniform) override;
 
         void prepare() override;
 
     private:
-        static GLenum toShaderType(const std::string& type);
-        static std::string toStringShaderType(const GLenum& type);
-        static bool isTypeValid(const std::string& type);
+        static std::string toStringShaderType(GLenum type);
 
     private:
-        void onCreate(const std::string& vertexSrc, const std::string& fragmentSrc);
         void onCreate();
-        void getTypeSources(const std::string& sources);
+        void onDestroy();
         void compile();
+        void detachShaders();
+        void deleteShaders();
+
+    protected:
+        const char* getExtensionName() const override;
 
     private:
         std::unordered_map<GLenum, std::string> _typeSources;
+        std::vector<GLenum> _shaderIds;
 
     };
 

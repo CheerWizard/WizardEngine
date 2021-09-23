@@ -36,7 +36,7 @@ namespace engine {
         AttributeBool normalized;
         AttributeCategory category;
 
-        Attribute(const char* &name,
+        Attribute(const char* name,
                   const uint32_t &location,
                   const ElementCount &elementCount = SINGLE,
                   const uint32_t &offset = 0,

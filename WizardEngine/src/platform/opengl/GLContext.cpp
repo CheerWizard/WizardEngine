@@ -47,18 +47,8 @@ namespace engine {
         return glGetString(GL_VERSION);
     }
 
-    Ref<Shader> GLContext::newShader(const std::string& filepath) {
-        return createRef<GLShader>(filepath);
-    }
-
-    Ref<Shader> GLContext::newShader(const std::string &name,
-                                     const std::string &vertexSrc,
-                                     const std::string &fragmentSrc) {
-        return createRef<GLShader>(name, vertexSrc, fragmentSrc);
-    }
-
-    Ref<VertexBuffer> GLContext::newVertexBuffer() {
-        return createRef<GLVertexBuffer>();
+    Ref<Shader> GLContext::newShader(const ShaderProps &shaderProps, Vertex* vertex) {
+        return createRef<GLShader>(shaderProps, vertex);
     }
 
     Ref<VertexBuffer> GLContext::newVertexBuffer(Vertex *vertex) {

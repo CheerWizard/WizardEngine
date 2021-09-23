@@ -8,8 +8,8 @@
 
 namespace engine {
 
-    void GLRenderer::drawIndices(uint32_t *indices, const uint32_t &indexCount) {
-        glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, indices);
+    void GLRenderer::drawIndices(const uint32_t &indexCount) {
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
     }
 
 }

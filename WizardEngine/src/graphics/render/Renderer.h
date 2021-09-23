@@ -41,8 +41,16 @@ namespace engine {
                          const uint32_t &indexStart,
                          uint32_t *indices);
 
+        void loadObject(const Ref<GraphicsObject>& graphicsObject);
+
+        void addShader(const std::string& name, const Ref<Shader>& shader);
+        void addShader(const Ref<Shader>& shader);
+        Ref<Shader> loadShader(const ShaderProps& shaderProps, Vertex* vertex);
+        Ref<Shader> getShader(const std::string& name);
+        bool shaderExists(const std::string& name) const;
+
     protected:
-        virtual void drawIndices(uint32_t* indices, const uint32_t &indexCount) = 0;
+        virtual void drawIndices(const uint32_t &indexCount) = 0;
 
     protected:
         void destroy();

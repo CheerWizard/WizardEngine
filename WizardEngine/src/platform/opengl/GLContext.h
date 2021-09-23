@@ -28,11 +28,6 @@ namespace engine {
         void swapBuffers() override;
         void clearDisplay() override;
 
-        Ref<Shader> newShader(const std::string &filepath) override;
-        Ref<Shader> newShader(const std::string &name,
-                              const std::string &vertexSrc,
-                              const std::string &fragmentSrc) override;
-
         Ref<engine::Renderer> newRenderer(
                 ShaderCache *shaderCache,
                 GraphicsObjectCache *graphicsObjectCache,
@@ -42,12 +37,12 @@ namespace engine {
                 VertexBufferCache *vertexBufferCache,
                 const Ref<engine::IndexBuffer> &indexBuffer) override;
 
-        Ref<VertexBuffer> newVertexBuffer() override;
         Ref<VertexBuffer> newVertexBuffer(Vertex *vertex) override;
 
         Ref<IndexBuffer> newIndexBuffer() override;
         Ref<IndexBuffer> newIndexBuffer(const uint32_t &indexCount) override;
 
+        Ref<engine::Shader> newShader(const ShaderProps &shaderProps, Vertex* vertex) override;
 
     private:
         std::string getAPIName() override;

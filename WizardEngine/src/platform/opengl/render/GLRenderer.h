@@ -21,7 +21,7 @@ namespace engine {
         }
 
     protected:
-        void drawIndices(uint32_t *indices, const uint32_t &indexCount) override;
+        void drawIndices(const uint32_t &indexCount) override;
 
     };
 

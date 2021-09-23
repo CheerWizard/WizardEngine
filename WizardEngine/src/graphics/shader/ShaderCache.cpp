@@ -18,18 +18,6 @@ namespace engine {
         add(name, shader);
     }
 
-    Ref<Shader> ShaderCache::load(const std::string &name, const std::string &filepath) {
-        auto shader = GRAPHICS_CONTEXT->newShader(filepath);
-        add(name, shader);
-        return shader;
-    }
-
-    Ref<Shader> ShaderCache::load(const std::string &filepath) {
-        auto shader = GRAPHICS_CONTEXT->newShader(filepath);
-        add(shader);
-        return shader;
-    }
-
     Ref<Shader> ShaderCache::get(const std::string &name) {
         ENGINE_ASSERT(exists(name), "Shader not found!");
         return _shaders[name];
@@ -41,6 +29,12 @@ namespace engine {
 
     void ShaderCache::clear() {
         _shaders.clear();
+    }
+
+    Ref<Shader> ShaderCache::load(const ShaderProps &shaderProps, Vertex* vertex) {
+        auto shader = GRAPHICS_CONTEXT->newShader(shaderProps, vertex);
+        add(shader);
+        return shader;
     }
 
 }

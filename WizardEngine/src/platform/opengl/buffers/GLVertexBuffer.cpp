@@ -34,15 +34,15 @@ namespace engine {
         auto stride = vertex->getElementCount() * sizeof(float);
         uint32_t offset = 0;
 
-        for (Attribute* attribute : vertex->getAttributes()) {
-            glVertexAttribPointer(attribute->location,
-                                  attribute->elementCount,
+        for (const Attribute &attribute : vertex->getAttributes()) {
+            glVertexAttribPointer(attribute.location,
+                                  attribute.elementCount,
                                   GL_FLOAT,
-                                  attribute->normalized,
+                                  attribute.normalized,
                                   stride,
                                   (GLvoid*) offset);
-            offset += attribute->elementCount * sizeof(float);
-            glVertexAttribDivisor(attribute->location, attribute->category);
+            offset += attribute.elementCount * sizeof(float);
+            glVertexAttribDivisor(attribute.location, attribute.category);
         }
     }
 
@@ -52,14 +52,14 @@ namespace engine {
     }
 
     void GLVertexBuffer::enableAttributes() {
-        for (Attribute* attribute : vertex->getAttributes()) {
-            glEnableVertexAttribArray(attribute->location);
+        for (const Attribute& attribute : vertex->getAttributes()) {
+            glEnableVertexAttribArray(attribute.location);
         }
     }
 
     void GLVertexBuffer::disableAttributes() {
-        for (Attribute* attribute : vertex->getAttributes()) {
-            glDisableVertexAttribArray(attribute->location);
+        for (const Attribute& attribute : vertex->getAttributes()) {
+            glDisableVertexAttribArray(attribute.location);
         }
     }
 }

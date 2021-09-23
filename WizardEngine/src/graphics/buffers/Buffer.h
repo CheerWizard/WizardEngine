@@ -11,7 +11,10 @@ namespace engine {
     class Buffer {
 
     public:
-        Buffer() = default;
+        Buffer() {
+            id = 0;
+            capacity = 0;
+        }
         virtual ~Buffer() = default;
 
     public:
@@ -22,6 +25,9 @@ namespace engine {
         inline const uint32_t& getCapacity() const {
             return capacity;
         }
+
+    protected:
+        bool hasCapacity() const;
 
     protected:
         uint32_t id;

@@ -14,9 +14,11 @@ namespace engine {
 
     public:
 
-        explicit Vertex(const uint32_t &count = 1) : _count(count) {}
+        explicit Vertex(const uint32_t &count = 1) : _count(count) {
+            _attributes = std::vector<Attribute>();
+        }
 
-        explicit Vertex(const std::vector<Attribute*>& attributes, const uint32_t &count = 1) :
+        explicit Vertex(const std::vector<Attribute>& attributes, const uint32_t &count = 1) :
         _count(count), _attributes(attributes) {}
 
         ~Vertex() {
@@ -24,15 +26,19 @@ namespace engine {
         }
 
     public:
+        inline void setCount(const uint32_t &count) {
+            _count = count;
+        }
+
         inline uint32_t getCount() const {
             return _count;
         }
 
-        inline const std::vector<Attribute*> getAttributes() const {
+        inline std::vector<Attribute> getAttributes() const {
             return _attributes;
         }
 
-        inline void setAttributes(const std::vector<Attribute*>& attributes) {
+        inline void setAttributes(const std::vector<Attribute>& attributes) {
             _attributes = attributes;
         }
 
@@ -42,14 +48,15 @@ namespace engine {
         uint32_t getElementCount() const;
         size_t getSize() const;
 
-        uint32_t add(Attribute* attribute);
-        void replace(const uint32_t &index, Attribute* attribute);
-        Attribute& get(const uint32_t &index) const;
+        uint32_t add(const Attribute &attribute);
+        void replace(const uint32_t &index, const Attribute &attribute);
+        const Attribute& get(const uint32_t &index) const;
         void remove(const uint32_t &index);
+        void clear();
 
     private:
-        std::vector<Attribute*> _attributes;
-        uint32_t _count; // count of Vertex copies.
+        std::vector<Attribute> _attributes;
+        uint32_t _count; // describes count of Vertex's.
 
     };
 
