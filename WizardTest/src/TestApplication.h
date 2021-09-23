@@ -39,8 +39,6 @@ namespace test {
             pushLayout(new TestLayout());
 
             CLIENT_INFO("Current workspace '{0}'", CURRENT_WORKING_DIR);
-            // todo find a way to move Assets folder from source to build output folder...
-            // todo right now we need to move manually Assets folder from source to build output, to read them properly.
             auto shape2dShader = loadShader("assets/shaders/shape2d.glsl");
         }
 

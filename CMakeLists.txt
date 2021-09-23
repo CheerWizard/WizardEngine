@@ -28,6 +28,32 @@ if (VK)
     add_definitions(-DVK=1)
 endif(VK)
 
+# copying target dir to destination dir. If destination does not exist, create it.
+macro(copy_dir dir1 dir2)
+    set(srcDir ${CMAKE_SOURCE_DIR}/${dir1})
+    set(destDir ${CMAKE_BINARY_DIR}/${dir2})
+
+    message(STATUS "Creating directory ${destDir}")
+    make_directory(${destDir})
+
+    message(STATUS "Search files in directory ${srcDir}")
+    file(GLOB_RECURSE templateFiles RELATIVE ${srcDir} ${srcDir}/*)
+
+    message(STATUS "Copying files from directory ${srcDir}")
+    foreach(templateFile ${templateFiles})
+        set(srcTemplatePath ${srcDir}/${templateFile})
+        if(NOT IS_DIRECTORY ${srcTemplatePath})
+            message(STATUS "Target file path ${srcTemplatePath}")
+            message(STATUS "Destination file path ${destDir}/${templateFile}")
+            configure_file(
+                    ${srcTemplatePath}
+                    ${destDir}/${templateFile}
+                    @ONLY)
+        endif(NOT IS_DIRECTORY ${srcTemplatePath})
+    endforeach(templateFile)
+
+endmacro(copy_dir)
+
 # Subprojects from Wizard.
 add_subdirectory(WizardEngine)
 add_subdirectory(WizardTest)
