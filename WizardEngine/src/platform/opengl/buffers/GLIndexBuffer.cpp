@@ -9,7 +9,7 @@
 namespace engine {
 
     void GLIndexBuffer::create() {
-        glCreateBuffers(1, &id);
+        glGenBuffers(1, &id);
     }
 
     void GLIndexBuffer::destroy() {
@@ -26,14 +26,17 @@ namespace engine {
 
     void GLIndexBuffer::allocate() {
         if (!hasCapacity()) return;
-        auto data = new uint32_t[capacity];
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(data), data, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, capacity * sizeof(uint32_t), nullptr, GL_DYNAMIC_DRAW);
     }
 
-    void GLIndexBuffer::load(const uint32_t &indexStart, uint32_t* subData) {
+    void GLIndexBuffer::load(const IndexData &indexData) {
         if (!hasCapacity()) return;
-        auto subDataOffset = indexStart * sizeof(uint32_t);
-        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, subDataOffset, sizeof(subData), subData);
+
+        auto subDataOffset = indexData.indexStart * sizeof(uint32_t);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,
+                        (GLintptr)subDataOffset,
+                        indexData.indexCount * sizeof(uint32_t),
+                        indexData.indices);
     }
 
 }

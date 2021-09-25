@@ -45,58 +45,120 @@ namespace test {
                 "v_shape2d",
                 "f_shape2d"
             };
+            shape2dShaderName = shape2dShaderProps.name;
 
-            auto shape2dVertex = new engine::Vertex {
+            auto shape2dVertex = new engine::VertexFormat {
                 {
                     engine::Attribute {
                         "position",
                         0,
                         engine::VEC3},
-//                        engine::Attribute {
-//                        "color",
-//                        1,
-//                        engine::VEC4}
-                        }
+                        engine::Attribute {
+                        "textureCoords",
+                        1,
+                        engine::VEC2
+                        },
+                        engine::Attribute {
+                        "color",
+                        2,
+                        engine::VEC4}
+                }
             };
 
             auto shape2dShader = loadShader(shape2dShaderProps, shape2dVertex);
-            shape2dShader->setUniform(engine::ViewProjectionMatrix {
-                "viewProjection",
+
+            auto projection = new engine::PerspectiveMatrix {
                 engine::PerspectiveMatrix {
-                    "perspective",
+                    "projection",
                     getAspectRatio()
                 }
-            });
+            };
+            projection->applyChanges();
+
+            auto transform = new engine::TransformMatrix {
+                "transform",
+                {0.5, 0.5, -1},
+                {0, 0, 0},
+                {1, 1, 1}
+            };
+            transform->applyChanges();
+
+            auto brightness = new engine::FloatUniform {
+                "brightness",
+                1.0f
+            };
+            brightness->applyChanges();
 
             // load a 2D triangle.
+            auto triangle = CREATE_TRIANGLE(shape2dShaderName);
+            shape2dIndex = addObject(triangle);
+            triangle->isUpdated = true;
+            triangle->brightness = brightness;
+            triangle->perspectiveProjection = projection;
+            triangle->transform = transform;
 
-            shape2dVertex->setCount(3); // 2D triangle requires 3 Vertex to draw.
+            enableDepthRendering();
 
-            const uint32_t verticesSize = 9;
-            float vertices[verticesSize] = {
-                    -0.5f, -0.5f, 0.5f,
-                    0.5f, -0.5f, 0.5f,
-                    0.0f,  0.5f, 0.5f,
-                    };
+            loadTexture("demo.png");
 
-            const uint32_t indicesSize = 3;
-            uint32_t indices[indicesSize] = {0, 1, 2};
+            auto textureSampler = new engine::TextureSampler {
+                "diffuseSampler",
+                0
+            };
 
-            auto shape2dObject = CREATE_GRAPHICS_OBJECT(shape2dShader->getName());
-            shape2dObject->verticesSize = verticesSize;
-            shape2dObject->indicesSize = indicesSize;
-            shape2dObject->vertices = vertices;
-            shape2dObject->indices = indices;
+            triangle->textureSampler = textureSampler;
 
-            loadObject(shape2dObject);
+            //todo fix textures.
+            //todo fix 3D projection.
+            //todo add ECS.
+            //todo Add Material system.
+        }
 
-            // TODO render system is not displaying anything!
-            // WARN not attribute, shader, uniform, draw call issues!
+        void onPrepare() override {
+            Application::onPrepare();
+            CLIENT_INFO("onPrepare()");
+            closeKeyPressed = engine::KeyCode::Escape;
         }
 
         void onUpdate() override {
             Application::onUpdate();
             CLIENT_INFO("onUpdate()");
+
+            auto object = getGraphicsObject(shape2dShaderName, shape2dIndex);
+            auto transform = object->transform;
+
+            //            object->isUpdated = true;
+
+            transform->scale.x += 0.001f;
+            transform->scale.y += 0.001f;
+            transform->scale.z += 0.001f;
+            transform->applyChanges();
+        }
+
+        void onKeyHold(engine::KeyCode keyCode) override {
+            if (keyCode == engine::KeyCode::Z) {
+                auto object = getGraphicsObject(shape2dShaderName, shape2dIndex);
+                auto projection = object->perspectiveProjection;
+
+                projection->zFar -= 0.001f;
+                projection->applyChanges();
+            }
+
+            if (keyCode == engine::KeyCode::F) {
+                auto object = getGraphicsObject(shape2dShaderName, shape2dIndex);
+                auto projection = object->perspectiveProjection;
+
+                projection->fieldOfView -= 0.001f;
+                projection->applyChanges();
+            }
+
+            if (keyCode == engine::KeyCode::X) {
+                auto object = getGraphicsObject(shape2dShaderName, shape2dIndex);
+                auto projection = object->perspectiveProjection;
+
+                projection->zNear -= 0.001f;
+                projection->applyChanges();
+            }
         }
 
         void onDestroy() override {
@@ -104,13 +166,10 @@ namespace test {
             CLIENT_INFO("destroy()");
         }
 
-        void onKeyPressed(engine::KeyCode keyCode) override {
-            Application::onKeyPressed(keyCode);
+    private:
+        std::string shape2dShaderName;
+        uint32_t shape2dIndex;
 
-            if (keyCode == engine::KeyCode::Escape) {
-                engine::Application::onWindowClosed();
-            }
-        }
     };
 
 }

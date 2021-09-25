@@ -17,6 +17,8 @@ namespace engine {
     class File {
 
     public:
+        File() = default;
+
         File(const std::string& name, const std::string& path) :
                 name(name),
                 path(path)

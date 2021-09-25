@@ -31,6 +31,7 @@ namespace engine {
         virtual void onCreate() = 0;
         virtual void swapBuffers() = 0;
         virtual void clearDisplay() = 0;
+        virtual void enableDepth() = 0;
 
         virtual Ref<Renderer> newRenderer(
                 ShaderCache* shaderCache,
@@ -41,13 +42,15 @@ namespace engine {
                 VertexBufferCache* vertexBufferCache,
                 const Ref<IndexBuffer>& indexBuffer) = 0;
 
-        virtual Ref<VertexBuffer> newVertexBuffer(Vertex* vertex) = 0;
+        virtual Ref<VertexBuffer> newVertexBuffer(VertexFormat* vertexFormat) = 0;
 
         virtual Ref<IndexBuffer> newIndexBuffer() = 0;
         virtual Ref<IndexBuffer> newIndexBuffer(const uint32_t &indexCount) = 0;
 
+        virtual Ref<TextureBuffer> newTextureBuffer() = 0;
+
         virtual Ref<Shader> newShader(const ShaderProps& shaderProps,
-                                      Vertex* vertex) = 0;
+                                      VertexFormat* vertexFormat) = 0;
 
     private:
         virtual std::string getAPIName() = 0;

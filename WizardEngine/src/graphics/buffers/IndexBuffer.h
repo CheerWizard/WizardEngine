@@ -5,10 +5,11 @@
 #pragma once
 
 #include "Buffer.h"
+#include "IndexData.h"
 
 #include "vector"
 
-#define DEFAULT_INDEX_COUNT 3
+#define DEFAULT_INDEX_COUNT 1000
 
 namespace engine {
 
@@ -21,7 +22,7 @@ namespace engine {
 
     public:
         virtual void allocate() = 0;
-        virtual void load(const uint32_t &indexStart, uint32_t* indices) = 0;
+        virtual void load(const IndexData& indexData) = 0;
 
     };
 

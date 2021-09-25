@@ -20,28 +20,21 @@ namespace engine {
             auto vertexBuffers = vertexArray->getVertexBuffers(shaderName);
             auto indexBuffer = vertexArray->getIndexBuffer();
 
-            shader->prepare();
-
+            shader->bindAttributes();
             vertexArray->bind();
 
             for (const auto& vertexBuffer : vertexBuffers) {
-                vertexBuffer->setVertex(shader->getVertex());
+                vertexBuffer->setVertex(shader->getVertexFormat());
                 vertexBuffer->bind();
                 vertexBuffer->allocate();
-                vertexBuffer->prepare();
+                vertexBuffer->setAttributesPointer();
             }
 
             indexBuffer->bind();
             indexBuffer->allocate();
 
-            for (const auto& graphicsObject : graphicsObjects) {
-                // TODO consider how to manipulate with vertexStart and indexStart params.
-                vertexArray->loadVertexBuffer(graphicsObject->shaderName, 0, graphicsObject->vertices);
-                vertexArray->loadIndexBuffer(0, graphicsObject->indices);
-            }
+            vertexArray->bindTextureBuffer();
 
-            vertexBuffers[0]->unbind();
-            indexBuffer->unbind();
             vertexArray->unbind();
         }
     }
@@ -57,46 +50,65 @@ namespace engine {
             shader->start();
             vertexArray->bind();
 
+            uint32_t totalIndexCount = 0;
+            for (const auto& graphicsObject : graphicsObjects) {
+                totalIndexCount += graphicsObject->indexData.indexCount;
+                if (graphicsObject->isUpdated) {
+                    updateObject(graphicsObject);
+                    graphicsObject->isUpdated = false;
+                }
+
+                // todo move this responsibility to render subsystem. For ex. to MaterialSystem.
+                if (graphicsObject->perspectiveProjection != nullptr) {
+                    shader->setUniform(*graphicsObject->perspectiveProjection);
+                }
+                if (graphicsObject->orthographicProjection != nullptr) {
+                    shader->setUniform(*graphicsObject->orthographicProjection);
+                }
+                if (graphicsObject->brightness != nullptr) {
+                    shader->setUniform(*graphicsObject->brightness);
+                }
+                if (graphicsObject->transform != nullptr) {
+                    shader->setUniform(*graphicsObject->transform);
+                }
+                if (graphicsObject->textureSampler != nullptr) {
+                    shader->setUniform(*graphicsObject->textureSampler);
+//                    vertexArray->activateTextureBuffer(graphicsObject->textureSampler->value);
+                }
+            }
+
             for (const auto& vertexBuffer : vertexBuffers) {
                 vertexBuffer->enableAttributes();
             }
 
-            drawIndices(indexBuffer->getCapacity());
+            vertexArray->bindTextureBuffer();
+            vertexArray->activateTextureBuffer(graphicsObjects[0]->textureSampler->value);
 
-            for (const auto& vertexBuffer : vertexBuffers) {
-                vertexBuffer->disableAttributes();
-            }
+            drawIndices(totalIndexCount);
 
             vertexArray->unbind();
             shader->stop();
         }
     }
 
-    void Renderer::loadIndices(const std::string &shaderName, const uint32_t &indexStart, uint32_t *indices) {
-
-    }
-
-    void Renderer::loadVertices(const std::string &shaderName, const uint32_t &vertexStart, float *vertices) {
-
-    }
-
     void Renderer::loadObject(const Ref<GraphicsObject> &graphicsObject) {
-        graphicsObjectCache->add(graphicsObject->shaderName, graphicsObject);
+        addObject(graphicsObject);
+        updateObject(graphicsObject);
     }
 
     void Renderer::addShader(const std::string &name, const Ref<Shader> &shader) {
         shaderCache->add(name, shader);
-        vertexArray->createVertexBuffer(shader->getVertex(), shader->getName());
+        vertexArray->createVertexBuffer(shader->getVertexFormat(), shader->getName());
     }
 
     void Renderer::addShader(const Ref<Shader> &shader) {
         shaderCache->add(shader);
-        vertexArray->createVertexBuffer(shader->getVertex(), shader->getName());
+        vertexArray->createVertexBuffer(shader->getVertexFormat(), shader->getName());
     }
 
-    Ref<Shader> Renderer::loadShader(const ShaderProps &shaderProps, Vertex *vertex) {
-        auto newShader = shaderCache->load(shaderProps, vertex);
-        vertexArray->createVertexBuffer(newShader->getVertex(), newShader->getName());
+    Ref<Shader> Renderer::loadShader(const ShaderProps &shaderProps, VertexFormat *vertexFormat) {
+        auto newShader = shaderCache->load(shaderProps, vertexFormat);
+        vertexArray->createVertexBuffer(newShader->getVertexFormat(), newShader->getName());
         return newShader;
     }
 
@@ -106,6 +118,30 @@ namespace engine {
 
     bool Renderer::shaderExists(const std::string &name) const {
         return shaderCache->exists(name);
+    }
+
+    uint32_t Renderer::addObject(const Ref<GraphicsObject> &graphicsObject) {
+        return graphicsObjectCache->add(graphicsObject->shaderName, graphicsObject);
+    }
+
+    void Renderer::updateObject(const Ref<GraphicsObject> &graphicsObject) {
+        vertexArray->bindLastVertexBuffer(graphicsObject->shaderName);
+        vertexArray->loadVertexBuffer(graphicsObject->shaderName, graphicsObject->vertexData);
+        vertexArray->bindIndexBuffer();
+        vertexArray->loadIndexBuffer(graphicsObject->indexData);
+    }
+
+    const Ref<GraphicsObject>& Renderer::getGraphicsObject(const std::string &shaderName, const uint32_t &objectIndex) {
+        return graphicsObjectCache->get(shaderName, objectIndex);
+    }
+
+    void Renderer::loadTexture(const std::string &filePath) {
+        vertexArray->bindTextureBuffer();
+        vertexArray->loadTextureBuffer(filePath);
+    }
+
+    void Renderer::loadTextureData(const void *data) {
+        vertexArray->loadTextureBufferData(data);
     }
 
 }

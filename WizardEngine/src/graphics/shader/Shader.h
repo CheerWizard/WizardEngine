@@ -33,18 +33,18 @@ namespace engine {
     class Shader : public File {
 
     public:
-        Shader(const ShaderProps& shaderProps, Vertex* vertex) :
+        Shader(const ShaderProps& shaderProps, VertexFormat* vertexFormat) :
         File(shaderProps.name, ""),
-        vertex(vertex),
+        vertexFormat(vertexFormat),
         props(shaderProps) {}
 
     public:
-        inline void setVertex(Vertex* vertex) {
-            this->vertex = vertex;
+        inline void setVertex(VertexFormat* vertexFormat) {
+            this->vertexFormat = vertexFormat;
         }
 
-        inline Vertex *getVertex() const {
-            return vertex;
+        inline VertexFormat *getVertexFormat() const {
+            return vertexFormat;
         }
 
         inline void setProps(const ShaderProps& shaderProps) {
@@ -68,27 +68,27 @@ namespace engine {
         virtual void start() = 0;
         virtual void stop() = 0;
 
-        virtual void prepare() = 0;
+        virtual void bindAttributes() = 0;
 
-        virtual void setUniform(const char* name, const float &value) = 0;
-        virtual void setUniform(const char* name, const int &value) = 0;
-        virtual void setUniform(const char* name, const double &value) = 0;
+        virtual void setUniform(FloatUniform &uniform) = 0;
+        virtual void setUniform(BoolUniform &uniform) = 0;
+        virtual void setUniform(IntUniform &uniform) = 0;
+        virtual void setUniform(DoubleUniform &uniform) = 0;
 
-        virtual void setUniform(const char* name, const glm::fvec2 &value) = 0;
-        virtual void setUniform(const char* name, const glm::fvec3 &value) = 0;
-        virtual void setUniform(const char* name, const glm::fvec4 &value) = 0;
+        virtual void setUniform(Vec2fUniform &uniform) = 0;
+        virtual void setUniform(Vec3fUniform &uniform) = 0;
+        virtual void setUniform(Vec4fUniform &uniform) = 0;
 
-        virtual void setUniform(const char* name, const glm::fmat2 &value) = 0;
-        virtual void setUniform(const char* name, const glm::fmat3 &value) = 0;
-
-        virtual void setUniform(const Mat4fUniform &mat4Uniform) = 0;
+        virtual void setUniform(Mat2fUniform &uniform) = 0;
+        virtual void setUniform(Mat3fUniform &uniform) = 0;
+        virtual void setUniform(Mat4fUniform &uniform) = 0;
 
     protected:
         virtual const char* getExtensionName() const = 0;
 
     protected:
         uint32_t programId;
-        Vertex* vertex;
+        VertexFormat* vertexFormat;
         ShaderProps props;
 
     };

@@ -12,6 +12,7 @@
 #include "buffers/GLVertexBuffer.h"
 #include "buffers/GLIndexBuffer.h"
 #include "buffers/GLVertexArray.h"
+#include "buffers/GLTextureBuffer.h"
 
 struct GLFWwindow;
 
@@ -37,12 +38,16 @@ namespace engine {
                 VertexBufferCache *vertexBufferCache,
                 const Ref<engine::IndexBuffer> &indexBuffer) override;
 
-        Ref<VertexBuffer> newVertexBuffer(Vertex *vertex) override;
-
         Ref<IndexBuffer> newIndexBuffer() override;
         Ref<IndexBuffer> newIndexBuffer(const uint32_t &indexCount) override;
 
-        Ref<engine::Shader> newShader(const ShaderProps &shaderProps, Vertex* vertex) override;
+        Ref<VertexBuffer> newVertexBuffer(VertexFormat *vertexFormat) override;
+
+        Ref<Shader> newShader(const ShaderProps &shaderProps, VertexFormat *vertexFormat) override;
+
+        void enableDepth() override;
+
+        Ref<TextureBuffer> newTextureBuffer() override;
 
     private:
         std::string getAPIName() override;

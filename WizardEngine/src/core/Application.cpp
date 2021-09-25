@@ -39,7 +39,6 @@ namespace engine {
         _window->setMouseCallback(this);
         _window->setKeyboardCallback(this);
         _window->setCursorCallback(this);
-        _window->onPrepare();
 
         input = INIT_INPUT;
 
@@ -53,9 +52,10 @@ namespace engine {
                 new ShaderCache(),
                 new GraphicsObjectCache(),
                 vertexArray);
-    }
+}
 
     void Application::onPrepare() {
+        _window->onPrepare();
         _renderer->onPrepare();
     }
 
@@ -97,6 +97,9 @@ namespace engine {
     }
 
     void Application::onKeyPressed(KeyCode keyCode) {
+        if (closeKeyPressed == keyCode) {
+            onWindowClosed();
+        }
         _layerStack.onKeyPressed(keyCode);
     }
 
@@ -144,8 +147,8 @@ namespace engine {
         _renderer->addShader(shader);
     }
 
-    Ref<Shader> Application::loadShader(const ShaderProps &shaderProps, Vertex* vertex) {
-        return _renderer->loadShader(shaderProps, vertex);
+    Ref<Shader> Application::loadShader(const ShaderProps &shaderProps, VertexFormat* vertexFormat) {
+        return _renderer->loadShader(shaderProps, vertexFormat);
     }
 
     Ref<Shader> Application::getShader(const std::string &name) {
@@ -156,20 +159,37 @@ namespace engine {
         return _renderer->shaderExists(name);
     }
 
-    void Application::loadVertices(const std::string &shaderName, const uint32_t &vertexStart, float *vertices) {
-        _renderer->loadVertices(shaderName, vertexStart, vertices);
-    }
-
-    void Application::loadIndices(const std::string &shaderName, const uint32_t &indexStart, uint32_t *indices) {
-        _renderer->loadIndices(shaderName, indexStart, indices);
-    }
-
     void Application::loadObject(const Ref<GraphicsObject> &graphicsObject) {
         _renderer->loadObject(graphicsObject);
     }
 
     float Application::getAspectRatio() const {
         return _window->getAspectRatio();
+    }
+
+    uint32_t Application::addObject(const Ref<GraphicsObject> &graphicsObject) {
+        return _renderer->addObject(graphicsObject);
+    }
+
+    void Application::updateObject(const Ref<GraphicsObject> &graphicsObject) {
+        _renderer->updateObject(graphicsObject);
+    }
+
+    const Ref<GraphicsObject>& Application::getGraphicsObject(const std::string &shaderName,
+                                                              const uint32_t &objectIndex) {
+        return _renderer->getGraphicsObject(shaderName, objectIndex);
+    }
+
+    void Application::enableDepthRendering() {
+        _graphicsContext->enableDepth();
+    }
+
+    void Application::loadTexture(const std::string &filePath) {
+        _renderer->loadTexture(filePath);
+    }
+
+    void Application::loadTextureData(const void *data) {
+        _renderer->loadTextureData(data);
     }
 
 }

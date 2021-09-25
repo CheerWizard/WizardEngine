@@ -8,6 +8,7 @@
 namespace engine {
 
     enum KeyCode : unsigned int {
+        None                = 0,
         Space               = 32,
         Apostrophe          = 39, /* ' */
         Comma               = 44, /* , */

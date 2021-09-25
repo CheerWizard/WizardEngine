@@ -9,7 +9,7 @@
 namespace engine {
 
     void GLVertexArray::create() {
-        glCreateVertexArrays(1, &id);
+        glGenVertexArrays(1, &id);
     }
 
     void GLVertexArray::destroy() {

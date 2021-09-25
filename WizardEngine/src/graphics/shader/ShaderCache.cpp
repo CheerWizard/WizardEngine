@@ -31,8 +31,8 @@ namespace engine {
         _shaders.clear();
     }
 
-    Ref<Shader> ShaderCache::load(const ShaderProps &shaderProps, Vertex* vertex) {
-        auto shader = GRAPHICS_CONTEXT->newShader(shaderProps, vertex);
+    Ref<Shader> ShaderCache::load(const ShaderProps &shaderProps, VertexFormat* vertexFormat) {
+        auto shader = GRAPHICS_CONTEXT->newShader(shaderProps, vertexFormat);
         add(shader);
         return shader;
     }

@@ -9,11 +9,11 @@
 namespace engine {
 
     const Attribute& Shader::getAttribute(const uint32_t &index) const {
-        return vertex->get(index);
+        return vertexFormat->get(index);
     }
 
     void Shader::removeAttribute(const uint32_t &index) {
-        vertex->remove(index);
+        vertexFormat->remove(index);
     }
 
     std::string Shader::readShader(const std::string &path) const {
@@ -23,11 +23,11 @@ namespace engine {
     }
 
     uint32_t Shader::addAttribute(const Attribute &attribute) {
-        return vertex->add(attribute);
+        return vertexFormat->add(attribute);
     }
 
     void Shader::replaceAttribute(const uint32_t &index, const Attribute &attribute) {
-        vertex->replace(index, attribute);
+        vertexFormat->replace(index, attribute);
     }
 
 }

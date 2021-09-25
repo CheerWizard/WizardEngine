@@ -60,7 +60,7 @@ namespace engine {
             _tree[key] = newVector;
         }
 
-        return _tree[key].size();
+        return _tree[key].size() - 1;
     }
 
     template<typename K, typename V>

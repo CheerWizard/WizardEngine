@@ -5,13 +5,14 @@
 #pragma once
 
 #include "../../../graphics/buffers/VertexBuffer.h"
+#include "../../../graphics/GraphicsObject.h"
 
 namespace engine {
 
     class GLVertexBuffer : public VertexBuffer {
 
     public:
-        explicit GLVertexBuffer(Vertex* vertex) : VertexBuffer(vertex) {
+        explicit GLVertexBuffer(VertexFormat* vertexFormat) : VertexBuffer(vertexFormat) {
             create();
         }
 
@@ -24,11 +25,11 @@ namespace engine {
         void unbind() override;
 
         void allocate() override;
-        void prepare() override;
+        void setAttributesPointer() override;
         void enableAttributes() override;
         void disableAttributes() override;
 
-        void load(const uint32_t &vertexStart, float *subData) override;
+        void load(const VertexData &vertexData) override;
 
     private:
         void create();

@@ -22,62 +22,90 @@ namespace engine {
         glUseProgram(0);
     }
 
-    void GLShader::prepare() {
-        for (Attribute &attribute : vertex->getAttributes()) {
+    void GLShader::bindAttributes() {
+        for (Attribute &attribute : vertexFormat->getAttributes()) {
             auto attributeLocation = glGetAttribLocation(programId, attribute.name);
             glBindAttribLocation(programId, attributeLocation, attribute.name);
             attribute.location = attributeLocation;
         }
     }
 
-    void GLShader::setUniform(const char* name, const float &value) {
-        auto location = glGetUniformLocation(programId, name);
-        glUniform1f(location, value);
+    void GLShader::setUniform(FloatUniform &uniform) {
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+        auto location = glGetUniformLocation(programId, uniform.name);
+        glUniform1f(location, uniform.value);
     }
 
-    void GLShader::setUniform(const char* name, const int &value) {
-        auto location = glGetUniformLocation(programId, name);
-        glUniform1i(location, value);
+    void GLShader::setUniform(BoolUniform &uniform) {
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+        auto location = glGetUniformLocation(programId, uniform.name);
+        glUniform1i(location, uniform.value); // bool is 32-bit as integer in GLSL compiler.
     }
 
-    void GLShader::setUniform(const char* name, const double &value) {
-        auto location = glGetUniformLocation(programId, name);
-        glUniform1d(location, value);
+    void GLShader::setUniform(IntUniform &uniform) {
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+        auto location = glGetUniformLocation(programId, uniform.name);
+        glUniform1i(location, uniform.value);
     }
 
-    void GLShader::setUniform(const char* name, const glm::fvec2 &value) {
-        auto location = glGetUniformLocation(programId, name);
+    void GLShader::setUniform(DoubleUniform &uniform) {
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+        auto location = glGetUniformLocation(programId, uniform.name);
+        glUniform1d(location, uniform.value);
+    }
+
+    void GLShader::setUniform(Vec2fUniform &uniform) {
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+        auto location = glGetUniformLocation(programId, uniform.name);
+        auto value = uniform.value;
         glUniform2f(location, value.x, value.y);
     }
 
-    void GLShader::setUniform(const char* name, const glm::fvec3 &value) {
-        auto location = glGetUniformLocation(programId, name);
+    void GLShader::setUniform(Vec3fUniform &uniform) {
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+        auto location = glGetUniformLocation(programId, uniform.name);
+        auto value = uniform.value;
         glUniform3f(location, value.x, value.y, value.z);
     }
 
-    void GLShader::setUniform(const char* name, const glm::fvec4 &value) {
-        auto location = glGetUniformLocation(programId, name);
+    void GLShader::setUniform(Vec4fUniform &uniform) {
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+        auto location = glGetUniformLocation(programId, uniform.name);
+        auto value = uniform.value;
         glUniform4f(location, value.x, value.y, value.z, value.w);
     }
 
-    void GLShader::setUniform(const char* name, const glm::fmat2 &value) {
-        auto location = glGetUniformLocation(programId, name);
-        glUniformMatrix2fv(location, 1, GL_FALSE, glm::value_ptr(value));
+    void GLShader::setUniform(Mat2fUniform &uniform) {
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+        auto location = glGetUniformLocation(programId, uniform.name);
+        glUniformMatrix2fv(location, 1, GL_FALSE, glm::value_ptr(uniform.value));
     }
 
-    void GLShader::setUniform(const char* name, const glm::fmat3 &value) {
-        auto location = glGetUniformLocation(programId, name);
-        glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value));
+    void GLShader::setUniform(Mat3fUniform &uniform) {
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+        auto location = glGetUniformLocation(programId, uniform.name);
+        glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(uniform.value));
     }
 
-    void GLShader::setUniform(const Mat4fUniform &mat4Uniform) {
-        auto location = glGetUniformLocation(programId, mat4Uniform.name);
-        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat4Uniform.value));
+    void GLShader::setUniform(Mat4fUniform &uniform) {
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+        auto location = glGetUniformLocation(programId, uniform.name);
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(uniform.value));
     }
 
     void GLShader::compile() {
         programId = glCreateProgram();
-        _shaderIds = std::vector<GLenum>(_typeSources.size());
+        _shaderIds = std::vector<GLenum>();
 
         for (auto& typeSource : _typeSources) {
             GLenum type = typeSource.first;
@@ -86,7 +114,7 @@ namespace engine {
             GLuint shader = glCreateShader(type);
 
             const GLchar* sourceCStr = source.c_str();
-            glShaderSource(shader, 1, &sourceCStr, 0);
+            glShaderSource(shader, 1, &sourceCStr, nullptr);
 
             glCompileShader(shader);
 
@@ -131,7 +159,7 @@ namespace engine {
             return;
         }
 
-        detachShaders();
+        ENGINE_INFO("Shader program id={0} has been fully compiled!", programId);
     }
 
     std::string GLShader::toStringShaderType(GLenum type) {
@@ -147,11 +175,12 @@ namespace engine {
     }
 
     void GLShader::onDestroy() {
-        glDeleteProgram(programId);
+        detachShaders();
         deleteShaders();
+        glDeleteProgram(programId);
         _shaderIds.clear();
         _typeSources.clear();
-        delete vertex;
+        delete vertexFormat;
     }
 
     void GLShader::detachShaders() {

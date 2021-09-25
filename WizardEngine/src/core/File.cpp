@@ -24,7 +24,7 @@ namespace engine {
     std::string File::getCurrentWorkingDirectory() {
         char buff[FILENAME_MAX]; //create string buffer to hold path
         _getcwd(buff, FILENAME_MAX);
-        return std::string(buff);
+        return buff;
     }
 
     std::string File::read(const std::string &filePath) {

@@ -10,31 +10,33 @@
 
 #include "vector"
 
+#define DEFAULT_VERTEX_COUNT 100
+
 namespace engine {
 
     class VertexBuffer : public Buffer {
 
     public:
-        explicit VertexBuffer(Vertex* vertex) : vertex(vertex) {}
+        explicit VertexBuffer(VertexFormat* vertexFormat) : vertexFormat(vertexFormat) {}
 
     public:
         virtual void allocate() = 0;
-        virtual void prepare() = 0;
-        virtual void load(const uint32_t &vertexStart, float* vertices) = 0;
+        virtual void setAttributesPointer() = 0;
+        virtual void load(const VertexData &vertexData) = 0;
         virtual void enableAttributes() = 0;
         virtual void disableAttributes() = 0;
 
     public:
-        inline void setVertex(Vertex* vertex) {
-            this->vertex = vertex;
+        inline void setVertex(VertexFormat* vertexFormat) {
+            this->vertexFormat = vertexFormat;
         }
 
-        inline Vertex *getVertex() const {
-            return vertex;
+        inline VertexFormat *getVertex() const {
+            return vertexFormat;
         }
 
     protected:
-        Vertex* vertex;
+        VertexFormat* vertexFormat;
 
     };
 

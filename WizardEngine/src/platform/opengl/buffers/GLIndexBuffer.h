@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../../../graphics/buffers/IndexBuffer.h"
+#include "../../../graphics/GraphicsObject.h"
 
 namespace engine {
 
@@ -25,7 +26,8 @@ namespace engine {
         void unbind() override;
 
         void allocate() override;
-        void load(const uint32_t &indexStart, uint32_t *subData) override;
+
+        void load(const IndexData &indexData);
 
     private:
         void create();

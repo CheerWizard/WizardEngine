@@ -16,7 +16,7 @@ namespace engine {
     class GLShader : public Shader {
 
     public:
-        GLShader(const ShaderProps& shaderProps, Vertex* vertex) : Shader(shaderProps, vertex) {
+        GLShader(const ShaderProps& shaderProps, VertexFormat* vertexFormat) : Shader(shaderProps, vertexFormat) {
             onCreate();
         }
 
@@ -28,20 +28,20 @@ namespace engine {
         void start() override;
         void stop() override;
 
-        void setUniform(const char* name, const float &value) override;
-        void setUniform(const char* name, const int &value) override;
-        void setUniform(const char* name, const double &value) override;
+        void bindAttributes() override;
 
-        void setUniform(const char* name, const glm::fvec2 &value) override;
-        void setUniform(const char* name, const glm::fvec3 &value) override;
-        void setUniform(const char* name, const glm::fvec4 &value) override;
+        void setUniform(FloatUniform &uniform) override;
+        void setUniform(BoolUniform &uniform) override;
+        void setUniform(IntUniform &uniform) override;
+        void setUniform(DoubleUniform &uniform) override;
 
-        void setUniform(const char* name, const glm::fmat2 &value) override;
-        void setUniform(const char* name, const glm::fmat3 &value) override;
+        void setUniform(Vec2fUniform &uniform) override;
+        void setUniform(Vec3fUniform &uniform) override;
+        void setUniform(Vec4fUniform &uniform) override;
 
-        void setUniform(const Mat4fUniform &mat4Uniform) override;
-
-        void prepare() override;
+        void setUniform(Mat2fUniform &uniform) override;
+        void setUniform(Mat3fUniform &uniform) override;
+        void setUniform(Mat4fUniform &uniform) override;
 
     private:
         static std::string toStringShaderType(GLenum type);

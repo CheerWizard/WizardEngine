@@ -12,21 +12,19 @@
 #include "core/Layout.h"
 #include "core/Time.h"
 #include "core/Memory.h"
+#include "core/TreeCache.h"
 
 // export Graphics systems.
 #include "graphics/GraphicsObject.h"
-
+#include "graphics/geometry/Shapes.h"
 // export ImGui system.
 #include "imgui/DemoLayout.h"
 
 // export vendor libs.
 #include "../vendor/imgui/imgui/imgui.h"
+#include "../vendor/stb/stb/stb_image.h"
 
-#include "core/TreeCache.h"
-#include "graphics/buffers/VertexArray.h"
-#include "graphics/buffers/VertexBuffer.h"
-#include "graphics/render/Renderer.h"
-
+// export math
 #include "math/ViewProjectionMatrix.h"
 #include "math/TransformMatrix.h"
 

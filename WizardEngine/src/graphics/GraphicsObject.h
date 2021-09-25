@@ -10,35 +10,41 @@
 #include "geometry/Vertex.h"
 #include "../core/Memory.h"
 
+#include "buffers/IndexData.h"
+
+#include "../math/ViewProjectionMatrix.h"
+#include "../math/Uniform.h"
+
+#include "buffers/TextureData.h"
+
 namespace engine {
 
     struct GraphicsObject {
         std::string shaderName;
-        float* vertices;
-        uint32_t* indices;
-        uint32_t verticesSize;
-        uint32_t indicesSize;
+        VertexData vertexData;
+        IndexData indexData;
+
+        bool isUpdated = false; //used to notify RenderSystem that this struct data needs to be uploaded to appropriate GPU buffer.
+
+        //todo add ECS
+        PerspectiveMatrix* perspectiveProjection = nullptr;
+        OrthographicMatrix* orthographicProjection = nullptr;
+        TransformMatrix* transform = nullptr;
+
+        FloatUniform* brightness = nullptr;
+        TextureSampler* textureSampler = nullptr;
 
         GraphicsObject(const std::string &shaderName) : shaderName(shaderName) {
-            vertices = new float[0];
-            indices = new uint32_t[0];
-            verticesSize = 0;
-            indicesSize = 0;
         }
 
         GraphicsObject(
                 const std::string &shaderName,
-                float* vertices,
-                uint32_t* indices,
-                uint32_t verticesSize,
-                uint32_t indicesSize
+                const VertexData &vertexData,
+                const IndexData &indexData
                 ) :
                 shaderName(shaderName),
-                vertices(vertices),
-                indices(indices),
-                verticesSize(verticesSize),
-                indicesSize(indicesSize) {}
-
+                vertexData(vertexData),
+                indexData(indexData) {}
     };
 
 }
