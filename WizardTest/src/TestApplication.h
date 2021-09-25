@@ -77,7 +77,7 @@ namespace test {
 
             auto transform = new engine::TransformMatrix {
                 "transform",
-                {0.5, 0.5, -1},
+                {0.5, 0.5, 1},
                 {0, 0, 0},
                 {1, 1, 1}
             };
@@ -90,7 +90,7 @@ namespace test {
             brightness->applyChanges();
 
             // load a 2D triangle.
-            auto triangle = CREATE_TRIANGLE(shape2dShaderName);
+            auto triangle = CREATE_CUBE(shape2dShaderName);
             shape2dIndex = addObject(triangle);
             triangle->isUpdated = true;
             triangle->brightness = brightness;
@@ -108,7 +108,6 @@ namespace test {
 
             triangle->textureSampler = textureSampler;
 
-            //todo fix textures.
             //todo fix 3D projection.
             //todo add ECS.
             //todo Add Material system.
@@ -127,38 +126,10 @@ namespace test {
             auto object = getGraphicsObject(shape2dShaderName, shape2dIndex);
             auto transform = object->transform;
 
-            //            object->isUpdated = true;
-
-            transform->scale.x += 0.001f;
-            transform->scale.y += 0.001f;
-            transform->scale.z += 0.001f;
+            transform->rotation.z += 0.001f;
+            transform->rotation.x += 0.001f;
+            transform->rotation.y += 0.001f;
             transform->applyChanges();
-        }
-
-        void onKeyHold(engine::KeyCode keyCode) override {
-            if (keyCode == engine::KeyCode::Z) {
-                auto object = getGraphicsObject(shape2dShaderName, shape2dIndex);
-                auto projection = object->perspectiveProjection;
-
-                projection->zFar -= 0.001f;
-                projection->applyChanges();
-            }
-
-            if (keyCode == engine::KeyCode::F) {
-                auto object = getGraphicsObject(shape2dShaderName, shape2dIndex);
-                auto projection = object->perspectiveProjection;
-
-                projection->fieldOfView -= 0.001f;
-                projection->applyChanges();
-            }
-
-            if (keyCode == engine::KeyCode::X) {
-                auto object = getGraphicsObject(shape2dShaderName, shape2dIndex);
-                auto projection = object->perspectiveProjection;
-
-                projection->zNear -= 0.001f;
-                projection->applyChanges();
-            }
         }
 
         void onDestroy() override {

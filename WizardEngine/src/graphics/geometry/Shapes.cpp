@@ -9,17 +9,17 @@ namespace engine {
     Vertex *Triangle::createVertices() {
         auto v1 = Vertex {
             {-0.5f, -0.5f, 0.0f },
-            {0.5f, 0.5f}
+            {0, 0}
         };
 
         auto v2 = Vertex {
             {0.5f, -0.5f, 0.0f},
-            {0.5f, 0.5f}
+            {1, 0}
         };
 
         auto v3 = Vertex {
             {0.0f,  0.5f, 0.0f },
-            {0.5f, 0.5f}
+            {1, 1}
         };
 
         return new Vertex[] {
@@ -32,98 +32,126 @@ namespace engine {
     }
 
     Vertex *Cube::createVertices() {
+
         auto v1 = Vertex {
             {-0.5f,0.5f,-0.5f},
+            {0,0,}
         };
 
         auto v2 = Vertex {
             {-0.5f,-0.5f,-0.5f},
+            {0,1}
         };
+
         auto v3 = Vertex {
             {0.5f,-0.5f,-0.5f},
+            {1,1}
+
         };
         auto v4 = Vertex {
             {0.5f,0.5f,-0.5f},
+            {1,0}
         };
 
         auto v5 = Vertex {
             {-0.5f,0.5f,0.5f},
+            {0,0}
         };
 
         auto v6 = Vertex {
             {-0.5f,-0.5f,0.5f},
+            {0,1,}
         };
 
         auto v7 = Vertex {
             {0.5f,-0.5f,0.5f},
+            {1,1,}
         };
 
         auto v8 = Vertex {
-            {0.5f,0.5f,0.5f}
+            {0.5f,0.5f,0.5f},
+            {1,0,}
         };
 
         auto v9 = Vertex {
-            {0.5f,0.5f,-0.5f}
+            {0.5f,0.5f,-0.5f},
+            {0,0,}
         };
 
         auto v10 = Vertex {
-            {0.5f,-0.5f,-0.5f}
+            {0.5f,-0.5f,-0.5f},
+            {0,1,}
         };
 
         auto v11 = Vertex {
-            {0.5f,-0.5f,0.5f}
+            {0.5f,-0.5f,0.5f},
+            {1,1,}
         };
 
         auto v12 = Vertex {
-            {0.5f,0.5f,0.5f}
+            {0.5f,0.5f,0.5f},
+            {1,0,}
         };
 
         auto v13 = Vertex {
-            {-0.5f,0.5f,-0.5f}
+            {-0.5f,0.5f,-0.5f},
+            {0,0,}
         };
 
         auto v14 = Vertex {
-            {-0.5f,-0.5f,-0.5f}
+            {-0.5f,-0.5f,-0.5f},
+            {0,1,}
         };
 
         auto v15 = Vertex {
             {-0.5f,-0.5f,0.5f},
+            {1,1,}
         };
 
         auto v16 = Vertex {
-            {-0.5f,0.5f,0.5f}
+            {-0.5f,0.5f,0.5f},
+            {1,0,}
         };
 
         auto v17 = Vertex {
-            {-0.5f,0.5f,0.5f}
+            {-0.5f,0.5f,0.5f},
+            {0,0,}
         };
 
         auto v18 = Vertex {
             {-0.5f,0.5f,-0.5f},
+            {0,1,}
         };
 
         auto v19 = Vertex {
             { 0.5f,0.5f,-0.5f},
+            {1,1,}
         };
 
         auto v20 = Vertex {
             {0.5f,0.5f,0.5f},
+            {1,0,}
         };
 
         auto v21 = Vertex {
-            {-0.5f,-0.5f,0.5f}
+            {-0.5f,-0.5f,0.5f},
+            {0,0,}
         };
 
         auto v22 = Vertex {
-            {-0.5f,-0.5f,-0.5f}
+            {-0.5f,-0.5f,-0.5f},
+            {0,1,}
+
         };
 
         auto v23 = Vertex {
-            {0.5f,-0.5f,-0.5f}
+            {0.5f,-0.5f,-0.5f},
+            {1,1,}
         };
 
         auto v24 = Vertex {
-            {0.5f,-0.5f,0.5f}
+            {0.5f,-0.5f,0.5f},
+            {1,0,}
         };
 
         return new Vertex[] {

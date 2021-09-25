@@ -9,11 +9,13 @@
 namespace engine {
 
     const TransformMatrix &TransformMatrix::applyChanges() {
-        auto translationMatrix = glm::translate(glm::mat4(1.0f), position);
+        auto translationMatrix = glm::translate(glm::mat4(1), position);
         auto rotationMatrixX = glm::rotate(translationMatrix, rotation.x, glm::vec3(1, 0, 0));
         auto rotationMatrixY = glm::rotate(rotationMatrixX, rotation.y, glm::vec3(0, 1, 0));
         auto rotationMatrixZ = glm::rotate(rotationMatrixY, rotation.z, glm::vec3(0, 0, 1));
-        value = glm::scale(rotationMatrixZ, scale);
+        auto modelMatrix = glm::scale(rotationMatrixZ, scale);
+        auto viewMatrix = glm::inverse(modelMatrix) * modelMatrix;
+        value = viewMatrix;
         isUpdated = true;
         return *this;
     }

@@ -14,7 +14,7 @@
 #define MIN_OFFSET_IN_BUFFER 0
 #define DEFAULT_COLOR {0.25f, 0.5f, 0.75f, 1}
 #define DEFAULT_POSITION {0.5f, 0.5f, 0.5f}
-#define DEFAULT_TEXTURE_COORDS {0, 0}
+#define DEFAULT_TEXTURE_COORDS {0.25f, -0.25f}
 
 namespace engine {
 
@@ -65,7 +65,9 @@ namespace engine {
                const glm::vec2 &textureCoords = DEFAULT_TEXTURE_COORDS,
                const glm::vec4 &color = DEFAULT_COLOR) :
                position(position),
-               color(color) {}
+               color(color),
+               textureCoords(textureCoords)
+               {}
     };
 
     struct VertexData {
