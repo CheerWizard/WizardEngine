@@ -12,6 +12,8 @@
 
 #include "../shader/ShaderCache.h"
 
+#include "../../core/CameraController.h"
+
 #include "string"
 
 namespace engine {
@@ -54,10 +56,16 @@ namespace engine {
     protected:
         void destroy();
 
+    public:
+        void setCameraController(CameraController* cameraController) {
+            this->cameraController = cameraController;
+        }
+
     protected:
         Ref<VertexArray> vertexArray;
         ShaderCache* shaderCache;
         GraphicsObjectCache* graphicsObjectCache;
+        CameraController* cameraController = nullptr;
 
     };
 

@@ -19,6 +19,8 @@
 #include "../platform/Platform.h"
 #include "../graphics/shader/ShaderCache.h"
 
+#include "CameraController.h"
+
 #include "string"
 #include "vector"
 
@@ -105,9 +107,14 @@ namespace engine {
         void loadTexture(const std::string &filePath);
         void loadTextureData(const void* data);
 
+        void createCamera3D(Camera3d* camera3D);
+        void createCamera3D(const char* name);
+        void createCamera3D(const char* name, const glm::vec3 &position);
+
     protected:
         Scope<Input> input;
         KeyCode closeKeyPressed;
+        CameraController* cameraController;
 
     private:
         static Application* _instance;

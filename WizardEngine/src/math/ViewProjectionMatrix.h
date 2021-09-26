@@ -6,20 +6,20 @@
 
 #include "Uniform.h"
 
-#include "TransformMatrix.h"
+#include "ViewMatrix.h"
 #include "ProjectionMatrix.h"
 
 namespace engine {
 
     struct ViewProjection2d : Mat4fUniform {
-        TransformMatrix transformMatrix;
+        ViewMatrix viewMatrix;
         OrthographicMatrix orthographicMatrix;
 
         ViewProjection2d(const char* name,
-                             const TransformMatrix &transformMatrix,
+                             const ViewMatrix &viewMatrix,
                              const OrthographicMatrix &orthographicMatrix) :
                              orthographicMatrix(orthographicMatrix),
-                             transformMatrix(transformMatrix),
+                             viewMatrix(viewMatrix),
                              Mat4fUniform(name) {
         }
 
@@ -28,14 +28,14 @@ namespace engine {
     };
 
     struct ViewProjection3d : Mat4fUniform {
-        TransformMatrix transformMatrix;
+        ViewMatrix viewMatrix;
         PerspectiveMatrix perspectiveMatrix;
 
         ViewProjection3d(const char* name,
-                         const TransformMatrix &transformMatrix,
+                         const ViewMatrix &viewMatrix,
                          const PerspectiveMatrix &perspectiveMatrix) :
                          perspectiveMatrix(perspectiveMatrix),
-                         transformMatrix(transformMatrix),
+                         viewMatrix(viewMatrix),
                          Mat4fUniform(name) {
         }
 

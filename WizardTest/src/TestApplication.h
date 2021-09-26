@@ -67,17 +67,9 @@ namespace test {
 
             auto shape2dShader = loadShader(shape2dShaderProps, shape2dVertex);
 
-            auto projection = new engine::PerspectiveMatrix {
-                engine::PerspectiveMatrix {
-                    "projection",
-                    getAspectRatio()
-                }
-            };
-            projection->applyChanges();
-
             auto transform = new engine::TransformMatrix {
                 "transform",
-                {0.5, 0.5, 1},
+                {0.5, 0.5, -0.5},
                 {0, 0, 0},
                 {1, 1, 1}
             };
@@ -94,7 +86,6 @@ namespace test {
             shape2dIndex = addObject(triangle);
             triangle->isUpdated = true;
             triangle->brightness = brightness;
-            triangle->perspectiveProjection = projection;
             triangle->transform = transform;
 
             enableDepthRendering();
@@ -108,8 +99,8 @@ namespace test {
 
             triangle->textureSampler = textureSampler;
 
-            //todo fix 3D projection.
-            //todo add ECS.
+            //todo fix 3D viewProjection3d. object is going to wide during rotation.
+            //todo add ECS - important as it's a core for all future systems.
             //todo Add Material system.
         }
 
@@ -117,6 +108,18 @@ namespace test {
             Application::onPrepare();
             CLIENT_INFO("onPrepare()");
             closeKeyPressed = engine::KeyCode::Escape;
+            cameraController->bind(engine::KeyCode::W, engine::MoveType::UP);
+            cameraController->bind(engine::KeyCode::A, engine::MoveType::LEFT);
+            cameraController->bind(engine::KeyCode::S, engine::MoveType::DOWN);
+            cameraController->bind(engine::KeyCode::D, engine::MoveType::RIGHT);
+            cameraController->bind(engine::KeyCode::Q, engine::RotateType::LEFT_Z);
+            cameraController->bind(engine::KeyCode::E, engine::RotateType::RIGHT_Z);
+            cameraController->bind(engine::KeyCode::Z, engine::ZoomType::IN);
+            cameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
+            cameraController->moveSpeed = 0.1f;
+            cameraController->zoomSpeed = 0.1f;
+            cameraController->rotateSpeed = 0.1f;
+            cameraController->applyChanges();
         }
 
         void onUpdate() override {
@@ -126,15 +129,15 @@ namespace test {
             auto object = getGraphicsObject(shape2dShaderName, shape2dIndex);
             auto transform = object->transform;
 
-            transform->rotation.z += 0.001f;
-            transform->rotation.x += 0.001f;
-            transform->rotation.y += 0.001f;
-            transform->applyChanges();
+//            transform->rotation.z += 0.001f;
+//            transform->rotation.x += 0.001f;
+//            transform->rotation.y += 0.001f;
+//            transform->applyChanges();
         }
 
         void onDestroy() override {
             Application::onDestroy();
-            CLIENT_INFO("destroy()");
+            CLIENT_INFO("onDestroy()");
         }
 
     private:

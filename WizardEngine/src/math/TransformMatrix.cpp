@@ -14,8 +14,7 @@ namespace engine {
         auto rotationMatrixY = glm::rotate(rotationMatrixX, rotation.y, glm::vec3(0, 1, 0));
         auto rotationMatrixZ = glm::rotate(rotationMatrixY, rotation.z, glm::vec3(0, 0, 1));
         auto modelMatrix = glm::scale(rotationMatrixZ, scale);
-        auto viewMatrix = glm::inverse(modelMatrix) * modelMatrix;
-        value = viewMatrix;
+        value = modelMatrix;
         isUpdated = true;
         return *this;
     }

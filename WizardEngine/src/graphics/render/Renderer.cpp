@@ -50,21 +50,20 @@ namespace engine {
             shader->start();
             vertexArray->bind();
 
+            if (cameraController != nullptr) {
+                shader->setUniform(cameraController->getCamera());
+            }
+
             uint32_t totalIndexCount = 0;
             for (const auto& graphicsObject : graphicsObjects) {
                 totalIndexCount += graphicsObject->indexData.indexCount;
+
                 if (graphicsObject->isUpdated) {
                     updateObject(graphicsObject);
                     graphicsObject->isUpdated = false;
                 }
 
                 // todo move this responsibility to render subsystem. For ex. to MaterialSystem.
-                if (graphicsObject->perspectiveProjection != nullptr) {
-                    shader->setUniform(*graphicsObject->perspectiveProjection);
-                }
-                if (graphicsObject->orthographicProjection != nullptr) {
-                    shader->setUniform(*graphicsObject->orthographicProjection);
-                }
                 if (graphicsObject->brightness != nullptr) {
                     shader->setUniform(*graphicsObject->brightness);
                 }
@@ -81,6 +80,7 @@ namespace engine {
                 vertexBuffer->enableAttributes();
             }
 
+            // todo find a way to bind texture buffer for multiple objects.
             vertexArray->bindTextureBuffer();
             vertexArray->activateTextureBuffer(graphicsObjects[0]->textureSampler->value);
 

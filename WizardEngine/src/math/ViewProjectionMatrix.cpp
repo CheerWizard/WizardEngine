@@ -7,13 +7,13 @@
 namespace engine {
 
     const ViewProjection2d& ViewProjection2d::applyChanges() {
-        value = orthographicMatrix.applyChanges().value * glm::inverse(transformMatrix.applyChanges().value);
+        value = orthographicMatrix.applyChanges().value * viewMatrix.applyChanges().value;
         isUpdated = true;
         return *this;
     }
 
     const ViewProjection3d& ViewProjection3d::applyChanges() {
-        value = perspectiveMatrix.applyChanges().value * glm::inverse(transformMatrix.applyChanges().value);
+        value = perspectiveMatrix.applyChanges().value * viewMatrix.applyChanges().value;
         isUpdated = true;
         return *this;
     }

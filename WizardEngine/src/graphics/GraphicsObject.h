@@ -13,6 +13,7 @@
 #include "buffers/IndexData.h"
 
 #include "../math/ViewProjectionMatrix.h"
+#include "../math/TransformMatrix.h"
 #include "../math/Uniform.h"
 
 #include "buffers/TextureData.h"
@@ -26,13 +27,10 @@ namespace engine {
 
         bool isUpdated = false; //used to notify RenderSystem that this struct data needs to be uploaded to appropriate GPU buffer.
 
-        //todo add ECS
-        PerspectiveMatrix* perspectiveProjection = nullptr;
-        OrthographicMatrix* orthographicProjection = nullptr;
-        TransformMatrix* transform = nullptr;
+        TransformMatrix* transform = nullptr; // todo move to Component
 
-        FloatUniform* brightness = nullptr;
-        TextureSampler* textureSampler = nullptr;
+        FloatUniform* brightness = nullptr; // todo move to Component
+        TextureSampler* textureSampler = nullptr; // todo move to Component
 
         GraphicsObject(const std::string &shaderName) : shaderName(shaderName) {
         }
