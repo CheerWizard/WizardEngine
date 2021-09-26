@@ -33,10 +33,7 @@ namespace engine {
         virtual void clearDisplay() = 0;
         virtual void enableDepth() = 0;
 
-        virtual Ref<Renderer> newRenderer(
-                ShaderCache* shaderCache,
-                GraphicsObjectCache* graphicsObjectCache,
-                const Ref<VertexArray>& vertexArray) = 0;
+        virtual Ref<Renderer> newRenderer(ShaderCache* shaderCache, const Ref<VertexArray>& vertexArray) = 0;
 
         virtual Ref<VertexArray> newVertexArray(
                 VertexBufferCache* vertexBufferCache,

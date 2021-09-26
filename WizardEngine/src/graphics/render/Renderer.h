@@ -6,28 +6,28 @@
 
 #include "../../core/TreeCache.h"
 
-#include "../GraphicsObject.h"
-
 #include "../buffers/VertexArray.h"
 
 #include "../shader/ShaderCache.h"
 
 #include "../../core/CameraController.h"
 
+#include "../../ecs/Scene.h"
+
+#include "../geometry/ShapeComponent.h"
+#include "../../math/TransformComponent.h"
+#include "../material/MaterialComponents.h"
+
 #include "string"
 
 namespace engine {
-
-    typedef TreeCache<std::string, GraphicsObject> GraphicsObjectCache;
 
     class Renderer {
 
     public:
         Renderer(ShaderCache* shaderCache,
-                 GraphicsObjectCache* graphicsObjectCache,
                  const Ref<VertexArray> &vertexArray) :
         shaderCache(shaderCache),
-        graphicsObjectCache(graphicsObjectCache),
         vertexArray(vertexArray) {}
 
         virtual ~Renderer() = default;
@@ -35,11 +35,6 @@ namespace engine {
     public:
         void onPrepare();
         void onUpdate();
-
-        uint32_t addObject(const Ref<GraphicsObject>& graphicsObject);
-        void updateObject(const Ref<GraphicsObject>& graphicsObject);
-        void loadObject(const Ref<GraphicsObject>& graphicsObject);
-        const Ref<GraphicsObject>& getGraphicsObject(const std::string &shaderName, const uint32_t &objectIndex);
 
         void addShader(const std::string& name, const Ref<Shader>& shader);
         void addShader(const Ref<Shader>& shader);
@@ -61,11 +56,19 @@ namespace engine {
             this->cameraController = cameraController;
         }
 
+        void setActiveScene(Scene* activeScene) {
+            this->activeScene = activeScene;
+        }
+
     protected:
         Ref<VertexArray> vertexArray;
         ShaderCache* shaderCache;
-        GraphicsObjectCache* graphicsObjectCache;
-        CameraController* cameraController = nullptr;
+        CameraController* cameraController = nullptr; // weak reference.
+        Scene* activeScene = nullptr; // weak reference.
+
+    private:
+        void updateShapeComponent(const std::string &shaderName, const ShapeComponent &shapeComponent);
+        void updateMaterial();
 
     };
 

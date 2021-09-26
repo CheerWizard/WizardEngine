@@ -19,6 +19,8 @@
 #include "../platform/Platform.h"
 #include "../graphics/shader/ShaderCache.h"
 
+#include "../ecs/Scene.h"
+
 #include "CameraController.h"
 
 #include "string"
@@ -96,11 +98,6 @@ namespace engine {
         Ref<Shader> getShader(const std::string& name);
         bool shaderExists(const std::string& name) const;
 
-        void loadObject(const Ref<GraphicsObject>& graphicsObject);
-        uint32_t addObject(const Ref<GraphicsObject>& graphicsObject);
-        void updateObject(const Ref<GraphicsObject>& graphicsObject);
-        const Ref<GraphicsObject>& getGraphicsObject(const std::string &shaderName, const uint32_t &objectIndex);
-
         float getAspectRatio() const;
         void enableDepthRendering();
 
@@ -111,10 +108,13 @@ namespace engine {
         void createCamera3D(const char* name);
         void createCamera3D(const char* name, const glm::vec3 &position);
 
+        void createActiveScene();
+
     protected:
         Scope<Input> input;
         KeyCode closeKeyPressed;
-        CameraController* cameraController;
+        CameraController* cameraController; // todo move to Component.
+        Scene* activeScene; // todo add Scene cache or smth similar.
 
     private:
         static Application* _instance;

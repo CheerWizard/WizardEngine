@@ -29,10 +29,7 @@ namespace engine {
         void swapBuffers() override;
         void clearDisplay() override;
 
-        Ref<engine::Renderer> newRenderer(
-                ShaderCache *shaderCache,
-                GraphicsObjectCache *graphicsObjectCache,
-                const Ref<engine::VertexArray> &vertexArray) override;
+        Ref<engine::Renderer> newRenderer(ShaderCache *shaderCache, const Ref<engine::VertexArray> &vertexArray) override;
 
         Ref<engine::VertexArray> newVertexArray(
                 VertexBufferCache *vertexBufferCache,

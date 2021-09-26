@@ -18,6 +18,9 @@ namespace engine {
         void onUpdate(Time deltaTime) override;
         void onKeyPressed(KeyCode keyCode) override;
 
+    public:
+        KeyCode showKeyPressed = KeyCode::None;
+
     private:
         bool _show = false;
 

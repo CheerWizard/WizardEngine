@@ -166,12 +166,12 @@ namespace engine {
         switch (type) {
             case GL_VERTEX_SHADER:
                 return "Vertex";
-
-                case GL_FRAGMENT_SHADER:
-                    return "Fragment";
-
-                    default: ENGINE_ASSERT(false, "Cannot convert shader type to string!")
+            case GL_FRAGMENT_SHADER:
+                return "Fragment";
         }
+
+        ENGINE_ASSERT(false, "Cannot convert shader type to string!")
+        return "Undefined";
     }
 
     void GLShader::onDestroy() {

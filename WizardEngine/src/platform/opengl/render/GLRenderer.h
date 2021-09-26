@@ -11,10 +11,8 @@ namespace engine {
     class GLRenderer : public Renderer {
 
     public:
-        GLRenderer(ShaderCache* shaderCache,
-                   GraphicsObjectCache* graphicsObjectCache,
-                   const Ref<VertexArray> &vertexArray) :
-        Renderer(shaderCache, graphicsObjectCache, vertexArray) {}
+        GLRenderer(ShaderCache* shaderCache, const Ref<VertexArray> &vertexArray) :
+        Renderer(shaderCache, vertexArray) {}
 
         ~GLRenderer() override {
             destroy();

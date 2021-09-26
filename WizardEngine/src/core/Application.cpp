@@ -48,12 +48,10 @@ namespace engine {
         auto indexBuffer = _graphicsContext->newIndexBuffer();
         auto vertexArray = _graphicsContext->newVertexArray(new VertexBufferCache(), indexBuffer);
 
-        _renderer = _graphicsContext->newRenderer(
-                new ShaderCache(),
-                new GraphicsObjectCache(),
-                vertexArray);
+        _renderer = _graphicsContext->newRenderer(new ShaderCache(), vertexArray);
 
         createCamera3D("camera");
+        createActiveScene();
     }
 
     void Application::onPrepare() {
@@ -64,8 +62,9 @@ namespace engine {
     void Application::onDestroy() {
         ENGINE_INFO("destroy()");
         delete cameraController;
-        _renderer.reset();
+        delete activeScene;
         input.reset();
+        _renderer.reset();
         _window->onDestroy();
         _window.reset();
     }
@@ -167,25 +166,8 @@ namespace engine {
         return _renderer->shaderExists(name);
     }
 
-    void Application::loadObject(const Ref<GraphicsObject> &graphicsObject) {
-        _renderer->loadObject(graphicsObject);
-    }
-
     float Application::getAspectRatio() const {
         return _window->getAspectRatio();
-    }
-
-    uint32_t Application::addObject(const Ref<GraphicsObject> &graphicsObject) {
-        return _renderer->addObject(graphicsObject);
-    }
-
-    void Application::updateObject(const Ref<GraphicsObject> &graphicsObject) {
-        _renderer->updateObject(graphicsObject);
-    }
-
-    const Ref<GraphicsObject>& Application::getGraphicsObject(const std::string &shaderName,
-                                                              const uint32_t &objectIndex) {
-        return _renderer->getGraphicsObject(shaderName, objectIndex);
     }
 
     void Application::enableDepthRendering() {
@@ -223,6 +205,11 @@ namespace engine {
         delete cameraController;
         cameraController = new Camera3dController(camera3D);
         _renderer->setCameraController(cameraController);
+    }
+
+    void Application::createActiveScene() {
+        activeScene = new Scene();
+        _renderer->setActiveScene(activeScene);
     }
 
 }

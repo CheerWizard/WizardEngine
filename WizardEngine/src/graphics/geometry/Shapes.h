@@ -4,21 +4,15 @@
 
 #pragma once
 
-#include "../GraphicsObject.h"
-
-#define CREATE_TRIANGLE(shaderName) engine::createRef<engine::Triangle>(engine::Triangle { shaderName })
-#define CREATE_CUBE(shaderName) engine::createRef<engine::Cube>(engine::Cube { shaderName })
+#include "ShapeComponent.h"
+#include "../../ecs/Entity.h"
 
 namespace engine {
 
-    struct Triangle : GraphicsObject {
-        Triangle(const std::string &shaderName) : GraphicsObject(shaderName) {
-            this->vertexData = VertexData {
-                createVertices()
-            };
-            this->indexData = IndexData {
-                createIndices()
-            };
+    struct Triangle : ShapeComponent {
+        Triangle() : ShapeComponent() {
+            vertexData = { createVertices() };
+            indexData = { createIndices() };
         }
 
     private:
@@ -26,18 +20,10 @@ namespace engine {
         static Vertex *createVertices();
     };
 
-    struct Cube : GraphicsObject {
-        Cube(const std::string &shaderName) : GraphicsObject(shaderName) {
-            this->vertexData = VertexData {
-                createVertices(),
-                0,
-                24
-            };
-            this->indexData = IndexData {
-                createIndices(),
-                0,
-                36
-            };
+    struct Cube : ShapeComponent {
+        Cube() : ShapeComponent() {
+            vertexData = { createVertices(),0,24 };
+            indexData = { createIndices(), 0, 36 };
         }
 
     private:

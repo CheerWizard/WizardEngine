@@ -35,7 +35,10 @@ namespace test {
 
             pushLayer(new TestLayer());
 
-            pushLayout(new engine::DemoLayout());
+            auto demoLayout = new engine::DemoLayout();
+            demoLayout->showKeyPressed = engine::KeyCode::D1;
+            pushLayout(demoLayout);
+
             pushLayout(new TestLayout());
 
             CLIENT_INFO("Current workspace '{0}'", CURRENT_WORKING_DIR);
@@ -45,7 +48,6 @@ namespace test {
                 "v_shape2d",
                 "f_shape2d"
             };
-            shape2dShaderName = shape2dShaderProps.name;
 
             auto shape2dVertex = new engine::VertexFormat {
                 {
@@ -67,40 +69,33 @@ namespace test {
 
             auto shape2dShader = loadShader(shape2dShaderProps, shape2dVertex);
 
-            auto transform = new engine::TransformMatrix {
+            auto transform = engine::TransformComponent {
                 "transform",
                 {0.5, 0.5, -0.5},
                 {0, 0, 0},
                 {1, 1, 1}
             };
-            transform->applyChanges();
+            transform.applyChanges();
 
-            auto brightness = new engine::FloatUniform {
-                "brightness",
-                1.0f
-            };
-            brightness->applyChanges();
-
-            // load a 2D triangle.
-            auto triangle = CREATE_CUBE(shape2dShaderName);
-            shape2dIndex = addObject(triangle);
-            triangle->isUpdated = true;
-            triangle->brightness = brightness;
-            triangle->transform = transform;
+            auto shape = engine::Cube();
+            shape.applyChanges();
 
             enableDepthRendering();
 
             loadTexture("demo.png");
 
-            auto textureSampler = new engine::TextureSampler {
+            auto texture = engine::TextureComponent {
                 "diffuseSampler",
                 0
             };
+            texture.applyChanges();
 
-            triangle->textureSampler = textureSampler;
+            entity = activeScene->createEntity("DemoEntity");
+            entity.addComponent<engine::ShapeComponent>(shape);
+            entity.addComponent<engine::TransformComponent>(transform);
+            entity.addComponent<engine::TextureComponent>(texture);
 
             //todo fix 3D viewProjection3d. object is going to wide during rotation.
-            //todo add ECS - important as it's a core for all future systems.
             //todo Add Material system.
         }
 
@@ -116,9 +111,6 @@ namespace test {
             cameraController->bind(engine::KeyCode::E, engine::RotateType::RIGHT_Z);
             cameraController->bind(engine::KeyCode::Z, engine::ZoomType::IN);
             cameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
-            cameraController->moveSpeed = 0.1f;
-            cameraController->zoomSpeed = 0.1f;
-            cameraController->rotateSpeed = 0.1f;
             cameraController->applyChanges();
         }
 
@@ -126,13 +118,13 @@ namespace test {
             Application::onUpdate();
             CLIENT_INFO("onUpdate()");
 
-            auto object = getGraphicsObject(shape2dShaderName, shape2dIndex);
-            auto transform = object->transform;
-
-//            transform->rotation.z += 0.001f;
-//            transform->rotation.x += 0.001f;
-//            transform->rotation.y += 0.001f;
-//            transform->applyChanges();
+            auto transform = entity.getComponent<engine::TransformComponent>().transformMatrix;
+            // todo if update component here, value will not be changed!
+            // todo however, if you update Component for ex. in Renderer, value will be changed everywhere!
+            transform.rotation.z += 0.001f;
+            transform.rotation.x += 0.001f;
+            transform.rotation.y += 0.001f;
+            transform.applyChanges();
         }
 
         void onDestroy() override {
@@ -141,8 +133,7 @@ namespace test {
         }
 
     private:
-        std::string shape2dShaderName;
-        uint32_t shape2dIndex;
+        engine::Entity entity;
 
     };
 

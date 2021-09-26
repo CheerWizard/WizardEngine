@@ -55,7 +55,6 @@ namespace engine {
 
     };
 
-    // todo find a way to expand or hide data fields.
     struct Vertex {
         glm::vec3 position;
         glm::vec2 textureCoords;
@@ -68,21 +67,6 @@ namespace engine {
                color(color),
                textureCoords(textureCoords)
                {}
-    };
-
-    struct VertexData {
-        Vertex* vertices;
-        uint32_t vertexCount;
-        uint32_t vertexStart;
-
-        VertexData() = default;
-
-        VertexData(Vertex* vertices,
-                   const uint32_t &vertexStart = 0,
-                   const uint32_t &vertexCount = MIN_VERTEX_COUNT) :
-                   vertices(vertices),
-                   vertexCount(vertexCount),
-                   vertexStart(vertexStart) {}
     };
 
 }

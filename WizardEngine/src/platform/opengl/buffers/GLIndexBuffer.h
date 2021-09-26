@@ -5,7 +5,6 @@
 #pragma once
 
 #include "../../../graphics/buffers/IndexBuffer.h"
-#include "../../../graphics/GraphicsObject.h"
 
 namespace engine {
 

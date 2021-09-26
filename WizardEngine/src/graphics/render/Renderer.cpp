@@ -9,14 +9,13 @@ namespace engine {
     void Renderer::destroy() {
         vertexArray.reset();
         shaderCache->clear();
-        graphicsObjectCache->clear();
+        delete shaderCache;
     }
 
     void Renderer::onPrepare() {
-        for (auto &iterator : *graphicsObjectCache) {
+        for (auto &iterator : *shaderCache) {
             auto shaderName = iterator.first;
-            auto graphicsObjects = iterator.second;
-            auto shader = shaderCache->get(shaderName);
+            auto shader = iterator.second;
             auto vertexBuffers = vertexArray->getVertexBuffers(shaderName);
             auto indexBuffer = vertexArray->getIndexBuffer();
 
@@ -40,10 +39,20 @@ namespace engine {
     }
 
     void Renderer::onUpdate() {
-        for (auto &iterator : *graphicsObjectCache) {
+        if (activeScene == nullptr) {
+            ENGINE_WARN("Renderer : No active scene!");
+            return;
+        }
+
+        auto shapeEntities = activeScene->getEntities().group<ShapeComponent, TransformComponent>();
+        if (shapeEntities.empty()) {
+            ENGINE_WARN("Renderer : Nothing to draw!");
+            return;
+        }
+
+        for (const auto& iterator : *shaderCache) {
             auto shaderName = iterator.first;
-            auto graphicsObjects = iterator.second;
-            auto shader = shaderCache->get(shaderName);
+            auto shader = iterator.second;
             auto vertexBuffers = vertexArray->getVertexBuffers(shaderName);
             auto indexBuffer = vertexArray->getIndexBuffer();
 
@@ -55,45 +64,41 @@ namespace engine {
             }
 
             uint32_t totalIndexCount = 0;
-            for (const auto& graphicsObject : graphicsObjects) {
-                totalIndexCount += graphicsObject->indexData.indexCount;
+            for (const auto& entity : shapeEntities) {
+                auto [shape, transform] = shapeEntities.get<ShapeComponent, TransformComponent>(entity);
 
-                if (graphicsObject->isUpdated) {
-                    updateObject(graphicsObject);
-                    graphicsObject->isUpdated = false;
+                totalIndexCount += shape.indexData.indexCount;
+
+                if (shape.isUpdated) {
+                    updateShapeComponent(shaderName, shape);
+                    shape.isUpdated = true;
                 }
 
-                // todo move this responsibility to render subsystem. For ex. to MaterialSystem.
-                if (graphicsObject->brightness != nullptr) {
-                    shader->setUniform(*graphicsObject->brightness);
-                }
-                if (graphicsObject->transform != nullptr) {
-                    shader->setUniform(*graphicsObject->transform);
-                }
-                if (graphicsObject->textureSampler != nullptr) {
-                    shader->setUniform(*graphicsObject->textureSampler);
-//                    vertexArray->activateTextureBuffer(graphicsObject->textureSampler->value);
-                }
+//                transform.transformMatrix.rotation.z += 0.001f;
+//                transform.transformMatrix.rotation.x += 0.001f;
+//                transform.transformMatrix.rotation.y += 0.001f;
+//                transform.applyChanges();
+
+                shader->setUniform(transform.transformMatrix);
+            }
+
+            auto materials = activeScene->getEntities().view<TextureComponent>();
+            for (const auto& material : materials) {
+                auto texture = materials.get<TextureComponent>(material);
+                // todo add Material sub system
+                shader->setUniform(texture.texture);
+                vertexArray->activateTextureBuffer(texture.texture.value);
             }
 
             for (const auto& vertexBuffer : vertexBuffers) {
                 vertexBuffer->enableAttributes();
             }
 
-            // todo find a way to bind texture buffer for multiple objects.
-            vertexArray->bindTextureBuffer();
-            vertexArray->activateTextureBuffer(graphicsObjects[0]->textureSampler->value);
-
             drawIndices(totalIndexCount);
 
             vertexArray->unbind();
             shader->stop();
         }
-    }
-
-    void Renderer::loadObject(const Ref<GraphicsObject> &graphicsObject) {
-        addObject(graphicsObject);
-        updateObject(graphicsObject);
     }
 
     void Renderer::addShader(const std::string &name, const Ref<Shader> &shader) {
@@ -120,19 +125,11 @@ namespace engine {
         return shaderCache->exists(name);
     }
 
-    uint32_t Renderer::addObject(const Ref<GraphicsObject> &graphicsObject) {
-        return graphicsObjectCache->add(graphicsObject->shaderName, graphicsObject);
-    }
-
-    void Renderer::updateObject(const Ref<GraphicsObject> &graphicsObject) {
-        vertexArray->bindLastVertexBuffer(graphicsObject->shaderName);
-        vertexArray->loadVertexBuffer(graphicsObject->shaderName, graphicsObject->vertexData);
+    void Renderer::updateShapeComponent(const std::string &shaderName, const ShapeComponent &shapeComponent) {
+        vertexArray->bindLastVertexBuffer(shaderName);
+        vertexArray->loadVertexBuffer(shaderName, shapeComponent.vertexData);
         vertexArray->bindIndexBuffer();
-        vertexArray->loadIndexBuffer(graphicsObject->indexData);
-    }
-
-    const Ref<GraphicsObject>& Renderer::getGraphicsObject(const std::string &shaderName, const uint32_t &objectIndex) {
-        return graphicsObjectCache->get(shaderName, objectIndex);
+        vertexArray->loadIndexBuffer(shapeComponent.indexData);
     }
 
     void Renderer::loadTexture(const std::string &filePath) {

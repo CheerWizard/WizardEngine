@@ -33,6 +33,9 @@ add_subdirectory(vendor/glm)
 add_subdirectory(vendor/stb)
 include_directories(vendor/stb/stb)
 
+#/ ECS lib.
+add_subdirectory(vendor/entt)
+
 #/ linking dependencies.
 target_link_libraries(
         WizardEngine PUBLIC
@@ -42,4 +45,5 @@ target_link_libraries(
         imgui
         glm::glm
         stb
+        EnTT
 )

@@ -27,8 +27,4 @@ namespace engine {
                     data(data) {}
     };
 
-    struct TextureSampler : IntUniform {
-        TextureSampler(const char* name, const int &slot) : IntUniform(name, slot) {}
-    };
-
 }

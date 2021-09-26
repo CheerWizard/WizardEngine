@@ -7,6 +7,7 @@
 #include "Buffer.h"
 
 #include "../geometry/Vertex.h"
+#include "VertexData.h"
 
 #include "vector"
 

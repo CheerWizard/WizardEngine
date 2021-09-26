@@ -11,6 +11,9 @@
 
 namespace engine {
 
+    typedef std::unordered_map<std::string, Ref<Shader>> Shaders;
+    typedef Shaders::iterator ShaderIterator;
+
     class ShaderCache {
 
     public:
@@ -25,8 +28,17 @@ namespace engine {
         bool exists(const std::string& name) const;
         void clear();
 
+    public:
+        ShaderIterator begin() {
+            return _shaders.begin();
+        }
+
+        ShaderIterator end() {
+            return _shaders.end();
+        }
+
     private:
-        std::unordered_map<std::string, Ref<Shader>> _shaders;
+         Shaders _shaders;
 
     };
 

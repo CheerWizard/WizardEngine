@@ -15,7 +15,6 @@
 #include "core/TreeCache.h"
 
 // export Graphics systems.
-#include "graphics/GraphicsObject.h"
 #include "graphics/geometry/Shapes.h"
 // export ImGui system.
 #include "imgui/DemoLayout.h"
