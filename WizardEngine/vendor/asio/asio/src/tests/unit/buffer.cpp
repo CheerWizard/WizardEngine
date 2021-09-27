@@ -333,10 +333,10 @@ void test()
 
     dynamic_string_buffer<char, std::string::traits_type,
       std::string::allocator_type>::mutable_buffers_type mb5
-        = db1.prepare(1024);
+        = db1.onPrepare(1024);
     (void)mb5;
     dynamic_vector_buffer<char, std::allocator<char> >::mutable_buffers_type
-      mb6 = db3.prepare(1024);
+      mb6 = db3.onPrepare(1024);
     (void)mb6;
 
     db1.commit(1024);

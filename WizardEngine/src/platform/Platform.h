@@ -1,6 +1,7 @@
 //
 // Created by mecha on 30.08.2021.
 //
+
 #pragma once
 
 #ifdef WIN32
@@ -41,4 +42,27 @@
 #else
 	/* Unknown compiler/platform */
 	#error "Unknown platform!"
+#endif
+
+#ifdef GLFW
+
+    #define INIT_WINDOW(props) createScope<WindowsWindow>(props)
+    #define INIT_INPUT createScope<WindowsInput>()
+
+	#define GLFW_WINDOW static_cast<GLFWwindow*>(Application::getInstance().getWindow()->getNativeWindow())
+
+	#define GET_WINDOW_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).windowCallback
+    #define GET_KEYBOARD_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).keyboardCallback
+    #define GET_MOUSE_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).mouseCallback
+    #define GET_CURSOR_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).cursorCallback
+
+    #ifdef GL
+        #define GLFW_INCLUDE_NONE
+        #define INIT_GRAPHICS_CONTEXT createScope<GLContext>(GLFW_WINDOW)
+
+    #elif defined(VK)
+        #error "Vulkan graphics context is not supported!"
+
+    #endif
+
 #endif

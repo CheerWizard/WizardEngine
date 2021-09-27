@@ -78,7 +78,7 @@ private:
     reply_buffer_.consume(reply_buffer_.size());
 
     // Wait for a reply. We prepare the buffer to receive up to 64KB.
-    socket_.async_receive(reply_buffer_.prepare(65536),
+    socket_.async_receive(reply_buffer_.onPrepare(65536),
         boost::bind(&pinger::handle_receive, this, boost::placeholders::_2));
   }
 

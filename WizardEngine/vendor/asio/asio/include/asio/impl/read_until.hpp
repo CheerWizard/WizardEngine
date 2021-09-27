@@ -906,7 +906,7 @@ namespace detail
           {
             ASIO_HANDLER_LOCATION((
                   __FILE__, __LINE__, "async_read_until"));
-            stream_.async_read_some(buffers_.prepare(bytes_to_read),
+            stream_.async_read_some(buffers_.onPrepare(bytes_to_read),
                 ASIO_MOVE_CAST(read_until_delim_op_v1)(*this));
           }
           return; default:
@@ -1208,7 +1208,7 @@ namespace detail
           {
             ASIO_HANDLER_LOCATION((
                   __FILE__, __LINE__, "async_read_until"));
-            stream_.async_read_some(buffers_.prepare(bytes_to_read),
+            stream_.async_read_some(buffers_.onPrepare(bytes_to_read),
                 ASIO_MOVE_CAST(read_until_delim_string_op_v1)(*this));
           }
           return; default:
@@ -1821,7 +1821,7 @@ namespace detail
           {
             ASIO_HANDLER_LOCATION((
                   __FILE__, __LINE__, "async_read_until"));
-            stream_.async_read_some(buffers_.prepare(bytes_to_read),
+            stream_.async_read_some(buffers_.onPrepare(bytes_to_read),
                 ASIO_MOVE_CAST(read_until_match_op_v1)(*this));
           }
           return; default:

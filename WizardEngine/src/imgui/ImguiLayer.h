@@ -4,15 +4,12 @@
 
 #pragma once
 
-#include "imgui.h"
-#include <backends/imgui_impl_opengl3.h>
-
 #include <GLFW/glfw3.h>
 
-#include "../core/KeyCodes.h"
-#include "../core/Layer.h"
+#include "../core/Layout.h"
 
-#include "../events/Event.h"
+#include "../core/Events.h"
+#include "../core/LayoutStack.h"
 
 namespace engine {
 
@@ -20,17 +17,58 @@ namespace engine {
 
     public:
         ImGuiLayer();
-        ~ImGuiLayer();
+        ~ImGuiLayer() override = default;
 
     public:
-        void onEvent(Event& e) override;
-        void onAttach() override;
-        void onDetach() override;
+        void onCreate() override;
         void onUpdate(Time deltaTime) override;
+        void onDestroy() override;
+
+    public:
+        static void setDarkTheme();
+
+        void pushLayout(Layout* imGuiLayout);
+        void pushOverLayout(Layout* imGuiLayout);
+        void popLayout(Layout* imGuiLayout);
+        void popOverLayout(Layout* imGuiLayout);
+
+    public:
+        void onWindowClosed() override;
+        void onWindowResized(unsigned int width, unsigned int height) override;
+
+        void onKeyPressed(KeyCode keyCode) override;
+        void onKeyHold(KeyCode keyCode) override;
+        void onKeyReleased(KeyCode keyCode) override;
+        void onKeyTyped(KeyCode keyCode) override;
+
+        void onMousePressed(MouseCode mouseCode) override;
+        void onMouseRelease(MouseCode mouseCode) override;
+        void onMouseScrolled(double xOffset, double yOffset) override;
+
+        void onCursorMoved(double xPos, double yPos) override;
 
     private:
-        float _time = 0.0f;
+        static void onBeginFrame();
+        static void onEndFrame();
 
+        static void beginDockSpace();
+        static void setDockSpace();
+        static void endDockSpace();
+
+    public:
+        static void setDockSpaceOption(const bool &isFullscreen);
+        static void openDockSpace();
+        static void hideDockSpace();
+        static void toggleDockSpace();
+
+    private:
+        LayoutStack _layoutStack;
+
+    private:
+        static bool _isFullScreen;
+        static bool _isDockSpaceOpened;
+        static int _windowFlags;
+        static int _dockSpaceFlags;
     };
 
 }

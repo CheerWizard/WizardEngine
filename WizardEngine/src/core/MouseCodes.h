@@ -8,6 +8,7 @@
 namespace engine {
 
     enum MouseCode : uint16_t {
+        NoneButton             = 16,
         Button0                = 0,
         Button1                = 1,
         Button2                = 2,

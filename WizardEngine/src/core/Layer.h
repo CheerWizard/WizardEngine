@@ -7,28 +7,47 @@
 #include <string>
 
 #include "Time.h"
-#include "../events/Event.h"
+#include "Logger.h"
+#include "Events.h"
+#include "../platform/Platform.h"
 
 namespace engine {
 
-    class Layer {
+    class Layer : public WindowCallback, KeyboardCallback, MouseCallback, CursorCallback {
 
     public:
-        explicit Layer(const std::string& name = "Layer") : mName(name) {}
-        virtual ~Layer() = default;
+
+        explicit Layer(const std::string& tag = "Layer") : tag(tag) {}
+
+        virtual ~Layer() {
+            onDestroy();
+        }
 
     public:
-        virtual void onAttach() {}
-        virtual void onDetach() {}
-        virtual void onUpdate(Time deltaTime) {}
-        virtual void onImGuiRender() {}
-        virtual void onEvent(Event& event) {}
+        virtual void onCreate();
+        virtual void onUpdate(Time deltaTime);
+        virtual void onDestroy();
 
     public:
-        const std::string& getName() const { return mName; }
+        void onWindowClosed() override;
+        void onWindowResized(unsigned int width, unsigned int height) override;
+
+        void onKeyPressed(KeyCode keyCode) override;
+        void onKeyHold(KeyCode keyCode) override;
+        void onKeyReleased(KeyCode keyCode) override;
+        void onKeyTyped(KeyCode keyCode) override;
+
+        void onMousePressed(MouseCode mouseCode) override;
+        void onMouseRelease(MouseCode mouseCode) override;
+        void onMouseScrolled(double xOffset, double yOffset) override;
+
+        void onCursorMoved(double xPos, double yPos) override;
+
+    public:
+        const std::string& getTag() const { return tag; }
 
     protected:
-        std::string mName;
+        std::string tag;
 
     };
 

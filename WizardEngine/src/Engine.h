@@ -4,25 +4,38 @@
 
 #pragma once
 
+// export core module
 #include "core/Application.h"
 #include "core/Logger.h"
 #include "core/Layer.h"
+#include "core/Input.h"
+#include "core/Layout.h"
+#include "core/Time.h"
+#include "core/Memory.h"
+#include "core/TreeCache.h"
 
-extern engine::Application* engine::createApplication();
+// export Graphics module
+#include "graphics/geometry/Shapes.h"
+// export ImGui system.
+#include "imgui/DemoLayout.h"
+#include "imgui/ImguiLayer.h"
+
+// export vendor libs.
+#include "../vendor/imgui/imgui/imgui.h"
+#include "../vendor/stb/stb/stb_image.h"
+
+// export math
+#include "math/ViewProjectionMatrix.h"
+#include "math/TransformMatrix.h"
+
+extern engine::Application* engine::createApplication(); // needs to be defined on Client side.
 
 namespace engine {
 
-    static void init() {
+    static void run() {
         INIT_CLIENT_LOG("Client");
         INIT_ENGINE_LOG("Engine");
-        LOG_PATTERN("%^[%T] %n: %v%$");
 
-        ENGINE_INFO("Initializing...");
-
-        ENGINE_INFO("Init completed!");
-    }
-
-    static void run() {
         ENGINE_INFO("Creating Application...");
         auto app = createApplication();
         ENGINE_INFO("Application created!");

@@ -1,28 +1,14 @@
 //
-// Created by mecha on 28.08.2021.
+// Created by mecha on 05.09.2021.
 //
 
-#include "../../WizardEngine/src/Engine.h"
-
-#include "TestLayer.h"
-
-namespace test {
-
-    class TestApplication : public engine::Application {
-
-    public:
-
-        TestApplication() {
-            pushLayer(new TestLayer());
-        }
-
-        ~TestApplication() override = default;
-
-    };
-
-}
+#include "TestApplication.h"
 
 engine::Application* engine::createApplication() {
     CLIENT_INFO("Creating TestApplication...");
     return new test::TestApplication();
+}
+
+int main() {
+    engine::run();
 }

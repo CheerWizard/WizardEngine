@@ -13,27 +13,21 @@ namespace test {
 
     public:
         TestLayer() : Layer("TestLayer") {
-
         }
 
     public:
 
-        void onAttach() override {
-            CLIENT_INFO("{0} : onAttach()", mName);
+        void onCreate() override {
+            CLIENT_INFO("{0} : create()", tag);
         }
 
-        void onDetach() override {
-            CLIENT_INFO("{0} : onDetach()", mName);
+        void onDestroy() override {
+            CLIENT_INFO("{0} : destroy()", tag);
         }
 
         void onUpdate(engine::Time deltaTime) override {
-            CLIENT_INFO("{0} : onUpdate()", mName);
+            CLIENT_INFO("{0} : onUpdate()", tag);
             CLIENT_INFO("Delta time : {0} ms", deltaTime.getMilliseconds());
-        }
-
-        void onEvent(engine::Event& event) override {
-            CLIENT_INFO("{0} : onEvent()", mName);
-            CLIENT_INFO("{0}", event.toString());
         }
 
     };
