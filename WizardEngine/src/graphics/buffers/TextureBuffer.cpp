@@ -27,7 +27,7 @@ namespace engine {
         // todo fix texture path not found.
         //  cannot open file from directory.
         //  possible to open if texture exists directly in WizardTest package
-        // tested also with '\' and '/' slash paths.
+        //  tested also with '\' and '/' slash paths.
 
         if (data == nullptr) {
             ENGINE_ERR("Error occurs when loading texture from '{0}'", CURRENT_WORKING_DIR + path);

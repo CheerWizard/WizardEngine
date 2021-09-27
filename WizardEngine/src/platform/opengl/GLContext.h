@@ -6,7 +6,7 @@
 
 #include "../../graphics/GraphicsContext.h"
 
-#include "render/GLRenderer.h"
+#include "render/GLRenderSystem.h"
 #include "shader/GLShader.h"
 
 #include "buffers/GLVertexBuffer.h"
@@ -29,7 +29,8 @@ namespace engine {
         void swapBuffers() override;
         void clearDisplay() override;
 
-        Ref<engine::Renderer> newRenderer(ShaderCache *shaderCache, const Ref<engine::VertexArray> &vertexArray) override;
+        Ref<RenderSystem> newRenderSystem() override;
+        Ref<engine::RenderSystem> newRenderSystem(ShaderCache *shaderCache, const Ref<engine::VertexArray> &vertexArray) override;
 
         Ref<engine::VertexArray> newVertexArray(
                 VertexBufferCache *vertexBufferCache,

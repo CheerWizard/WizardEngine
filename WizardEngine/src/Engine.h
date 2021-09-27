@@ -4,7 +4,7 @@
 
 #pragma once
 
-// export core systems.
+// export core module
 #include "core/Application.h"
 #include "core/Logger.h"
 #include "core/Layer.h"
@@ -14,10 +14,11 @@
 #include "core/Memory.h"
 #include "core/TreeCache.h"
 
-// export Graphics systems.
+// export Graphics module
 #include "graphics/geometry/Shapes.h"
 // export ImGui system.
 #include "imgui/DemoLayout.h"
+#include "imgui/ImguiLayer.h"
 
 // export vendor libs.
 #include "../vendor/imgui/imgui/imgui.h"
@@ -27,7 +28,7 @@
 #include "math/ViewProjectionMatrix.h"
 #include "math/TransformMatrix.h"
 
-extern engine::Application* engine::createApplication();
+extern engine::Application* engine::createApplication(); // needs to be defined on Client side.
 
 namespace engine {
 

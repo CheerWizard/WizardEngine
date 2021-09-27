@@ -11,17 +11,15 @@
 #include "LayerStack.h"
 #include "Assert.h"
 #include "Input.h"
+#include "CameraController.h"
 
 #include "../imgui/ImguiLayer.h"
 
 #include "../graphics/GraphicsContext.h"
 
 #include "../platform/Platform.h"
-#include "../graphics/shader/ShaderCache.h"
 
 #include "../ecs/Scene.h"
-
-#include "CameraController.h"
 
 #include "string"
 #include "vector"
@@ -125,7 +123,7 @@ namespace engine {
         ImGuiLayer* _imGuiLayer;
         Scope<Window> _window;
         Scope<GraphicsContext> _graphicsContext;
-        Ref<Renderer> _renderer;
+        Ref<RenderSystem> _renderSystem;
 
     };
 

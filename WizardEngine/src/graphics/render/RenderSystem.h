@@ -12,29 +12,28 @@
 
 #include "../../core/CameraController.h"
 
-#include "../../ecs/Scene.h"
+#include "../../ecs/System.h"
 
 #include "../geometry/ShapeComponent.h"
 #include "../../math/TransformComponent.h"
-#include "../material/MaterialComponents.h"
+#include "material/MaterialComponents.h"
 
 #include "string"
 
 namespace engine {
 
-    class Renderer {
+    class RenderSystem : public System {
 
     public:
-        Renderer(ShaderCache* shaderCache,
-                 const Ref<VertexArray> &vertexArray) :
+        RenderSystem(ShaderCache* shaderCache, const Ref<VertexArray> &vertexArray) :
         shaderCache(shaderCache),
         vertexArray(vertexArray) {}
 
-        virtual ~Renderer() = default;
+        virtual ~RenderSystem() = default;
 
     public:
-        void onPrepare();
-        void onUpdate();
+        void onPrepare() override;
+        void onUpdate() override;
 
         void addShader(const std::string& name, const Ref<Shader>& shader);
         void addShader(const Ref<Shader>& shader);
@@ -52,23 +51,18 @@ namespace engine {
         void destroy();
 
     public:
-        void setCameraController(CameraController* cameraController) {
+        inline void setCameraController(CameraController* cameraController) {
             this->cameraController = cameraController;
-        }
-
-        void setActiveScene(Scene* activeScene) {
-            this->activeScene = activeScene;
         }
 
     protected:
         Ref<VertexArray> vertexArray;
         ShaderCache* shaderCache;
         CameraController* cameraController = nullptr; // weak reference.
-        Scene* activeScene = nullptr; // weak reference.
 
     private:
-        void updateShapeComponent(const std::string &shaderName, const ShapeComponent &shapeComponent);
-        void updateMaterial();
+        void renderShape(const std::string &shaderName, ShapeComponent &shapeComponent);
+        void renderMaterial(Ref<Shader> &shader, const entt::entity &entity);
 
     };
 

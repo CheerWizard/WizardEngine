@@ -2,17 +2,17 @@
 // Created by mecha on 05.09.2021.
 //
 
-#include "Renderer.h"
+#include "RenderSystem.h"
 
 namespace engine {
 
-    void Renderer::destroy() {
+    void RenderSystem::destroy() {
         vertexArray.reset();
         shaderCache->clear();
         delete shaderCache;
     }
 
-    void Renderer::onPrepare() {
+    void RenderSystem::onPrepare() {
         for (auto &iterator : *shaderCache) {
             auto shaderName = iterator.first;
             auto shader = iterator.second;
@@ -38,14 +38,14 @@ namespace engine {
         }
     }
 
-    void Renderer::onUpdate() {
+    void RenderSystem::onUpdate() {
         if (activeScene == nullptr) {
             ENGINE_WARN("Renderer : No active scene!");
             return;
         }
 
-        auto shapeEntities = activeScene->getEntities().group<ShapeComponent, TransformComponent>();
-        if (shapeEntities.empty()) {
+        auto renderableEntities = activeScene->getEntities().group<ShapeComponent, TransformComponent>();
+        if (renderableEntities.empty()) {
             ENGINE_WARN("Renderer : Nothing to draw!");
             return;
         }
@@ -64,30 +64,13 @@ namespace engine {
             }
 
             uint32_t totalIndexCount = 0;
-            for (const auto& entity : shapeEntities) {
-                auto [shape, transform] = shapeEntities.get<ShapeComponent, TransformComponent>(entity);
-
+            for (const auto& renderableEntity : renderableEntities) {
+                auto [shape, transform] = renderableEntities.get<ShapeComponent, TransformComponent>(renderableEntity);
                 totalIndexCount += shape.indexData.indexCount;
 
-                if (shape.isUpdated) {
-                    updateShapeComponent(shaderName, shape);
-                    shape.isUpdated = true;
-                }
-
-//                transform.transformMatrix.rotation.z += 0.001f;
-//                transform.transformMatrix.rotation.x += 0.001f;
-//                transform.transformMatrix.rotation.y += 0.001f;
-//                transform.applyChanges();
-
+                renderShape(shaderName, shape);
+                renderMaterial(shader, renderableEntity);
                 shader->setUniform(transform.transformMatrix);
-            }
-
-            auto materials = activeScene->getEntities().view<TextureComponent>();
-            for (const auto& material : materials) {
-                auto texture = materials.get<TextureComponent>(material);
-                // todo add Material sub system
-                shader->setUniform(texture.texture);
-                vertexArray->activateTextureBuffer(texture.texture.value);
             }
 
             for (const auto& vertexBuffer : vertexBuffers) {
@@ -101,44 +84,53 @@ namespace engine {
         }
     }
 
-    void Renderer::addShader(const std::string &name, const Ref<Shader> &shader) {
+    void RenderSystem::addShader(const std::string &name, const Ref<Shader> &shader) {
         shaderCache->add(name, shader);
         vertexArray->createVertexBuffer(shader->getVertexFormat(), shader->getName());
     }
 
-    void Renderer::addShader(const Ref<Shader> &shader) {
+    void RenderSystem::addShader(const Ref<Shader> &shader) {
         shaderCache->add(shader);
         vertexArray->createVertexBuffer(shader->getVertexFormat(), shader->getName());
     }
 
-    Ref<Shader> Renderer::loadShader(const ShaderProps &shaderProps, VertexFormat *vertexFormat) {
+    Ref<Shader> RenderSystem::loadShader(const ShaderProps &shaderProps, VertexFormat *vertexFormat) {
         auto newShader = shaderCache->load(shaderProps, vertexFormat);
         vertexArray->createVertexBuffer(newShader->getVertexFormat(), newShader->getName());
         return newShader;
     }
 
-    Ref<Shader> Renderer::getShader(const std::string &name) {
+    Ref<Shader> RenderSystem::getShader(const std::string &name) {
         return shaderCache->get(name);
     }
 
-    bool Renderer::shaderExists(const std::string &name) const {
+    bool RenderSystem::shaderExists(const std::string &name) const {
         return shaderCache->exists(name);
     }
 
-    void Renderer::updateShapeComponent(const std::string &shaderName, const ShapeComponent &shapeComponent) {
+    void RenderSystem::renderShape(const std::string &shaderName, ShapeComponent &shapeComponent) {
+        if (!shapeComponent.isUpdated) return;
+        shapeComponent.isUpdated = false;
+
         vertexArray->bindLastVertexBuffer(shaderName);
         vertexArray->loadVertexBuffer(shaderName, shapeComponent.vertexData);
         vertexArray->bindIndexBuffer();
         vertexArray->loadIndexBuffer(shapeComponent.indexData);
     }
 
-    void Renderer::loadTexture(const std::string &filePath) {
+    void RenderSystem::loadTexture(const std::string &filePath) {
         vertexArray->bindTextureBuffer();
         vertexArray->loadTextureBuffer(filePath);
     }
 
-    void Renderer::loadTextureData(const void *data) {
+    void RenderSystem::loadTextureData(const void *data) {
         vertexArray->loadTextureBufferData(data);
+    }
+
+    void RenderSystem::renderMaterial(Ref<Shader> &shader, const entt::entity &entity) {
+        auto texture = activeScene->getComponent<TextureComponent>(entity);
+        shader->setUniform(texture.texture);
+        vertexArray->activateTextureBuffer(texture.texture.value);
     }
 
 }

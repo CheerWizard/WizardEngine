@@ -45,10 +45,7 @@ namespace engine {
         _imGuiLayer = new ImGuiLayer();
         pushOverlay(_imGuiLayer);
 
-        auto indexBuffer = _graphicsContext->newIndexBuffer();
-        auto vertexArray = _graphicsContext->newVertexArray(new VertexBufferCache(), indexBuffer);
-
-        _renderer = _graphicsContext->newRenderer(new ShaderCache(), vertexArray);
+        _renderSystem = _graphicsContext->newRenderSystem();
 
         createCamera3D("camera");
         createActiveScene();
@@ -56,7 +53,7 @@ namespace engine {
 
     void Application::onPrepare() {
         _window->onPrepare();
-        _renderer->onPrepare();
+        _renderSystem->onPrepare();
     }
 
     void Application::onDestroy() {
@@ -64,14 +61,14 @@ namespace engine {
         delete cameraController;
         delete activeScene;
         input.reset();
-        _renderer.reset();
+        _renderSystem.reset();
         _window->onDestroy();
         _window.reset();
     }
 
     void Application::onUpdate() {
         Time deltaTime = Time();
-        _renderer->onUpdate();
+        _renderSystem->onUpdate();
         _layerStack.onUpdate(deltaTime);
         _window->onUpdate();
         _graphicsContext->swapBuffers();
@@ -147,23 +144,23 @@ namespace engine {
     }
 
     void Application::addShader(const std::string &name, const Ref<Shader> &shader) {
-        _renderer->addShader(name, shader);
+        _renderSystem->addShader(name, shader);
     }
 
     void Application::addShader(const Ref<Shader> &shader) {
-        _renderer->addShader(shader);
+        _renderSystem->addShader(shader);
     }
 
     Ref<Shader> Application::loadShader(const ShaderProps &shaderProps, VertexFormat* vertexFormat) {
-        return _renderer->loadShader(shaderProps, vertexFormat);
+        return _renderSystem->loadShader(shaderProps, vertexFormat);
     }
 
     Ref<Shader> Application::getShader(const std::string &name) {
-        return _renderer->getShader(name);
+        return _renderSystem->getShader(name);
     }
 
     bool Application::shaderExists(const std::string &name) const {
-        return _renderer->shaderExists(name);
+        return _renderSystem->shaderExists(name);
     }
 
     float Application::getAspectRatio() const {
@@ -175,11 +172,11 @@ namespace engine {
     }
 
     void Application::loadTexture(const std::string &filePath) {
-        _renderer->loadTexture(filePath);
+        _renderSystem->loadTexture(filePath);
     }
 
     void Application::loadTextureData(const void *data) {
-        _renderer->loadTextureData(data);
+        _renderSystem->loadTextureData(data);
     }
 
     void Application::createCamera3D(const char *name) {
@@ -204,12 +201,12 @@ namespace engine {
     void Application::createCamera3D(Camera3d* camera3D) {
         delete cameraController;
         cameraController = new Camera3dController(camera3D);
-        _renderer->setCameraController(cameraController);
+        _renderSystem->setCameraController(cameraController);
     }
 
     void Application::createActiveScene() {
         activeScene = new Scene();
-        _renderer->setActiveScene(activeScene);
+        _renderSystem->setActiveScene(activeScene);
     }
 
 }

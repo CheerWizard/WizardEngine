@@ -6,9 +6,6 @@
 
 #include "Scene.h"
 
-#include "../core/Logger.h"
-#include "../core/Assert.h"
-
 #include <entt/entt.hpp>
 
 namespace engine {
@@ -28,26 +25,22 @@ namespace engine {
 
         template<typename T, typename... Args>
         T& addComponent(Args &&... args) {
-            ENGINE_ASSERT(!hasComponent<T>(), "Entity already has component!")
-            return _scene->_entities.emplace<T>(_id, std::forward<Args>(args)...);
+            return _scene->addComponent<T>(_id, std::forward<Args>(args)...);
         }
 
         template<typename T>
         T& getComponent() {
-            auto component = _scene->_entities.try_get<T>(_id);
-            ENGINE_ASSERT(component != nullptr, "Entity does not have component!");
-            return *component;
+            return _scene->getComponent<T>(_id);
         }
 
         template<typename T>
         bool hasComponent() {
-            return _scene->_entities.try_get<T>(_id) != nullptr;
+            return _scene->hasComponent<T>(_id);
         }
 
         template<typename T>
         void removeComponent() {
-            ENGINE_ASSERT(hasComponent<T>(), "Entity does not have component!")
-            _scene->_entities.remove<T>(_id);
+            _scene->removeComponent<T>(_id);
         }
 
         operator bool() const { return _id != entt::null; }
@@ -63,8 +56,8 @@ namespace engine {
         }
 
     private:
-        Scene* _scene = nullptr;
         entt::entity _id = { entt::null };
+        Scene* _scene = nullptr;
 
     };
 

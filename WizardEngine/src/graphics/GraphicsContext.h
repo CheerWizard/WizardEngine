@@ -7,7 +7,7 @@
 #include "../core/Memory.h"
 #include "../core/Assert.h"
 
-#include "render/Renderer.h"
+#include "render/RenderSystem.h"
 #include "shader/Shader.h"
 #include "buffers/VertexArray.h"
 
@@ -33,7 +33,9 @@ namespace engine {
         virtual void clearDisplay() = 0;
         virtual void enableDepth() = 0;
 
-        virtual Ref<Renderer> newRenderer(ShaderCache* shaderCache, const Ref<VertexArray>& vertexArray) = 0;
+        virtual Ref<RenderSystem> newRenderSystem() = 0;
+
+        virtual Ref<RenderSystem> newRenderSystem(ShaderCache* shaderCache, const Ref<VertexArray>& vertexArray) = 0;
 
         virtual Ref<VertexArray> newVertexArray(
                 VertexBufferCache* vertexBufferCache,

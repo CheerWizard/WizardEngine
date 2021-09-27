@@ -25,7 +25,8 @@ namespace engine {
         void onDestroy() override;
 
     public:
-        void setDarkTheme();
+        static void setDarkTheme();
+
         void pushLayout(Layout* imGuiLayout);
         void pushOverLayout(Layout* imGuiLayout);
         void popLayout(Layout* imGuiLayout);
@@ -47,12 +48,27 @@ namespace engine {
         void onCursorMoved(double xPos, double yPos) override;
 
     private:
-        void onBeginFrame();
-        void onEndFrame();
+        static void onBeginFrame();
+        static void onEndFrame();
+
+        static void beginDockSpace();
+        static void setDockSpace();
+        static void endDockSpace();
+
+    public:
+        static void setDockSpaceOption(const bool &isFullscreen);
+        static void openDockSpace();
+        static void hideDockSpace();
+        static void toggleDockSpace();
 
     private:
         LayoutStack _layoutStack;
 
+    private:
+        static bool _isFullScreen;
+        static bool _isDockSpaceOpened;
+        static int _windowFlags;
+        static int _dockSpaceFlags;
     };
 
 }

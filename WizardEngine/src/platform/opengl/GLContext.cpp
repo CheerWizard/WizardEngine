@@ -73,13 +73,21 @@ namespace engine {
         return createRef<GLTextureBuffer>();
     }
 
-    Ref<Renderer> GLContext::newRenderer(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray) {
-        return createRef<GLRenderer>(shaderCache, vertexArray);
+    Ref<RenderSystem> GLContext::newRenderSystem(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray) {
+        return createRef<GLRenderSystem>(shaderCache, vertexArray);
     }
 
     Ref<VertexArray> GLContext::newVertexArray(VertexBufferCache *vertexBufferCache,
                                                const Ref<IndexBuffer> &indexBuffer) {
         return createRef<GLVertexArray>(vertexBufferCache, indexBuffer);
+    }
+
+    Ref<engine::RenderSystem> GLContext::newRenderSystem() {
+        auto indexBuffer = newIndexBuffer();
+        auto vertexBufferCache = new VertexBufferCache();
+        auto shaderCache = new ShaderCache();
+        auto vertexArray = newVertexArray(vertexBufferCache, indexBuffer);
+        return newRenderSystem(shaderCache, vertexArray);
     }
 
 }

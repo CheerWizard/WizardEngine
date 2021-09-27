@@ -13,7 +13,7 @@ namespace engine {
         VertexData vertexData;
         IndexData indexData;
 
-        bool isUpdated = false; //used to notify RenderSystem that this struct data needs to be uploaded to appropriate GPU buffer.
+        bool isUpdated = false; //used to notify RenderSystem that this Component has been updated.
 
         ShapeComponent() = default;
 

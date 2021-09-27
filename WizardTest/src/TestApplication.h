@@ -95,8 +95,11 @@ namespace test {
             entity.addComponent<engine::TransformComponent>(transform);
             entity.addComponent<engine::TextureComponent>(texture);
 
+            engine::ImGuiLayer::hideDockSpace();
+
+            //todo add FrameBuffer and set viewport for scene window to dock space!
             //todo fix 3D viewProjection3d. object is going to wide during rotation.
-            //todo Add Material system.
+            //todo search and add different Material components.
         }
 
         void onPrepare() override {
@@ -125,6 +128,14 @@ namespace test {
             transform.rotation.x += 0.001f;
             transform.rotation.y += 0.001f;
             transform.applyChanges();
+        }
+
+        void onKeyPressed(engine::KeyCode keyCode) override {
+            Application::onKeyPressed(keyCode);
+
+            if (keyCode == engine::KeyCode::D2) {
+                engine::ImGuiLayer::toggleDockSpace();
+            }
         }
 
         void onDestroy() override {
