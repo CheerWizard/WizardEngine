@@ -30,12 +30,21 @@
 #define IMGUI_LAYER APP.getImGuiLayer()
 #define GRAPHICS_CONTEXT APP.getGraphicsContext()
 
+#define DEFAULT_CAMERA_NAME "camera"
+
 namespace engine {
+
+    enum EngineType : bool {
+        ENGINE_2D = false,
+        ENGINE_3D = true
+    };
 
     class Application : public WindowCallback, KeyboardCallback, MouseCallback, CursorCallback {
 
     public:
-        Application() = default;
+        Application(const EngineType &engineType = ENGINE_3D) :
+        _engineType(engineType) {}
+
         virtual ~Application() = default;
 
     public:
@@ -62,6 +71,7 @@ namespace engine {
 
     public:
         void run();
+        void restart();
 
     public:
         void onWindowClosed() override;
@@ -102,11 +112,20 @@ namespace engine {
         void loadTexture(const std::string &filePath);
         void loadTextureData(const void* data);
 
-        void createCamera3D(Camera3d* camera3D);
+        void createCamera(const char* name = DEFAULT_CAMERA_NAME);
+        void createActiveScene();
+
+    private:
         void createCamera3D(const char* name);
         void createCamera3D(const char* name, const glm::vec3 &position);
+        void createCamera3D(Camera3d* camera3D);
 
-        void createActiveScene();
+        void createCamera2D(const char* name);
+        void createCamera2D(const char* name, const glm::vec3 &position);
+        void createCamera2D(Camera2d* camera2D);
+
+        void createRenderSystem();
+
 
     protected:
         Scope<Input> input;
@@ -118,6 +137,7 @@ namespace engine {
         static Application* _instance;
 
     private:
+        EngineType _engineType;
         bool _isRunning = true;
         LayerStack _layerStack;
         ImGuiLayer* _imGuiLayer;

@@ -37,4 +37,8 @@ namespace engine {
         return shader;
     }
 
+    ShaderCache::~ShaderCache() {
+        clear();
+    }
+
 }

@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "Drawer.h"
+
 #include "../../core/TreeCache.h"
 
 #include "../buffers/VertexArray.h"
@@ -25,9 +27,12 @@ namespace engine {
     class RenderSystem : public System {
 
     public:
-        RenderSystem(ShaderCache* shaderCache, const Ref<VertexArray> &vertexArray) :
+        RenderSystem(ShaderCache* shaderCache,
+                     const Ref<VertexArray> &vertexArray,
+                     const Ref<Drawer> &drawer) :
         shaderCache(shaderCache),
-        vertexArray(vertexArray) {}
+        vertexArray(vertexArray),
+        drawer(drawer) {}
 
         virtual ~RenderSystem() = default;
 
@@ -45,7 +50,8 @@ namespace engine {
         void loadTextureData(const void* data);
 
     protected:
-        virtual void drawIndices(const uint32_t &indexCount) = 0;
+        virtual void renderMaterial(Ref<Shader> &shader, const entt::entity &entity) = 0;
+        virtual void renderTransform(Ref<Shader> &shader, const entt::entity &entity) = 0;
 
     protected:
         void destroy();
@@ -57,12 +63,45 @@ namespace engine {
 
     protected:
         Ref<VertexArray> vertexArray;
+        Ref<Drawer> drawer;
         ShaderCache* shaderCache;
         CameraController* cameraController = nullptr; // weak reference.
 
     private:
         void renderShape(const std::string &shaderName, ShapeComponent &shapeComponent);
-        void renderMaterial(Ref<Shader> &shader, const entt::entity &entity);
+        void renderCamera(const Ref<Shader>& shader);
+
+    };
+
+    class RenderSystem2d : public RenderSystem {
+
+    public:
+        RenderSystem2d(ShaderCache* shaderCache,
+                     const Ref<VertexArray> &vertexArray,
+                     const Ref<Drawer> &drawer) :
+                     RenderSystem(shaderCache, vertexArray, drawer) {}
+
+        ~RenderSystem2d() override = default;
+
+    protected:
+        void renderMaterial(Ref<Shader> &shader, const entt::entity &entity) override;
+        void renderTransform(Ref<Shader> &shader, const entt::entity &entity) override;
+
+    };
+
+    class RenderSystem3d : public RenderSystem {
+
+    public:
+        RenderSystem3d(ShaderCache* shaderCache,
+                       const Ref<VertexArray> &vertexArray,
+                       const Ref<Drawer> &drawer) :
+                       RenderSystem(shaderCache, vertexArray, drawer) {}
+
+        ~RenderSystem3d() override = default;
+
+    protected:
+        void renderMaterial(Ref<Shader> &shader, const entt::entity &entity) override;
+        void renderTransform(Ref<Shader> &shader, const entt::entity &entity) override;
 
     };
 

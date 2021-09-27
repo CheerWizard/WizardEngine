@@ -18,7 +18,7 @@ namespace engine {
 
     public:
         ShaderCache() = default;
-        ~ShaderCache() = default;
+        ~ShaderCache();
 
     public:
         void add(const std::string& name, const Ref<Shader>& shader);

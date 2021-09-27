@@ -117,6 +117,22 @@ namespace engine {
 
     };
 
-    // todo implement camera 2D
+    // todo fix 2D projection!
+    class Camera2dController : public CameraController {
+
+    public:
+        Camera2dController(Camera2d* camera2D) : _camera2D(camera2D) {}
+        ~Camera2dController() override;
+
+        void zoom(const ZoomType &zoomType) override;
+        void move(const MoveType &moveType) override;
+        void rotate(const RotateType &rotateType) override;
+        void applyChanges() override;
+        Mat4fUniform &getCamera() override;
+
+    private:
+        Camera2d* _camera2D;
+
+    };
 
 }

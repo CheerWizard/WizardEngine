@@ -8,6 +8,8 @@
 #include "../core/Assert.h"
 
 #include "render/RenderSystem.h"
+#include "render/Drawer.h"
+
 #include "shader/Shader.h"
 #include "buffers/VertexArray.h"
 
@@ -33,9 +35,20 @@ namespace engine {
         virtual void clearDisplay() = 0;
         virtual void enableDepth() = 0;
 
-        virtual Ref<RenderSystem> newRenderSystem() = 0;
+        virtual Ref<Drawer> newDrawer() = 0;
 
-        virtual Ref<RenderSystem> newRenderSystem(ShaderCache* shaderCache, const Ref<VertexArray>& vertexArray) = 0;
+        virtual Ref<RenderSystem> newRenderSystem2d() = 0;
+
+        virtual Ref<RenderSystem> newRenderSystem2d(ShaderCache* shaderCache,
+                                                  const Ref<VertexArray>& vertexArray,
+                                                  const Ref<Drawer>& drawer) = 0;
+
+
+        virtual Ref<RenderSystem> newRenderSystem3d() = 0;
+
+        virtual Ref<RenderSystem> newRenderSystem3d(ShaderCache* shaderCache,
+                                                    const Ref<VertexArray>& vertexArray,
+                                                    const Ref<Drawer>& drawer) = 0;
 
         virtual Ref<VertexArray> newVertexArray(
                 VertexBufferCache* vertexBufferCache,

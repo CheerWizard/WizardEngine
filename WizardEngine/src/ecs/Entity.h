@@ -24,22 +24,22 @@ namespace engine {
     public:
 
         template<typename T, typename... Args>
-        T& addComponent(Args &&... args) {
+        inline T& addComponent(Args &&... args) {
             return _scene->addComponent<T>(_id, std::forward<Args>(args)...);
         }
 
         template<typename T>
-        T& getComponent() {
+        inline T& getComponent() {
             return _scene->getComponent<T>(_id);
         }
 
         template<typename T>
-        bool hasComponent() {
+        inline const bool hasComponent() {
             return _scene->hasComponent<T>(_id);
         }
 
         template<typename T>
-        void removeComponent() {
+        inline void removeComponent() {
             _scene->removeComponent<T>(_id);
         }
 
