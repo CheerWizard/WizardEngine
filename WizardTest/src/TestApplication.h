@@ -27,6 +27,9 @@ namespace test {
 
     class TestApplication : public engine::Application {
 
+    public:
+        TestApplication(const engine::EngineType &engineType = engine::ENGINE_3D) : Application(engineType) {}
+
     protected:
 
         void onCreate() override {
@@ -69,11 +72,8 @@ namespace test {
 
             auto shape2dShader = loadShader(shape2dShaderProps, shape2dVertex);
 
-            auto transform = engine::TransformComponent {
+            auto transform = engine::TransformComponent3d {
                 "transform",
-                {0.5, 0.5, -0.5},
-                {0, 0, 0},
-                {1, 1, 1}
             };
             transform.applyChanges();
 
@@ -92,7 +92,7 @@ namespace test {
 
             entity = activeScene->createEntity("DemoEntity");
             entity.addComponent<engine::ShapeComponent>(shape);
-            entity.addComponent<engine::TransformComponent>(transform);
+            entity.addComponent<engine::TransformComponent3d>(transform);
             entity.addComponent<engine::TextureComponent>(texture);
 
             engine::ImGuiLayer::hideDockSpace();
@@ -121,13 +121,15 @@ namespace test {
             Application::onUpdate();
             CLIENT_INFO("onUpdate()");
 
-            auto transform = entity.getComponent<engine::TransformComponent>().transformMatrix;
-            // todo if update component here, value will not be changed!
-            // todo however, if you update Component for ex. in Renderer, value will be changed everywhere!
-            transform.rotation.z += 0.001f;
-            transform.rotation.x += 0.001f;
-            transform.rotation.y += 0.001f;
-            transform.applyChanges();
+            if (entity.hasComponent<engine::TransformComponent3d>()) {
+                auto transform = entity.getComponent<engine::TransformComponent3d>().transformMatrix;
+                // todo if update component here, value will not be changed!
+                // todo however, if you update Component for ex. in Renderer, value will be changed everywhere!
+                transform.rotation.z += 0.001f;
+                transform.rotation.x += 0.001f;
+                transform.rotation.y += 0.001f;
+                transform.applyChanges();
+            }
         }
 
         void onKeyPressed(engine::KeyCode keyCode) override {

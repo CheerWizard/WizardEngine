@@ -154,4 +154,76 @@ namespace engine {
         return *_camera3D;
     }
 
+    Camera2dController::~Camera2dController() {
+        delete _camera2D;
+    }
+
+    void Camera2dController::zoom(const ZoomType &zoomType) {
+        switch (zoomType) {
+            case ZoomType::IN:
+                _camera2D->viewMatrix.position.z += zoomSpeed;
+                break;
+            case ZoomType::OUT:
+                _camera2D->viewMatrix.position.z -= zoomSpeed;
+                break;
+        }
+    }
+
+    void Camera2dController::move(const MoveType &moveType) {
+        switch (moveType) {
+            case MoveType::DOWN:
+                _camera2D->viewMatrix.position.y -= moveSpeed;
+                break;
+            case MoveType::UP:
+                _camera2D->viewMatrix.position.y += moveSpeed;
+                break;
+            case MoveType::LEFT:
+                _camera2D->viewMatrix.position.x += moveSpeed;
+                break;
+            case MoveType::RIGHT:
+                _camera2D->viewMatrix.position.x -= moveSpeed;
+                break;
+            case MoveType::RIGHT_DOWN:
+                _camera2D->viewMatrix.position.x -= moveSpeed;
+                _camera2D->viewMatrix.position.y -= moveSpeed;
+                break;
+            case MoveType::RIGHT_UP:
+                _camera2D->viewMatrix.position.x -= moveSpeed;
+                _camera2D->viewMatrix.position.y += moveSpeed;
+                break;
+            case MoveType::LEFT_DOWN:
+                _camera2D->viewMatrix.position.x += moveSpeed;
+                _camera2D->viewMatrix.position.y -= moveSpeed;
+                break;
+            case MoveType::LEFT_UP:
+                _camera2D->viewMatrix.position.x += moveSpeed;
+                _camera2D->viewMatrix.position.y += moveSpeed;
+                break;
+        }
+    }
+
+    void Camera2dController::rotate(const RotateType &rotateType) {
+        if (rotateType == RotateType::LEFT_X ||
+        rotateType == RotateType::LEFT_Y ||
+        rotateType == RotateType::LEFT_Z) {
+            _camera2D->viewMatrix.rotation -= rotateSpeed;
+            return;
+        }
+
+        if (rotateType == RotateType::RIGHT_X ||
+        rotateType == RotateType::RIGHT_Y ||
+        rotateType == RotateType::RIGHT_Z) {
+            _camera2D->viewMatrix.rotation += rotateSpeed;
+            return;
+        }
+    }
+
+    void Camera2dController::applyChanges() {
+        _camera2D->applyChanges();
+    }
+
+    Mat4fUniform &Camera2dController::getCamera() {
+        return *_camera2D;
+    }
+
 }

@@ -6,14 +6,6 @@
 
 #include "../../graphics/GraphicsContext.h"
 
-#include "render/GLRenderSystem.h"
-#include "shader/GLShader.h"
-
-#include "buffers/GLVertexBuffer.h"
-#include "buffers/GLIndexBuffer.h"
-#include "buffers/GLVertexArray.h"
-#include "buffers/GLTextureBuffer.h"
-
 struct GLFWwindow;
 
 namespace engine {
@@ -28,13 +20,11 @@ namespace engine {
         void onCreate() override;
         void swapBuffers() override;
         void clearDisplay() override;
+        void enableDepth() override;
 
-        Ref<RenderSystem> newRenderSystem() override;
-        Ref<engine::RenderSystem> newRenderSystem(ShaderCache *shaderCache, const Ref<engine::VertexArray> &vertexArray) override;
-
-        Ref<engine::VertexArray> newVertexArray(
+        Ref<VertexArray> newVertexArray(
                 VertexBufferCache *vertexBufferCache,
-                const Ref<engine::IndexBuffer> &indexBuffer) override;
+                const Ref<IndexBuffer> &indexBuffer) override;
 
         Ref<IndexBuffer> newIndexBuffer() override;
         Ref<IndexBuffer> newIndexBuffer(const uint32_t &indexCount) override;
@@ -43,9 +33,17 @@ namespace engine {
 
         Ref<Shader> newShader(const ShaderProps &shaderProps, VertexFormat *vertexFormat) override;
 
-        void enableDepth() override;
-
         Ref<TextureBuffer> newTextureBuffer() override;
+
+        Ref<engine::Drawer> newDrawer() override;
+
+        Ref<RenderSystem> newRenderSystem2d() override;
+        Ref<RenderSystem> newRenderSystem2d(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray,
+                                            const Ref<Drawer> &drawer) override;
+
+        Ref<RenderSystem> newRenderSystem3d() override;
+        Ref<RenderSystem> newRenderSystem3d(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray,
+                                            const Ref<Drawer> &drawer) override;
 
     private:
         std::string getAPIName() override;

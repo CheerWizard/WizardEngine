@@ -45,10 +45,9 @@ namespace engine {
         _imGuiLayer = new ImGuiLayer();
         pushOverlay(_imGuiLayer);
 
-        _renderSystem = _graphicsContext->newRenderSystem();
-
-        createCamera3D("camera");
+        createRenderSystem();
         createActiveScene();
+        createCamera();
     }
 
     void Application::onPrepare() {
@@ -186,8 +185,8 @@ namespace engine {
     void Application::createCamera3D(const char *name, const glm::vec3 &position) {
         auto camera3D = new engine::Camera3d {
             name,
-            engine::ViewMatrix {
-                "view",
+            engine::ViewMatrix3d {
+                "view3d",
                 position
                 },
                 engine::PerspectiveMatrix {
@@ -199,7 +198,6 @@ namespace engine {
     }
 
     void Application::createCamera3D(Camera3d* camera3D) {
-        delete cameraController;
         cameraController = new Camera3dController(camera3D);
         _renderSystem->setCameraController(cameraController);
     }
@@ -207,6 +205,51 @@ namespace engine {
     void Application::createActiveScene() {
         activeScene = new Scene();
         _renderSystem->setActiveScene(activeScene);
+    }
+
+    void Application::createCamera2D(const char *name) {
+        createCamera2D(name, {0, 0, 1});
+    }
+
+    void Application::createCamera2D(const char *name, const glm::vec3 &position) {
+        auto camera2D = new engine::Camera2d {
+            name,
+            engine::ViewMatrix2d {
+                "view2d",
+                position
+                },
+                engine::OrthographicMatrix {
+                "projection2d",
+                getAspectRatio()
+            }
+        };
+        createCamera2D(camera2D);
+    }
+
+    void Application::createCamera2D(Camera2d *camera2D) {
+        cameraController = new Camera2dController(camera2D);
+        _renderSystem->setCameraController(cameraController);
+    }
+
+    void Application::restart() {
+        onDestroy();
+        onCreate();
+    }
+
+    void Application::createCamera(const char *name) {
+        if (_engineType == ENGINE_2D) {
+            createCamera2D(name);
+        } else {
+            createCamera3D(name);
+        }
+    }
+
+    void Application::createRenderSystem() {
+        if (_engineType == ENGINE_2D) {
+            _renderSystem = _graphicsContext->newRenderSystem2d();
+        } else {
+            _renderSystem = _graphicsContext->newRenderSystem3d();
+        }
     }
 
 }

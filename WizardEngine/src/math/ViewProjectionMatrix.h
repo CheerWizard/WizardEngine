@@ -12,11 +12,11 @@
 namespace engine {
 
     struct ViewProjection2d : Mat4fUniform {
-        ViewMatrix viewMatrix;
+        ViewMatrix2d viewMatrix;
         OrthographicMatrix orthographicMatrix;
 
         ViewProjection2d(const char* name,
-                             const ViewMatrix &viewMatrix,
+                             const ViewMatrix2d &viewMatrix,
                              const OrthographicMatrix &orthographicMatrix) :
                              orthographicMatrix(orthographicMatrix),
                              viewMatrix(viewMatrix),
@@ -28,11 +28,11 @@ namespace engine {
     };
 
     struct ViewProjection3d : Mat4fUniform {
-        ViewMatrix viewMatrix;
+        ViewMatrix3d viewMatrix;
         PerspectiveMatrix perspectiveMatrix;
 
         ViewProjection3d(const char* name,
-                         const ViewMatrix &viewMatrix,
+                         const ViewMatrix3d &viewMatrix,
                          const PerspectiveMatrix &perspectiveMatrix) :
                          perspectiveMatrix(perspectiveMatrix),
                          viewMatrix(viewMatrix),
