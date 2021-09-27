@@ -7,8 +7,6 @@
 namespace engine {
 
     void RenderSystem::destroy() {
-        vertexArray.reset();
-        shaderCache->clear();
         delete shaderCache;
     }
 
@@ -44,7 +42,7 @@ namespace engine {
             return;
         }
 
-        auto renderableEntities = activeScene->getEntities().group<ShapeComponent, TransformComponent>();
+        auto renderableEntities = activeScene->getEntities().view<ShapeComponent>();
         if (renderableEntities.empty()) {
             ENGINE_WARN("Renderer : Nothing to draw!");
             return;
@@ -59,25 +57,23 @@ namespace engine {
             shader->start();
             vertexArray->bind();
 
-            if (cameraController != nullptr) {
-                shader->setUniform(cameraController->getCamera());
-            }
+            renderCamera(shader);
 
             uint32_t totalIndexCount = 0;
             for (const auto& renderableEntity : renderableEntities) {
-                auto [shape, transform] = renderableEntities.get<ShapeComponent, TransformComponent>(renderableEntity);
-                totalIndexCount += shape.indexData.indexCount;
+                auto shapeComponent = renderableEntities.get<ShapeComponent>(renderableEntity);
+                totalIndexCount += shapeComponent.indexData.indexCount;
 
-                renderShape(shaderName, shape);
+                renderShape(shaderName, shapeComponent);
                 renderMaterial(shader, renderableEntity);
-                shader->setUniform(transform.transformMatrix);
+                renderTransform(shader, renderableEntity);
             }
 
             for (const auto& vertexBuffer : vertexBuffers) {
                 vertexBuffer->enableAttributes();
             }
 
-            drawIndices(totalIndexCount);
+            drawer->drawIndices(totalIndexCount);
 
             vertexArray->unbind();
             shader->stop();
@@ -127,10 +123,40 @@ namespace engine {
         vertexArray->loadTextureBufferData(data);
     }
 
-    void RenderSystem::renderMaterial(Ref<Shader> &shader, const entt::entity &entity) {
+    void RenderSystem::renderCamera(const Ref<Shader> &shader) {
+        if (cameraController != nullptr) {
+            shader->setUniform(cameraController->getCamera());
+        }
+    }
+
+    void RenderSystem3d::renderMaterial(Ref<Shader> &shader, const entt::entity &entity) {
+        if (!activeScene->hasComponent<TextureComponent>(entity)) return;
+
         auto texture = activeScene->getComponent<TextureComponent>(entity);
         shader->setUniform(texture.texture);
         vertexArray->activateTextureBuffer(texture.texture.value);
+    }
+
+    void RenderSystem3d::renderTransform(Ref<Shader> &shader, const entt::entity &entity) {
+        if (!activeScene->hasComponent<TransformComponent3d>(entity)) return;
+
+        auto transform3d = activeScene->getComponent<TransformComponent3d>(entity);
+        shader->setUniform(transform3d.transformMatrix);
+    }
+
+    void RenderSystem2d::renderMaterial(Ref<Shader> &shader, const entt::entity &entity) {
+        if (!activeScene->hasComponent<TextureComponent>(entity)) return;
+
+        auto texture = activeScene->getComponent<TextureComponent>(entity);
+        shader->setUniform(texture.texture);
+        vertexArray->activateTextureBuffer(texture.texture.value);
+    }
+
+    void RenderSystem2d::renderTransform(Ref<Shader> &shader, const entt::entity &entity) {
+        if (!activeScene->hasComponent<TransformComponent2d>(entity)) return;
+
+        auto transform2d = activeScene->getComponent<TransformComponent2d>(entity);
+        shader->setUniform(transform2d.transformMatrix);
     }
 
 }

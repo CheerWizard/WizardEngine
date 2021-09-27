@@ -30,25 +30,23 @@ namespace engine {
         void deleteEntity(const Entity& entity);
 
         template<typename T, typename... Args>
-        T& addComponent(const entt::entity& entityId, Args &&... args) {
+        inline T& addComponent(const entt::entity& entityId, Args &&... args) {
             ENGINE_ASSERT(!hasComponent<T>(entityId), "Entity already has component!")
             return _entities.emplace<T>(entityId, std::forward<Args>(args)...);
         }
 
         template<typename T>
-        T& getComponent(const entt::entity& entityId) {
-            auto component = _entities.try_get<T>(entityId);
-            ENGINE_ASSERT(component != nullptr, "Entity does not have component!")
-            return *component;
+        inline T& getComponent(const entt::entity& entityId) {
+            return *_entities.try_get<T>(entityId);
         }
 
         template<typename T>
-        bool hasComponent(const entt::entity& entityId) {
+        inline bool hasComponent(const entt::entity& entityId) const {
             return _entities.try_get<T>(entityId) != nullptr;
         }
 
         template<typename T>
-        void removeComponent(const entt::entity& entityId) {
+        inline void removeComponent(const entt::entity& entityId) {
             ENGINE_ASSERT(hasComponent<T>(), "Entity does not have component!")
             _entities.remove<T>(entityId);
         }

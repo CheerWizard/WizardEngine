@@ -4,6 +4,14 @@
 
 #include "GLContext.h"
 
+#include "render/GLDrawer.h"
+#include "shader/GLShader.h"
+
+#include "buffers/GLVertexBuffer.h"
+#include "buffers/GLIndexBuffer.h"
+#include "buffers/GLVertexArray.h"
+#include "buffers/GLTextureBuffer.h"
+
 #include "GLFW/glfw3.h"
 
 namespace engine {
@@ -73,21 +81,41 @@ namespace engine {
         return createRef<GLTextureBuffer>();
     }
 
-    Ref<RenderSystem> GLContext::newRenderSystem(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray) {
-        return createRef<GLRenderSystem>(shaderCache, vertexArray);
-    }
-
     Ref<VertexArray> GLContext::newVertexArray(VertexBufferCache *vertexBufferCache,
                                                const Ref<IndexBuffer> &indexBuffer) {
         return createRef<GLVertexArray>(vertexBufferCache, indexBuffer);
     }
 
-    Ref<engine::RenderSystem> GLContext::newRenderSystem() {
+    Ref<Drawer> GLContext::newDrawer() {
+        return createRef<GLDrawer>();
+    }
+
+    Ref<RenderSystem> GLContext::newRenderSystem2d() {
         auto indexBuffer = newIndexBuffer();
         auto vertexBufferCache = new VertexBufferCache();
         auto shaderCache = new ShaderCache();
         auto vertexArray = newVertexArray(vertexBufferCache, indexBuffer);
-        return newRenderSystem(shaderCache, vertexArray);
+        auto drawer = newDrawer();
+        return newRenderSystem2d(shaderCache, vertexArray, drawer);
+    }
+
+    Ref<RenderSystem> GLContext::newRenderSystem2d(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray,
+                                                   const Ref<Drawer> &drawer) {
+        return createRef<RenderSystem2d>(shaderCache, vertexArray, drawer);
+    }
+
+    Ref<RenderSystem> GLContext::newRenderSystem3d() {
+        auto indexBuffer = newIndexBuffer();
+        auto vertexBufferCache = new VertexBufferCache();
+        auto shaderCache = new ShaderCache();
+        auto vertexArray = newVertexArray(vertexBufferCache, indexBuffer);
+        auto drawer = newDrawer();
+        return newRenderSystem3d(shaderCache, vertexArray, drawer);
+    }
+
+    Ref<RenderSystem> GLContext::newRenderSystem3d(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray,
+                                                   const Ref<Drawer> &drawer) {
+        return createRef<RenderSystem3d>(shaderCache, vertexArray, drawer);
     }
 
 }
