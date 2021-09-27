@@ -4,7 +4,6 @@
 
 #include "GLContext.h"
 
-#include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
 namespace engine {
@@ -28,19 +27,25 @@ namespace engine {
     }
 
     void GLContext::clearDisplay() {
+        ENGINE_INFO("clearDisplay()");
         glClearColor(0.2f, 0.2f, 0.2f, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    void GLContext::enableDepth() {
+        ENGINE_INFO("enableDepth()");
+        glEnable(GL_DEPTH_TEST);
     }
 
     std::string GLContext::getAPIName() {
         return "OpenGL";
     }
 
-    const unsigned char *GLContext::getVendor() {
+    const unsigned char *GLContext::getVendorName() {
         return glGetString(GL_VENDOR);
     }
 
-    const unsigned char *GLContext::getRenderer() {
+    const unsigned char *GLContext::getRendererName() {
         return glGetString(GL_RENDERER);
     }
 
@@ -48,8 +53,41 @@ namespace engine {
         return glGetString(GL_VERSION);
     }
 
-    Renderer* GLContext::newRenderer() {
-        return new GLRenderer();
+    Ref<Shader> GLContext::newShader(const ShaderProps &shaderProps, VertexFormat* vertexFormat) {
+        return createRef<GLShader>(shaderProps, vertexFormat);
+    }
+
+    Ref<VertexBuffer> GLContext::newVertexBuffer(VertexFormat *vertexFormat) {
+        return createRef<GLVertexBuffer>(vertexFormat);
+    }
+
+    Ref<IndexBuffer> GLContext::newIndexBuffer() {
+        return createRef<GLIndexBuffer>();
+    }
+
+    Ref<IndexBuffer> GLContext::newIndexBuffer(const uint32_t &indexCount) {
+        return createRef<GLIndexBuffer>(indexCount);
+    }
+
+    Ref<TextureBuffer> GLContext::newTextureBuffer() {
+        return createRef<GLTextureBuffer>();
+    }
+
+    Ref<RenderSystem> GLContext::newRenderSystem(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray) {
+        return createRef<GLRenderSystem>(shaderCache, vertexArray);
+    }
+
+    Ref<VertexArray> GLContext::newVertexArray(VertexBufferCache *vertexBufferCache,
+                                               const Ref<IndexBuffer> &indexBuffer) {
+        return createRef<GLVertexArray>(vertexBufferCache, indexBuffer);
+    }
+
+    Ref<engine::RenderSystem> GLContext::newRenderSystem() {
+        auto indexBuffer = newIndexBuffer();
+        auto vertexBufferCache = new VertexBufferCache();
+        auto shaderCache = new ShaderCache();
+        auto vertexArray = newVertexArray(vertexBufferCache, indexBuffer);
+        return newRenderSystem(shaderCache, vertexArray);
     }
 
 }

@@ -665,7 +665,7 @@ namespace detail
         {
           {
             ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_read"));
-            stream_.async_read_some(buffers_.prepare(bytes_available),
+            stream_.async_read_some(buffers_.onPrepare(bytes_available),
                 ASIO_MOVE_CAST(read_dynbuf_v1_op)(*this));
           }
           return; default:

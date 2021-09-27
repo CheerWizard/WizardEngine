@@ -15,6 +15,11 @@
 
 namespace engine {
 
+    bool ImGuiLayer::_isFullScreen = true;
+    bool ImGuiLayer::_isDockSpaceOpened = true;
+    int ImGuiLayer::_windowFlags = 0;
+    int ImGuiLayer::_dockSpaceFlags = 0;
+
     ImGuiLayer::ImGuiLayer() : Layer("ImguiLayer") {
     }
 
@@ -45,7 +50,6 @@ namespace engine {
         }
 
         setDarkTheme();
-
         // Setup Platform/Renderer bindings
         ImGui_ImplGlfw_InitForOpenGL(GLFW_WINDOW, true);
         ImGui_ImplOpenGL3_Init("#version 410");
@@ -53,8 +57,11 @@ namespace engine {
 
     void ImGuiLayer::onUpdate(Time deltaTime) {
         Layer::onUpdate(deltaTime);
+
         onBeginFrame();
+        beginDockSpace();
         _layoutStack.onUpdate(deltaTime);
+        endDockSpace();
         onEndFrame();
     }
 
@@ -65,7 +72,7 @@ namespace engine {
     }
 
     void ImGuiLayer::onEndFrame() {
-        IO.DisplaySize = ImVec2((float) WINDOW.getWidth(), (float) WINDOW.getHeight());
+        IO.DisplaySize = ImVec2((float) WINDOW->getWidth(), (float) WINDOW->getHeight());
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -180,6 +187,68 @@ namespace engine {
     void ImGuiLayer::onCursorMoved(double xPos, double yPos) {
         Layer::onCursorMoved(xPos, yPos);
         _layoutStack.onCursorMoved(xPos, yPos);
+    }
+
+    void ImGuiLayer::setDockSpaceOption(const bool &isFullscreen) {
+        _isFullScreen = isFullscreen;
+    }
+
+    void ImGuiLayer::openDockSpace() {
+        _isDockSpaceOpened = true;
+    }
+
+    void ImGuiLayer::hideDockSpace() {
+        _isDockSpaceOpened = false;
+    }
+
+    void ImGuiLayer::beginDockSpace() {
+        if (!_isDockSpaceOpened) return;
+        static bool isDockSpaceOpened = _isDockSpaceOpened;
+
+        setDockSpace();
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::Begin("WizardDockSpace", &isDockSpaceOpened, _windowFlags);
+        ImGui::PopStyleVar();
+
+        if (_isFullScreen) {
+            ImGui::PopStyleVar(2);
+        }
+
+        if (IO.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
+            ImGuiID dockspace_id = ImGui::GetID("WizardDockSpace");
+            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), _dockSpaceFlags);
+        }
+    }
+
+    void ImGuiLayer::setDockSpace() {
+        _dockSpaceFlags = ImGuiDockNodeFlags_None;
+        _windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+
+        if (_isFullScreen) {
+            const ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos(viewport->WorkPos);
+            ImGui::SetNextWindowSize(viewport->WorkSize);
+            ImGui::SetNextWindowViewport(viewport->ID);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+            _windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+            _windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        } else {
+            _dockSpaceFlags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+        }
+
+        if (_dockSpaceFlags & ImGuiDockNodeFlags_PassthruCentralNode) {
+            _windowFlags |= ImGuiWindowFlags_NoBackground;
+        }
+    }
+
+    void ImGuiLayer::endDockSpace() {
+        if (!_isDockSpaceOpened) return;
+        ImGui::End();
+    }
+
+    void ImGuiLayer::toggleDockSpace() {
+        _isDockSpaceOpened = !_isDockSpaceOpened;
     }
 
 }

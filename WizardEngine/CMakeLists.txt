@@ -29,6 +29,13 @@ include_directories(vendor/asio/asio/include)
 #/ Math.
 add_subdirectory(vendor/glm)
 
+#/ Picture API
+add_subdirectory(vendor/stb)
+include_directories(vendor/stb/stb)
+
+#/ ECS lib.
+add_subdirectory(vendor/entt)
+
 #/ linking dependencies.
 target_link_libraries(
         WizardEngine PUBLIC
@@ -37,4 +44,6 @@ target_link_libraries(
         glad
         imgui
         glm::glm
+        stb
+        EnTT
 )

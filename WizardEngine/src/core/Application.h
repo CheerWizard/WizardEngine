@@ -11,12 +11,18 @@
 #include "LayerStack.h"
 #include "Assert.h"
 #include "Input.h"
+#include "CameraController.h"
 
 #include "../imgui/ImguiLayer.h"
 
 #include "../graphics/GraphicsContext.h"
 
 #include "../platform/Platform.h"
+
+#include "../ecs/Scene.h"
+
+#include "string"
+#include "vector"
 
 #define APP Application::getInstance()
 #define WINDOW APP.getWindow()
@@ -38,23 +44,20 @@ namespace engine {
         }
 
     public:
-        inline Window& getWindow() {
-            return *_window;
+        inline const Scope<Window>& getWindow() const {
+            return _window;
         }
 
-    public:
-        inline Input& getInput() {
-            return *input;
+        inline const Scope<Input>& getInput() const {
+            return input;
         }
 
-    public:
-        inline ImGuiLayer& getImGuiLayer() {
+        inline ImGuiLayer& getImGuiLayer() const {
             return *_imGuiLayer;
         }
 
-    public:
-        inline GraphicsContext& getGraphicsContext() {
-            return *_graphicsContext;
+        inline const Scope<GraphicsContext>& getGraphicsContext() const {
+            return _graphicsContext;
         }
 
     public:
@@ -77,6 +80,7 @@ namespace engine {
 
     protected:
         virtual void onCreate();
+        virtual void onPrepare();
         virtual void onDestroy();
         virtual void onUpdate();
 
@@ -86,8 +90,29 @@ namespace engine {
         void pushLayout(Layout* imGuiLayout);
         void pushOverLayout(Layout* imGuiLayout);
 
+        void addShader(const std::string& name, const Ref<Shader>& shader);
+        void addShader(const Ref<Shader>& shader);
+        Ref<Shader> loadShader(const ShaderProps& shaderProps, VertexFormat* vertexFormat);
+        Ref<Shader> getShader(const std::string& name);
+        bool shaderExists(const std::string& name) const;
+
+        float getAspectRatio() const;
+        void enableDepthRendering();
+
+        void loadTexture(const std::string &filePath);
+        void loadTextureData(const void* data);
+
+        void createCamera3D(Camera3d* camera3D);
+        void createCamera3D(const char* name);
+        void createCamera3D(const char* name, const glm::vec3 &position);
+
+        void createActiveScene();
+
     protected:
         Scope<Input> input;
+        KeyCode closeKeyPressed;
+        CameraController* cameraController; // todo move to Component.
+        Scene* activeScene; // todo add Scene cache or smth similar.
 
     private:
         static Application* _instance;
@@ -98,7 +123,7 @@ namespace engine {
         ImGuiLayer* _imGuiLayer;
         Scope<Window> _window;
         Scope<GraphicsContext> _graphicsContext;
-        Renderer* _renderer;
+        Ref<RenderSystem> _renderSystem;
 
     };
 

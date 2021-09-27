@@ -18,8 +18,7 @@ namespace engine {
 
     void DemoLayout::onKeyPressed(KeyCode keyCode) {
         Layer::onKeyPressed(keyCode);
-
-        if (keyCode == KeyCode::D) {
+        if (showKeyPressed == keyCode) {
             _show = !_show;
         }
     }

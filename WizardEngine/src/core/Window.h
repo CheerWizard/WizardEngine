@@ -8,6 +8,9 @@
 #include "Logger.h"
 #include "Assert.h"
 
+#define DEFAULT_WINDOW_WIDTH 1920
+#define DEFAULT_WINDOW_HEIGHT 1080
+
 namespace engine {
 
     struct WindowProps {
@@ -23,8 +26,8 @@ namespace engine {
 
         explicit WindowProps(
                 const std::string& title = "Wizard",
-                uint32_t width = 1920,
-                uint32_t height = 1080,
+                uint32_t width = DEFAULT_WINDOW_WIDTH,
+                uint32_t height = DEFAULT_WINDOW_HEIGHT,
                 bool vSyncEnabled = false)
         : title(title), width(width), height(height), vSyncEnabled(vSyncEnabled) {
 
@@ -70,6 +73,10 @@ namespace engine {
 
         inline uint32_t getHeight() const {
             return windowProps.height;
+        }
+
+        inline float getAspectRatio() const {
+            return (float) getWidth() / (float) getHeight();
         }
 
         inline bool isVSyncEnabled() const {

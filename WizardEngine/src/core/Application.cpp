@@ -15,6 +15,7 @@ namespace engine {
 
     void Application::run() {
         onCreate();
+        onPrepare();
         while (_isRunning) {
             onUpdate();
         }
@@ -22,7 +23,7 @@ namespace engine {
     }
 
     void Application::onCreate() {
-        ENGINE_INFO("onCreate()");
+        ENGINE_INFO("create()");
 
         ENGINE_ASSERT(!_instance, "Application already created!")
         _instance = this;
@@ -38,26 +39,36 @@ namespace engine {
         _window->setMouseCallback(this);
         _window->setKeyboardCallback(this);
         _window->setCursorCallback(this);
-        _window->onPrepare();
 
         input = INIT_INPUT;
 
         _imGuiLayer = new ImGuiLayer();
         pushOverlay(_imGuiLayer);
 
-        _renderer = _graphicsContext->newRenderer();
-        _renderer->onCreate();
+        _renderSystem = _graphicsContext->newRenderSystem();
+
+        createCamera3D("camera");
+        createActiveScene();
+    }
+
+    void Application::onPrepare() {
+        _window->onPrepare();
+        _renderSystem->onPrepare();
     }
 
     void Application::onDestroy() {
-        ENGINE_INFO("onDestroy()");
-        _renderer->onDestroy();
+        ENGINE_INFO("destroy()");
+        delete cameraController;
+        delete activeScene;
+        input.reset();
+        _renderSystem.reset();
         _window->onDestroy();
+        _window.reset();
     }
 
     void Application::onUpdate() {
         Time deltaTime = Time();
-        _renderer->onUpdate();
+        _renderSystem->onUpdate();
         _layerStack.onUpdate(deltaTime);
         _window->onUpdate();
         _graphicsContext->swapBuffers();
@@ -86,15 +97,21 @@ namespace engine {
     }
 
     void Application::onKeyPressed(KeyCode keyCode) {
+        if (closeKeyPressed == keyCode) {
+            onWindowClosed();
+        }
         _layerStack.onKeyPressed(keyCode);
+        cameraController->onKeyPressed(keyCode);
     }
 
     void Application::onKeyHold(KeyCode keyCode) {
         _layerStack.onKeyHold(keyCode);
+        cameraController->onKeyHold(keyCode);
     }
 
     void Application::onKeyReleased(KeyCode keyCode) {
         _layerStack.onKeyReleased(keyCode);
+        cameraController->onKeyReleased(keyCode);
     }
 
     void Application::onMousePressed(MouseCode mouseCode) {
@@ -115,6 +132,7 @@ namespace engine {
 
     void Application::onKeyTyped(KeyCode keyCode) {
         _layerStack.onKeyTyped(keyCode);
+        cameraController->onKeyTyped(keyCode);
     }
 
     void Application::pushLayout(Layout *imGuiLayout) {
@@ -123,6 +141,72 @@ namespace engine {
 
     void Application::pushOverLayout(Layout *imGuiLayout) {
         _imGuiLayer->pushOverLayout(imGuiLayout);
+    }
+
+    void Application::addShader(const std::string &name, const Ref<Shader> &shader) {
+        _renderSystem->addShader(name, shader);
+    }
+
+    void Application::addShader(const Ref<Shader> &shader) {
+        _renderSystem->addShader(shader);
+    }
+
+    Ref<Shader> Application::loadShader(const ShaderProps &shaderProps, VertexFormat* vertexFormat) {
+        return _renderSystem->loadShader(shaderProps, vertexFormat);
+    }
+
+    Ref<Shader> Application::getShader(const std::string &name) {
+        return _renderSystem->getShader(name);
+    }
+
+    bool Application::shaderExists(const std::string &name) const {
+        return _renderSystem->shaderExists(name);
+    }
+
+    float Application::getAspectRatio() const {
+        return _window->getAspectRatio();
+    }
+
+    void Application::enableDepthRendering() {
+        _graphicsContext->enableDepth();
+    }
+
+    void Application::loadTexture(const std::string &filePath) {
+        _renderSystem->loadTexture(filePath);
+    }
+
+    void Application::loadTextureData(const void *data) {
+        _renderSystem->loadTextureData(data);
+    }
+
+    void Application::createCamera3D(const char *name) {
+        createCamera3D(name, {0.5, 0.5, 1});
+    }
+
+    void Application::createCamera3D(const char *name, const glm::vec3 &position) {
+        auto camera3D = new engine::Camera3d {
+            name,
+            engine::ViewMatrix {
+                "view",
+                position
+                },
+                engine::PerspectiveMatrix {
+                "projection3d",
+                getAspectRatio()
+            }
+        };
+        createCamera3D(camera3D);
+    }
+
+    void Application::createCamera3D(Camera3d* camera3D) {
+        delete cameraController;
+        cameraController = new Camera3dController(camera3D);
+        _renderSystem->setCameraController(cameraController);
+    }
+
+    void Application::createActiveScene() {
+        activeScene = new Scene();
+        _renderSystem->setActiveScene(activeScene);
     }
 
 }

@@ -6,7 +6,13 @@
 
 #include "../../graphics/GraphicsContext.h"
 
-#include "renderer/GLRenderer.h"
+#include "render/GLRenderSystem.h"
+#include "shader/GLShader.h"
+
+#include "buffers/GLVertexBuffer.h"
+#include "buffers/GLIndexBuffer.h"
+#include "buffers/GLVertexArray.h"
+#include "buffers/GLTextureBuffer.h"
 
 struct GLFWwindow;
 
@@ -23,12 +29,28 @@ namespace engine {
         void swapBuffers() override;
         void clearDisplay() override;
 
-        Renderer* newRenderer() override;
+        Ref<RenderSystem> newRenderSystem() override;
+        Ref<engine::RenderSystem> newRenderSystem(ShaderCache *shaderCache, const Ref<engine::VertexArray> &vertexArray) override;
+
+        Ref<engine::VertexArray> newVertexArray(
+                VertexBufferCache *vertexBufferCache,
+                const Ref<engine::IndexBuffer> &indexBuffer) override;
+
+        Ref<IndexBuffer> newIndexBuffer() override;
+        Ref<IndexBuffer> newIndexBuffer(const uint32_t &indexCount) override;
+
+        Ref<VertexBuffer> newVertexBuffer(VertexFormat *vertexFormat) override;
+
+        Ref<Shader> newShader(const ShaderProps &shaderProps, VertexFormat *vertexFormat) override;
+
+        void enableDepth() override;
+
+        Ref<TextureBuffer> newTextureBuffer() override;
 
     private:
         std::string getAPIName() override;
-        const unsigned char *getVendor() override;
-        const unsigned char *getRenderer() override;
+        const unsigned char *getVendorName() override;
+        const unsigned char *getRendererName() override;
         const unsigned char *getVersion() override;
 
     private:

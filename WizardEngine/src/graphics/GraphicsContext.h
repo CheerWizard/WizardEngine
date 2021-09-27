@@ -6,9 +6,15 @@
 
 #include "../core/Memory.h"
 #include "../core/Assert.h"
-#include "render/Renderer.h"
 
-#include <string>
+#include "render/RenderSystem.h"
+#include "shader/Shader.h"
+#include "buffers/VertexArray.h"
+
+#include "string"
+#include "vector"
+
+#define CREATE_GRAPHICS_OBJECT(shaderName) engine::createRef<engine::GraphicsObject>(engine::GraphicsObject { shaderName })
 
 namespace engine {
 
@@ -25,13 +31,30 @@ namespace engine {
         virtual void onCreate() = 0;
         virtual void swapBuffers() = 0;
         virtual void clearDisplay() = 0;
+        virtual void enableDepth() = 0;
 
-        virtual Renderer* newRenderer() = 0;
+        virtual Ref<RenderSystem> newRenderSystem() = 0;
+
+        virtual Ref<RenderSystem> newRenderSystem(ShaderCache* shaderCache, const Ref<VertexArray>& vertexArray) = 0;
+
+        virtual Ref<VertexArray> newVertexArray(
+                VertexBufferCache* vertexBufferCache,
+                const Ref<IndexBuffer>& indexBuffer) = 0;
+
+        virtual Ref<VertexBuffer> newVertexBuffer(VertexFormat* vertexFormat) = 0;
+
+        virtual Ref<IndexBuffer> newIndexBuffer() = 0;
+        virtual Ref<IndexBuffer> newIndexBuffer(const uint32_t &indexCount) = 0;
+
+        virtual Ref<TextureBuffer> newTextureBuffer() = 0;
+
+        virtual Ref<Shader> newShader(const ShaderProps& shaderProps,
+                                      VertexFormat* vertexFormat) = 0;
 
     private:
         virtual std::string getAPIName() = 0;
-        virtual const unsigned char* getVendor() = 0;
-        virtual const unsigned char* getRenderer() = 0;
+        virtual const unsigned char* getVendorName() = 0;
+        virtual const unsigned char* getRendererName() = 0;
         virtual const unsigned char* getVersion() = 0;
 
     };

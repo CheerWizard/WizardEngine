@@ -13,6 +13,7 @@
 #include "Memory.h"
 
 #include <string>
+#include <vector>
 
 namespace engine {
 
@@ -32,6 +33,9 @@ namespace engine {
         static Ref<spdlog::logger>& getClientLogger() {
             return _clientLogger;
         }
+
+    private:
+        static std::vector<spdlog::sink_ptr> createLogSinks(const std::string &logFileName);
 
     private:
         static Ref<spdlog::logger> _engineLogger;
