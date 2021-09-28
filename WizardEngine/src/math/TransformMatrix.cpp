@@ -8,19 +8,25 @@
 
 namespace engine {
 
-    const TransformMatrix3d &TransformMatrix3d::applyChanges() {
+    TransformMatrix3d &TransformMatrix3d::applyChanges() {
         auto identity = glm::mat4(1);
-        auto translationMatrix = glm::translate(identity, position);
-        auto rotationMatrixX = glm::rotate(translationMatrix, rotation.x, glm::vec3(1, 0, 0));
-        auto rotationMatrixY = glm::rotate(rotationMatrixX, rotation.y, glm::vec3(0, 1, 0));
-        auto rotationMatrixZ = glm::rotate(rotationMatrixY, rotation.z, glm::vec3(0, 0, 1));
-        auto modelMatrix = glm::scale(rotationMatrixZ, scale);
+
+        auto posMat = glm::translate(identity, position);
+
+        auto rotMatX = glm::rotate(identity, rotation.x, glm::vec3(1, 0, 0));
+        auto rotMatY = glm::rotate(identity, rotation.y, glm::vec3(0, 1, 0));
+        auto rotMatZ = glm::rotate(identity, rotation.z, glm::vec3(0, 0, 1));
+        auto rotMat = rotMatZ * rotMatY * rotMatX;
+
+        auto scaleMat = glm::scale(identity, scale);
+
+        auto modelMatrix = posMat * rotMat * scaleMat;
         value = modelMatrix;
         isUpdated = true;
         return *this;
     }
 
-    const TransformMatrix2d &TransformMatrix2d::applyChanges() {
+    TransformMatrix2d &TransformMatrix2d::applyChanges() {
         auto identity = glm::mat4(1);
         auto translationMatrix = glm::translate(identity, glm::vec3(position, 1));
         auto rotationMatrix = glm::rotate(translationMatrix, rotation, glm::vec3(0, 0, 1));

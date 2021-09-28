@@ -4,6 +4,8 @@
 
 #include "WindowsWindow.h"
 
+#include <GLFW/glfw3.h>
+
 namespace engine {
 
     void WindowsWindow::onCreate() {
@@ -31,7 +33,6 @@ namespace engine {
 
             if (callback != nullptr) {
                 callback->onWindowResized(width, height);
-//                glViewport(0, 0, width, height);
             }
         });
 

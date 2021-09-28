@@ -24,7 +24,7 @@ namespace engine {
                 rotation(rotation)
                 {}
 
-        const ViewMatrix3d &applyChanges() override;
+        ViewMatrix3d &applyChanges() override;
 
     };
 
@@ -40,7 +40,7 @@ namespace engine {
                    position(position),
                    rotation(rotation) {}
 
-       const ViewMatrix2d& applyChanges() override;
+       ViewMatrix2d& applyChanges() override;
 
     };
 
