@@ -53,10 +53,26 @@ namespace engine {
     }
 
     void CameraController::onKeyPressed(KeyCode keyCode) {
-        move(moveKeys[keyCode]);
-        rotate(rotateKeys[keyCode]);
-        zoom(zoomKeys[keyCode]);
-        applyChanges();
+        auto moveKey = moveKeys[keyCode];
+        if (moveKey != UNDEFINED_TYPE(MoveType)) {
+            move(moveKey);
+            applyChanges();
+            return;
+        }
+
+        auto zoomKey = zoomKeys[keyCode];
+        if (zoomKey != UNDEFINED_TYPE(ZoomType)) {
+            zoom(zoomKey);
+            applyChanges();
+            return;
+        }
+
+        auto rotateKey = rotateKeys[keyCode];
+        if (rotateKey != UNDEFINED_TYPE(RotateType)) {
+            rotate(rotateKey);
+            applyChanges();
+            return;
+        }
     }
 
     void CameraController::onKeyHold(KeyCode keyCode) {
