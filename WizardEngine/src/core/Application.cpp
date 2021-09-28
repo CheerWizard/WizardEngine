@@ -34,6 +34,7 @@ namespace engine {
         _graphicsContext = INIT_GRAPHICS_CONTEXT;
         _graphicsContext->onCreate();
         _graphicsContext->printInfo();
+        _graphicsContext->setViewPort(_window->getWidth(), _window->getHeight());
 
         _window->setWindowCallback(this);
         _window->setMouseCallback(this);
@@ -92,6 +93,7 @@ namespace engine {
 
     void Application::onWindowResized(unsigned int width, unsigned int height) {
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
+        _graphicsContext->setViewPort(width, height);
         _layerStack.onWindowResized(width, height);
     }
 

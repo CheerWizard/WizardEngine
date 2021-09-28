@@ -3,9 +3,9 @@
 //
 #pragma once
 
-#include <GLFW/glfw3.h>
-
 #include "../../core/Window.h"
+
+struct GLFWwindow;
 
 namespace engine {
 

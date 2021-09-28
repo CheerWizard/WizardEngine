@@ -114,6 +114,7 @@ namespace test {
             cameraController->bind(engine::KeyCode::E, engine::RotateType::RIGHT_Z);
             cameraController->bind(engine::KeyCode::Z, engine::ZoomType::IN);
             cameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
+            cameraController->setPosition({0, 0, -1});
             cameraController->applyChanges();
         }
 
@@ -124,9 +125,9 @@ namespace test {
             if (entity.hasComponent<engine::TransformComponent3d>()) {
                 auto& transform = entity.getComponent<engine::TransformComponent3d>().transformMatrix;
 
-                transform.rotation.z += 0.001f;
                 transform.rotation.x += 0.001f;
                 transform.rotation.y += 0.001f;
+                transform.rotation.z += 0.001f;
                 transform.applyChanges();
             }
         }

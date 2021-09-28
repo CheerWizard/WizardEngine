@@ -61,6 +61,11 @@ namespace engine {
             rotate(rotateType);
         }
 
+        void updatePosition(const glm::vec3 &position) {
+            setPosition(position);
+            applyChanges();
+        }
+
     public:
         void bind(const KeyCode &keyCode, const MoveType &moveType);
         void bind(const KeyCode &keyCode, const RotateType &rotateType);
@@ -81,6 +86,7 @@ namespace engine {
         virtual void rotate(const RotateType &rotateType) = 0;
         virtual void applyChanges() = 0;
         virtual Mat4fUniform& getCamera() = 0;
+        virtual void setPosition(const glm::vec3 &position) = 0;
 
         void onKeyPressed(KeyCode keyCode) override;
         void onKeyHold(KeyCode keyCode) override;
@@ -112,6 +118,8 @@ namespace engine {
         void applyChanges() override;
         Mat4fUniform& getCamera() override;
 
+        void setPosition(const glm::vec3 &position) override;
+
     private:
         Camera3d* _camera3D;
 
@@ -128,7 +136,9 @@ namespace engine {
         void move(const MoveType &moveType) override;
         void rotate(const RotateType &rotateType) override;
         void applyChanges() override;
-        Mat4fUniform &getCamera() override;
+        Mat4fUniform& getCamera() override;
+
+        void setPosition(const glm::vec3 &position) override;
 
     private:
         Camera2d* _camera2D;

@@ -93,10 +93,10 @@ namespace engine {
     void Camera3dController::move(const MoveType &moveType) {
         switch (moveType) {
             case MoveType::DOWN:
-                _camera3D->viewMatrix.position.y += moveSpeed;
+                _camera3D->viewMatrix.position.y -= moveSpeed;
                 break;
             case MoveType::UP:
-                _camera3D->viewMatrix.position.y -= moveSpeed;
+                _camera3D->viewMatrix.position.y += moveSpeed;
                 break;
             case MoveType::LEFT:
                 _camera3D->viewMatrix.position.x += moveSpeed;
@@ -106,19 +106,19 @@ namespace engine {
                 break;
             case MoveType::RIGHT_DOWN:
                 _camera3D->viewMatrix.position.x -= moveSpeed;
-                _camera3D->viewMatrix.position.y += moveSpeed;
+                _camera3D->viewMatrix.position.y -= moveSpeed;
                 break;
             case MoveType::RIGHT_UP:
                 _camera3D->viewMatrix.position.x -= moveSpeed;
-                _camera3D->viewMatrix.position.y -= moveSpeed;
+                _camera3D->viewMatrix.position.y += moveSpeed;
                 break;
             case MoveType::LEFT_DOWN:
                 _camera3D->viewMatrix.position.x += moveSpeed;
-                _camera3D->viewMatrix.position.y += moveSpeed;
+                _camera3D->viewMatrix.position.y -= moveSpeed;
                 break;
             case MoveType::LEFT_UP:
                 _camera3D->viewMatrix.position.x += moveSpeed;
-                _camera3D->viewMatrix.position.y -= moveSpeed;
+                _camera3D->viewMatrix.position.y += moveSpeed;
                 break;
         }
     }
@@ -222,8 +222,18 @@ namespace engine {
         _camera2D->applyChanges();
     }
 
-    Mat4fUniform &Camera2dController::getCamera() {
+    Mat4fUniform& Camera2dController::getCamera() {
         return *_camera2D;
+    }
+
+    void Camera2dController::setPosition(const glm::vec3 &position) {
+        _camera2D->viewMatrix.position = position;
+        _camera2D->applyChanges();
+    }
+
+    void Camera3dController::setPosition(const glm::vec3 &position) {
+        _camera3D->viewMatrix.position = position;
+        _camera3D->applyChanges();
     }
 
 }

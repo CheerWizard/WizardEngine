@@ -8,14 +8,14 @@
 
 namespace engine {
 
-    const OrthographicMatrix& OrthographicMatrix::applyChanges() {
+    OrthographicMatrix& OrthographicMatrix::applyChanges() {
         value = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
         isUpdated = true;
         return *this;
     }
 
-    const PerspectiveMatrix& PerspectiveMatrix::applyChanges() {
-        value = glm::perspective(fieldOfView, aspectRatio, zNear, zFar);
+    PerspectiveMatrix& PerspectiveMatrix::applyChanges() {
+        value = glm::perspective(glm::radians(fieldOfView), aspectRatio, zNear, zFar);
         isUpdated = true;
         return *this;
     }
