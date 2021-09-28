@@ -6,13 +6,13 @@
 
 namespace engine {
 
-    const ViewProjection2d& ViewProjection2d::applyChanges() {
+    ViewProjection2d& ViewProjection2d::applyChanges() {
         value = orthographicMatrix.applyChanges().value * viewMatrix.applyChanges().value;
         isUpdated = true;
         return *this;
     }
 
-    const ViewProjection3d& ViewProjection3d::applyChanges() {
+    ViewProjection3d& ViewProjection3d::applyChanges() {
         value = perspectiveMatrix.applyChanges().value * viewMatrix.applyChanges().value;
         isUpdated = true;
         return *this;

@@ -114,6 +114,7 @@ namespace test {
             cameraController->bind(engine::KeyCode::E, engine::RotateType::RIGHT_Z);
             cameraController->bind(engine::KeyCode::Z, engine::ZoomType::IN);
             cameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
+            cameraController->setPosition({0, 0, -1});
             cameraController->applyChanges();
         }
 
@@ -122,12 +123,11 @@ namespace test {
             CLIENT_INFO("onUpdate()");
 
             if (entity.hasComponent<engine::TransformComponent3d>()) {
-                auto transform = entity.getComponent<engine::TransformComponent3d>().transformMatrix;
-                // todo if update component here, value will not be changed!
-                // todo however, if you update Component for ex. in Renderer, value will be changed everywhere!
-                transform.rotation.z += 0.001f;
+                auto& transform = entity.getComponent<engine::TransformComponent3d>().transformMatrix;
+
                 transform.rotation.x += 0.001f;
                 transform.rotation.y += 0.001f;
+                transform.rotation.z += 0.001f;
                 transform.applyChanges();
             }
         }

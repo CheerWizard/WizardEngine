@@ -24,7 +24,7 @@ namespace engine {
         }
 
     public:
-        const ViewProjection2d& applyChanges() override;
+        ViewProjection2d& applyChanges() override;
     };
 
     struct ViewProjection3d : Mat4fUniform {
@@ -40,7 +40,7 @@ namespace engine {
         }
 
     public:
-        const ViewProjection3d& applyChanges() override;
+        ViewProjection3d& applyChanges() override;
 
     };
 

@@ -45,6 +45,8 @@ namespace engine {
         Ref<RenderSystem> newRenderSystem3d(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray,
                                             const Ref<Drawer> &drawer) override;
 
+        void setViewPort(const uint32_t &width, const uint32_t &height) override;
+
     private:
         std::string getAPIName() override;
         const unsigned char *getVendorName() override;

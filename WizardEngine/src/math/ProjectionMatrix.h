@@ -7,7 +7,7 @@
 #include "Uniform.h"
 
 #define DEFAULT_FIELD_OF_VIEW 60.0f
-#define DEFAULT_Z_NEAR 0.1f
+#define DEFAULT_Z_NEAR 0.01f
 #define DEFAULT_Z_FAR 1000.0f
 
 namespace engine {
@@ -30,7 +30,7 @@ namespace engine {
                            right(right) {}
 
     public:
-        const OrthographicMatrix& applyChanges() override;
+        OrthographicMatrix& applyChanges() override;
 
     };
 
@@ -52,7 +52,7 @@ namespace engine {
                           Mat4fUniform(name) {}
 
     public:
-        const PerspectiveMatrix& applyChanges() override;
+        PerspectiveMatrix& applyChanges() override;
 
     };
 

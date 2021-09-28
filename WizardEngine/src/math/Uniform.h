@@ -23,12 +23,12 @@ namespace engine {
         }
 
     public:
-        virtual const Uniform<V>& applyChanges(); // call this method to upload your uniform on the GPU.
+        virtual Uniform<V>& applyChanges(); // call this method to upload your uniform on the GPU.
 
     };
 
     template<typename V>
-    const Uniform<V>& Uniform<V>::applyChanges() {
+    Uniform<V>& Uniform<V>::applyChanges() {
         isUpdated = true;
         return *this;
     }

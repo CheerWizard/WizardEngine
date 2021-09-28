@@ -31,7 +31,7 @@ namespace engine {
                         scale(scale) {
         }
 
-        const TransformMatrix3d& applyChanges() override;
+        TransformMatrix3d& applyChanges() override;
 
     };
 
@@ -50,7 +50,7 @@ namespace engine {
                           scale(scale) {
         }
 
-        const TransformMatrix2d& applyChanges() override;
+        TransformMatrix2d& applyChanges() override;
 
     };
 

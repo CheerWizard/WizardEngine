@@ -25,4 +25,13 @@ namespace engine {
         return std::make_shared<T>(std::forward<Args>(args)...);
     }
 
+    template<typename T>
+    using Weak = std::weak_ptr<T>;
+
+    template<typename T, typename ... Args>
+    constexpr Weak<T> createWeak(Args&& ... args)
+    {
+        return std::weak_ptr<T>(std::forward<Args>(args)...).lock();
+    }
+
 }

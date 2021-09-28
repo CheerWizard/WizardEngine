@@ -34,6 +34,7 @@ namespace engine {
         virtual void swapBuffers() = 0;
         virtual void clearDisplay() = 0;
         virtual void enableDepth() = 0;
+        virtual void setViewPort(const uint32_t &width, const uint32_t &height) = 0;
 
         virtual Ref<Drawer> newDrawer() = 0;
 

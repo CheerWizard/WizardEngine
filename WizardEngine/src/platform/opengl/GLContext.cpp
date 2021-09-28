@@ -45,6 +45,11 @@ namespace engine {
         glEnable(GL_DEPTH_TEST);
     }
 
+    void GLContext::setViewPort(const uint32_t &width, const uint32_t &height) {
+        ENGINE_INFO("setViewPort()");
+        glViewport(0, 0, width, height);
+    }
+
     std::string GLContext::getAPIName() {
         return "OpenGL";
     }
