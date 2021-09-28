@@ -112,6 +112,10 @@ namespace engine {
         vertexArray->loadVertexBuffer(shaderName, shapeComponent.vertexData);
         vertexArray->bindIndexBuffer();
         vertexArray->loadIndexBuffer(shapeComponent.indexData);
+
+        // TEMP
+//        shapeComponent.vertexData.vertices->position.x += 0.1f;
+//        shapeComponent.applyChanges();
     }
 
     void RenderSystem::loadTexture(const std::string &filePath) {

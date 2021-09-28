@@ -122,9 +122,8 @@ namespace test {
             CLIENT_INFO("onUpdate()");
 
             if (entity.hasComponent<engine::TransformComponent3d>()) {
-                auto transform = entity.getComponent<engine::TransformComponent3d>().transformMatrix;
-                // todo if update component here, value will not be changed!
-                // todo however, if you update Component for ex. in Renderer, value will be changed everywhere!
+                auto& transform = entity.getComponent<engine::TransformComponent3d>().transformMatrix;
+
                 transform.rotation.z += 0.001f;
                 transform.rotation.x += 0.001f;
                 transform.rotation.y += 0.001f;
