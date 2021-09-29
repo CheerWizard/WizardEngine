@@ -31,6 +31,7 @@ namespace engine {
     }
 
     void VertexFormat::clear() {
+        if (isEmpty()) return;
         _attributes.clear();
     }
 
@@ -45,6 +46,10 @@ namespace engine {
 
     void VertexFormat::remove(const uint32_t &index) {
         _attributes.erase(_attributes.begin() + index);
+    }
+
+    bool VertexFormat::isEmpty() {
+        return _attributes.empty();
     }
 
 }

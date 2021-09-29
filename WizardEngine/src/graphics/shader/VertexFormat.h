@@ -42,9 +42,10 @@ namespace engine {
         const Attribute& get(const uint32_t &index) const;
         void clear();
         void remove(const uint32_t &index);
+        bool isEmpty();
 
     private:
-        std::vector<Attribute> _attributes;
+        std::vector<Attribute> _attributes = std::vector<Attribute>();
 
     };
 

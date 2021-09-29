@@ -10,7 +10,7 @@
 
 #include "string"
 
-#define TEXTURE_PATHS "assets/textures/"
+#define TEXTURE_PATHS "textures"
 
 namespace engine {
 
@@ -31,6 +31,10 @@ namespace engine {
     public:
         virtual bool load(const std::string &filePath);
         void free();
+
+    protected:
+        const char *getExtensionName() const override;
+        const char *getAssetPath() const override;
 
     protected:
         TextureData* textureData = nullptr;

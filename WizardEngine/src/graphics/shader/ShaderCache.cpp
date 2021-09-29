@@ -49,8 +49,6 @@ namespace engine {
         auto shaderError = shader->getShaderError();
         if (shaderError == ShaderError::NONE) {
             add(shader);
-        } else {
-            shader.reset();
         }
         return shaderError;
     }

@@ -5,6 +5,7 @@
 #include "File.h"
 
 #include <direct.h>
+#include <sstream>
 
 namespace engine {
 
@@ -47,6 +48,12 @@ namespace engine {
         }
 
         return result;
+    }
+
+    void File::setAssetName(const std::string &assetName) {
+        std::stringstream srcPath;
+        srcPath << ASSET_PATH << "/" << getAssetPath() << "/" << assetName << getExtensionName();
+        path = srcPath.str();
     }
 
 }

@@ -12,7 +12,7 @@
 
 #include "../../math/Uniform.h"
 
-#define SHADERS_PATH "assets/shaders/"
+#define SHADERS_PATH "shaders"
 
 namespace engine {
 
@@ -21,7 +21,7 @@ namespace engine {
         READING_FILE = 1,
         COMPILE = 2,
         LINKING = 3,
-        FINDING_ATTRS = 4
+        NO_ATTRS = 4
     };
 
     struct ShaderProps {
@@ -77,7 +77,8 @@ namespace engine {
         void removeAttribute(const uint32_t &index);
 
     protected:
-        std::string readShader(const std::string &path) const;
+        std::string readShader(const std::string &name);
+        const char *getAssetPath() const override;
 
     public:
         virtual void start() = 0;
@@ -99,11 +100,8 @@ namespace engine {
         virtual void setUniform(Mat4fUniform &uniform) = 0;
 
     protected:
-        virtual const char* getExtensionName() const = 0;
-
-    protected:
         uint32_t programId;
-        VertexFormat* vertexFormat;
+        VertexFormat* vertexFormat = nullptr;
         ShaderProps props;
         ShaderError error = NONE;
 

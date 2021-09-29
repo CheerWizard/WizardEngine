@@ -82,7 +82,7 @@ namespace test {
 
             enableDepthRendering();
 
-            loadTexture("demo_texture.jpg");
+            loadTexture("demo.png");
 
             auto texture = engine::TextureComponent {
                 "diffuseSampler",

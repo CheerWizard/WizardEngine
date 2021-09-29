@@ -5,6 +5,7 @@
 #include "GLShader.h"
 
 #include "../../../core/String.h"
+#include "../../../core/Memory.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -26,7 +27,7 @@ namespace engine {
         _typeSources[GL_VERTEX_SHADER] = vShader;
         _typeSources[GL_FRAGMENT_SHADER] = fShader;
 
-        if (compile()) {
+        if (compile() && vertexFormat == nullptr) {
             findAttributes();
         }
     }
@@ -239,6 +240,11 @@ namespace engine {
                 ENGINE_INFO("Adding new attribute elementCount : {0}, name : {1}", attrElementCount, attrName);
                 addAttribute(attr);
             }
+        }
+
+        if (vertexFormat->isEmpty()) {
+            ENGINE_WARN("Shader '{0}' doesn't has vertex attributes!", props.name);
+            error = ShaderError::NO_ATTRS;
         }
 
         ENGINE_INFO("Shader has found attributes");

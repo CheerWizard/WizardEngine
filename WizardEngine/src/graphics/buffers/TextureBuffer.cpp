@@ -13,16 +13,13 @@ namespace engine {
         stbi_image_free(textureData->data);
     }
 
+    // filePath should have ending with extension name , like .png or .jpg!
     bool TextureBuffer::load(const std::string &filePath) {
-//        std::stringstream srcPath;
-//        srcPath << TEXTURE_PATHS << filePath;
-        this->path = filePath;
-
+        setAssetName(filePath);
         int width, height, channels;
-//        stbi_set_flip_vertically_on_load(1);
 
         ENGINE_INFO("Loading texture from '{0}'", CURRENT_WORKING_DIR + path);
-        stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+        auto data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
         // todo fix texture path not found.
         //  cannot open file from directory.
@@ -30,12 +27,23 @@ namespace engine {
         //  tested also with '\' and '/' slash paths.
 
         if (data == nullptr) {
-            ENGINE_ERR("Error occurs when loading texture from '{0}'", CURRENT_WORKING_DIR + path);
-            return false;
+            if (stbi_failure_reason()) {
+                ENGINE_ERR("Error occurs when loading texture from '{0}'", CURRENT_WORKING_DIR + path);
+                ENGINE_ERR("stbi failure reason : {0}", stbi_failure_reason());
+                return false;
+            }
         }
 
         textureData = new TextureData(width, height, channels, data);
         return true;
+    }
+
+    const char* TextureBuffer::getExtensionName() const {
+        return ""; // file can be either .png, .jpg, .jpeg!
+    }
+
+    const char* TextureBuffer::getAssetPath() const {
+        return TEXTURE_PATHS;
     }
 
 }

@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "Assert.h"
-
 #include <vector>
 #include <string>
 

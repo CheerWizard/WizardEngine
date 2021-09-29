@@ -12,6 +12,8 @@
 #define CURRENT_WORKING_DIR engine::File::getCurrentWorkingDirectory()
 #define READ_FILE(path) engine::File::read(path)
 
+#define ASSET_PATH "assets"
+
 namespace engine {
 
     class File {
@@ -35,17 +37,19 @@ namespace engine {
             this->path = filePath;
         }
 
-        inline std::string getFilePath() const {
+        inline const std::string& getFilePath() const {
             return path;
         }
 
-        inline std::string getName() const {
+        inline const std::string& getName() const {
             return name;
         }
 
         inline void setName(const std::string& name) {
             this->name = name;
         }
+
+        void setAssetName(const std::string &assetName);
 
     public:
         std::string read() const;
@@ -56,6 +60,8 @@ namespace engine {
 
     protected:
         void createName();
+        virtual const char* getExtensionName() const = 0;
+        virtual const char* getAssetPath() const = 0;
 
     protected:
         std::string path;
