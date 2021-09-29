@@ -228,6 +228,15 @@ namespace engine {
         vertexFormat = new VertexFormat();
         for (auto i = 0 ; i < vShaderTokens.size() ; i++) {
             if (vShaderTokens[i] == "in") {
+                auto attrCategory = VERTEX;
+                // find attr category token, if exists.
+                if (vShaderTokens[i + 3] == "//") {
+                    auto subToken = split(vShaderTokens[i + 4], "!");
+                    if (!subToken.empty() && subToken[0] == "instance") {
+                        attrCategory = INSTANCE;
+                    }
+                }
+
                 auto attrElementCount = toElementCount(vShaderTokens[i + 1]);
                 auto tokenName = vShaderTokens[i + 2];
                 auto endNamePos = tokenName.find(';');
@@ -235,7 +244,9 @@ namespace engine {
                 auto attr = Attribute {
                     attrName,
                     0,
-                    attrElementCount
+                    attrElementCount,
+                    0,
+                    attrCategory
                 };
                 ENGINE_INFO("Adding new attribute elementCount : {0}, name : {1}", attrElementCount, attrName);
                 addAttribute(attr);
