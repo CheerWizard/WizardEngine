@@ -47,6 +47,8 @@ namespace engine {
 
         void setViewPort(const uint32_t &width, const uint32_t &height) override;
 
+        Ref<Shader> newShader(const ShaderProps &shaderProps) override;
+
     private:
         std::string getAPIName() override;
         const unsigned char *getVendorName() override;

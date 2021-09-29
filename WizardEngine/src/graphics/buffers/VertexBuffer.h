@@ -6,10 +6,8 @@
 
 #include "Buffer.h"
 
-#include "../geometry/Vertex.h"
 #include "VertexData.h"
-
-#include "vector"
+#include "../shader/VertexFormat.h"
 
 #define DEFAULT_VERTEX_COUNT 100
 

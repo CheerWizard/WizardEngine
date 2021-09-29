@@ -102,7 +102,8 @@ namespace engine {
 
         void addShader(const std::string& name, const Ref<Shader>& shader);
         void addShader(const Ref<Shader>& shader);
-        Ref<Shader> loadShader(const ShaderProps& shaderProps, VertexFormat* vertexFormat);
+        ShaderError loadShader(const ShaderProps& shaderProps, VertexFormat* vertexFormat);
+        ShaderError loadShader(const ShaderProps &shaderProps);
         Ref<Shader> getShader(const std::string& name);
         bool shaderExists(const std::string& name) const;
 

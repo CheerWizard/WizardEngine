@@ -6,6 +6,8 @@
 
 #include "glm/glm.hpp"
 
+#include <string>
+
 namespace engine {
 
     enum AttributeCategory : unsigned char {
@@ -29,14 +31,14 @@ namespace engine {
     };
 
     struct Attribute {
-        const char *name;
+        std::string name;
         uint32_t location;
         uint32_t offset;
         ElementCount elementCount;
         AttributeBool normalized;
         AttributeCategory category;
 
-        Attribute(const char* name,
+        Attribute(const std::string& name,
                   const uint32_t &location,
                   const ElementCount &elementCount = SINGLE,
                   const uint32_t &offset = 0,

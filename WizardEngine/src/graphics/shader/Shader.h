@@ -4,17 +4,25 @@
 
 #pragma once
 
+#include "VertexFormat.h"
+
 #include "glm/glm.hpp"
 
 #include "../../core/File.h"
-
-#include "../geometry/Vertex.h"
 
 #include "../../math/Uniform.h"
 
 #define SHADERS_PATH "assets/shaders/"
 
 namespace engine {
+
+    enum ShaderError : unsigned char {
+        NONE = 0,
+        READING_FILE = 1,
+        COMPILE = 2,
+        LINKING = 3,
+        FINDING_ATTRS = 4
+    };
 
     struct ShaderProps {
         std::string name;
@@ -33,6 +41,9 @@ namespace engine {
     class Shader : public File {
 
     public:
+
+        Shader(const ShaderProps &shaderProps) : File(shaderProps.name, ""), props(shaderProps) {}
+
         Shader(const ShaderProps& shaderProps, VertexFormat* vertexFormat) :
         File(shaderProps.name, ""),
         vertexFormat(vertexFormat),
@@ -43,7 +54,7 @@ namespace engine {
             this->vertexFormat = vertexFormat;
         }
 
-        inline VertexFormat *getVertexFormat() const {
+        inline VertexFormat* getVertexFormat() const {
             return vertexFormat;
         }
 
@@ -53,6 +64,10 @@ namespace engine {
 
         inline const ShaderProps& getProps() const {
             return props;
+        }
+
+        inline ShaderError getShaderError() const {
+            return error;
         }
 
     public:
@@ -90,6 +105,7 @@ namespace engine {
         uint32_t programId;
         VertexFormat* vertexFormat;
         ShaderProps props;
+        ShaderError error = NONE;
 
     };
 

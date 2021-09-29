@@ -1,8 +1,8 @@
 #version 420 core
 
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec2 textureCoords;
-layout(location = 2) in vec4 color;
+// order of attrs should be compatible with input graphics model.
+layout(location = 0) in vec3 position; in vec2 textureCoords; // geometry data
+layout(location = 2) in vec4 color; // material data
 
 out vec4 v_Color;
 out vec2 v_TextureCoords;

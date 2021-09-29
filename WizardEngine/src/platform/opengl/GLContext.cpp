@@ -70,6 +70,10 @@ namespace engine {
         return createRef<GLShader>(shaderProps, vertexFormat);
     }
 
+    Ref<engine::Shader> GLContext::newShader(const ShaderProps &shaderProps) {
+        return createRef<GLShader>(shaderProps);
+    }
+
     Ref<VertexBuffer> GLContext::newVertexBuffer(VertexFormat *vertexFormat) {
         return createRef<GLVertexBuffer>(vertexFormat);
     }

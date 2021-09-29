@@ -152,8 +152,12 @@ namespace engine {
         _renderSystem->addShader(shader);
     }
 
-    Ref<Shader> Application::loadShader(const ShaderProps &shaderProps, VertexFormat* vertexFormat) {
+    ShaderError Application::loadShader(const ShaderProps &shaderProps, VertexFormat* vertexFormat) {
         return _renderSystem->loadShader(shaderProps, vertexFormat);
+    }
+
+    ShaderError Application::loadShader(const ShaderProps &shaderProps) {
+        return _renderSystem->loadShader(shaderProps);
     }
 
     Ref<Shader> Application::getShader(const std::string &name) {
