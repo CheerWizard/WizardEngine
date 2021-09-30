@@ -39,7 +39,7 @@ namespace engine {
         }
 
     private:
-        ShaderError handleShaderError(Ref<Shader> shader);
+        ShaderError handleShaderError(const Ref<Shader>& shader);
 
     private:
          Shaders _shaders;

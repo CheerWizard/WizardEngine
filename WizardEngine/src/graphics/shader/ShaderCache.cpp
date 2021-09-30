@@ -45,7 +45,7 @@ namespace engine {
         return handleShaderError(shader);
     }
 
-    ShaderError ShaderCache::handleShaderError(Ref<Shader> shader) {
+    ShaderError ShaderCache::handleShaderError(const Ref<Shader>& shader) {
         auto shaderError = shader->getShaderError();
         if (shaderError == ShaderError::NONE) {
             add(shader);

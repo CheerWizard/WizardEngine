@@ -20,9 +20,6 @@ namespace engine {
     int ImGuiLayer::_windowFlags = 0;
     int ImGuiLayer::_dockSpaceFlags = 0;
 
-    ImGuiLayer::ImGuiLayer() : Layer("ImguiLayer") {
-    }
-
     void ImGuiLayer::onCreate() {
         Layer::onCreate();
         // Setup Dear ImGui context

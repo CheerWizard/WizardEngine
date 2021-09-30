@@ -7,7 +7,6 @@
 #include <GLFW/glfw3.h>
 
 #include "../core/Layout.h"
-
 #include "../core/Events.h"
 #include "../core/LayoutStack.h"
 
@@ -16,7 +15,7 @@ namespace engine {
     class ImGuiLayer : public Layer {
 
     public:
-        ImGuiLayer();
+        ImGuiLayer(const char* tag = "ImGuiLayer") : Layer(tag) {}
         ~ImGuiLayer() override = default;
 
     public:
@@ -26,7 +25,12 @@ namespace engine {
 
     public:
         static void setDarkTheme();
+        static void setDockSpaceOption(const bool &isFullscreen);
+        static void openDockSpace();
+        static void hideDockSpace();
+        static void toggleDockSpace();
 
+    public:
         void pushLayout(Layout* imGuiLayout);
         void pushOverLayout(Layout* imGuiLayout);
         void popLayout(Layout* imGuiLayout);
@@ -54,12 +58,6 @@ namespace engine {
         static void beginDockSpace();
         static void setDockSpace();
         static void endDockSpace();
-
-    public:
-        static void setDockSpaceOption(const bool &isFullscreen);
-        static void openDockSpace();
-        static void hideDockSpace();
-        static void toggleDockSpace();
 
     private:
         LayoutStack _layoutStack;

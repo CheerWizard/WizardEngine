@@ -54,8 +54,6 @@ namespace engine {
     private:
         entt::registry _entities;
 
-        friend class Entity;
-
     };
 
 }
