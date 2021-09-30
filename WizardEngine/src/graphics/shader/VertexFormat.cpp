@@ -31,7 +31,6 @@ namespace engine {
     }
 
     void VertexFormat::clear() {
-        if (isEmpty()) return;
         _attributes.clear();
     }
 

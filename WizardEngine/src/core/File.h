@@ -4,16 +4,15 @@
 
 #pragma once
 
-#include "string"
 #include "fstream"
 
+#include "String.h"
 #include "Logger.h"
 
 #define CURRENT_WORKING_DIR engine::File::getCurrentWorkingDirectory()
 #define READ_FILE(path) engine::File::read(path)
 
-#define ASSET_PATH "../../WizardTest/assets" // todo temp fix. instead cmake script should move assets
-                                            // into out dir without damaging files.
+#define ASSET_PATH "assets"
 
 namespace engine {
 

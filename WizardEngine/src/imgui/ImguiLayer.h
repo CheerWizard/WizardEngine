@@ -15,12 +15,18 @@ namespace engine {
     class ImGuiLayer : public Layer {
 
     public:
-        ImGuiLayer(const char* tag = "ImGuiLayer") : Layer(tag) {}
-        ~ImGuiLayer() override = default;
+        ImGuiLayer(const char* tag = "ImGuiLayer") : Layer(tag) {
+            onCreate();
+        }
+        ~ImGuiLayer() override {
+            onDestroy();
+        }
 
     public:
-        void onCreate() override;
         void onUpdate(Time deltaTime) override;
+
+    protected:
+        void onCreate() override;
         void onDestroy() override;
 
     public:

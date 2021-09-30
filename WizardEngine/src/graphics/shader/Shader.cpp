@@ -16,6 +16,7 @@ namespace engine {
 
     std::string Shader::readShader(const std::string &name) {
         setAssetName(name);
+        this->name = props.name;
         return read();
     }
 

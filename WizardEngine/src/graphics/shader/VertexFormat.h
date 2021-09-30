@@ -17,9 +17,7 @@ namespace engine {
 
     public:
 
-        explicit VertexFormat() = default;
-
-        explicit VertexFormat(const std::vector<Attribute>& attributes) :
+        VertexFormat(const std::vector<Attribute>& attributes = std::vector<Attribute>()) :
         _attributes(attributes) {}
 
         ~VertexFormat() {
@@ -45,7 +43,7 @@ namespace engine {
         bool isEmpty();
 
     private:
-        std::vector<Attribute> _attributes = std::vector<Attribute>();
+        std::vector<Attribute> _attributes;
 
     };
 

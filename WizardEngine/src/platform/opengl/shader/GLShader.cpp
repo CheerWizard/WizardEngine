@@ -4,8 +4,6 @@
 
 #include "GLShader.h"
 
-#include "../../../core/String.h"
-
 #include <glm/gtc/type_ptr.hpp>
 
 namespace engine {

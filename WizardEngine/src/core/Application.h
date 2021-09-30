@@ -21,6 +21,8 @@
 
 #include "../ecs/Scene.h"
 
+#include "../graphics/io/ObjFile.h"
+
 #include "string"
 #include "vector"
 
@@ -116,6 +118,8 @@ namespace engine {
         void createCamera(const char* name = DEFAULT_CAMERA_NAME);
         void createActiveScene();
 
+        ObjData loadObj(const std::string& objName);
+
     private:
         void createCamera3D(const char* name);
         void createCamera3D(const char* name, const glm::vec3 &position);
@@ -145,6 +149,7 @@ namespace engine {
         Scope<Window> _window;
         Scope<GraphicsContext> _graphicsContext;
         Ref<RenderSystem> _renderSystem;
+        ObjFile* objFile = nullptr;
 
     };
 

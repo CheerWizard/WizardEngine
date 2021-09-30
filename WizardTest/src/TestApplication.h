@@ -55,15 +55,24 @@ namespace test {
 
             auto transform = engine::TransformComponent3d {
                 "transform",
+                { -1, -1, 10 },
+                {135, 0, 0},
+                {0.5, 0.5, 0.5}
             };
             transform.applyChanges();
 
-            auto shape = engine::Cube();
+            auto objData = loadObj("deagle");
+
+            auto shape = engine::ShapeComponent {
+                objData.vertexData,
+                objData.indexData
+            };
+
             shape.applyChanges();
 
             enableDepthRendering();
 
-            loadTexture("demo_texture.jpg");
+            loadTexture("demo.png");
 
             auto texture = engine::TextureComponent {
                 "diffuseSampler",
@@ -106,9 +115,7 @@ namespace test {
             if (entity.hasComponent<engine::TransformComponent3d>()) {
                 auto& transform = entity.getComponent<engine::TransformComponent3d>().transformMatrix;
 
-                transform.rotation.x += 0.001f;
                 transform.rotation.y += 0.001f;
-                transform.rotation.z += 0.001f;
                 transform.applyChanges();
             }
         }

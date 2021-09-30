@@ -21,11 +21,6 @@ namespace engine {
         ENGINE_INFO("Loading texture from '{0}'", CURRENT_WORKING_DIR + path);
         auto data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
-        // todo fix texture path not found.
-        //  cannot open file from directory.
-        //  possible to open if texture exists directly in WizardTest package
-        //  tested also with '\' and '/' slash paths.
-
         if (data == nullptr) {
             if (stbi_failure_reason()) {
                 ENGINE_ERR("Error occurs when loading texture from '{0}'", CURRENT_WORKING_DIR + path);

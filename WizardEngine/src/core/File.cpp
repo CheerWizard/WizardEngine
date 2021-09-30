@@ -51,9 +51,10 @@ namespace engine {
     }
 
     void File::setAssetName(const std::string &assetName) {
-        std::stringstream srcPath;
-        srcPath << ASSET_PATH << "/" << getAssetPath() << "/" << assetName << getExtensionName();
-        path = srcPath.str();
+        std::stringstream assetFullPath;
+        assetFullPath << ASSET_PATH << "/" << getAssetPath() << "/" << assetName << getExtensionName();
+        path = assetFullPath.str();
+        name = assetName;
     }
 
 }

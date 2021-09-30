@@ -43,6 +43,8 @@ namespace engine {
     void GLContext::enableDepth() {
         ENGINE_INFO("enableDepth()");
         glEnable(GL_DEPTH_TEST);
+//        glEnable(GL_CULL_FACE);
+//        glCullFace(GL_BACK);
     }
 
     void GLContext::setViewPort(const uint32_t &width, const uint32_t &height) {

@@ -4,41 +4,45 @@
 
 #pragma once
 
-#include "../../core/String.h"
 #include "../../core/File.h"
 
 #include "../buffers/VertexData.h"
 #include "../buffers/IndexData.h"
 
-#include "vector"
-
-#define OBJ_PATH "assets/obj/"
+#define OBJ_PATH "obj"
 
 namespace engine {
 
-    struct ObjModel {
+    struct ObjData {
         VertexData vertexData;
         IndexData indexData;
     };
 
-    class ObjFile : File {
+    struct Face {
+        int posIndex;
+        int uvIndex;
+        int normalIndex;
+    };
+
+    class ObjFile : public File {
 
     public:
         ObjFile() = default;
         ObjFile(const std::string& name, const std::string &path) : File(name, path) {}
-        ~ObjFile() override = default;
+
+        ~ObjFile() override {
+            destroy();
+        }
 
     public:
-        ObjModel read() const;
-        ObjModel read(const std::string &fileName) const;
+        ObjData readObj(const std::string &fileName);
 
     protected:
         const char *getExtensionName() const override;
         const char *getAssetPath() const override;
 
     private:
-        std::vector<Vertex> vertices;
-
+        void destroy();
 
     };
 

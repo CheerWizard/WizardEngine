@@ -49,6 +49,8 @@ namespace engine {
         createRenderSystem();
         createActiveScene();
         createCamera();
+
+        objFile = new ObjFile();
     }
 
     void Application::onPrepare() {
@@ -58,6 +60,7 @@ namespace engine {
 
     void Application::onDestroy() {
         ENGINE_INFO("destroy()");
+        delete objFile;
         delete cameraController;
         delete activeScene;
         input.reset();
@@ -256,6 +259,10 @@ namespace engine {
         } else {
             _renderSystem = _graphicsContext->newRenderSystem3d();
         }
+    }
+
+    ObjData Application::loadObj(const std::string &objName) {
+        return objFile->readObj(objName);
     }
 
 }
