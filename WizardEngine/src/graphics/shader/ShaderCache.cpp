@@ -31,14 +31,26 @@ namespace engine {
         _shaders.clear();
     }
 
-    Ref<Shader> ShaderCache::load(const ShaderProps &shaderProps, VertexFormat* vertexFormat) {
+    ShaderError ShaderCache::load(const ShaderProps &shaderProps, VertexFormat* vertexFormat) {
         auto shader = GRAPHICS_CONTEXT->newShader(shaderProps, vertexFormat);
-        add(shader);
-        return shader;
+        return handleShaderError(shader);
     }
 
     ShaderCache::~ShaderCache() {
         clear();
+    }
+
+    ShaderError ShaderCache::load(const ShaderProps &shaderProps) {
+        auto shader = GRAPHICS_CONTEXT->newShader(shaderProps);
+        return handleShaderError(shader);
+    }
+
+    ShaderError ShaderCache::handleShaderError(const Ref<Shader>& shader) {
+        auto shaderError = shader->getShaderError();
+        if (shaderError == ShaderError::NONE) {
+            add(shader);
+        }
+        return shaderError;
     }
 
 }

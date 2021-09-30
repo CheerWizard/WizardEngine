@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <string>
-
 #include "Time.h"
 #include "Logger.h"
 #include "Events.h"
@@ -17,15 +15,19 @@ namespace engine {
 
     public:
 
-        explicit Layer(const std::string& tag = "Layer") : tag(tag) {}
+        Layer(const char* tag = "Layer") : tag(tag) {
+            onCreate();
+        }
 
         virtual ~Layer() {
             onDestroy();
         }
 
     public:
-        virtual void onCreate();
         virtual void onUpdate(Time deltaTime);
+
+    protected:
+        virtual void onCreate();
         virtual void onDestroy();
 
     public:
@@ -44,10 +46,10 @@ namespace engine {
         void onCursorMoved(double xPos, double yPos) override;
 
     public:
-        const std::string& getTag() const { return tag; }
+        inline const char* getTag() const { return tag; }
 
     protected:
-        std::string tag;
+        const char* tag;
 
     };
 

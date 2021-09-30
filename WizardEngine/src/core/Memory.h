@@ -31,7 +31,7 @@ namespace engine {
     template<typename T, typename ... Args>
     constexpr Weak<T> createWeak(Args&& ... args)
     {
-        return std::weak_ptr<T>(std::forward<Args>(args)...).lock();
+        return std::weak_ptr<T>(std::forward<Args>(args)...);
     }
 
 }

@@ -65,6 +65,8 @@ namespace engine {
         virtual Ref<Shader> newShader(const ShaderProps& shaderProps,
                                       VertexFormat* vertexFormat) = 0;
 
+        virtual Ref<Shader> newShader(const ShaderProps& shaderProps) = 0;
+
     private:
         virtual std::string getAPIName() = 0;
         virtual const unsigned char* getVendorName() = 0;

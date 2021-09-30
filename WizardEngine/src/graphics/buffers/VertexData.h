@@ -6,6 +6,8 @@
 
 #include "../geometry/Vertex.h"
 
+#define MIN_VERTEX_COUNT 3
+
 namespace engine {
 
     struct VertexData {
