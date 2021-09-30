@@ -2,7 +2,7 @@
 
 // order of attrs should be compatible with input graphics model.
 layout(location = 0) in vec3 position;
- in vec2 textureCoords; // instance!
+ in vec2 textureCoords; // vertex!
 layout(location = 2) in vec4 color;
 
 out vec4 v_Color;

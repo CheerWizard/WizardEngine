@@ -51,26 +51,7 @@ namespace test {
                 "v_shape2d",
                 "f_shape2d"
             };
-
-//            auto shape2dVertex = new engine::VertexFormat {
-//                {
-//                    engine::Attribute {
-//                        "position",
-//                        0,
-//                        engine::VEC3},
-//                        engine::Attribute {
-//                        "textureCoords",
-//                        1,
-//                        engine::VEC2
-//                        },
-//                        engine::Attribute {
-//                        "color",
-//                        2,
-//                        engine::VEC4}
-//                }
-//            };
-
-            auto shape2dLoaded = loadShader(shape2dShaderProps);
+            loadShader(shape2dShaderProps);
 
             auto transform = engine::TransformComponent3d {
                 "transform",

@@ -5,7 +5,6 @@
 #include "GLShader.h"
 
 #include "../../../core/String.h"
-#include "../../../core/Memory.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
