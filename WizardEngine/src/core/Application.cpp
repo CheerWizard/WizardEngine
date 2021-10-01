@@ -34,7 +34,6 @@ namespace engine {
         _graphicsContext = INIT_GRAPHICS_CONTEXT;
         _graphicsContext->onCreate();
         _graphicsContext->printInfo();
-        _graphicsContext->setViewPort(_window->getWidth(), _window->getHeight());
 
         _window->setWindowCallback(this);
         _window->setMouseCallback(this);
@@ -50,7 +49,7 @@ namespace engine {
         createActiveScene();
         createCamera();
 
-        objFile = new ObjFile();
+        _objFile = new ObjFile();
     }
 
     void Application::onPrepare() {
@@ -60,7 +59,7 @@ namespace engine {
 
     void Application::onDestroy() {
         ENGINE_INFO("destroy()");
-        delete objFile;
+        delete _objFile;
         delete cameraController;
         delete activeScene;
         input.reset();
@@ -75,7 +74,6 @@ namespace engine {
         _layerStack.onUpdate(deltaTime);
         _window->onUpdate();
         _graphicsContext->swapBuffers();
-        _graphicsContext->clearDisplay();
     }
 
     void Application::pushLayer(Layer *layer) {
@@ -91,13 +89,14 @@ namespace engine {
     void Application::onWindowClosed() {
         ENGINE_INFO("Application : onWindowClosed()");
         _layerStack.onWindowClosed();
+        _renderSystem->onWindowClosed();
         _isRunning = false;
     }
 
     void Application::onWindowResized(unsigned int width, unsigned int height) {
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
-        _graphicsContext->setViewPort(width, height);
         _layerStack.onWindowResized(width, height);
+        _renderSystem->onWindowResized(width, height);
     }
 
     void Application::onKeyPressed(KeyCode keyCode) {
@@ -176,7 +175,7 @@ namespace engine {
     }
 
     void Application::enableDepthRendering() {
-        _graphicsContext->enableDepth();
+        _renderSystem->enableDepth();
     }
 
     void Application::loadTexture(const std::string &filePath) {
@@ -262,7 +261,15 @@ namespace engine {
     }
 
     ObjData Application::loadObj(const std::string &objName) {
-        return objFile->readObj(objName);
+        return _objFile->readObj(objName);
+    }
+
+    const uint32_t &Application::getWindowWidth() {
+        return _window->getWidth();
+    }
+
+    const uint32_t &Application::getWindowHeight() {
+        return _window->getHeight();
     }
 
 }

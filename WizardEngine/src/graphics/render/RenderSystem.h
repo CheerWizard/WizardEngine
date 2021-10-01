@@ -9,6 +9,7 @@
 #include "../../core/TreeCache.h"
 
 #include "../buffers/VertexArray.h"
+#include "../buffers/FrameBuffer.h"
 
 #include "../shader/ShaderCache.h"
 
@@ -24,15 +25,17 @@
 
 namespace engine {
 
-    class RenderSystem : public System {
+    class RenderSystem : public System, public WindowCallback {
 
     public:
         RenderSystem(ShaderCache* shaderCache,
                      const Ref<VertexArray> &vertexArray,
-                     const Ref<Drawer> &drawer) :
+                     const Ref<Drawer> &drawer,
+                     const Ref<FrameBuffer> &frameBuffer) :
         shaderCache(shaderCache),
         vertexArray(vertexArray),
-        drawer(drawer) {}
+        drawer(drawer),
+        frameBuffer(frameBuffer) {}
 
         virtual ~RenderSystem() = default;
 
@@ -50,6 +53,12 @@ namespace engine {
         void loadTexture(const std::string &filePath);
         void loadTextureData(const void* data);
 
+        void enableDepth();
+
+    public:
+        void onWindowClosed() override;
+        void onWindowResized(unsigned int width, unsigned int height) override;
+
     protected:
         virtual void renderMaterial(Ref<Shader> &shader, const entt::entity &entity) = 0;
         virtual void renderTransform(Ref<Shader> &shader, const entt::entity &entity) = 0;
@@ -65,6 +74,7 @@ namespace engine {
     protected:
         Ref<VertexArray> vertexArray;
         Ref<Drawer> drawer;
+        Ref<FrameBuffer> frameBuffer;
         ShaderCache* shaderCache;
         CameraController* cameraController = nullptr; // weak reference.
 
@@ -72,6 +82,7 @@ namespace engine {
         void renderShape(const std::string &shaderName, ShapeComponent &shapeComponent);
         void renderCamera(const Ref<Shader>& shader);
         void onShaderLoaded(const ShaderError& shaderError, const std::string &shaderName);
+
     };
 
     class RenderSystem2d : public RenderSystem {
@@ -79,8 +90,9 @@ namespace engine {
     public:
         RenderSystem2d(ShaderCache* shaderCache,
                      const Ref<VertexArray> &vertexArray,
-                     const Ref<Drawer> &drawer) :
-                     RenderSystem(shaderCache, vertexArray, drawer) {}
+                     const Ref<Drawer> &drawer,
+                     const Ref<FrameBuffer> &frameBuffer) :
+                     RenderSystem(shaderCache, vertexArray, drawer, frameBuffer) {}
 
         ~RenderSystem2d() override = default;
 
@@ -95,8 +107,9 @@ namespace engine {
     public:
         RenderSystem3d(ShaderCache* shaderCache,
                        const Ref<VertexArray> &vertexArray,
-                       const Ref<Drawer> &drawer) :
-                       RenderSystem(shaderCache, vertexArray, drawer) {}
+                       const Ref<Drawer> &drawer,
+                       const Ref<FrameBuffer> &frameBuffer) :
+                       RenderSystem(shaderCache, vertexArray, drawer, frameBuffer) {}
 
         ~RenderSystem3d() override = default;
 

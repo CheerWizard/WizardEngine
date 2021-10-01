@@ -19,8 +19,6 @@ namespace engine {
     public:
         void onCreate() override;
         void swapBuffers() override;
-        void clearDisplay() override;
-        void enableDepth() override;
 
         Ref<VertexArray> newVertexArray(
                 VertexBufferCache *vertexBufferCache,
@@ -37,17 +35,23 @@ namespace engine {
 
         Ref<engine::Drawer> newDrawer() override;
 
+        Ref<Shader> newShader(const ShaderProps &shaderProps) override;
+
+        Ref<FrameBuffer> newFrameBuffer(const FramebufferSpecification &framebufferSpecification) override;
+
         Ref<RenderSystem> newRenderSystem2d() override;
-        Ref<RenderSystem> newRenderSystem2d(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray,
-                                            const Ref<Drawer> &drawer) override;
+
+        Ref<RenderSystem>
+        newRenderSystem2d(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray, const Ref<Drawer> &drawer,
+                          const Ref<FrameBuffer> &frameBuffer) override;
 
         Ref<RenderSystem> newRenderSystem3d() override;
-        Ref<RenderSystem> newRenderSystem3d(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray,
-                                            const Ref<Drawer> &drawer) override;
 
-        void setViewPort(const uint32_t &width, const uint32_t &height) override;
+        Ref<RenderSystem>
+        newRenderSystem3d(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray, const Ref<Drawer> &drawer,
+                          const Ref<FrameBuffer> &frameBuffer) override;
 
-        Ref<Shader> newShader(const ShaderProps &shaderProps) override;
+        Ref<FrameBuffer> newFrameBuffer() override;
 
     private:
         std::string getAPIName() override;

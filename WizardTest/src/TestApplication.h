@@ -43,6 +43,8 @@ namespace test {
             pushLayout(demoLayout);
 
             pushLayout(new TestLayout());
+            // create window for Scene.
+            pushLayout(new engine::ScenePanel(activeScene, getWindowWidth(), getWindowHeight()));
 
             CLIENT_INFO("Current workspace '{0}'", CURRENT_WORKING_DIR);
 
@@ -56,7 +58,7 @@ namespace test {
             auto transform = engine::TransformComponent3d {
                 "transform",
                 { -1, -1, 10 },
-                {135, 0, 0},
+                {90, 0, 0},
                 {0.5, 0.5, 0.5}
             };
             transform.applyChanges();
@@ -84,8 +86,6 @@ namespace test {
             entity.addComponent<engine::ShapeComponent>(shape);
             entity.addComponent<engine::TransformComponent3d>(transform);
             entity.addComponent<engine::TextureComponent>(texture);
-
-            engine::ImGuiLayer::hideDockSpace();
 
             //todo add FrameBuffer and set viewport for scene window to dock space!
             //todo fix 3D viewProjection3d. object is going to wide during rotation.
