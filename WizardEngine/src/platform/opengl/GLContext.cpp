@@ -43,6 +43,8 @@ namespace engine {
     void GLContext::enableDepth() {
         ENGINE_INFO("enableDepth()");
         glEnable(GL_DEPTH_TEST);
+//        glEnable(GL_CULL_FACE);
+//        glCullFace(GL_BACK);
     }
 
     void GLContext::setViewPort(const uint32_t &width, const uint32_t &height) {
@@ -68,6 +70,10 @@ namespace engine {
 
     Ref<Shader> GLContext::newShader(const ShaderProps &shaderProps, VertexFormat* vertexFormat) {
         return createRef<GLShader>(shaderProps, vertexFormat);
+    }
+
+    Ref<engine::Shader> GLContext::newShader(const ShaderProps &shaderProps) {
+        return createRef<GLShader>(shaderProps);
     }
 
     Ref<VertexBuffer> GLContext::newVertexBuffer(VertexFormat *vertexFormat) {

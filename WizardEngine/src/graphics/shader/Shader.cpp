@@ -4,8 +4,6 @@
 
 #include "Shader.h"
 
-#include <sstream>
-
 namespace engine {
 
     const Attribute& Shader::getAttribute(const uint32_t &index) const {
@@ -16,10 +14,10 @@ namespace engine {
         vertexFormat->remove(index);
     }
 
-    std::string Shader::readShader(const std::string &path) const {
-        std::stringstream srcPath;
-        srcPath << SHADERS_PATH << path << getExtensionName();
-        return read(srcPath.str());
+    std::string Shader::readShader(const std::string &name) {
+        setAssetName(name);
+        this->name = props.name;
+        return read();
     }
 
     uint32_t Shader::addAttribute(const Attribute &attribute) {
@@ -28,6 +26,10 @@ namespace engine {
 
     void Shader::replaceAttribute(const uint32_t &index, const Attribute &attribute) {
         vertexFormat->replace(index, attribute);
+    }
+
+    const char *Shader::getAssetPath() const {
+        return SHADERS_PATH;
     }
 
 }

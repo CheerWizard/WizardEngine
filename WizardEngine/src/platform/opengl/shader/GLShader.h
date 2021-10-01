@@ -16,6 +16,10 @@ namespace engine {
     class GLShader : public Shader {
 
     public:
+        GLShader(const ShaderProps &shaderProps) : Shader(shaderProps) {
+            onCreate();
+        }
+
         GLShader(const ShaderProps& shaderProps, VertexFormat* vertexFormat) : Shader(shaderProps, vertexFormat) {
             onCreate();
         }
@@ -49,9 +53,11 @@ namespace engine {
     private:
         void onCreate();
         void onDestroy();
-        void compile();
+        bool compile();
         void detachShaders();
         void deleteShaders();
+        void findAttributes();
+        static ElementCount toElementCount(const std::string &elementCountStr);
 
     protected:
         const char* getExtensionName() const override;

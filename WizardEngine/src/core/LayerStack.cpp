@@ -8,7 +8,6 @@ namespace engine {
 
     LayerStack::~LayerStack() {
         for (Layer* layer : _layers) {
-            layer->onDestroy();
             delete layer;
         }
     }
@@ -16,18 +15,16 @@ namespace engine {
     void LayerStack::pushLayer(Layer* layer) {
         _layers.emplace(_layers.begin() + _layerInsertIndex, layer);
         _layerInsertIndex++;
-        layer->onCreate();
     }
 
     void LayerStack::pushOverlay(Layer* overlay) {
         _layers.emplace_back(overlay);
-        overlay->onCreate();
     }
 
     void LayerStack::popLayer(Layer* layer) {
         auto it = std::find(_layers.begin(), _layers.begin() + _layerInsertIndex, layer);
         if (it != _layers.begin() + _layerInsertIndex) {
-            layer->onDestroy();
+            delete layer;
             _layers.erase(it);
             _layerInsertIndex--;
         }
@@ -36,7 +33,7 @@ namespace engine {
     void LayerStack::popOverlay(Layer* overlay) {
         auto it = std::find(_layers.begin() + _layerInsertIndex, _layers.end(), overlay);
         if (it != _layers.end()) {
-            overlay->onDestroy();
+            delete overlay;
             _layers.erase(it);
         }
     }

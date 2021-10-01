@@ -1,8 +1,8 @@
 //
-// Created by mecha on 07.09.2021.
+// Created by mecha on 29.09.2021.
 //
 
-#include "Vertex.h"
+#include "VertexFormat.h"
 
 namespace engine {
 
@@ -45,6 +45,10 @@ namespace engine {
 
     void VertexFormat::remove(const uint32_t &index) {
         _attributes.erase(_attributes.begin() + index);
+    }
+
+    bool VertexFormat::isEmpty() {
+        return _attributes.empty();
     }
 
 }

@@ -9,7 +9,7 @@
 
 #include "vector"
 
-#define DEFAULT_INDEX_COUNT 1000
+#define DEFAULT_INDEX_COUNT 100000
 
 namespace engine {
 

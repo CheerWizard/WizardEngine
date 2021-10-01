@@ -49,6 +49,8 @@ namespace engine {
         createRenderSystem();
         createActiveScene();
         createCamera();
+
+        objFile = new ObjFile();
     }
 
     void Application::onPrepare() {
@@ -58,6 +60,7 @@ namespace engine {
 
     void Application::onDestroy() {
         ENGINE_INFO("destroy()");
+        delete objFile;
         delete cameraController;
         delete activeScene;
         input.reset();
@@ -152,8 +155,12 @@ namespace engine {
         _renderSystem->addShader(shader);
     }
 
-    Ref<Shader> Application::loadShader(const ShaderProps &shaderProps, VertexFormat* vertexFormat) {
+    ShaderError Application::loadShader(const ShaderProps &shaderProps, VertexFormat* vertexFormat) {
         return _renderSystem->loadShader(shaderProps, vertexFormat);
+    }
+
+    ShaderError Application::loadShader(const ShaderProps &shaderProps) {
+        return _renderSystem->loadShader(shaderProps);
     }
 
     Ref<Shader> Application::getShader(const std::string &name) {
@@ -252,6 +259,10 @@ namespace engine {
         } else {
             _renderSystem = _graphicsContext->newRenderSystem3d();
         }
+    }
+
+    ObjData Application::loadObj(const std::string &objName) {
+        return objFile->readObj(objName);
     }
 
 }

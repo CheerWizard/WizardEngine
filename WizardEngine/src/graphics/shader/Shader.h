@@ -4,17 +4,25 @@
 
 #pragma once
 
+#include "VertexFormat.h"
+
 #include "glm/glm.hpp"
 
 #include "../../core/File.h"
 
-#include "../geometry/Vertex.h"
-
 #include "../../math/Uniform.h"
 
-#define SHADERS_PATH "assets/shaders/"
+#define SHADERS_PATH "shaders"
 
 namespace engine {
+
+    enum ShaderError : unsigned char {
+        NONE = 0,
+        READING_FILE = 1,
+        COMPILE = 2,
+        LINKING = 3,
+        NO_ATTRS = 4
+    };
 
     struct ShaderProps {
         std::string name;
@@ -33,6 +41,9 @@ namespace engine {
     class Shader : public File {
 
     public:
+
+        Shader(const ShaderProps &shaderProps) : File(shaderProps.name, ""), props(shaderProps) {}
+
         Shader(const ShaderProps& shaderProps, VertexFormat* vertexFormat) :
         File(shaderProps.name, ""),
         vertexFormat(vertexFormat),
@@ -43,7 +54,7 @@ namespace engine {
             this->vertexFormat = vertexFormat;
         }
 
-        inline VertexFormat *getVertexFormat() const {
+        inline VertexFormat* getVertexFormat() const {
             return vertexFormat;
         }
 
@@ -55,6 +66,10 @@ namespace engine {
             return props;
         }
 
+        inline ShaderError getShaderError() const {
+            return error;
+        }
+
     public:
         uint32_t addAttribute(const Attribute &attribute);
         void replaceAttribute(const uint32_t &index, const Attribute &attribute);
@@ -62,7 +77,8 @@ namespace engine {
         void removeAttribute(const uint32_t &index);
 
     protected:
-        std::string readShader(const std::string &path) const;
+        std::string readShader(const std::string &name);
+        const char *getAssetPath() const override;
 
     public:
         virtual void start() = 0;
@@ -84,12 +100,10 @@ namespace engine {
         virtual void setUniform(Mat4fUniform &uniform) = 0;
 
     protected:
-        virtual const char* getExtensionName() const = 0;
-
-    protected:
         uint32_t programId;
-        VertexFormat* vertexFormat;
+        VertexFormat* vertexFormat = nullptr;
         ShaderProps props;
+        ShaderError error = NONE;
 
     };
 

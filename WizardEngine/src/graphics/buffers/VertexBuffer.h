@@ -6,12 +6,10 @@
 
 #include "Buffer.h"
 
-#include "../geometry/Vertex.h"
 #include "VertexData.h"
+#include "../shader/VertexFormat.h"
 
-#include "vector"
-
-#define DEFAULT_VERTEX_COUNT 100
+#define DEFAULT_VERTEX_COUNT 50000
 
 namespace engine {
 

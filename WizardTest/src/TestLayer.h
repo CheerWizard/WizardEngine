@@ -13,10 +13,13 @@ namespace test {
 
     public:
         TestLayer() : Layer("TestLayer") {
+            onCreate();
+        }
+        ~TestLayer() override {
+            onDestroy();
         }
 
     public:
-
         void onCreate() override {
             CLIENT_INFO("{0} : create()", tag);
         }
@@ -29,7 +32,6 @@ namespace test {
             CLIENT_INFO("{0} : onUpdate()", tag);
             CLIENT_INFO("Delta time : {0} ms", deltaTime.getMilliseconds());
         }
-
     };
 
 }

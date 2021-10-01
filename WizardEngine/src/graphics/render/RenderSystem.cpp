@@ -90,10 +90,23 @@ namespace engine {
         vertexArray->createVertexBuffer(shader->getVertexFormat(), shader->getName());
     }
 
-    Ref<Shader> RenderSystem::loadShader(const ShaderProps &shaderProps, VertexFormat *vertexFormat) {
-        auto newShader = shaderCache->load(shaderProps, vertexFormat);
-        vertexArray->createVertexBuffer(newShader->getVertexFormat(), newShader->getName());
-        return newShader;
+    ShaderError RenderSystem::loadShader(const ShaderProps &shaderProps, VertexFormat *vertexFormat) {
+        auto shaderError = shaderCache->load(shaderProps, vertexFormat);
+        onShaderLoaded(shaderError, shaderProps.name);
+        return shaderError;
+    }
+
+    ShaderError RenderSystem::loadShader(const ShaderProps &shaderProps) {
+        auto shaderError = shaderCache->load(shaderProps);
+        onShaderLoaded(shaderError, shaderProps.name);
+        return shaderError;
+    }
+
+    void RenderSystem::onShaderLoaded(const ShaderError &shaderError, const std::string &shaderName) {
+        if (shaderError == ShaderError::NONE) {
+            auto shader = shaderCache->get(shaderName);
+            vertexArray->createVertexBuffer(shader->getVertexFormat(), shader->getName());
+        }
     }
 
     Ref<Shader> RenderSystem::getShader(const std::string &name) {
