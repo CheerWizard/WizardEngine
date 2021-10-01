@@ -55,6 +55,7 @@ namespace engine {
     void Application::onPrepare() {
         _window->onPrepare();
         _renderSystem->onPrepare();
+        updateFboSpecification();
     }
 
     void Application::onDestroy() {
@@ -270,6 +271,21 @@ namespace engine {
 
     const uint32_t &Application::getWindowHeight() {
         return _window->getHeight();
+    }
+
+    void Application::updateFboSpecification() {
+        FramebufferSpecification framebufferSpecification;
+        framebufferSpecification.attachmentSpecification = { FramebufferTextureFormat::RGBA8,
+                                                             FramebufferTextureFormat::RED_INTEGER,
+                                                             FramebufferTextureFormat::Depth };
+        framebufferSpecification.width = 1920;
+        framebufferSpecification.height = 1080;
+
+        updateFboSpecification(framebufferSpecification);
+    }
+
+    void Application::updateFboSpecification(const FramebufferSpecification &framebufferSpecification) {
+        _renderSystem->updateFboSpecification(framebufferSpecification);
     }
 
 }

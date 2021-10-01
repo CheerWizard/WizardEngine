@@ -143,18 +143,6 @@ namespace engine {
     void RenderSystem::loadTexture(const std::string &filePath) {
         vertexArray->bindTextureBuffer();
         vertexArray->loadTextureBuffer(filePath);
-
-        FramebufferSpecification framebufferSpecification;
-        framebufferSpecification.attachmentSpecification = { FramebufferTextureFormat::RGBA8,
-                                                             FramebufferTextureFormat::RED_INTEGER,
-                                                             FramebufferTextureFormat::Depth };
-        framebufferSpecification.width = 1920;
-        framebufferSpecification.height = 1080;
-        frameBuffer->setSpecification(framebufferSpecification);
-        frameBuffer->loadAttachments();
-
-        auto colorAttachments = frameBuffer->getColorAttachments();
-        activeScene->setColorTextures(colorAttachments);
     }
 
     void RenderSystem::loadTextureData(const void *data) {
@@ -206,6 +194,12 @@ namespace engine {
 
     void RenderSystem::onWindowResized(unsigned int width, unsigned int height) {
 
+    }
+
+    void RenderSystem::updateFboSpecification(const FramebufferSpecification &framebufferSpecification) {
+        frameBuffer->setSpecification(framebufferSpecification);
+        frameBuffer->loadAttachments();
+        activeScene->setColorTextures(frameBuffer->getColorAttachments());
     }
 
 }
