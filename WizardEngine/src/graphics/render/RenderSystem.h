@@ -53,6 +53,8 @@ namespace engine {
         void loadTexture(const std::string &filePath);
         void loadTextureData(const void* data);
 
+        void updateFboSpecification(const FramebufferSpecification &framebufferSpecification);
+
         void enableDepth();
 
     public:
