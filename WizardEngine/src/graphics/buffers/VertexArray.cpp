@@ -65,4 +65,8 @@ namespace engine {
         textureBuffer->activate(slot);
     }
 
+    void VertexArray::unbindTextureBuffer() {
+        textureBuffer->unbind();
+    }
+
 }

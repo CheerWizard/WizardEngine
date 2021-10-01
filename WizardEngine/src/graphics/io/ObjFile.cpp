@@ -14,6 +14,10 @@ namespace engine {
         return OBJ_PATH;
     }
 
+    // todo add support of multiple ObjData
+    //  obj file may include not only single model, but whole world (multiple models)
+    //  model may consist from multiple models and than merged into single one
+    //  great example is model of AK-47 weapon, which consist from different sub models.
     ObjData ObjFile::readObj(const std::string &fileName) {
         setAssetName(fileName);
         auto source = read();

@@ -11,6 +11,8 @@ namespace engine {
     }
 
     void RenderSystem::onPrepare() {
+        frameBuffer->setViewPort();
+
         for (auto &iterator : *shaderCache) {
             auto shaderName = iterator.first;
             auto shader = iterator.second;
@@ -48,6 +50,11 @@ namespace engine {
             return;
         }
 
+        // bind to our own frame buffer
+        frameBuffer->bind();
+        drawer->enableDepth();
+        drawer->clearDepth({0.2, 0.2, 0.2, 1});
+
         for (const auto& iterator : *shaderCache) {
             auto shaderName = iterator.first;
             auto shader = iterator.second;
@@ -78,6 +85,12 @@ namespace engine {
             vertexArray->unbind();
             shader->stop();
         }
+
+        // bind to default frame buffer.
+        frameBuffer->unbind();
+        drawer->disableDepth();
+        drawer->clearColor({1.0, 1.0, 1.0, 1.0});
+
     }
 
     void RenderSystem::addShader(const std::string &name, const Ref<Shader> &shader) {
@@ -130,6 +143,18 @@ namespace engine {
     void RenderSystem::loadTexture(const std::string &filePath) {
         vertexArray->bindTextureBuffer();
         vertexArray->loadTextureBuffer(filePath);
+
+        FramebufferSpecification framebufferSpecification;
+        framebufferSpecification.attachmentSpecification = { FramebufferTextureFormat::RGBA8,
+                                                             FramebufferTextureFormat::RED_INTEGER,
+                                                             FramebufferTextureFormat::Depth };
+        framebufferSpecification.width = 1920;
+        framebufferSpecification.height = 1080;
+        frameBuffer->setSpecification(framebufferSpecification);
+        frameBuffer->loadAttachments();
+
+        auto colorAttachments = frameBuffer->getColorAttachments();
+        activeScene->setColorTextures(colorAttachments);
     }
 
     void RenderSystem::loadTextureData(const void *data) {
@@ -140,6 +165,10 @@ namespace engine {
         if (cameraController != nullptr) {
             shader->setUniform(cameraController->getCamera());
         }
+    }
+
+    void RenderSystem::enableDepth() {
+        drawer->enableDepth();
     }
 
     void RenderSystem3d::renderMaterial(Ref<Shader> &shader, const entt::entity &entity) {
@@ -170,6 +199,13 @@ namespace engine {
 
         auto transform2d = activeScene->getComponent<TransformComponent2d>(entity);
         shader->setUniform(transform2d.transformMatrix);
+    }
+
+    void RenderSystem::onWindowClosed() {
+    }
+
+    void RenderSystem::onWindowResized(unsigned int width, unsigned int height) {
+
     }
 
 }

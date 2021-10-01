@@ -67,11 +67,15 @@ namespace engine {
         }
 
     public:
-        inline uint32_t getWidth() const {
+        inline const WindowProps& getWindowProps() {
+            return windowProps;
+        }
+
+        inline const uint32_t& getWidth() const {
             return windowProps.width;
         }
 
-        inline uint32_t getHeight() const {
+        inline const uint32_t& getHeight() const {
             return windowProps.height;
         }
 

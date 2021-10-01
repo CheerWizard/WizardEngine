@@ -62,6 +62,8 @@ namespace engine {
         void bindIndexBuffer();
         void bindTextureBuffer();
 
+        void unbindTextureBuffer();
+
         void activateTextureBuffer(const int &slot);
 
     protected:

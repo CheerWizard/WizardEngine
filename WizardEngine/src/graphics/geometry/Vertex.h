@@ -10,7 +10,6 @@
 
 #include "vector"
 
-#define DEFAULT_COLOR {0.25f, 0.5f, 0.75f, 1}
 #define DEFAULT_POSITION {0.5f, 0.5f, 0.5f}
 #define DEFAULT_TEXTURE_COORDS {0.25f, -0.25f}
 
@@ -23,7 +22,7 @@ namespace engine {
 
         Vertex(const glm::vec3 &position = DEFAULT_POSITION,
                const glm::vec2 &textureCoords = DEFAULT_TEXTURE_COORDS,
-               const glm::vec4 &color = DEFAULT_COLOR) :
+               const glm::vec4 &color = {0.5, 0.75, 0, 1}) :
                position(position),
                color(color),
                textureCoords(textureCoords)
