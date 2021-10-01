@@ -12,6 +12,7 @@
 
 #include "shader/Shader.h"
 #include "buffers/VertexArray.h"
+#include "buffers/FrameBuffer.h"
 
 #include "string"
 #include "vector"
@@ -32,9 +33,6 @@ namespace engine {
     public:
         virtual void onCreate() = 0;
         virtual void swapBuffers() = 0;
-        virtual void clearDisplay() = 0;
-        virtual void enableDepth() = 0;
-        virtual void setViewPort(const uint32_t &width, const uint32_t &height) = 0;
 
         virtual Ref<Drawer> newDrawer() = 0;
 
@@ -42,14 +40,16 @@ namespace engine {
 
         virtual Ref<RenderSystem> newRenderSystem2d(ShaderCache* shaderCache,
                                                   const Ref<VertexArray>& vertexArray,
-                                                  const Ref<Drawer>& drawer) = 0;
+                                                  const Ref<Drawer>& drawer,
+                                                  const Ref<FrameBuffer> &frameBuffer) = 0;
 
 
         virtual Ref<RenderSystem> newRenderSystem3d() = 0;
 
         virtual Ref<RenderSystem> newRenderSystem3d(ShaderCache* shaderCache,
                                                     const Ref<VertexArray>& vertexArray,
-                                                    const Ref<Drawer>& drawer) = 0;
+                                                    const Ref<Drawer>& drawer,
+                                                    const Ref<FrameBuffer> &frameBuffer) = 0;
 
         virtual Ref<VertexArray> newVertexArray(
                 VertexBufferCache* vertexBufferCache,
@@ -61,6 +61,9 @@ namespace engine {
         virtual Ref<IndexBuffer> newIndexBuffer(const uint32_t &indexCount) = 0;
 
         virtual Ref<TextureBuffer> newTextureBuffer() = 0;
+
+        virtual Ref<FrameBuffer> newFrameBuffer(const FramebufferSpecification &framebufferSpecification) = 0;
+        virtual Ref<FrameBuffer> newFrameBuffer() = 0;
 
         virtual Ref<Shader> newShader(const ShaderProps& shaderProps,
                                       VertexFormat* vertexFormat) = 0;

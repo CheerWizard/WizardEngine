@@ -11,6 +11,7 @@
 #include "buffers/GLIndexBuffer.h"
 #include "buffers/GLVertexArray.h"
 #include "buffers/GLTextureBuffer.h"
+#include "buffers/GLFrameBuffer.h"
 
 #include "GLFW/glfw3.h"
 
@@ -32,24 +33,6 @@ namespace engine {
     void GLContext::swapBuffers() {
         ENGINE_INFO("swapBuffers()");
         glfwSwapBuffers(_window);
-    }
-
-    void GLContext::clearDisplay() {
-        ENGINE_INFO("clearDisplay()");
-        glClearColor(0.2f, 0.2f, 0.2f, 1);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
-    void GLContext::enableDepth() {
-        ENGINE_INFO("enableDepth()");
-        glEnable(GL_DEPTH_TEST);
-//        glEnable(GL_CULL_FACE);
-//        glCullFace(GL_BACK);
-    }
-
-    void GLContext::setViewPort(const uint32_t &width, const uint32_t &height) {
-        ENGINE_INFO("setViewPort()");
-        glViewport(0, 0, width, height);
     }
 
     std::string GLContext::getAPIName() {
@@ -107,12 +90,15 @@ namespace engine {
         auto shaderCache = new ShaderCache();
         auto vertexArray = newVertexArray(vertexBufferCache, indexBuffer);
         auto drawer = newDrawer();
-        return newRenderSystem2d(shaderCache, vertexArray, drawer);
+        auto frameBuffer = newFrameBuffer();
+        return newRenderSystem2d(shaderCache, vertexArray, drawer, frameBuffer);
     }
 
-    Ref<RenderSystem> GLContext::newRenderSystem2d(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray,
-                                                   const Ref<Drawer> &drawer) {
-        return createRef<RenderSystem2d>(shaderCache, vertexArray, drawer);
+    Ref<RenderSystem> GLContext::newRenderSystem2d(ShaderCache *shaderCache,
+                                                   const Ref<VertexArray> &vertexArray,
+                                                   const Ref<Drawer> &drawer,
+                                                   const Ref<FrameBuffer> &frameBuffer) {
+        return createRef<RenderSystem2d>(shaderCache, vertexArray, drawer, frameBuffer);
     }
 
     Ref<RenderSystem> GLContext::newRenderSystem3d() {
@@ -121,12 +107,23 @@ namespace engine {
         auto shaderCache = new ShaderCache();
         auto vertexArray = newVertexArray(vertexBufferCache, indexBuffer);
         auto drawer = newDrawer();
-        return newRenderSystem3d(shaderCache, vertexArray, drawer);
+        auto frameBuffer = newFrameBuffer();
+        return newRenderSystem3d(shaderCache, vertexArray, drawer, frameBuffer);
     }
 
-    Ref<RenderSystem> GLContext::newRenderSystem3d(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray,
-                                                   const Ref<Drawer> &drawer) {
-        return createRef<RenderSystem3d>(shaderCache, vertexArray, drawer);
+    Ref<RenderSystem> GLContext::newRenderSystem3d(ShaderCache *shaderCache,
+                                                   const Ref<VertexArray> &vertexArray,
+                                                   const Ref<Drawer> &drawer,
+                                                   const Ref<FrameBuffer> &frameBuffer) {
+        return createRef<RenderSystem3d>(shaderCache, vertexArray, drawer, frameBuffer);
+    }
+
+    Ref<FrameBuffer> GLContext::newFrameBuffer(const FramebufferSpecification &framebufferSpecification) {
+        return createRef<GLFrameBuffer>(framebufferSpecification);
+    }
+
+    Ref<FrameBuffer> GLContext::newFrameBuffer() {
+        return createRef<GLFrameBuffer>();
     }
 
 }

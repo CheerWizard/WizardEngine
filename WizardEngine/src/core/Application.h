@@ -110,6 +110,9 @@ namespace engine {
         bool shaderExists(const std::string& name) const;
 
         float getAspectRatio() const;
+        const uint32_t& getWindowWidth();
+        const uint32_t& getWindowHeight();
+
         void enableDepthRendering();
 
         void loadTexture(const std::string &filePath);
@@ -149,7 +152,7 @@ namespace engine {
         Scope<Window> _window;
         Scope<GraphicsContext> _graphicsContext;
         Ref<RenderSystem> _renderSystem;
-        ObjFile* objFile = nullptr;
+        ObjFile* _objFile = nullptr;
 
     };
 
