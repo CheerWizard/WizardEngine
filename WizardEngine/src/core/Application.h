@@ -123,6 +123,9 @@ namespace engine {
 
         ObjData loadObj(const std::string& objName);
 
+        void updateFboSpecification();
+        void updateFboSpecification(const FramebufferSpecification &framebufferSpecification);
+
     private:
         void createCamera3D(const char* name);
         void createCamera3D(const char* name, const glm::vec3 &position);
