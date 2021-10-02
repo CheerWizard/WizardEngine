@@ -91,7 +91,7 @@ namespace engine {
                 vertexBuffer->enableAttributes();
             }
 
-            drawer->drawIndices(totalIndexCount);
+            drawer->drawTrianglesIndices(totalIndexCount);
 
             vertexArray->unbind();
             shader->stop();

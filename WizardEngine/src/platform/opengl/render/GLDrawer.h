@@ -15,7 +15,6 @@ namespace engine {
         ~GLDrawer() = default;
 
     public:
-        void drawIndices(const uint32_t &indexCount) override;
         void setViewPort(const uint32_t &width, const uint32_t &height) override;
         void enableDepth() override;
         void disableDepth() override;
@@ -26,6 +25,10 @@ namespace engine {
         void multiDrawIndices(const uint32_t &totalIndexCount, const uint32_t &drawCount) override;
 
         void enableCulling() override;
+
+        void drawQuadsIndices(const uint32_t &indexCount) override;
+
+        void drawTrianglesIndices(const uint32_t &indexCount) override;
 
     };
 

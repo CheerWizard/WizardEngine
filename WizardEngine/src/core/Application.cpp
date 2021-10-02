@@ -261,7 +261,7 @@ namespace engine {
         }
     }
 
-    ObjData Application::loadObj(const std::string &objName) {
+    ShapeComponent Application::loadObj(const std::string &objName) {
         return _objFile->readObj(objName);
     }
 

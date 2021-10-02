@@ -18,7 +18,7 @@ namespace engine {
     //  obj file may include not only single model, but whole world (multiple models)
     //  model may consist from multiple models and than merged into single one
     //  great example is model of AK-47 weapon, which consist from different sub models.
-    ObjData ObjFile::readObj(const std::string &fileName) {
+    ShapeComponent ObjFile::readObj(const std::string &fileName) {
         setAssetName(fileName);
         auto source = read();
         auto tokens = split(source, "\n\r ");
@@ -28,6 +28,7 @@ namespace engine {
         std::vector<glm::vec3> normals;
         std::vector<uint32_t> indices;
         std::vector<Face> faces;
+        ShapePrimitive primitive = TRIANGLE;
 
         for (auto i = 0 ; i < tokens.size(); i++) {
             auto token = tokens[i];
@@ -125,6 +126,35 @@ namespace engine {
                 faces.emplace_back(face1);
                 faces.emplace_back(face2);
                 faces.emplace_back(face3);
+
+                auto vertexOrder4Token = tokens[i + 4];
+                auto faceTokens4 = split(vertexOrder4Token, "/");
+
+                if (faceTokens4.size() > 1) {
+                    int indexUv4 = 0;
+                    int indexPos4;
+                    int indexNormal4;
+                    if (faceTokens4.size() < 3) {
+                        indexPos4 = TO_INT(faceTokens4[0]) - 1;
+                        indexNormal4 = TO_INT(faceTokens4[1]) - 1;
+                    } else {
+                        indexPos4 = TO_INT(faceTokens4[0]) - 1;
+                        indexUv4 = TO_INT(faceTokens4[1]) - 1;
+                        indexNormal4 = TO_INT(faceTokens4[2]) - 1;
+                    }
+
+                    Face face4 = {
+                            indexPos4,
+                            indexUv4,
+                            indexNormal4
+                    };
+
+                    indices.emplace_back(indexPos1);
+                    indices.emplace_back(indexPos3);
+                    indices.emplace_back(indexPos4);
+
+                    faces.emplace_back(face4);
+                }
             }
         }
 
@@ -162,13 +192,11 @@ namespace engine {
             indexCount
         };
 
-        return ObjData {
+        return ShapeComponent {
             vertexData,
-            indexData
+            indexData,
+            primitive
         };
-    }
-
-    void ObjFile::destroy() {
     }
 
 }

@@ -10,8 +10,13 @@
 
 namespace engine {
 
-    void GLDrawer::drawIndices(const uint32_t &indexCount) {
-        ENGINE_INFO("drawIndices()");
+    void GLDrawer::drawQuadsIndices(const uint32_t &indexCount) {
+        ENGINE_INFO("drawQuadsIndices()");
+        glDrawElements(GL_QUADS, (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr);
+    }
+
+    void GLDrawer::drawTrianglesIndices(const uint32_t &indexCount) {
+        ENGINE_INFO("drawTrianglesIndices()");
         glDrawElements(GL_TRIANGLES, (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr);
     }
 
