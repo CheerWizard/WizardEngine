@@ -20,6 +20,8 @@ namespace engine {
             auto indexBuffer = vertexArray->getIndexBuffer();
 
             shader->bindAttributes();
+            shader->bindUniformBlock();
+
             vertexArray->bind();
 
             for (const auto& vertexBuffer : vertexBuffers) {
@@ -33,6 +35,12 @@ namespace engine {
             indexBuffer->allocate();
 
             vertexArray->bindTextureBuffer();
+
+            uniformBuffer->setUniformBlockFormat(shader->getUniformBlockFormat());
+            uniformBuffer->bind();
+            uniformBuffer->allocate();
+            uniformBuffer->unbind();
+            uniformBuffer->setUniformBlockPointer();
 
             vertexArray->unbind();
         }
@@ -171,7 +179,19 @@ namespace engine {
 
     void RenderSystem::renderCamera(const Ref<Shader> &shader) {
         if (cameraController != nullptr) {
-            shader->setUniform(cameraController->getCamera());
+            auto& camera = cameraController->getCamera();
+            if (camera.isUpdated) {
+                camera.isUpdated = false;
+
+                auto uniformData = UniformData {
+                    camera.toFloatPtr(),
+                    0,
+                    1
+                };
+                uniformBuffer->bind();
+                uniformBuffer->load(uniformData);
+                uniformBuffer->unbind();
+            }
         }
     }
 

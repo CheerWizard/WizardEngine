@@ -3,8 +3,8 @@ A complex game development platform, with all necessary solutions.
 
 Includes : 
 1. WizardEngine; 
-2. WizardEditor; 
-3. WizardTest;
+2. WizardTest;
+3. WizardEditor; 
 4. WizardGame;
 
 # WizardEngine

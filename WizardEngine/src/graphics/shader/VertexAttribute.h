@@ -4,9 +4,10 @@
 
 #pragma once
 
-#include "glm/glm.hpp"
+#include "../../core/String.h"
+#include "ElementCount.h"
 
-#include <string>
+#include "glm/glm.hpp"
 
 namespace engine {
 
@@ -20,17 +21,7 @@ namespace engine {
         TRUE = 1
     };
 
-    enum ElementCount : unsigned char {
-        SINGLE = 1,
-        VEC2 = 2,
-        VEC3 = 3,
-        VEC4 = 4,
-        MAT2 = 4,
-        MAT3 = 9,
-        MAT4 = 16
-    };
-
-    struct Attribute {
+    struct VertexAttribute {
         std::string name;
         uint32_t location;
         uint32_t offset;
@@ -38,12 +29,12 @@ namespace engine {
         AttributeBool normalized;
         AttributeCategory category;
 
-        Attribute(const std::string& name,
-                  const uint32_t &location,
-                  const ElementCount &elementCount = SINGLE,
-                  const uint32_t &offset = 0,
-                  const AttributeCategory &category = VERTEX,
-                  const AttributeBool &normalized = FALSE) :
+        VertexAttribute(const std::string& name,
+                        const uint32_t &location,
+                        const ElementCount &elementCount = SINGLE,
+                        const uint32_t &offset = 0,
+                        const AttributeCategory &category = VERTEX,
+                        const AttributeBool &normalized = FALSE) :
                   name(name), location(location),
                   offset(offset), elementCount(elementCount),
                   normalized(normalized), category(category)

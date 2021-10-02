@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../geometry/Vertex.h"
+#include <algorithm>
 
 #define MIN_VERTEX_COUNT 3
 
@@ -23,6 +24,17 @@ namespace engine {
                    vertices(vertices),
                    vertexCount(vertexCount),
                    vertexStart(vertexStart) {}
+
+        VertexData copy() const {
+            auto* copyVertices = new Vertex[vertexCount];
+            std::copy(vertices, vertices + vertexCount, copyVertices);
+
+            return VertexData {
+                copyVertices,
+                vertexStart,
+                vertexCount
+            };
+        }
     };
 
 }

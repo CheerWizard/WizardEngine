@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../shader/Attribute.h"
+#include "../shader/VertexAttribute.h"
 
 #include "glm/glm.hpp"
 

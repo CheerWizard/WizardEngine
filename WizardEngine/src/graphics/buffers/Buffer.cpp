@@ -10,7 +10,7 @@ namespace engine {
 
     bool Buffer::hasCapacity() const {
         if (capacity == 0) {
-            ENGINE_WARN("Buffer id={0} is not allocated!");
+            ENGINE_WARN("Buffer id={0} is not allocated!", id);
             return false;
         }
         return true;

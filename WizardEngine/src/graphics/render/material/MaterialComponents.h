@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../../math/Uniform.h"
+#include "../../shader/Uniform.h"
 
 namespace engine {
 

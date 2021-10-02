@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <string>
 
-#include "../../math/Uniform.h"
+#include "../shader/Uniform.h"
 
 namespace engine {
 

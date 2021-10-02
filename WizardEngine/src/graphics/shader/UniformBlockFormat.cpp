@@ -1,20 +1,20 @@
 //
-// Created by mecha on 29.09.2021.
+// Created by mecha on 02.10.2021.
 //
 
-#include "VertexFormat.h"
+#include "UniformBlockFormat.h"
 
 namespace engine {
 
-    const VertexAttribute& VertexFormat::get(const uint32_t &index) const {
+    const UniformAttribute& UniformBlockFormat::get(const uint32_t &index) const {
         return _attributes[index];
     }
 
-    void VertexFormat::destroy() {
+    void UniformBlockFormat::destroy() {
         clear();
     }
 
-    uint32_t VertexFormat::getElementCount() const {
+    uint32_t UniformBlockFormat::getElementCount() const {
         uint32_t elementCount = 0;
         for (const auto &attribute : _attributes) {
             elementCount += attribute.elementCount;
@@ -22,7 +22,7 @@ namespace engine {
         return elementCount;
     }
 
-    size_t VertexFormat::getSize() const {
+    size_t UniformBlockFormat::getSize() const {
         size_t size = 0;
         for (const auto &attribute : _attributes) {
             size += attribute.elementCount * sizeof(float);
@@ -30,24 +30,24 @@ namespace engine {
         return size;
     }
 
-    void VertexFormat::clear() {
+    void UniformBlockFormat::clear() {
         _attributes.clear();
     }
 
-    void VertexFormat::replace(const uint32_t &index, const VertexAttribute &attribute) {
+    void UniformBlockFormat::replace(const uint32_t &index, const UniformAttribute &attribute) {
         _attributes.emplace(_attributes.begin() + index, attribute);
     }
 
-    uint32_t VertexFormat::add(const VertexAttribute &attribute) {
+    uint32_t UniformBlockFormat::add(const UniformAttribute &attribute) {
         _attributes.emplace_back(attribute);
         return _attributes.size() - 1;
     }
 
-    void VertexFormat::remove(const uint32_t &index) {
+    void UniformBlockFormat::remove(const uint32_t &index) {
         _attributes.erase(_attributes.begin() + index);
     }
 
-    bool VertexFormat::isEmpty() {
+    bool UniformBlockFormat::isEmpty() {
         return _attributes.empty();
     }
 

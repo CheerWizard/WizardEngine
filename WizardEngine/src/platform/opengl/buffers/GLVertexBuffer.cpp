@@ -35,7 +35,7 @@ namespace engine {
         auto stride = vertexFormat->getElementCount() * sizeof(float);
         uint32_t offset = 0;
 
-        for (const Attribute &attribute : vertexFormat->getAttributes()) {
+        for (const VertexAttribute &attribute : vertexFormat->getAttributes()) {
             glVertexAttribPointer(attribute.location,
                                   attribute.elementCount,
                                   GL_FLOAT,
@@ -50,21 +50,22 @@ namespace engine {
     void GLVertexBuffer::load(const VertexData &vertexData) {
         if (!hasCapacity()) return;
 
-        auto subDataOffset = vertexData.vertexStart * vertexFormat->getElementCount() * sizeof(float);
+        auto vertexSize = vertexFormat->getSize();
+        auto subDataOffset = vertexData.vertexStart * vertexSize;
         glBufferSubData(GL_ARRAY_BUFFER,
                         (GLsizeiptr)subDataOffset,
-                        vertexData.vertexCount * sizeof(Vertex),
+                        vertexData.vertexCount * vertexSize,
                         vertexData.vertices);
     }
 
     void GLVertexBuffer::enableAttributes() {
-        for (const Attribute& attribute : vertexFormat->getAttributes()) {
+        for (const VertexAttribute& attribute : vertexFormat->getAttributes()) {
             glEnableVertexAttribArray(attribute.location);
         }
     }
 
     void GLVertexBuffer::disableAttributes() {
-        for (const Attribute& attribute : vertexFormat->getAttributes()) {
+        for (const VertexAttribute& attribute : vertexFormat->getAttributes()) {
             glDisableVertexAttribArray(attribute.location);
         }
     }
