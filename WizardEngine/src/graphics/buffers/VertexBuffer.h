@@ -9,7 +9,7 @@
 #include "VertexData.h"
 #include "../shader/VertexFormat.h"
 
-#define DEFAULT_VERTEX_COUNT 50000
+#define DEFAULT_VERTEX_COUNT 200000
 
 namespace engine {
 

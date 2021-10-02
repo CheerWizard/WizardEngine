@@ -65,23 +65,63 @@ namespace test {
 
             loadTexture("demo.png");
 
-            auto objData = loadObj("deagle");
+            auto deagleObj = loadObj("deagle");
+            auto ak47Obj = loadObj("Ak47");
+            auto humanObj = loadObj("human");
+
+            // create human entity
+
+            auto transform = engine::TransformComponent3d {
+                "transform",
+                { 2.5, 0, 12 },
+                {135, 0, 0},
+                {0.5, 0.5, 0.5}
+            };
+            transform.applyChanges();
+
+            for (auto i = 0 ; i < humanObj.vertexData.vertexCount ; i++) {
+                auto& vertex = humanObj.vertexData.vertices[i];
+                vertex.position.x -= 40;
+            }
+            humanObj.applyChanges();
+
+            auto humanTexture = engine::TextureComponent {
+                "diffuseSampler",
+                0
+            };
+            humanTexture.applyChanges();
+
+            humanEntity = activeScene->createEntity("Human");
+            humanEntity.addComponent<engine::TransformComponent3d>(transform);
+            humanEntity.addComponent<engine::ShapeComponent>(humanObj);
+            humanEntity.addComponent<engine::TextureComponent>(humanTexture);
+
+            // create AK47 entity
+            for (auto i = 0 ; i < ak47Obj.vertexData.vertexCount ; i++) {
+                auto& vertex = ak47Obj.vertexData.vertices[i];
+                vertex.position.x -= 30;
+                vertex.position.y -= 30;
+            }
+            ak47Obj.applyChanges();
+
+            auto ak47Texture = engine::TextureComponent {
+                "diffuseSampler",
+                0
+            };
+            ak47Texture.applyChanges();
+
+            ak47Entity = activeScene->createEntity("Human2");
+            ak47Entity.addComponent<engine::ShapeComponent>(ak47Obj);
+            ak47Entity.addComponent<engine::TextureComponent>(ak47Texture);
 
             // create deagle entity
 
-            auto deagle = engine::ShapeComponent {
-                objData.vertexData,
-                objData.indexData
-            };
-            deagle.applyChanges();
-
-            auto deagleTransform = engine::TransformComponent3d {
-                "transform",
-                { 2.5, 0, 12 },
-                {0, 0, 0},
-                {0.5, 0.5, 0.5}
-            };
-            deagleTransform.applyChanges();
+            deagleObj.applyChanges();
+            for (auto i = 0 ; i < deagleObj.vertexData.vertexCount ; i++) {
+                auto& vertex = deagleObj.vertexData.vertices[i];
+                vertex.position.x -= 20;
+            }
+            deagleObj.applyChanges();
 
             auto deagleTexture = engine::TextureComponent {
                 "diffuseSampler",
@@ -90,32 +130,8 @@ namespace test {
             deagleTexture.applyChanges();
 
             deagleEntity = activeScene->createEntity("Deagle");
-            deagleEntity.addComponent<engine::ShapeComponent>(deagle);
-            deagleEntity.addComponent<engine::TransformComponent3d>(deagleTransform);
+            deagleEntity.addComponent<engine::ShapeComponent>(deagleObj);
             deagleEntity.addComponent<engine::TextureComponent>(deagleTexture);
-
-            // create second deagle entity
-
-            auto deagle2 = engine::ShapeComponent {
-                objData.vertexData.copy(),
-                objData.indexData.copy()
-            };
-
-            for (auto i = 0 ; i < deagle2.vertexData.vertexCount ; i++) {
-                auto& vertex = deagle2.vertexData.vertices[i];
-                vertex.position.x -= 15;
-            }
-            deagle2.applyChanges();
-
-            auto deagleTexture2 = engine::TextureComponent {
-                "diffuseSampler",
-                0
-            };
-            deagleTexture2.applyChanges();
-
-            deagleEntity2 = activeScene->createEntity("Deagle2");
-            deagleEntity2.addComponent<engine::ShapeComponent>(deagle2);
-            deagleEntity2.addComponent<engine::TextureComponent>(deagleTexture2);
 
             // create cube entity
 
@@ -123,7 +139,7 @@ namespace test {
 
             for (auto i = 0 ; i < cube.vertexData.vertexCount ; i++) {
                 auto& vertex = cube.vertexData.vertices[i];
-                vertex.position.x -= 5;
+                vertex.position.x -= 10;
             }
             cube.applyChanges();
 
@@ -140,11 +156,6 @@ namespace test {
             // create triangle entity
 
             auto triangle = engine::Triangle();
-
-            for (auto i = 0 ; i < triangle.vertexData.vertexCount ; i++) {
-                auto& vertex = triangle.vertexData.vertices[i];
-                vertex.position.x -= 10;
-            }
             triangle.applyChanges();
 
             auto triangleTexture = engine::TextureComponent {
@@ -178,10 +189,10 @@ namespace test {
             Application::onUpdate();
             CLIENT_INFO("onUpdate()");
 
-            if (deagleEntity.hasComponent<engine::TransformComponent3d>()) {
-                auto& transform = deagleEntity.getComponent<engine::TransformComponent3d>().transformMatrix;
+            if (humanEntity.hasComponent<engine::TransformComponent3d>()) {
+                auto& transform = humanEntity.getComponent<engine::TransformComponent3d>().transformMatrix;
 
-                transform.rotation.y += 0.005f;
+                transform.rotation.y += 0.0005f;
                 transform.applyChanges();
             }
 
@@ -207,10 +218,11 @@ namespace test {
         }
 
     private:
-        engine::Entity cubeEntity;
         engine::Entity triangleEntity;
+        engine::Entity cubeEntity;
         engine::Entity deagleEntity;
-        engine::Entity deagleEntity2;
+        engine::Entity ak47Entity;
+        engine::Entity humanEntity;
 
     };
 
