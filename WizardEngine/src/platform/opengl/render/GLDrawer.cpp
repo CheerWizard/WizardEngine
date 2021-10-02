@@ -39,4 +39,12 @@ namespace engine {
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
+    void GLDrawer::drawIndicesInstanced(const uint32_t &indexCount, const uint32_t &instanceCount) {
+        glDrawElementsInstanced(GL_TRIANGLES, (GLsizei) indexCount, GL_UNSIGNED_INT, 0, instanceCount);
+    }
+
+    void GLDrawer::multiDrawIndices(const uint32_t &totalIndexCount, const uint32_t &drawCount) {
+//        glMultiDrawElements(GL_TRIANGLES, totalIndexCount, GL_UNSIGNED_INT, 0, drawCount);
+    }
+
 }

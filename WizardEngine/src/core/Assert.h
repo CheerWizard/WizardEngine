@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "Core.h"
+#include "Debug.h"
 #include "Logger.h"
 
 #ifdef ENABLE_ASSERTS

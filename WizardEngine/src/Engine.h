@@ -19,7 +19,7 @@
 // export ImGui system.
 #include "imgui/DemoLayout.h"
 #include "imgui/ImguiLayer.h"
-#include "imgui/ScenePanel.h"
+#include "imgui/SceneLayout.h"
 
 // export vendor libs.
 #include "../vendor/imgui/imgui/imgui.h"

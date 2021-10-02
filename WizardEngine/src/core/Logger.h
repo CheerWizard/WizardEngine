@@ -9,7 +9,7 @@
 #include <spdlog/fmt/ostr.h>
 #pragma warning(pop)
 
-#include "Core.h"
+#include "Debug.h"
 #include "Memory.h"
 
 #include <string>

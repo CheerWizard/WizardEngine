@@ -43,8 +43,16 @@ namespace test {
             pushLayout(demoLayout);
 
             pushLayout(new TestLayout());
-            // create window for Scene.
-            pushLayout(new engine::ScenePanel(activeScene, getWindowWidth(), getWindowHeight()));
+            pushLayout(new engine::SceneLayout(activeScene, {
+                "Scene Preview",
+                        600,
+                        480
+            }));
+            pushLayout(new engine::SceneLayout(activeScene, {
+                "Scene",
+                getWindowWidth(),
+                getWindowHeight()
+            }));
 
             CLIENT_INFO("Current workspace '{0}'", CURRENT_WORKING_DIR);
 
@@ -55,41 +63,100 @@ namespace test {
             };
             loadShader(shape2dShaderProps);
 
-            auto transform = engine::TransformComponent3d {
-                "transform",
-                { -1, -1, 10 },
-                {90, 0, 0},
-                {0.5, 0.5, 0.5}
-            };
-            transform.applyChanges();
+            loadTexture("demo.png");
 
             auto objData = loadObj("deagle");
 
-            auto shape = engine::ShapeComponent {
+            // create deagle entity
+
+            auto deagle = engine::ShapeComponent {
                 objData.vertexData,
                 objData.indexData
             };
+            deagle.applyChanges();
 
-            shape.applyChanges();
+            auto deagleTransform = engine::TransformComponent3d {
+                "transform",
+                { 2.5, 0, 12 },
+                {0, 0, 0},
+                {0.5, 0.5, 0.5}
+            };
+            deagleTransform.applyChanges();
 
-            enableDepthRendering();
-
-            loadTexture("demo.png");
-
-            auto texture = engine::TextureComponent {
+            auto deagleTexture = engine::TextureComponent {
                 "diffuseSampler",
                 0
             };
-            texture.applyChanges();
+            deagleTexture.applyChanges();
 
-            entity = activeScene->createEntity("DemoEntity");
-            entity.addComponent<engine::ShapeComponent>(shape);
-            entity.addComponent<engine::TransformComponent3d>(transform);
-            entity.addComponent<engine::TextureComponent>(texture);
+            deagleEntity = activeScene->createEntity("Deagle");
+            deagleEntity.addComponent<engine::ShapeComponent>(deagle);
+            deagleEntity.addComponent<engine::TransformComponent3d>(deagleTransform);
+            deagleEntity.addComponent<engine::TextureComponent>(deagleTexture);
 
-            //todo add FrameBuffer and set viewport for scene window to dock space!
-            //todo fix 3D viewProjection3d. object is going to wide during rotation.
-            //todo search and add different Material components.
+            // create cube entity
+
+            auto cube = engine::Cube();
+
+            cube.vertexData.vertexStart += deagle.vertexData.vertexCount;
+            cube.indexData.indexStart += deagle.indexData.indexCount;
+
+            for (auto i = 0 ; i < cube.vertexData.vertexCount ; i++) {
+                auto& vertex = cube.vertexData.vertices[i];
+                vertex.position.x -= 5;
+            }
+            cube.applyChanges();
+
+            auto cubeTransform = engine::TransformComponent3d {
+                "transform",
+                { 2.5, 0, 12 },
+                {0, 0, 0},
+                {0.5, 0.5, 0.5}
+            };
+            cubeTransform.applyChanges();
+
+            auto cubeTexture = engine::TextureComponent {
+                "diffuseSampler",
+                0
+            };
+            cubeTexture.applyChanges();
+
+            cubeEntity = activeScene->createEntity("Cube");
+            cubeEntity.addComponent<engine::ShapeComponent>(cube);
+            cubeEntity.addComponent<engine::TransformComponent3d>(cubeTransform);
+            cubeEntity.addComponent<engine::TextureComponent>(cubeTexture);
+
+            // create triangle entity
+
+            auto triangle = engine::Triangle();
+
+            triangle.vertexData.vertexStart += deagle.vertexData.vertexCount + cube.vertexData.vertexCount;
+            triangle.indexData.indexStart += deagle.indexData.indexCount + cube.indexData.indexCount;
+
+            for (auto i = 0 ; i < triangle.vertexData.vertexCount ; i++) {
+                auto& vertex = triangle.vertexData.vertices[i];
+                vertex.position.x -= 10;
+            }
+            triangle.applyChanges();
+
+            auto triangleTransform = engine::TransformComponent3d {
+                "transform",
+                { -2.5, 0, 12 },
+                {0, 0, 0},
+                {0.5, 0.5, 0.5}
+            };
+            triangleTransform.applyChanges();
+
+            auto triangleTexture = engine::TextureComponent {
+                "diffuseSampler",
+                0
+            };
+            triangleTexture.applyChanges();
+
+            triangleEntity = activeScene->createEntity("Triangle");
+            triangleEntity.addComponent<engine::ShapeComponent>(triangle);
+            triangleEntity.addComponent<engine::TransformComponent3d>(triangleTransform);
+            triangleEntity.addComponent<engine::TextureComponent>(triangleTexture);
         }
 
         void onPrepare() override {
@@ -112,12 +179,19 @@ namespace test {
             Application::onUpdate();
             CLIENT_INFO("onUpdate()");
 
-            if (entity.hasComponent<engine::TransformComponent3d>()) {
-                auto& transform = entity.getComponent<engine::TransformComponent3d>().transformMatrix;
-
-                transform.rotation.y += 0.001f;
-                transform.applyChanges();
-            }
+//            if (entity.hasComponent<engine::TransformComponent3d>()) {
+//                auto& transform = entity.getComponent<engine::TransformComponent3d>().transformMatrix;
+//
+//                transform.rotation.y += 0.001f;
+//                transform.applyChanges();
+//            }
+//
+//            if (entity2.hasComponent<engine::TransformComponent3d>()) {
+//                auto& transform = entity2.getComponent<engine::TransformComponent3d>().transformMatrix;
+//
+//                transform.rotation.y -= 0.001f;
+//                transform.applyChanges();
+//            }
         }
 
         void onKeyPressed(engine::KeyCode keyCode) override {
@@ -134,7 +208,9 @@ namespace test {
         }
 
     private:
-        engine::Entity entity;
+        engine::Entity cubeEntity;
+        engine::Entity triangleEntity;
+        engine::Entity deagleEntity;
 
     };
 
