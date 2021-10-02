@@ -126,6 +126,8 @@ namespace engine {
         void updateFboSpecification();
         void updateFboSpecification(const FramebufferSpecification &framebufferSpecification);
 
+        void setPolygonMode(const PolygonMode &polygonMode);
+
     private:
         void createCamera3D(const char* name);
         void createCamera3D(const char* name, const glm::vec3 &position);

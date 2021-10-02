@@ -199,6 +199,10 @@ namespace engine {
         drawer->enableDepth();
     }
 
+    void RenderSystem::setPolygonMode(const PolygonMode &polygonMode) {
+        drawer->setPolygonMode(polygonMode);
+    }
+
     void RenderSystem3d::renderMaterial(Ref<Shader> &shader, const entt::entity &entity) {
         if (!activeScene->hasComponent<TextureComponent>(entity)) return;
 

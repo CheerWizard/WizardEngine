@@ -64,12 +64,10 @@ namespace test {
             loadShader(shape2dShaderProps);
 
             loadTexture("demo.png");
+            // todo dont use for now. creates overhead for drivers, maybe even need to restart PC :)
+            auto carObj = loadObj("ferrari");
 
-            auto deagleObj = loadObj("deagle");
-            auto ak47Obj = loadObj("Ak47");
-            auto humanObj = loadObj("human");
-
-            // create human entity
+            // create car entity
 
             auto transform = engine::TransformComponent3d {
                 "transform",
@@ -79,94 +77,121 @@ namespace test {
             };
             transform.applyChanges();
 
-            for (auto i = 0 ; i < humanObj.vertexData.vertexCount ; i++) {
-                auto& vertex = humanObj.vertexData.vertices[i];
-                vertex.position.x -= 40;
-            }
-            humanObj.applyChanges();
+            carObj.applyChanges();
 
-            auto humanTexture = engine::TextureComponent {
+            auto carTexture = engine::TextureComponent {
                 "diffuseSampler",
                 0
             };
-            humanTexture.applyChanges();
+            carTexture.applyChanges();
 
-            humanEntity = activeScene->createEntity("Human");
-            humanEntity.addComponent<engine::TransformComponent3d>(transform);
-            humanEntity.addComponent<engine::ShapeComponent>(humanObj);
-            humanEntity.addComponent<engine::TextureComponent>(humanTexture);
+            carEntity = activeScene->createEntity("Car");
+            carEntity.addComponent<engine::TransformComponent3d>(transform);
+            carEntity.addComponent<engine::ShapeComponent>(carObj);
+            carEntity.addComponent<engine::TextureComponent>(carTexture);
 
-            // create AK47 entity
-            for (auto i = 0 ; i < ak47Obj.vertexData.vertexCount ; i++) {
-                auto& vertex = ak47Obj.vertexData.vertices[i];
-                vertex.position.x -= 30;
-                vertex.position.y -= 30;
-            }
-            ak47Obj.applyChanges();
-
-            auto ak47Texture = engine::TextureComponent {
-                "diffuseSampler",
-                0
-            };
-            ak47Texture.applyChanges();
-
-            ak47Entity = activeScene->createEntity("Human2");
-            ak47Entity.addComponent<engine::ShapeComponent>(ak47Obj);
-            ak47Entity.addComponent<engine::TextureComponent>(ak47Texture);
-
-            // create deagle entity
-
-            deagleObj.applyChanges();
-            for (auto i = 0 ; i < deagleObj.vertexData.vertexCount ; i++) {
-                auto& vertex = deagleObj.vertexData.vertices[i];
-                vertex.position.x -= 20;
-            }
-            deagleObj.applyChanges();
-
-            auto deagleTexture = engine::TextureComponent {
-                "diffuseSampler",
-                0
-            };
-            deagleTexture.applyChanges();
-
-            deagleEntity = activeScene->createEntity("Deagle");
-            deagleEntity.addComponent<engine::ShapeComponent>(deagleObj);
-            deagleEntity.addComponent<engine::TextureComponent>(deagleTexture);
-
-            // create cube entity
-
-            auto cube = engine::Cube();
-
-            for (auto i = 0 ; i < cube.vertexData.vertexCount ; i++) {
-                auto& vertex = cube.vertexData.vertices[i];
-                vertex.position.x -= 10;
-            }
-            cube.applyChanges();
-
-            auto cubeTexture = engine::TextureComponent {
-                "diffuseSampler",
-                0
-            };
-            cubeTexture.applyChanges();
-
-            cubeEntity = activeScene->createEntity("Cube");
-            cubeEntity.addComponent<engine::ShapeComponent>(cube);
-            cubeEntity.addComponent<engine::TextureComponent>(cubeTexture);
-
-            // create triangle entity
-
-            auto triangle = engine::Triangle();
-            triangle.applyChanges();
-
-            auto triangleTexture = engine::TextureComponent {
-                "diffuseSampler",
-                0
-            };
-            triangleTexture.applyChanges();
-
-            triangleEntity = activeScene->createEntity("Triangle");
-            triangleEntity.addComponent<engine::ShapeComponent>(triangle);
-            triangleEntity.addComponent<engine::TextureComponent>(triangleTexture);
+//            auto deagleObj = loadObj("deagle");
+//            auto ak47Obj = loadObj("Ak47");
+//            auto humanObj = loadObj("human");
+//
+//            // create human entity
+//
+//            auto transform = engine::TransformComponent3d {
+//                "transform",
+//                { 2.5, 0, 12 },
+//                {135, 0, 0},
+//                {0.5, 0.5, 0.5}
+//            };
+//            transform.applyChanges();
+//
+//            for (auto i = 0 ; i < humanObj.vertexData.vertexCount ; i++) {
+//                auto& vertex = humanObj.vertexData.vertices[i];
+//                vertex.position.x -= 40;
+//            }
+//            humanObj.applyChanges();
+//
+//            auto humanTexture = engine::TextureComponent {
+//                "diffuseSampler",
+//                0
+//            };
+//            humanTexture.applyChanges();
+//
+//            humanEntity = activeScene->createEntity("Human");
+//            humanEntity.addComponent<engine::TransformComponent3d>(transform);
+//            humanEntity.addComponent<engine::ShapeComponent>(humanObj);
+//            humanEntity.addComponent<engine::TextureComponent>(humanTexture);
+//
+//            // create AK47 entity
+//            for (auto i = 0 ; i < ak47Obj.vertexData.vertexCount ; i++) {
+//                auto& vertex = ak47Obj.vertexData.vertices[i];
+//                vertex.position.x -= 30;
+//                vertex.position.y -= 30;
+//            }
+//            ak47Obj.applyChanges();
+//
+//            auto ak47Texture = engine::TextureComponent {
+//                "diffuseSampler",
+//                0
+//            };
+//            ak47Texture.applyChanges();
+//
+//            ak47Entity = activeScene->createEntity("Human2");
+//            ak47Entity.addComponent<engine::ShapeComponent>(ak47Obj);
+//            ak47Entity.addComponent<engine::TextureComponent>(ak47Texture);
+//
+//            // create deagle entity
+//
+//            deagleObj.applyChanges();
+//            for (auto i = 0 ; i < deagleObj.vertexData.vertexCount ; i++) {
+//                auto& vertex = deagleObj.vertexData.vertices[i];
+//                vertex.position.x -= 20;
+//            }
+//            deagleObj.applyChanges();
+//
+//            auto deagleTexture = engine::TextureComponent {
+//                "diffuseSampler",
+//                0
+//            };
+//            deagleTexture.applyChanges();
+//
+//            deagleEntity = activeScene->createEntity("Deagle");
+//            deagleEntity.addComponent<engine::ShapeComponent>(deagleObj);
+//            deagleEntity.addComponent<engine::TextureComponent>(deagleTexture);
+//
+//            // create cube entity
+//
+//            auto cube = engine::Cube();
+//
+//            for (auto i = 0 ; i < cube.vertexData.vertexCount ; i++) {
+//                auto& vertex = cube.vertexData.vertices[i];
+//                vertex.position.x -= 10;
+//            }
+//            cube.applyChanges();
+//
+//            auto cubeTexture = engine::TextureComponent {
+//                "diffuseSampler",
+//                0
+//            };
+//            cubeTexture.applyChanges();
+//
+//            cubeEntity = activeScene->createEntity("Cube");
+//            cubeEntity.addComponent<engine::ShapeComponent>(cube);
+//            cubeEntity.addComponent<engine::TextureComponent>(cubeTexture);
+//
+//            // create triangle entity
+//
+//            auto triangle = engine::Triangle();
+//            triangle.applyChanges();
+//
+//            auto triangleTexture = engine::TextureComponent {
+//                "diffuseSampler",
+//                0
+//            };
+//            triangleTexture.applyChanges();
+//
+//            triangleEntity = activeScene->createEntity("Triangle");
+//            triangleEntity.addComponent<engine::ShapeComponent>(triangle);
+//            triangleEntity.addComponent<engine::TextureComponent>(triangleTexture);
         }
 
         void onPrepare() override {
@@ -189,8 +214,8 @@ namespace test {
             Application::onUpdate();
             CLIENT_INFO("onUpdate()");
 
-            if (humanEntity.hasComponent<engine::TransformComponent3d>()) {
-                auto& transform = humanEntity.getComponent<engine::TransformComponent3d>().transformMatrix;
+            if (carEntity.hasComponent<engine::TransformComponent3d>()) {
+                auto& transform = carEntity.getComponent<engine::TransformComponent3d>().transformMatrix;
 
                 transform.rotation.y += 0.0005f;
                 transform.applyChanges();
@@ -207,8 +232,16 @@ namespace test {
         void onKeyPressed(engine::KeyCode keyCode) override {
             Application::onKeyPressed(keyCode);
 
+            if (keyCode == engine::KeyCode::D1) {
+                setPolygonMode(engine::PolygonMode::POINT);
+            }
+
             if (keyCode == engine::KeyCode::D2) {
-                engine::ImGuiLayer::toggleDockSpace();
+                setPolygonMode(engine::PolygonMode::LINE);
+            }
+
+            if (keyCode == engine::KeyCode::D3) {
+                setPolygonMode(engine::PolygonMode::FILL);
             }
         }
 
@@ -223,6 +256,7 @@ namespace test {
         engine::Entity deagleEntity;
         engine::Entity ak47Entity;
         engine::Entity humanEntity;
+        engine::Entity carEntity;
 
     };
 

@@ -61,6 +61,8 @@ namespace engine {
 
         void enableDepth();
 
+        void setPolygonMode(const PolygonMode &polygonMode);
+
     public:
         void onWindowClosed() override;
         void onWindowResized(unsigned int width, unsigned int height) override;

@@ -290,4 +290,8 @@ namespace engine {
         _renderSystem->updateFboSpecification(framebufferSpecification);
     }
 
+    void Application::setPolygonMode(const PolygonMode &polygonMode) {
+        _renderSystem->setPolygonMode(polygonMode);
+    }
+
 }
