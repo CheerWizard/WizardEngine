@@ -67,13 +67,16 @@ namespace engine {
             renderCamera(shader);
 
             uint32_t totalIndexCount = 0;
+            uint32_t totalVertexCount = 0;
             for (const auto& renderableEntity : renderableEntities) {
-                auto shapeComponent = renderableEntities.get<ShapeComponent>(renderableEntity);
-                totalIndexCount += shapeComponent.indexData.indexCount;
+                auto& shapeComponent = renderableEntities.get<ShapeComponent>(renderableEntity);
 
-                renderShape(shaderName, shapeComponent);
+                renderShape(shaderName, shapeComponent, totalVertexCount, totalIndexCount);
                 renderMaterial(shader, renderableEntity);
                 renderTransform(shader, renderableEntity);
+
+                totalIndexCount += shapeComponent.indexData.indexCount;
+                totalVertexCount += shapeComponent.vertexData.vertexCount;
             }
 
             for (const auto& vertexBuffer : vertexBuffers) {
@@ -130,14 +133,31 @@ namespace engine {
         return shaderCache->exists(name);
     }
 
-    void RenderSystem::renderShape(const std::string &shaderName, ShapeComponent &shapeComponent) {
+    void RenderSystem::renderShape(const std::string &shaderName,
+                                   ShapeComponent &shapeComponent,
+                                   const uint32_t &vertexStart,
+                                   const uint32_t &indexStart) {
         if (!shapeComponent.isUpdated) return;
         shapeComponent.isUpdated = false;
 
+        auto& indexData = shapeComponent.indexData;
+        auto& currentIndexStart = indexData.indexStart;
+        auto& vertexData = shapeComponent.vertexData;
+        auto& currentVertexStart = vertexData.vertexStart;
+
+        if (currentVertexStart != vertexStart || currentIndexStart != indexStart) {
+            currentVertexStart = vertexStart;
+            currentIndexStart = indexStart;
+            for (auto i = 0 ; i < indexData.indexCount ; i++) {
+                auto& index = indexData.indices[i];
+                index += currentVertexStart;
+            }
+        }
+
         vertexArray->bindLastVertexBuffer(shaderName);
-        vertexArray->loadVertexBuffer(shaderName, shapeComponent.vertexData);
+        vertexArray->loadVertexBuffer(shaderName, vertexData);
         vertexArray->bindIndexBuffer();
-        vertexArray->loadIndexBuffer(shapeComponent.indexData);
+        vertexArray->loadIndexBuffer(indexData);
     }
 
     void RenderSystem::loadTexture(const std::string &filePath) {

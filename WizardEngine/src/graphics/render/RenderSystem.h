@@ -81,7 +81,10 @@ namespace engine {
         CameraController* cameraController = nullptr; // weak reference.
 
     private:
-        void renderShape(const std::string &shaderName, ShapeComponent &shapeComponent);
+        void renderShape(const std::string &shaderName,
+                         ShapeComponent &shapeComponent,
+                         const uint32_t &vertexStart,
+                         const uint32_t &indexStart);
         void renderCamera(const Ref<Shader>& shader);
         void onShaderLoaded(const ShaderError& shaderError, const std::string &shaderName);
 

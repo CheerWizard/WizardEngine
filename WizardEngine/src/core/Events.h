@@ -3,12 +3,12 @@
 //
 #pragma once
 
-#include <string>
-#include <sstream>
-#include "Core.h"
-
+#include "Debug.h"
 #include "KeyCodes.h"
 #include "MouseCodes.h"
+
+#include <string>
+#include <sstream>
 
 namespace engine {
 

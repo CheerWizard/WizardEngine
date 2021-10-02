@@ -6,8 +6,10 @@ in vec2 v_TextureCoords;
 out vec4 f_Color;
 
 uniform sampler2D diffuseSampler;
+uniform sampler2D diffuseSampler2;
 
 void main() {
-    vec4 diffColor = texture(diffuseSampler, v_TextureCoords);
+    sampler2D diffSampler = diffuseSampler;
+    vec4 diffColor = texture(diffSampler, v_TextureCoords);
     f_Color = diffColor;
 }

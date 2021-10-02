@@ -137,7 +137,6 @@ namespace engine {
 
         void createRenderSystem();
 
-
     protected:
         Scope<Input> input;
         KeyCode closeKeyPressed;

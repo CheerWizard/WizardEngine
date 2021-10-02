@@ -10,9 +10,9 @@
 
 #include "unordered_map"
 
-#define DEFAULT_CAMERA_ZOOM_SPEED 0.05f
-#define DEFAULT_CAMERA_MOVE_SPEED 0.05f
-#define DEFAULT_CAMERA_ROTATE_SPEED 0.05f
+#define DEFAULT_CAMERA_ZOOM_SPEED 0.5f
+#define DEFAULT_CAMERA_MOVE_SPEED 0.5f
+#define DEFAULT_CAMERA_ROTATE_SPEED 0.5f
 #define UNDEFINED_TYPE(T) static_cast<T>(0)
 
 namespace engine {
