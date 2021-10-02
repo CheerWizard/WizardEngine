@@ -18,12 +18,12 @@ namespace engine {
         void drawIndices(const uint32_t &indexCount) override;
         void setViewPort(const uint32_t &width, const uint32_t &height) override;
         void enableDepth() override;
-
         void disableDepth() override;
-
         void clearDepth(const Color &color) override;
-
         void clearColor(const Color &color) override;
+        void drawIndicesInstanced(const uint32_t &indexCount, const uint32_t &instanceCount) override;
+
+        void multiDrawIndices(const uint32_t &totalIndexCount, const uint32_t &drawCount) override;
 
     };
 

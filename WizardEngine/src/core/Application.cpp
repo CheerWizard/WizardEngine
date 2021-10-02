@@ -54,8 +54,8 @@ namespace engine {
 
     void Application::onPrepare() {
         _window->onPrepare();
-        _renderSystem->onPrepare();
         updateFboSpecification();
+        _renderSystem->onPrepare();
     }
 
     void Application::onDestroy() {
@@ -275,9 +275,11 @@ namespace engine {
 
     void Application::updateFboSpecification() {
         FramebufferSpecification framebufferSpecification;
-        framebufferSpecification.attachmentSpecification = { FramebufferTextureFormat::RGBA8,
-                                                             FramebufferTextureFormat::RED_INTEGER,
-                                                             FramebufferTextureFormat::Depth };
+        framebufferSpecification.attachmentSpecification = {
+                FramebufferTextureFormat::RGBA8,
+                FramebufferTextureFormat::RED_INTEGER,
+                FramebufferTextureFormat::Depth
+        };
         framebufferSpecification.width = 1920;
         framebufferSpecification.height = 1080;
 

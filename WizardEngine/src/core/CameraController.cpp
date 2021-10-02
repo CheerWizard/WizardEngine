@@ -109,10 +109,10 @@ namespace engine {
     void Camera3dController::move(const MoveType &moveType) {
         switch (moveType) {
             case MoveType::DOWN:
-                _camera3D->viewMatrix.position.y -= moveSpeed;
+                _camera3D->viewMatrix.position.y += moveSpeed;
                 break;
             case MoveType::UP:
-                _camera3D->viewMatrix.position.y += moveSpeed;
+                _camera3D->viewMatrix.position.y -= moveSpeed;
                 break;
             case MoveType::LEFT:
                 _camera3D->viewMatrix.position.x += moveSpeed;
@@ -122,19 +122,19 @@ namespace engine {
                 break;
             case MoveType::RIGHT_DOWN:
                 _camera3D->viewMatrix.position.x -= moveSpeed;
-                _camera3D->viewMatrix.position.y -= moveSpeed;
+                _camera3D->viewMatrix.position.y += moveSpeed;
                 break;
             case MoveType::RIGHT_UP:
                 _camera3D->viewMatrix.position.x -= moveSpeed;
-                _camera3D->viewMatrix.position.y += moveSpeed;
+                _camera3D->viewMatrix.position.y -= moveSpeed;
                 break;
             case MoveType::LEFT_DOWN:
                 _camera3D->viewMatrix.position.x += moveSpeed;
-                _camera3D->viewMatrix.position.y -= moveSpeed;
+                _camera3D->viewMatrix.position.y += moveSpeed;
                 break;
             case MoveType::LEFT_UP:
                 _camera3D->viewMatrix.position.x += moveSpeed;
-                _camera3D->viewMatrix.position.y += moveSpeed;
+                _camera3D->viewMatrix.position.y -= moveSpeed;
                 break;
         }
     }
