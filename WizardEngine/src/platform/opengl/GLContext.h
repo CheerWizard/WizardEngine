@@ -42,16 +42,27 @@ namespace engine {
         Ref<RenderSystem> newRenderSystem2d() override;
 
         Ref<RenderSystem>
-        newRenderSystem2d(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray, const Ref<Drawer> &drawer,
-                          const Ref<FrameBuffer> &frameBuffer) override;
+        newRenderSystem2d(ShaderCache *shaderCache,
+                          const Ref<VertexArray> &vertexArray,
+                          const Ref<Drawer> &drawer,
+                          const Ref<FrameBuffer> &frameBuffer,
+                          const Ref<UniformBuffer> &uniformBuffer
+                          ) override;
 
         Ref<RenderSystem> newRenderSystem3d() override;
 
         Ref<RenderSystem>
-        newRenderSystem3d(ShaderCache *shaderCache, const Ref<VertexArray> &vertexArray, const Ref<Drawer> &drawer,
-                          const Ref<FrameBuffer> &frameBuffer) override;
+        newRenderSystem3d(ShaderCache *shaderCache,
+                          const Ref<VertexArray> &vertexArray,
+                          const Ref<Drawer> &drawer,
+                          const Ref<FrameBuffer> &frameBuffer,
+                          const Ref<UniformBuffer> &uniformBuffer
+                          ) override;
 
         Ref<FrameBuffer> newFrameBuffer() override;
+
+        Ref<UniformBuffer> newUniformBuffer(UniformBlockFormat* uniformBlockFormat) override;
+        Ref<UniformBuffer> newUniformBuffer() override;
 
     private:
         std::string getAPIName() override;

@@ -10,6 +10,7 @@
 
 #include "../buffers/VertexArray.h"
 #include "../buffers/FrameBuffer.h"
+#include "../buffers/UniformBuffer.h"
 
 #include "../shader/ShaderCache.h"
 
@@ -31,11 +32,14 @@ namespace engine {
         RenderSystem(ShaderCache* shaderCache,
                      const Ref<VertexArray> &vertexArray,
                      const Ref<Drawer> &drawer,
-                     const Ref<FrameBuffer> &frameBuffer) :
+                     const Ref<FrameBuffer> &frameBuffer,
+                     const Ref<UniformBuffer> &uniformBuffer
+                     ) :
         shaderCache(shaderCache),
         vertexArray(vertexArray),
         drawer(drawer),
-        frameBuffer(frameBuffer) {}
+        frameBuffer(frameBuffer),
+        uniformBuffer(uniformBuffer) {}
 
         virtual ~RenderSystem() = default;
 
@@ -74,10 +78,11 @@ namespace engine {
         }
 
     protected:
+        ShaderCache* shaderCache;
         Ref<VertexArray> vertexArray;
         Ref<Drawer> drawer;
         Ref<FrameBuffer> frameBuffer;
-        ShaderCache* shaderCache;
+        Ref<UniformBuffer> uniformBuffer;
         CameraController* cameraController = nullptr; // weak reference.
 
     private:
@@ -96,8 +101,10 @@ namespace engine {
         RenderSystem2d(ShaderCache* shaderCache,
                      const Ref<VertexArray> &vertexArray,
                      const Ref<Drawer> &drawer,
-                     const Ref<FrameBuffer> &frameBuffer) :
-                     RenderSystem(shaderCache, vertexArray, drawer, frameBuffer) {}
+                     const Ref<FrameBuffer> &frameBuffer,
+                     const Ref<UniformBuffer> &uniformBuffer
+                     ) :
+                     RenderSystem(shaderCache, vertexArray, drawer, frameBuffer, uniformBuffer) {}
 
         ~RenderSystem2d() override = default;
 
@@ -113,8 +120,10 @@ namespace engine {
         RenderSystem3d(ShaderCache* shaderCache,
                        const Ref<VertexArray> &vertexArray,
                        const Ref<Drawer> &drawer,
-                       const Ref<FrameBuffer> &frameBuffer) :
-                       RenderSystem(shaderCache, vertexArray, drawer, frameBuffer) {}
+                       const Ref<FrameBuffer> &frameBuffer,
+                       const Ref<UniformBuffer> &uniformBuffer
+                       ) :
+                       RenderSystem(shaderCache, vertexArray, drawer, frameBuffer, uniformBuffer) {}
 
         ~RenderSystem3d() override = default;
 

@@ -13,7 +13,7 @@ namespace engine {
 //        auto rotMatX = glm::rotate(identity, rotation.x, {1, 0, 0});
 //        auto rotMatY = glm::rotate(rotMatX, rotation.y, {0, 1, 0});
 //        auto rotMatZ = glm::rotate(rotMatY, rotation.z, {0, 0, 1});
-//        auto translateMat = glm::translate(rotMatY, -position);
+//        auto translateMat = glm::translate(rotMatZ, -position);
         auto yAxis = glm::vec3(0, 1, 0);
         auto zAxis = glm::vec3(0, 0, 1);
         value = glm::lookAt(position, position + zAxis, yAxis);

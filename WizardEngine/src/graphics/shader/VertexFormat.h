@@ -4,12 +4,7 @@
 
 #pragma once
 
-#include "Attribute.h"
-
-#include "vector"
-
-#define MIN_VERTEX_COUNT 3
-#define MIN_OFFSET_IN_BUFFER 0
+#include "VertexAttribute.h"
 
 namespace engine {
 
@@ -17,7 +12,7 @@ namespace engine {
 
     public:
 
-        VertexFormat(const std::vector<Attribute>& attributes = std::vector<Attribute>()) :
+        VertexFormat(const std::vector<VertexAttribute>& attributes = std::vector<VertexAttribute>()) :
         _attributes(attributes) {}
 
         ~VertexFormat() {
@@ -25,25 +20,26 @@ namespace engine {
         }
 
     public:
-        inline std::vector<Attribute>& getAttributes() {
+        inline std::vector<VertexAttribute>& getAttributes() {
             return _attributes;
         }
 
     public:
-        void destroy();
-
         uint32_t getElementCount() const;
         size_t getSize() const;
 
-        uint32_t add(const Attribute &attribute); // returns index of new element.
-        void replace(const uint32_t &index, const Attribute &attribute);
-        const Attribute& get(const uint32_t &index) const;
+        uint32_t add(const VertexAttribute &attribute); // returns index of new element.
+        void replace(const uint32_t &index, const VertexAttribute &attribute);
+        const VertexAttribute& get(const uint32_t &index) const;
         void clear();
         void remove(const uint32_t &index);
         bool isEmpty();
 
     private:
-        std::vector<Attribute> _attributes;
+        void destroy();
+
+    private:
+        std::vector<VertexAttribute> _attributes;
 
     };
 

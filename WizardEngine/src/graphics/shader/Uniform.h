@@ -5,6 +5,7 @@
 #pragma once
 
 #include "glm/glm.hpp"
+#include <glm/gtc/type_ptr.hpp>
 
 namespace engine {
 
@@ -20,6 +21,15 @@ namespace engine {
         Uniform(const char* name, const V &value) :
         name(name),
         value(value) {
+        }
+
+    public:
+        float* toFloatPtr() {
+            return glm::value_ptr(value);
+        }
+
+        int* toIntPtr() {
+            return glm::value_ptr(value);
         }
 
     public:

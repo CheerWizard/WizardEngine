@@ -5,6 +5,7 @@
 #pragma once
 
 #include <cstdint>
+#include <algorithm>
 
 #define MIN_INDEX_COUNT 3
 
@@ -23,6 +24,17 @@ namespace engine {
                   indices(indices),
                   indexStart(indexStart),
                   indexCount(indexCount) {}
+
+        IndexData copy() const {
+            auto* copyIndices = new uint32_t[indexCount];
+            std::copy(indices, indices + indexCount, copyIndices);
+
+            return IndexData {
+                copyIndices,
+                indexStart,
+                indexCount
+            };
+        }
     };
 
 }

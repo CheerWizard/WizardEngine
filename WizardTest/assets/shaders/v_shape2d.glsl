@@ -8,7 +8,11 @@ layout(location = 2) in vec4 color;
 out vec4 v_Color;
 out vec2 v_TextureCoords;
 
-uniform mat4 camera;
+layout (std140) uniform Camera {
+    mat4 camera;
+};
+
+// todo consider how to move all transforms into Camera uniform block.
 uniform mat4 transform;
 
 void main() {

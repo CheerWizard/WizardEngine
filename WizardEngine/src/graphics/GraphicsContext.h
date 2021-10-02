@@ -13,6 +13,7 @@
 #include "shader/Shader.h"
 #include "buffers/VertexArray.h"
 #include "buffers/FrameBuffer.h"
+#include "buffers/UniformBuffer.h"
 
 #include "string"
 #include "vector"
@@ -41,7 +42,9 @@ namespace engine {
         virtual Ref<RenderSystem> newRenderSystem2d(ShaderCache* shaderCache,
                                                   const Ref<VertexArray>& vertexArray,
                                                   const Ref<Drawer>& drawer,
-                                                  const Ref<FrameBuffer> &frameBuffer) = 0;
+                                                  const Ref<FrameBuffer> &frameBuffer,
+                                                  const Ref<UniformBuffer> &uniformBuffer
+                                                  ) = 0;
 
 
         virtual Ref<RenderSystem> newRenderSystem3d() = 0;
@@ -49,7 +52,9 @@ namespace engine {
         virtual Ref<RenderSystem> newRenderSystem3d(ShaderCache* shaderCache,
                                                     const Ref<VertexArray>& vertexArray,
                                                     const Ref<Drawer>& drawer,
-                                                    const Ref<FrameBuffer> &frameBuffer) = 0;
+                                                    const Ref<FrameBuffer> &frameBuffer,
+                                                    const Ref<UniformBuffer> &uniformBuffer
+                                                    ) = 0;
 
         virtual Ref<VertexArray> newVertexArray(
                 VertexBufferCache* vertexBufferCache,
@@ -64,6 +69,9 @@ namespace engine {
 
         virtual Ref<FrameBuffer> newFrameBuffer(const FramebufferSpecification &framebufferSpecification) = 0;
         virtual Ref<FrameBuffer> newFrameBuffer() = 0;
+
+        virtual Ref<UniformBuffer> newUniformBuffer(UniformBlockFormat* uniformBlockFormat) = 0;
+        virtual Ref<UniformBuffer> newUniformBuffer() = 0;
 
         virtual Ref<Shader> newShader(const ShaderProps& shaderProps,
                                       VertexFormat* vertexFormat) = 0;

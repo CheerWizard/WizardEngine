@@ -6,7 +6,7 @@
 
 namespace engine {
 
-    const Attribute& VertexFormat::get(const uint32_t &index) const {
+    const VertexAttribute& VertexFormat::get(const uint32_t &index) const {
         return _attributes[index];
     }
 
@@ -34,11 +34,11 @@ namespace engine {
         _attributes.clear();
     }
 
-    void VertexFormat::replace(const uint32_t &index, const Attribute &attribute) {
+    void VertexFormat::replace(const uint32_t &index, const VertexAttribute &attribute) {
         _attributes.emplace(_attributes.begin() + index, attribute);
     }
 
-    uint32_t VertexFormat::add(const Attribute &attribute) {
+    uint32_t VertexFormat::add(const VertexAttribute &attribute) {
         _attributes.emplace_back(attribute);
         return _attributes.size() - 1;
     }

@@ -6,7 +6,7 @@
 
 namespace engine {
 
-    const Attribute& Shader::getAttribute(const uint32_t &index) const {
+    const VertexAttribute& Shader::getAttribute(const uint32_t &index) const {
         return vertexFormat->get(index);
     }
 
@@ -20,16 +20,24 @@ namespace engine {
         return read();
     }
 
-    uint32_t Shader::addAttribute(const Attribute &attribute) {
+    uint32_t Shader::addAttribute(const VertexAttribute &attribute) {
         return vertexFormat->add(attribute);
     }
 
-    void Shader::replaceAttribute(const uint32_t &index, const Attribute &attribute) {
+    void Shader::replaceAttribute(const uint32_t &index, const VertexAttribute &attribute) {
         vertexFormat->replace(index, attribute);
     }
 
     const char *Shader::getAssetPath() const {
         return SHADERS_PATH;
+    }
+
+    uint32_t Shader::addUniformBlockAttr(const UniformAttribute &uniformAttribute) {
+        return uniformBlockFormat->add(uniformAttribute);
+    }
+
+    const UniformAttribute& Shader::getUniformBlockAttr(const uint32_t &index) {
+        return uniformBlockFormat->get(index);
     }
 
 }

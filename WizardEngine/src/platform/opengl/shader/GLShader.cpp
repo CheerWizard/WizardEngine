@@ -4,8 +4,6 @@
 
 #include "GLShader.h"
 
-#include <glm/gtc/type_ptr.hpp>
-
 namespace engine {
 
     void GLShader::onCreate() {
@@ -24,8 +22,13 @@ namespace engine {
         _typeSources[GL_VERTEX_SHADER] = vShader;
         _typeSources[GL_FRAGMENT_SHADER] = fShader;
 
-        if (compile() && vertexFormat == nullptr) {
-            findAttributes();
+        if (compile()) {
+            if (vertexFormat == nullptr) {
+                findAttributes();
+            }
+            if (uniformBlockFormat == nullptr) {
+                findUniformBlocks();
+            }
         }
     }
 
@@ -38,12 +41,17 @@ namespace engine {
     }
 
     void GLShader::bindAttributes() {
-        for (Attribute& attribute : vertexFormat->getAttributes()) {
+        for (VertexAttribute& attribute : vertexFormat->getAttributes()) {
             auto attrName = attribute.name.c_str();
             auto attributeLocation = glGetAttribLocation(programId, attrName);
             glBindAttribLocation(programId, attributeLocation, attrName);
             attribute.location = attributeLocation;
         }
+    }
+
+    void GLShader::bindUniformBlock() {
+        auto uniformBlockIndex = glGetUniformBlockIndex(programId, uniformBlockFormat->getName().c_str());
+        glUniformBlockBinding(programId, uniformBlockIndex, 0);
     }
 
     void GLShader::setUniform(FloatUniform &uniform) {
@@ -79,7 +87,7 @@ namespace engine {
         uniform.isUpdated = false;
         auto location = glGetUniformLocation(programId, uniform.name);
         auto value = uniform.value;
-        glUniform2f(location, value.x, value.y);
+        glUniform2fv(location, 1, uniform.toFloatPtr());
     }
 
     void GLShader::setUniform(Vec3fUniform &uniform) {
@@ -87,7 +95,7 @@ namespace engine {
         uniform.isUpdated = false;
         auto location = glGetUniformLocation(programId, uniform.name);
         auto value = uniform.value;
-        glUniform3f(location, value.x, value.y, value.z);
+        glUniform3fv(location, 1, uniform.toFloatPtr());
     }
 
     void GLShader::setUniform(Vec4fUniform &uniform) {
@@ -95,28 +103,28 @@ namespace engine {
         uniform.isUpdated = false;
         auto location = glGetUniformLocation(programId, uniform.name);
         auto value = uniform.value;
-        glUniform4f(location, value.x, value.y, value.z, value.w);
+        glUniform4fv(location, 1, uniform.toFloatPtr());
     }
 
     void GLShader::setUniform(Mat2fUniform &uniform) {
         if (!uniform.isUpdated) return;
         uniform.isUpdated = false;
         auto location = glGetUniformLocation(programId, uniform.name);
-        glUniformMatrix2fv(location, 1, GL_FALSE, glm::value_ptr(uniform.value));
+        glUniformMatrix2fv(location, 1, GL_FALSE, uniform.toFloatPtr());
     }
 
     void GLShader::setUniform(Mat3fUniform &uniform) {
         if (!uniform.isUpdated) return;
         uniform.isUpdated = false;
         auto location = glGetUniformLocation(programId, uniform.name);
-        glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(uniform.value));
+        glUniformMatrix3fv(location, 1, GL_FALSE, uniform.toFloatPtr());
     }
 
     void GLShader::setUniform(Mat4fUniform &uniform) {
         if (!uniform.isUpdated) return;
         uniform.isUpdated = false;
         auto location = glGetUniformLocation(programId, uniform.name);
-        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(uniform.value));
+        glUniformMatrix4fv(location, 1, GL_FALSE, uniform.toFloatPtr());
     }
 
     bool GLShader::compile() {
@@ -199,6 +207,7 @@ namespace engine {
         _shaderIds.clear();
         _typeSources.clear();
         delete vertexFormat;
+        delete uniformBlockFormat;
     }
 
     void GLShader::detachShaders() {
@@ -218,7 +227,7 @@ namespace engine {
     }
 
     void GLShader::findAttributes() {
-        auto& vShader = _typeSources[GL_VERTEX_SHADER];
+        auto vShader = _typeSources[GL_VERTEX_SHADER];
         ENGINE_INFO("Shader is trying to find attributes...");
         auto vShaderTokens = split(vShader, " ");
 
@@ -238,14 +247,14 @@ namespace engine {
                 auto tokenName = vShaderTokens[i + 2];
                 auto endNamePos = tokenName.find(';');
                 auto attrName = tokenName.substr(0, endNamePos);
-                auto attr = Attribute {
+                auto attr = VertexAttribute {
                     attrName,
                     0,
                     attrElementCount,
                     0,
                     attrCategory
                 };
-                ENGINE_INFO("Adding new attribute elementCount : {0}, name : {1}", attrElementCount, attrName);
+                ENGINE_INFO("Adding new vertex attribute - elementCount : {0}, name : {1}", attrElementCount, attrName);
                 addAttribute(attr);
             }
         }
@@ -255,7 +264,7 @@ namespace engine {
             error = ShaderError::NO_ATTRS;
         }
 
-        ENGINE_INFO("Shader has found attributes");
+        ENGINE_INFO("Shader has found vertex attributes!");
     }
 
     ElementCount GLShader::toElementCount(const std::string &elementCountStr) {
@@ -283,6 +292,47 @@ namespace engine {
         }
 
         return elementCount;
+    }
+
+    void GLShader::findUniformBlocks() {
+        auto vShader = _typeSources[GL_VERTEX_SHADER];
+        ENGINE_INFO("Shader is trying to find uniform blocks...");
+        auto vShaderTokens = split(vShader, "\r\n; ");
+
+        uniformBlockFormat = new UniformBlockFormat();
+        for (auto i = 0 ; i < vShaderTokens.size() ; i++) {
+            if (vShaderTokens[i] == "uniform") {
+                // if uniform starts with curly brace, then this is uniform block
+                if (vShaderTokens[i + 2] != "{") continue;
+
+                auto uniformBlockName = vShaderTokens[i + 1];
+                ENGINE_INFO("Found new uniform block - name : {0}", uniformBlockName);
+                uniformBlockFormat->setName(uniformBlockName);
+
+                auto j = i + 2; // start of block {
+                while (vShaderTokens[j + 1] != "}") {
+                    auto attrElementCount = toElementCount(vShaderTokens[j + 1]);
+                    auto attr = UniformAttribute {
+                        attrElementCount
+                    };
+                    ENGINE_INFO("Adding new uniform block attribute - elementCount : {0}, block name : {1}",
+                                attrElementCount,
+                                uniformBlockName);
+                    addUniformBlockAttr(attr);
+                    j += 2;
+                }
+
+                // skip searching next blocks
+                break;
+            }
+        }
+
+        if (uniformBlockFormat->isEmpty()) {
+            ENGINE_WARN("Shader '{0}' doesn't has uniform blocks!", props.name);
+            error = ShaderError::NO_UNIFORM_BLOCKS;
+        }
+
+        ENGINE_INFO("Shader has found uniform blocks!");
     }
 
 }

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Uniform.h"
+#include "../graphics/shader/Uniform.h"
 
 #define DEFAULT_FIELD_OF_VIEW 60.0f
 #define DEFAULT_Z_NEAR 0.01f
