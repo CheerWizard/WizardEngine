@@ -12,6 +12,7 @@
 #include "buffers/GLVertexArray.h"
 #include "buffers/GLTextureBuffer.h"
 #include "buffers/GLFrameBuffer.h"
+#include "buffers/GLUniformBuffer.h"
 
 #include "GLFW/glfw3.h"
 
@@ -91,14 +92,17 @@ namespace engine {
         auto vertexArray = newVertexArray(vertexBufferCache, indexBuffer);
         auto drawer = newDrawer();
         auto frameBuffer = newFrameBuffer();
-        return newRenderSystem2d(shaderCache, vertexArray, drawer, frameBuffer);
+        auto uniformBuffer = newUniformBuffer();
+        return newRenderSystem2d(shaderCache, vertexArray, drawer, frameBuffer, uniformBuffer);
     }
 
     Ref<RenderSystem> GLContext::newRenderSystem2d(ShaderCache *shaderCache,
                                                    const Ref<VertexArray> &vertexArray,
                                                    const Ref<Drawer> &drawer,
-                                                   const Ref<FrameBuffer> &frameBuffer) {
-        return createRef<RenderSystem2d>(shaderCache, vertexArray, drawer, frameBuffer);
+                                                   const Ref<FrameBuffer> &frameBuffer,
+                                                   const Ref<UniformBuffer> &uniformBuffer
+                                                   ) {
+        return createRef<RenderSystem2d>(shaderCache, vertexArray, drawer, frameBuffer, uniformBuffer);
     }
 
     Ref<RenderSystem> GLContext::newRenderSystem3d() {
@@ -108,14 +112,17 @@ namespace engine {
         auto vertexArray = newVertexArray(vertexBufferCache, indexBuffer);
         auto drawer = newDrawer();
         auto frameBuffer = newFrameBuffer();
-        return newRenderSystem3d(shaderCache, vertexArray, drawer, frameBuffer);
+        auto uniformBuffer = newUniformBuffer();
+        return newRenderSystem3d(shaderCache, vertexArray, drawer, frameBuffer, uniformBuffer);
     }
 
     Ref<RenderSystem> GLContext::newRenderSystem3d(ShaderCache *shaderCache,
                                                    const Ref<VertexArray> &vertexArray,
                                                    const Ref<Drawer> &drawer,
-                                                   const Ref<FrameBuffer> &frameBuffer) {
-        return createRef<RenderSystem3d>(shaderCache, vertexArray, drawer, frameBuffer);
+                                                   const Ref<FrameBuffer> &frameBuffer,
+                                                   const Ref<UniformBuffer> &uniformBuffer
+                                                   ) {
+        return createRef<RenderSystem3d>(shaderCache, vertexArray, drawer, frameBuffer, uniformBuffer);
     }
 
     Ref<FrameBuffer> GLContext::newFrameBuffer(const FramebufferSpecification &framebufferSpecification) {
@@ -124,6 +131,14 @@ namespace engine {
 
     Ref<FrameBuffer> GLContext::newFrameBuffer() {
         return createRef<GLFrameBuffer>();
+    }
+
+    Ref<UniformBuffer> GLContext::newUniformBuffer(UniformBlockFormat* uniformBlockFormat) {
+        return createRef<GLUniformBuffer>(uniformBlockFormat);
+    }
+
+    Ref<engine::UniformBuffer> GLContext::newUniformBuffer() {
+        return createRef<GLUniformBuffer>();
     }
 
 }

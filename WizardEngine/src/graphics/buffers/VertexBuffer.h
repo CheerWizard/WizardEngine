@@ -16,7 +16,9 @@ namespace engine {
     class VertexBuffer : public Buffer {
 
     public:
-        explicit VertexBuffer(VertexFormat* vertexFormat) : vertexFormat(vertexFormat) {}
+        explicit VertexBuffer(VertexFormat* vertexFormat) :
+        Buffer(),
+        vertexFormat(vertexFormat) {}
 
     public:
         virtual void allocate() = 0;

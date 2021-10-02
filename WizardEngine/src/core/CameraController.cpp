@@ -94,14 +94,10 @@ namespace engine {
     void Camera3dController::zoom(const ZoomType &zoomType) {
         switch (zoomType) {
             case ZoomType::IN:
-                _camera3D->viewMatrix.position.z += zoomSpeed;
-                _camera3D->viewMatrix.position.x += zoomSpeed;
-                _camera3D->viewMatrix.position.y += zoomSpeed;
+                _camera3D->viewMatrix.position.z -= zoomSpeed;
                 break;
             case ZoomType::OUT:
-                _camera3D->viewMatrix.position.z -= zoomSpeed;
-                _camera3D->viewMatrix.position.x -= zoomSpeed;
-                _camera3D->viewMatrix.position.y -= zoomSpeed;
+                _camera3D->viewMatrix.position.z += zoomSpeed;
                 break;
         }
     }

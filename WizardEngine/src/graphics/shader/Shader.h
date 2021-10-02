@@ -5,12 +5,12 @@
 #pragma once
 
 #include "VertexFormat.h"
-
-#include "glm/glm.hpp"
+#include "Uniform.h"
+#include "UniformBlockFormat.h"
 
 #include "../../core/File.h"
 
-#include "../../math/Uniform.h"
+#include "glm/glm.hpp"
 
 #define SHADERS_PATH "shaders"
 
@@ -21,7 +21,8 @@ namespace engine {
         READING_FILE = 1,
         COMPILE = 2,
         LINKING = 3,
-        NO_ATTRS = 4
+        NO_ATTRS = 4,
+        NO_UNIFORM_BLOCKS = 5,
     };
 
     struct ShaderProps {
@@ -50,7 +51,7 @@ namespace engine {
         props(shaderProps) {}
 
     public:
-        inline void setVertex(VertexFormat* vertexFormat) {
+        inline void setVertexFormat(VertexFormat* vertexFormat) {
             this->vertexFormat = vertexFormat;
         }
 
@@ -70,11 +71,26 @@ namespace engine {
             return error;
         }
 
+        inline const uint32_t& getId() const {
+            return programId;
+        }
+
+        inline void setUniformFormat(UniformBlockFormat* uniformBlockFormat) {
+            this->uniformBlockFormat = uniformBlockFormat;
+        }
+
+        inline UniformBlockFormat* getUniformBlockFormat() const {
+            return uniformBlockFormat;
+        }
+
     public:
-        uint32_t addAttribute(const Attribute &attribute);
-        void replaceAttribute(const uint32_t &index, const Attribute &attribute);
-        const Attribute& getAttribute(const uint32_t &index) const;
+        uint32_t addAttribute(const VertexAttribute &attribute);
+        void replaceAttribute(const uint32_t &index, const VertexAttribute &attribute);
+        const VertexAttribute& getAttribute(const uint32_t &index) const;
         void removeAttribute(const uint32_t &index);
+
+        uint32_t addUniformBlockAttr(const UniformAttribute &uniformAttribute);
+        const UniformAttribute& getUniformBlockAttr(const uint32_t &index);
 
     protected:
         std::string readShader(const std::string &name);
@@ -85,6 +101,7 @@ namespace engine {
         virtual void stop() = 0;
 
         virtual void bindAttributes() = 0;
+        virtual void bindUniformBlock() = 0;
 
         virtual void setUniform(FloatUniform &uniform) = 0;
         virtual void setUniform(BoolUniform &uniform) = 0;
@@ -101,9 +118,10 @@ namespace engine {
 
     protected:
         uint32_t programId;
-        VertexFormat* vertexFormat = nullptr;
         ShaderProps props;
         ShaderError error = NONE;
+        VertexFormat* vertexFormat = nullptr;
+        UniformBlockFormat* uniformBlockFormat = nullptr;
 
     };
 

@@ -47,6 +47,8 @@ namespace engine {
         void setUniform(Mat3fUniform &uniform) override;
         void setUniform(Mat4fUniform &uniform) override;
 
+        void bindUniformBlock() override;
+
     private:
         static std::string toStringShaderType(GLenum type);
 
@@ -57,6 +59,7 @@ namespace engine {
         void detachShaders();
         void deleteShaders();
         void findAttributes();
+        void findUniformBlocks();
         static ElementCount toElementCount(const std::string &elementCountStr);
 
     protected:

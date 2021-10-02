@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Uniform.h"
+#include "../graphics/shader/Uniform.h"
 
 #include "ViewMatrix.h"
 #include "ProjectionMatrix.h"

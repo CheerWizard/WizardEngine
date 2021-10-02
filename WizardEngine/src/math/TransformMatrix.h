@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Uniform.h"
+#include "../graphics/shader/Uniform.h"
 
 #define DEFAULT_TRANSLATION_3D {0.5, 0.5, 0.5}
 #define DEFAULT_ROTATION_3D {0, 0, 0}
