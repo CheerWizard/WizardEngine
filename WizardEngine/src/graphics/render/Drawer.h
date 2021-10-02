@@ -21,6 +21,7 @@ namespace engine {
     public:
         virtual void enableDepth() = 0;
         virtual void disableDepth() = 0;
+        virtual void enableCulling() = 0;
         virtual void clearDepth(const Color &color) = 0;
         virtual void clearColor(const Color &color) = 0;
         virtual void setViewPort(const uint32_t &width, const uint32_t &height) = 0;

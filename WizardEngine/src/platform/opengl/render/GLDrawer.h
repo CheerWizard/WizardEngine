@@ -25,6 +25,8 @@ namespace engine {
 
         void multiDrawIndices(const uint32_t &totalIndexCount, const uint32_t &drawCount) override;
 
+        void enableCulling() override;
+
     };
 
 }

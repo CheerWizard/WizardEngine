@@ -64,27 +64,54 @@ namespace engine {
                 auto faceTokens2 = split(vertexOrder2Token, "/");
                 auto faceTokens3 = split(vertexOrder3Token, "/");
 
-                auto indexPos1 = TO_INT(faceTokens1[0]) - 1;
-                auto indexUv1 = TO_INT(faceTokens1[1]) - 1;
-                auto indexNormal1 = TO_INT(faceTokens1[2]) - 1;
+                int indexUv1 = 0;
+                int indexPos1;
+                int indexNormal1;
+                if (faceTokens1.size() < 3) {
+                    indexPos1 = TO_INT(faceTokens1[0]) - 1;
+                    indexNormal1 = TO_INT(faceTokens1[1]) - 1;
+                } else {
+                    indexPos1 = TO_INT(faceTokens1[0]) - 1;
+                    indexUv1 = TO_INT(faceTokens1[1]) - 1;
+                    indexNormal1 = TO_INT(faceTokens1[2]) - 1;
+                }
+
                 Face face1 = {
                         indexPos1,
                         indexUv1,
                         indexNormal1
                 };
 
-                auto indexPos2 = TO_INT(faceTokens2[0]) - 1;
-                auto indexUv2 = TO_INT(faceTokens2[1]) - 1;
-                auto indexNormal2 = TO_INT(faceTokens2[2]) - 1;
+                int indexUv2 = 0;
+                int indexPos2 = 0;
+                int indexNormal2;
+                if (faceTokens2.size() < 3) {
+                    indexPos2 = TO_INT(faceTokens2[0]) - 1;
+                    indexNormal2 = TO_INT(faceTokens2[1]) - 1;
+                } else {
+                    indexPos2 = TO_INT(faceTokens2[0]) - 1;
+                    indexUv2 = TO_INT(faceTokens2[1]) - 1;
+                    indexNormal2 = TO_INT(faceTokens2[2]) - 1;
+                }
+
                 Face face2 = {
                         indexPos2,
                         indexUv2,
                         indexNormal2
                 };
 
-                auto indexPos3 = TO_INT(faceTokens3[0]) - 1;
-                auto indexUv3 = TO_INT(faceTokens3[1]) - 1;
-                auto indexNormal3 = TO_INT(faceTokens3[2]) - 1;
+                int indexUv3 = 0;
+                int indexPos3 = 0;
+                int indexNormal3;
+                if (faceTokens3.size() < 3) {
+                    indexPos3 = TO_INT(faceTokens3[0]) - 1;
+                    indexNormal3 = TO_INT(faceTokens3[1]) - 1;
+                } else {
+                    indexPos3 = TO_INT(faceTokens3[0]) - 1;
+                    indexUv3 = TO_INT(faceTokens3[1]) - 1;
+                    indexNormal3 = TO_INT(faceTokens3[2]) - 1;
+                }
+
                 Face face3 = {
                         indexPos3,
                         indexUv3,
@@ -105,7 +132,9 @@ namespace engine {
             auto posIndex = face.posIndex;
             auto uvIndex = face.uvIndex;
             auto& vertex = vertices[posIndex];
-            vertex.textureCoords = uvs[uvIndex];
+            if (!uvs.empty()) {
+                vertex.textureCoords = uvs[uvIndex];
+            }
         }
 
         uint32_t indexCount = indices.size();

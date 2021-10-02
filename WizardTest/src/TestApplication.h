@@ -65,20 +65,21 @@ namespace test {
 
             loadTexture("demo.png");
 
-            auto objData = loadObj("deagle");
+            auto deagleObj = loadObj("deagle");
+            auto humanObj = loadObj("human");
 
             // create deagle entity
 
             auto deagle = engine::ShapeComponent {
-                objData.vertexData,
-                objData.indexData
+                    deagleObj.vertexData,
+                    deagleObj.indexData
             };
             deagle.applyChanges();
 
             auto deagleTransform = engine::TransformComponent3d {
                 "transform",
                 { 2.5, 0, 12 },
-                {0, 0, 0},
+                {135, 0, 0},
                 {0.5, 0.5, 0.5}
             };
             deagleTransform.applyChanges();
@@ -97,8 +98,8 @@ namespace test {
             // create second deagle entity
 
             auto deagle2 = engine::ShapeComponent {
-                objData.vertexData.copy(),
-                objData.indexData.copy()
+                    deagleObj.vertexData.copy(),
+                    deagleObj.indexData.copy()
             };
 
             for (auto i = 0 ; i < deagle2.vertexData.vertexCount ; i++) {
@@ -116,6 +117,52 @@ namespace test {
             deagleEntity2 = activeScene->createEntity("Deagle2");
             deagleEntity2.addComponent<engine::ShapeComponent>(deagle2);
             deagleEntity2.addComponent<engine::TextureComponent>(deagleTexture2);
+
+            // create human entity
+
+            auto human = engine::ShapeComponent {
+                humanObj.vertexData,
+                humanObj.indexData
+            };
+
+            for (auto i = 0 ; i < human.vertexData.vertexCount ; i++) {
+                auto& vertex = human.vertexData.vertices[i];
+                vertex.position.x -= 30;
+            }
+            human.applyChanges();
+
+            auto humanTexture = engine::TextureComponent {
+                "diffuseSampler",
+                0
+            };
+            humanTexture.applyChanges();
+
+            humanEntity = activeScene->createEntity("Human");
+            humanEntity.addComponent<engine::ShapeComponent>(human);
+            humanEntity.addComponent<engine::TextureComponent>(humanTexture);
+
+            // create second human entity
+
+            auto human2 = engine::ShapeComponent {
+                humanObj.vertexData.copy(),
+                humanObj.indexData.copy()
+            };
+
+            for (auto i = 0 ; i < human2.vertexData.vertexCount ; i++) {
+                auto& vertex = human2.vertexData.vertices[i];
+                vertex.position.x += 15;
+            }
+            human2.applyChanges();
+
+            auto humanTexture2 = engine::TextureComponent {
+                "diffuseSampler",
+                0
+            };
+            humanTexture2.applyChanges();
+
+            humanEntity2 = activeScene->createEntity("Human2");
+            humanEntity2.addComponent<engine::ShapeComponent>(human2);
+            humanEntity2.addComponent<engine::TextureComponent>(humanTexture2);
 
             // create cube entity
 
@@ -181,7 +228,7 @@ namespace test {
             if (deagleEntity.hasComponent<engine::TransformComponent3d>()) {
                 auto& transform = deagleEntity.getComponent<engine::TransformComponent3d>().transformMatrix;
 
-                transform.rotation.y += 0.005f;
+                transform.rotation.y += 0.0025f;
                 transform.applyChanges();
             }
 
@@ -211,6 +258,8 @@ namespace test {
         engine::Entity triangleEntity;
         engine::Entity deagleEntity;
         engine::Entity deagleEntity2;
+        engine::Entity humanEntity;
+        engine::Entity humanEntity2;
 
     };
 

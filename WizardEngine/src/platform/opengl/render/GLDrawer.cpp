@@ -47,4 +47,9 @@ namespace engine {
 //        glMultiDrawElements(GL_TRIANGLES, totalIndexCount, GL_UNSIGNED_INT, 0, drawCount);
     }
 
+    void GLDrawer::enableCulling() {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+    }
+
 }
