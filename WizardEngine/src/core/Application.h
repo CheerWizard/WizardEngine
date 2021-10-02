@@ -121,7 +121,7 @@ namespace engine {
         void createCamera(const char* name = DEFAULT_CAMERA_NAME);
         void createActiveScene();
 
-        ObjData loadObj(const std::string& objName);
+        ShapeComponent loadObj(const std::string& objName);
 
         void updateFboSpecification();
         void updateFboSpecification(const FramebufferSpecification &framebufferSpecification);

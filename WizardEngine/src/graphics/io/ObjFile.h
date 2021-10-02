@@ -9,6 +9,8 @@
 #include "../buffers/VertexData.h"
 #include "../buffers/IndexData.h"
 
+#include "../geometry/ShapeComponent.h"
+
 #define OBJ_PATH "obj"
 
 namespace engine {
@@ -16,6 +18,7 @@ namespace engine {
     struct ObjData {
         VertexData vertexData;
         IndexData indexData;
+
     };
 
     struct Face {
@@ -30,19 +33,14 @@ namespace engine {
         ObjFile() = default;
         ObjFile(const std::string& name, const std::string &path) : File(name, path) {}
 
-        ~ObjFile() override {
-            destroy();
-        }
+        ~ObjFile() override = default;
 
     public:
-        ObjData readObj(const std::string &fileName);
+        ShapeComponent readObj(const std::string &fileName);
 
     protected:
         const char *getExtensionName() const override;
         const char *getAssetPath() const override;
-
-    private:
-        void destroy();
 
     };
 

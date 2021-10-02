@@ -18,7 +18,7 @@ namespace engine {
     //  obj file may include not only single model, but whole world (multiple models)
     //  model may consist from multiple models and than merged into single one
     //  great example is model of AK-47 weapon, which consist from different sub models.
-    ObjData ObjFile::readObj(const std::string &fileName) {
+    ShapeComponent ObjFile::readObj(const std::string &fileName) {
         setAssetName(fileName);
         auto source = read();
         auto tokens = split(source, "\n\r ");
@@ -28,6 +28,7 @@ namespace engine {
         std::vector<glm::vec3> normals;
         std::vector<uint32_t> indices;
         std::vector<Face> faces;
+        ShapePrimitive primitive = TRIANGLE;
 
         for (auto i = 0 ; i < tokens.size(); i++) {
             auto token = tokens[i];
@@ -64,27 +65,54 @@ namespace engine {
                 auto faceTokens2 = split(vertexOrder2Token, "/");
                 auto faceTokens3 = split(vertexOrder3Token, "/");
 
-                auto indexPos1 = TO_INT(faceTokens1[0]) - 1;
-                auto indexUv1 = TO_INT(faceTokens1[1]) - 1;
-                auto indexNormal1 = TO_INT(faceTokens1[2]) - 1;
+                int indexUv1 = 0;
+                int indexPos1;
+                int indexNormal1;
+                if (faceTokens1.size() < 3) {
+                    indexPos1 = TO_INT(faceTokens1[0]) - 1;
+                    indexNormal1 = TO_INT(faceTokens1[1]) - 1;
+                } else {
+                    indexPos1 = TO_INT(faceTokens1[0]) - 1;
+                    indexUv1 = TO_INT(faceTokens1[1]) - 1;
+                    indexNormal1 = TO_INT(faceTokens1[2]) - 1;
+                }
+
                 Face face1 = {
                         indexPos1,
                         indexUv1,
                         indexNormal1
                 };
 
-                auto indexPos2 = TO_INT(faceTokens2[0]) - 1;
-                auto indexUv2 = TO_INT(faceTokens2[1]) - 1;
-                auto indexNormal2 = TO_INT(faceTokens2[2]) - 1;
+                int indexUv2 = 0;
+                int indexPos2 = 0;
+                int indexNormal2;
+                if (faceTokens2.size() < 3) {
+                    indexPos2 = TO_INT(faceTokens2[0]) - 1;
+                    indexNormal2 = TO_INT(faceTokens2[1]) - 1;
+                } else {
+                    indexPos2 = TO_INT(faceTokens2[0]) - 1;
+                    indexUv2 = TO_INT(faceTokens2[1]) - 1;
+                    indexNormal2 = TO_INT(faceTokens2[2]) - 1;
+                }
+
                 Face face2 = {
                         indexPos2,
                         indexUv2,
                         indexNormal2
                 };
 
-                auto indexPos3 = TO_INT(faceTokens3[0]) - 1;
-                auto indexUv3 = TO_INT(faceTokens3[1]) - 1;
-                auto indexNormal3 = TO_INT(faceTokens3[2]) - 1;
+                int indexUv3 = 0;
+                int indexPos3 = 0;
+                int indexNormal3;
+                if (faceTokens3.size() < 3) {
+                    indexPos3 = TO_INT(faceTokens3[0]) - 1;
+                    indexNormal3 = TO_INT(faceTokens3[1]) - 1;
+                } else {
+                    indexPos3 = TO_INT(faceTokens3[0]) - 1;
+                    indexUv3 = TO_INT(faceTokens3[1]) - 1;
+                    indexNormal3 = TO_INT(faceTokens3[2]) - 1;
+                }
+
                 Face face3 = {
                         indexPos3,
                         indexUv3,
@@ -98,6 +126,35 @@ namespace engine {
                 faces.emplace_back(face1);
                 faces.emplace_back(face2);
                 faces.emplace_back(face3);
+
+                auto vertexOrder4Token = tokens[i + 4];
+                auto faceTokens4 = split(vertexOrder4Token, "/");
+
+                if (faceTokens4.size() > 1) {
+                    int indexUv4 = 0;
+                    int indexPos4;
+                    int indexNormal4;
+                    if (faceTokens4.size() < 3) {
+                        indexPos4 = TO_INT(faceTokens4[0]) - 1;
+                        indexNormal4 = TO_INT(faceTokens4[1]) - 1;
+                    } else {
+                        indexPos4 = TO_INT(faceTokens4[0]) - 1;
+                        indexUv4 = TO_INT(faceTokens4[1]) - 1;
+                        indexNormal4 = TO_INT(faceTokens4[2]) - 1;
+                    }
+
+                    Face face4 = {
+                            indexPos4,
+                            indexUv4,
+                            indexNormal4
+                    };
+
+                    indices.emplace_back(indexPos1);
+                    indices.emplace_back(indexPos3);
+                    indices.emplace_back(indexPos4);
+
+                    faces.emplace_back(face4);
+                }
             }
         }
 
@@ -105,7 +162,9 @@ namespace engine {
             auto posIndex = face.posIndex;
             auto uvIndex = face.uvIndex;
             auto& vertex = vertices[posIndex];
-            vertex.textureCoords = uvs[uvIndex];
+            if (!uvs.empty()) {
+                vertex.textureCoords = uvs[uvIndex];
+            }
         }
 
         uint32_t indexCount = indices.size();
@@ -133,13 +192,11 @@ namespace engine {
             indexCount
         };
 
-        return ObjData {
+        return ShapeComponent {
             vertexData,
-            indexData
+            indexData,
+            primitive
         };
-    }
-
-    void ObjFile::destroy() {
     }
 
 }
