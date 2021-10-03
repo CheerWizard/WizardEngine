@@ -1,4 +1,3 @@
-# WizardGE
 ![wizard_logo](https://user-images.githubusercontent.com/37471793/135765820-b9bdf5d2-54fa-41d8-b293-6c88ae8b4091.jpg)
 
 A complex game development platform, with all necessary solutions.
