@@ -33,16 +33,9 @@ namespace test {
     protected:
 
         void onCreate() override {
-            CLIENT_INFO("create()");
             Application::onCreate();
+            CLIENT_INFO("onCreate()");
 
-            pushLayer(new TestLayer());
-
-            auto demoLayout = new engine::DemoLayout();
-            demoLayout->showKeyPressed = engine::KeyCode::D1;
-            pushLayout(demoLayout);
-
-            pushLayout(new TestLayout());
             pushLayout(new engine::SceneLayout(activeScene, {
                 "Scene Preview",
                         600,
@@ -64,8 +57,7 @@ namespace test {
             loadShader(shape2dShaderProps);
 
             loadTexture("demo.png");
-            // todo dont use for now. creates overhead for drivers, maybe even need to restart PC :)
-            auto carObj = loadObj("ferrari");
+            auto carObj = loadObj("human");
 
             // create car entity
 
@@ -214,10 +206,12 @@ namespace test {
             Application::onUpdate();
             CLIENT_INFO("onUpdate()");
 
+            auto dt = fpsTimer.getDeltaTime();
+
             if (carEntity.hasComponent<engine::TransformComponent3d>()) {
                 auto& transform = carEntity.getComponent<engine::TransformComponent3d>().transformMatrix;
 
-                transform.rotation.y += 0.0005f;
+                transform.rotation.y += 0.0001f / dt;
                 transform.applyChanges();
             }
 
@@ -242,6 +236,22 @@ namespace test {
 
             if (keyCode == engine::KeyCode::D3) {
                 setPolygonMode(engine::PolygonMode::FILL);
+            }
+
+            if (keyCode == engine::KeyCode::D0) {
+                fpsTimer.setMaxFps(15);
+            }
+
+            if (keyCode == engine::KeyCode::D9) {
+                fpsTimer.setMaxFps(30);
+            }
+
+            if (keyCode == engine::KeyCode::D8) {
+                fpsTimer.setMaxFps(60);
+            }
+
+            if (keyCode == engine::KeyCode::D7) {
+                fpsTimer.setMaxFps(getRefreshRate());
             }
         }
 

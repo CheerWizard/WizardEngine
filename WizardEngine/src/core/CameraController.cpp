@@ -94,10 +94,10 @@ namespace engine {
     void Camera3dController::zoom(const ZoomType &zoomType) {
         switch (zoomType) {
             case ZoomType::IN:
-                _camera3D->viewMatrix.position.z -= zoomSpeed;
+                _camera3D->viewMatrix.position.z -= zoomSpeed / dt;
                 break;
             case ZoomType::OUT:
-                _camera3D->viewMatrix.position.z += zoomSpeed;
+                _camera3D->viewMatrix.position.z += zoomSpeed / dt;
                 break;
         }
     }
@@ -105,32 +105,32 @@ namespace engine {
     void Camera3dController::move(const MoveType &moveType) {
         switch (moveType) {
             case MoveType::DOWN:
-                _camera3D->viewMatrix.position.y += moveSpeed;
+                _camera3D->viewMatrix.position.y += moveSpeed / dt;
                 break;
             case MoveType::UP:
-                _camera3D->viewMatrix.position.y -= moveSpeed;
+                _camera3D->viewMatrix.position.y -= moveSpeed / dt;
                 break;
             case MoveType::LEFT:
-                _camera3D->viewMatrix.position.x += moveSpeed;
+                _camera3D->viewMatrix.position.x += moveSpeed / dt;
                 break;
             case MoveType::RIGHT:
-                _camera3D->viewMatrix.position.x -= moveSpeed;
+                _camera3D->viewMatrix.position.x -= moveSpeed / dt;
                 break;
             case MoveType::RIGHT_DOWN:
-                _camera3D->viewMatrix.position.x -= moveSpeed;
-                _camera3D->viewMatrix.position.y += moveSpeed;
+                _camera3D->viewMatrix.position.x -= moveSpeed / dt;
+                _camera3D->viewMatrix.position.y += moveSpeed / dt;
                 break;
             case MoveType::RIGHT_UP:
-                _camera3D->viewMatrix.position.x -= moveSpeed;
-                _camera3D->viewMatrix.position.y -= moveSpeed;
+                _camera3D->viewMatrix.position.x -= moveSpeed / dt;
+                _camera3D->viewMatrix.position.y -= moveSpeed / dt;
                 break;
             case MoveType::LEFT_DOWN:
-                _camera3D->viewMatrix.position.x += moveSpeed;
-                _camera3D->viewMatrix.position.y += moveSpeed;
+                _camera3D->viewMatrix.position.x += moveSpeed / dt;
+                _camera3D->viewMatrix.position.y += moveSpeed / dt;
                 break;
             case MoveType::LEFT_UP:
-                _camera3D->viewMatrix.position.x += moveSpeed;
-                _camera3D->viewMatrix.position.y -= moveSpeed;
+                _camera3D->viewMatrix.position.x += moveSpeed / dt;
+                _camera3D->viewMatrix.position.y -= moveSpeed / dt;
                 break;
         }
     }
@@ -138,22 +138,22 @@ namespace engine {
     void Camera3dController::rotate(const RotateType &rotateType) {
         switch (rotateType) {
             case RotateType::LEFT_X:
-                _camera3D->viewMatrix.rotation.x -= rotateSpeed;
+                _camera3D->viewMatrix.rotation.x -= rotateSpeed / dt;
                 break;
             case RotateType::LEFT_Y:
-                _camera3D->viewMatrix.rotation.y -= rotateSpeed;
+                _camera3D->viewMatrix.rotation.y -= rotateSpeed / dt;
                 break;
             case RotateType::LEFT_Z:
-                _camera3D->viewMatrix.rotation.z -= rotateSpeed;
+                _camera3D->viewMatrix.rotation.z -= rotateSpeed / dt;
                 break;
             case RotateType::RIGHT_X:
-                _camera3D->viewMatrix.rotation.x += rotateSpeed;
+                _camera3D->viewMatrix.rotation.x += rotateSpeed / dt;
                 break;
             case RotateType::RIGHT_Y:
-                _camera3D->viewMatrix.rotation.y += rotateSpeed;
+                _camera3D->viewMatrix.rotation.y += rotateSpeed / dt;
                 break;
             case RotateType::RIGHT_Z:
-                _camera3D->viewMatrix.rotation.z += rotateSpeed;
+                _camera3D->viewMatrix.rotation.z += rotateSpeed / dt;
                 break;
         }
     }
@@ -173,10 +173,10 @@ namespace engine {
     void Camera2dController::zoom(const ZoomType &zoomType) {
         switch (zoomType) {
             case ZoomType::IN:
-                _camera2D->viewMatrix.position.z += zoomSpeed;
+                _camera2D->viewMatrix.position.z += zoomSpeed / dt;
                 break;
             case ZoomType::OUT:
-                _camera2D->viewMatrix.position.z -= zoomSpeed;
+                _camera2D->viewMatrix.position.z -= zoomSpeed / dt;
                 break;
         }
     }
@@ -184,32 +184,32 @@ namespace engine {
     void Camera2dController::move(const MoveType &moveType) {
         switch (moveType) {
             case MoveType::DOWN:
-                _camera2D->viewMatrix.position.y -= moveSpeed;
+                _camera2D->viewMatrix.position.y -= moveSpeed / dt;
                 break;
             case MoveType::UP:
-                _camera2D->viewMatrix.position.y += moveSpeed;
+                _camera2D->viewMatrix.position.y += moveSpeed / dt;
                 break;
             case MoveType::LEFT:
-                _camera2D->viewMatrix.position.x += moveSpeed;
+                _camera2D->viewMatrix.position.x += moveSpeed / dt;
                 break;
             case MoveType::RIGHT:
-                _camera2D->viewMatrix.position.x -= moveSpeed;
+                _camera2D->viewMatrix.position.x -= moveSpeed / dt;
                 break;
             case MoveType::RIGHT_DOWN:
-                _camera2D->viewMatrix.position.x -= moveSpeed;
-                _camera2D->viewMatrix.position.y -= moveSpeed;
+                _camera2D->viewMatrix.position.x -= moveSpeed / dt;
+                _camera2D->viewMatrix.position.y -= moveSpeed / dt;
                 break;
             case MoveType::RIGHT_UP:
-                _camera2D->viewMatrix.position.x -= moveSpeed;
-                _camera2D->viewMatrix.position.y += moveSpeed;
+                _camera2D->viewMatrix.position.x -= moveSpeed / dt;
+                _camera2D->viewMatrix.position.y += moveSpeed / dt;
                 break;
             case MoveType::LEFT_DOWN:
-                _camera2D->viewMatrix.position.x += moveSpeed;
-                _camera2D->viewMatrix.position.y -= moveSpeed;
+                _camera2D->viewMatrix.position.x += moveSpeed / dt;
+                _camera2D->viewMatrix.position.y -= moveSpeed / dt;
                 break;
             case MoveType::LEFT_UP:
-                _camera2D->viewMatrix.position.x += moveSpeed;
-                _camera2D->viewMatrix.position.y += moveSpeed;
+                _camera2D->viewMatrix.position.x += moveSpeed / dt;
+                _camera2D->viewMatrix.position.y += moveSpeed / dt;
                 break;
         }
     }

@@ -5,14 +5,15 @@
 #pragma once
 
 #include "Events.h"
+#include "Time.h"
 
 #include "../math/ViewProjectionMatrix.h"
 
 #include "unordered_map"
 
-#define DEFAULT_CAMERA_ZOOM_SPEED 0.5f
-#define DEFAULT_CAMERA_MOVE_SPEED 0.5f
-#define DEFAULT_CAMERA_ROTATE_SPEED 0.5f
+#define DEFAULT_CAMERA_ZOOM_SPEED 0.001f
+#define DEFAULT_CAMERA_MOVE_SPEED 0.001f
+#define DEFAULT_CAMERA_ROTATE_SPEED 0.001f
 #define UNDEFINED_TYPE(T) static_cast<T>(0)
 
 namespace engine {
@@ -66,6 +67,10 @@ namespace engine {
             applyChanges();
         }
 
+        inline void setDeltaTime(const Time &dt) {
+            this->dt = dt;
+        }
+
     public:
         void bind(const KeyCode &keyCode, const MoveType &moveType);
         void bind(const KeyCode &keyCode, const RotateType &rotateType);
@@ -97,6 +102,7 @@ namespace engine {
         MoveKeys moveKeys = MoveKeys();
         RotateKeys rotateKeys = RotateKeys();
         ZoomKeys zoomKeys = ZoomKeys();
+        Time dt;
 
     public:
         float zoomSpeed = DEFAULT_CAMERA_ZOOM_SPEED;

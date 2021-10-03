@@ -6,6 +6,7 @@
 #include "../../core/Window.h"
 
 struct GLFWwindow;
+struct GLFWmonitor;
 
 namespace engine {
 
@@ -29,6 +30,8 @@ namespace engine {
 
     public:
         void* getNativeWindow() const override { return _window; }
+
+        uint32_t getRefreshRate() override;
 
     private:
         static void handleError(int error, const char* description);

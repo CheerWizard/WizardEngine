@@ -15,12 +15,6 @@
 
 namespace engine {
 
-    struct ObjData {
-        VertexData vertexData;
-        IndexData indexData;
-
-    };
-
     struct Face {
         int posIndex;
         int uvIndex;

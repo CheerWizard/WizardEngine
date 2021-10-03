@@ -12,6 +12,7 @@
 #include "Assert.h"
 #include "Input.h"
 #include "CameraController.h"
+#include "Timer.h"
 
 #include "../imgui/ImguiLayer.h"
 
@@ -128,6 +129,8 @@ namespace engine {
 
         void setPolygonMode(const PolygonMode &polygonMode);
 
+        uint32_t getRefreshRate();
+
     private:
         void createCamera3D(const char* name);
         void createCamera3D(const char* name, const glm::vec3 &position);
@@ -144,6 +147,7 @@ namespace engine {
         KeyCode closeKeyPressed;
         CameraController* cameraController; // todo move to Component.
         Scene* activeScene; // todo add Scene cache or smth similar.
+        Timer fpsTimer;
 
     private:
         static Application* _instance;
