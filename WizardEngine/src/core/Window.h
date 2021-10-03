@@ -51,6 +51,8 @@ namespace engine {
         virtual void onUpdate() = 0;
         virtual void onClose() = 0;
 
+        virtual uint32_t getRefreshRate() = 0;
+
         virtual void onDestroy() {
             removeWindowCallback();
             removeKeyboardCallback();

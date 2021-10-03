@@ -31,6 +31,8 @@ namespace engine {
         _window = INIT_WINDOW(WindowProps());
         _window->onCreate();
 
+        fpsTimer.setMaxFps(getRefreshRate());
+
         _graphicsContext = INIT_GRAPHICS_CONTEXT;
         _graphicsContext->onCreate();
         _graphicsContext->printInfo();
@@ -70,11 +72,16 @@ namespace engine {
     }
 
     void Application::onUpdate() {
-        Time deltaTime = Time();
+        fpsTimer.begin();
+        auto dt = fpsTimer.getDeltaTime();
+
+        cameraController->setDeltaTime(dt);
         _renderSystem->onUpdate();
-        _layerStack.onUpdate(deltaTime);
+        _layerStack.onUpdate(dt);
         _window->onUpdate();
         _graphicsContext->swapBuffers();
+
+        fpsTimer.end();
     }
 
     void Application::pushLayer(Layer *layer) {
@@ -288,6 +295,14 @@ namespace engine {
 
     void Application::updateFboSpecification(const FramebufferSpecification &framebufferSpecification) {
         _renderSystem->updateFboSpecification(framebufferSpecification);
+    }
+
+    void Application::setPolygonMode(const PolygonMode &polygonMode) {
+        _renderSystem->setPolygonMode(polygonMode);
+    }
+
+    uint32_t Application::getRefreshRate() {
+        return _window->getRefreshRate();
     }
 
 }

@@ -25,11 +25,6 @@ namespace engine {
         glEnable(GL_DEPTH_TEST);
     }
 
-    void GLDrawer::setViewPort(const uint32_t &width, const uint32_t &height) {
-        ENGINE_INFO("setViewPort()");
-        glViewport(0, 0, (GLsizei) width, (GLsizei) height);
-    }
-
     void GLDrawer::disableDepth() {
         glDisable(GL_DEPTH_TEST);
     }
@@ -55,6 +50,10 @@ namespace engine {
     void GLDrawer::enableCulling() {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
+    }
+
+    void GLDrawer::setPolygonMode(const PolygonMode &polygonMode) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_POINT + polygonMode);
     }
 
 }
