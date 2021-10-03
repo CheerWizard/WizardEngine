@@ -5,7 +5,6 @@ A complex game development platform, with all necessary solutions.
 1. WizardEngine; 
 2. WizardTest;
 3. WizardEditor; 
-4. WizardGame;
 
 # WizardEngine
 A game engine library, responsible to provide an easy and flexible toolchain with all necessary technical solutions for a game.
@@ -14,7 +13,11 @@ A game engine library, responsible to provide an easy and flexible toolchain wit
 A test framework, responsible to provide all necessary test suites that will cover all tech side of WizardEngine project. Has static link to WizardEngine.
 
 # WizardEditor
-Not planned yet.
-
-# WizardGame
-Not planned yet.
+A GUI desktop application. Provides toolchain to manipulate with WizardEngine components, systems, etc. The actual GUI will consists with : 
+1. LevelEditor - creating and editing objects in the Scene or World. World may include muktiple Scenes.
+2. CharacterEditor - not decided yet.
+3. MaterialEditor - creating and editing material component.
+4. MeshEditor - editing geometry, shapes, meshes.
+5. ShaderEditor - creating and editing Shader.
+6. Entity and Component panels - creating and editing Entity and Component.
+7. Assets browser - manipulation with Asset files. Loading, saving, etc. It may be texture, shader, .obj and so on.
