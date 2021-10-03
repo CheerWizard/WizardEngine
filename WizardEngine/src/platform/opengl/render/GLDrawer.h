@@ -15,7 +15,6 @@ namespace engine {
         ~GLDrawer() = default;
 
     public:
-        void setViewPort(const uint32_t &width, const uint32_t &height) override;
         void enableDepth() override;
         void disableDepth() override;
         void clearDepth(const Color &color) override;
@@ -29,6 +28,8 @@ namespace engine {
         void drawQuadsIndices(const uint32_t &indexCount) override;
 
         void drawTrianglesIndices(const uint32_t &indexCount) override;
+
+        void setPolygonMode(const PolygonMode &polygonMode) override;
 
     };
 

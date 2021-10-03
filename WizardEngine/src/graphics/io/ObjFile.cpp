@@ -127,6 +127,8 @@ namespace engine {
                 faces.emplace_back(face2);
                 faces.emplace_back(face3);
 
+                if (tokens.size() == i + 4) break;
+
                 auto vertexOrder4Token = tokens[i + 4];
                 auto faceTokens4 = split(vertexOrder4Token, "/");
 

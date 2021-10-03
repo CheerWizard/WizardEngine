@@ -25,6 +25,10 @@ namespace engine {
                 nullptr);
     }
 
+    uint32_t WindowsWindow::getRefreshRate() {
+        return glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate;
+    }
+
     void WindowsWindow::onPrepare() {
         glfwSetWindowUserPointer(_window, &windowProps);
 
@@ -119,6 +123,7 @@ namespace engine {
     void WindowsWindow::onDestroy() {
         Window::onDestroy();
         glfwDestroyWindow(_window);
+        _window = nullptr;
         glfwTerminate();
     }
 
