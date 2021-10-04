@@ -2,17 +2,13 @@
 
 A complex game development platform, with all necessary solutions.
 
-1. WizardEngine; 
-2. WizardTest;
-3. WizardEditor; 
+1. Wizard Engine; 
+2. Fairy Lab; 
 
-# WizardEngine
+# Wizard Engine
 A game engine library, responsible to provide an easy and flexible toolchain with all necessary technical solutions for a game.
 
-# WizardTest
-A test framework, responsible to provide all necessary test suites that will cover all tech side of WizardEngine project. Has static link to WizardEngine.
-
-# WizardEditor
+# Fairy Lab
 A GUI desktop application. Provides toolchain to manipulate with WizardEngine components, systems, etc. The actual GUI will consists with : 
 1. LevelEditor - creating and editing objects in the Scene or World. World may include muktiple Scenes.
 2. CharacterEditor - not decided yet.
