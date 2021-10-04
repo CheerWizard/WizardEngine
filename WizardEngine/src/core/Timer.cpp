@@ -3,6 +3,7 @@
 //
 
 #include "Timer.h"
+#include "Logger.h"
 
 namespace engine {
 

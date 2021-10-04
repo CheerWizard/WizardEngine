@@ -18,17 +18,22 @@ namespace engine {
 
     public:
         SceneLayout(Scene* scene, const SceneLayoutProps &props) :
-        _scene(scene),
-        _props(props) {}
+        scene(scene),
+        props(props) {}
 
-        ~SceneLayout() override = default;
+        ~SceneLayout() override {
+            destroy();
+        }
 
     public:
         void onUpdate(Time deltaTime) override;
 
     private:
-        Scene* _scene;
-        SceneLayoutProps _props;
+        void destroy();
+
+    protected:
+        Scene* scene;
+        SceneLayoutProps props;
 
     };
 

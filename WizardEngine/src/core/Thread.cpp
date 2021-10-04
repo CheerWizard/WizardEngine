@@ -4,6 +4,9 @@
 
 #include "Thread.h"
 
+#include "Logger.h"
+#include <thread>
+
 namespace engine {
 
     void Thread::current_sleep(const uint32_t &millis) {

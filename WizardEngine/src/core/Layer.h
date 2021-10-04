@@ -5,9 +5,7 @@
 #pragma once
 
 #include "Time.h"
-#include "Logger.h"
 #include "Events.h"
-#include "../platform/Platform.h"
 
 namespace engine {
 

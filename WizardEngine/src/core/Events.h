@@ -3,12 +3,8 @@
 //
 #pragma once
 
-#include "Debug.h"
 #include "KeyCodes.h"
 #include "MouseCodes.h"
-
-#include <string>
-#include <sstream>
 
 namespace engine {
 

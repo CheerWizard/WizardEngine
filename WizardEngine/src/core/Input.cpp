@@ -1,5 +1,13 @@
 //
-// Created by mecha on 04.09.2021.
+// Created by mecha on 03.10.2021.
 //
 
 #include "Input.h"
+
+namespace engine {
+
+    void Input::destroy() {
+        nativeWindow = nullptr;
+    }
+
+}

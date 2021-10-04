@@ -3,11 +3,13 @@
 //
 
 #include "ImguiLayer.h"
-#include "../core/Application.h"
+#include "../platform/Platform.h"
 
 #include <imgui.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
+
+#include <GLFW/glfw3.h>
 
 #define IO ImGui::GetIO()
 #define STYLE ImGui::GetStyle()
@@ -20,7 +22,7 @@ namespace engine {
     int ImGuiLayer::_windowFlags = 0;
     int ImGuiLayer::_dockSpaceFlags = 0;
 
-    void ImGuiLayer::onCreate() {
+    void ImGuiLayer::onCreate(void* nativeWindow) {
         Layer::onCreate();
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
@@ -48,7 +50,7 @@ namespace engine {
 
         setDarkTheme();
         // Setup Platform/Renderer bindings
-        ImGui_ImplGlfw_InitForOpenGL(GLFW_WINDOW, true);
+        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*) nativeWindow, true);
         ImGui_ImplOpenGL3_Init("#version 410");
     }
 
@@ -69,7 +71,7 @@ namespace engine {
     }
 
     void ImGuiLayer::onEndFrame() {
-        IO.DisplaySize = ImVec2((float) WINDOW->getWidth(), (float) WINDOW->getHeight());
+        IO.DisplaySize = ImVec2((float) _width, (float) _height);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

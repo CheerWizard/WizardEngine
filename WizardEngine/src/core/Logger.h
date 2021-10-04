@@ -9,11 +9,8 @@
 #include <spdlog/fmt/ostr.h>
 #pragma warning(pop)
 
-#include "Debug.h"
 #include "Memory.h"
-
-#include <string>
-#include <vector>
+#include "String.h"
 
 namespace engine {
 
@@ -45,7 +42,7 @@ namespace engine {
 
 }
 
-#ifdef ENABLE_LOGS
+#ifdef DEBUG
     #define LOG_PATTERN(...)      ::engine::Logger::setPattern(__VA_ARGS__)
 
     // Engine log macros

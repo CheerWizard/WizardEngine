@@ -4,11 +4,19 @@
 
 #include "WindowsWindow.h"
 
+#include "../../core/Memory.h"
+#include "../../core/Assert.h"
+
 #include <GLFW/glfw3.h>
+
+#define GET_WINDOW_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).windowCallback
+#define GET_KEYBOARD_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).keyboardCallback
+#define GET_MOUSE_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).mouseCallback
+#define GET_CURSOR_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).cursorCallback
 
 namespace engine {
 
-    void WindowsWindow::onCreate() {
+    void WindowsWindow::create() {
         ENGINE_INFO("Creating window {0} ({1}, {2})", windowProps.title, windowProps.width, windowProps.height);
 
         if (!isInitialized) {
@@ -23,6 +31,13 @@ namespace engine {
                 windowProps.title.c_str(),
                 nullptr,
                 nullptr);
+    }
+
+    void WindowsWindow::destroy() {
+        removeCallbacks();
+        glfwDestroyWindow(_window);
+        _window = nullptr;
+        glfwTerminate();
     }
 
     uint32_t WindowsWindow::getRefreshRate() {
@@ -118,13 +133,6 @@ namespace engine {
 
     void WindowsWindow::onUpdate() {
         glfwPollEvents();
-    }
-
-    void WindowsWindow::onDestroy() {
-        Window::onDestroy();
-        glfwDestroyWindow(_window);
-        _window = nullptr;
-        glfwTerminate();
     }
 
     void WindowsWindow::onClose() {

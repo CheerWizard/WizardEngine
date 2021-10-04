@@ -29,14 +29,18 @@ namespace engine {
         std::string name;
         std::string vertexPath;
         std::string fragmentPath;
+        std::string assetPath;
 
         ShaderProps(
                 const std::string& name,
                 const std::string& vertexPath,
-                const std::string& fragmentPath) :
+                const std::string& fragmentPath,
+                const std::string& assetPath = CLIENT_ASSET_PATH
+                ) :
                 name(name),
                 vertexPath(vertexPath),
-                fragmentPath(fragmentPath) {}
+                fragmentPath(fragmentPath),
+                assetPath(assetPath) {}
     };
 
     class Shader : public File {

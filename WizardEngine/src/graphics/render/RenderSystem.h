@@ -63,6 +63,13 @@ namespace engine {
 
         void setPolygonMode(const PolygonMode &polygonMode);
 
+        void renderShape(const std::string &shaderName,
+                         ShapeComponent &shapeComponent,
+                         const uint32_t &vertexStart,
+                         const uint32_t &indexStart);
+
+        void renderScene(const std::string &shaderName, const ShapeComponent &shapeComponent);
+
     public:
         void onWindowClosed() override;
         void onWindowResized(unsigned int width, unsigned int height) override;
@@ -88,10 +95,6 @@ namespace engine {
         CameraController* cameraController = nullptr; // weak reference.
 
     private:
-        void renderShape(const std::string &shaderName,
-                         ShapeComponent &shapeComponent,
-                         const uint32_t &vertexStart,
-                         const uint32_t &indexStart);
         void renderCamera(const Ref<Shader>& shader);
         void onShaderLoaded(const ShaderError& shaderError, const std::string &shaderName);
 
