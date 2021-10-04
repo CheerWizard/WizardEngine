@@ -3,6 +3,7 @@
 //
 
 #include "Layer.h"
+#include "Logger.h"
 
 namespace engine {
 

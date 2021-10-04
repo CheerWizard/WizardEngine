@@ -23,4 +23,8 @@ namespace engine {
         return Entity { _entities.create(), this };
     }
 
+    void Scene::clear() {
+        _entities.clear<>();
+    }
+
 }

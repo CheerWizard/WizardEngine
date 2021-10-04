@@ -4,9 +4,8 @@
 #pragma once
 
 #include "Events.h"
-#include "Memory.h"
-#include "Logger.h"
-#include "Assert.h"
+
+#include <string>
 
 #define DEFAULT_WINDOW_WIDTH 1920
 #define DEFAULT_WINDOW_HEIGHT 1080
@@ -38,22 +37,21 @@ namespace engine {
     class Window {
 
     public:
-        explicit Window(const WindowProps& windowProps) : windowProps(windowProps) {
+        Window(const WindowProps &windowProps = WindowProps()) : windowProps(windowProps) {}
 
-        };
         virtual ~Window() = default;
 
     public:
         virtual void* getNativeWindow() const = 0;
 
-        virtual void onCreate() = 0;
         virtual void onPrepare() = 0;
         virtual void onUpdate() = 0;
         virtual void onClose() = 0;
 
         virtual uint32_t getRefreshRate() = 0;
 
-        virtual void onDestroy() {
+    public:
+        void removeCallbacks() {
             removeWindowCallback();
             removeKeyboardCallback();
             removeMouseCallback();

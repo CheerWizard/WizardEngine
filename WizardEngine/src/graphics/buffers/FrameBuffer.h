@@ -7,8 +7,6 @@
 #include "Buffer.h"
 #include "../../core/Assert.h"
 
-#include <vector>
-
 #define DEFAULT_FRAMES_COUNT 8192
 
 namespace engine {

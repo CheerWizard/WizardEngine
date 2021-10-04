@@ -31,8 +31,40 @@ namespace engine {
         return new uint32_t[] {0, 1, 2};
     }
 
-    Vertex *Cube::createVertices() {
+    Vertex *Square::createVertices() {
+        auto v1 = Vertex {
+            { -1, -1, 0 },
+            {0, 0}
+        };
 
+        auto v2 = Vertex {
+            { -1,  1, 0 },
+            {0, 1}
+        };
+
+        auto v3 = Vertex {
+            {1,  1, 0 },
+            {1, 1}
+        };
+
+        auto v4 = Vertex {
+            {1, -1, 0 },
+            {1, 0}
+        };
+
+        return new Vertex[] {
+            v1, v2, v3, v4
+        };
+    }
+
+    uint32_t *Square::createIndices() {
+        return new uint32_t[] {
+            0, 2, 1,
+            0, 3, 2
+        };
+    }
+
+    Vertex *Cube::createVertices() {
         auto v1 = Vertex {
             {-0.5f,0.5f,-0.5f},
             {0,0,}

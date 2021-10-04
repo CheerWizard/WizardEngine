@@ -12,7 +12,8 @@
 #define CURRENT_WORKING_DIR engine::File::getCurrentWorkingDirectory()
 #define READ_FILE(path) engine::File::read(path)
 
-#define ASSET_PATH "assets"
+#define CLIENT_ASSET_PATH "assets"
+#define ENGINE_ASSET_PATH "../WizardEngine/assets"
 
 namespace engine {
 
@@ -49,6 +50,10 @@ namespace engine {
             this->name = name;
         }
 
+        inline void setAssetPath(const std::string &assetPath) {
+            this->assetPath = assetPath;
+        }
+
         void setAssetName(const std::string &assetName);
 
     public:
@@ -66,6 +71,7 @@ namespace engine {
     protected:
         std::string path;
         std::string name;
+        std::string assetPath = CLIENT_ASSET_PATH;
 
     };
 

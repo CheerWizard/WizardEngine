@@ -5,7 +5,7 @@
 #pragma once
 
 #include "../core/Memory.h"
-#include "../core/Assert.h"
+#include "../core/String.h"
 
 #include "render/RenderSystem.h"
 #include "render/Drawer.h"
@@ -14,9 +14,6 @@
 #include "buffers/VertexArray.h"
 #include "buffers/FrameBuffer.h"
 #include "buffers/UniformBuffer.h"
-
-#include "string"
-#include "vector"
 
 #define CREATE_GRAPHICS_OBJECT(shaderName) engine::createRef<engine::GraphicsObject>(engine::GraphicsObject { shaderName })
 

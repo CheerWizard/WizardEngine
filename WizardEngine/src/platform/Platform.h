@@ -9,6 +9,8 @@
 	#ifdef WIN64
 	/* Windows x64  */
 		#define PLATFORM_WINDOWS
+		#include "windows/WindowsWindow.h"
+		#include "windows/WindowsInput.h"
 	#else
 	/* Windows x86 */
 		#error "x86 Builds are not supported!"
@@ -46,17 +48,14 @@
 
 #ifdef GLFW
 
-    #define INIT_WINDOW(props) createScope<WindowsWindow>(props)
-    #define INIT_INPUT createScope<WindowsInput>()
+    #define INIT_WINDOW createScope<WindowsWindow>()
+    #define INIT_WINDOW_PROPS(props) createScope<WindowsWindow>(props)
+    #define INIT_INPUT(nativeWindow) createScope<WindowsInput>(nativeWindow)
 
 	#define GLFW_WINDOW static_cast<GLFWwindow*>(Application::getInstance().getWindow()->getNativeWindow())
 
-	#define GET_WINDOW_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).windowCallback
-    #define GET_KEYBOARD_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).keyboardCallback
-    #define GET_MOUSE_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).mouseCallback
-    #define GET_CURSOR_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).cursorCallback
-
     #ifdef GL
+	    #include "opengl/GLContext.h"
         #define GLFW_INCLUDE_NONE
         #define INIT_GRAPHICS_CONTEXT createScope<GLContext>(GLFW_WINDOW)
 

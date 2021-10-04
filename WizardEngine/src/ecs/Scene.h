@@ -27,6 +27,7 @@ namespace engine {
         Entity createEntity();
         Entity createEntity(const std::string &tag);
         void deleteEntity(const Entity& entity);
+        void clear();
 
         template<typename T, typename... Args>
         inline T& addComponent(const entt::entity& entityId, Args &&... args) {
@@ -50,18 +51,17 @@ namespace engine {
             _entities.remove<T>(entityId);
         }
 
-        const uint32_t& getColorTexture(uint32_t index = 0) const {
-            ENGINE_ASSERT(index < _colorTextures.size(), "getColorTexture()");
-            return _colorTextures[index];
+        inline const uint32_t& getTextureId() const {
+            return _textureId;
         }
 
-        inline void setColorTextures(const std::vector<uint32_t> &colorTextures) {
-            _colorTextures = colorTextures;
+        inline void setTextureId(const uint32_t &textureId) {
+            _textureId = textureId;
         }
 
     private:
         entt::registry _entities;
-        std::vector<uint32_t> _colorTextures;
+        uint32_t _textureId;
 
     };
 

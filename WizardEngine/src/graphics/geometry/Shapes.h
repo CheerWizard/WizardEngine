@@ -20,6 +20,17 @@ namespace engine {
         static Vertex *createVertices();
     };
 
+    struct Square : ShapeComponent {
+        Square() : ShapeComponent() {
+            vertexData = { createVertices() };
+            indexData = { createIndices() };
+        }
+
+    private:
+        static uint32_t *createIndices();
+        static Vertex *createVertices();
+    };
+
     struct Cube : ShapeComponent {
         Cube() : ShapeComponent() {
             vertexData = { createVertices(),0,24 };

@@ -4,10 +4,7 @@
 
 #pragma once
 
-#include <GLFW/glfw3.h>
-
 #include "../core/Layout.h"
-#include "../core/Events.h"
 #include "../core/LayoutStack.h"
 
 namespace engine {
@@ -15,9 +12,17 @@ namespace engine {
     class ImGuiLayer : public Layer {
 
     public:
-        ImGuiLayer(const char* tag = "ImGuiLayer") : Layer(tag) {
-            onCreate();
+        ImGuiLayer(void* nativeWindow,
+                   const uint32_t &width,
+                   const uint32_t &height,
+                   const char* tag = "ImGuiLayer") :
+        Layer(tag),
+        _width(width),
+        _height(height)
+        {
+            onCreate(nativeWindow);
         }
+
         ~ImGuiLayer() override {
             onDestroy();
         }
@@ -26,7 +31,7 @@ namespace engine {
         void onUpdate(Time deltaTime) override;
 
     protected:
-        void onCreate() override;
+        void onCreate(void* nativeWindow);
         void onDestroy() override;
 
     public:
@@ -58,9 +63,10 @@ namespace engine {
         void onCursorMoved(double xPos, double yPos) override;
 
     private:
-        static void onBeginFrame();
-        static void onEndFrame();
+        void onBeginFrame();
+        void onEndFrame();
 
+    private:
         static void beginDockSpace();
         static void setDockSpace();
         static void endDockSpace();
@@ -69,10 +75,12 @@ namespace engine {
         LayoutStack _layoutStack;
 
     private:
-        static bool _isFullScreen;
-        static bool _isDockSpaceOpened;
-        static int _windowFlags;
-        static int _dockSpaceFlags;
+        static bool _isFullScreen, _isDockSpaceOpened;
+        static int _windowFlags, _dockSpaceFlags;
+
+    private:
+        uint32_t _width, _height;
+
     };
 
 }
