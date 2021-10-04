@@ -3,23 +3,24 @@
 //
 
 #include "WindowsInput.h"
-#include "../../core/Application.h"
+
+#include <GLFW/glfw3.h>
 
 namespace engine {
 
     bool WindowsInput::isKeyPressed(KeyCode keyCode) {
-        auto state = glfwGetKey(GLFW_WINDOW, keyCode);
+        auto state = glfwGetKey((GLFWwindow*) nativeWindow, keyCode);
         return state == GLFW_PRESS || state == GLFW_REPEAT;
     }
 
     bool WindowsInput::isMousePressed(MouseCode mouseCode) {
-        auto state = glfwGetMouseButton(GLFW_WINDOW, mouseCode);
+        auto state = glfwGetMouseButton((GLFWwindow*) nativeWindow, mouseCode);
         return state == GLFW_PRESS;
     }
 
     MousePosition WindowsInput::getMousePosition() {
         double x, y;
-        glfwGetCursorPos(GLFW_WINDOW, &x, &y);
+        glfwGetCursorPos((GLFWwindow*) nativeWindow, &x, &y);
         return {
             (float) x,
             (float) y

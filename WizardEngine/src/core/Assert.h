@@ -3,10 +3,22 @@
 //
 #pragma once
 
-#include "Debug.h"
 #include "Logger.h"
 
-#ifdef ENABLE_ASSERTS
+#ifdef DEBUG
+	#ifdef WIN32
+		#define DEBUGBREAK() __debugbreak()
+	#elif defined(__linux__)
+		#include <signal.h>
+		#define DEBUGBREAK() raise(SIGTRAP)
+	#else
+		#error "Platform doesn't support debugbreak yet!"
+	#endif
+#else
+	#define DEBUGBREAK()
+#endif
+
+#ifdef DEBUG
     #define CLIENT_ASSERT(x, ...) { if (!(x)) { CLIENT_ERR("Assertion failed : {0}", __VA_ARGS__); DEBUGBREAK(); } }
     #define ENGINE_ASSERT(x, ...) { if (!(x)) { ENGINE_ERR("Assertion failed : {0}", __VA_ARGS__); DEBUGBREAK(); } }
 #else

@@ -69,4 +69,4 @@ endmacro(replace_dirs)
 
 # Subprojects from Wizard.
 add_subdirectory(WizardEngine)
-add_subdirectory(WizardTest)
+add_subdirectory(FairyLab)

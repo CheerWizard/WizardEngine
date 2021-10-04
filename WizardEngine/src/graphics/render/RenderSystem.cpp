@@ -237,13 +237,20 @@ namespace engine {
     }
 
     void RenderSystem::onWindowResized(unsigned int width, unsigned int height) {
-
+        frameBuffer->setViewPort();
     }
 
     void RenderSystem::updateFboSpecification(const FramebufferSpecification &framebufferSpecification) {
         frameBuffer->setSpecification(framebufferSpecification);
         frameBuffer->loadAttachments();
-        activeScene->setColorTextures(frameBuffer->getColorAttachments());
+        activeScene->setTextureId(frameBuffer->getColorAttachment(0));
+    }
+
+    void RenderSystem::renderScene(const std::string &shaderName, const ShapeComponent &shapeComponent) {
+        vertexArray->bindLastVertexBuffer(shaderName);
+        vertexArray->loadVertexBuffer(shaderName, shapeComponent.vertexData);
+        vertexArray->bindIndexBuffer();
+        vertexArray->loadIndexBuffer(shapeComponent.indexData);
     }
 
 }

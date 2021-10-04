@@ -6,31 +6,22 @@
 
 #include "Memory.h"
 #include "Window.h"
-#include "Logger.h"
 #include "Events.h"
 #include "LayerStack.h"
-#include "Assert.h"
 #include "Input.h"
 #include "CameraController.h"
 #include "Timer.h"
-
-#include "../imgui/ImguiLayer.h"
-
-#include "../graphics/GraphicsContext.h"
-
-#include "../platform/Platform.h"
+#include "String.h"
 
 #include "../ecs/Scene.h"
 
+#include "../graphics/GraphicsContext.h"
 #include "../graphics/io/ObjFile.h"
-
-#include "string"
-#include "vector"
+#include "../graphics/geometry/Shapes.h"
 
 #define APP Application::getInstance()
 #define WINDOW APP.getWindow()
 #define INPUT APP.getInput()
-#define IMGUI_LAYER APP.getImGuiLayer()
 #define GRAPHICS_CONTEXT APP.getGraphicsContext()
 
 #define DEFAULT_CAMERA_NAME "camera"
@@ -62,10 +53,6 @@ namespace engine {
 
         inline const Scope<Input>& getInput() const {
             return input;
-        }
-
-        inline ImGuiLayer& getImGuiLayer() const {
-            return *_imGuiLayer;
         }
 
         inline const Scope<GraphicsContext>& getGraphicsContext() const {
@@ -100,8 +87,6 @@ namespace engine {
     protected:
         void pushLayer(Layer* layer);
         void pushOverlay(Layer* overlay);
-        void pushLayout(Layout* imGuiLayout);
-        void pushOverLayout(Layout* imGuiLayout);
 
         void addShader(const std::string& name, const Ref<Shader>& shader);
         void addShader(const Ref<Shader>& shader);
@@ -130,6 +115,10 @@ namespace engine {
         void setPolygonMode(const PolygonMode &polygonMode);
 
         uint32_t getRefreshRate();
+        void* getNativeWindow();
+
+        void enableDisplay();
+        void disableDisplay();
 
     private:
         void createCamera3D(const char* name);
@@ -156,11 +145,13 @@ namespace engine {
         EngineType _engineType;
         bool _isRunning = true;
         LayerStack _layerStack;
-        ImGuiLayer* _imGuiLayer;
         Scope<Window> _window;
         Scope<GraphicsContext> _graphicsContext;
         Ref<RenderSystem> _renderSystem;
         ObjFile* _objFile = nullptr;
+
+        Square display;
+        bool _isDisplayEnabled = true;
 
     };
 

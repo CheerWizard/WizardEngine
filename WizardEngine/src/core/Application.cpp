@@ -4,10 +4,7 @@
 
 #include "Application.h"
 
-#include "../platform/windows/WindowsWindow.h"
-#include "../platform/windows/WindowsInput.h"
-
-#include "../platform/opengl/GLContext.h"
+#include "../platform/Platform.h"
 
 namespace engine {
 
@@ -28,8 +25,7 @@ namespace engine {
         ENGINE_ASSERT(!_instance, "Application already created!")
         _instance = this;
 
-        _window = INIT_WINDOW(WindowProps());
-        _window->onCreate();
+        _window = INIT_WINDOW;
 
         fpsTimer.setMaxFps(getRefreshRate());
 
@@ -42,16 +38,21 @@ namespace engine {
         _window->setKeyboardCallback(this);
         _window->setCursorCallback(this);
 
-        input = INIT_INPUT;
-
-        _imGuiLayer = new ImGuiLayer();
-        pushOverlay(_imGuiLayer);
+        input = INIT_INPUT(_window->getNativeWindow());
 
         createRenderSystem();
         createActiveScene();
         createCamera();
 
         _objFile = new ObjFile();
+
+        loadShader(ShaderProps {
+            "display",
+            "v_square",
+            "f_square",
+            ENGINE_ASSET_PATH
+        });
+        display = Square();
     }
 
     void Application::onPrepare() {
@@ -61,14 +62,10 @@ namespace engine {
     }
 
     void Application::onDestroy() {
-        ENGINE_INFO("destroy()");
+        ENGINE_INFO("onDestroy()");
         delete _objFile;
         delete cameraController;
         delete activeScene;
-        input.reset();
-        _renderSystem.reset();
-        _window->onDestroy();
-        _window.reset();
     }
 
     void Application::onUpdate() {
@@ -77,6 +74,7 @@ namespace engine {
 
         cameraController->setDeltaTime(dt);
         _renderSystem->onUpdate();
+
         _layerStack.onUpdate(dt);
         _window->onUpdate();
         _graphicsContext->swapBuffers();
@@ -144,14 +142,6 @@ namespace engine {
     void Application::onKeyTyped(KeyCode keyCode) {
         _layerStack.onKeyTyped(keyCode);
         cameraController->onKeyTyped(keyCode);
-    }
-
-    void Application::pushLayout(Layout *imGuiLayout) {
-        _imGuiLayer->pushLayout(imGuiLayout);
-    }
-
-    void Application::pushOverLayout(Layout *imGuiLayout) {
-        _imGuiLayer->pushOverLayout(imGuiLayout);
     }
 
     void Application::addShader(const std::string &name, const Ref<Shader> &shader) {
@@ -303,6 +293,18 @@ namespace engine {
 
     uint32_t Application::getRefreshRate() {
         return _window->getRefreshRate();
+    }
+
+    void Application::enableDisplay() {
+        _isDisplayEnabled = true;
+    }
+
+    void Application::disableDisplay() {
+        _isDisplayEnabled = false;
+    }
+
+    void *Application::getNativeWindow() {
+        return _window->getNativeWindow();
     }
 
 }

@@ -47,3 +47,5 @@ target_link_libraries(
         stb
         EnTT
 )
+
+replace_dirs(WizardEngine/assets WizardEngine/assets)

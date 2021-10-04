@@ -5,10 +5,8 @@
 #pragma once
 
 #include "Time.h"
-#include "Logger.h"
 
 #include <cstdint>
-#include <thread>
 
 #define CURRENT_THREAD_SLEEP_MILLIS(millis) engine::Thread::current_sleep(millis)
 #define CURRENT_THREAD_SLEEP_TIME(time) engine::Thread::current_sleep_time(time)

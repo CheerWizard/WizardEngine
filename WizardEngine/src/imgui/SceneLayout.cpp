@@ -10,10 +10,14 @@ namespace engine {
 
     void SceneLayout::onUpdate(Time deltaTime) {
         Layer::onUpdate(deltaTime);
-        ImGui::Begin(_props.name);
-        auto colorTexture = _scene->getColorTexture();
-        ImGui::Image((void*) colorTexture, ImVec2 {(float) _props.width,(float) _props.height });
+        ImGui::Begin(props.name);
+        auto colorTexture = scene->getTextureId();
+        ImGui::Image((void*) colorTexture, ImVec2 {(float) props.width,(float) props.height });
         ImGui::End();
+    }
+
+    void SceneLayout::destroy() {
+        scene = nullptr;
     }
 
 }

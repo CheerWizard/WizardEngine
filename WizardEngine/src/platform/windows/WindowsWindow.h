@@ -1,6 +1,7 @@
 //
 // Created by mecha on 29.08.2021.
 //
+
 #pragma once
 
 #include "../../core/Window.h"
@@ -13,17 +14,18 @@ namespace engine {
     class WindowsWindow : public Window {
 
     public:
-        explicit WindowsWindow(const WindowProps& windowProps) : Window(windowProps) {
-
+        WindowsWindow(const WindowProps& windowProps = WindowProps()) : Window(windowProps) {
+            create();
         }
-        ~WindowsWindow() override = default;
+
+        ~WindowsWindow() override {
+            destroy();
+        }
 
     public:
-        void onUpdate() override;
-        void onCreate() override;
-        void onClose() override;
-        void onDestroy() override;
         void onPrepare() override;
+        void onUpdate() override;
+        void onClose() override;
 
         void enableVSync() override;
         void disableVSync() override;
@@ -35,6 +37,10 @@ namespace engine {
 
     private:
         static void handleError(int error, const char* description);
+
+    private:
+        void create();
+        void destroy();
 
     private:
         GLFWwindow* _window;

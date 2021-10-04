@@ -6,30 +6,23 @@
 
 #include "KeyCodes.h"
 #include "MouseCodes.h"
-#include "Memory.h"
-#include "Logger.h"
-#include "../platform/Platform.h"
-
-#include <string>
 
 namespace engine {
 
     struct MousePosition {
         float x;
         float y;
-
-        MousePosition(float x, float y) : x(x), y(y) {}
-
-        void log() {
-            ENGINE_INFO("Mouse [x : {0}, y : {1}]", x, y);
-        }
     };
 
     class Input {
 
     public:
-        Input() = default;;
-        virtual ~Input() = default;
+        Input(void* nativeWindow) :
+        nativeWindow(nativeWindow) {}
+
+        virtual ~Input() {
+            destroy();
+        }
 
     public:
         virtual bool isKeyPressed(KeyCode keyCode) = 0;
@@ -44,6 +37,13 @@ namespace engine {
         inline float getMousePosY() {
             return getMousePosition().y;
         }
+
+    private:
+        void destroy();
+
+    protected:
+        void* nativeWindow;
+
     };
 
 }

@@ -14,6 +14,8 @@
 #include "buffers/GLFrameBuffer.h"
 #include "buffers/GLUniformBuffer.h"
 
+#include "../../core/Assert.h"
+
 #include "GLFW/glfw3.h"
 
 namespace engine {

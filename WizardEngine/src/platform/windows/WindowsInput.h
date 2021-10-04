@@ -11,7 +11,8 @@ namespace engine {
     class WindowsInput : public Input {
 
     public:
-        WindowsInput() = default;
+        WindowsInput(void* nativeWindow) : Input(nativeWindow) {}
+
         ~WindowsInput() override = default;
 
     public:
