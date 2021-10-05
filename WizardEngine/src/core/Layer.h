@@ -12,21 +12,12 @@ namespace engine {
     class Layer : public WindowCallback, KeyboardCallback, MouseCallback, CursorCallback {
 
     public:
-
-        Layer(const char* tag = "Layer") : tag(tag) {
-            onCreate();
-        }
-
-        virtual ~Layer() {
-            onDestroy();
-        }
+        Layer(const char* tag = "Layer") : tag(tag) {}
+        virtual ~Layer() = default;
 
     public:
-        virtual void onUpdate(Time deltaTime);
-
-    protected:
-        virtual void onCreate();
-        virtual void onDestroy();
+        virtual void onUpdate(Time deltaTime) = 0;
+        virtual void onPrepare() = 0;
 
     public:
         void onWindowClosed() override;

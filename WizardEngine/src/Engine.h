@@ -17,9 +17,8 @@
 // export Graphics module
 #include "graphics/geometry/Shapes.h"
 // export ImGui system.
-#include "imgui/DemoLayout.h"
 #include "imgui/ImguiLayer.h"
-#include "imgui/SceneLayout.h"
+#include "imgui/ImageLayout.h"
 
 // export vendor libs.
 #include "../vendor/imgui/imgui/imgui.h"
@@ -28,24 +27,3 @@
 // export math
 #include "math/ViewProjectionMatrix.h"
 #include "math/TransformMatrix.h"
-
-extern engine::Application* engine::createApplication(); // needs to be defined on Client side.
-
-namespace engine {
-
-    static void run() {
-        INIT_CLIENT_LOG("Client");
-        INIT_ENGINE_LOG("Engine");
-
-        ENGINE_INFO("Creating Application...");
-        auto app = createApplication();
-        ENGINE_INFO("Application created!");
-
-        ENGINE_INFO("Running Application...");
-        app->run();
-
-        ENGINE_INFO("Application terminated!");
-        delete app;
-    }
-
-}

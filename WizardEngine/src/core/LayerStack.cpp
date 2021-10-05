@@ -12,30 +12,34 @@ namespace engine {
         }
     }
 
-    void LayerStack::pushLayer(Layer* layer) {
+    uint32_t LayerStack::pushFront(Layer* layer) {
         _layers.emplace(_layers.begin() + _layerInsertIndex, layer);
         _layerInsertIndex++;
+        return _layerInsertIndex - 1;
     }
 
-    void LayerStack::pushOverlay(Layer* overlay) {
-        _layers.emplace_back(overlay);
+    uint32_t LayerStack::pushBack(Layer* layer) {
+        _layers.emplace_back(layer);
+        return 0;
     }
 
-    void LayerStack::popLayer(Layer* layer) {
+    uint32_t LayerStack::popFront(Layer* layer) {
         auto it = std::find(_layers.begin(), _layers.begin() + _layerInsertIndex, layer);
         if (it != _layers.begin() + _layerInsertIndex) {
             delete layer;
             _layers.erase(it);
             _layerInsertIndex--;
         }
+        return _layerInsertIndex;
     }
 
-    void LayerStack::popOverlay(Layer* overlay) {
-        auto it = std::find(_layers.begin() + _layerInsertIndex, _layers.end(), overlay);
+    uint32_t LayerStack::popBack(Layer* layer) {
+        auto it = std::find(_layers.begin() + _layerInsertIndex, _layers.end(), layer);
         if (it != _layers.end()) {
-            delete overlay;
+            delete layer;
             _layers.erase(it);
         }
+        return 0;
     }
 
     void LayerStack::onUpdate(Time deltaTime) {
@@ -101,6 +105,12 @@ namespace engine {
     void LayerStack::onKeyTyped(KeyCode keyCode) {
         for (Layer* layer : _layers) {
             layer->onKeyTyped(keyCode);
+        }
+    }
+
+    void LayerStack::onPrepare() {
+        for (Layer* layer : _layers) {
+            layer->onPrepare();
         }
     }
 

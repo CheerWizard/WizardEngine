@@ -6,18 +6,27 @@
 
 namespace engine {
 
+    void RenderSystem::create() {
+        drawer = graphicsFactory->newDrawer();
+        vertexArray = graphicsFactory->newVertexArray();
+        indexBuffer = graphicsFactory->newIndexBuffer();
+        textureBuffer = graphicsFactory->newTextureBuffer();
+        frameBuffer = graphicsFactory->newFrameBuffer();
+        uniformBuffer = graphicsFactory->newUniformBuffer();
+    }
+
     void RenderSystem::destroy() {
-        delete shaderCache;
+        shaderCache.clear();
+        vertexBufferCache.clear();
     }
 
     void RenderSystem::onPrepare() {
         frameBuffer->setViewPort();
 
-        for (auto &iterator : *shaderCache) {
+        for (auto &iterator : shaderCache) {
             auto shaderName = iterator.first;
             auto shader = iterator.second;
-            auto vertexBuffers = vertexArray->getVertexBuffers(shaderName);
-            auto indexBuffer = vertexArray->getIndexBuffer();
+            auto vertexBuffers = vertexBufferCache.get(shaderName);
 
             shader->bindAttributes();
             shader->bindUniformBlock();
@@ -34,7 +43,7 @@ namespace engine {
             indexBuffer->bind();
             indexBuffer->allocate();
 
-            vertexArray->bindTextureBuffer();
+            textureBuffer->bind();
 
             uniformBuffer->setUniformBlockFormat(shader->getUniformBlockFormat());
             uniformBuffer->bind();
@@ -63,11 +72,10 @@ namespace engine {
         drawer->enableDepth();
         drawer->clearDepth({0.2, 0.2, 0.2, 1});
 
-        for (const auto& iterator : *shaderCache) {
+        for (const auto& iterator : shaderCache) {
             auto shaderName = iterator.first;
             auto shader = iterator.second;
-            auto vertexBuffers = vertexArray->getVertexBuffers(shaderName);
-            auto indexBuffer = vertexArray->getIndexBuffer();
+            auto vertexBuffers = vertexBufferCache.get(shaderName);
 
             shader->start();
             vertexArray->bind();
@@ -101,44 +109,42 @@ namespace engine {
         frameBuffer->unbind();
         drawer->disableDepth();
         drawer->clearColor({1.0, 1.0, 1.0, 1.0});
-
     }
 
     void RenderSystem::addShader(const std::string &name, const Ref<Shader> &shader) {
-        shaderCache->add(name, shader);
-        vertexArray->createVertexBuffer(shader->getVertexFormat(), shader->getName());
+        shaderCache.add(name, shader);
+        prepareVertexBuffer(name, shader->getVertexFormat());
     }
 
     void RenderSystem::addShader(const Ref<Shader> &shader) {
-        shaderCache->add(shader);
-        vertexArray->createVertexBuffer(shader->getVertexFormat(), shader->getName());
+        addShader(shader->getName(), shader);
     }
 
     ShaderError RenderSystem::loadShader(const ShaderProps &shaderProps, VertexFormat *vertexFormat) {
-        auto shaderError = shaderCache->load(shaderProps, vertexFormat);
-        onShaderLoaded(shaderError, shaderProps.name);
-        return shaderError;
+        auto shader = graphicsFactory->newShader(shaderProps, vertexFormat);
+        return handleShaderError(shader);
     }
 
     ShaderError RenderSystem::loadShader(const ShaderProps &shaderProps) {
-        auto shaderError = shaderCache->load(shaderProps);
-        onShaderLoaded(shaderError, shaderProps.name);
+        auto shader = graphicsFactory->newShader(shaderProps);
+        return handleShaderError(shader);
+    }
+
+    ShaderError RenderSystem::handleShaderError(const Ref<Shader> &shader) {
+        auto shaderError = shader->getShaderError();
+        if (shaderError == ShaderError::NONE) {
+            shaderCache.add(shader);
+            prepareVertexBuffer(shader->getName(), shader->getVertexFormat());
+        }
         return shaderError;
     }
 
-    void RenderSystem::onShaderLoaded(const ShaderError &shaderError, const std::string &shaderName) {
-        if (shaderError == ShaderError::NONE) {
-            auto shader = shaderCache->get(shaderName);
-            vertexArray->createVertexBuffer(shader->getVertexFormat(), shader->getName());
-        }
-    }
-
     Ref<Shader> RenderSystem::getShader(const std::string &name) {
-        return shaderCache->get(name);
+        return shaderCache.get(name);
     }
 
     bool RenderSystem::shaderExists(const std::string &name) const {
-        return shaderCache->exists(name);
+        return shaderCache.exists(name);
     }
 
     void RenderSystem::renderShape(const std::string &shaderName,
@@ -162,19 +168,22 @@ namespace engine {
             }
         }
 
-        vertexArray->bindLastVertexBuffer(shaderName);
-        vertexArray->loadVertexBuffer(shaderName, vertexData);
-        vertexArray->bindIndexBuffer();
-        vertexArray->loadIndexBuffer(indexData);
+        auto& vbo = vertexBufferCache.last(shaderName);
+        vbo->bind();
+        vbo->load(vertexData);
+
+        indexBuffer->bind();
+        indexBuffer->load(indexData);
     }
 
     void RenderSystem::loadTexture(const std::string &filePath) {
-        vertexArray->bindTextureBuffer();
-        vertexArray->loadTextureBuffer(filePath);
+        textureBuffer->bind();
+        textureBuffer->load(filePath);
     }
 
     void RenderSystem::loadTextureData(const void *data) {
-        vertexArray->loadTextureBufferData(data);
+        textureBuffer->bind();
+        textureBuffer->loadData(data);
     }
 
     void RenderSystem::renderCamera(const Ref<Shader> &shader) {
@@ -208,7 +217,7 @@ namespace engine {
 
         auto texture = activeScene->getComponent<TextureComponent>(entity);
         shader->setUniform(texture.texture);
-        vertexArray->activateTextureBuffer(texture.texture.value);
+        textureBuffer->activate(texture.texture.value);
     }
 
     void RenderSystem3d::renderTransform(Ref<Shader> &shader, const entt::entity &entity) {
@@ -223,7 +232,7 @@ namespace engine {
 
         auto texture = activeScene->getComponent<TextureComponent>(entity);
         shader->setUniform(texture.texture);
-        vertexArray->activateTextureBuffer(texture.texture.value);
+        textureBuffer->activate(texture.texture.value);
     }
 
     void RenderSystem2d::renderTransform(Ref<Shader> &shader, const entt::entity &entity) {
@@ -247,10 +256,19 @@ namespace engine {
     }
 
     void RenderSystem::renderScene(const std::string &shaderName, const ShapeComponent &shapeComponent) {
-        vertexArray->bindLastVertexBuffer(shaderName);
-        vertexArray->loadVertexBuffer(shaderName, shapeComponent.vertexData);
-        vertexArray->bindIndexBuffer();
-        vertexArray->loadIndexBuffer(shapeComponent.indexData);
+        auto& vbo = vertexBufferCache.last(shaderName);
+        vbo->bind();
+        vbo->load(shapeComponent.vertexData);
+
+        indexBuffer->bind();
+        indexBuffer->load(shapeComponent.indexData);
+    }
+
+    void RenderSystem::prepareVertexBuffer(const std::string &shaderName, VertexFormat* vertexFormat) {
+        if (vertexBufferCache.isEmpty(shaderName)) {
+            vertexBufferCache.add(shaderName, graphicsFactory->newVertexBuffer(vertexFormat));
+        }
+        vertexBufferCache.last(shaderName)->setVertex(vertexFormat);
     }
 
 }

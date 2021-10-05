@@ -4,35 +4,37 @@
 
 #pragma once
 
-#include "../core/Layout.h"
-#include "../core/LayoutStack.h"
+#include "../core/Application.h"
+#include "../core/Layer.h"
 
 namespace engine {
+
+    struct ImGuiLayerProps {
+        uint32_t width, height;
+        const char* tag = "ImGuiLayer";
+    };
 
     class ImGuiLayer : public Layer {
 
     public:
-        ImGuiLayer(void* nativeWindow,
-                   const uint32_t &width,
-                   const uint32_t &height,
-                   const char* tag = "ImGuiLayer") :
-        Layer(tag),
-        _width(width),
-        _height(height)
-        {
-            onCreate(nativeWindow);
+        ImGuiLayer(Application* app, const ImGuiLayerProps &props) :
+                   app(app),
+                   props(props),
+                   Layer(props.tag) {
+            create();
         }
 
         ~ImGuiLayer() override {
-            onDestroy();
+            destroy();
         }
 
     public:
-        void onUpdate(Time deltaTime) override;
+        void onUpdate(Time dt) override;
+        void onPrepare() override;
 
     protected:
-        void onCreate(void* nativeWindow);
-        void onDestroy() override;
+        // method in which you can render ImGui widgets.
+        virtual void onRender(Time dt) = 0;
 
     public:
         static void setDarkTheme();
@@ -41,28 +43,9 @@ namespace engine {
         static void hideDockSpace();
         static void toggleDockSpace();
 
-    public:
-        void pushLayout(Layout* imGuiLayout);
-        void pushOverLayout(Layout* imGuiLayout);
-        void popLayout(Layout* imGuiLayout);
-        void popOverLayout(Layout* imGuiLayout);
-
-    public:
-        void onWindowClosed() override;
-        void onWindowResized(unsigned int width, unsigned int height) override;
-
-        void onKeyPressed(KeyCode keyCode) override;
-        void onKeyHold(KeyCode keyCode) override;
-        void onKeyReleased(KeyCode keyCode) override;
-        void onKeyTyped(KeyCode keyCode) override;
-
-        void onMousePressed(MouseCode mouseCode) override;
-        void onMouseRelease(MouseCode mouseCode) override;
-        void onMouseScrolled(double xOffset, double yOffset) override;
-
-        void onCursorMoved(double xPos, double yPos) override;
-
     private:
+        void create();
+        void destroy();
         void onBeginFrame();
         void onEndFrame();
 
@@ -71,15 +54,11 @@ namespace engine {
         static void setDockSpace();
         static void endDockSpace();
 
-    private:
-        LayoutStack _layoutStack;
-
-    private:
-        static bool _isFullScreen, _isDockSpaceOpened;
-        static int _windowFlags, _dockSpaceFlags;
-
-    private:
-        uint32_t _width, _height;
+    protected:
+        Application* app = nullptr;
+        ImGuiLayerProps props;
+        static bool isFullScreen, isDockSpaceOpened;
+        static int windowFlags, dockSpaceFlags;
 
     };
 
