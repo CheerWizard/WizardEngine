@@ -45,7 +45,7 @@ namespace engine {
 
     private:
         float _beginTime;
-        Time _deltaTime;
+        Time _deltaTime = 1;
         uint32_t _maxFps;
 
     };

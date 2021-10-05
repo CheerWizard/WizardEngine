@@ -4,9 +4,10 @@
 
 #pragma once
 
-#include <vector>
-
 #include "Layer.h"
+
+#include <vector>
+#include <cstdint>
 
 namespace engine {
 
@@ -19,11 +20,14 @@ namespace engine {
         ~LayerStack();
 
     public:
-        void pushLayer(Layer* layer);
-        void pushOverlay(Layer* overlay);
-        void popLayer(Layer* layer);
-        void popOverlay(Layer* overlay);
         void onUpdate(Time deltaTime);
+        void onPrepare();
+
+    public:
+        uint32_t pushFront(Layer* layer);
+        uint32_t pushBack(Layer* overlay);
+        uint32_t popFront(Layer* layer);
+        uint32_t popBack(Layer* overlay);
 
     public:
         void onWindowClosed() override;
@@ -53,7 +57,7 @@ namespace engine {
 
     private:
         Layers _layers;
-        unsigned int _layerInsertIndex = 0;
+        uint32_t _layerInsertIndex = 0;
 
     };
 

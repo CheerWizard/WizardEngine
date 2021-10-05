@@ -23,8 +23,6 @@ namespace engine {
     public:
         void add(const std::string& name, const Ref<Shader>& shader);
         void add(const Ref<Shader>& shader);
-        ShaderError load(const ShaderProps& shaderProps, VertexFormat* vertexFormat);
-        ShaderError load(const ShaderProps& shaderProps);
         Ref<Shader> get(const std::string& name);
         bool exists(const std::string& name) const;
         void clear();
@@ -37,9 +35,6 @@ namespace engine {
         ShaderIterator end() {
             return _shaders.end();
         }
-
-    private:
-        ShaderError handleShaderError(const Ref<Shader>& shader);
 
     private:
          Shaders _shaders;

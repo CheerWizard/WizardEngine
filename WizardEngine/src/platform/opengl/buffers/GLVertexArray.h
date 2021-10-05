@@ -11,9 +11,7 @@ namespace engine {
     class GLVertexArray : public VertexArray {
 
     public:
-        GLVertexArray(VertexBufferCache* vertexBufferCache,
-                      const Ref<IndexBuffer>& indexBuffer) :
-                      VertexArray(vertexBufferCache, indexBuffer) {
+        GLVertexArray() : VertexArray() {
             create();
         }
 
@@ -25,11 +23,9 @@ namespace engine {
         void bind() override;
         void unbind() override;
 
-    protected:
-        void destroy() override;
-
     private:
         void create();
+        void destroy();
 
     };
 

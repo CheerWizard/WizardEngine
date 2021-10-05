@@ -4,7 +4,7 @@ project(WizardEngine)
 
 #/ creating a library from sources.
 file(GLOB_RECURSE ENGINE_SRC src/*.cpp)
-add_library(WizardEngine ${ENGINE_SRC})
+add_library(WizardEngine src/Engine.h ${ENGINE_SRC})
 
 #/ adding dependencies.
 

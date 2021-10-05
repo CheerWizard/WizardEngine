@@ -4,31 +4,53 @@
 
 #pragma once
 
-#include "SceneLayout.h"
 #include "../ecs/Entity.h"
+#include "../core/Layout.h"
 #include "../core/String.h"
 
 namespace engine {
 
-    class EntityLayout : public SceneLayout {
+    struct EntityLayoutProps {
+        const char* name;
+    };
+
+    class EntityLayoutCallback {
+    public:
+        virtual void onCreateEntity() = 0;
+        virtual void onRemoveEntity() = 0;
+    };
+
+    class EntityLayout : public Layout {
 
     public:
-        EntityLayout(Scene* scene, const SceneLayoutProps &props) : SceneLayout(scene, props) {}
+        EntityLayout(const EntityLayoutProps &entityLayoutProps,
+                     EntityLayoutCallback* callback = nullptr) :
+                _props(entityLayoutProps),
+                _callback(callback),
+                Layout() {}
 
-        ~EntityLayout() override {
+        ~EntityLayout() {
             destroy();
         }
 
     public:
-        void clear();
-        Entity create(const std::string &tag);
-        Entity create();
-        void remove(const Entity &entity);
-
         void onUpdate(Time deltaTime) override;
+
+    public:
+        inline void setCallback(EntityLayoutCallback* callback) {
+            _callback = callback;
+        }
+
+        inline void removeCallback() {
+            _callback = nullptr;
+        }
 
     private:
         void destroy();
+
+    private:
+        EntityLayoutProps _props;
+        EntityLayoutCallback* _callback = nullptr;
 
     };
 

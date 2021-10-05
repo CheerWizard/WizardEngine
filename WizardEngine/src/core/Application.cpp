@@ -8,8 +8,6 @@
 
 namespace engine {
 
-    Application* Application::_instance = nullptr;
-
     void Application::run() {
         onCreate();
         onPrepare();
@@ -22,14 +20,11 @@ namespace engine {
     void Application::onCreate() {
         ENGINE_INFO("create()");
 
-        ENGINE_ASSERT(!_instance, "Application already created!")
-        _instance = this;
-
         _window = INIT_WINDOW;
 
         fpsTimer.setMaxFps(getRefreshRate());
 
-        _graphicsContext = INIT_GRAPHICS_CONTEXT;
+        _graphicsContext = INIT_GRAPHICS_CONTEXT(_window->getNativeWindow());
         _graphicsContext->onCreate();
         _graphicsContext->printInfo();
 
@@ -45,20 +40,13 @@ namespace engine {
         createCamera();
 
         _objFile = new ObjFile();
-
-        loadShader(ShaderProps {
-            "display",
-            "v_square",
-            "f_square",
-            ENGINE_ASSET_PATH
-        });
-        display = Square();
     }
 
     void Application::onPrepare() {
         _window->onPrepare();
         updateFboSpecification();
         _renderSystem->onPrepare();
+        _layerStack.onPrepare();
     }
 
     void Application::onDestroy() {
@@ -69,8 +57,8 @@ namespace engine {
     }
 
     void Application::onUpdate() {
-        fpsTimer.begin();
         auto dt = fpsTimer.getDeltaTime();
+        fpsTimer.begin();
 
         cameraController->setDeltaTime(dt);
         _renderSystem->onUpdate();
@@ -82,14 +70,14 @@ namespace engine {
         fpsTimer.end();
     }
 
-    void Application::pushLayer(Layer *layer) {
+    void Application::pushFront(Layer *layer) {
         ENGINE_INFO("Pushing layer : {0}", layer->getTag());
-        _layerStack.pushLayer(layer);
+        _layerStack.pushFront(layer);
     }
 
-    void Application::pushOverlay(Layer *overlay) {
-        ENGINE_INFO("Pushing overlay : {0}", overlay->getTag());
-        _layerStack.pushOverlay(overlay);
+    void Application::pushBack(Layer *layer) {
+        ENGINE_INFO("Pushing overlay : {0}", layer->getTag());
+        _layerStack.pushBack(layer);
     }
 
     void Application::onWindowClosed() {
@@ -251,10 +239,11 @@ namespace engine {
     }
 
     void Application::createRenderSystem() {
+        auto graphicsFactory = _graphicsContext->newGraphicsFactory();
         if (_engineType == ENGINE_2D) {
-            _renderSystem = _graphicsContext->newRenderSystem2d();
+            _renderSystem = createRef<RenderSystem2d>(graphicsFactory);
         } else {
-            _renderSystem = _graphicsContext->newRenderSystem3d();
+            _renderSystem = createRef<RenderSystem3d>(graphicsFactory);
         }
     }
 
