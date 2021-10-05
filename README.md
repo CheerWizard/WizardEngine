@@ -1,4 +1,4 @@
-![wizard_logo](https://user-images.githubusercontent.com/37471793/135765820-b9bdf5d2-54fa-41d8-b293-6c88ae8b4091.jpg)
+![wizard_engine_logo](https://user-images.githubusercontent.com/37471793/136009687-db49dad7-966c-43c2-831f-fe8791c4e160.jpg)
 All tech and GUI solutions, which allows you to build a dream game :)
 
 # Wizard Engine
