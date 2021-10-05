@@ -3,8 +3,13 @@ cmake_minimum_required(VERSION 3.20)
 project(WizardEngine)
 
 #/ creating a library from sources.
-file(GLOB_RECURSE ENGINE_SRC src/*.cpp)
-add_library(WizardEngine src/Engine.h ${ENGINE_SRC})
+file(GLOB_RECURSE ENGINE_SRC
+        src/*.c
+        src/*.cpp
+        src/*.h
+        src/*.hpp
+)
+add_library(WizardEngine ${ENGINE_SRC})
 
 #/ adding dependencies.
 
