@@ -4,17 +4,12 @@
 
 #pragma once
 
-#include "Drawer.h"
-
 #include "../../core/TreeCache.h"
-
-#include "../buffers/VertexArray.h"
-#include "../buffers/FrameBuffer.h"
-#include "../buffers/UniformBuffer.h"
+#include "../../core/CameraController.h"
 
 #include "../shader/ShaderCache.h"
 
-#include "../../core/CameraController.h"
+#include "../GraphicsFactory.h"
 
 #include "../../ecs/System.h"
 
@@ -28,18 +23,12 @@ namespace engine {
 
     class RenderSystem : public System, public WindowCallback {
 
+        typedef TreeCache<std::string, VertexBuffer> VertexBufferCache;
+
     public:
-        RenderSystem(ShaderCache* shaderCache,
-                     const Ref<VertexArray> &vertexArray,
-                     const Ref<Drawer> &drawer,
-                     const Ref<FrameBuffer> &frameBuffer,
-                     const Ref<UniformBuffer> &uniformBuffer
-                     ) :
-        shaderCache(shaderCache),
-        vertexArray(vertexArray),
-        drawer(drawer),
-        frameBuffer(frameBuffer),
-        uniformBuffer(uniformBuffer) {}
+        RenderSystem(const Ref<GraphicsFactory> &graphicsFactory) : graphicsFactory(graphicsFactory) {
+            create();
+        }
 
         virtual ~RenderSystem() = default;
 
@@ -86,31 +75,35 @@ namespace engine {
             this->cameraController = cameraController;
         }
 
+    private:
+        void create();
+        void prepareVertexBuffer(const std::string &shaderName, VertexFormat* vertexFormat);
+
     protected:
-        ShaderCache* shaderCache;
-        Ref<VertexArray> vertexArray;
+        Ref<GraphicsFactory> graphicsFactory;
+
         Ref<Drawer> drawer;
+        Ref<VertexArray> vertexArray;
+        VertexBufferCache vertexBufferCache;
+        Ref<IndexBuffer> indexBuffer;
+        Ref<TextureBuffer> textureBuffer;
         Ref<FrameBuffer> frameBuffer;
         Ref<UniformBuffer> uniformBuffer;
+
+        ShaderCache shaderCache;
+
         CameraController* cameraController = nullptr; // weak reference.
 
     private:
         void renderCamera(const Ref<Shader>& shader);
-        void onShaderLoaded(const ShaderError& shaderError, const std::string &shaderName);
+        ShaderError handleShaderError(const Ref<Shader> &shader);
 
     };
 
     class RenderSystem2d : public RenderSystem {
 
     public:
-        RenderSystem2d(ShaderCache* shaderCache,
-                     const Ref<VertexArray> &vertexArray,
-                     const Ref<Drawer> &drawer,
-                     const Ref<FrameBuffer> &frameBuffer,
-                     const Ref<UniformBuffer> &uniformBuffer
-                     ) :
-                     RenderSystem(shaderCache, vertexArray, drawer, frameBuffer, uniformBuffer) {}
-
+        RenderSystem2d(const Ref<GraphicsFactory> &graphicsFactory) : RenderSystem(graphicsFactory) {}
         ~RenderSystem2d() override = default;
 
     protected:
@@ -122,14 +115,7 @@ namespace engine {
     class RenderSystem3d : public RenderSystem {
 
     public:
-        RenderSystem3d(ShaderCache* shaderCache,
-                       const Ref<VertexArray> &vertexArray,
-                       const Ref<Drawer> &drawer,
-                       const Ref<FrameBuffer> &frameBuffer,
-                       const Ref<UniformBuffer> &uniformBuffer
-                       ) :
-                       RenderSystem(shaderCache, vertexArray, drawer, frameBuffer, uniformBuffer) {}
-
+        RenderSystem3d(const Ref<GraphicsFactory> &graphicsFactory) : RenderSystem(graphicsFactory) {}
         ~RenderSystem3d() override = default;
 
     protected:

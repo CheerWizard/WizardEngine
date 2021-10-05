@@ -52,12 +52,10 @@
     #define INIT_WINDOW_PROPS(props) createScope<WindowsWindow>(props)
     #define INIT_INPUT(nativeWindow) createScope<WindowsInput>(nativeWindow)
 
-	#define GLFW_WINDOW static_cast<GLFWwindow*>(Application::getInstance().getWindow()->getNativeWindow())
-
     #ifdef GL
 	    #include "opengl/GLContext.h"
         #define GLFW_INCLUDE_NONE
-        #define INIT_GRAPHICS_CONTEXT createScope<GLContext>(GLFW_WINDOW)
+        #define INIT_GRAPHICS_CONTEXT(nativeWindow) createScope<GLContext>(nativeWindow)
 
     #elif defined(VK)
         #error "Vulkan graphics context is not supported!"

@@ -14,7 +14,6 @@ namespace engine {
 
     void GLVertexArray::destroy() {
         glDeleteVertexArrays(1, &id);
-        VertexArray::destroy();
     }
 
     void GLVertexArray::bind() {

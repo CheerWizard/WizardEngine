@@ -16,13 +16,9 @@
 #include "../ecs/Scene.h"
 
 #include "../graphics/GraphicsContext.h"
+#include "../graphics/render/RenderSystem.h"
 #include "../graphics/io/ObjFile.h"
 #include "../graphics/geometry/Shapes.h"
-
-#define APP Application::getInstance()
-#define WINDOW APP.getWindow()
-#define INPUT APP.getInput()
-#define GRAPHICS_CONTEXT APP.getGraphicsContext()
 
 #define DEFAULT_CAMERA_NAME "camera"
 
@@ -42,26 +38,7 @@ namespace engine {
         virtual ~Application() = default;
 
     public:
-        static inline Application& getInstance() {
-            return *_instance;
-        }
-
-    public:
-        inline const Scope<Window>& getWindow() const {
-            return _window;
-        }
-
-        inline const Scope<Input>& getInput() const {
-            return input;
-        }
-
-        inline const Scope<GraphicsContext>& getGraphicsContext() const {
-            return _graphicsContext;
-        }
-
-    public:
         void run();
-        void restart();
 
     public:
         void onWindowClosed() override;
@@ -84,43 +61,37 @@ namespace engine {
         virtual void onDestroy();
         virtual void onUpdate();
 
-    protected:
-        void pushLayer(Layer* layer);
-        void pushOverlay(Layer* overlay);
-
+    public:
         void addShader(const std::string& name, const Ref<Shader>& shader);
         void addShader(const Ref<Shader>& shader);
         ShaderError loadShader(const ShaderProps& shaderProps, VertexFormat* vertexFormat);
         ShaderError loadShader(const ShaderProps &shaderProps);
         Ref<Shader> getShader(const std::string& name);
         bool shaderExists(const std::string& name) const;
-
         float getAspectRatio() const;
         const uint32_t& getWindowWidth();
         const uint32_t& getWindowHeight();
-
         void enableDepthRendering();
-
-        void loadTexture(const std::string &filePath);
         void loadTextureData(const void* data);
-
         void createCamera(const char* name = DEFAULT_CAMERA_NAME);
         void createActiveScene();
-
-        ShapeComponent loadObj(const std::string& objName);
-
         void updateFboSpecification();
         void updateFboSpecification(const FramebufferSpecification &framebufferSpecification);
-
         void setPolygonMode(const PolygonMode &polygonMode);
-
         uint32_t getRefreshRate();
         void* getNativeWindow();
-
         void enableDisplay();
         void disableDisplay();
+        void loadTexture(const std::string &filePath);
+        ShapeComponent loadObj(const std::string& objName);
+
+    protected:
+        void pushFront(Layer* layer);
+        void pushBack(Layer* overlay);
 
     private:
+        void restart();
+
         void createCamera3D(const char* name);
         void createCamera3D(const char* name, const glm::vec3 &position);
         void createCamera3D(Camera3d* camera3D);
@@ -131,15 +102,12 @@ namespace engine {
 
         void createRenderSystem();
 
-    protected:
+    public:
         Scope<Input> input;
         KeyCode closeKeyPressed;
         CameraController* cameraController; // todo move to Component.
         Scene* activeScene; // todo add Scene cache or smth similar.
         Timer fpsTimer;
-
-    private:
-        static Application* _instance;
 
     private:
         EngineType _engineType;
@@ -149,7 +117,6 @@ namespace engine {
         Scope<GraphicsContext> _graphicsContext;
         Ref<RenderSystem> _renderSystem;
         ObjFile* _objFile = nullptr;
-
         Square display;
         bool _isDisplayEnabled = true;
 

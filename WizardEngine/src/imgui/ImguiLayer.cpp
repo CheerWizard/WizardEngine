@@ -4,6 +4,7 @@
 
 #include "ImguiLayer.h"
 #include "../platform/Platform.h"
+#include "../core/Layer.h"
 
 #include <imgui.h>
 #include <backends/imgui_impl_opengl3.h>
@@ -17,13 +18,12 @@
 
 namespace engine {
 
-    bool ImGuiLayer::_isFullScreen = true;
-    bool ImGuiLayer::_isDockSpaceOpened = true;
-    int ImGuiLayer::_windowFlags = 0;
-    int ImGuiLayer::_dockSpaceFlags = 0;
+    bool ImGuiLayer::isFullScreen = true;
+    bool ImGuiLayer::isDockSpaceOpened = true;
+    int ImGuiLayer::windowFlags = 0;
+    int ImGuiLayer::dockSpaceFlags = 0;
 
-    void ImGuiLayer::onCreate(void* nativeWindow) {
-        Layer::onCreate();
+    void ImGuiLayer::create() {
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -50,16 +50,14 @@ namespace engine {
 
         setDarkTheme();
         // Setup Platform/Renderer bindings
-        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*) nativeWindow, true);
+        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*) app->getNativeWindow(), true);
         ImGui_ImplOpenGL3_Init("#version 410");
     }
 
-    void ImGuiLayer::onUpdate(Time deltaTime) {
-        Layer::onUpdate(deltaTime);
-
+    void ImGuiLayer::onUpdate(Time dt) {
         onBeginFrame();
         beginDockSpace();
-        _layoutStack.onUpdate(deltaTime);
+        onRender(dt);
         endDockSpace();
         onEndFrame();
     }
@@ -71,7 +69,7 @@ namespace engine {
     }
 
     void ImGuiLayer::onEndFrame() {
-        IO.DisplaySize = ImVec2((float) _width, (float) _height);
+        IO.DisplaySize = ImVec2((float) props.width, (float) props.height);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -84,11 +82,11 @@ namespace engine {
         }
     }
 
-    void ImGuiLayer::onDestroy() {
-        Layer::onDestroy();
+    void ImGuiLayer::destroy() {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
+        app = nullptr;
     }
 
     void ImGuiLayer::setDarkTheme() {
@@ -122,132 +120,69 @@ namespace engine {
         COLORS[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
     }
 
-    void ImGuiLayer::pushLayout(Layout *imGuiLayout) {
-        _layoutStack.pushLayer(imGuiLayout);
-    }
-
-    void ImGuiLayer::pushOverLayout(Layout *imGuiLayout) {
-        _layoutStack.pushOverlay(imGuiLayout);
-    }
-
-    void ImGuiLayer::popLayout(Layout *imGuiLayout) {
-        _layoutStack.popLayer(imGuiLayout);
-    }
-
-    void ImGuiLayer::popOverLayout(Layout *imGuiLayout) {
-        _layoutStack.popOverlay(imGuiLayout);
-    }
-
-    void ImGuiLayer::onWindowClosed() {
-        Layer::onWindowClosed();
-        _layoutStack.onWindowClosed();
-    }
-
-    void ImGuiLayer::onWindowResized(unsigned int width, unsigned int height) {
-        Layer::onWindowResized(width, height);
-        _layoutStack.onWindowResized(width, height);
-    }
-
-    void ImGuiLayer::onKeyPressed(KeyCode keyCode) {
-        Layer::onKeyPressed(keyCode);
-        _layoutStack.onKeyPressed(keyCode);
-    }
-
-    void ImGuiLayer::onKeyHold(KeyCode keyCode) {
-        Layer::onKeyHold(keyCode);
-        _layoutStack.onKeyHold(keyCode);
-    }
-
-    void ImGuiLayer::onKeyReleased(KeyCode keyCode) {
-        Layer::onKeyReleased(keyCode);
-        _layoutStack.onKeyReleased(keyCode);
-    }
-
-    void ImGuiLayer::onKeyTyped(KeyCode keyCode) {
-        Layer::onKeyTyped(keyCode);
-        _layoutStack.onKeyTyped(keyCode);
-    }
-
-    void ImGuiLayer::onMousePressed(MouseCode mouseCode) {
-        Layer::onMousePressed(mouseCode);
-        _layoutStack.onMousePressed(mouseCode);
-    }
-
-    void ImGuiLayer::onMouseRelease(MouseCode mouseCode) {
-        Layer::onMouseRelease(mouseCode);
-        _layoutStack.onMouseRelease(mouseCode);
-    }
-
-    void ImGuiLayer::onMouseScrolled(double xOffset, double yOffset) {
-        Layer::onMouseScrolled(xOffset, yOffset);
-        _layoutStack.onMouseScrolled(xOffset, yOffset);
-    }
-
-    void ImGuiLayer::onCursorMoved(double xPos, double yPos) {
-        Layer::onCursorMoved(xPos, yPos);
-        _layoutStack.onCursorMoved(xPos, yPos);
-    }
-
     void ImGuiLayer::setDockSpaceOption(const bool &isFullscreen) {
-        _isFullScreen = isFullscreen;
+        isFullScreen = isFullscreen;
     }
 
     void ImGuiLayer::openDockSpace() {
-        _isDockSpaceOpened = true;
+        isDockSpaceOpened = true;
     }
 
     void ImGuiLayer::hideDockSpace() {
-        _isDockSpaceOpened = false;
+        isDockSpaceOpened = false;
     }
 
     void ImGuiLayer::beginDockSpace() {
-        if (!_isDockSpaceOpened) return;
-        static bool isDockSpaceOpened = _isDockSpaceOpened;
+        if (!isDockSpaceOpened) return;
+        static bool isDockSpaceOpened = isDockSpaceOpened;
 
         setDockSpace();
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("WizardDockSpace", &isDockSpaceOpened, _windowFlags);
+        ImGui::Begin("WizardDockSpace", &isDockSpaceOpened, windowFlags);
         ImGui::PopStyleVar();
 
-        if (_isFullScreen) {
+        if (isFullScreen) {
             ImGui::PopStyleVar(2);
         }
 
         if (IO.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
             ImGuiID dockspace_id = ImGui::GetID("WizardDockSpace");
-            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), _dockSpaceFlags);
+            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockSpaceFlags);
         }
     }
 
     void ImGuiLayer::setDockSpace() {
-        _dockSpaceFlags = ImGuiDockNodeFlags_None;
-        _windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        dockSpaceFlags = ImGuiDockNodeFlags_None;
+        windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 
-        if (_isFullScreen) {
+        if (isFullScreen) {
             const ImGuiViewport* viewport = ImGui::GetMainViewport();
             ImGui::SetNextWindowPos(viewport->WorkPos);
             ImGui::SetNextWindowSize(viewport->WorkSize);
             ImGui::SetNextWindowViewport(viewport->ID);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-            _windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-            _windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+            windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+            windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
         } else {
-            _dockSpaceFlags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+            dockSpaceFlags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
         }
 
-        if (_dockSpaceFlags & ImGuiDockNodeFlags_PassthruCentralNode) {
-            _windowFlags |= ImGuiWindowFlags_NoBackground;
+        if (dockSpaceFlags & ImGuiDockNodeFlags_PassthruCentralNode) {
+            windowFlags |= ImGuiWindowFlags_NoBackground;
         }
     }
 
     void ImGuiLayer::endDockSpace() {
-        if (!_isDockSpaceOpened) return;
+        if (!isDockSpaceOpened) return;
         ImGui::End();
     }
 
     void ImGuiLayer::toggleDockSpace() {
-        _isDockSpaceOpened = !_isDockSpaceOpened;
+        isDockSpaceOpened = !isDockSpaceOpened;
+    }
+
+    void ImGuiLayer::onPrepare() {
     }
 
 }

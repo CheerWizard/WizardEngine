@@ -4,8 +4,13 @@
 
 #pragma once
 
-#include "Layer.h"
+#include "Time.h"
 
 namespace engine {
-    class Layout : public Layer {};
+
+    class Layout {
+    public:
+        virtual void onUpdate(Time dt) = 0;
+    };
+
 }
