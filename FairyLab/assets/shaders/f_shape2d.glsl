@@ -8,5 +8,5 @@ uniform sampler2D diffuseSampler;
 
 void main() {
     vec4 diffColor = texture(diffuseSampler, v_TextureCoords);
-    f_Color = diffColor + vec4(0.3, 0, 0.6, 1.0);
+    f_Color = vec4(0.8, 0.8, 0.8, 1.0);
 }

@@ -15,4 +15,5 @@ include_directories(
 )
 add_executable(FairyLab ${FAIRY_SRC})
 target_link_libraries(FairyLab PUBLIC WizardEngine)
-replace_dirs(FairyLab/assets FairyLab/assets)
+#replace_dirs(FairyLab/assets FairyLab/assets)
+#replace_dirs(FairyLab/editorRes FairyLab/editorRes)

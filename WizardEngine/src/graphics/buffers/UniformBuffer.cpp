@@ -6,6 +6,12 @@
 
 namespace engine {
 
-
+    void UniformBuffer::prepare(UniformBlockFormat* uniformBlockFormat) {
+        setUniformBlockFormat(uniformBlockFormat);
+        bind();
+        allocate();
+        unbind();
+        setUniformBlockPointer();
+    }
 
 }

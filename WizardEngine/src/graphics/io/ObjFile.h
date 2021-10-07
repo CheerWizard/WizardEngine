@@ -9,7 +9,7 @@
 #include "../buffers/VertexData.h"
 #include "../buffers/IndexData.h"
 
-#include "../geometry/ShapeComponent.h"
+#include "../geometry/MeshComponent.h"
 
 #define OBJ_PATH "obj"
 
@@ -30,7 +30,7 @@ namespace engine {
         ~ObjFile() override = default;
 
     public:
-        ShapeComponent readObj(const std::string &fileName);
+        MeshComponent readObj(const std::string &fileName);
 
     protected:
         const char *getExtensionName() const override;

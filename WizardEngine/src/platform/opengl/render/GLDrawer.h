@@ -27,7 +27,7 @@ namespace engine {
 
         void drawQuadsIndices(const uint32_t &indexCount) override;
 
-        void drawTrianglesIndices(const uint32_t &indexCount) override;
+        void drawByIndices(const uint32_t &indexCount) override;
 
         void setPolygonMode(const PolygonMode &polygonMode) override;
 

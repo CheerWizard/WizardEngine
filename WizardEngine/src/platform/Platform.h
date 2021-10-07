@@ -48,8 +48,7 @@
 
 #ifdef GLFW
 
-    #define INIT_WINDOW createScope<WindowsWindow>()
-    #define INIT_WINDOW_PROPS(props) createScope<WindowsWindow>(props)
+    #define INIT_WINDOW(props) createScope<WindowsWindow>(props)
     #define INIT_INPUT(nativeWindow) createScope<WindowsInput>(nativeWindow)
 
     #ifdef GL

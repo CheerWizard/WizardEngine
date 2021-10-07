@@ -24,7 +24,7 @@ namespace engine {
         CursorCallback* cursorCallback = nullptr;
 
         explicit WindowProps(
-                const std::string& title = "Wizard",
+                const std::string& title = "Wizard Engine",
                 uint32_t width = DEFAULT_WINDOW_WIDTH,
                 uint32_t height = DEFAULT_WINDOW_HEIGHT,
                 bool vSyncEnabled = false)

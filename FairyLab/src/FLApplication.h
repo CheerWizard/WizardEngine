@@ -11,6 +11,8 @@ namespace fairy {
     class FLApplication : public engine::Application {
     protected:
         void onCreate() override;
+
+        engine::WindowProps createWindowProps() override;
     };
 
 }

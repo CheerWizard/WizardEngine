@@ -11,8 +11,7 @@ namespace engine {
     class GLIndexBuffer : public IndexBuffer {
 
     public:
-        explicit GLIndexBuffer(const uint32_t &indexCount = DEFAULT_INDEX_COUNT) :
-        IndexBuffer(indexCount) {
+        GLIndexBuffer(const uint32_t &indexCount = DEFAULT_INDEX_COUNT) : IndexBuffer(indexCount) {
             create();
         }
 
@@ -26,7 +25,9 @@ namespace engine {
 
         void allocate() override;
 
-        void load(const IndexData &indexData);
+        void load(const IndexData &indexData) override;
+
+        void recreate() override;
 
     private:
         void create();

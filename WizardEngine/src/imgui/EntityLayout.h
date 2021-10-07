@@ -16,8 +16,8 @@ namespace engine {
 
     class EntityLayoutCallback {
     public:
-        virtual void onCreateEntity() = 0;
-        virtual void onRemoveEntity() = 0;
+        virtual Entity createEntity(const std::string &entityName) = 0;
+        virtual void removeEntity(Entity entity) = 0;
     };
 
     class EntityLayout : public Layout {

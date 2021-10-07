@@ -69,4 +69,9 @@ namespace engine {
         return true;
     }
 
+    void GLTextureBuffer::recreate() {
+        destroy();
+        create();
+    }
+
 }

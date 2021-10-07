@@ -7,14 +7,13 @@
 namespace fairy {
 
     void FLLayer::create() {
-        _scenePanel = new engine::ImageLayout({
-            "Scene",
-            props.width,
-            props.height
-        });
-        _entityPanel = new engine::EntityLayout({
-            "Entities"
-        });
+        _scenePreviewCallback = new FLLayer::ScenePreviewCallback(*this);
+        _imagePreviewCallback = new FLLayer::ImagePreviewCallback(*this);
+
+        _scenePanel.setCallback(_scenePreviewCallback);
+        _imagePreview.setCallback(_imagePreviewCallback);
+        _entityPanel.setCallback(this);
+        _assetBrowser->setCallback(this);
 
         auto shape2dShaderProps = engine::ShaderProps {
             "shape2d",
@@ -44,44 +43,53 @@ namespace fairy {
         };
         carTexture.applyChanges();
 
-        carEntity = app->activeScene->createEntity("Car");
-        carEntity.addComponent<engine::TransformComponent3d>(transform);
-        carEntity.addComponent<engine::ShapeComponent>(carObj);
-        carEntity.addComponent<engine::TextureComponent>(carTexture);
+        _carEntity = app->activeScene->createEntity("Car");
+        _carEntity.addComponent<engine::TransformComponent3d>(transform);
+        _carEntity.addComponent<engine::MeshComponent>(carObj);
+        _carEntity.addComponent<engine::TextureComponent>(carTexture);
     }
 
     void FLLayer::destroy() {
-        delete _scenePanel;
-        delete _entityPanel;
-    }
-
-    void FLLayer::onRender(engine::Time dt) {
-        _scenePanel->onUpdate(dt);
-        _entityPanel->onUpdate(dt);
+        _entityPanel.removeCallback();
+        _scenePanel.removeCallback();
+        _imagePreview.removeCallback();
+        delete _imagePreviewCallback;
+        delete _scenePreviewCallback;
     }
 
     void FLLayer::onPrepare() {
         CLIENT_INFO("onPrepare()");
         ImGuiLayer::onPrepare();
-        _scenePanel->setTextureId(app->activeScene->getTextureId());
         app->closeKeyPressed = engine::KeyCode::Escape;
-        app->cameraController->bind(engine::KeyCode::W, engine::MoveType::UP);
-        app->cameraController->bind(engine::KeyCode::A, engine::MoveType::LEFT);
-        app->cameraController->bind(engine::KeyCode::S, engine::MoveType::DOWN);
-        app->cameraController->bind(engine::KeyCode::D, engine::MoveType::RIGHT);
-        app->cameraController->bind(engine::KeyCode::Q, engine::RotateType::LEFT_Z);
-        app->cameraController->bind(engine::KeyCode::E, engine::RotateType::RIGHT_Z);
-        app->cameraController->bind(engine::KeyCode::Z, engine::ZoomType::IN);
-        app->cameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
-        app->cameraController->setPosition({0, 0, -1});
-        app->cameraController->applyChanges();
+        app->sceneCameraController->bind(engine::KeyCode::W, engine::MoveType::UP);
+        app->sceneCameraController->bind(engine::KeyCode::A, engine::MoveType::LEFT);
+        app->sceneCameraController->bind(engine::KeyCode::S, engine::MoveType::DOWN);
+        app->sceneCameraController->bind(engine::KeyCode::D, engine::MoveType::RIGHT);
+        app->sceneCameraController->bind(engine::KeyCode::Q, engine::RotateType::LEFT_Z);
+        app->sceneCameraController->bind(engine::KeyCode::E, engine::RotateType::RIGHT_Z);
+        app->sceneCameraController->bind(engine::KeyCode::Z, engine::ZoomType::IN);
+        app->sceneCameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
+        app->sceneCameraController->setPosition({0, 0, -1});
+        app->sceneCameraController->applyChanges();
+
+        _scenePanel.setTextureId(app->activeScene->getTextureId());
+
+        _imagePreview.hide();
+        _imagePreview.setClosable(true);
+    }
+
+    void FLLayer::onRender(engine::Time dt) {
+        _scenePanel.onUpdate(dt);
+        _entityPanel.onUpdate(dt);
+        _assetBrowser->onUpdate(dt);
+        _imagePreview.onUpdate(dt);
     }
 
     void FLLayer::onUpdate(engine::Time dt) {
         ImGuiLayer::onUpdate(dt);
 
-        if (carEntity.hasComponent<engine::TransformComponent3d>()) {
-            auto& transform = carEntity.getComponent<engine::TransformComponent3d>().transformMatrix;
+        if (_carEntity.hasComponent<engine::TransformComponent3d>()) {
+            auto& transform = _carEntity.getComponent<engine::TransformComponent3d>().transformMatrix;
 
             transform.rotation.y += 0.0001f / dt;
             transform.applyChanges();
@@ -118,6 +126,36 @@ namespace fairy {
         if (keyCode == engine::KeyCode::D7) {
             app->fpsTimer.setMaxFps(app->getRefreshRate());
         }
+    }
+
+    engine::Entity FLLayer::createEntity(const std::string &entityName) {
+        return app->activeScene->createEntity(entityName);
+    }
+
+    void FLLayer::removeEntity(engine::Entity entity) {
+        app->activeScene->deleteEntity(entity);
+    }
+
+    void FLLayer::onMousePressed(engine::MouseCode mouseCode) {
+        _scenePanel.onMousePressed(mouseCode);
+    }
+
+    void FLLayer::onMouseRelease(engine::MouseCode mouseCode) {
+        _scenePanel.onMouseRelease(mouseCode);
+    }
+
+    void FLLayer::onFileOpen(const std::string &fileName) {
+        ENGINE_INFO("onImageFileOpen({0})", fileName);
+        _imagePreview.load(fileName);
+        _imagePreview.show();
+    }
+
+    void FLLayer::ImagePreviewCallback::onImageResized(const uint32_t &width, const uint32_t &height) {
+        // do nothing.
+    }
+
+    void FLLayer::ScenePreviewCallback::onImageResized(const uint32_t &width, const uint32_t &height) {
+        _parent.app->onWindowResized(width, height);
     }
 
 }

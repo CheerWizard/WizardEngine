@@ -15,8 +15,8 @@ namespace engine {
         glDrawElements(GL_QUADS, (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr);
     }
 
-    void GLDrawer::drawTrianglesIndices(const uint32_t &indexCount) {
-        ENGINE_INFO("drawTrianglesIndices()");
+    void GLDrawer::drawByIndices(const uint32_t &indexCount) {
+        ENGINE_INFO("drawByIndices()");
         glDrawElements(GL_TRIANGLES, (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr);
     }
 

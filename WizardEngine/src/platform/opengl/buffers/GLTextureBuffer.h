@@ -19,6 +19,8 @@ namespace engine {
             destroy();
         }
 
+        void recreate() override;
+
     private:
         void create();
         void destroy();
