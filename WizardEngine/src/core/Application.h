@@ -87,7 +87,7 @@ namespace engine {
         void* getNativeWindow();
         void enableDisplay();
         void disableDisplay();
-        MeshComponent loadObj(const std::string& objName);
+        Ref<MeshComponent> loadObj(const std::string& objName);
         void loadTexture(const std::string &fileName);
 
     protected:
@@ -111,8 +111,9 @@ namespace engine {
         Scope<Input> input;
         KeyCode closeKeyPressed;
         Ref<CameraController> sceneCameraController; // todo move to Component.
-        Scene* activeScene; // todo add Scene cache or smth similar.
+        Ref<Scene> activeScene; // todo add Scene cache or smth similar.
         Timer fpsTimer;
+        ObjFile objFile;
 
     private:
         EngineType _engineType;
@@ -121,7 +122,6 @@ namespace engine {
         Scope<Window> _window;
         Scope<GraphicsContext> _graphicsContext;
         Ref<RenderSystem> _renderSystem;
-        ObjFile* _objFile = nullptr;
         bool _isDisplayEnabled = true;
         Ref<GraphicsFactory> _graphicsFactory;
 

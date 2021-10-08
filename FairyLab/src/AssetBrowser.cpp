@@ -44,11 +44,11 @@ namespace fairy {
         for (auto& directoryEntry : std::filesystem::directory_iterator(_currentDir)) {
             const auto& path = directoryEntry.path();
             auto relativePath = std::filesystem::relative(path, _props.assetPath);
-            const auto& fileName = relativePath.filename().string();
-            ENGINE_INFO("Asset file name : {0}", fileName);
+            const auto& fullFileName = relativePath.filename().string();
+            ENGINE_INFO("Asset file name : {0}", fullFileName);
             bool isDirectory = directoryEntry.is_directory();
 
-            ImGui::PushID(fileName.c_str());
+            ImGui::PushID(fullFileName.c_str());
             auto icon = isDirectory ? _dirIcon : _fileIcon;
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
             auto iconClicked = ImGui::ImageButton(
@@ -59,7 +59,24 @@ namespace fairy {
             );
 
             if (!isDirectory && iconClicked) {
-                _callback->onFileOpen(fileName);
+                const auto& fullFileNameTokens = engine::split(fullFileName, ".");
+                const auto& fileName = fullFileNameTokens[0];
+                const auto& fileExtension = fullFileNameTokens[1];
+
+                SWITCH(fileExtension.c_str()) {
+                    CASE("jpg"):
+                        _callback->onJpgOpen(fileName);
+                        break;
+                    CASE("png"):
+                        _callback->onPngOpen(fileName);
+                        break;
+                    CASE("obj"):
+                        _callback->onObjOpen(fileName);
+                        break;
+                    CASE("glsl"):
+                        _callback->onGlslOpen(fileName);
+                        break;
+                }
             }
 
             if (ImGui::BeginDragDropSource()) {
@@ -76,7 +93,7 @@ namespace fairy {
                 }
             }
 
-            ImGui::TextWrapped("%s", fileName.c_str());
+            ImGui::TextWrapped("%s", fullFileName.c_str());
             ImGui::NextColumn();
             ImGui::PopID();
         }

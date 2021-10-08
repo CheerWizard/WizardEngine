@@ -40,7 +40,7 @@ namespace engine {
         void stop();
         void startFrame();
         void endFrame();
-        void renderMesh(MeshComponent &meshComponent);
+        void renderMesh(MeshComponent &meshComponent, TransformComponent3d &transformComponent3D);
         void renderMaterial(TextureComponent &material);
         void renderTransform(TransformComponent2d &transformComponent2D);
         void renderTransform(TransformComponent3d &transformComponent3D);
@@ -53,6 +53,14 @@ namespace engine {
     public:
         inline void setCameraController(const Ref<CameraController> &cameraController) {
             _cameraController = cameraController;
+        }
+
+        inline const Ref<TextureBuffer>& getTextureBuffer() {
+            return _textureBuffer;
+        }
+
+        inline const std::vector<uint32_t>& getFrameColors() {
+            return _frameBuffer->getColorAttachments();
         }
 
     private:

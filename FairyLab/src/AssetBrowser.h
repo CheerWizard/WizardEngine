@@ -15,7 +15,10 @@ namespace fairy {
 
     class AssetBrowserCallback {
     public:
-        virtual void onFileOpen(const std::string &fileName) = 0;
+        virtual void onPngOpen(const std::string &fileName) = 0;
+        virtual void onJpgOpen(const std::string &fileName) = 0;
+        virtual void onObjOpen(const std::string &fileName) = 0;
+        virtual void onGlslOpen(const std::string &fileName) = 0;
     };
 
     struct AssetBrowserProps {

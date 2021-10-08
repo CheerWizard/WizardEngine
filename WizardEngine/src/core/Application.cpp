@@ -38,8 +38,6 @@ namespace engine {
         createRenderSystem();
         createActiveScene();
         createCamera();
-
-        _objFile = new ObjFile();
     }
 
     void Application::onPrepare() {
@@ -50,8 +48,6 @@ namespace engine {
 
     void Application::onDestroy() {
         ENGINE_INFO("onDestroy()");
-        delete _objFile;
-        delete activeScene;
     }
 
     void Application::onUpdate() {
@@ -99,17 +95,14 @@ namespace engine {
             onWindowClosed();
         }
         _layerStack.onKeyPressed(keyCode);
-        sceneCameraController->onKeyPressed(keyCode);
     }
 
     void Application::onKeyHold(KeyCode keyCode) {
         _layerStack.onKeyHold(keyCode);
-        sceneCameraController->onKeyHold(keyCode);
     }
 
     void Application::onKeyReleased(KeyCode keyCode) {
         _layerStack.onKeyReleased(keyCode);
-        sceneCameraController->onKeyReleased(keyCode);
     }
 
     void Application::onMousePressed(MouseCode mouseCode) {
@@ -130,7 +123,6 @@ namespace engine {
 
     void Application::onKeyTyped(KeyCode keyCode) {
         _layerStack.onKeyTyped(keyCode);
-        sceneCameraController->onKeyTyped(keyCode);
     }
 
     void Application::addShader(const std::string &name, const Ref<Shader> &shader) {
@@ -190,8 +182,8 @@ namespace engine {
     }
 
     void Application::createActiveScene() {
-        activeScene = new Scene();
-        _renderSystem->setActiveScene(activeScene);
+        activeScene = createRef<Scene>();
+        _renderSystem->setActiveScene(activeScene.get());
     }
 
     void Application::createCamera2D(const char *name) {
@@ -240,8 +232,8 @@ namespace engine {
         }
     }
 
-    MeshComponent Application::loadObj(const std::string &objName) {
-        return _objFile->readObj(objName);
+    Ref<MeshComponent> Application::loadObj(const std::string &objName) {
+        return objFile.readObj(objName);
     }
 
     const uint32_t &Application::getWindowWidth() {

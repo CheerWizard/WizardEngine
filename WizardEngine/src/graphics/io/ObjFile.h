@@ -11,6 +11,8 @@
 
 #include "../geometry/MeshComponent.h"
 
+#include "unordered_map"
+
 #define OBJ_PATH "obj"
 
 namespace engine {
@@ -27,14 +29,23 @@ namespace engine {
         ObjFile() = default;
         ObjFile(const std::string& name, const std::string &path) : File(name, path) {}
 
-        ~ObjFile() override = default;
+        ~ObjFile() override {
+            destroy();
+        }
 
     public:
-        MeshComponent readObj(const std::string &fileName);
+        Ref<MeshComponent> readObj(const std::string &fileName);
 
     protected:
         const char *getExtensionName() const override;
         const char *getAssetPath() const override;
+
+    private:
+        bool exists(const std::string &objName);
+        void destroy();
+
+    private:
+        std::unordered_map<std::string, Ref<MeshComponent>> _meshComponents;
 
     };
 

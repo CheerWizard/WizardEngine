@@ -12,7 +12,6 @@ namespace engine {
         _indexBuffer = _graphicsFactory->newIndexBuffer();
         _frameBuffer = _graphicsFactory->newFrameBuffer();
         _textureBuffer = _graphicsFactory->newTextureBuffer();
-        _uniformBuffer = _graphicsFactory->newUniformBuffer();
         _drawer = _graphicsFactory->newDrawer();
     }
 
@@ -35,12 +34,15 @@ namespace engine {
 
         _textureBuffer->bind();
 
-        _uniformBuffer->prepare(shader->getUniformBlockFormat());
+        if (shader->getShaderError() != ShaderError::NO_UNIFORM_BLOCKS) {
+            _uniformBuffer = _graphicsFactory->newUniformBuffer();
+            _uniformBuffer->prepare(shader->getUniformBlockFormat());
+        }
 
         _vertexArray->unbind();
     }
 
-    void Renderer::renderMesh(MeshComponent &meshComponent) {
+    void Renderer::renderMesh(MeshComponent &meshComponent, TransformComponent3d &transformComponent3D) {
         startFrame();
         start();
 
@@ -51,6 +53,8 @@ namespace engine {
             loadMesh(meshComponent);
         }
 
+        renderTransform(transformComponent3D);
+
         drawByIndices(meshComponent.indexCount);
 
         stop();
@@ -60,17 +64,21 @@ namespace engine {
     void Renderer::renderCamera() {
         if (_cameraController != nullptr) {
             auto& camera = _cameraController->getCamera();
-            if (camera.isUpdated) {
-                camera.isUpdated = false;
+            if (_shader->getShaderError() == ShaderError::NO_UNIFORM_BLOCKS) {
+                _shader->setUniform(camera);
+            } else {
+                if (camera.isUpdated) {
+                    camera.isUpdated = false;
 
-                auto uniformData = UniformData {
-                    camera.toFloatPtr(),
-                    0,
-                    1
-                };
-                _uniformBuffer->bind();
-                _uniformBuffer->load(uniformData);
-                _uniformBuffer->unbind();
+                    auto uniformData = UniformData {
+                        camera.toFloatPtr(),
+                        0,
+                        1
+                    };
+                    _uniformBuffer->bind();
+                    _uniformBuffer->load(uniformData);
+                    _uniformBuffer->unbind();
+                }
             }
         }
     }

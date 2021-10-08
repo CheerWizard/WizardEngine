@@ -22,18 +22,18 @@ namespace engine {
         virtual void onImageResized(const uint32_t &width, const uint32_t &height) = 0;
     };
 
-    class ImageLayout : public Layout, MouseCallback {
+    class ImageLayout : public Layout, public MouseCallback {
 
     public:
         ImageLayout(const ImageLayoutProps &props, const Ref<TextureBuffer>& image) :
                 _props(props), _image(image) {}
 
-        ~ImageLayout() {
+        virtual ~ImageLayout() {
             destroy();
         }
 
     public:
-        void onUpdate(Time deltaTime) override;
+        void onUpdate(Time dt) override;
         void load(const std::string &fileName);
 
     public:
@@ -61,21 +61,29 @@ namespace engine {
             _image->setId(textureId);
         }
 
+        inline const bool& isFocused() const {
+            return _isFocused;
+        }
+
     public:
         void onMousePressed(MouseCode mouseCode) override;
         void onMouseRelease(MouseCode mouseCode) override;
         void onMouseScrolled(double xOffset, double yOffset) override;
 
+    protected:
+        void end();
+
     private:
         void destroy();
 
-    private:
+    protected:
         ImageLayoutProps _props;
         ImageLayoutCallback* _callback = nullptr;
+        Ref<TextureBuffer> _image;
         bool _isHoldingMouse = false;
         bool _isVisible = true;
-        bool _isClosable = false;
-        Ref<TextureBuffer> _image;
+        bool _isClosable = true;
+        bool _isFocused = false;
 
     };
 

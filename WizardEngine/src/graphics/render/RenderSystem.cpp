@@ -13,6 +13,7 @@ namespace engine {
     void RenderSystem::destroy() {
         shaderCache.clear();
         vertexBufferCache.clear();
+        activeScene = nullptr;
     }
 
     void RenderSystem::onUpdate() {

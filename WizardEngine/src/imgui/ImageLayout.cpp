@@ -8,27 +8,35 @@
 
 namespace engine {
 
-    void ImageLayout::onUpdate(Time deltaTime) {
+    void ImageLayout::onUpdate(Time dt) {
         if (!_isVisible) return;
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2 {0 , 0});
 
-        static bool* open = _isClosable ? &_isClosable : nullptr;
+        static bool open = true;
+        auto isClosed = !ImGui::Begin(_props.name, &open, ImGuiWindowFlags_AlwaysUseWindowPadding);
 
-        ImGui::Begin(_props.name, open);
+        if (isClosed && _isClosable) {
+            _isVisible = false;
+            end();
+            return;
+        }
+
+        _isFocused = ImGui::IsWindowFocused();
+        ENGINE_INFO("{0} is focused = {1}", _props.name, _isFocused);
 
         ImVec2 imageSize = ImGui::GetContentRegionAvail();
 
         if (!_isHoldingMouse && (imageSize.x != (float) _props.width || imageSize.y != (float) _props.height)) {
             _props.width = (uint32_t) imageSize.x;
             _props.height = (uint32_t) imageSize.y;
-            _callback->onImageResized(_props.width, _props.height);
+            if (_callback != nullptr) {
+                _callback->onImageResized(_props.width, _props.height);
+            }
         }
 
         ImGui::Image((void*) _image->getId(), imageSize);
-
-        ImGui::End();
-        ImGui::PopStyleVar();
+        end();
     }
 
     void ImageLayout::destroy() {
@@ -50,6 +58,11 @@ namespace engine {
         _image->recreate();
         _image->bind();
         _image->load(fileName);
+    }
+
+    void ImageLayout::end() {
+        ImGui::End();
+        ImGui::PopStyleVar();
     }
 
 }

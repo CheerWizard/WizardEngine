@@ -6,13 +6,14 @@
 
 #include "imgui/ImguiLayer.h"
 #include "imgui/ImageLayout.h"
-#include "imgui/EntityLayout.h"
+#include "imgui/SceneHierarchy.h"
+#include "imgui/MeshLayout.h"
 
 #include "AssetBrowser.h"
 
 namespace fairy {
 
-    class FLLayer : public engine::ImGuiLayer, engine::EntityLayoutCallback, AssetBrowserCallback {
+    class FLLayer : public engine::ImGuiLayer, AssetBrowserCallback {
 
         class ImagePreviewCallback : public engine::ImageLayoutCallback {
 
@@ -59,6 +60,12 @@ namespace fairy {
         void onMousePressed(engine::MouseCode mouseCode) override;
         void onMouseRelease(engine::MouseCode mouseCode) override;
 
+        void onKeyHold(engine::KeyCode keyCode) override;
+
+        void onKeyReleased(engine::KeyCode keyCode) override;
+
+        void onKeyTyped(engine::KeyCode keyCode) override;
+
     protected:
         void onRender(engine::Time dt) override;
 
@@ -66,23 +73,21 @@ namespace fairy {
         void create();
         void destroy();
 
-        engine::Entity createEntity(const std::string &entityName) override;
-        void removeEntity(engine::Entity entity) override;
-
-        void onFileOpen(const std::string &fileName) override;
+        void onPngOpen(const std::string &fileName) override;
+        void onJpgOpen(const std::string &fileName) override;
+        void onObjOpen(const std::string &fileName) override;
+        void onGlslOpen(const std::string &fileName) override;
 
     private:
-        engine::ImageLayout _scenePanel = engine::ImageLayout({
+        engine::ImageLayout _scenePreview = engine::ImageLayout({
             "Scene Preview",
                 props.width,
                 props.height
                 },
-          app->getGraphicsFactory()->newTextureBuffer()
+        app->getGraphicsFactory()->newTextureBuffer()
         );
 
-        engine::EntityLayout _entityPanel = engine::EntityLayout({
-            "Scene Hierarchy"
-        });
+        engine::SceneHierarchy _sceneHierarchy = engine::SceneHierarchy(app->activeScene);
 
         engine::ImageLayout _imagePreview = engine::ImageLayout {
             {"Image Preview"},
@@ -98,7 +103,9 @@ namespace fairy {
                 app->getGraphicsFactory()->newTextureBuffer()
         );
 
-        engine::Entity _carEntity;
+        engine::Ref<engine::MeshLayout> _objPreview;
+
+        engine::Entity _humanEntity;
 
         ImagePreviewCallback* _imagePreviewCallback = nullptr;
         ScenePreviewCallback* _scenePreviewCallback = nullptr;
