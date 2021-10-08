@@ -15,5 +15,7 @@ include_directories(
 )
 add_executable(FairyLab ${FAIRY_SRC})
 target_link_libraries(FairyLab PUBLIC WizardEngine)
-#replace_dirs(FairyLab/assets FairyLab/assets)
-#replace_dirs(FairyLab/editorRes FairyLab/editorRes)
+# copy assets, editor res and imgui init file.
+replace_dirs(FairyLab/assets FairyLab/assets)
+replace_dirs(FairyLab/editorRes FairyLab/editorRes)
+configure_file(imgui.ini imgui.ini COPYONLY)

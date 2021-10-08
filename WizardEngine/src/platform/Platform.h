@@ -11,6 +11,7 @@
 		#define PLATFORM_WINDOWS
 		#include "windows/WindowsWindow.h"
 		#include "windows/WindowsInput.h"
+        #include "windows/WindowsFileDialog.h"
 	#else
 	/* Windows x86 */
 		#error "x86 Builds are not supported!"
@@ -50,6 +51,7 @@
 
     #define INIT_WINDOW(props) createScope<WindowsWindow>(props)
     #define INIT_INPUT(nativeWindow) createScope<WindowsInput>(nativeWindow)
+    #define INIT_FILE_DIALOG(nativeWindow) createScope<WindowsFileDialog>(nativeWindow)
 
     #ifdef GL
 	    #include "opengl/GLContext.h"

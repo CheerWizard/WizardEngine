@@ -78,6 +78,10 @@ namespace fairy {
         void onObjOpen(const std::string &fileName) override;
         void onGlslOpen(const std::string &fileName) override;
 
+        void onImport(const char *filter) override;
+
+        void onExport(const char *filter) override;
+
     private:
         engine::ImageLayout _scenePreview = engine::ImageLayout({
             "Scene Preview",

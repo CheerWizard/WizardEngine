@@ -48,7 +48,7 @@ macro(copy_dir dir1 dir2)
             configure_file(
                     ${srcTemplatePath}
                     ${destDir}/${templateFile}
-                    @ONLY)
+                    COPYONLY)
         endif(NOT IS_DIRECTORY ${srcTemplatePath})
     endforeach(templateFile)
 
