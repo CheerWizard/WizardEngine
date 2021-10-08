@@ -20,10 +20,23 @@ namespace engine {
     public:
         virtual void bind() = 0;
         virtual void unbind() = 0;
+        virtual void recreate() = 0;
 
     public:
         inline const uint32_t& getCapacity() const {
             return capacity;
+        }
+
+        inline const uint32_t& getId() const {
+            return id;
+        }
+
+        inline void setId(const uint32_t &id) {
+            this->id = id;
+        }
+
+        inline void setCapacity(const uint32_t capacity) {
+            this->capacity = capacity;
         }
 
     protected:

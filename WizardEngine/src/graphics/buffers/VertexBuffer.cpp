@@ -3,3 +3,14 @@
 //
 
 #include "VertexBuffer.h"
+
+namespace engine {
+
+    void VertexBuffer::prepare(VertexFormat *vertexFormat) {
+        setVertexFormat(vertexFormat);
+        bind();
+        allocate();
+        setAttributesPointer();
+    }
+
+}

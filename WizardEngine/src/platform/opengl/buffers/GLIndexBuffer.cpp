@@ -16,6 +16,11 @@ namespace engine {
         glDeleteBuffers(1, &id);
     }
 
+    void GLIndexBuffer::recreate() {
+        destroy();
+        create();
+    }
+
     void GLIndexBuffer::bind() {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
     }

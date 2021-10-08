@@ -7,113 +7,61 @@
 namespace engine {
 
     void RenderSystem::create() {
-        drawer = graphicsFactory->newDrawer();
-        vertexArray = graphicsFactory->newVertexArray();
-        indexBuffer = graphicsFactory->newIndexBuffer();
-        textureBuffer = graphicsFactory->newTextureBuffer();
-        frameBuffer = graphicsFactory->newFrameBuffer();
-        uniformBuffer = graphicsFactory->newUniformBuffer();
+        sceneRenderer = createRef<Renderer>(graphicsFactory);
     }
 
     void RenderSystem::destroy() {
         shaderCache.clear();
         vertexBufferCache.clear();
-    }
-
-    void RenderSystem::onPrepare() {
-        frameBuffer->setViewPort();
-
-        for (auto &iterator : shaderCache) {
-            auto shaderName = iterator.first;
-            auto shader = iterator.second;
-            auto vertexBuffers = vertexBufferCache.get(shaderName);
-
-            shader->bindAttributes();
-            shader->bindUniformBlock();
-
-            vertexArray->bind();
-
-            for (const auto& vertexBuffer : vertexBuffers) {
-                vertexBuffer->setVertex(shader->getVertexFormat());
-                vertexBuffer->bind();
-                vertexBuffer->allocate();
-                vertexBuffer->setAttributesPointer();
-            }
-
-            indexBuffer->bind();
-            indexBuffer->allocate();
-
-            textureBuffer->bind();
-
-            uniformBuffer->setUniformBlockFormat(shader->getUniformBlockFormat());
-            uniformBuffer->bind();
-            uniformBuffer->allocate();
-            uniformBuffer->unbind();
-            uniformBuffer->setUniformBlockPointer();
-
-            vertexArray->unbind();
-        }
+        activeScene = nullptr;
     }
 
     void RenderSystem::onUpdate() {
         if (activeScene == nullptr) {
-            ENGINE_WARN("Renderer : No active scene!");
+            ENGINE_WARN("RenderSystem : No active scene!");
             return;
         }
 
-        auto renderableEntities = activeScene->getEntities().view<ShapeComponent>();
+        auto renderableEntities = activeScene->getEntities().view<MeshComponent>();
         if (renderableEntities.empty()) {
-            ENGINE_WARN("Renderer : Nothing to draw!");
+            ENGINE_WARN("RenderSystem : Nothing to draw!");
             return;
         }
 
-        // bind to our own frame buffer
-        frameBuffer->bind();
-        drawer->enableDepth();
-        drawer->clearDepth({0.2, 0.2, 0.2, 1});
+        sceneRenderer->startFrame();
 
-        for (const auto& iterator : shaderCache) {
-            auto shaderName = iterator.first;
-            auto shader = iterator.second;
-            auto vertexBuffers = vertexBufferCache.get(shaderName);
+        sceneRenderer->start();
 
-            shader->start();
-            vertexArray->bind();
+        sceneRenderer->renderCamera();
 
-            renderCamera(shader);
-
-            uint32_t totalIndexCount = 0;
-            uint32_t totalVertexCount = 0;
-            for (const auto& renderableEntity : renderableEntities) {
-                auto& shapeComponent = renderableEntities.get<ShapeComponent>(renderableEntity);
-
-                renderShape(shaderName, shapeComponent, totalVertexCount, totalIndexCount);
-                renderMaterial(shader, renderableEntity);
-                renderTransform(shader, renderableEntity);
-
-                totalIndexCount += shapeComponent.indexData.indexCount;
-                totalVertexCount += shapeComponent.vertexData.vertexCount;
+        uint32_t totalIndexCount = 0;
+        uint32_t totalVertexCount = 0;
+        for (const auto& renderableEntity : renderableEntities) {
+            auto& meshComponent = renderableEntities.get<MeshComponent>(renderableEntity);
+            if (meshComponent.isUpdated) {
+                meshComponent.isUpdated = false;
+                meshComponent.updateStart(totalVertexCount, totalIndexCount);
+                sceneRenderer->loadMesh(meshComponent);
             }
 
-            for (const auto& vertexBuffer : vertexBuffers) {
-                vertexBuffer->enableAttributes();
-            }
+            meshComponent.updateCounts();
+            totalIndexCount += meshComponent.indexCount;
+            totalVertexCount += meshComponent.vertexCount;
 
-            drawer->drawTrianglesIndices(totalIndexCount);
-
-            vertexArray->unbind();
-            shader->stop();
+            renderMaterial(renderableEntity);
+            renderTransform(renderableEntity);
         }
 
-        // bind to default frame buffer.
-        frameBuffer->unbind();
-        drawer->disableDepth();
-        drawer->clearColor({1.0, 1.0, 1.0, 1.0});
+        sceneRenderer->drawByIndices(totalIndexCount);
+
+        sceneRenderer->stop();
+
+        sceneRenderer->endFrame();
     }
 
     void RenderSystem::addShader(const std::string &name, const Ref<Shader> &shader) {
         shaderCache.add(name, shader);
-        prepareVertexBuffer(name, shader->getVertexFormat());
+        sceneRenderer->prepare(shader);
     }
 
     void RenderSystem::addShader(const Ref<Shader> &shader) {
@@ -134,7 +82,7 @@ namespace engine {
         auto shaderError = shader->getShaderError();
         if (shaderError == ShaderError::NONE) {
             shaderCache.add(shader);
-            prepareVertexBuffer(shader->getName(), shader->getVertexFormat());
+            sceneRenderer->prepare(shader);
         }
         return shaderError;
     }
@@ -147,128 +95,57 @@ namespace engine {
         return shaderCache.exists(name);
     }
 
-    void RenderSystem::renderShape(const std::string &shaderName,
-                                   ShapeComponent &shapeComponent,
-                                   const uint32_t &vertexStart,
-                                   const uint32_t &indexStart) {
-        if (!shapeComponent.isUpdated) return;
-        shapeComponent.isUpdated = false;
-
-        auto& indexData = shapeComponent.indexData;
-        auto& currentIndexStart = indexData.indexStart;
-        auto& vertexData = shapeComponent.vertexData;
-        auto& currentVertexStart = vertexData.vertexStart;
-
-        if (currentVertexStart != vertexStart || currentIndexStart != indexStart) {
-            currentVertexStart = vertexStart;
-            currentIndexStart = indexStart;
-            for (auto i = 0 ; i < indexData.indexCount ; i++) {
-                auto& index = indexData.indices[i];
-                index += currentVertexStart;
-            }
-        }
-
-        auto& vbo = vertexBufferCache.last(shaderName);
-        vbo->bind();
-        vbo->load(vertexData);
-
-        indexBuffer->bind();
-        indexBuffer->load(indexData);
-    }
-
-    void RenderSystem::loadTexture(const std::string &filePath) {
-        textureBuffer->bind();
-        textureBuffer->load(filePath);
-    }
-
-    void RenderSystem::loadTextureData(const void *data) {
-        textureBuffer->bind();
-        textureBuffer->loadData(data);
-    }
-
-    void RenderSystem::renderCamera(const Ref<Shader> &shader) {
-        if (cameraController != nullptr) {
-            auto& camera = cameraController->getCamera();
-            if (camera.isUpdated) {
-                camera.isUpdated = false;
-
-                auto uniformData = UniformData {
-                    camera.toFloatPtr(),
-                    0,
-                    1
-                };
-                uniformBuffer->bind();
-                uniformBuffer->load(uniformData);
-                uniformBuffer->unbind();
-            }
-        }
-    }
-
     void RenderSystem::enableDepth() {
-        drawer->enableDepth();
+        sceneRenderer->enableDepth();
     }
 
     void RenderSystem::setPolygonMode(const PolygonMode &polygonMode) {
-        drawer->setPolygonMode(polygonMode);
+        sceneRenderer->setPolygonMode(polygonMode);
     }
 
-    void RenderSystem3d::renderMaterial(Ref<Shader> &shader, const entt::entity &entity) {
+    void RenderSystem3d::renderMaterial(const entt::entity &entity) {
         if (!activeScene->hasComponent<TextureComponent>(entity)) return;
 
-        auto texture = activeScene->getComponent<TextureComponent>(entity);
-        shader->setUniform(texture.texture);
-        textureBuffer->activate(texture.texture.value);
+        auto& texture = activeScene->getComponent<TextureComponent>(entity);
+        sceneRenderer->renderMaterial(texture);
     }
 
-    void RenderSystem3d::renderTransform(Ref<Shader> &shader, const entt::entity &entity) {
+    void RenderSystem3d::renderTransform(const entt::entity &entity) {
         if (!activeScene->hasComponent<TransformComponent3d>(entity)) return;
 
-        auto transform3d = activeScene->getComponent<TransformComponent3d>(entity);
-        shader->setUniform(transform3d.transformMatrix);
+        auto& transform3d = activeScene->getComponent<TransformComponent3d>(entity);
+        sceneRenderer->renderTransform(transform3d);
     }
 
-    void RenderSystem2d::renderMaterial(Ref<Shader> &shader, const entt::entity &entity) {
+    void RenderSystem2d::renderMaterial(const entt::entity &entity) {
         if (!activeScene->hasComponent<TextureComponent>(entity)) return;
 
-        auto texture = activeScene->getComponent<TextureComponent>(entity);
-        shader->setUniform(texture.texture);
-        textureBuffer->activate(texture.texture.value);
+        auto& texture = activeScene->getComponent<TextureComponent>(entity);
+        sceneRenderer->renderMaterial(texture);
     }
 
-    void RenderSystem2d::renderTransform(Ref<Shader> &shader, const entt::entity &entity) {
+    void RenderSystem2d::renderTransform(const entt::entity &entity) {
         if (!activeScene->hasComponent<TransformComponent2d>(entity)) return;
 
-        auto transform2d = activeScene->getComponent<TransformComponent2d>(entity);
-        shader->setUniform(transform2d.transformMatrix);
+        auto& transform2d = activeScene->getComponent<TransformComponent2d>(entity);
+        sceneRenderer->renderTransform(transform2d);
     }
 
     void RenderSystem::onWindowClosed() {
     }
 
     void RenderSystem::onWindowResized(unsigned int width, unsigned int height) {
-        frameBuffer->setViewPort();
+        sceneRenderer->resizeFrame(width, height);
     }
 
     void RenderSystem::updateFboSpecification(const FramebufferSpecification &framebufferSpecification) {
-        frameBuffer->setSpecification(framebufferSpecification);
-        frameBuffer->loadAttachments();
-        activeScene->setTextureId(frameBuffer->getColorAttachment(0));
+        const auto& colorTextures = sceneRenderer->updateFboSpecs(framebufferSpecification);
+        ENGINE_INFO("Update FBO specs. Scene texture id : {0}", colorTextures[0]);
+        activeScene->setTextureId(colorTextures[0]);
     }
 
-    void RenderSystem::renderScene(const std::string &shaderName, const ShapeComponent &shapeComponent) {
-        auto& vbo = vertexBufferCache.last(shaderName);
-        vbo->bind();
-        vbo->load(shapeComponent.vertexData);
-
-        indexBuffer->bind();
-        indexBuffer->load(shapeComponent.indexData);
-    }
-
-    void RenderSystem::prepareVertexBuffer(const std::string &shaderName, VertexFormat* vertexFormat) {
-        if (vertexBufferCache.isEmpty(shaderName)) {
-            vertexBufferCache.add(shaderName, graphicsFactory->newVertexBuffer(vertexFormat));
-        }
-        vertexBufferCache.last(shaderName)->setVertex(vertexFormat);
+    void RenderSystem::loadTexture(const std::string &fileName) {
+        sceneRenderer->loadTexture(fileName);
     }
 
 }

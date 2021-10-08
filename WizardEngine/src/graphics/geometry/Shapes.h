@@ -4,38 +4,62 @@
 
 #pragma once
 
-#include "ShapeComponent.h"
+#include "MeshComponent.h"
 #include "../../ecs/Entity.h"
 
 namespace engine {
 
-    struct Triangle : ShapeComponent {
-        Triangle() : ShapeComponent() {
-            vertexData = { createVertices() };
-            indexData = { createIndices() };
-        }
+    struct Triangle : MeshComponent {
+        Triangle() : MeshComponent(new Mesh {
+            VertexData {
+                createVertices(),
+                0,
+                3
+            },
+            IndexData {
+                createIndices(),
+                0,
+                3
+            }
+        }) {}
 
     private:
         static uint32_t *createIndices();
         static Vertex *createVertices();
     };
 
-    struct Square : ShapeComponent {
-        Square() : ShapeComponent() {
-            vertexData = { createVertices() };
-            indexData = { createIndices() };
-        }
+    struct Square : MeshComponent {
+        Square() : MeshComponent(new Mesh {
+            VertexData {
+                createVertices(),
+                0,
+                4
+            },
+            IndexData {
+                createIndices(),
+                0,
+                6
+            }
+        }) {}
 
     private:
         static uint32_t *createIndices();
         static Vertex *createVertices();
     };
 
-    struct Cube : ShapeComponent {
-        Cube() : ShapeComponent() {
-            vertexData = { createVertices(),0,24 };
-            indexData = { createIndices(), 0, 36 };
-        }
+    struct Cube : MeshComponent {
+        Cube() : MeshComponent(new Mesh {
+            VertexData {
+                createVertices(),
+                0,
+                24
+            },
+            IndexData {
+                createIndices(),
+                0,
+                36
+            }
+        }) {}
 
     private:
         static uint32_t *createIndices();

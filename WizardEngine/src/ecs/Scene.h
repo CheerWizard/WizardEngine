@@ -47,7 +47,7 @@ namespace engine {
 
         template<typename T>
         inline void removeComponent(const entt::entity& entityId) {
-            ENGINE_ASSERT(hasComponent<T>(), "Entity does not have component!")
+            ENGINE_ASSERT(hasComponent<T>(entityId), "Entity does not have component!")
             _entities.remove<T>(entityId);
         }
 

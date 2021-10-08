@@ -14,11 +14,12 @@ namespace engine {
         return OBJ_PATH;
     }
 
-    // todo add support of multiple ObjData
-    //  obj file may include not only single model, but whole world (multiple models)
-    //  model may consist from multiple models and than merged into single one
-    //  great example is model of AK-47 weapon, which consist from different sub models.
-    ShapeComponent ObjFile::readObj(const std::string &fileName) {
+    Ref<MeshComponent> ObjFile::readObj(const std::string &fileName) {
+        if (exists(fileName)) {
+            ENGINE_INFO("Obj file data {0} exists in cache! Returning it!", fileName);
+            return _meshComponents[fileName];
+        }
+
         setAssetName(fileName);
         auto source = read();
         auto tokens = split(source, "\n\r ");
@@ -28,7 +29,6 @@ namespace engine {
         std::vector<glm::vec3> normals;
         std::vector<uint32_t> indices;
         std::vector<Face> faces;
-        ShapePrimitive primitive = TRIANGLE;
 
         for (auto i = 0 ; i < tokens.size(); i++) {
             auto token = tokens[i];
@@ -194,11 +194,22 @@ namespace engine {
             indexCount
         };
 
-        return ShapeComponent {
+        auto* mesh = new Mesh {
             vertexData,
-            indexData,
-            primitive
+            indexData
         };
+
+        auto meshComponent = createRef<MeshComponent>(mesh);
+        _meshComponents[fileName] = meshComponent;
+        return meshComponent;
+    }
+
+    bool ObjFile::exists(const std::string &objName) {
+        return _meshComponents.find(objName) != _meshComponents.end();
+    }
+
+    void ObjFile::destroy() {
+        _meshComponents.clear();
     }
 
 }

@@ -16,7 +16,7 @@ namespace engine {
     class IndexBuffer : public Buffer {
 
     public:
-        explicit IndexBuffer(const uint32_t &indexCount = DEFAULT_INDEX_COUNT) {
+        IndexBuffer(const uint32_t &indexCount = DEFAULT_INDEX_COUNT) {
             capacity = indexCount;
         }
 

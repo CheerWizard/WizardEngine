@@ -20,7 +20,7 @@ namespace engine {
     void Application::onCreate() {
         ENGINE_INFO("create()");
 
-        _window = INIT_WINDOW;
+        _window = INIT_WINDOW(createWindowProps());
 
         fpsTimer.setMaxFps(getRefreshRate());
 
@@ -38,29 +38,23 @@ namespace engine {
         createRenderSystem();
         createActiveScene();
         createCamera();
-
-        _objFile = new ObjFile();
     }
 
     void Application::onPrepare() {
         _window->onPrepare();
         updateFboSpecification();
-        _renderSystem->onPrepare();
         _layerStack.onPrepare();
     }
 
     void Application::onDestroy() {
         ENGINE_INFO("onDestroy()");
-        delete _objFile;
-        delete cameraController;
-        delete activeScene;
     }
 
     void Application::onUpdate() {
         auto dt = fpsTimer.getDeltaTime();
         fpsTimer.begin();
 
-        cameraController->setDeltaTime(dt);
+        sceneCameraController->setDeltaTime(dt);
         _renderSystem->onUpdate();
 
         _layerStack.onUpdate(dt);
@@ -89,8 +83,11 @@ namespace engine {
 
     void Application::onWindowResized(unsigned int width, unsigned int height) {
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
+        if (width == 0 || height == 0) return;
+
         _layerStack.onWindowResized(width, height);
         _renderSystem->onWindowResized(width, height);
+        sceneCameraController->onWindowResized(width, height);
     }
 
     void Application::onKeyPressed(KeyCode keyCode) {
@@ -98,17 +95,14 @@ namespace engine {
             onWindowClosed();
         }
         _layerStack.onKeyPressed(keyCode);
-        cameraController->onKeyPressed(keyCode);
     }
 
     void Application::onKeyHold(KeyCode keyCode) {
         _layerStack.onKeyHold(keyCode);
-        cameraController->onKeyHold(keyCode);
     }
 
     void Application::onKeyReleased(KeyCode keyCode) {
         _layerStack.onKeyReleased(keyCode);
-        cameraController->onKeyReleased(keyCode);
     }
 
     void Application::onMousePressed(MouseCode mouseCode) {
@@ -129,7 +123,6 @@ namespace engine {
 
     void Application::onKeyTyped(KeyCode keyCode) {
         _layerStack.onKeyTyped(keyCode);
-        cameraController->onKeyTyped(keyCode);
     }
 
     void Application::addShader(const std::string &name, const Ref<Shader> &shader) {
@@ -164,14 +157,6 @@ namespace engine {
         _renderSystem->enableDepth();
     }
 
-    void Application::loadTexture(const std::string &filePath) {
-        _renderSystem->loadTexture(filePath);
-    }
-
-    void Application::loadTextureData(const void *data) {
-        _renderSystem->loadTextureData(data);
-    }
-
     void Application::createCamera3D(const char *name) {
         createCamera3D(name, {0.5, 0.5, 1});
     }
@@ -192,13 +177,13 @@ namespace engine {
     }
 
     void Application::createCamera3D(Camera3d* camera3D) {
-        cameraController = new Camera3dController(camera3D);
-        _renderSystem->setCameraController(cameraController);
+        sceneCameraController = createRef<Camera3dController>(camera3D);
+        _renderSystem->setSceneCameraController(sceneCameraController);
     }
 
     void Application::createActiveScene() {
-        activeScene = new Scene();
-        _renderSystem->setActiveScene(activeScene);
+        activeScene = createRef<Scene>();
+        _renderSystem->setActiveScene(activeScene.get());
     }
 
     void Application::createCamera2D(const char *name) {
@@ -221,8 +206,8 @@ namespace engine {
     }
 
     void Application::createCamera2D(Camera2d *camera2D) {
-        cameraController = new Camera2dController(camera2D);
-        _renderSystem->setCameraController(cameraController);
+        sceneCameraController = createRef<Camera2dController>(camera2D);
+        _renderSystem->setSceneCameraController(sceneCameraController);
     }
 
     void Application::restart() {
@@ -239,16 +224,16 @@ namespace engine {
     }
 
     void Application::createRenderSystem() {
-        auto graphicsFactory = _graphicsContext->newGraphicsFactory();
+        _graphicsFactory = _graphicsContext->newGraphicsFactory();
         if (_engineType == ENGINE_2D) {
-            _renderSystem = createRef<RenderSystem2d>(graphicsFactory);
+            _renderSystem = createRef<RenderSystem2d>(_graphicsFactory);
         } else {
-            _renderSystem = createRef<RenderSystem3d>(graphicsFactory);
+            _renderSystem = createRef<RenderSystem3d>(_graphicsFactory);
         }
     }
 
-    ShapeComponent Application::loadObj(const std::string &objName) {
-        return _objFile->readObj(objName);
+    Ref<MeshComponent> Application::loadObj(const std::string &objName) {
+        return objFile.readObj(objName);
     }
 
     const uint32_t &Application::getWindowWidth() {
@@ -294,6 +279,14 @@ namespace engine {
 
     void *Application::getNativeWindow() {
         return _window->getNativeWindow();
+    }
+
+    WindowProps Application::createWindowProps() {
+        return WindowProps();
+    }
+
+    void Application::loadTexture(const std::string &fileName) {
+        _renderSystem->loadTexture(fileName);
     }
 
 }

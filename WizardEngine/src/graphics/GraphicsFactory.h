@@ -29,6 +29,7 @@ namespace engine {
         virtual Ref<Drawer> newDrawer() = 0;
         virtual Ref<VertexArray> newVertexArray() = 0;
 
+        virtual Ref<VertexBuffer> newVertexBuffer() = 0;
         virtual Ref<VertexBuffer> newVertexBuffer(VertexFormat* vertexFormat) = 0;
 
         virtual Ref<IndexBuffer> newIndexBuffer() = 0;

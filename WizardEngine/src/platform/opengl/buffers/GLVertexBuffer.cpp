@@ -16,6 +16,11 @@ namespace engine {
         glDeleteBuffers(1, &id);
     }
 
+    void GLVertexBuffer::recreate() {
+        destroy();
+        create();
+    }
+
     void GLVertexBuffer::bind() {
         glBindBuffer(GL_ARRAY_BUFFER, id);
     }

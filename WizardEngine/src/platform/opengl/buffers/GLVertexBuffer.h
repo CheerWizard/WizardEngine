@@ -11,7 +11,11 @@ namespace engine {
     class GLVertexBuffer : public VertexBuffer {
 
     public:
-        explicit GLVertexBuffer(VertexFormat* vertexFormat) : VertexBuffer(vertexFormat) {
+        GLVertexBuffer() : VertexBuffer() {
+            create();
+        }
+
+        GLVertexBuffer(VertexFormat* vertexFormat) : VertexBuffer(vertexFormat) {
             create();
         }
 
@@ -29,6 +33,8 @@ namespace engine {
         void disableAttributes() override;
 
         void load(const VertexData &vertexData) override;
+
+        void recreate() override;
 
     private:
         void create();

@@ -31,6 +31,7 @@ namespace engine {
         int readPixel(uint32_t attachmentIndex, int x, int y) override;
         void removeAttachment(uint32_t attachmentIndex, int value) override;
         void setViewPort() override;
+        void recreate() override;
 
     protected:
         void attachColorSpecs() override;

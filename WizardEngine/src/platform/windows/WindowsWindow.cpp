@@ -35,6 +35,7 @@ namespace engine {
 
     void WindowsWindow::destroy() {
         removeCallbacks();
+        glfwSetErrorCallback(nullptr);
         glfwDestroyWindow(_window);
         _window = nullptr;
         glfwTerminate();

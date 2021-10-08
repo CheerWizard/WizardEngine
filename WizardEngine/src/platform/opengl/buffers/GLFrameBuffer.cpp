@@ -20,6 +20,11 @@ namespace engine {
         depthAttachment = 0;
     }
 
+    void GLFrameBuffer::recreate() {
+        destroy();
+        create();
+    }
+
     bool GLFrameBuffer::isCompleted() {
         return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
     }
@@ -166,7 +171,9 @@ namespace engine {
         specification.width = width;
         specification.height = height;
 
-        create();
+        recreate();
+        loadAttachments();
+        setViewPort();
     }
 
     int GLFrameBuffer::readPixel(uint32_t attachmentIndex, int x, int y) {

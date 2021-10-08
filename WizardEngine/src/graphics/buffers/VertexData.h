@@ -13,8 +13,8 @@ namespace engine {
 
     struct VertexData {
         Vertex* vertices;
-        uint32_t vertexCount;
         uint32_t vertexStart;
+        uint32_t vertexCount;
 
         VertexData() = default;
 

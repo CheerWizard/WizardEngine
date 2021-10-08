@@ -27,6 +27,8 @@ namespace engine {
         Ref <UniformBuffer> newUniformBuffer() override;
         Ref <Shader> newShader(const ShaderProps &shaderProps, VertexFormat *vertexFormat) override;
         Ref <Shader> newShader(const ShaderProps &shaderProps) override;
+
+        Ref<VertexBuffer> newVertexBuffer() override;
     };
 
 }

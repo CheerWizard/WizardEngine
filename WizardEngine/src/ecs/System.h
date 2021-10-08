@@ -11,7 +11,6 @@ namespace engine {
     class System {
 
     public:
-        virtual void onPrepare() = 0;
         virtual void onUpdate() = 0;
 
     public:

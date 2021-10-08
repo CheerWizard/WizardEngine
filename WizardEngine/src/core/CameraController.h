@@ -14,7 +14,7 @@
 #define DEFAULT_CAMERA_ZOOM_SPEED 0.001f
 #define DEFAULT_CAMERA_MOVE_SPEED 0.001f
 #define DEFAULT_CAMERA_ROTATE_SPEED 0.001f
-#define UNDEFINED_TYPE(T) static_cast<T>(0)
+#define NONE_TYPE(T) static_cast<T>(0)
 
 namespace engine {
 
@@ -41,7 +41,7 @@ namespace engine {
     typedef std::unordered_map<KeyCode, RotateType> RotateKeys;
     typedef std::unordered_map<KeyCode, MoveType> MoveKeys;
 
-    class CameraController : public KeyboardCallback {
+    class CameraController : public KeyboardCallback, WindowCallback {
 
     public:
         virtual ~CameraController();
@@ -98,6 +98,9 @@ namespace engine {
         void onKeyReleased(KeyCode keyCode) override;
         void onKeyTyped(KeyCode keyCode) override;
 
+        void onWindowClosed() override;
+        void onWindowResized(unsigned int width, unsigned int height) override;
+
     protected:
         MoveKeys moveKeys = MoveKeys();
         RotateKeys rotateKeys = RotateKeys();
@@ -126,6 +129,10 @@ namespace engine {
 
         void setPosition(const glm::vec3 &position) override;
 
+    public:
+        void onWindowClosed() override;
+        void onWindowResized(unsigned int width, unsigned int height) override;
+
     private:
         Camera3d* _camera3D;
 
@@ -145,6 +152,10 @@ namespace engine {
         Mat4fUniform& getCamera() override;
 
         void setPosition(const glm::vec3 &position) override;
+
+    public:
+        void onWindowClosed() override;
+        void onWindowResized(unsigned int width, unsigned int height) override;
 
     private:
         Camera2d* _camera2D;

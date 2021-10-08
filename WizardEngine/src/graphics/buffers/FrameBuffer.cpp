@@ -24,7 +24,6 @@ namespace engine {
         attachDepthSpecs();
         createDrawBuffers();
 
-        // todo debug fbo status
         ENGINE_ASSERT(isCompleted(), "Framebuffer is incomplete!");
 
         unbind();

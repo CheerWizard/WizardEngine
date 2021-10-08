@@ -9,9 +9,9 @@
 #include <cstdint>
 
 #define MAX_LENGTH 10
-#define SWITCH(str) switch(str_hash_for_switch(str))
-#define CASE(str) static_assert(str_is_correct(str) && (str_len(str) <= MAX_LENGTH), "CASE : string is incorrect or length is higher than 10"); \
-case str_hash(str, str_len(str))
+#define SWITCH(str) switch(engine::str_hash_for_switch(str))
+#define CASE(str) static_assert(engine::str_is_correct(str) && (engine::str_len(str) <= MAX_LENGTH), "CASE : string is incorrect or length is higher than 10"); \
+case engine::str_hash(str, engine::str_len(str))
 
 #define TO_FLOAT(v) std::stof(v)
 #define TO_INT(v) std::stoi(v)
