@@ -22,6 +22,9 @@ namespace engine {
         uniformBlockFormat(uniformBlockFormat) {}
 
     public:
+        void prepare(UniformBlockFormat* uniformBlockFormat);
+
+    public:
         virtual void allocate() = 0;
         virtual void load(const UniformData &uniformData) = 0;
         virtual void setUniformBlockPointer() = 0;

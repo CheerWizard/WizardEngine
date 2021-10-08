@@ -41,6 +41,11 @@ namespace engine {
         void run();
 
     public:
+        inline const Ref<GraphicsFactory>& getGraphicsFactory() {
+            return _graphicsFactory;
+        }
+
+    public:
         void onWindowClosed() override;
         void onWindowResized(unsigned int width, unsigned int height) override;
 
@@ -60,6 +65,7 @@ namespace engine {
         virtual void onPrepare();
         virtual void onDestroy();
         virtual void onUpdate();
+        virtual WindowProps createWindowProps();
 
     public:
         void addShader(const std::string& name, const Ref<Shader>& shader);
@@ -72,7 +78,6 @@ namespace engine {
         const uint32_t& getWindowWidth();
         const uint32_t& getWindowHeight();
         void enableDepthRendering();
-        void loadTextureData(const void* data);
         void createCamera(const char* name = DEFAULT_CAMERA_NAME);
         void createActiveScene();
         void updateFboSpecification();
@@ -82,8 +87,8 @@ namespace engine {
         void* getNativeWindow();
         void enableDisplay();
         void disableDisplay();
-        void loadTexture(const std::string &filePath);
-        ShapeComponent loadObj(const std::string& objName);
+        Ref<MeshComponent> loadObj(const std::string& objName);
+        void loadTexture(const std::string &fileName);
 
     protected:
         void pushFront(Layer* layer);
@@ -105,9 +110,10 @@ namespace engine {
     public:
         Scope<Input> input;
         KeyCode closeKeyPressed;
-        CameraController* cameraController; // todo move to Component.
-        Scene* activeScene; // todo add Scene cache or smth similar.
+        Ref<CameraController> sceneCameraController; // todo move to Component.
+        Ref<Scene> activeScene; // todo add Scene cache or smth similar.
         Timer fpsTimer;
+        ObjFile objFile;
 
     private:
         EngineType _engineType;
@@ -116,9 +122,8 @@ namespace engine {
         Scope<Window> _window;
         Scope<GraphicsContext> _graphicsContext;
         Ref<RenderSystem> _renderSystem;
-        ObjFile* _objFile = nullptr;
-        Square display;
         bool _isDisplayEnabled = true;
+        Ref<GraphicsFactory> _graphicsFactory;
 
     };
 

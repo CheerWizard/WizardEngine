@@ -205,7 +205,7 @@ private:
   static asio::error_code load_option(void* option,
       const ::DCB& storage, asio::error_code& ec)
   {
-    static_cast<GettableSerialPortOption*>(option)->load(storage, ec);
+      static_cast<GettableSerialPortOption *>(option)->loadMeshComponent(storage, ec);
     return ec;
   }
 

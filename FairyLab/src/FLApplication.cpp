@@ -28,4 +28,10 @@ namespace fairy {
         pushBack(flLayer);
     }
 
+    engine::WindowProps FLApplication::createWindowProps() {
+        return engine::WindowProps {
+            "Fairy Lab"
+        };
+    }
+
 }

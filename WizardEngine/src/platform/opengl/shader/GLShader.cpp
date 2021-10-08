@@ -121,6 +121,7 @@ namespace engine {
     }
 
     void GLShader::setUniform(Mat4fUniform &uniform) {
+        ENGINE_INFO("Mat4Uniform is updated : {0}", uniform.isUpdated);
         if (!uniform.isUpdated) return;
         uniform.isUpdated = false;
         auto location = glGetUniformLocation(programId, uniform.name);
@@ -330,6 +331,7 @@ namespace engine {
         if (uniformBlockFormat->isEmpty()) {
             ENGINE_WARN("Shader '{0}' doesn't has uniform blocks!", props.name);
             error = ShaderError::NO_UNIFORM_BLOCKS;
+            return;
         }
 
         ENGINE_INFO("Shader has found uniform blocks!");

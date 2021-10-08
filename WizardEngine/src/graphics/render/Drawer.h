@@ -8,7 +8,7 @@
 
 namespace engine {
 
-    enum PolygonMode : unsigned int {
+    enum PolygonMode : uint16_t {
         POINT = 0,
         LINE = 1,
         FILL = 2
@@ -24,7 +24,7 @@ namespace engine {
 
     public:
         virtual void drawQuadsIndices(const uint32_t &indexCount) = 0;
-        virtual void drawTrianglesIndices(const uint32_t &indexCount) = 0;
+        virtual void drawByIndices(const uint32_t &indexCount) = 0;
         virtual void drawIndicesInstanced(const uint32_t &indexCount, const uint32_t &instanceCount) = 0;
         virtual void multiDrawIndices(const uint32_t &totalIndexCount, const uint32_t &drawCount) = 0;
 

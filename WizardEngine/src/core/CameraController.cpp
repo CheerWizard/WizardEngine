@@ -23,15 +23,15 @@ namespace engine {
     }
 
     void CameraController::unbindMove(const KeyCode &keyCode) {
-        moveKeys[keyCode] = UNDEFINED_TYPE(MoveType);
+        moveKeys[keyCode] = NONE_TYPE(MoveType);
     }
 
     void CameraController::unbindRotate(const KeyCode &keyCode) {
-        rotateKeys[keyCode] = UNDEFINED_TYPE(RotateType);
+        rotateKeys[keyCode] = NONE_TYPE(RotateType);
     }
 
     void CameraController::unbindZoom(const KeyCode &keyCode) {
-        zoomKeys[keyCode] = UNDEFINED_TYPE(ZoomType);
+        zoomKeys[keyCode] = NONE_TYPE(ZoomType);
     }
 
     void CameraController::clearZoomBindings() {
@@ -54,21 +54,21 @@ namespace engine {
 
     void CameraController::onKeyPressed(KeyCode keyCode) {
         auto moveKey = moveKeys[keyCode];
-        if (moveKey != UNDEFINED_TYPE(MoveType)) {
+        if (moveKey != NONE_TYPE(MoveType)) {
             move(moveKey);
             applyChanges();
             return;
         }
 
         auto zoomKey = zoomKeys[keyCode];
-        if (zoomKey != UNDEFINED_TYPE(ZoomType)) {
+        if (zoomKey != NONE_TYPE(ZoomType)) {
             zoom(zoomKey);
             applyChanges();
             return;
         }
 
         auto rotateKey = rotateKeys[keyCode];
-        if (rotateKey != UNDEFINED_TYPE(RotateType)) {
+        if (rotateKey != NONE_TYPE(RotateType)) {
             rotate(rotateKey);
             applyChanges();
             return;
@@ -85,6 +85,12 @@ namespace engine {
 
     void CameraController::onKeyTyped(KeyCode keyCode) {
         // no needs to support it for now!
+    }
+
+    void CameraController::onWindowClosed() {
+    }
+
+    void CameraController::onWindowResized(unsigned int width, unsigned int height) {
     }
 
     Camera3dController::~Camera3dController() {
@@ -245,6 +251,20 @@ namespace engine {
 
     void Camera3dController::setPosition(const glm::vec3 &position) {
         _camera3D->viewMatrix.position = position;
+        _camera3D->applyChanges();
+    }
+
+    void Camera2dController::onWindowResized(unsigned int width, unsigned int height) {
+    }
+
+    void Camera2dController::onWindowClosed() {
+    }
+
+    void Camera3dController::onWindowClosed() {
+    }
+
+    void Camera3dController::onWindowResized(unsigned int width, unsigned int height) {
+        _camera3D->perspectiveMatrix.aspectRatio = (float) width / (float) height;
         _camera3D->applyChanges();
     }
 

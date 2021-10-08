@@ -32,6 +32,8 @@ namespace engine {
         void allocate() override;
         void load(const UniformData &uniformData) override;
 
+        void recreate() override;
+
     private:
         void create();
         void destroy();

@@ -16,9 +16,11 @@ namespace engine {
     class VertexBuffer : public Buffer {
 
     public:
-        explicit VertexBuffer(VertexFormat* vertexFormat) :
-        Buffer(),
-        vertexFormat(vertexFormat) {}
+        VertexBuffer() : Buffer() {}
+        VertexBuffer(VertexFormat* vertexFormat) : Buffer(), vertexFormat(vertexFormat) {}
+
+    public:
+        void prepare(VertexFormat* vertexFormat);
 
     public:
         virtual void allocate() = 0;
@@ -28,7 +30,7 @@ namespace engine {
         virtual void disableAttributes() = 0;
 
     public:
-        inline void setVertex(VertexFormat* vertexFormat) {
+        inline void setVertexFormat(VertexFormat* vertexFormat) {
             this->vertexFormat = vertexFormat;
         }
 
@@ -37,7 +39,7 @@ namespace engine {
         }
 
     protected:
-        VertexFormat* vertexFormat;
+        VertexFormat* vertexFormat = nullptr;
 
     };
 

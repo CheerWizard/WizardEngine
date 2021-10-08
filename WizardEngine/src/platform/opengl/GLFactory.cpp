@@ -24,6 +24,10 @@ namespace engine {
         return createRef<GLShader>(shaderProps);
     }
 
+    Ref<engine::VertexBuffer> GLFactory::newVertexBuffer() {
+        return createRef<GLVertexBuffer>();
+    }
+
     Ref<VertexBuffer> GLFactory::newVertexBuffer(VertexFormat *vertexFormat) {
         return createRef<GLVertexBuffer>(vertexFormat);
     }
