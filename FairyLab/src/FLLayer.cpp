@@ -136,9 +136,6 @@ namespace fairy {
         objCameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
         objCameraController->setPosition({0, 0, -1});
         objCameraController->applyChanges();
-
-//        auto importPath = app->fileDialog->getImportPath("GLSL shader (*.glsl)\0*.glsl\0");
-//        ENGINE_INFO("Import path : {0}", importPath);
     }
 
     void FLLayer::onRender(engine::Time dt) {
