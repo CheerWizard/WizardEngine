@@ -265,4 +265,14 @@ namespace fairy {
         _parent.app->onWindowResized(width, height);
     }
 
+    void FLLayer::onImport(const char *filter) {
+        auto importPath = app->fileDialog->getImportPath(filter);
+        ENGINE_INFO("Import path : {0}", importPath);
+    }
+
+    void FLLayer::onExport(const char *filter) {
+        auto exportPath = app->fileDialog->getExportPath(filter);
+        ENGINE_INFO("Export path : {0}", exportPath);
+    }
+
 }

@@ -98,6 +98,17 @@ namespace fairy {
             ImGui::PopID();
         }
 
+        // Right-click on blank space
+        if (ImGui::BeginPopupContextWindow(nullptr, 1, false)) {
+            if (ImGui::MenuItem("Import Asset")) {
+                _callback->onImport("Asset File (*.glsl, *.png, *.jpg, *.obj)");
+            }
+            if (ImGui::MenuItem("Export Asset")) {
+                _callback->onExport("Asset File (*.glsl, *.png, *.jpg, *.obj)");
+            }
+            ImGui::EndPopup();
+        }
+
         ImGui::Columns(1);
 
         ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);

@@ -19,6 +19,8 @@ namespace fairy {
         virtual void onJpgOpen(const std::string &fileName) = 0;
         virtual void onObjOpen(const std::string &fileName) = 0;
         virtual void onGlslOpen(const std::string &fileName) = 0;
+        virtual void onImport(const char* filter) = 0;
+        virtual void onExport(const char* filter) = 0;
     };
 
     struct AssetBrowserProps {

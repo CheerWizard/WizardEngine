@@ -34,6 +34,7 @@ namespace engine {
         _window->setCursorCallback(this);
 
         input = INIT_INPUT(_window->getNativeWindow());
+        fileDialog = INIT_FILE_DIALOG(_window->getNativeWindow());
 
         createRenderSystem();
         createActiveScene();
