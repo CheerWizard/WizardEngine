@@ -136,6 +136,9 @@ namespace fairy {
         objCameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
         objCameraController->setPosition({0, 0, -1});
         objCameraController->applyChanges();
+
+//        auto importPath = app->fileDialog->getImportPath("GLSL shader (*.glsl)\0*.glsl\0");
+//        ENGINE_INFO("Import path : {0}", importPath);
     }
 
     void FLLayer::onRender(engine::Time dt) {
@@ -263,6 +266,16 @@ namespace fairy {
 
     void FLLayer::ScenePreviewCallback::onImageResized(const uint32_t &width, const uint32_t &height) {
         _parent.app->onWindowResized(width, height);
+    }
+
+    void FLLayer::onImport(const char *filter) {
+        auto importPath = app->fileDialog->getImportPath(filter);
+        ENGINE_INFO("Import path : {0}", importPath);
+    }
+
+    void FLLayer::onExport(const char *filter) {
+        auto exportPath = app->fileDialog->getExportPath(filter);
+        ENGINE_INFO("Export path : {0}", exportPath);
     }
 
 }

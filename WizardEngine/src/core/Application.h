@@ -12,6 +12,7 @@
 #include "CameraController.h"
 #include "Timer.h"
 #include "String.h"
+#include "FileDialog.h"
 
 #include "../ecs/Scene.h"
 
@@ -114,6 +115,7 @@ namespace engine {
         Ref<Scene> activeScene; // todo add Scene cache or smth similar.
         Timer fpsTimer;
         ObjFile objFile;
+        Scope<FileDialog> fileDialog;
 
     private:
         EngineType _engineType;
