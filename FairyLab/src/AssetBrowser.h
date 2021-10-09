@@ -4,12 +4,13 @@
 
 #pragma once
 
-#include <core/Layout.h>
+#include <core/Time.h>
 #include <graphics/buffers/TextureBuffer.h>
 
 #include <filesystem>
 
-#define EDITOR_RES_PATH "editorRes"
+#define EDITOR_TEXTURES_PATH "editorRes/textures"
+#define EDITOR_SHADERS_PATH "editorRes/shaders"
 
 namespace fairy {
 
@@ -18,7 +19,7 @@ namespace fairy {
         virtual void onPngOpen(const std::string &fileName) = 0;
         virtual void onJpgOpen(const std::string &fileName) = 0;
         virtual void onObjOpen(const std::string &fileName) = 0;
-        virtual void onGlslOpen(const std::string &fileName) = 0;
+        virtual void onGlslOpen(const std::string &filePath, const std::string &fileName) = 0;
         virtual void onImport(const char* filter) = 0;
         virtual void onExport(const char* filter) = 0;
     };
@@ -28,7 +29,7 @@ namespace fairy {
         const std::filesystem::path& assetPath;
     };
 
-    class AssetBrowser : public engine::Layout {
+    class AssetBrowser {
 
     public:
         AssetBrowser(const AssetBrowserProps &props,
@@ -56,7 +57,7 @@ namespace fairy {
         }
 
     public:
-        void onUpdate(engine::Time dt) override;
+        void onUpdate(engine::Time dt);
 
     private:
         void create();

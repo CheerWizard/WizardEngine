@@ -34,17 +34,19 @@ namespace engine {
         //io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
         //io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-        IO.Fonts->AddFontFromFileTTF("assets/fonts/roboto/Roboto-Bold.ttf", 16.0f);
-        IO.FontDefault = IO.Fonts->AddFontFromFileTTF("assets/fonts/roboto/Roboto-Regular.ttf", 16.0f);
+        boldFont = IO.Fonts->AddFontFromFileTTF("assets/fonts/roboto/Roboto-Bold.ttf", 16.0f);
+        regularFont = IO.Fonts->AddFontFromFileTTF("assets/fonts/roboto/Roboto-Regular.ttf", 16.0f);
+        resizableFont = IO.Fonts->AddFontFromFileTTF("assets/fonts/roboto/Roboto-Regular.ttf", 20.0f);
+        // set default font!
+        IO.FontDefault = regularFont;
 
         // Setup Dear ImGui style
         ImGui::StyleColorsDark();
 
         // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-        if (IO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-        {
+        if (IO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
             STYLE.WindowRounding = 0.0f;
-            STYLE.Colors[ImGuiCol_WindowBg].w = 1.0f;
+            COLORS[ImGuiCol_WindowBg].w = 1.0f;
         }
 
         setDarkTheme();
@@ -82,6 +84,9 @@ namespace engine {
     }
 
     void ImGuiLayer::destroy() {
+        delete boldFont;
+        delete regularFont;
+        delete resizableFont;
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
@@ -182,6 +187,47 @@ namespace engine {
     }
 
     void ImGuiLayer::onPrepare() {
+    }
+
+    void ImGuiLayer::onKeyPressed(KeyCode keyCode) {
+        Layer::onKeyPressed(keyCode);
+        IO.KeysDown[keyCode] = true;
+    }
+
+    void ImGuiLayer::onKeyHold(KeyCode keyCode) {
+        Layer::onKeyHold(keyCode);
+        IO.KeysDown[keyCode] = true;
+    }
+
+    void ImGuiLayer::onKeyReleased(KeyCode keyCode) {
+        Layer::onKeyReleased(keyCode);
+        IO.KeysDown[keyCode] = false;
+    }
+
+    void ImGuiLayer::onKeyTyped(KeyCode keyCode) {
+        Layer::onKeyTyped(keyCode);
+        IO.AddInputCharacter(keyCode);
+    }
+
+    void ImGuiLayer::onMouseScrolled(double xOffset, double yOffset) {
+        Layer::onMouseScrolled(xOffset, yOffset);
+        IO.MouseWheelH += xOffset;
+        IO.MouseWheel += yOffset;
+    }
+
+    void ImGuiLayer::onMousePressed(MouseCode mouseCode) {
+        Layer::onMousePressed(mouseCode);
+        IO.MouseDown[mouseCode] = true;
+    }
+
+    void ImGuiLayer::onMouseRelease(MouseCode mouseCode) {
+        Layer::onMouseRelease(mouseCode);
+        IO.MouseDown[mouseCode] = false;
+    }
+
+    void ImGuiLayer::onCursorMoved(double xPos, double yPos) {
+        Layer::onCursorMoved(xPos, yPos);
+        IO.MousePos = {(float) xPos, (float) yPos};
     }
 
 }

@@ -14,7 +14,7 @@ namespace engine {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2 {0 , 0});
 
         static bool open = true;
-        auto isClosed = !ImGui::Begin(_props.name, &open, ImGuiWindowFlags_AlwaysUseWindowPadding);
+        auto isClosed = !ImGui::Begin(_props.title, &open, ImGuiWindowFlags_AlwaysUseWindowPadding);
 
         if (isClosed && _isClosable) {
             _isVisible = false;
@@ -23,7 +23,7 @@ namespace engine {
         }
 
         _isFocused = ImGui::IsWindowFocused();
-        ENGINE_INFO("{0} is focused = {1}", _props.name, _isFocused);
+        ENGINE_INFO("{0} is focused = {1}", _props.title, _isFocused);
 
         ImVec2 imageSize = ImGui::GetContentRegionAvail();
 

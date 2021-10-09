@@ -9,11 +9,11 @@
 namespace fairy {
 
     void AssetBrowser::create() {
-        _fileIcon->setAssetPath(EDITOR_RES_PATH);
+        _fileIcon->setTexturesPath(EDITOR_TEXTURES_PATH);
         _fileIcon->bind();
         _fileIcon->load("file_icon.png");
 
-        _dirIcon->setAssetPath(EDITOR_RES_PATH);
+        _dirIcon->setTexturesPath(EDITOR_TEXTURES_PATH);
         _dirIcon->bind();
         _dirIcon->load("dir_icon.png");
     }
@@ -45,7 +45,7 @@ namespace fairy {
             const auto& path = directoryEntry.path();
             auto relativePath = std::filesystem::relative(path, _props.assetPath);
             const auto& fullFileName = relativePath.filename().string();
-            ENGINE_INFO("Asset file name : {0}", fullFileName);
+            ENGINE_INFO("Asset file name : {0}, relative path : {1}", fullFileName, path);
             bool isDirectory = directoryEntry.is_directory();
 
             ImGui::PushID(fullFileName.c_str());
@@ -74,7 +74,7 @@ namespace fairy {
                         _callback->onObjOpen(fileName);
                         break;
                     CASE("glsl"):
-                        _callback->onGlslOpen(fileName);
+                        _callback->onGlslOpen(path.string(), fullFileName);
                         break;
                 }
             }

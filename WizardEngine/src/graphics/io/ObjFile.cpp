@@ -10,18 +10,13 @@ namespace engine {
         return ".obj";
     }
 
-    const char *ObjFile::getAssetPath() const {
-        return OBJ_PATH;
-    }
-
     Ref<MeshComponent> ObjFile::readObj(const std::string &fileName) {
         if (exists(fileName)) {
             ENGINE_INFO("Obj file data {0} exists in cache! Returning it!", fileName);
             return _meshComponents[fileName];
         }
 
-        setAssetName(fileName);
-        auto source = read();
+        auto source = readAsset(fileName);
         auto tokens = split(source, "\n\r ");
 
         std::vector<Vertex> vertices;

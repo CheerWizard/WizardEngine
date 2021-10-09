@@ -6,20 +6,27 @@
 
 #include <direct.h>
 #include <sstream>
+#include <fstream>
 
 namespace engine {
 
-    std::string File::read() const {
-        return read(path);
+    std::string File::readAsset(const std::string &assetName) const {
+        return read(createPath(assetName));
     }
 
     void File::createName() {
         // Extract name from filepath
-        auto lastSlash = path.find_last_of("/\\");
+        auto lastSlash = assetPath.find_last_of("/\\");
         lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
-        auto lastDot = path.rfind('.');
-        auto count = lastDot == std::string::npos ? path.size() - lastSlash : lastDot - lastSlash;
-        name = path.substr(lastSlash, count);
+        auto lastDot = assetPath.rfind('.');
+        auto count = lastDot == std::string::npos ? assetPath.size() - lastSlash : lastDot - lastSlash;
+        name = assetPath.substr(lastSlash, count);
+    }
+
+    std::string File::createPath(const std::string &assetName) const {
+        std::stringstream assetFullPath;
+        assetFullPath << assetPath << "/" << assetName << getExtensionName();
+        return assetFullPath.str();
     }
 
     std::string File::getCurrentWorkingDirectory() {
@@ -50,11 +57,12 @@ namespace engine {
         return result;
     }
 
-    void File::setAssetName(const std::string &assetName) {
-        std::stringstream assetFullPath;
-        assetFullPath << assetPath << "/" << getAssetPath() << "/" << assetName << getExtensionName();
-        path = assetFullPath.str();
-        name = assetName;
+    bool File::write(const std::string &filePath, const std::string &source) {
+        std::ofstream file;
+        file.open(filePath);
+        file << source;
+        file.close();
+        return true;
     }
 
 }

@@ -7,6 +7,8 @@
 #include "../core/Application.h"
 #include "../core/Layer.h"
 
+struct ImFont;
+
 namespace engine {
 
     struct ImGuiLayerProps {
@@ -43,6 +45,15 @@ namespace engine {
         static void hideDockSpace();
         static void toggleDockSpace();
 
+        void onKeyPressed(KeyCode keyCode) override;
+        void onKeyHold(KeyCode keyCode) override;
+        void onKeyReleased(KeyCode keyCode) override;
+        void onKeyTyped(KeyCode keyCode) override;
+        void onMouseScrolled(double xOffset, double yOffset) override;
+        void onMousePressed(MouseCode mouseCode) override;
+        void onMouseRelease(MouseCode mouseCode) override;
+        void onCursorMoved(double xPos, double yPos) override;
+
     private:
         void create();
         void destroy();
@@ -60,6 +71,9 @@ namespace engine {
         static bool isFullScreen, isDockSpaceOpened;
         static int windowFlags, dockSpaceFlags;
 
+        ImFont* boldFont = nullptr;
+        ImFont* regularFont = nullptr;
+        ImFont* resizableFont = nullptr;
     };
 
 }

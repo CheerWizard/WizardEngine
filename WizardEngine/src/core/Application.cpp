@@ -82,7 +82,7 @@ namespace engine {
         _isRunning = false;
     }
 
-    void Application::onWindowResized(unsigned int width, unsigned int height) {
+    void Application::onWindowResized(const uint32_t &width , const uint32_t &height) {
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
         if (width == 0 || height == 0) return;
 

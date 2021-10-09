@@ -54,7 +54,7 @@ namespace engine {
         }
     }
 
-    void LayerStack::onWindowResized(unsigned int width, unsigned int height) {
+    void LayerStack::onWindowResized(const uint32_t &width, const uint32_t &height) {
         for (Layer* layer : _layers) {
             layer->onWindowResized(width, height);
         }

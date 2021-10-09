@@ -11,7 +11,7 @@ namespace engine {
         ENGINE_INFO("{0} : onWindowClosed()", tag);
     }
 
-    void Layer::onWindowResized(unsigned int width, unsigned int height) {
+    void Layer::onWindowResized(const uint32_t &width, const uint32_t &height) {
         ENGINE_INFO("{0} : onWindowResized({1}, {2})", tag, width, height);
     }
 

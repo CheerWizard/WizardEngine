@@ -12,7 +12,7 @@ namespace fairy {
             "obj",
             "v_obj",
             "f_obj",
-            EDITOR_RES_PATH
+            EDITOR_SHADERS_PATH
         });
         auto objRenderer = engine::createRef<engine::Renderer>(app->getGraphicsFactory());
 
@@ -136,14 +136,18 @@ namespace fairy {
         objCameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
         objCameraController->setPosition({0, 0, -1});
         objCameraController->applyChanges();
+
+        _fileEditor.setTextFieldFont(resizableFont);
     }
 
     void FLLayer::onRender(engine::Time dt) {
+        // todo only able to close imgui windows, if they are docked to dock space.
         _scenePreview.onUpdate(dt);
         _sceneHierarchy.onUpdate(dt);
         _assetBrowser->onUpdate(dt);
         _imagePreview.onUpdate(dt);
         _objPreview->onUpdate(dt);
+        _fileEditor.onUpdate(dt);
     }
 
     void FLLayer::onUpdate(engine::Time dt) {
@@ -158,7 +162,7 @@ namespace fairy {
     }
 
     void FLLayer::onKeyPressed(engine::KeyCode keyCode) {
-        Layer::onKeyPressed(keyCode);
+        engine::ImGuiLayer::onKeyPressed(keyCode);
 
         _objPreview->onKeyPressed(keyCode);
 
@@ -196,7 +200,7 @@ namespace fairy {
     }
 
     void FLLayer::onKeyHold(engine::KeyCode keyCode) {
-        Layer::onKeyHold(keyCode);
+        engine::ImGuiLayer::onKeyHold(keyCode);
         _objPreview->onKeyHold(keyCode);
 
         if (_scenePreview.isFocused()) {
@@ -205,7 +209,7 @@ namespace fairy {
     }
 
     void FLLayer::onKeyReleased(engine::KeyCode keyCode) {
-        Layer::onKeyReleased(keyCode);
+        engine::ImGuiLayer::onKeyReleased(keyCode);
         _objPreview->onKeyReleased(keyCode);
 
         if (_scenePreview.isFocused()) {
@@ -214,7 +218,7 @@ namespace fairy {
     }
 
     void FLLayer::onKeyTyped(engine::KeyCode keyCode) {
-        Layer::onKeyTyped(keyCode);
+        engine::ImGuiLayer::onKeyTyped(keyCode);
         _objPreview->onKeyTyped(keyCode);
 
         if (_scenePreview.isFocused()) {
@@ -223,10 +227,12 @@ namespace fairy {
     }
 
     void FLLayer::onMousePressed(engine::MouseCode mouseCode) {
+        engine::ImGuiLayer::onMousePressed(mouseCode);
         _scenePreview.onMousePressed(mouseCode);
     }
 
     void FLLayer::onMouseRelease(engine::MouseCode mouseCode) {
+        engine::ImGuiLayer::onMouseRelease(mouseCode);
         _scenePreview.onMouseRelease(mouseCode);
     }
 
@@ -253,8 +259,11 @@ namespace fairy {
         _objPreview->show();
     }
 
-    void FLLayer::onGlslOpen(const std::string &fileName) {
-        ENGINE_INFO("onGlslOpen({0})", fileName);
+    void FLLayer::onGlslOpen(const std::string &filePath, const std::string &fileName) {
+        ENGINE_INFO("onGlslOpen({0})", filePath);
+        _fileEditor.setTitle(filePath);
+        _fileEditor.open(filePath);
+        _fileEditor.show();
     }
 
     void FLLayer::ImagePreviewCallback::onImageResized(const uint32_t &width, const uint32_t &height) {

@@ -90,7 +90,7 @@ namespace engine {
     void CameraController::onWindowClosed() {
     }
 
-    void CameraController::onWindowResized(unsigned int width, unsigned int height) {
+    void CameraController::onWindowResized(const uint32_t &width, const uint32_t &height) {
     }
 
     Camera3dController::~Camera3dController() {
@@ -254,7 +254,7 @@ namespace engine {
         _camera3D->applyChanges();
     }
 
-    void Camera2dController::onWindowResized(unsigned int width, unsigned int height) {
+    void Camera2dController::onWindowResized(const uint32_t &width, const uint32_t &height) {
     }
 
     void Camera2dController::onWindowClosed() {
@@ -263,7 +263,7 @@ namespace engine {
     void Camera3dController::onWindowClosed() {
     }
 
-    void Camera3dController::onWindowResized(unsigned int width, unsigned int height) {
+    void Camera3dController::onWindowResized(const uint32_t &width, const uint32_t &height) {
         _camera3D->perspectiveMatrix.aspectRatio = (float) width / (float) height;
         _camera3D->applyChanges();
     }
