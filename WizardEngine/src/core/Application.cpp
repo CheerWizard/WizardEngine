@@ -34,7 +34,6 @@ namespace engine {
         _window->setCursorCallback(this);
 
         input = INIT_INPUT(_window->getNativeWindow());
-        fileDialog = INIT_FILE_DIALOG(_window->getNativeWindow());
 
         createRenderSystem();
         createActiveScene();
@@ -288,6 +287,14 @@ namespace engine {
 
     void Application::loadTexture(const std::string &fileName) {
         _renderSystem->loadTexture(fileName);
+    }
+
+    void Application::setWindowIcon(const std::string &filePath) {
+        _window->setWindowIcon(filePath);
+    }
+
+    Ref<FileDialog> Application::createFileDialog() {
+        return INIT_FILE_DIALOG(_window->getNativeWindow());
     }
 
 }

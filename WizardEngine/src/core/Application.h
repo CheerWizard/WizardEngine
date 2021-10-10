@@ -90,6 +90,8 @@ namespace engine {
         void disableDisplay();
         Ref<MeshComponent> loadObj(const std::string& objName);
         void loadTexture(const std::string &fileName);
+        void setWindowIcon(const std::string &filePath);
+        Ref<FileDialog> createFileDialog();
 
     protected:
         void pushFront(Layer* layer);
@@ -115,7 +117,6 @@ namespace engine {
         Ref<Scene> activeScene; // todo add Scene cache or smth similar.
         Timer fpsTimer;
         ObjFile objFile;
-        Scope<FileDialog> fileDialog;
 
     private:
         EngineType _engineType;

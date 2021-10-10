@@ -2,6 +2,8 @@
 // Created by mecha on 04.10.2021.
 //
 
+#include <imgui/imgui/imgui.h>
+#include <imgui/imgui/imgui_demo.cpp>
 #include "FLLayer.h"
 
 namespace fairy {
@@ -74,7 +76,7 @@ namespace fairy {
         app->loadShader(humanShaderProps);
         app->loadTexture("demo.png");
 
-        auto humanMesh = app->loadObj("human");
+        auto humanMesh = app->loadObj("human.obj");
         humanMesh->applyChanges();
 
         auto humanTransform = engine::TransformComponent3d {
@@ -152,13 +154,6 @@ namespace fairy {
 
     void FLLayer::onUpdate(engine::Time dt) {
         ImGuiLayer::onUpdate(dt);
-
-//        if (_humanEntity.hasComponent<engine::TransformComponent3d>()) {
-//            auto& transform = _humanEntity.getComponent<engine::TransformComponent3d>().transformMatrix;
-//
-//            transform.rotation.y += 0.0001f / dt;
-//            transform.applyChanges();
-//        }
     }
 
     void FLLayer::onKeyPressed(engine::KeyCode keyCode) {
@@ -238,15 +233,13 @@ namespace fairy {
 
     void FLLayer::onPngOpen(const std::string &fileName) {
         ENGINE_INFO("onPngOpen({0})", fileName);
-        auto imageName = fileName + ".png";
-        _imagePreview.load(imageName);
+        _imagePreview.load(fileName);
         _imagePreview.show();
     }
 
     void FLLayer::onJpgOpen(const std::string &fileName) {
         ENGINE_INFO("onJpgOpen({0})", fileName);
-        auto imageName = fileName + ".jpg";
-        _imagePreview.load(imageName);
+        _imagePreview.load(fileName);
         _imagePreview.show();
     }
 
@@ -274,14 +267,16 @@ namespace fairy {
         _parent.app->onWindowResized(width, height);
     }
 
-    void FLLayer::onImport(const char *filter) {
-        auto importPath = app->fileDialog->getImportPath(filter);
-        ENGINE_INFO("Import path : {0}", importPath);
+    void FLLayer::onAssetImported(const std::string &assetPath) {
+        ENGINE_INFO("onAssetImported() - {0}", assetPath);
     }
 
-    void FLLayer::onExport(const char *filter) {
-        auto exportPath = app->fileDialog->getExportPath(filter);
-        ENGINE_INFO("Export path : {0}", exportPath);
+    void FLLayer::onAssetExported(const std::string &assetPath) {
+        ENGINE_INFO("onAssetExported() - {0}", assetPath);
+    }
+
+    void FLLayer::onAssetRemoved(const std::string &assetPath) {
+        ENGINE_INFO("onAssetRemoved() - {0}", assetPath);
     }
 
 }

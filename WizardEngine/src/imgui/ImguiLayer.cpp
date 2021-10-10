@@ -84,9 +84,9 @@ namespace engine {
     }
 
     void ImGuiLayer::destroy() {
-        delete boldFont;
-        delete regularFont;
-        delete resizableFont;
+        boldFont = nullptr;
+        regularFont = nullptr;
+        resizableFont = nullptr;
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();

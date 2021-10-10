@@ -26,6 +26,8 @@ namespace fairy {
         );
 
         pushBack(flLayer);
+
+        setWindowIcon("FairyLab.png");
     }
 
     engine::WindowProps FLApplication::createWindowProps() {

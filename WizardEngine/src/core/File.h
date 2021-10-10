@@ -7,6 +7,8 @@
 #include "String.h"
 #include "Logger.h"
 
+#include <filesystem>
+
 #define CURRENT_WORKING_DIR engine::File::getCurrentWorkingDirectory()
 #define READ_FILE(path) engine::File::read(path)
 
@@ -49,6 +51,8 @@ namespace engine {
         static std::string read(const std::string &filePath);
         static bool write(const std::string &filePath, const std::string &source);
         static std::string getCurrentWorkingDirectory();
+        static bool copy(const std::string &src, const std::string &dest);
+        static bool remove(const std::string &target);
 
     protected:
         void createName();

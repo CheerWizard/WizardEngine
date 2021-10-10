@@ -7,7 +7,7 @@
 namespace engine {
 
     const char *ObjFile::getExtensionName() const {
-        return ".obj";
+        return "";
     }
 
     Ref<MeshComponent> ObjFile::readObj(const std::string &fileName) {

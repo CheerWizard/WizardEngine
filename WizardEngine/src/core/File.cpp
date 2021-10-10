@@ -65,4 +65,24 @@ namespace engine {
         return true;
     }
 
+    bool File::copy(const std::string &src, const std::string &dest) {
+        auto isCopied = std::filesystem::copy_file(src, dest);
+        if (isCopied) {
+            ENGINE_INFO("File has been copied. Source: {0} , Destination: {1}", src, dest);
+        } else {
+            ENGINE_ERR("File has not been copied. Source: {0} , Destination: {1}", src, dest);
+        }
+        return isCopied;
+    }
+
+    bool File::remove(const std::string &target) {
+        auto isRemoved = std::filesystem::remove(target);
+        if (isRemoved) {
+            ENGINE_INFO("File has been removed. File path: {0}", target);
+        } else {
+            ENGINE_ERR("File has not been removed. File path: {0}", target);
+        }
+        return isRemoved;
+    }
+
 }

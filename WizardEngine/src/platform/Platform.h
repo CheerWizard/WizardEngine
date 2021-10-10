@@ -51,7 +51,7 @@
 
     #define INIT_WINDOW(props) createScope<WindowsWindow>(props)
     #define INIT_INPUT(nativeWindow) createScope<WindowsInput>(nativeWindow)
-    #define INIT_FILE_DIALOG(nativeWindow) createScope<WindowsFileDialog>(nativeWindow)
+    #define INIT_FILE_DIALOG(nativeWindow) createRef<WindowsFileDialog>(nativeWindow)
 
     #ifdef GL
 	    #include "opengl/GLContext.h"
