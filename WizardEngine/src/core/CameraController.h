@@ -99,7 +99,7 @@ namespace engine {
         void onKeyTyped(KeyCode keyCode) override;
 
         void onWindowClosed() override;
-        void onWindowResized(unsigned int width, unsigned int height) override;
+        void onWindowResized(const uint32_t &width, const uint32_t &height) override;
 
     protected:
         MoveKeys moveKeys = MoveKeys();
@@ -131,7 +131,7 @@ namespace engine {
 
     public:
         void onWindowClosed() override;
-        void onWindowResized(unsigned int width, unsigned int height) override;
+        void onWindowResized(const uint32_t &width, const uint32_t &height) override;
 
     private:
         Camera3d* _camera3D;
@@ -155,7 +155,7 @@ namespace engine {
 
     public:
         void onWindowClosed() override;
-        void onWindowResized(unsigned int width, unsigned int height) override;
+        void onWindowResized(const uint32_t &width, const uint32_t &height) override;
 
     private:
         Camera2d* _camera2D;

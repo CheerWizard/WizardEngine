@@ -35,8 +35,8 @@ namespace engine {
         glBindTextureUnit(GL_TEXTURE0 + slot, id);
     }
 
-    bool GLTextureBuffer::load(const std::string &filePath) {
-        auto isLoaded = TextureBuffer::load(filePath);
+    bool GLTextureBuffer::load(const std::string &imageName) {
+        auto isLoaded = TextureBuffer::load(imageName);
         if (!isLoaded) return false;
         return loadData(textureData->data);
     }

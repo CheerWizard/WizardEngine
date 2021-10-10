@@ -48,7 +48,7 @@ namespace engine {
 
     public:
         void onWindowClosed() override;
-        void onWindowResized(unsigned int width, unsigned int height) override;
+        void onWindowResized(const uint32_t &width, const uint32_t &height) override;
 
         void onKeyPressed(KeyCode keyCode) override;
         void onKeyHold(KeyCode keyCode) override;
@@ -90,6 +90,8 @@ namespace engine {
         void disableDisplay();
         Ref<MeshComponent> loadObj(const std::string& objName);
         void loadTexture(const std::string &fileName);
+        void setWindowIcon(const std::string &filePath);
+        Ref<FileDialog> createFileDialog();
 
     protected:
         void pushFront(Layer* layer);
@@ -111,11 +113,10 @@ namespace engine {
     public:
         Scope<Input> input;
         KeyCode closeKeyPressed;
-        Ref<CameraController> sceneCameraController; // todo move to Component.
+        Ref<CameraController> sceneCameraController;
         Ref<Scene> activeScene; // todo add Scene cache or smth similar.
         Timer fpsTimer;
         ObjFile objFile;
-        Scope<FileDialog> fileDialog;
 
     private:
         EngineType _engineType;

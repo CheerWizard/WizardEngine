@@ -8,6 +8,7 @@
 #include "../../core/Assert.h"
 
 #include <GLFW/glfw3.h>
+#include <stb_image.h>
 
 #define GET_WINDOW_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).windowCallback
 #define GET_KEYBOARD_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).keyboardCallback
@@ -152,6 +153,17 @@ namespace engine {
 
     void WindowsWindow::handleError(int error, const char *description) {
         ENGINE_ERR("GLFW Error ({0}): {1}", error, description);
+    }
+
+    void WindowsWindow::setWindowIcon(const std::string &filePath) {
+        GLFWimage images[1];
+        images[0].pixels = stbi_load(filePath.c_str(),
+                                     &images[0].width,
+                                     &images[0].height,
+                                     nullptr,
+                                     4);
+        glfwSetWindowIcon(_window, 1, images);
+        stbi_image_free(images[0].pixels);
     }
 
 }

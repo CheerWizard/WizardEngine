@@ -35,6 +35,8 @@ namespace engine {
 
         uint32_t getRefreshRate() override;
 
+        void setWindowIcon(const std::string &filePath) override;
+
     private:
         static void handleError(int error, const char* description);
 

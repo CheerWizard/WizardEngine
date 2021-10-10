@@ -26,6 +26,7 @@ include_directories(vendor/glad/include)
 # Immediate UI API.
 add_subdirectory(vendor/imgui)
 include_directories(vendor/imgui/imgui)
+include_directories(vendor/imgui/imgui/misc/cpp)
 
 #/ Networking and async IO.
 add_subdirectory(vendor/asio)

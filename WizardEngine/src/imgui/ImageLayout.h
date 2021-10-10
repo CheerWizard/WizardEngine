@@ -5,15 +5,15 @@
 #pragma once
 
 #include "../ecs/Scene.h"
-#include "../core/Layout.h"
 #include "../core/Events.h"
+#include "../core/Time.h"
 
 #include "../graphics/buffers/TextureBuffer.h"
 
 namespace engine {
 
     struct ImageLayoutProps {
-        const char* name;
+        const char* title;
         uint32_t width, height;
     };
 
@@ -22,7 +22,7 @@ namespace engine {
         virtual void onImageResized(const uint32_t &width, const uint32_t &height) = 0;
     };
 
-    class ImageLayout : public Layout, public MouseCallback {
+    class ImageLayout : public MouseCallback {
 
     public:
         ImageLayout(const ImageLayoutProps &props, const Ref<TextureBuffer>& image) :
@@ -33,7 +33,7 @@ namespace engine {
         }
 
     public:
-        void onUpdate(Time dt) override;
+        virtual void onUpdate(Time dt);
         void load(const std::string &fileName);
 
     public:

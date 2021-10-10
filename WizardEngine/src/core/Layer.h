@@ -21,7 +21,7 @@ namespace engine {
 
     public:
         void onWindowClosed() override;
-        void onWindowResized(unsigned int width, unsigned int height) override;
+        void onWindowResized(const uint32_t &width, const uint32_t &height) override;
 
         void onKeyPressed(KeyCode keyCode) override;
         void onKeyHold(KeyCode keyCode) override;

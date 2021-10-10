@@ -10,14 +10,14 @@
 
 #include "string"
 
-#define TEXTURE_PATHS "textures"
+#define TEXTURE_PATH "assets/textures"
 
 namespace engine {
 
-    class TextureBuffer : public File, public Buffer {
+    class TextureBuffer : public Buffer {
 
     public:
-        TextureBuffer() : File(), Buffer() {}
+        TextureBuffer() : Buffer() {}
 
     public:
         ~TextureBuffer() override {
@@ -29,15 +29,23 @@ namespace engine {
         virtual bool loadData(const void* data) = 0;
 
     public:
-        virtual bool load(const std::string &filePath);
+        inline void setTexturesPath(const std::string &texturesPath) {
+            this->texturesPath = texturesPath;
+        }
+
+        inline const std::string& getTexturesPath() {
+            return texturesPath;
+        }
+
+    public:
+        virtual bool load(const std::string &imageName);
         void free();
 
     protected:
-        const char *getExtensionName() const override;
-        const char *getAssetPath() const override;
-
-    protected:
         TextureData* textureData = nullptr;
+
+    private:
+        std::string texturesPath = TEXTURE_PATH;
 
     };
 

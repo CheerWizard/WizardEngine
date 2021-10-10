@@ -7,13 +7,13 @@
 namespace engine {
 
     void GLShader::onCreate() {
-        auto vShader = readShader(props.vertexPath);
+        auto vShader = readAsset(props.vFileName);
         if (vShader.empty()) {
             error = READING_FILE;
             return;
         }
 
-        auto fShader = readShader(props.fragmentPath);
+        auto fShader = readAsset(props.fFileName);
         if (fShader.empty()) {
             error = READING_FILE;
             return;

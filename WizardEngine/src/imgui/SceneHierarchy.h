@@ -4,10 +4,10 @@
 
 #pragma once
 
+#include "../core/Time.h"
+#include "../core/String.h"
 #include "../ecs/Scene.h"
 #include "../ecs/Entity.h"
-#include "../core/Layout.h"
-#include "../core/String.h"
 
 namespace engine {
 
@@ -15,7 +15,7 @@ namespace engine {
         const char* name = "Scene Hierarchy";
     };
 
-    class SceneHierarchy : public Layout {
+    class SceneHierarchy {
 
     public:
         SceneHierarchy(const SceneHierarchyProps &props = SceneHierarchyProps()) : _props(props) {}
@@ -23,7 +23,7 @@ namespace engine {
         _props(props), _scene(scene) {}
 
     public:
-        void onUpdate(Time dt) override;
+        void onUpdate(Time dt);
 
     public:
         inline void setScene(const Ref<Scene> &scene) {
