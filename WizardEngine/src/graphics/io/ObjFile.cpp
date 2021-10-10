@@ -7,11 +7,7 @@
 namespace engine {
 
     const char *ObjFile::getExtensionName() const {
-        return ".obj";
-    }
-
-    const char *ObjFile::getAssetPath() const {
-        return OBJ_PATH;
+        return "";
     }
 
     Ref<MeshComponent> ObjFile::readObj(const std::string &fileName) {
@@ -20,8 +16,7 @@ namespace engine {
             return _meshComponents[fileName];
         }
 
-        setAssetName(fileName);
-        auto source = read();
+        auto source = readAsset(fileName);
         auto tokens = split(source, "\n\r ");
 
         std::vector<Vertex> vertices;

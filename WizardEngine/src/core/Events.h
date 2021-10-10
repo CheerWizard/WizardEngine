@@ -11,7 +11,7 @@ namespace engine {
     class WindowCallback {
     public:
         virtual void onWindowClosed() = 0;
-        virtual void onWindowResized(unsigned int width, unsigned int height) = 0;
+        virtual void onWindowResized(const uint32_t &width, const uint32_t &height) = 0;
     };
 
     class KeyboardCallback {

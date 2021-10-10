@@ -2,6 +2,8 @@
 // Created by mecha on 04.10.2021.
 //
 
+#include <imgui/imgui/imgui.h>
+#include <imgui/imgui/imgui_demo.cpp>
 #include "FLLayer.h"
 
 namespace fairy {
@@ -12,7 +14,7 @@ namespace fairy {
             "obj",
             "v_obj",
             "f_obj",
-            EDITOR_RES_PATH
+            EDITOR_SHADERS_PATH
         });
         auto objRenderer = engine::createRef<engine::Renderer>(app->getGraphicsFactory());
 
@@ -74,7 +76,7 @@ namespace fairy {
         app->loadShader(humanShaderProps);
         app->loadTexture("demo.png");
 
-        auto humanMesh = app->loadObj("human");
+        auto humanMesh = app->loadObj("human.obj");
         humanMesh->applyChanges();
 
         auto humanTransform = engine::TransformComponent3d {
@@ -136,29 +138,26 @@ namespace fairy {
         objCameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
         objCameraController->setPosition({0, 0, -1});
         objCameraController->applyChanges();
+
+        _fileEditor.setTextFieldFont(resizableFont);
     }
 
     void FLLayer::onRender(engine::Time dt) {
+        // todo only able to close imgui windows, if they are docked to dock space.
         _scenePreview.onUpdate(dt);
         _sceneHierarchy.onUpdate(dt);
         _assetBrowser->onUpdate(dt);
         _imagePreview.onUpdate(dt);
         _objPreview->onUpdate(dt);
+        _fileEditor.onUpdate(dt);
     }
 
     void FLLayer::onUpdate(engine::Time dt) {
         ImGuiLayer::onUpdate(dt);
-
-//        if (_humanEntity.hasComponent<engine::TransformComponent3d>()) {
-//            auto& transform = _humanEntity.getComponent<engine::TransformComponent3d>().transformMatrix;
-//
-//            transform.rotation.y += 0.0001f / dt;
-//            transform.applyChanges();
-//        }
     }
 
     void FLLayer::onKeyPressed(engine::KeyCode keyCode) {
-        Layer::onKeyPressed(keyCode);
+        engine::ImGuiLayer::onKeyPressed(keyCode);
 
         _objPreview->onKeyPressed(keyCode);
 
@@ -196,7 +195,7 @@ namespace fairy {
     }
 
     void FLLayer::onKeyHold(engine::KeyCode keyCode) {
-        Layer::onKeyHold(keyCode);
+        engine::ImGuiLayer::onKeyHold(keyCode);
         _objPreview->onKeyHold(keyCode);
 
         if (_scenePreview.isFocused()) {
@@ -205,7 +204,7 @@ namespace fairy {
     }
 
     void FLLayer::onKeyReleased(engine::KeyCode keyCode) {
-        Layer::onKeyReleased(keyCode);
+        engine::ImGuiLayer::onKeyReleased(keyCode);
         _objPreview->onKeyReleased(keyCode);
 
         if (_scenePreview.isFocused()) {
@@ -214,7 +213,7 @@ namespace fairy {
     }
 
     void FLLayer::onKeyTyped(engine::KeyCode keyCode) {
-        Layer::onKeyTyped(keyCode);
+        engine::ImGuiLayer::onKeyTyped(keyCode);
         _objPreview->onKeyTyped(keyCode);
 
         if (_scenePreview.isFocused()) {
@@ -223,24 +222,24 @@ namespace fairy {
     }
 
     void FLLayer::onMousePressed(engine::MouseCode mouseCode) {
+        engine::ImGuiLayer::onMousePressed(mouseCode);
         _scenePreview.onMousePressed(mouseCode);
     }
 
     void FLLayer::onMouseRelease(engine::MouseCode mouseCode) {
+        engine::ImGuiLayer::onMouseRelease(mouseCode);
         _scenePreview.onMouseRelease(mouseCode);
     }
 
     void FLLayer::onPngOpen(const std::string &fileName) {
         ENGINE_INFO("onPngOpen({0})", fileName);
-        auto imageName = fileName + ".png";
-        _imagePreview.load(imageName);
+        _imagePreview.load(fileName);
         _imagePreview.show();
     }
 
     void FLLayer::onJpgOpen(const std::string &fileName) {
         ENGINE_INFO("onJpgOpen({0})", fileName);
-        auto imageName = fileName + ".jpg";
-        _imagePreview.load(imageName);
+        _imagePreview.load(fileName);
         _imagePreview.show();
     }
 
@@ -253,8 +252,11 @@ namespace fairy {
         _objPreview->show();
     }
 
-    void FLLayer::onGlslOpen(const std::string &fileName) {
-        ENGINE_INFO("onGlslOpen({0})", fileName);
+    void FLLayer::onGlslOpen(const std::string &filePath, const std::string &fileName) {
+        ENGINE_INFO("onGlslOpen({0})", filePath);
+        _fileEditor.setTitle(filePath);
+        _fileEditor.open(filePath);
+        _fileEditor.show();
     }
 
     void FLLayer::ImagePreviewCallback::onImageResized(const uint32_t &width, const uint32_t &height) {
@@ -265,14 +267,16 @@ namespace fairy {
         _parent.app->onWindowResized(width, height);
     }
 
-    void FLLayer::onImport(const char *filter) {
-        auto importPath = app->fileDialog->getImportPath(filter);
-        ENGINE_INFO("Import path : {0}", importPath);
+    void FLLayer::onAssetImported(const std::string &assetPath) {
+        ENGINE_INFO("onAssetImported() - {0}", assetPath);
     }
 
-    void FLLayer::onExport(const char *filter) {
-        auto exportPath = app->fileDialog->getExportPath(filter);
-        ENGINE_INFO("Export path : {0}", exportPath);
+    void FLLayer::onAssetExported(const std::string &assetPath) {
+        ENGINE_INFO("onAssetExported() - {0}", assetPath);
+    }
+
+    void FLLayer::onAssetRemoved(const std::string &assetPath) {
+        ENGINE_INFO("onAssetRemoved() - {0}", assetPath);
     }
 
 }

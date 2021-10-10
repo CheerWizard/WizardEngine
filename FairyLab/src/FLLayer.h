@@ -8,6 +8,7 @@
 #include "imgui/ImageLayout.h"
 #include "imgui/SceneHierarchy.h"
 #include "imgui/MeshLayout.h"
+#include "imgui/FileEditor.h"
 
 #include "AssetBrowser.h"
 
@@ -76,11 +77,12 @@ namespace fairy {
         void onPngOpen(const std::string &fileName) override;
         void onJpgOpen(const std::string &fileName) override;
         void onObjOpen(const std::string &fileName) override;
-        void onGlslOpen(const std::string &fileName) override;
+        void onGlslOpen(const std::string &filePath, const std::string &fileName) override;
 
-        void onImport(const char *filter) override;
+        void onAssetImported(const std::string &assetPath) override;
+        void onAssetExported(const std::string &assetPath) override;
 
-        void onExport(const char *filter) override;
+        void onAssetRemoved(const std::string &assetPath) override;
 
     private:
         engine::ImageLayout _scenePreview = engine::ImageLayout({
@@ -104,10 +106,13 @@ namespace fairy {
                     CLIENT_ASSET_PATH,
                     },
                 app->getGraphicsFactory()->newTextureBuffer(),
-                app->getGraphicsFactory()->newTextureBuffer()
+                app->getGraphicsFactory()->newTextureBuffer(),
+                app->createFileDialog()
         );
 
         engine::Ref<engine::MeshLayout> _objPreview;
+
+        engine::FileEditor _fileEditor = engine::FileEditor {};
 
         engine::Entity _humanEntity;
 

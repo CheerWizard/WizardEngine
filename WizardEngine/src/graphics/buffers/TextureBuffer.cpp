@@ -13,17 +13,19 @@ namespace engine {
         stbi_image_free(textureData->data);
     }
 
-    // filePath should have ending with extension name , like .png or .jpg!
-    bool TextureBuffer::load(const std::string &filePath) {
-        setAssetName(filePath);
+    bool TextureBuffer::load(const std::string &imageName) {
+        std::stringstream ss;
+        ss << texturesPath << "/" << imageName;
+        auto imagePath = ss.str();
+
         int width, height, channels;
 
-        ENGINE_INFO("Loading texture from '{0}'", CURRENT_WORKING_DIR + path);
-        auto data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+        ENGINE_INFO("Loading texture from '{0}'", imagePath);
+        auto data = stbi_load(imagePath.c_str(), &width, &height, &channels, 0);
 
         if (data == nullptr) {
             if (stbi_failure_reason()) {
-                ENGINE_ERR("Error occurs when loading texture from '{0}'", CURRENT_WORKING_DIR + path);
+                ENGINE_ERR("Error occurs when loading texture from '{0}'", imagePath);
                 ENGINE_ERR("stbi failure reason : {0}", stbi_failure_reason());
                 return false;
             }
@@ -31,14 +33,6 @@ namespace engine {
 
         textureData = new TextureData(width, height, channels, data);
         return true;
-    }
-
-    const char* TextureBuffer::getExtensionName() const {
-        return ""; // file can be either .png, .jpg, .jpeg!
-    }
-
-    const char* TextureBuffer::getAssetPath() const {
-        return TEXTURE_PATHS;
     }
 
 }

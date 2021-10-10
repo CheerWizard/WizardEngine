@@ -30,7 +30,7 @@ namespace engine {
 
         void activate(const uint32_t &slot) override;
 
-        bool load(const std::string &filePath) override;
+        bool load(const std::string &imageName) override;
         bool loadData(const void *data) override;
 
     };

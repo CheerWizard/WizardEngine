@@ -134,7 +134,7 @@ namespace engine {
     void RenderSystem::onWindowClosed() {
     }
 
-    void RenderSystem::onWindowResized(unsigned int width, unsigned int height) {
+    void RenderSystem::onWindowResized(const uint32_t &width, const uint32_t &height) {
         sceneRenderer->resizeFrame(width, height);
     }
 

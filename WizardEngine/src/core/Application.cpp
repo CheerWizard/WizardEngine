@@ -34,7 +34,6 @@ namespace engine {
         _window->setCursorCallback(this);
 
         input = INIT_INPUT(_window->getNativeWindow());
-        fileDialog = INIT_FILE_DIALOG(_window->getNativeWindow());
 
         createRenderSystem();
         createActiveScene();
@@ -82,7 +81,7 @@ namespace engine {
         _isRunning = false;
     }
 
-    void Application::onWindowResized(unsigned int width, unsigned int height) {
+    void Application::onWindowResized(const uint32_t &width , const uint32_t &height) {
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
         if (width == 0 || height == 0) return;
 
@@ -288,6 +287,14 @@ namespace engine {
 
     void Application::loadTexture(const std::string &fileName) {
         _renderSystem->loadTexture(fileName);
+    }
+
+    void Application::setWindowIcon(const std::string &filePath) {
+        _window->setWindowIcon(filePath);
+    }
+
+    Ref<FileDialog> Application::createFileDialog() {
+        return INIT_FILE_DIALOG(_window->getNativeWindow());
     }
 
 }

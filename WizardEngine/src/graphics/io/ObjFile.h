@@ -13,7 +13,7 @@
 
 #include "unordered_map"
 
-#define OBJ_PATH "obj"
+#define OBJ_PATH "assets/obj"
 
 namespace engine {
 
@@ -26,8 +26,7 @@ namespace engine {
     class ObjFile : public File {
 
     public:
-        ObjFile() = default;
-        ObjFile(const std::string& name, const std::string &path) : File(name, path) {}
+        ObjFile() : File("", OBJ_PATH) {}
 
         ~ObjFile() override {
             destroy();
@@ -38,7 +37,6 @@ namespace engine {
 
     protected:
         const char *getExtensionName() const override;
-        const char *getAssetPath() const override;
 
     private:
         bool exists(const std::string &objName);

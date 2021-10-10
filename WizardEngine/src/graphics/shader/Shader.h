@@ -12,7 +12,7 @@
 
 #include "glm/glm.hpp"
 
-#define SHADERS_PATH "shaders"
+#define SHADERS_PATH "assets/shaders"
 
 namespace engine {
 
@@ -27,30 +27,29 @@ namespace engine {
 
     struct ShaderProps {
         std::string name;
-        std::string vertexPath;
-        std::string fragmentPath;
+        std::string vFileName;
+        std::string fFileName;
         std::string assetPath;
 
         ShaderProps(
                 const std::string& name,
-                const std::string& vertexPath,
-                const std::string& fragmentPath,
-                const std::string& assetPath = CLIENT_ASSET_PATH
+                const std::string& vFileName,
+                const std::string& fFileName,
+                const std::string& assetPath = SHADERS_PATH
                 ) :
                 name(name),
-                vertexPath(vertexPath),
-                fragmentPath(fragmentPath),
+                vFileName(vFileName),
+                fFileName(fFileName),
                 assetPath(assetPath) {}
     };
 
     class Shader : public File {
 
     public:
-
-        Shader(const ShaderProps &shaderProps) : File(shaderProps.name, ""), props(shaderProps) {}
+        Shader(const ShaderProps &shaderProps) : File(shaderProps.name, shaderProps.assetPath), props(shaderProps) {}
 
         Shader(const ShaderProps& shaderProps, VertexFormat* vertexFormat) :
-        File(shaderProps.name, ""),
+        File(shaderProps.name, shaderProps.assetPath),
         vertexFormat(vertexFormat),
         props(shaderProps) {}
 
@@ -95,10 +94,6 @@ namespace engine {
 
         uint32_t addUniformBlockAttr(const UniformAttribute &uniformAttribute);
         const UniformAttribute& getUniformBlockAttr(const uint32_t &index);
-
-    protected:
-        std::string readShader(const std::string &name);
-        const char *getAssetPath() const override;
 
     public:
         virtual void start() = 0;

@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "fstream"
-
 #include "String.h"
 #include "Logger.h"
+
+#include <filesystem>
 
 #define CURRENT_WORKING_DIR engine::File::getCurrentWorkingDirectory()
 #define READ_FILE(path) engine::File::read(path)
@@ -22,10 +22,7 @@ namespace engine {
     public:
         File() = default;
 
-        File(const std::string& name, const std::string& path) :
-                name(name),
-                path(path)
-        {
+        File(const std::string& name, const std::string& assetPath) : name(name), assetPath(assetPath) {
             if (name.empty()) {
                 createName();
             }
@@ -34,14 +31,6 @@ namespace engine {
         virtual ~File() = default;
 
     public:
-        inline void setFilePath(const std::string& filePath) {
-            this->path = filePath;
-        }
-
-        inline const std::string& getFilePath() const {
-            return path;
-        }
-
         inline const std::string& getName() const {
             return name;
         }
@@ -54,24 +43,24 @@ namespace engine {
             this->assetPath = assetPath;
         }
 
-        void setAssetName(const std::string &assetName);
-
     public:
-        std::string read() const;
+        std::string createPath(const std::string &assetName) const;
+        std::string readAsset(const std::string &assetName) const;
 
     public:
         static std::string read(const std::string &filePath);
+        static bool write(const std::string &filePath, const std::string &source);
         static std::string getCurrentWorkingDirectory();
+        static bool copy(const std::string &src, const std::string &dest);
+        static bool remove(const std::string &target);
 
     protected:
         void createName();
         virtual const char* getExtensionName() const = 0;
-        virtual const char* getAssetPath() const = 0;
 
     protected:
-        std::string path;
         std::string name;
-        std::string assetPath = CLIENT_ASSET_PATH;
+        std::string assetPath;
 
     };
 

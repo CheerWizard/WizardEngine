@@ -50,6 +50,8 @@ namespace engine {
 
         virtual uint32_t getRefreshRate() = 0;
 
+        virtual void setWindowIcon(const std::string &filePath) = 0;
+
     public:
         void removeCallbacks() {
             removeWindowCallback();
