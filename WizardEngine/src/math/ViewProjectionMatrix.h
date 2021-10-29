@@ -16,15 +16,15 @@ namespace engine {
         OrthographicMatrix orthographicMatrix;
 
         ViewProjection2d(const char* name,
-                             const ViewMatrix2d &viewMatrix,
-                             const OrthographicMatrix &orthographicMatrix) :
-                             orthographicMatrix(orthographicMatrix),
-                             viewMatrix(viewMatrix),
-                             Mat4fUniform(name) {
+                         const ViewMatrix2d &viewMatrix,
+                         const OrthographicMatrix &orthographicMatrix
+        ) : orthographicMatrix(orthographicMatrix), viewMatrix(viewMatrix), Mat4fUniform(name) {
+            applyChanges();
         }
 
     public:
         ViewProjection2d& applyChanges() override;
+
     };
 
     struct ViewProjection3d : Mat4fUniform {
@@ -33,10 +33,9 @@ namespace engine {
 
         ViewProjection3d(const char* name,
                          const ViewMatrix3d &viewMatrix,
-                         const PerspectiveMatrix &perspectiveMatrix) :
-                         perspectiveMatrix(perspectiveMatrix),
-                         viewMatrix(viewMatrix),
-                         Mat4fUniform(name) {
+                         const PerspectiveMatrix &perspectiveMatrix
+        ) : perspectiveMatrix(perspectiveMatrix), viewMatrix(viewMatrix), Mat4fUniform(name) {
+            applyChanges();
         }
 
     public:

@@ -12,16 +12,19 @@
 
 #include "glm/glm.hpp"
 
-#define SHADERS_PATH "assets/shaders"
+#ifdef GL
+#define CLIENT_SHADERS_PATH "assets/shaders/glsl/4.0"
+#define ENGINE_SHADERS_PATH "../WizardEngine/assets/shaders/glsl/4.0"
+#endif
 
 namespace engine {
 
-    enum ShaderError : unsigned char {
-        NONE = 0,
-        READING_FILE = 1,
-        COMPILE = 2,
-        LINKING = 3,
-        NO_ATTRS = 4,
+    enum ShaderState : unsigned char {
+        READY = 0,
+        FAILED_READ_FILE = 1,
+        FAILED_COMPILE = 2,
+        FAILED_LINKING = 3,
+        NO_VERTEX_ATTRS = 4,
         NO_UNIFORM_BLOCKS = 5,
     };
 
@@ -29,18 +32,7 @@ namespace engine {
         std::string name;
         std::string vFileName;
         std::string fFileName;
-        std::string assetPath;
-
-        ShaderProps(
-                const std::string& name,
-                const std::string& vFileName,
-                const std::string& fFileName,
-                const std::string& assetPath = SHADERS_PATH
-                ) :
-                name(name),
-                vFileName(vFileName),
-                fFileName(fFileName),
-                assetPath(assetPath) {}
+        std::string assetPath = CLIENT_SHADERS_PATH;
     };
 
     class Shader : public File {
@@ -70,8 +62,8 @@ namespace engine {
             return props;
         }
 
-        inline ShaderError getShaderError() const {
-            return error;
+        inline ShaderState getState() const {
+            return state;
         }
 
         inline const uint32_t& getId() const {
@@ -115,10 +107,12 @@ namespace engine {
         virtual void setUniform(Mat3fUniform &uniform) = 0;
         virtual void setUniform(Mat4fUniform &uniform) = 0;
 
+        virtual void setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) = 0;
+
     protected:
         uint32_t programId;
         ShaderProps props;
-        ShaderError error = NONE;
+        ShaderState state = READY;
         VertexFormat* vertexFormat = nullptr;
         UniformBlockFormat* uniformBlockFormat = nullptr;
 

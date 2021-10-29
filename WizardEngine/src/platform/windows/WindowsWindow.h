@@ -37,12 +37,17 @@ namespace engine {
 
         void setWindowIcon(const std::string &filePath) override;
 
+        void enableFullScreen() override;
+        void disableFullScreen() override;
+
     private:
         static void handleError(int error, const char* description);
 
     private:
         void create();
         void destroy();
+
+        void onWindowResized(const uint32_t &width, const uint32_t &height);
 
     private:
         GLFWwindow* _window;

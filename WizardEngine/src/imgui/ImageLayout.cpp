@@ -28,6 +28,7 @@ namespace engine {
         ImVec2 imageSize = ImGui::GetContentRegionAvail();
 
         if (!_isHoldingMouse && (imageSize.x != (float) _props.width || imageSize.y != (float) _props.height)) {
+            // we will resize image content only if user stopped holding mouse!
             _props.width = (uint32_t) imageSize.x;
             _props.height = (uint32_t) imageSize.y;
             if (_callback != nullptr) {

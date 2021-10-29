@@ -23,7 +23,7 @@ namespace engine {
         void bind() override;
         void unbind() override;
 
-        void allocate() override;
+        void allocate(const uint32_t &indexCount = DEFAULT_INDEX_COUNT) override;
 
         void load(const IndexData &indexData) override;
 

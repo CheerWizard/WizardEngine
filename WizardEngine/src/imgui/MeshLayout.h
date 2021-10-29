@@ -5,16 +5,23 @@
 #pragma once
 
 #include "ImageLayout.h"
+
 #include "../graphics/render/Renderer.h"
-#include "../graphics/geometry/MeshComponent.h"
+#include "../camera/CameraController.h"
+#include "../graphics/frame/FrameController.h"
 
 namespace engine {
 
     class MeshLayout : public ImageLayout, public ImageLayoutCallback, public KeyboardCallback {
 
     public:
-        MeshLayout(const ImageLayoutProps &props, const Ref<Renderer> &renderer) :
-        ImageLayout(props, renderer->getTextureBuffer()), _renderer(renderer) {
+        MeshLayout(
+                const ImageLayoutProps &props,
+                const Ref<Renderer> &renderer,
+                const Ref<FrameController> &frameController,
+                const Ref<CameraController> &cameraController
+        ) : ImageLayout(props, renderer->getTextureBuffer()),
+        _renderer(renderer), _frameController(frameController), _cameraController(cameraController) {
             create();
         }
 
@@ -26,21 +33,19 @@ namespace engine {
         void onUpdate(Time dt) override;
 
     public:
-        inline void setMesh(const Ref<MeshComponent> &meshComponent) {
-            _meshComponent = meshComponent;
-        }
-
-        inline void setTransform(const Ref<TransformComponent3d> &transformComponent) {
-            _transformComponent = transformComponent;
-        }
-
-        inline const Ref<Camera3dController>& getCameraController() {
+        inline const Ref<CameraController>& getCameraController() {
             return _cameraController;
         }
 
-    public:
-        void setCameraController(const Ref<Camera3dController> &camera3DController);
+        inline void setEntity(const Entity& entity) {
+            _entity = entity;
+        }
 
+        inline void setMesh(const MeshComponent &meshComponent) {
+            _entity.set<MeshComponent>(meshComponent);
+        }
+
+    public:
         void onImageResized(const uint32_t &width, const uint32_t &height) override;
 
         void onKeyPressed(KeyCode keyCode) override;
@@ -54,9 +59,9 @@ namespace engine {
 
     private:
         Ref<Renderer> _renderer;
-        Ref<MeshComponent> _meshComponent = nullptr;
-        Ref<TransformComponent3d> _transformComponent = nullptr;
-        Ref<Camera3dController> _cameraController = nullptr;
+        Ref<FrameController> _frameController;
+        Ref<CameraController> _cameraController;
+        Entity _entity;
 
     };
 

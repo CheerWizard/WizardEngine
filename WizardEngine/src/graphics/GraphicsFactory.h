@@ -10,7 +10,7 @@
 #include "buffers/IndexBuffer.h"
 #include "buffers/VertexBuffer.h"
 #include "buffers/TextureBuffer.h"
-#include "buffers/FrameBuffer.h"
+#include "frame/FrameBuffer.h"
 #include "buffers/UniformBuffer.h"
 
 #include "render/Drawer.h"

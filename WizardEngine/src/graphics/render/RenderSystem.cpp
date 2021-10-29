@@ -3,16 +3,29 @@
 //
 
 #include "RenderSystem.h"
+#include "vector"
 
 namespace engine {
 
-    void RenderSystem::create() {
-        sceneRenderer = createRef<Renderer>(graphicsFactory);
+    void RenderSystem::create(const Ref<GraphicsFactory> &graphicsFactory, const Ref<ShaderSource> &shaderSource) {
+        auto batchShader = shaderSource->create(ShaderProps {
+            "batch",
+            "v_batch",
+            "f_batch",
+            ENGINE_SHADERS_PATH
+        });
+        auto instanceShader = shaderSource->create(ShaderProps {
+            "instance",
+            "v_instance",
+            "f_instance",
+            ENGINE_SHADERS_PATH
+        });
+
+        batchRenderer = createRef<Renderer>(graphicsFactory, batchShader);
+        instanceRenderer = createRef<Renderer>(graphicsFactory, instanceShader);
     }
 
     void RenderSystem::destroy() {
-        shaderCache.clear();
-        vertexBufferCache.clear();
         activeScene = nullptr;
     }
 
@@ -22,130 +35,112 @@ namespace engine {
             return;
         }
 
-        auto renderableEntities = activeScene->getEntities().view<MeshComponent>();
-        if (renderableEntities.empty()) {
-            ENGINE_WARN("RenderSystem : Nothing to draw!");
+        if (activeScene->isEmpty()) {
+            ENGINE_WARN("RenderSystem : Nothing to render on scene!");
             return;
         }
 
-        sceneRenderer->startFrame();
+        // begin frame!
+        frameController->begin();
 
-        sceneRenderer->start();
+        // render families!
+        const auto& families = activeScene->getFamilies();
+        for (const Family& family : families) {
+            bool instancingAvailable = family.has<MeshComponent>();
+            ENGINE_INFO("Family {0} uses instance rendering : {1}", family.get<TagComponent>().tag, instancingAvailable);
 
-        sceneRenderer->renderCamera();
+            if (instancingAvailable) {
+                renderInstancing(family);
+            } else {
+                renderBatching(family.getEntities());
+            }
+        }
 
-        uint32_t totalIndexCount = 0;
+        // render other entities!
+        renderBatching(activeScene->getEntities());
+
+        // end frame!
+        frameController->end();
+    }
+
+    void RenderSystem::renderBatching(const std::vector<Entity> &entities) {
+        batchRenderer->begin();
+
         uint32_t totalVertexCount = 0;
-        for (const auto& renderableEntity : renderableEntities) {
-            auto& meshComponent = renderableEntities.get<MeshComponent>(renderableEntity);
-            if (meshComponent.isUpdated) {
-                meshComponent.isUpdated = false;
-                meshComponent.updateStart(totalVertexCount, totalIndexCount);
-                sceneRenderer->loadMesh(meshComponent);
+        uint32_t totalIndexCount = 0;
+
+        int entitiesCount = entities.size();
+        int limitedEntitiesCount = entitiesCount;
+        if (limitedEntitiesCount > INSTANCE_COUNT_LIMIT) {
+            limitedEntitiesCount = INSTANCE_COUNT_LIMIT;
+        }
+
+        uint32_t entityCounter = 0;
+        while (limitedEntitiesCount > 0) {
+            uint32_t instanceId = 0;
+            for (uint32_t i = entityCounter ; i < limitedEntitiesCount ; i++) {
+                const auto& entity = entities[i];
+                batchRenderer->renderCamera(entity);
+                batchRenderer->renderMaterial(entity);
+                batchRenderer->renderPolygonMode(entity);
+                // if entity does not have "transform", then it should not increment instance count!
+                if (batchRenderer->renderTransform(instanceId, entity)) {
+                    batchRenderer->renderMesh(instanceId, entity, totalVertexCount, totalIndexCount);
+                    instanceId++;
+                }
             }
 
-            meshComponent.updateCounts();
-            totalIndexCount += meshComponent.indexCount;
-            totalVertexCount += meshComponent.vertexCount;
+            batchRenderer->drawElements(totalIndexCount);
 
-            renderMaterial(renderableEntity);
-            renderTransform(renderableEntity);
+            entitiesCount -= INSTANCE_COUNT_LIMIT;
+            if (entitiesCount < INSTANCE_COUNT_LIMIT) {
+                limitedEntitiesCount = entitiesCount;
+            }
+            entityCounter += limitedEntitiesCount;
         }
 
-        sceneRenderer->drawByIndices(totalIndexCount);
-
-        sceneRenderer->stop();
-
-        sceneRenderer->endFrame();
+        batchRenderer->end();
     }
 
-    void RenderSystem::addShader(const std::string &name, const Ref<Shader> &shader) {
-        shaderCache.add(name, shader);
-        sceneRenderer->prepare(shader);
-    }
+    void RenderSystem::renderInstancing(const Family &family) {
+        instanceRenderer->begin();
+        // render family mesh!
+        uint32_t totalIndexCount = 0;
+        uint32_t totalVertexCount = 0;
+        instanceRenderer->renderMesh(family, totalVertexCount, totalIndexCount);
 
-    void RenderSystem::addShader(const Ref<Shader> &shader) {
-        addShader(shader->getName(), shader);
-    }
+        const auto& entities = family.getEntities();
 
-    ShaderError RenderSystem::loadShader(const ShaderProps &shaderProps, VertexFormat *vertexFormat) {
-        auto shader = graphicsFactory->newShader(shaderProps, vertexFormat);
-        return handleShaderError(shader);
-    }
-
-    ShaderError RenderSystem::loadShader(const ShaderProps &shaderProps) {
-        auto shader = graphicsFactory->newShader(shaderProps);
-        return handleShaderError(shader);
-    }
-
-    ShaderError RenderSystem::handleShaderError(const Ref<Shader> &shader) {
-        auto shaderError = shader->getShaderError();
-        if (shaderError == ShaderError::NONE) {
-            shaderCache.add(shader);
-            sceneRenderer->prepare(shader);
+        int instanceCount = entities.size();
+        int limitedInstanceCount = instanceCount;
+        if (limitedInstanceCount > INSTANCE_COUNT_LIMIT) {
+            limitedInstanceCount = INSTANCE_COUNT_LIMIT;
         }
-        return shaderError;
-    }
 
-    Ref<Shader> RenderSystem::getShader(const std::string &name) {
-        return shaderCache.get(name);
-    }
+        uint32_t entityCounter = 0;
+        while (limitedInstanceCount > 0) {
+            uint32_t instanceId = 0;
+            for (uint32_t i = entityCounter ; i < limitedInstanceCount ; i++) {
+                const auto& entity = entities[i];
+                instanceRenderer->renderCamera(entity);
+                instanceRenderer->renderMaterial(entity);
+                instanceRenderer->renderPolygonMode(entity);
+                // if entity does not have "transform", then it should not increment instance count!
+                if (instanceRenderer->renderTransform(instanceId, entity)) {
+                    instanceId++;
+                }
+            }
 
-    bool RenderSystem::shaderExists(const std::string &name) const {
-        return shaderCache.exists(name);
-    }
+            instanceRenderer->drawElements(totalIndexCount, limitedInstanceCount);
 
-    void RenderSystem::enableDepth() {
-        sceneRenderer->enableDepth();
-    }
+            instanceCount -= INSTANCE_COUNT_LIMIT;
+            if (instanceCount < INSTANCE_COUNT_LIMIT) {
+                limitedInstanceCount = instanceCount;
+            }
+            entityCounter += limitedInstanceCount;
+        }
 
-    void RenderSystem::setPolygonMode(const PolygonMode &polygonMode) {
-        sceneRenderer->setPolygonMode(polygonMode);
-    }
-
-    void RenderSystem3d::renderMaterial(const entt::entity &entity) {
-        if (!activeScene->hasComponent<TextureComponent>(entity)) return;
-
-        auto& texture = activeScene->getComponent<TextureComponent>(entity);
-        sceneRenderer->renderMaterial(texture);
-    }
-
-    void RenderSystem3d::renderTransform(const entt::entity &entity) {
-        if (!activeScene->hasComponent<TransformComponent3d>(entity)) return;
-
-        auto& transform3d = activeScene->getComponent<TransformComponent3d>(entity);
-        sceneRenderer->renderTransform(transform3d);
-    }
-
-    void RenderSystem2d::renderMaterial(const entt::entity &entity) {
-        if (!activeScene->hasComponent<TextureComponent>(entity)) return;
-
-        auto& texture = activeScene->getComponent<TextureComponent>(entity);
-        sceneRenderer->renderMaterial(texture);
-    }
-
-    void RenderSystem2d::renderTransform(const entt::entity &entity) {
-        if (!activeScene->hasComponent<TransformComponent2d>(entity)) return;
-
-        auto& transform2d = activeScene->getComponent<TransformComponent2d>(entity);
-        sceneRenderer->renderTransform(transform2d);
-    }
-
-    void RenderSystem::onWindowClosed() {
-    }
-
-    void RenderSystem::onWindowResized(const uint32_t &width, const uint32_t &height) {
-        sceneRenderer->resizeFrame(width, height);
-    }
-
-    void RenderSystem::updateFboSpecification(const FramebufferSpecification &framebufferSpecification) {
-        const auto& colorTextures = sceneRenderer->updateFboSpecs(framebufferSpecification);
-        ENGINE_INFO("Update FBO specs. Scene texture id : {0}", colorTextures[0]);
-        activeScene->setTextureId(colorTextures[0]);
-    }
-
-    void RenderSystem::loadTexture(const std::string &fileName) {
-        sceneRenderer->loadTexture(fileName);
+        instanceRenderer->end();
     }
 
 }

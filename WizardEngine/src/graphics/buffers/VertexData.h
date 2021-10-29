@@ -16,9 +16,7 @@ namespace engine {
         uint32_t vertexStart;
         uint32_t vertexCount;
 
-        VertexData() = default;
-
-        VertexData(Vertex* vertices,
+        VertexData(Vertex* vertices = nullptr,
                    const uint32_t &vertexStart = 0,
                    const uint32_t &vertexCount = MIN_VERTEX_COUNT) :
                    vertices(vertices),

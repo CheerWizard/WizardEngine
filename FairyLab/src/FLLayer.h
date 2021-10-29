@@ -14,7 +14,7 @@
 
 namespace fairy {
 
-    class FLLayer : public engine::ImGuiLayer, AssetBrowserCallback {
+    class FLLayer : public engine::ImGuiLayer, AssetBrowserCallback, engine::SceneHierarchyCallback {
 
         class ImagePreviewCallback : public engine::ImageLayoutCallback {
 
@@ -57,14 +57,12 @@ namespace fairy {
         void onPrepare() override;
         void onUpdate(engine::Time dt) override;
 
-        void onKeyPressed(engine::KeyCode keyCode) override;
         void onMousePressed(engine::MouseCode mouseCode) override;
         void onMouseRelease(engine::MouseCode mouseCode) override;
 
+        void onKeyPressed(engine::KeyCode keyCode) override;
         void onKeyHold(engine::KeyCode keyCode) override;
-
         void onKeyReleased(engine::KeyCode keyCode) override;
-
         void onKeyTyped(engine::KeyCode keyCode) override;
 
     protected:
@@ -74,15 +72,17 @@ namespace fairy {
         void create();
         void destroy();
 
-        void onPngOpen(const std::string &fileName) override;
-        void onJpgOpen(const std::string &fileName) override;
+        void createAssetBrowser();
+
+        void onImageOpen(const std::string &fileName) override;
         void onObjOpen(const std::string &fileName) override;
         void onGlslOpen(const std::string &filePath, const std::string &fileName) override;
 
         void onAssetImported(const std::string &assetPath) override;
         void onAssetExported(const std::string &assetPath) override;
-
         void onAssetRemoved(const std::string &assetPath) override;
+
+        void onEntityRemoved(const engine::Entity &entity) override;
 
     private:
         engine::ImageLayout _scenePreview = engine::ImageLayout({
@@ -93,32 +93,29 @@ namespace fairy {
         app->getGraphicsFactory()->newTextureBuffer()
         );
 
-        engine::SceneHierarchy _sceneHierarchy = engine::SceneHierarchy(app->activeScene);
-
         engine::ImageLayout _imagePreview = engine::ImageLayout {
             {"Image Preview"},
             app->getGraphicsFactory()->newTextureBuffer()
         };
 
-        engine::Ref<AssetBrowser> _assetBrowser = engine::createRef<AssetBrowser>(
-                AssetBrowserProps {
-                    "Asset Browser",
-                    CLIENT_ASSET_PATH,
-                    },
-                app->getGraphicsFactory()->newTextureBuffer(),
-                app->getGraphicsFactory()->newTextureBuffer(),
-                app->createFileDialog()
-        );
+        engine::SceneHierarchy _sceneHierarchy = engine::SceneHierarchy(app->activeScene);
+
+        engine::Ref<AssetBrowser> _assetBrowser;
 
         engine::Ref<engine::MeshLayout> _objPreview;
 
-        engine::FileEditor _fileEditor = engine::FileEditor {};
+        engine::FileEditor _fileEditor;
 
         engine::Entity _humanEntity;
+        engine::Entity _cubeEntity;
 
         ImagePreviewCallback* _imagePreviewCallback = nullptr;
         ScenePreviewCallback* _scenePreviewCallback = nullptr;
 
+        engine::Ref<engine::Scene> editorScene = engine::createRef<engine::Scene>(); // store entities in scope of Editor and not Runtime!
+
+        engine::Camera3D activeSceneCamera;
+        engine::Ref<engine::Camera3dController> activeSceneCameraController;
     };
 
 }

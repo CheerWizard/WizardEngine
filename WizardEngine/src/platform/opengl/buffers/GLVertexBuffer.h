@@ -27,7 +27,7 @@ namespace engine {
         void bind() override;
         void unbind() override;
 
-        void allocate() override;
+        void allocate(const uint32_t &vertexCount = DEFAULT_VERTEX_COUNT) override;
         void setAttributesPointer() override;
         void enableAttributes() override;
         void disableAttributes() override;

@@ -11,15 +11,18 @@ namespace engine {
     class System {
 
     public:
+        virtual ~System() = default;
+
+    public:
         virtual void onUpdate() = 0;
 
     public:
-        inline void setActiveScene(Scene* activeScene) {
+        inline void setActiveScene(const Ref<Scene> &activeScene) {
             this->activeScene = activeScene;
         }
 
     protected:
-        Scene* activeScene = nullptr; // weak reference!
+        Ref<Scene> activeScene = nullptr;
 
     };
 

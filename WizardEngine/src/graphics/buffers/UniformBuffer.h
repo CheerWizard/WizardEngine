@@ -8,8 +8,6 @@
 #include "UniformData.h"
 #include "../shader/UniformBlockFormat.h"
 
-#define DEFAULT_UNIFORM_BLOCK_COUNT 1
-
 namespace engine {
 
     class UniformBuffer : public Buffer {

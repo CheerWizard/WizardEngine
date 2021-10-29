@@ -194,4 +194,25 @@ namespace engine {
         glClearTexImage(texture, 0, textureFormat, GL_INT,&value);
     }
 
+    void GLFrameBuffer::enableDepth() {
+        ENGINE_INFO("enableDepth()");
+        glEnable(GL_DEPTH_TEST);
+    }
+
+    void GLFrameBuffer::disableDepth() {
+        ENGINE_INFO("disableDepth()");
+        glDisable(GL_DEPTH_TEST);
+    }
+
+    void GLFrameBuffer::clearDepth(const Color &color) {
+        ENGINE_INFO("clearDepth(depthColor = {0})", color.toString());
+        glClearColor(color.r, color.g, color.b, color.a);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    void GLFrameBuffer::clearColor(const Color &color) {
+        glClearColor(color.r, color.g, color.b, color.a);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
 }

@@ -27,15 +27,17 @@ namespace engine {
     struct MeshComponent {
         Mesh* meshes;
         uint32_t meshCount;
-        uint32_t vertexCount = 0;
+        uint32_t totalVertexCount = 0;
+        uint32_t totalIndexCount = 0;
         uint32_t vertexStart = 0;
-        uint32_t indexCount = 0;
         uint32_t indexStart = 0;
 
         bool isUpdated = false;
 
-        MeshComponent(Mesh* meshes, const uint32_t meshCount = MIN_MESH_COUNT) :
-        meshes(meshes), meshCount(meshCount)  {}
+        MeshComponent(Mesh* meshes = nullptr, const uint32_t &meshCount = MIN_MESH_COUNT) :
+        meshes(meshes), meshCount(meshCount)  {
+            applyChanges();
+        }
 
     public:
         void applyChanges() {
@@ -56,11 +58,11 @@ namespace engine {
         }
 
         void updateCounts() {
-            vertexCount = 0;
-            indexCount = 0;
+            totalVertexCount = 0;
+            totalIndexCount = 0;
             for (auto i = 0 ; i < meshCount ; i++) {
-                vertexCount += meshes[i].vertexData.vertexCount;
-                indexCount += meshes[i].indexData.indexCount;
+                totalVertexCount += meshes[i].vertexData.vertexCount;
+                totalIndexCount += meshes[i].indexData.indexCount;
             }
         }
 
@@ -102,6 +104,22 @@ namespace engine {
                 totalIndexCount += indexData.indexCount;
             }
         }
+
+        void setInstanceId(const uint32_t &instanceId) {
+            if (_instanceId == instanceId) return;
+            _instanceId = instanceId;
+            // update instanceId for each vertex in each mesh.
+            for (auto i = 0 ; i < meshCount ; i++) {
+                const auto& vertexData = meshes[i].vertexData;
+                for (auto j = 0; j < vertexData.vertexCount; j++) {
+                    auto& vertex = vertexData.vertices[j];
+                    vertex.instanceId = (float) instanceId;
+                }
+            }
+        }
+
+    private:
+        uint32_t _instanceId = 0;
 
     };
 

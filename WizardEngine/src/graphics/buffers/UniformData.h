@@ -12,8 +12,7 @@ namespace engine {
 
     struct UniformData {
         float* uniforms;
-        uint32_t uniformStart;
-        uint32_t uniformCount;
+        uint32_t index;
     };
 
 }
