@@ -6,101 +6,52 @@
 
 #include "Renderer.h"
 
-#include "../../core/TreeCache.h"
-#include "../../core/CameraController.h"
-#include "../shader/ShaderCache.h"
 #include "../GraphicsFactory.h"
 
 #include "../../ecs/System.h"
 
 #include "../geometry/MeshComponent.h"
-#include "../../math/TransformComponent.h"
+#include "../../transform/TransformComponents.h"
 #include "material/MaterialComponents.h"
+
+#include "../frame/FrameController.h"
+
+#include "../sources/ShaderSource.h"
 
 #include "string"
 
+#define INSTANCE_COUNT_LIMIT 128
+
 namespace engine {
 
-    class RenderSystem : public System, public WindowCallback {
-
-        typedef TreeCache<std::string, VertexBuffer> VertexBufferCache;
+    class RenderSystem : public System {
 
     public:
-        RenderSystem(const Ref<GraphicsFactory> &graphicsFactory) : graphicsFactory(graphicsFactory) {
-            create();
+        RenderSystem(
+                const Ref<GraphicsFactory> &graphicsFactory,
+                const Ref<FrameController> &frameController,
+                const Ref<ShaderSource> &shaderSource
+        ) : frameController(frameController) {
+            create(graphicsFactory, shaderSource);
         }
 
-        virtual ~RenderSystem() = default;
+        ~RenderSystem() override {
+            destroy();
+        }
 
     public:
         void onUpdate() override;
 
-        void addShader(const std::string& name, const Ref<Shader>& shader);
-        void addShader(const Ref<Shader>& shader);
-        ShaderError loadShader(const ShaderProps& shaderProps, VertexFormat* vertexFormat);
-        ShaderError loadShader(const ShaderProps& shaderProps);
-        Ref<Shader> getShader(const std::string& name);
-        bool shaderExists(const std::string& name) const;
-
-        void updateFboSpecification(const FramebufferSpecification &framebufferSpecification);
-
-        void enableDepth();
-        void setPolygonMode(const PolygonMode &polygonMode);
-
-        void loadTexture(const std::string &fileName);
-
-    public:
-        void onWindowClosed() override;
-        void onWindowResized(const uint32_t &width, const uint32_t &height) override;
-
-    protected:
-        virtual void renderMaterial(const entt::entity &entity) = 0;
-        virtual void renderTransform(const entt::entity &entity) = 0;
-
-    protected:
+    private:
+        void create(const Ref<GraphicsFactory>& graphicsFactory, const Ref<ShaderSource> &shaderSource);
         void destroy();
-
-    public:
-        inline void setSceneCameraController(const Ref<CameraController> &cameraController) {
-            sceneRenderer->setCameraController(cameraController);
-        }
-
-    private:
-        void create();
+        void renderBatching(const std::vector<Entity> &entities);
+        void renderInstancing(const Family& family);
 
     protected:
-        Ref<GraphicsFactory> graphicsFactory;
-        Ref<Renderer> sceneRenderer;
-
-        ShaderCache shaderCache;
-        VertexBufferCache vertexBufferCache;
-
-    private:
-        ShaderError handleShaderError(const Ref<Shader> &shader);
-
-    };
-
-    class RenderSystem2d : public RenderSystem {
-
-    public:
-        RenderSystem2d(const Ref<GraphicsFactory> &graphicsFactory) : RenderSystem(graphicsFactory) {}
-        ~RenderSystem2d() override = default;
-
-    protected:
-        void renderMaterial(const entt::entity &entity) override;
-        void renderTransform(const entt::entity &entity) override;
-
-    };
-
-    class RenderSystem3d : public RenderSystem {
-
-    public:
-        RenderSystem3d(const Ref<GraphicsFactory> &graphicsFactory) : RenderSystem(graphicsFactory) {}
-        ~RenderSystem3d() override = default;
-
-    protected:
-        void renderMaterial(const entt::entity &entity) override;
-        void renderTransform(const entt::entity &entity) override;
+        Ref<FrameController> frameController;
+        Ref<Renderer> batchRenderer;
+        Ref<Renderer> instanceRenderer;
 
     };
 

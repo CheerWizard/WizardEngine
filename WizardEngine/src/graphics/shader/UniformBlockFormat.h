@@ -39,7 +39,7 @@ namespace engine {
         void destroy();
 
         uint32_t getElementCount() const;
-        size_t getSize() const;
+        size_t size() const;
 
         uint32_t add(const UniformAttribute &attribute); // returns index of new element.
         void replace(const uint32_t &index, const UniformAttribute &attribute);

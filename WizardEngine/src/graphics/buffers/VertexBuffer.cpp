@@ -6,10 +6,14 @@
 
 namespace engine {
 
-    void VertexBuffer::prepare(VertexFormat *vertexFormat) {
+    void VertexBuffer::prepare(VertexFormat* vertexFormat) {
+        prepare(vertexFormat, DEFAULT_VERTEX_COUNT);
+    }
+
+    void VertexBuffer::prepare(VertexFormat* vertexFormat, const uint32_t &vertexCount) {
         setVertexFormat(vertexFormat);
         bind();
-        allocate();
+        allocate(vertexCount);
         setAttributesPointer();
     }
 

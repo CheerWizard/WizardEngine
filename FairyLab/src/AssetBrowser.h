@@ -10,8 +10,8 @@
 
 #include <graphics/buffers/TextureBuffer.h>
 
-#define EDITOR_TEXTURES_PATH "editorRes/textures"
-#define EDITOR_SHADERS_PATH "editorRes/shaders"
+#define EDITOR_TEXTURES_PATH "editor/textures"
+#define EDITOR_SHADERS_PATH "editor/shaders"
 
 namespace fairy {
 
@@ -21,8 +21,7 @@ namespace fairy {
         virtual ~AssetBrowserCallback() = default;
 
     public:
-        virtual void onPngOpen(const std::string &fileName) = 0;
-        virtual void onJpgOpen(const std::string &fileName) = 0;
+        virtual void onImageOpen(const std::string &fileName) = 0;
         virtual void onObjOpen(const std::string &fileName) = 0;
         virtual void onGlslOpen(const std::string &filePath, const std::string &fileName) = 0;
         virtual void onAssetImported(const std::string &assetPath) = 0;
@@ -32,21 +31,35 @@ namespace fairy {
 
     struct AssetBrowserProps {
         const char* name;
-        const std::filesystem::path& assetPath;
+        std::filesystem::path assetPath;
+        float padding = 16.0f;
+        float thumbnailSize = 64.0f;
+    };
+
+    struct AssetBrowserItem {
+        const char* extension;
+        const uint32_t iconId;
+    };
+
+    template<size_t itemsCount>
+    struct AssetBrowserItems {
+        AssetBrowserItem dirItem;
+        AssetBrowserItem items[itemsCount];
     };
 
     class AssetBrowser {
 
     public:
+        static constexpr size_t itemsCount = 5;
+
+    public:
         AssetBrowser(const AssetBrowserProps &props,
-                     const engine::Ref<engine::TextureBuffer>& dirIcon,
-                     const engine::Ref<engine::TextureBuffer>& fileIcon,
+                     const AssetBrowserItems<itemsCount> &items,
                      const engine::Ref<engine::FileDialog>& fileDialog) :
-                     _props(props),
-                     _currentDir(props.assetPath),
-                     _dirIcon(dirIcon),
-                     _fileIcon(fileIcon),
-                     _fileDialog(fileDialog) {
+                _props(props),
+                _items(items),
+                _currentDir(props.assetPath),
+                _fileDialog(fileDialog) {
             create();
         }
 
@@ -63,6 +76,10 @@ namespace fairy {
             _callback = nullptr;
         }
 
+        inline const AssetBrowserProps& getProps() {
+            return _props;
+        }
+
     public:
         void onUpdate(engine::Time dt);
 
@@ -74,21 +91,18 @@ namespace fairy {
         void removeAsset(const std::string &assetPath);
         void popupAssetMenu(const char* id);
 
-    public:
-        float padding = 16.0f;
-        float thumbnailSize = 64.0f;
-
     private:
         AssetBrowserProps _props;
+        AssetBrowserItems<itemsCount> _items;
+
         std::filesystem::path _currentDir;
-        engine::Ref<engine::TextureBuffer> _dirIcon;
-        engine::Ref<engine::TextureBuffer> _fileIcon;
+
         engine::Ref<engine::FileDialog> _fileDialog;
+
+        AssetBrowserCallback* _callback = nullptr;
 
         std::string _rightClickedAssetPath;
         std::filesystem::path _rightClickedDir;
-
-        AssetBrowserCallback* _callback = nullptr;
     };
 
 }

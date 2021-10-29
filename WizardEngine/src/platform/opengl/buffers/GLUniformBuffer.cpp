@@ -30,7 +30,7 @@ namespace engine {
     }
 
     void GLUniformBuffer::allocate() {
-        capacity = uniformBlockFormat->getSize() * DEFAULT_UNIFORM_BLOCK_COUNT;
+        capacity = uniformBlockFormat->size();
 
         if (!hasCapacity()) return;
         glBufferData(GL_UNIFORM_BUFFER, (GLsizeiptr) capacity, nullptr, GL_DYNAMIC_DRAW);
@@ -43,11 +43,11 @@ namespace engine {
     void GLUniformBuffer::load(const UniformData &uniformData) {
         if (!hasCapacity()) return;
 
-        auto uniformBlockSize = uniformBlockFormat->getSize();
-        auto subDataOffset = uniformData.uniformStart * uniformBlockSize;
+        auto uniformBlockAttrSize = uniformBlockFormat->get(uniformData.index).size();
+        auto subDataOffset = uniformData.index * uniformBlockAttrSize;
         glBufferSubData(GL_UNIFORM_BUFFER,
                         (GLsizeiptr)subDataOffset,
-                        uniformData.uniformCount * uniformBlockSize,
+                        (GLsizeiptr)uniformBlockAttrSize,
                         uniformData.uniforms);
     }
 

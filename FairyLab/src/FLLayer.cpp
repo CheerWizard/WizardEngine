@@ -2,63 +2,66 @@
 // Created by mecha on 04.10.2021.
 //
 
-#include <imgui/imgui/imgui.h>
-#include <imgui/imgui/imgui_demo.cpp>
 #include "FLLayer.h"
+#include "FileExtensions.h"
+
+#include <imgui/imgui/imgui.h>
 
 namespace fairy {
 
     void FLLayer::create() {
-        auto graphicsFactory = app->getGraphicsFactory();
-        auto objPreviewShader = graphicsFactory->newShader(engine::ShaderProps {
+        ImGui::StyleColorsLight();
+
+        createAssetBrowser();
+
+        activeSceneCamera = engine::Camera3D {
+            "SceneCamera",
+            app->getAspectRatio(),
+            app->activeScene.get()
+        };
+        activeSceneCameraController = engine::createRef<engine::Camera3dController>(
+                "ActiveSceneCameraController",
+                activeSceneCamera
+        );
+
+        const auto& graphicsFactory = app->getGraphicsFactory();
+
+        auto objPreviewShader = app->getShaderSource()->create(engine::ShaderProps {
             "obj",
             "v_obj",
             "f_obj",
             EDITOR_SHADERS_PATH
         });
-        auto objRenderer = engine::createRef<engine::Renderer>(app->getGraphicsFactory());
+        auto objRenderer = engine::createRef<engine::Renderer>(graphicsFactory, objPreviewShader);
 
-        engine::FramebufferSpecification framebufferSpecification;
-        framebufferSpecification.attachmentSpecification = {
-                engine::FramebufferTextureFormat::RGBA8,
-                engine::FramebufferTextureFormat::RED_INTEGER,
-                engine::FramebufferTextureFormat::Depth
+        auto objCamera = engine::Camera3D {
+            "obj",
+            app->getAspectRatio(),
+            editorScene.get()
         };
-        framebufferSpecification.width = 1920;
-        framebufferSpecification.height = 1080;
-        objRenderer->updateFboSpecs(framebufferSpecification);
+        auto objCameraController = engine::createRef<engine::Camera3dController>(
+                "ObjCameraController",
+                objCamera
+        );
 
-        objRenderer->prepare(objPreviewShader);
+        auto objFrameController = engine::createRef<engine::FrameController>(graphicsFactory->newFrameBuffer());
+        objFrameController->updateSpecs(app->getWindowWidth(), app->getWindowHeight());
 
         _objPreview = engine::createRef<engine::MeshLayout>(
                 engine::ImageLayoutProps {"Object Preview"},
-                objRenderer
+                objRenderer,
+                objFrameController,
+                objCameraController
         );
 
-        auto objTransformMat = engine::TransformMatrix3d {
-            "transform",
-            { 2.5, 0, 12 },
-            {135, 0, 0},
-            {0.5, 0.5, 0.5}
-        };
-        auto objTransform = engine::createRef<engine::TransformComponent3d>(objTransformMat);
-        objTransform->applyChanges();
+        auto objTransform = engine::TransformComponents::newTransform3d(
+                { 2.5, 0, 12 },
+                {135, 0, 0},
+                {0.5, 0.5, 0.5}
+        );
+        objCamera.add<engine::Transform3dComponent>(objTransform);
 
-        _objPreview->setTransform(objTransform);
-
-        auto objCamera = new engine::Camera3d {
-            "camera",
-            engine::ViewMatrix3d {
-                "view3d"
-                },
-                engine::PerspectiveMatrix {
-                "projection3d",
-                app->getAspectRatio()
-            }
-        };
-        auto objCameraController = engine::createRef<engine::Camera3dController>(objCamera);
-        objCameraController->applyChanges();
-        _objPreview->setCameraController(objCameraController);
+        _objPreview->setEntity(objCamera);
 
         _scenePreviewCallback = new FLLayer::ScenePreviewCallback(*this);
         _imagePreviewCallback = new FLLayer::ImagePreviewCallback(*this);
@@ -67,36 +70,37 @@ namespace fairy {
         _imagePreview.setCallback(_imagePreviewCallback);
         _assetBrowser->setCallback(this);
 
-        auto humanShaderProps = engine::ShaderProps {
-            "shape2d",
-            "v_shape2d",
-            "f_shape2d"
-        };
+        app->getTextureSource()->loadTexture("demo.png");
 
-        app->loadShader(humanShaderProps);
-        app->loadTexture("demo.png");
-
-        auto humanMesh = app->loadObj("human.obj");
-        humanMesh->applyChanges();
-
-        auto humanTransform = engine::TransformComponent3d {
-            "transform",
-            { 2.5, 0, 12 },
-            {135, 0, 0},
-            {0.5, 0.5, 0.5}
-        };
-        humanTransform.applyChanges();
-
+        _humanEntity = app->activeScene->createEntity("Human");
+        auto humanMesh = app->getMeshSource().getMesh("human.obj");
+        auto humanTransform = engine::TransformComponents::newTransform3d(
+                { 2.5, 0, 12 },
+                {135, 0, 0},
+                {0.5, 0.5, 0.5}
+        );
         auto humanTexture = engine::TextureComponent {
             "diffuseSampler",
             0
         };
-        humanTexture.applyChanges();
+        _humanEntity.add<engine::Transform3dComponent>(humanTransform);
+        _humanEntity.add<engine::MeshComponent>(humanMesh);
+        _humanEntity.add<engine::TextureComponent>(humanTexture);
 
-        _humanEntity = app->activeScene->createEntity("Human");
-        _humanEntity.addComponent<engine::MeshComponent>(*humanMesh);
-        _humanEntity.addComponent<engine::TransformComponent3d>(humanTransform);
-        _humanEntity.addComponent<engine::TextureComponent>(humanTexture);
+        _cubeEntity = app->activeScene->createEntity("Cube");
+        auto cubeMesh = app->getMeshSource().getCube("cube");
+        auto cubeTransform = engine::TransformComponents::newTransform3d(
+                { 10, 0, 12 },
+                { 135, 0, 0 },
+                { 0.5, 0.5, 0.5 }
+        );
+        auto cubeTexture = engine::TextureComponent {
+            "diffuseSampler",
+            0
+        };
+        _cubeEntity.add<engine::Transform3dComponent>(cubeTransform);
+        _cubeEntity.add<engine::MeshComponent>(cubeMesh);
+        _cubeEntity.add<engine::TextureComponent>(cubeTexture);
     }
 
     void FLLayer::destroy() {
@@ -109,17 +113,17 @@ namespace fairy {
     void FLLayer::onPrepare() {
         CLIENT_INFO("onPrepare()");
         ImGuiLayer::onPrepare();
-        app->closeKeyPressed = engine::KeyCode::Escape;
-        app->sceneCameraController->bind(engine::KeyCode::W, engine::MoveType::UP);
-        app->sceneCameraController->bind(engine::KeyCode::A, engine::MoveType::LEFT);
-        app->sceneCameraController->bind(engine::KeyCode::S, engine::MoveType::DOWN);
-        app->sceneCameraController->bind(engine::KeyCode::D, engine::MoveType::RIGHT);
-        app->sceneCameraController->bind(engine::KeyCode::Q, engine::RotateType::LEFT_Z);
-        app->sceneCameraController->bind(engine::KeyCode::E, engine::RotateType::RIGHT_Z);
-        app->sceneCameraController->bind(engine::KeyCode::Z, engine::ZoomType::IN);
-        app->sceneCameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
-        app->sceneCameraController->setPosition({0, 0, -1});
-        app->sceneCameraController->applyChanges();
+        app->bindCloseKey(engine::KeyCode::Escape);
+        activeSceneCameraController->bind(engine::KeyCode::W, engine::MoveType::UP);
+        activeSceneCameraController->bind(engine::KeyCode::A, engine::MoveType::LEFT);
+        activeSceneCameraController->bind(engine::KeyCode::S, engine::MoveType::DOWN);
+        activeSceneCameraController->bind(engine::KeyCode::D, engine::MoveType::RIGHT);
+        activeSceneCameraController->bind(engine::KeyCode::Q, engine::RotateType::LEFT_Z);
+        activeSceneCameraController->bind(engine::KeyCode::E, engine::RotateType::RIGHT_Z);
+        activeSceneCameraController->bind(engine::KeyCode::Z, engine::ZoomType::IN);
+        activeSceneCameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
+        activeSceneCameraController->setPosition({0, 0, -1});
+        activeSceneCameraController->applyChanges();
 
         _scenePreview.setTextureId(app->activeScene->getTextureId());
         _scenePreview.setClosable(false);
@@ -140,6 +144,7 @@ namespace fairy {
         objCameraController->applyChanges();
 
         _fileEditor.setTextFieldFont(resizableFont);
+        _sceneHierarchy.setCallback(this);
     }
 
     void FLLayer::onRender(engine::Time dt) {
@@ -154,6 +159,7 @@ namespace fairy {
 
     void FLLayer::onUpdate(engine::Time dt) {
         ImGuiLayer::onUpdate(dt);
+        activeSceneCameraController->setDeltaTime(dt);
     }
 
     void FLLayer::onKeyPressed(engine::KeyCode keyCode) {
@@ -162,35 +168,28 @@ namespace fairy {
         _objPreview->onKeyPressed(keyCode);
 
         if (_scenePreview.isFocused()) {
-            app->sceneCameraController->onKeyPressed(keyCode);
-        }
-
-        if (keyCode == engine::KeyCode::D1) {
-            app->setPolygonMode(engine::PolygonMode::POINT);
-        }
-
-        if (keyCode == engine::KeyCode::D2) {
-            app->setPolygonMode(engine::PolygonMode::LINE);
-        }
-
-        if (keyCode == engine::KeyCode::D3) {
-            app->setPolygonMode(engine::PolygonMode::FILL);
+            activeSceneCameraController->onKeyPressed(keyCode);
         }
 
         if (keyCode == engine::KeyCode::D0) {
-            app->fpsTimer.setMaxFps(15);
+            app->fpsController.setMaxFps(15);
         }
 
         if (keyCode == engine::KeyCode::D9) {
-            app->fpsTimer.setMaxFps(30);
+            app->fpsController.setMaxFps(30);
         }
 
         if (keyCode == engine::KeyCode::D8) {
-            app->fpsTimer.setMaxFps(60);
+            app->fpsController.setMaxFps(60);
         }
 
         if (keyCode == engine::KeyCode::D7) {
-            app->fpsTimer.setMaxFps(app->getRefreshRate());
+            app->fpsController.setMaxFps(app->getRefreshRate());
+        }
+
+        // L-CTRL + F - toggles fullscreen/windowed modes.
+        if (keyCode == engine::KeyCode::F && app->input->isKeyPressed(engine::KeyCode::LeftControl)) {
+            app->getWindow()->toggleFullScreen();
         }
     }
 
@@ -199,7 +198,7 @@ namespace fairy {
         _objPreview->onKeyHold(keyCode);
 
         if (_scenePreview.isFocused()) {
-            app->sceneCameraController->onKeyHold(keyCode);
+            activeSceneCameraController->onKeyHold(keyCode);
         }
     }
 
@@ -208,7 +207,7 @@ namespace fairy {
         _objPreview->onKeyReleased(keyCode);
 
         if (_scenePreview.isFocused()) {
-            app->sceneCameraController->onKeyReleased(keyCode);
+            activeSceneCameraController->onKeyReleased(keyCode);
         }
     }
 
@@ -217,7 +216,7 @@ namespace fairy {
         _objPreview->onKeyTyped(keyCode);
 
         if (_scenePreview.isFocused()) {
-            app->sceneCameraController->onKeyTyped(keyCode);
+            activeSceneCameraController->onKeyTyped(keyCode);
         }
     }
 
@@ -231,23 +230,16 @@ namespace fairy {
         _scenePreview.onMouseRelease(mouseCode);
     }
 
-    void FLLayer::onPngOpen(const std::string &fileName) {
-        ENGINE_INFO("onPngOpen({0})", fileName);
-        _imagePreview.load(fileName);
-        _imagePreview.show();
-    }
-
-    void FLLayer::onJpgOpen(const std::string &fileName) {
-        ENGINE_INFO("onJpgOpen({0})", fileName);
+    void FLLayer::onImageOpen(const std::string &fileName) {
+        ENGINE_INFO("onImageOpen({0})", fileName);
         _imagePreview.load(fileName);
         _imagePreview.show();
     }
 
     void FLLayer::onObjOpen(const std::string &fileName) {
         ENGINE_INFO("onObjOpen({0})", fileName);
-        auto objMesh = app->loadObj(fileName);
-        objMesh->applyChanges();
-        objMesh->updateCounts();
+        auto objMesh = app->getMeshSource().getMesh(fileName);
+        objMesh.applyChanges();
         _objPreview->setMesh(objMesh);
         _objPreview->show();
     }
@@ -264,7 +256,10 @@ namespace fairy {
     }
 
     void FLLayer::ScenePreviewCallback::onImageResized(const uint32_t &width, const uint32_t &height) {
-        _parent.app->onWindowResized(width, height);
+        if (width == 0 || height == 0) return;
+
+        _parent.app->activeFrameController->resize(width, height);
+        _parent.activeSceneCameraController->onWindowResized(width, height);
     }
 
     void FLLayer::onAssetImported(const std::string &assetPath) {
@@ -277,6 +272,59 @@ namespace fairy {
 
     void FLLayer::onAssetRemoved(const std::string &assetPath) {
         ENGINE_INFO("onAssetRemoved() - {0}", assetPath);
+    }
+
+    void FLLayer::onEntityRemoved(const engine::Entity &entity) {
+        ENGINE_INFO("onEntityRemoved({0})", entity.operator unsigned int());
+        app->activeFrameController->resetFrame();
+    }
+
+    void FLLayer::createAssetBrowser() {
+        const auto& textureSource = app->getTextureSource();
+
+        auto props = AssetBrowserProps {
+            "Asset Browser",
+            CLIENT_ASSET_PATH
+        };
+
+        auto dirItem = AssetBrowserItem {
+            "",
+            textureSource->loadTexture("dir_icon.png", EDITOR_TEXTURES_PATH)
+        };
+
+        auto pngItem = AssetBrowserItem {
+            file_extensions::PNG,
+            textureSource->loadTexture("png_icon.png", EDITOR_TEXTURES_PATH)
+        };
+
+        auto jpgItem = AssetBrowserItem {
+            file_extensions::JPG,
+            textureSource->loadTexture("jpg_icon.png", EDITOR_TEXTURES_PATH)
+        };
+
+        auto glslItem = AssetBrowserItem {
+            file_extensions::GLSL,
+            textureSource->loadTexture("glsl_icon.png", EDITOR_TEXTURES_PATH)
+        };
+
+        auto objItem = AssetBrowserItem {
+            file_extensions::OBJ,
+            textureSource->loadTexture("obj_icon.png", EDITOR_TEXTURES_PATH)
+        };
+
+        auto ttfItem = AssetBrowserItem {
+            file_extensions::TTF,
+            textureSource->loadTexture("ttf_icon.png", EDITOR_TEXTURES_PATH)
+        };
+
+        auto items = AssetBrowserItems<AssetBrowser::itemsCount> {
+            dirItem,
+            { pngItem, jpgItem, glslItem, objItem, ttfItem }
+        };
+
+        auto fileDialog = app->createFileDialog();
+
+        _assetBrowser = engine::createRef<AssetBrowser>(props, items, fileDialog);
     }
 
 }

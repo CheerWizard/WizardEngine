@@ -11,7 +11,23 @@
 namespace engine {
 
     struct UniformAttribute {
-        ElementCount elementCount = SINGLE;
+        const char* name;
+        ElementCount elementCount;
+        uint32_t count;
+
+        UniformAttribute(
+            const char* name,
+            const ElementCount &elementCount = SINGLE,
+            const uint32_t &count = 1
+        ) : name(name), elementCount(elementCount), count(count) {}
+
+        size_t size() const {
+            return count * elementCount * sizeof(float);
+        }
+
+        size_t elementSize() const {
+            return elementCount * sizeof(float);
+        }
     };
 
 }

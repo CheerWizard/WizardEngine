@@ -21,7 +21,7 @@ namespace engine {
         }
 
     public:
-        virtual void allocate() = 0;
+        virtual void allocate(const uint32_t &indexCount = DEFAULT_INDEX_COUNT) = 0;
         virtual void load(const IndexData& indexData) = 0;
 
     };

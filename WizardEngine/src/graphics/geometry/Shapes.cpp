@@ -78,8 +78,8 @@ namespace engine {
         auto v3 = Vertex {
             {0.5f,-0.5f,-0.5f},
             {1,1}
-
         };
+
         auto v4 = Vertex {
             {0.5f,0.5f,-0.5f},
             {1,0}

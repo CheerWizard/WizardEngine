@@ -40,16 +40,13 @@ namespace engine {
         // set default font!
         IO.FontDefault = regularFont;
 
-        // Setup Dear ImGui style
-        ImGui::StyleColorsDark();
-
         // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
         if (IO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
             STYLE.WindowRounding = 0.0f;
             COLORS[ImGuiCol_WindowBg].w = 1.0f;
         }
 
-        setDarkTheme();
+        setTheme();
         // Setup Platform/Renderer bindings
         ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*) app->getNativeWindow(), true);
         ImGui_ImplOpenGL3_Init("#version 410");
@@ -93,7 +90,7 @@ namespace engine {
         app = nullptr;
     }
 
-    void ImGuiLayer::setDarkTheme() {
+    void ImGuiLayer::setTheme() {
         COLORS[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
 
         // Headers

@@ -6,124 +6,68 @@
 
 namespace engine {
 
-    void Renderer::create() {
-        _vertexArray = _graphicsFactory->newVertexArray();
-        _vertexBuffer = _graphicsFactory->newVertexBuffer();
-        _indexBuffer = _graphicsFactory->newIndexBuffer();
-        _frameBuffer = _graphicsFactory->newFrameBuffer();
-        _textureBuffer = _graphicsFactory->newTextureBuffer();
-        _drawer = _graphicsFactory->newDrawer();
-    }
-
-    void Renderer::destroy() {
-    }
-
-    void Renderer::prepare(const Ref<Shader> &shader) {
-        _shader = shader;
-        _frameBuffer->setViewPort();
+    void Renderer::create(const Ref<GraphicsFactory> &graphicsFactory) {
+        _vertexArray = graphicsFactory->newVertexArray();
+        _vertexBuffer = graphicsFactory->newVertexBuffer();
+        _indexBuffer = graphicsFactory->newIndexBuffer();
+        _textureBuffer = graphicsFactory->newTextureBuffer();
+        _drawer = graphicsFactory->newDrawer();
+        _uniformBuffer = graphicsFactory->newUniformBuffer();
 
         _shader->bindAttributes();
         _shader->bindUniformBlock();
 
         _vertexArray->bind();
 
-        _vertexBuffer->prepare(shader->getVertexFormat());
+        _vertexBuffer->prepare(_shader->getVertexFormat());
 
         _indexBuffer->bind();
         _indexBuffer->allocate();
 
         _textureBuffer->bind();
 
-        if (shader->getShaderError() != ShaderError::NO_UNIFORM_BLOCKS) {
-            _uniformBuffer = _graphicsFactory->newUniformBuffer();
-            _uniformBuffer->prepare(shader->getUniformBlockFormat());
+        if (_shader->getState() != ShaderState::NO_UNIFORM_BLOCKS) {
+            _uniformBuffer->prepare(_shader->getUniformBlockFormat());
         }
 
         _vertexArray->unbind();
     }
 
-    void Renderer::renderMesh(MeshComponent &meshComponent, TransformComponent3d &transformComponent3D) {
-        startFrame();
-        start();
-
-        renderCamera();
-
-        if (meshComponent.isUpdated) {
-            meshComponent.isUpdated = false;
-            loadMesh(meshComponent);
-        }
-
-        renderTransform(transformComponent3D);
-
-        drawByIndices(meshComponent.indexCount);
-
-        stop();
-        endFrame();
+    void Renderer::destroy() {
     }
 
-    void Renderer::renderCamera() {
-        if (_cameraController != nullptr) {
-            auto& camera = _cameraController->getCamera();
-            if (_shader->getShaderError() == ShaderError::NO_UNIFORM_BLOCKS) {
-                _shader->setUniform(camera);
-            } else {
-                if (camera.isUpdated) {
-                    camera.isUpdated = false;
+    void Renderer::render(const Entity &entity) {
+        begin();
 
-                    auto uniformData = UniformData {
-                        camera.toFloatPtr(),
-                        0,
-                        1
-                    };
-                    _uniformBuffer->bind();
-                    _uniformBuffer->load(uniformData);
-                    _uniformBuffer->unbind();
-                }
-            }
-        }
+        uint32_t totalIndexCount = 0;
+        uint32_t totalVertexCount = 0;
+        renderMesh(entity, totalVertexCount, totalIndexCount);
+
+        renderTransform(entity);
+        renderCamera(entity);
+        renderPolygonMode(entity);
+
+        drawElements(totalIndexCount);
+
+        end();
     }
 
-    void Renderer::start() {
+    void Renderer::begin() {
         _shader->start();
         _vertexArray->bind();
     }
 
-    void Renderer::stop() {
+    void Renderer::end() {
         _vertexArray->unbind();
         _shader->stop();
     }
 
-    void Renderer::startFrame() {
-        _frameBuffer->bind();
-        _drawer->enableDepth();
-        _drawer->clearDepth({0.2, 0.2, 0.2, 1});
-    }
-
-    void Renderer::endFrame() {
-        _frameBuffer->unbind();
-        _drawer->disableDepth();
-        _drawer->clearColor({1.0, 1.0, 1.0, 1.0});
-    }
-
-    void Renderer::renderMaterial(TextureComponent &material) {
-        _shader->setUniform(material.texture);
-        _textureBuffer->activate(material.texture.value);
-    }
-
-    void Renderer::renderTransform(TransformComponent2d &transformComponent2D) {
-        _shader->setUniform(transformComponent2D.transformMatrix);
-    }
-
-    void Renderer::renderTransform(TransformComponent3d &transformComponent3D) {
-        _shader->setUniform(transformComponent3D.transformMatrix);
-    }
-
-    void Renderer::enableDepth() {
-        _drawer->enableDepth();
-    }
-
-    void Renderer::setPolygonMode(const PolygonMode &polygonMode) {
-        _drawer->setPolygonMode(polygonMode);
+    void Renderer::renderMaterial(const Entity& entity) {
+        if (entity.has<TextureComponent>()) {
+            auto& texture = entity.get<TextureComponent>();
+            _shader->setUniform(texture);
+            _textureBuffer->activate(texture.value);
+        }
     }
 
     void Renderer::loadMesh(MeshComponent &meshComponent) {
@@ -149,19 +93,109 @@ namespace engine {
         _textureBuffer->loadData(data);
     }
 
-    void Renderer::drawByIndices(const uint32_t &indexCount) {
+    void Renderer::drawElements(const uint32_t &indexCount) {
         _vertexBuffer->enableAttributes();
-        _drawer->drawByIndices(indexCount);
+        _drawer->drawElements(indexCount);
     }
 
-    const std::vector<uint32_t> &Renderer::updateFboSpecs(const FramebufferSpecification &framebufferSpecification) {
-        _frameBuffer->setSpecification(framebufferSpecification);
-        _frameBuffer->loadAttachments();
-        return _frameBuffer->getColorAttachments();
+    void Renderer::drawElements(const uint32_t &indexCount, const uint32_t &instanceCount) {
+        _vertexBuffer->enableAttributes();
+        _drawer->drawElements(indexCount, instanceCount);
     }
 
-    void Renderer::resizeFrame(const uint32_t &width, const uint32_t &height) {
-        _frameBuffer->resize(width, height);
+    void Renderer::renderMesh(
+            const Entity& entity,
+            uint32_t &previousVertexCount,
+            uint32_t &previousIndexCount
+    ) {
+        renderMesh(entity, entity, previousVertexCount, previousIndexCount);
     }
 
+    void Renderer::renderMesh(
+            const uint32_t &instanceID,
+            const Entity &entity,
+            uint32_t &previousVertexCount,
+            uint32_t &previousIndexCount
+    ) {
+        ENGINE_INFO("renderMesh() - entityId: {0}, entityName: {1}", (uint32_t) entity.getId(), entity.get<TagComponent>().tag);
+
+        if (!entity.has<MeshComponent>()) {
+            ENGINE_INFO("No MeshComponent for Entity {0}", entity.get<TagComponent>().tag);
+            return;
+        }
+
+        auto& meshComponent = entity.get<MeshComponent>();
+        if (meshComponent.isUpdated) {
+            meshComponent.isUpdated = false;
+            meshComponent.updateStart(previousVertexCount, previousIndexCount);
+            meshComponent.setInstanceId(instanceID);
+            meshComponent.updateCounts();
+            loadMesh(meshComponent);
+        }
+
+        previousIndexCount += meshComponent.totalIndexCount;
+        previousVertexCount += meshComponent.totalVertexCount;
+    }
+
+    void Renderer::renderCamera(const Entity &entity) {
+        if (entity.has<Camera2dComponent>()) {
+            renderCamera(entity.get<Camera2dComponent>());
+        }
+
+        if (entity.has<Camera3dComponent>()) {
+            renderCamera(entity.get<Camera3dComponent>());
+        }
+    }
+
+    bool Renderer::renderTransform(const uint32_t &instanceId, const Entity &entity) {
+        if (entity.has<Transform2dComponent>()) {
+            _shader->setUniformArrayElement(instanceId, entity.get<Transform2dComponent>());
+            return true;
+        }
+
+        if (entity.has<Transform3dComponent>()) {
+            _shader->setUniformArrayElement(instanceId, entity.get<Transform3dComponent>());
+            return true;
+        }
+
+        return false;
+    }
+
+    bool Renderer::renderTransform(const Entity &entity) {
+        if (entity.has<Transform2dComponent>()) {
+            _shader->setUniform(entity.get<Transform2dComponent>());
+            return true;
+        }
+
+        if (entity.has<Transform3dComponent>()) {
+            _shader->setUniform(entity.get<Transform3dComponent>());
+            return true;
+        }
+
+        return false;
+    }
+
+    void Renderer::renderCamera(Mat4fUniform &camera) {
+        if (_shader->getState() == ShaderState::NO_UNIFORM_BLOCKS) {
+            _shader->setUniform(camera);
+        } else {
+            if (camera.isUpdated) {
+                camera.isUpdated = false;
+
+                auto uniformData = UniformData {
+                    camera.toFloatPtr(),
+                    0
+                };
+                _uniformBuffer->bind();
+                _uniformBuffer->load(uniformData);
+                _uniformBuffer->unbind();
+            }
+        }
+    }
+
+    void Renderer::renderPolygonMode(const Entity &entity) {
+        if (entity.has<PolygonMode>()) {
+            _drawer->setPolygonMode(entity.get<PolygonMode>());
+        }
+    }
 }

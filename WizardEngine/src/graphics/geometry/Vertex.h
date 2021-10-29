@@ -16,17 +16,9 @@
 namespace engine {
 
     struct Vertex {
-        glm::vec3 position;
-        glm::vec2 textureCoords;
-//        glm::vec4 color;
-
-        Vertex(const glm::vec3 &position = DEFAULT_POSITION,
-               const glm::vec2 &textureCoords = DEFAULT_TEXTURE_COORDS,
-               const glm::vec4 &color = {0.5, 0.75, 0, 1}) :
-               position(position),
-//               color(color),
-               textureCoords(textureCoords)
-               {}
+        glm::vec3 position = DEFAULT_POSITION;
+        glm::vec2 textureCoords = DEFAULT_TEXTURE_COORDS;
+        float instanceId = 0;
     };
 
 }

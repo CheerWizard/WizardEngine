@@ -51,6 +51,8 @@ namespace engine {
         virtual uint32_t getRefreshRate() = 0;
 
         virtual void setWindowIcon(const std::string &filePath) = 0;
+        virtual void disableFullScreen() = 0;
+        virtual void enableFullScreen() = 0;
 
     public:
         void removeCallbacks() {
@@ -58,6 +60,15 @@ namespace engine {
             removeKeyboardCallback();
             removeMouseCallback();
             removeCursorCallback();
+        }
+
+        void toggleFullScreen() {
+            isFullScreen = !isFullScreen;
+            if (isFullScreen) {
+                enableFullScreen();
+            } else {
+                disableFullScreen();
+            }
         }
 
     public:
@@ -124,6 +135,7 @@ namespace engine {
     protected:
         WindowProps windowProps;
         bool isInitialized = false;
+        bool isFullScreen = false;
 
     };
 

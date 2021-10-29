@@ -4,8 +4,6 @@
 
 #include "ProjectionMatrix.h"
 
-#include <glm/gtc/matrix_transform.hpp>
-
 namespace engine {
 
     OrthographicMatrix& OrthographicMatrix::applyChanges() {

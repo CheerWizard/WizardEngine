@@ -29,8 +29,8 @@ namespace engine {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    void GLIndexBuffer::allocate() {
-        if (!hasCapacity()) return;
+    void GLIndexBuffer::allocate(const uint32_t &indexCount) {
+        capacity = indexCount;
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, capacity * sizeof(uint32_t), nullptr, GL_DYNAMIC_DRAW);
     }
 
