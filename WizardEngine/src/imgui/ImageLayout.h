@@ -53,10 +53,6 @@ namespace engine {
             _isVisible = false;
         }
 
-        inline void setClosable(const bool &isClosable) {
-            _isClosable = isClosable;
-        }
-
         inline void setTextureId(const uint32_t &textureId) {
             _image->setId(textureId);
         }
@@ -82,7 +78,6 @@ namespace engine {
         Ref<TextureBuffer> _image;
         bool _isHoldingMouse = false;
         bool _isVisible = true;
-        bool _isClosable = true;
         bool _isFocused = false;
 
     };

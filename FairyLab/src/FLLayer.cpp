@@ -126,7 +126,6 @@ namespace fairy {
         activeSceneCameraController->applyChanges();
 
         _scenePreview.setTextureId(app->activeScene->getTextureId());
-        _scenePreview.setClosable(false);
 
         _imagePreview.hide();
         _objPreview->hide();
@@ -148,7 +147,6 @@ namespace fairy {
     }
 
     void FLLayer::onRender(engine::Time dt) {
-        // todo only able to close imgui windows, if they are docked to dock space.
         _scenePreview.onUpdate(dt);
         _sceneHierarchy.onUpdate(dt);
         _assetBrowser->onUpdate(dt);
