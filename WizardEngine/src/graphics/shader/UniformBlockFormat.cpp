@@ -22,10 +22,10 @@ namespace engine {
         return elementCount;
     }
 
-    size_t UniformBlockFormat::getSize() const {
+    size_t UniformBlockFormat::size() const {
         size_t size = 0;
         for (const auto &attribute : _attributes) {
-            size += attribute.elementCount * sizeof(float);
+            size += attribute.size();
         }
         return size;
     }

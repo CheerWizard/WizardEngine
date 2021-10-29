@@ -21,9 +21,10 @@ namespace engine {
 
     public:
         void prepare(VertexFormat* vertexFormat);
+        void prepare(VertexFormat* vertexFormat, const uint32_t &vertexCount);
 
     public:
-        virtual void allocate() = 0;
+        virtual void allocate(const uint32_t &vertexCount = DEFAULT_VERTEX_COUNT) = 0;
         virtual void setAttributesPointer() = 0;
         virtual void load(const VertexData &vertexData) = 0;
         virtual void enableAttributes() = 0;

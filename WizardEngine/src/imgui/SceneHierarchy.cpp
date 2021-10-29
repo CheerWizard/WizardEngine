@@ -5,7 +5,7 @@
 #include "SceneHierarchy.h"
 
 #include "../ecs/Components.h"
-#include "../math/TransformComponent.h"
+#include "../transform/TransformComponents.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -13,7 +13,7 @@
 namespace engine {
 
     void SceneHierarchy::drawEntityNode(Entity &entity) {
-        auto& tag = entity.getComponent<TagComponent>().tag;
+        auto& tag = entity.get<TagComponent>().tag;
 
         ImGuiTreeNodeFlags headerTreeFlags = ((_selectedEntity == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
         headerTreeFlags |= ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -22,11 +22,20 @@ namespace engine {
             _selectedEntity = entity;
         }
 
-        bool entityDeleted = false;
         if (ImGui::BeginPopupContextItem()) {
+
             if (ImGui::MenuItem("Delete Entity")) {
-                entityDeleted = true;
+                _scene->deleteEntity(entity);
+
+                if (_selectedEntity == entity) {
+                    _selectedEntity = {};
+                }
+
+                if (_callback != nullptr) {
+                    _callback->onEntityRemoved(entity);
+                }
             }
+
             ImGui::EndPopup();
         }
 
@@ -39,12 +48,6 @@ namespace engine {
             ImGui::TreePop();
         }
 
-        if (entityDeleted) {
-            _scene->deleteEntity(entity);
-            if (_selectedEntity == entity) {
-                _selectedEntity = {};
-            }
-        }
     }
 
     static void drawVec3Controller(const std::string& label,
@@ -131,15 +134,15 @@ namespace engine {
     }
 
     template<typename T, typename UIFunction>
-    static void drawComponent(const std::string& name, Entity entity, UIFunction uiFunction) {
+    static void drawComponent(const std::string& name, const Entity &entity, UIFunction uiFunction) {
         const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen
                 | ImGuiTreeNodeFlags_Framed
                 | ImGuiTreeNodeFlags_SpanAvailWidth
                 | ImGuiTreeNodeFlags_AllowItemOverlap
                 | ImGuiTreeNodeFlags_FramePadding;
 
-        if (entity.hasComponent<T>()) {
-            auto& component = entity.getComponent<T>();
+        if (entity.template has<T>()) {
+            auto& component = entity.template get<T>();
             ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
 
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
@@ -172,22 +175,20 @@ namespace engine {
             }
 
             if (removeComponent) {
-                entity.removeComponent<T>();
+                entity.template remove<T>();
             }
         }
     }
 
     void SceneHierarchy::drawComponents(Entity &entity) {
-        if (entity.hasComponent<TagComponent>()) {
-            auto& tag = entity.getComponent<TagComponent>().tag;
+        auto& tag = entity.get<TagComponent>().tag;
 
-            char buffer[256];
-            memset(buffer, 0, sizeof(buffer));
-            std::strncpy(buffer, tag.c_str(), sizeof(buffer));
+        char buffer[256];
+        memset(buffer, 0, sizeof(buffer));
+        strncpy(buffer, tag.c_str(), sizeof(buffer));
 
-            if (ImGui::InputText("##Tag", buffer, sizeof(buffer))) {
-                tag = std::string(buffer);
-            }
+        if (ImGui::InputText("##Tag", buffer, sizeof(buffer))) {
+            tag = std::string(buffer);
         }
 
         ImGui::SameLine();
@@ -199,32 +200,31 @@ namespace engine {
 
         ImGui::PopItemWidth();
 
-        drawComponent<TransformComponent3d>("Transform", entity, [](TransformComponent3d& transform) {
-            auto& transformMat = transform.transformMatrix;
+        drawComponent<Transform3dComponent>("Transform", entity, [](Transform3dComponent& transform) {
             bool isPosUpdated = false;
             bool isRotUpdated = false;
             bool isScaleUpdated = false;
 
-            drawVec3Controller("Translation", transformMat.position, isPosUpdated);
+            drawVec3Controller("Translation", transform.position, isPosUpdated);
 
-            glm::vec3 rotation = glm::degrees(transformMat.rotation);
+            glm::vec3 rotation = glm::degrees(transform.rotation);
             drawVec3Controller("Rotation", rotation, isRotUpdated);
-            transformMat.rotation = glm::radians(rotation);
+            transform.rotation = glm::radians(rotation);
 
-            drawVec3Controller("Scale", transformMat.scale, isScaleUpdated, 1.0f);
+            drawVec3Controller("Scale", transform.scale, isScaleUpdated, 1.0f);
 
-            transformMat.isUpdated = isPosUpdated || isRotUpdated || isScaleUpdated;
-            if (transformMat.isUpdated) {
-                transformMat.applyChanges();
+            transform.isUpdated = isPosUpdated || isRotUpdated || isScaleUpdated;
+            if (transform.isUpdated) {
+                transform.applyChanges();
             }
-            ENGINE_INFO("Transform is updated : {0}", transformMat.isUpdated);
+            ENGINE_INFO("Transform is updated : {0}", transform.isUpdated);
         });
     }
 
     void SceneHierarchy::onUpdate(Time dt) {
         ImGui::Begin(_props.name);
 
-        _scene->getEntities().each([&](auto entityID) {
+        _scene->getRegistry().each([&](auto entityID) {
             Entity entity { entityID , _scene.get() };
             drawEntityNode(entity);
         });
@@ -236,7 +236,7 @@ namespace engine {
         // Right-click on blank space
         if (ImGui::BeginPopupContextWindow(nullptr, 1, false)) {
             if (ImGui::MenuItem("Create Empty Entity")) {
-                _scene->createEntity("Empty Entity");
+                _scene->createEntity3d("Empty Entity");
             }
             ImGui::EndPopup();
         }
@@ -249,6 +249,10 @@ namespace engine {
         }
 
         ImGui::End();
+    }
+
+    void SceneHierarchy::destroy() {
+        removeCallback();
     }
 
 }

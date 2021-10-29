@@ -1,56 +1,22 @@
 //
 // Created by mecha on 26.09.2021.
 //
+
 #pragma once
 
-#include "../core/Assert.h"
-#include "../core/String.h"
-
-#include "entt/entt.hpp"
+#include "Family.h"
 
 namespace engine {
 
-    class Entity;
-
-    class Scene {
+    class Scene : public EntityContainer {
 
     public:
         Scene() = default;
-        ~Scene() = default;
-
-    public:
-        inline entt::registry& getEntities() {
-            return _entities;
+        ~Scene() {
+            clear();
         }
 
     public:
-        Entity createEntity();
-        Entity createEntity(const std::string &tag);
-        void deleteEntity(const Entity& entity);
-        void clear();
-
-        template<typename T, typename... Args>
-        inline T& addComponent(const entt::entity& entityId, Args &&... args) {
-            ENGINE_ASSERT(!hasComponent<T>(entityId), "Entity already has component!")
-            return _entities.emplace<T>(entityId, std::forward<Args>(args)...);
-        }
-
-        template<typename T>
-        inline T& getComponent(const entt::entity& entityId) {
-            return *_entities.try_get<T>(entityId);
-        }
-
-        template<typename T>
-        inline bool hasComponent(const entt::entity& entityId) const {
-            return _entities.try_get<T>(entityId) != nullptr;
-        }
-
-        template<typename T>
-        inline void removeComponent(const entt::entity& entityId) {
-            ENGINE_ASSERT(hasComponent<T>(entityId), "Entity does not have component!")
-            _entities.remove<T>(entityId);
-        }
-
         inline const uint32_t& getTextureId() const {
             return _textureId;
         }
@@ -59,10 +25,39 @@ namespace engine {
             _textureId = textureId;
         }
 
-    private:
-        entt::registry _entities;
-        uint32_t _textureId;
+        inline const std::vector<Family>& getFamilies() {
+            return _families;
+        }
 
+        inline const std::vector<Entity>& getEntities() {
+            return _entities;
+        }
+
+        inline entt::registry& getRegistry() override {
+            return _registry;
+        }
+
+    public:
+        Family createFamily(const std::string &tag);
+        void deleteFamily(const Family& family);
+        void clear();
+        bool isEmpty() const;
+
+        Entity createEntity(const std::string &tag) override;
+        Entity createEntity2d(const std::string &tag) override;
+        Entity createEntity3d(const std::string &tag) override;
+        void deleteEntityFromRegistry(const Entity& entity) override;
+        void deleteEntity(const Entity& entity) override;
+
+        void addEntity(const Entity &entity) override;
+
+        void addFamily(const Entity &entity) override;
+
+    private:
+        entt::registry _registry; // registry of all entities for this Scene.
+        std::vector<Family> _families;
+        std::vector<Entity> _entities; // entities that are not included to Family.
+        uint32_t _textureId; // id of texture that stores pixels of this Scene.
     };
 
 }

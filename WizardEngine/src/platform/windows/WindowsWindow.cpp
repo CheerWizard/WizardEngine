@@ -8,6 +8,7 @@
 #include "../../core/Assert.h"
 
 #include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
 #include <stb_image.h>
 
 #define GET_WINDOW_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).windowCallback
@@ -32,6 +33,25 @@ namespace engine {
                 windowProps.title.c_str(),
                 nullptr,
                 nullptr);
+    }
+
+    void WindowsWindow::enableFullScreen() {
+        auto* monitor = glfwGetPrimaryMonitor();
+        auto* videoMode = glfwGetVideoMode(monitor);
+        glfwSetWindowMonitor(_window,
+                             monitor,
+                             0,
+                             0,
+                             videoMode->width,
+                             videoMode->height,
+                             videoMode->refreshRate);
+        onWindowResized(videoMode->width, videoMode->height);
+    }
+
+    void WindowsWindow::disableFullScreen() {
+        int refreshRate = getRefreshRate();
+        glfwSetWindowMonitor(_window, nullptr, 0, 0, windowProps.width, windowProps.height, refreshRate);
+        onWindowResized(windowProps.width, windowProps.height);
     }
 
     void WindowsWindow::destroy() {
@@ -164,6 +184,14 @@ namespace engine {
                                      4);
         glfwSetWindowIcon(_window, 1, images);
         stbi_image_free(images[0].pixels);
+    }
+
+    void WindowsWindow::onWindowResized(const uint32_t &width, const uint32_t &height) {
+        auto callback = GET_WINDOW_CALLBACK(_window);
+
+        if (callback != nullptr) {
+            callback->onWindowResized(width, height);
+        }
     }
 
 }

@@ -9,13 +9,13 @@ namespace engine {
     void GLShader::onCreate() {
         auto vShader = readAsset(props.vFileName);
         if (vShader.empty()) {
-            error = READING_FILE;
+            state = FAILED_READ_FILE;
             return;
         }
 
         auto fShader = readAsset(props.fFileName);
         if (fShader.empty()) {
-            error = READING_FILE;
+            state = FAILED_READ_FILE;
             return;
         }
 
@@ -128,6 +128,19 @@ namespace engine {
         glUniformMatrix4fv(location, 1, GL_FALSE, uniform.toFloatPtr());
     }
 
+    void GLShader::setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) {
+        ENGINE_INFO("Mat4Uniform array element is updated : {0}", uniform.isUpdated);
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+
+        auto name = std::string(uniform.name) + "[" + std::to_string(index) + "]";
+        auto c_name = name.c_str();
+        auto location = glGetUniformLocation(programId, c_name);
+
+        ENGINE_INFO("Uploading Mat4Uniform array element into {0}", c_name);
+        glUniformMatrix4fv(location, 1, GL_FALSE, uniform.toFloatPtr());
+    }
+
     bool GLShader::compile() {
         programId = glCreateProgram();
         _shaderIds = std::vector<GLenum>();
@@ -159,7 +172,7 @@ namespace engine {
                 auto shaderStringType = toStringShaderType(type);
                 ENGINE_ASSERT(false, shaderStringType + " shader compilation failure!")
 
-                error = COMPILE;
+                state = FAILED_COMPILE;
                 return false;
             }
 
@@ -181,7 +194,7 @@ namespace engine {
             ENGINE_ERR("{0}", infoLog.data());
             ENGINE_ASSERT(false, "Shader link failure!")
 
-            error = LINKING;
+            state = FAILED_LINKING;
             return false;
         }
 
@@ -262,7 +275,7 @@ namespace engine {
 
         if (vertexFormat->isEmpty()) {
             ENGINE_WARN("Shader '{0}' doesn't has vertex attributes!", props.name);
-            error = ShaderError::NO_ATTRS;
+            state = NO_VERTEX_ATTRS;
         }
 
         ENGINE_INFO("Shader has found vertex attributes!");
@@ -313,13 +326,29 @@ namespace engine {
                 auto j = i + 2; // start of block {
                 while (vShaderTokens[j + 1] != "}") {
                     auto attrElementCount = toElementCount(vShaderTokens[j + 1]);
+
+                    auto attrName = vShaderTokens[j + 2];
+                    uint32_t attrCount = 1;
+                    // check if this attr is attr array.
+                    auto attrNameTokens = split(attrName, "[]");
+                    if (attrNameTokens.size() > 1) {
+                        attrName = attrNameTokens[0];
+                        attrCount = TO_UINT32(attrNameTokens[1]);
+                    }
+
                     auto attr = UniformAttribute {
-                        attrElementCount
+                        attrName.c_str(),
+                        attrElementCount,
+                        attrCount
                     };
-                    ENGINE_INFO("Adding new uniform block attribute - elementCount : {0}, block name : {1}",
-                                attrElementCount,
-                                uniformBlockName);
+
+                    ENGINE_INFO(
+                        "Adding new uniform block attribute - elementCount : {0}, block name : {1}",
+                        attrElementCount,
+                        uniformBlockName
+                    );
                     addUniformBlockAttr(attr);
+
                     j += 2;
                 }
 
@@ -330,7 +359,7 @@ namespace engine {
 
         if (uniformBlockFormat->isEmpty()) {
             ENGINE_WARN("Shader '{0}' doesn't has uniform blocks!", props.name);
-            error = ShaderError::NO_UNIFORM_BLOCKS;
+            state = NO_UNIFORM_BLOCKS;
             return;
         }
 

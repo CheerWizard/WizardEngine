@@ -16,6 +16,7 @@ case engine::str_hash(str, engine::str_len(str))
 #define TO_FLOAT(v) std::stof(v)
 #define TO_INT(v) std::stoi(v)
 #define TO_DOUBLE(v) std::stod(v)
+#define TO_UINT32(v) static_cast<uint32_t>(std::stoul(v))
 
 namespace engine {
 
@@ -117,6 +118,22 @@ namespace engine {
 
     static constexpr ullong str_hash_for_switch(const char* const str) {
         return (str_is_correct(str) && (str_len(str) <= MAX_LENGTH)) ? str_hash(str, str_len(str)) : N_HASH;
+    }
+
+    namespace string {
+
+        static const bool contains(const char* str, const char &ch) {
+            return strchr(str, ch) != nullptr;
+        }
+
+        static const bool contains(const std::string &str, const char &ch) {
+            return str.find(ch) != std::string::npos;
+        }
+
+        static const bool equals(const char* str1, const char* str2) {
+            return strcmp(str1, str2) == 0;
+        }
+
     }
 
 }

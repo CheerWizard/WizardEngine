@@ -29,8 +29,8 @@ namespace engine {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    void GLVertexBuffer::allocate() {
-        capacity = vertexFormat->getSize() * DEFAULT_VERTEX_COUNT;
+    void GLVertexBuffer::allocate(const uint32_t &vertexCount) {
+        capacity = vertexFormat->getSize() * vertexCount;
 
         if (!hasCapacity()) return;
         glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr) capacity, nullptr, GL_DYNAMIC_DRAW);

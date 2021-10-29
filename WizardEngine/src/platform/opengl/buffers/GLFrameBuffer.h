@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../../graphics/buffers/FrameBuffer.h"
+#include "../../../graphics/frame/FrameBuffer.h"
 
 namespace engine {
 
@@ -32,6 +32,10 @@ namespace engine {
         void removeAttachment(uint32_t attachmentIndex, int value) override;
         void setViewPort() override;
         void recreate() override;
+        void enableDepth() override;
+        void disableDepth() override;
+        void clearDepth(const Color &color) override;
+        void clearColor(const Color &color) override;
 
     protected:
         void attachColorSpecs() override;

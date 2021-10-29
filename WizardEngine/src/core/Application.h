@@ -9,8 +9,8 @@
 #include "Events.h"
 #include "LayerStack.h"
 #include "Input.h"
-#include "CameraController.h"
-#include "Timer.h"
+#include "../camera/CameraController.h"
+#include "FpsController.h"
 #include "String.h"
 #include "FileDialog.h"
 
@@ -18,8 +18,9 @@
 
 #include "../graphics/GraphicsContext.h"
 #include "../graphics/render/RenderSystem.h"
-#include "../graphics/io/ObjFile.h"
-#include "../graphics/geometry/Shapes.h"
+#include "../graphics/sources/MeshSource.h"
+#include "../graphics/sources/TextureSource.h"
+#include "../graphics/sources/ShaderSource.h"
 
 #define DEFAULT_CAMERA_NAME "camera"
 
@@ -46,6 +47,30 @@ namespace engine {
             return _graphicsFactory;
         }
 
+        inline const Scope<Window>& getWindow() {
+            return _window;
+        }
+
+        inline const Ref<RenderSystem>& getRenderSystem() {
+            return _renderSystem;
+        }
+
+        inline MeshSource& getMeshSource() {
+            return _meshSource;
+        }
+
+        inline const Ref<TextureSource>& getTextureSource() {
+            return _textureSource;
+        }
+
+        inline const Ref<ShaderSource>& getShaderSource() {
+            return _shaderSource;
+        }
+
+        inline void bindCloseKey(const KeyCode& keyCode) {
+            _closeKeyPressed = keyCode;
+        }
+
     public:
         void onWindowClosed() override;
         void onWindowResized(const uint32_t &width, const uint32_t &height) override;
@@ -69,27 +94,12 @@ namespace engine {
         virtual WindowProps createWindowProps();
 
     public:
-        void addShader(const std::string& name, const Ref<Shader>& shader);
-        void addShader(const Ref<Shader>& shader);
-        ShaderError loadShader(const ShaderProps& shaderProps, VertexFormat* vertexFormat);
-        ShaderError loadShader(const ShaderProps &shaderProps);
-        Ref<Shader> getShader(const std::string& name);
-        bool shaderExists(const std::string& name) const;
         float getAspectRatio() const;
         const uint32_t& getWindowWidth();
         const uint32_t& getWindowHeight();
-        void enableDepthRendering();
-        void createCamera(const char* name = DEFAULT_CAMERA_NAME);
         void createActiveScene();
-        void updateFboSpecification();
-        void updateFboSpecification(const FramebufferSpecification &framebufferSpecification);
-        void setPolygonMode(const PolygonMode &polygonMode);
         uint32_t getRefreshRate();
         void* getNativeWindow();
-        void enableDisplay();
-        void disableDisplay();
-        Ref<MeshComponent> loadObj(const std::string& objName);
-        void loadTexture(const std::string &fileName);
         void setWindowIcon(const std::string &filePath);
         Ref<FileDialog> createFileDialog();
 
@@ -100,34 +110,30 @@ namespace engine {
     private:
         void restart();
 
-        void createCamera3D(const char* name);
-        void createCamera3D(const char* name, const glm::vec3 &position);
-        void createCamera3D(Camera3d* camera3D);
-
-        void createCamera2D(const char* name);
-        void createCamera2D(const char* name, const glm::vec3 &position);
-        void createCamera2D(Camera2d* camera2D);
-
-        void createRenderSystem();
+        void createGraphics();
+        void createSources();
+        void createFrameSpecs();
 
     public:
-        Scope<Input> input;
-        KeyCode closeKeyPressed;
-        Ref<CameraController> sceneCameraController;
-        Ref<Scene> activeScene; // todo add Scene cache or smth similar.
-        Timer fpsTimer;
-        ObjFile objFile;
+        Scope<Input> input; // input controller!
+        Ref<Scene> activeScene; // todo add SceneSource and cache multiple Scenes.
+        Ref<FrameController> activeFrameController; // controller for "active" scene frame!
+        FpsController fpsController;
 
     private:
         EngineType _engineType;
         bool _isRunning = true;
+        KeyCode _closeKeyPressed;
+
         LayerStack _layerStack;
         Scope<Window> _window;
         Scope<GraphicsContext> _graphicsContext;
         Ref<RenderSystem> _renderSystem;
-        bool _isDisplayEnabled = true;
+        // data sources
         Ref<GraphicsFactory> _graphicsFactory;
-
+        MeshSource _meshSource;
+        Ref<TextureSource> _textureSource;
+        Ref<ShaderSource> _shaderSource;
     };
 
     Application* createApplication();

@@ -3,6 +3,7 @@
 //
 
 #include "AssetBrowser.h"
+#include "FileExtensions.h"
 
 #include <core/MouseCodes.h>
 
@@ -11,13 +12,6 @@
 namespace fairy {
 
     void AssetBrowser::create() {
-        _fileIcon->setTexturesPath(EDITOR_TEXTURES_PATH);
-        _fileIcon->bind();
-        _fileIcon->load("file_icon.png");
-
-        _dirIcon->setTexturesPath(EDITOR_TEXTURES_PATH);
-        _dirIcon->bind();
-        _dirIcon->load("dir_icon.png");
     }
 
     void AssetBrowser::destroy() {
@@ -33,7 +27,7 @@ namespace fairy {
             }
         }
 
-        float cellSize = thumbnailSize + padding;
+        float cellSize = _props.thumbnailSize + _props.padding;
 
         float panelWidth = ImGui::GetContentRegionAvail().x;
         int columnCount = (int)(panelWidth / cellSize);
@@ -47,38 +41,53 @@ namespace fairy {
             const auto& path = directoryEntry.path();
             auto relativePath = std::filesystem::relative(path, _props.assetPath);
             const auto& fileName = relativePath.filename().string();
+            const auto& fileExtension = relativePath.extension().string();
             ENGINE_INFO("Asset file name : {0}, relative path : {1}", fileName, path);
+
             bool isDirectory = directoryEntry.is_directory();
+            uint32_t iconId = _items.dirItem.iconId;
+
+            if (!isDirectory) {
+                for (const auto& item : _items.items) {
+                    const auto* fileExtensionStr = fileExtension.c_str();
+                    ENGINE_INFO("Current file extension : {0}", fileExtensionStr);
+                    ENGINE_INFO("Current item extension : {0}", item.extension);
+                    if (strcmp(fileExtensionStr, item.extension) == 0) {
+                        ENGINE_INFO("Found icon id {0} for current {1} file!", item.iconId, item.extension);
+                        iconId = item.iconId;
+                        break;
+                    }
+                }
+            }
 
             auto itemId = fileName.c_str();
             ImGui::PushID(itemId);
-
-            auto icon = isDirectory ? _dirIcon : _fileIcon;
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
             auto iconClicked = ImGui::ImageButton(
-                    (ImTextureID)icon->getId(),
-                    { thumbnailSize, thumbnailSize },
-                    { 1, 0 },
-                    { 0, 1 }
+                    (ImTextureID) iconId,
+                    { _props.thumbnailSize, _props.thumbnailSize },
+                    { 0, 0 },
+                    { 1, 1 }
             );
 
             if (!isDirectory && iconClicked) {
-                auto assetExtension = relativePath.extension().string();
+                SWITCH(fileExtension.c_str()) {
 
-                // todo add icons for appropriate asset extension.
-                SWITCH(assetExtension.c_str()) {
-                    CASE(".jpg"):
-                        _callback->onJpgOpen(fileName);
-                        break;
-                    CASE(".png"):
-                        _callback->onPngOpen(fileName);
-                        break;
-                    CASE(".obj"):
-                        _callback->onObjOpen(fileName);
-                        break;
-                    CASE(".glsl"):
+                    CASE(file_extensions::JPG):
+                    _callback->onImageOpen(fileName);
+                    break;
+
+                    CASE(file_extensions::PNG):
+                    _callback->onImageOpen(fileName);
+                    break;
+
+                    CASE(file_extensions::OBJ):
+                    _callback->onObjOpen(fileName);
+                    break;
+
+                    CASE(file_extensions::GLSL):
                     _callback->onGlslOpen(path.string(), fileName);
-                        break;
+                    break;
                 }
             }
 
@@ -121,8 +130,8 @@ namespace fairy {
 
         ImGui::Columns(1);
 
-        ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
-        ImGui::SliderFloat("Padding", &padding, 0, 32);
+        ImGui::SliderFloat("Thumbnail Size", &_props.thumbnailSize, 16, 512);
+        ImGui::SliderFloat("Padding", &_props.padding, 0, 32);
 
         ImGui::End();
     }

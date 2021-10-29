@@ -17,17 +17,14 @@ namespace engine {
         glm::vec3 rotation;
         float scale;
 
-        ViewMatrix3d(const char* name,
+        ViewMatrix3d(
+                const char* name,
                 const glm::vec3 &position = DEFAULT_VIEW_POS_3D,
                 const glm::vec3 &rotation = DEFAULT_VIEW_ROT_3D,
-                const float &scale = 1) :
-                Mat4fUniform(name),
-                position(position),
-                rotation(rotation),
-                scale(scale)
-                {}
+                const float &scale = 1
+        ) : Mat4fUniform(name), position(position), rotation(rotation), scale(scale) {}
 
-        ViewMatrix3d &applyChanges() override;
+        ViewMatrix3d& applyChanges() override;
 
     };
 
@@ -35,13 +32,11 @@ namespace engine {
         glm::vec3 position;
         float rotation;
 
-        ViewMatrix2d(const char* name,
-                   const glm::vec3 &position = DEFAULT_VIEW_POS_2D,
-                   const float &rotation = 0,
-                   const float &scale = 0) :
-                   Mat4fUniform(name),
-                   position(position),
-                   rotation(rotation) {}
+        ViewMatrix2d(
+                const char* name,
+                const glm::vec3 &position = DEFAULT_VIEW_POS_2D,
+                const float &rotation = 0
+        ) : Mat4fUniform(name), position(position), rotation(rotation) {}
 
        ViewMatrix2d& applyChanges() override;
 

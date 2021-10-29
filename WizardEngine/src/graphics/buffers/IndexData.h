@@ -16,9 +16,7 @@ namespace engine {
         uint32_t indexStart;
         uint32_t indexCount;
 
-        IndexData() = default;
-
-        IndexData(uint32_t* indices,
+        IndexData(uint32_t* indices = nullptr,
                   const uint32_t &indexStart = 0,
                   const uint32_t &indexCount = MIN_INDEX_COUNT) :
                   indices(indices),

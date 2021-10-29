@@ -8,19 +8,9 @@
 
 namespace engine {
 
-    struct Texture : IntUniform {
-        Texture(const char* name, const int &slot) : IntUniform(name, slot) {}
-    };
-
-    struct TextureComponent {
-        Texture texture;
-
-        TextureComponent(const char* name, const int &slot) : texture(Texture(name, slot)) {}
-        TextureComponent(const Texture &texture) : texture(texture) {}
-
-    public:
-        void applyChanges() {
-            texture.applyChanges();
+    struct TextureComponent : IntUniform {
+        TextureComponent(const char* name, const int &slot) : IntUniform(name, slot) {
+            applyChanges();
         }
     };
 
