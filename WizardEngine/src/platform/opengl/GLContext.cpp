@@ -12,7 +12,7 @@
 namespace engine {
 
     GLContext::GLContext(void* nativeWindow) : _window((GLFWwindow*) nativeWindow) {
-        ENGINE_ASSERT(nativeWindow, "Window is null!")
+        ENGINE_ASSERT(nativeWindow, "Window is null!");
     }
 
     void GLContext::onCreate() {
@@ -21,7 +21,7 @@ namespace engine {
         glfwMakeContextCurrent(_window);
 
         int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-        ENGINE_ASSERT(status, "Failed to initialize Glad!")
+        ENGINE_ASSERT(status, "Failed to initialize Glad!");
     }
 
     void GLContext::swapBuffers() {

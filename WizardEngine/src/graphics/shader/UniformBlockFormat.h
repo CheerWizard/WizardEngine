@@ -11,7 +11,6 @@ namespace engine {
     class UniformBlockFormat {
 
     public:
-
         UniformBlockFormat(
                 const std::string& name = "",
                 const std::vector<UniformAttribute>& attributes = std::vector<UniformAttribute>()) :
@@ -47,6 +46,11 @@ namespace engine {
         void clear();
         void remove(const uint32_t &index);
         bool isEmpty();
+
+    public:
+        const UniformAttribute& operator [](const uint32_t &index) const {
+            return _attributes[index];
+        }
 
     private:
         std::string _name;

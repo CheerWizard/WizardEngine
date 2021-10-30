@@ -12,7 +12,7 @@ namespace engine {
 
     void MeshLayout::onUpdate(Time dt) {
         if (_isVisible) {
-            setTextureId(_frameController->getFrameColors()[0]);
+            id = _frameController->getFrameColors()[0];
 
             _cameraController->setDeltaTime(dt);
 

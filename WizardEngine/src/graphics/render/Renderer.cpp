@@ -10,12 +10,9 @@ namespace engine {
         _vertexArray = graphicsFactory->newVertexArray();
         _vertexBuffer = graphicsFactory->newVertexBuffer();
         _indexBuffer = graphicsFactory->newIndexBuffer();
-        _textureBuffer = graphicsFactory->newTextureBuffer();
         _drawer = graphicsFactory->newDrawer();
-        _uniformBuffer = graphicsFactory->newUniformBuffer();
 
         _shader->bindAttributes();
-        _shader->bindUniformBlock();
 
         _vertexArray->bind();
 
@@ -24,9 +21,9 @@ namespace engine {
         _indexBuffer->bind();
         _indexBuffer->allocate();
 
-        _textureBuffer->bind();
-
         if (_shader->getState() != ShaderState::NO_UNIFORM_BLOCKS) {
+            _uniformBuffer = graphicsFactory->newUniformBuffer();
+            _shader->bindUniformBlock();
             _uniformBuffer->prepare(_shader->getUniformBlockFormat());
         }
 
@@ -45,6 +42,7 @@ namespace engine {
 
         renderTransform(entity);
         renderCamera(entity);
+        renderMaterial(entity);
         renderPolygonMode(entity);
 
         drawElements(totalIndexCount);
@@ -65,12 +63,15 @@ namespace engine {
     void Renderer::renderMaterial(const Entity& entity) {
         if (entity.has<TextureComponent>()) {
             auto& texture = entity.get<TextureComponent>();
-            _shader->setUniform(texture);
-            _textureBuffer->activate(texture.value);
+            _shader->setUniformArrayElement(texture.value, texture);
+            // get/load TBO and activate his slot!
+            auto& tbo = _textureSource->getTextureBuffer(texture.fileName);
+            tbo->activate(texture.value);
+            tbo->bind();
         }
     }
 
-    void Renderer::loadMesh(MeshComponent &meshComponent) {
+    void Renderer::uploadMesh(MeshComponent &meshComponent) {
         _vertexBuffer->bind();
         _indexBuffer->bind();
 
@@ -81,16 +82,6 @@ namespace engine {
             const auto& indexData = meshes[i].indexData;
             _indexBuffer->load(indexData);
         }
-    }
-
-    void Renderer::loadTexture(const std::string &filePath) {
-        _textureBuffer->bind();
-        _textureBuffer->load(filePath);
-    }
-
-    void Renderer::loadTextureData(const void *data) {
-        _textureBuffer->bind();
-        _textureBuffer->loadData(data);
     }
 
     void Renderer::drawElements(const uint32_t &indexCount) {
@@ -130,7 +121,7 @@ namespace engine {
             meshComponent.updateStart(previousVertexCount, previousIndexCount);
             meshComponent.setInstanceId(instanceID);
             meshComponent.updateCounts();
-            loadMesh(meshComponent);
+            uploadMesh(meshComponent);
         }
 
         previousIndexCount += meshComponent.totalIndexCount;
@@ -186,6 +177,7 @@ namespace engine {
                     camera.toFloatPtr(),
                     0
                 };
+                _uniformBuffer->setUniformBlockPointer();
                 _uniformBuffer->bind();
                 _uniformBuffer->load(uniformData);
                 _uniformBuffer->unbind();

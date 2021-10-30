@@ -7,7 +7,11 @@
 
 namespace engine {
 
-    void RenderSystem::create(const Ref<GraphicsFactory> &graphicsFactory, const Ref<ShaderSource> &shaderSource) {
+    void RenderSystem::create(
+            const Ref<GraphicsFactory> &graphicsFactory,
+            const Ref<ShaderSource> &shaderSource,
+            const Ref<TextureSource> &textureSource
+    ) {
         auto batchShader = shaderSource->create(ShaderProps {
             "batch",
             "v_batch",
@@ -21,8 +25,8 @@ namespace engine {
             ENGINE_SHADERS_PATH
         });
 
-        batchRenderer = createRef<Renderer>(graphicsFactory, batchShader);
-        instanceRenderer = createRef<Renderer>(graphicsFactory, instanceShader);
+        batchRenderer = createRef<Renderer>(graphicsFactory, batchShader, textureSource);
+        instanceRenderer = createRef<Renderer>(graphicsFactory, instanceShader, textureSource);
     }
 
     void RenderSystem::destroy() {

@@ -177,6 +177,6 @@ namespace engine {
         _graphicsFactory = _graphicsContext->newGraphicsFactory();
         activeFrameController = createRef<FrameController>(_graphicsFactory->newFrameBuffer());
         createSources();
-        _renderSystem = createRef<RenderSystem>(_graphicsFactory, activeFrameController, _shaderSource);
+        _renderSystem = createRef<RenderSystem>(_graphicsFactory, activeFrameController, _shaderSource, _textureSource);
     }
 }

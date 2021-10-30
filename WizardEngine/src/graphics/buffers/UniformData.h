@@ -6,8 +6,6 @@
 
 #include <cstdint>
 
-#include "../shader/Uniform.h"
-
 namespace engine {
 
     struct UniformData {

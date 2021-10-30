@@ -8,8 +8,6 @@
 #include "../core/Events.h"
 #include "../core/Time.h"
 
-#include "../graphics/buffers/TextureBuffer.h"
-
 namespace engine {
 
     struct ImageLayoutProps {
@@ -25,8 +23,7 @@ namespace engine {
     class ImageLayout : public MouseCallback {
 
     public:
-        ImageLayout(const ImageLayoutProps &props, const Ref<TextureBuffer>& image) :
-                _props(props), _image(image) {}
+        ImageLayout(const ImageLayoutProps &props) : _props(props) {}
 
         virtual ~ImageLayout() {
             destroy();
@@ -34,7 +31,6 @@ namespace engine {
 
     public:
         virtual void onUpdate(Time dt);
-        void load(const std::string &fileName);
 
     public:
         inline void setCallback(ImageLayoutCallback* imageLayoutCallback) {
@@ -53,12 +49,12 @@ namespace engine {
             _isVisible = false;
         }
 
-        inline void setTextureId(const uint32_t &textureId) {
-            _image->setId(textureId);
-        }
-
         inline const bool& isFocused() const {
             return _isFocused;
+        }
+
+        inline void setId(const uint32_t &id) {
+            this->id = id;
         }
 
     public:
@@ -75,7 +71,7 @@ namespace engine {
     protected:
         ImageLayoutProps _props;
         ImageLayoutCallback* _callback = nullptr;
-        Ref<TextureBuffer> _image;
+        uint32_t id = 0;
         bool _isHoldingMouse = false;
         bool _isVisible = true;
         bool _isFocused = false;

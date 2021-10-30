@@ -10,21 +10,22 @@ namespace engine {
         return "";
     }
 
-    // todo extract multiple meshes from single file into single MeshComponent with multiple meshes.
     MeshComponent ObjFile::readObj(const std::string &fileName) {
+        name = fileName;
         auto source = readAsset(fileName);
         auto tokens = split(source, "\n\r ");
 
-        std::vector<Vertex> vertices;
-        std::vector<glm::vec2> uvs;
-        std::vector<glm::vec3> normals;
-        std::vector<uint32_t> indices;
-        std::vector<Face> faces;
-
-        for (auto i = 0 ; i < tokens.size(); i++) {
+        bool faceFound = false;
+        for (uint32_t i = 0 ; i < tokens.size(); i++) {
             auto token = tokens[i];
 
             if (token == "v") {
+                // check if we found a face previously. if yes, then create a mesh and continue parsing
+                if (faceFound) {
+                    faceFound = false;
+                    createMesh();
+                }
+
                 glm::vec3 position = {
                         TO_FLOAT(tokens[i + 1]),
                         TO_FLOAT(tokens[i + 2]),
@@ -48,6 +49,7 @@ namespace engine {
                 normals.emplace_back(normal);
 
             } else if (token == "f") {
+                faceFound = true;
                 auto vertexOrder1Token = tokens[i + 1];
                 auto vertexOrder2Token = tokens[i + 2];
                 auto vertexOrder3Token = tokens[i + 3];
@@ -123,6 +125,7 @@ namespace engine {
                 auto vertexOrder4Token = tokens[i + 4];
                 auto faceTokens4 = split(vertexOrder4Token, "/");
 
+                // todo currently we are handling 4 faces. need to find a way to handle any count of faces!
                 if (faceTokens4.size() > 1) {
                     int indexUv4 = 0;
                     int indexPos4;
@@ -137,9 +140,9 @@ namespace engine {
                     }
 
                     Face face4 = {
-                            indexPos4,
-                            indexUv4,
-                            indexNormal4
+                        indexPos4,
+                        indexUv4,
+                        indexNormal4
                     };
 
                     indices.emplace_back(indexPos1);
@@ -151,12 +154,43 @@ namespace engine {
             }
         }
 
+        // creates last mesh
+        if (faceFound) {
+            createMesh();
+        }
+
+        // convert meshes vector into meshes array
+        uint32_t meshCount = meshes.size();
+        auto* meshArr = new Mesh[meshCount];
+        for (uint32_t i = 0; i < meshCount ; i++) {
+            meshArr[i] = meshes[i];
+        }
+        clearMeshCache();
+        resetVertexCounters();
+
+        return { meshArr, meshCount };
+    }
+
+    void ObjFile::createMesh() {
+        if (uvs.empty()) {
+            ENGINE_WARN("ObjFile: No UVs for {0} file!", name);
+        }
+
+        if (normals.empty()) {
+            ENGINE_WARN("ObjFile: No normals for {0} file!", name);
+        }
+
         for (const auto& face : faces) {
-            auto posIndex = face.posIndex;
-            auto uvIndex = face.uvIndex;
+            auto posIndex = face.posIndex - vertexCounter;
+            auto uvIndex = face.uvIndex - uvsCounter;
+            auto normalIndex = face.normalIndex - normalsCounter;
+
             auto& vertex = vertices[posIndex];
             if (!uvs.empty()) {
                 vertex.textureCoords = uvs[uvIndex];
+            }
+            if (!normals.empty()) {
+                vertex.normal = normals[normalIndex];
             }
         }
 
@@ -165,32 +199,56 @@ namespace engine {
         auto* indicesArr = new uint32_t[indexCount];
         auto* verticesArr = new Vertex[vertexCount];
 
-        for (auto i = 0 ; i < indexCount ; i++) {
-            indicesArr[i] = indices[i];
+        for (auto j = 0 ; j < indexCount ; j++) {
+            indicesArr[j] = indices[j];
         }
 
-        for (auto i = 0 ; i < vertexCount ; i++) {
-            verticesArr[i] = vertices[i];
+        for (auto j = 0 ; j < vertexCount ; j++) {
+            verticesArr[j] = vertices[j];
         }
 
         auto vertexData = VertexData {
             verticesArr,
-            0,
+            vertexCounter,
             vertexCount
         };
 
         auto indexData = IndexData {
             indicesArr,
-            0,
+            indexCounter,
             indexCount
         };
 
-        auto* mesh = new Mesh {
+        meshes.emplace_back(Mesh {
             vertexData,
             indexData
-        };
+        });
 
-        return { mesh };
+        // invalidate counters
+        vertexCounter += vertices.size();
+        uvsCounter += uvs.size();
+        normalsCounter += normals.size();
+        indexCounter += indices.size();
+
+        clearVertexCache();
     }
 
+    void ObjFile::clearVertexCache() {
+        vertices.clear();
+        uvs.clear();
+        normals.clear();
+        indices.clear();
+        faces.clear();
+    }
+
+    void ObjFile::clearMeshCache() {
+        meshes.clear();
+    }
+
+    void ObjFile::resetVertexCounters() {
+        vertexCounter = 0;
+        uvsCounter = 0;
+        normalsCounter = 0;
+        indexCounter = 0;
+    }
 }

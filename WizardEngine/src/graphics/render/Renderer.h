@@ -14,12 +14,18 @@
 
 #include "../../ecs/Entity.h"
 
+#include "../sources/TextureSource.h"
+
 namespace engine {
 
     class Renderer {
 
     public:
-        Renderer(const Ref<GraphicsFactory> &graphicsFactory, const Ref<Shader> &shader) : _shader(shader) {
+        Renderer(
+                const Ref<GraphicsFactory> &graphicsFactory,
+                const Ref<Shader> &shader,
+                const Ref<TextureSource> &textureSource
+        ) : _shader(shader), _textureSource(textureSource) {
             create(graphicsFactory);
         }
 
@@ -58,18 +64,7 @@ namespace engine {
         void drawElements(const uint32_t &indexCount);
         void drawElements(const uint32_t &indexCount, const uint32_t &instanceCount);
 
-        void loadMesh(MeshComponent &meshComponent);
-        void loadTexture(const std::string &filePath);
-        void loadTextureData(const void* data);
-
-    public:
-        inline const Ref<TextureBuffer>& getTextureBuffer() {
-            return _textureBuffer;
-        }
-
-        inline const Ref<Drawer>& getDrawer() {
-            return _drawer;
-        }
+        void uploadMesh(MeshComponent &meshComponent);
 
     private:
         void create(const Ref<GraphicsFactory> &graphicsFactory);
@@ -83,8 +78,8 @@ namespace engine {
         Ref<VertexArray> _vertexArray;
         Ref<VertexBuffer> _vertexBuffer;
         Ref<IndexBuffer> _indexBuffer;
-        Ref<TextureBuffer> _textureBuffer;
-        Ref<UniformBuffer> _uniformBuffer;
+        Ref<UniformBuffer> _uniformBuffer = nullptr;
+        Ref<TextureSource> _textureSource;
 
     };
 

@@ -33,7 +33,7 @@ namespace engine {
             }
         }
 
-        ImGui::Image((void*) _image->getId(), imageSize);
+        ImGui::Image((void*) id, imageSize);
         end();
     }
 
@@ -50,12 +50,6 @@ namespace engine {
     }
 
     void ImageLayout::onMouseScrolled(double xOffset, double yOffset) {
-    }
-
-    void ImageLayout::load(const std::string &fileName) {
-        _image->recreate();
-        _image->bind();
-        _image->load(fileName);
     }
 
     void ImageLayout::end() {

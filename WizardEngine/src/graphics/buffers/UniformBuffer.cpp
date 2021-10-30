@@ -11,7 +11,6 @@ namespace engine {
         bind();
         allocate();
         unbind();
-        setUniformBlockPointer();
     }
 
 }
