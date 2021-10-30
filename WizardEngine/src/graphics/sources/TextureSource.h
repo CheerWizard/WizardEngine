@@ -30,9 +30,9 @@ namespace engine {
             return _textures.end();
         }
 
-
     public:
-        const Ref<TextureBuffer>& getTextureBuffer(const std::string &name);
+        const Ref<TextureBuffer>& getTextureBuffer(const std::string &fileName);
+        const Ref<TextureBuffer>& getTextureBuffer(const std::string &fileName, const std::string &texturesPath);
 
         /**
          * Checks if TextureBuffer already exists in cache by @param fileName.
@@ -52,6 +52,13 @@ namespace engine {
          * @return TextureBuffer ID from TextureBuffer that has loaded a texture from @param fileName
          */
         const uint32_t& loadTexture(const std::string &fileName, const std::string &texturesPath);
+
+        void remove(const std::string &fileName);
+
+    public:
+        const Ref<TextureBuffer>& operator [](const std::string &name) {
+            return getTextureBuffer(name);
+        }
 
     private:
         void destroy();

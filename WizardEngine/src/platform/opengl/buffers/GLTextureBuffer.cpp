@@ -32,7 +32,7 @@ namespace engine {
 
     void GLTextureBuffer::activate(const uint32_t &slot) {
         ENGINE_INFO("TextureBuffer : activate()");
-        glBindTextureUnit(GL_TEXTURE0 + slot, id);
+        glActiveTexture(GL_TEXTURE0 + slot);
     }
 
     bool GLTextureBuffer::load(const std::string &imageName) {
@@ -53,7 +53,7 @@ namespace engine {
             dataFormat = GL_RGB;
         }
 
-        ENGINE_ASSERT(internalFormat & dataFormat, "TextureBuffer format is not supported!")
+        ENGINE_ASSERT(internalFormat & dataFormat, "TextureBuffer format is not supported!");
 
         glTextureStorage2D(id, 1, internalFormat, width, height);
 

@@ -13,11 +13,8 @@ namespace engine {
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2 {0 , 0});
 
-        static bool open = true;
-        auto isClosed = !ImGui::Begin(_props.title, &open, ImGuiWindowFlags_AlwaysUseWindowPadding);
-
-        if (isClosed && _isClosable) {
-            _isVisible = false;
+        // end updating if window can't be created!
+        if (!ImGui::Begin(_props.title, &_isVisible)) {
             end();
             return;
         }
@@ -36,7 +33,7 @@ namespace engine {
             }
         }
 
-        ImGui::Image((void*) _image->getId(), imageSize);
+        ImGui::Image((void*) id, imageSize);
         end();
     }
 
@@ -53,12 +50,6 @@ namespace engine {
     }
 
     void ImageLayout::onMouseScrolled(double xOffset, double yOffset) {
-    }
-
-    void ImageLayout::load(const std::string &fileName) {
-        _image->recreate();
-        _image->bind();
-        _image->load(fileName);
     }
 
     void ImageLayout::end() {

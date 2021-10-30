@@ -11,12 +11,12 @@
 namespace engine {
 
     struct UniformAttribute {
-        const char* name;
+        std::string name;
         ElementCount elementCount;
         uint32_t count;
 
         UniformAttribute(
-            const char* name,
+            const std::string& name,
             const ElementCount &elementCount = SINGLE,
             const uint32_t &count = 1
         ) : name(name), elementCount(elementCount), count(count) {}

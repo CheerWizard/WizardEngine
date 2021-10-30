@@ -4,8 +4,9 @@ in vec2 f_uv;
 
 out vec4 fragment;
 
+uniform sampler2D diffuseSampler[1];
 uniform vec4 color;
 
 void main() {
-    fragment = color;
+    fragment = texture(diffuseSampler[0], f_uv);
 }

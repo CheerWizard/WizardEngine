@@ -49,7 +49,7 @@ namespace engine {
         setTheme();
         // Setup Platform/Renderer bindings
         ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*) app->getNativeWindow(), true);
-        ImGui_ImplOpenGL3_Init("#version 410");
+        ImGui_ImplOpenGL3_Init(GL_CORE_VERSION);
     }
 
     void ImGuiLayer::onUpdate(Time dt) {

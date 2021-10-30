@@ -51,6 +51,8 @@ namespace engine {
 
         void setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) override;
 
+        void setUniformArrayElement(const uint32_t &index, IntUniform &uniform) override;
+
     private:
         static std::string toStringShaderType(GLenum type);
 

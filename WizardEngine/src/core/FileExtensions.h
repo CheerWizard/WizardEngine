@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace fairy {
+namespace engine {
     namespace file_extensions {
         static constexpr char* GLSL = ".glsl";
         static constexpr char* OBJ = ".obj";

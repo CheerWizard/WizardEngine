@@ -30,9 +30,10 @@ namespace engine {
         RenderSystem(
                 const Ref<GraphicsFactory> &graphicsFactory,
                 const Ref<FrameController> &frameController,
-                const Ref<ShaderSource> &shaderSource
+                const Ref<ShaderSource> &shaderSource,
+                const Ref<TextureSource> &textureSource
         ) : frameController(frameController) {
-            create(graphicsFactory, shaderSource);
+            create(graphicsFactory, shaderSource, textureSource);
         }
 
         ~RenderSystem() override {
@@ -43,7 +44,11 @@ namespace engine {
         void onUpdate() override;
 
     private:
-        void create(const Ref<GraphicsFactory>& graphicsFactory, const Ref<ShaderSource> &shaderSource);
+        void create(
+                const Ref<GraphicsFactory>& graphicsFactory,
+                const Ref<ShaderSource> &shaderSource,
+                const Ref<TextureSource> &textureSource
+        );
         void destroy();
         void renderBatching(const std::vector<Entity> &entities);
         void renderInstancing(const Family& family);

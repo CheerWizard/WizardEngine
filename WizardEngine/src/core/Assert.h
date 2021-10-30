@@ -22,6 +22,6 @@
     #define CLIENT_ASSERT(x, ...) { if (!(x)) { CLIENT_ERR("Assertion failed : {0}", __VA_ARGS__); DEBUGBREAK(); } }
     #define ENGINE_ASSERT(x, ...) { if (!(x)) { ENGINE_ERR("Assertion failed : {0}", __VA_ARGS__); DEBUGBREAK(); } }
 #else
-    #define CLIENT_ASSERT(x, ...)
-    #define ENGINE_ASSERT(x, ...)
+    #define CLIENT_ASSERT(x, ...) x
+    #define ENGINE_ASSERT(x, ...) x
 #endif

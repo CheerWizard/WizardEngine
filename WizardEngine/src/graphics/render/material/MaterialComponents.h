@@ -6,10 +6,14 @@
 
 #include "../../shader/Uniform.h"
 
+#include "string"
+
 namespace engine {
 
     struct TextureComponent : IntUniform {
-        TextureComponent(const char* name, const int &slot) : IntUniform(name, slot) {
+        std::string fileName;
+        TextureComponent(const std::string &fileName, const char* name, const int &slot)
+        : IntUniform(name, slot), fileName(fileName) {
             applyChanges();
         }
     };

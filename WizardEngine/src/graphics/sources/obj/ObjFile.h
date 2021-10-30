@@ -33,6 +33,24 @@ namespace engine {
     protected:
         const char *getExtensionName() const override;
 
+    private:
+        void createMesh();
+        void clearVertexCache();
+        void clearMeshCache();
+        void resetVertexCounters();
+
+    private:
+        std::vector<Vertex> vertices;
+        std::vector<glm::vec2> uvs;
+        std::vector<glm::vec3> normals;
+        std::vector<uint32_t> indices;
+        std::vector<Face> faces;
+        std::vector<Mesh> meshes;
+
+        uint32_t vertexCounter = 0;
+        uint32_t indexCounter = 0;
+        uint32_t uvsCounter = 0;
+        uint32_t normalsCounter = 0;
     };
 
 }

@@ -3,7 +3,7 @@
 //
 
 #include "AssetBrowser.h"
-#include "FileExtensions.h"
+#include "core/FileExtensions.h"
 
 #include <core/MouseCodes.h>
 
@@ -72,20 +72,19 @@ namespace fairy {
 
             if (!isDirectory && iconClicked) {
                 SWITCH(fileExtension.c_str()) {
-
-                    CASE(file_extensions::JPG):
+                    CASE(engine::file_extensions::JPG):
                     _callback->onImageOpen(fileName);
                     break;
 
-                    CASE(file_extensions::PNG):
+                    CASE(engine::file_extensions::PNG):
                     _callback->onImageOpen(fileName);
                     break;
 
-                    CASE(file_extensions::OBJ):
+                    CASE(engine::file_extensions::OBJ):
                     _callback->onObjOpen(fileName);
                     break;
 
-                    CASE(file_extensions::GLSL):
+                    CASE(engine::file_extensions::GLSL):
                     _callback->onGlslOpen(path.string(), fileName);
                     break;
                 }
