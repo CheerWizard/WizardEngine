@@ -20,7 +20,7 @@ namespace engine {
                 const Ref<Renderer> &renderer,
                 const Ref<FrameController> &frameController,
                 const Ref<CameraController> &cameraController
-        ) : ImageLayout(props, renderer->getTextureBuffer()),
+        ) : ImageLayout(props),
         _renderer(renderer), _frameController(frameController), _cameraController(cameraController) {
             create();
         }

@@ -43,12 +43,14 @@ namespace engine {
     void GLUniformBuffer::load(const UniformData &uniformData) {
         if (!hasCapacity()) return;
 
-        auto uniformBlockAttrSize = uniformBlockFormat->get(uniformData.index).size();
-        auto subDataOffset = uniformData.index * uniformBlockAttrSize;
-        glBufferSubData(GL_UNIFORM_BUFFER,
-                        (GLsizeiptr)subDataOffset,
-                        (GLsizeiptr)uniformBlockAttrSize,
-                        uniformData.uniforms);
+        auto subDataSize = uniformBlockFormat[uniformData.index].size();
+        auto subDataOffset = uniformData.index * subDataSize;
+        glBufferSubData(
+                GL_UNIFORM_BUFFER,
+                (GLsizeiptr)subDataOffset,
+                (GLsizeiptr)subDataSize,
+                uniformData.uniforms
+        );
     }
 
 }

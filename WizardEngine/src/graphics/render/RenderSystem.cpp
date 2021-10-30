@@ -7,7 +7,11 @@
 
 namespace engine {
 
-    void RenderSystem::create(const Ref<GraphicsFactory> &graphicsFactory, const Ref<ShaderSource> &shaderSource) {
+    void RenderSystem::create(
+            const Ref<GraphicsFactory> &graphicsFactory,
+            const Ref<ShaderSource> &shaderSource,
+            const Ref<TextureSource> &textureSource
+    ) {
         auto batchShader = shaderSource->create(ShaderProps {
             "batch",
             "v_batch",
@@ -21,8 +25,8 @@ namespace engine {
             ENGINE_SHADERS_PATH
         });
 
-        batchRenderer = createRef<Renderer>(graphicsFactory, batchShader);
-        instanceRenderer = createRef<Renderer>(graphicsFactory, instanceShader);
+        batchRenderer = createRef<Renderer>(graphicsFactory, batchShader, textureSource);
+        instanceRenderer = createRef<Renderer>(graphicsFactory, instanceShader, textureSource);
     }
 
     void RenderSystem::destroy() {
@@ -30,11 +34,13 @@ namespace engine {
     }
 
     void RenderSystem::onUpdate() {
+        // check if it has at least 1 active scene!
         if (activeScene == nullptr) {
             ENGINE_WARN("RenderSystem : No active scene!");
             return;
         }
 
+        // can't update empty scene!
         if (activeScene->isEmpty()) {
             ENGINE_WARN("RenderSystem : Nothing to render on scene!");
             return;
@@ -51,8 +57,12 @@ namespace engine {
 
             if (instancingAvailable) {
                 renderInstancing(family);
-            } else {
+            } else if (!family.isEmpty()) {
                 renderBatching(family.getEntities());
+            } else {
+                // family is empty and does not have MeshComponent.
+                // we can't draw it, so move to next Family!
+                continue;
             }
         }
 

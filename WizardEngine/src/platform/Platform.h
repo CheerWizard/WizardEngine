@@ -57,6 +57,7 @@
 	    #include "opengl/GLContext.h"
         #define GLFW_INCLUDE_NONE
         #define INIT_GRAPHICS_CONTEXT(nativeWindow) createScope<GLContext>(nativeWindow)
+        #define GL_CORE_VERSION "#version 400"
 
     #elif defined(VK)
         #error "Vulkan graphics context is not supported!"

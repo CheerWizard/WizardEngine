@@ -108,6 +108,7 @@ namespace engine {
         virtual void setUniform(Mat4fUniform &uniform) = 0;
 
         virtual void setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) = 0;
+        virtual void setUniformArrayElement(const uint32_t &index, IntUniform &uniform) = 0;
 
     protected:
         uint32_t programId;

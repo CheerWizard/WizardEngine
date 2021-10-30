@@ -4,20 +4,18 @@
 
 #pragma once
 
-#include "../shader/VertexAttribute.h"
-
 #include "glm/glm.hpp"
 
-#include "vector"
-
 #define DEFAULT_POSITION {0.5f, 0.5f, 0.5f}
-#define DEFAULT_TEXTURE_COORDS {0.25f, -0.25f}
+#define DEFAULT_UV {0.25f, -0.25f}
+#define DEFAULT_NORMAL { 0, 0, 0 }
 
 namespace engine {
 
     struct Vertex {
         glm::vec3 position = DEFAULT_POSITION;
-        glm::vec2 textureCoords = DEFAULT_TEXTURE_COORDS;
+        glm::vec2 textureCoords = DEFAULT_UV;
+        glm::vec3 normal = DEFAULT_NORMAL;
         float instanceId = 0;
     };
 

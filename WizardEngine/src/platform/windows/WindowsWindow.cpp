@@ -22,7 +22,7 @@ namespace engine {
         ENGINE_INFO("Creating window {0} ({1}, {2})", windowProps.title, windowProps.width, windowProps.height);
 
         if (!isInitialized) {
-            ENGINE_ASSERT(glfwInit(), "Failed to initialize GLFW!")
+            ENGINE_ASSERT(glfwInit(), "Failed to initialize GLFW!");
             isInitialized = true;
             glfwSetErrorCallback(handleError);
         }

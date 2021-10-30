@@ -3,7 +3,7 @@
 //
 
 #include "FLLayer.h"
-#include "FileExtensions.h"
+#include "core/FileExtensions.h"
 
 #include <imgui/imgui/imgui.h>
 
@@ -32,7 +32,11 @@ namespace fairy {
             "f_obj",
             EDITOR_SHADERS_PATH
         });
-        auto objRenderer = engine::createRef<engine::Renderer>(graphicsFactory, objPreviewShader);
+        auto objRenderer = engine::createRef<engine::Renderer>(
+                graphicsFactory,
+                objPreviewShader,
+                app->getTextureSource()
+        );
 
         auto objCamera = engine::Camera3D {
             "obj",
@@ -43,6 +47,13 @@ namespace fairy {
                 "ObjCameraController",
                 objCamera
         );
+
+        auto objTexture = engine::TextureComponent {
+            "demo.png",
+            "diffuseSampler",
+            0
+        };
+        objCamera.add<engine::TextureComponent>(objTexture);
 
         auto objFrameController = engine::createRef<engine::FrameController>(graphicsFactory->newFrameBuffer());
         objFrameController->updateSpecs(app->getWindowWidth(), app->getWindowHeight());
@@ -67,10 +78,11 @@ namespace fairy {
         _imagePreviewCallback = new FLLayer::ImagePreviewCallback(*this);
 
         _scenePreview.setCallback(_scenePreviewCallback);
-        _imagePreview.setCallback(_imagePreviewCallback);
+        _texturePreview.setCallback(_imagePreviewCallback);
         _assetBrowser->setCallback(this);
 
         app->getTextureSource()->loadTexture("demo.png");
+        app->getTextureSource()->loadTexture("demo_texture.jpg");
 
         _humanEntity = app->activeScene->createEntity("Human");
         auto humanMesh = app->getMeshSource().getMesh("human.obj");
@@ -80,6 +92,7 @@ namespace fairy {
                 {0.5, 0.5, 0.5}
         );
         auto humanTexture = engine::TextureComponent {
+            "demo.png",
             "diffuseSampler",
             0
         };
@@ -95,8 +108,9 @@ namespace fairy {
                 { 0.5, 0.5, 0.5 }
         );
         auto cubeTexture = engine::TextureComponent {
+            "demo_texture.jpg",
             "diffuseSampler",
-            0
+            1
         };
         _cubeEntity.add<engine::Transform3dComponent>(cubeTransform);
         _cubeEntity.add<engine::MeshComponent>(cubeMesh);
@@ -105,7 +119,7 @@ namespace fairy {
 
     void FLLayer::destroy() {
         _scenePreview.removeCallback();
-        _imagePreview.removeCallback();
+        _texturePreview.removeCallback();
         delete _imagePreviewCallback;
         delete _scenePreviewCallback;
     }
@@ -125,10 +139,9 @@ namespace fairy {
         activeSceneCameraController->setPosition({0, 0, -1});
         activeSceneCameraController->applyChanges();
 
-        _scenePreview.setTextureId(app->activeScene->getTextureId());
-        _scenePreview.setClosable(false);
+        _scenePreview.setId(app->activeScene->getTextureId());
 
-        _imagePreview.hide();
+        _texturePreview.hide();
         _objPreview->hide();
 
         const auto& objCameraController = _objPreview->getCameraController();
@@ -148,11 +161,10 @@ namespace fairy {
     }
 
     void FLLayer::onRender(engine::Time dt) {
-        // todo only able to close imgui windows, if they are docked to dock space.
         _scenePreview.onUpdate(dt);
         _sceneHierarchy.onUpdate(dt);
         _assetBrowser->onUpdate(dt);
-        _imagePreview.onUpdate(dt);
+        _texturePreview.onUpdate(dt);
         _objPreview->onUpdate(dt);
         _fileEditor.onUpdate(dt);
     }
@@ -169,22 +181,6 @@ namespace fairy {
 
         if (_scenePreview.isFocused()) {
             activeSceneCameraController->onKeyPressed(keyCode);
-        }
-
-        if (keyCode == engine::KeyCode::D0) {
-            app->fpsController.setMaxFps(15);
-        }
-
-        if (keyCode == engine::KeyCode::D9) {
-            app->fpsController.setMaxFps(30);
-        }
-
-        if (keyCode == engine::KeyCode::D8) {
-            app->fpsController.setMaxFps(60);
-        }
-
-        if (keyCode == engine::KeyCode::D7) {
-            app->fpsController.setMaxFps(app->getRefreshRate());
         }
 
         // L-CTRL + F - toggles fullscreen/windowed modes.
@@ -232,14 +228,14 @@ namespace fairy {
 
     void FLLayer::onImageOpen(const std::string &fileName) {
         ENGINE_INFO("onImageOpen({0})", fileName);
-        _imagePreview.load(fileName);
-        _imagePreview.show();
+        const uint32_t &textureId = app->getTextureSource()->getTextureBuffer(fileName)->getId();
+        _texturePreview.setId(textureId);
+        _texturePreview.show();
     }
 
     void FLLayer::onObjOpen(const std::string &fileName) {
         ENGINE_INFO("onObjOpen({0})", fileName);
-        auto objMesh = app->getMeshSource().getMesh(fileName);
-        objMesh.applyChanges();
+        const auto& objMesh = app->getMeshSource().getMesh(fileName);
         _objPreview->setMesh(objMesh);
         _objPreview->show();
     }
@@ -293,27 +289,27 @@ namespace fairy {
         };
 
         auto pngItem = AssetBrowserItem {
-            file_extensions::PNG,
+            engine::file_extensions::PNG,
             textureSource->loadTexture("png_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto jpgItem = AssetBrowserItem {
-            file_extensions::JPG,
+            engine::file_extensions::JPG,
             textureSource->loadTexture("jpg_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto glslItem = AssetBrowserItem {
-            file_extensions::GLSL,
+            engine::file_extensions::GLSL,
             textureSource->loadTexture("glsl_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto objItem = AssetBrowserItem {
-            file_extensions::OBJ,
+            engine::file_extensions::OBJ,
             textureSource->loadTexture("obj_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto ttfItem = AssetBrowserItem {
-            file_extensions::TTF,
+            engine::file_extensions::TTF,
             textureSource->loadTexture("ttf_icon.png", EDITOR_TEXTURES_PATH)
         };
 

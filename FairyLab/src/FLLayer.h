@@ -89,14 +89,13 @@ namespace fairy {
             "Scene Preview",
                 props.width,
                 props.height
-                },
-        app->getGraphicsFactory()->newTextureBuffer()
-        );
+        });
 
-        engine::ImageLayout _imagePreview = engine::ImageLayout {
-            {"Image Preview"},
-            app->getGraphicsFactory()->newTextureBuffer()
-        };
+        engine::ImageLayout _texturePreview = engine::ImageLayout({
+            "Texture Preview",
+            512,
+            512
+        });
 
         engine::SceneHierarchy _sceneHierarchy = engine::SceneHierarchy(app->activeScene);
 

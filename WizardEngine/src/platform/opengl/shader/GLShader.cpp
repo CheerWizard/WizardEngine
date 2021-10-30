@@ -129,7 +129,7 @@ namespace engine {
     }
 
     void GLShader::setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) {
-        ENGINE_INFO("Mat4Uniform array element is updated : {0}", uniform.isUpdated);
+        ENGINE_INFO("Mat4Uniform array element {0} is updated: {1}", uniform.name, uniform.isUpdated);
         if (!uniform.isUpdated) return;
         uniform.isUpdated = false;
 
@@ -139,6 +139,19 @@ namespace engine {
 
         ENGINE_INFO("Uploading Mat4Uniform array element into {0}", c_name);
         glUniformMatrix4fv(location, 1, GL_FALSE, uniform.toFloatPtr());
+    }
+
+    void GLShader::setUniformArrayElement(const uint32_t &index, IntUniform &uniform) {
+        ENGINE_INFO("IntUniform array element {0} is updated: {1}", uniform.name, uniform.isUpdated);
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+
+        auto name = std::string(uniform.name) + "[" + std::to_string(index) + "]";
+        auto c_name = name.c_str();
+        auto location = glGetUniformLocation(programId, c_name);
+
+        ENGINE_INFO("Uploading IntUniform array element into {0}", c_name);
+        glUniform1i(location, uniform.value);
     }
 
     bool GLShader::compile() {
@@ -170,7 +183,7 @@ namespace engine {
 
                 ENGINE_ERR("{0}", infoLog.data());
                 auto shaderStringType = toStringShaderType(type);
-                ENGINE_ASSERT(false, shaderStringType + " shader compilation failure!")
+                ENGINE_ASSERT(false, shaderStringType + " shader compilation failure!");
 
                 state = FAILED_COMPILE;
                 return false;
@@ -192,7 +205,7 @@ namespace engine {
             glGetProgramInfoLog(programId, maxLength, &maxLength, &infoLog[0]);
 
             ENGINE_ERR("{0}", infoLog.data());
-            ENGINE_ASSERT(false, "Shader link failure!")
+            ENGINE_ASSERT(false, "Shader link failure!");
 
             state = FAILED_LINKING;
             return false;
@@ -210,7 +223,7 @@ namespace engine {
                 return "Fragment";
         }
 
-        ENGINE_ASSERT(false, "Cannot convert shader type to string!")
+        ENGINE_ASSERT(false, "Cannot convert shader type to string!");
         return "Undefined";
     }
 
@@ -337,7 +350,7 @@ namespace engine {
                     }
 
                     auto attr = UniformAttribute {
-                        attrName.c_str(),
+                        attrName,
                         attrElementCount,
                         attrCount
                     };

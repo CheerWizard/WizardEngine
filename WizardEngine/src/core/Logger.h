@@ -61,21 +61,21 @@ namespace engine {
     #define CLIENT_ERR(...)       ::engine::Logger::getClientLogger()->error(__VA_ARGS__)
     #define CLIENT_CRIT(...)      ::engine::Logger::getClientLogger()->critical(__VA_ARGS__)
 #else
-    #define LOG_PATTERN(...)
+    #define LOG_PATTERN(...) __VA_ARGS__
 
     // Engine log macros
-    #define INIT_ENGINE_LOG(...)
-    #define ENGINE_TRACE(...)
-    #define ENGINE_INFO(...)
-    #define ENGINE_WARN(...)
-    #define ENGINE_ERR(...)
-    #define ENGINE_CRIT(...)
+    #define INIT_ENGINE_LOG(...) __VA_ARGS__
+    #define ENGINE_TRACE(...) __VA_ARGS__
+    #define ENGINE_INFO(...) __VA_ARGS__
+    #define ENGINE_WARN(...) __VA_ARGS__
+    #define ENGINE_ERR(...) __VA_ARGS__
+    #define ENGINE_CRIT(...) __VA_ARGS__
 
     // Client log macros
-    #define INIT_CLIENT_LOG(...)
-    #define CLIENT_TRACE(...)
-    #define CLIENT_INFO(...)
-    #define CLIENT_WARN(...)
-    #define CLIENT_ERR(...)
-    #define CLIENT_CRIT(...)
+    #define INIT_CLIENT_LOG(...) __VA_ARGS__
+    #define CLIENT_TRACE(...) __VA_ARGS__
+    #define CLIENT_INFO(...) __VA_ARGS__
+    #define CLIENT_WARN(...) __VA_ARGS__
+    #define CLIENT_ERR(...) __VA_ARGS__
+    #define CLIENT_CRIT(...) __VA_ARGS__
 #endif

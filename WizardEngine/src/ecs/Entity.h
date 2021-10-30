@@ -78,6 +78,11 @@ namespace engine {
             return true;
         }
 
+        template <typename... Components>
+        std::vector<Entity> filter() {
+            return getRegistry().template view<std::add_const<Components>...>();
+        }
+
         template <typename... Components, typename Predicate>
         std::vector<entt::entity> filter(Predicate &&predicate) {
             std::vector<entt::entity> filteredEntities;
