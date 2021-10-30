@@ -183,22 +183,6 @@ namespace fairy {
             activeSceneCameraController->onKeyPressed(keyCode);
         }
 
-        if (keyCode == engine::KeyCode::D0) {
-            app->fpsController.setMaxFps(15);
-        }
-
-        if (keyCode == engine::KeyCode::D9) {
-            app->fpsController.setMaxFps(30);
-        }
-
-        if (keyCode == engine::KeyCode::D8) {
-            app->fpsController.setMaxFps(60);
-        }
-
-        if (keyCode == engine::KeyCode::D7) {
-            app->fpsController.setMaxFps(app->getRefreshRate());
-        }
-
         // L-CTRL + F - toggles fullscreen/windowed modes.
         if (keyCode == engine::KeyCode::F && app->input->isKeyPressed(engine::KeyCode::LeftControl)) {
             app->getWindow()->toggleFullScreen();
