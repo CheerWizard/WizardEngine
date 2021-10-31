@@ -187,6 +187,13 @@ namespace fairy {
         if (keyCode == engine::KeyCode::F && app->input->isKeyPressed(engine::KeyCode::LeftControl)) {
             app->getWindow()->toggleFullScreen();
         }
+
+        // L-CTRL + S - saves file changes in FileEditor if it's visible.
+        if (keyCode == engine::KeyCode::S && app->input->isKeyPressed(engine::KeyCode::LeftControl)) {
+            if (_fileEditor.props.isVisible) {
+                _fileEditor.save();
+            }
+        }
     }
 
     void FLLayer::onKeyHold(engine::KeyCode keyCode) {
@@ -242,7 +249,7 @@ namespace fairy {
 
     void FLLayer::onGlslOpen(const std::string &filePath, const std::string &fileName) {
         ENGINE_INFO("onGlslOpen({0})", filePath);
-        _fileEditor.setTitle(filePath);
+        _fileEditor.props.title = filePath;
         _fileEditor.open(filePath);
         _fileEditor.show();
     }
