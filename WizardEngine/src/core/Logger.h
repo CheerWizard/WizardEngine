@@ -12,6 +12,7 @@
 #include "Memory.h"
 #include "String.h"
 
+//todo figure out logs optimization! debug: CPU intensity is 15-30%, release: CPU intensity is only 1%!
 namespace engine {
 
     class Logger {

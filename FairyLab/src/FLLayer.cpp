@@ -7,6 +7,8 @@
 
 #include <imgui/imgui/imgui.h>
 
+#include "random"
+
 namespace fairy {
 
     void FLLayer::create() {
@@ -23,6 +25,7 @@ namespace fairy {
                 "ActiveSceneCameraController",
                 activeSceneCamera
         );
+        app->activeScene->addEntity(activeSceneCamera);
 
         const auto& graphicsFactory = app->getGraphicsFactory();
 
@@ -54,6 +57,7 @@ namespace fairy {
             0
         };
         objCamera.add<engine::TextureComponent>(objTexture);
+        editorScene->addEntity(objCamera);
 
         auto objFrameController = engine::createRef<engine::FrameController>(graphicsFactory->newFrameBuffer());
         objFrameController->updateSpecs(app->getWindowWidth(), app->getWindowHeight());
@@ -115,6 +119,39 @@ namespace fairy {
         _cubeEntity.add<engine::Transform3dComponent>(cubeTransform);
         _cubeEntity.add<engine::MeshComponent>(cubeMesh);
         _cubeEntity.add<engine::TextureComponent>(cubeTexture);
+
+        auto sphereFamily = engine::Family("Spheres", app->activeScene.get());
+        auto sphereMesh = app->getMeshSource().getMesh("sphere.obj");
+        sphereFamily.add<engine::MeshComponent>(sphereMesh);
+
+        sphereFamily.addEntity(activeSceneCamera);
+
+        // randomize 100 spheres. testing Instance Rendering and Family approach!
+        std::random_device rd;
+        std::mt19937 mt(rd());
+        std::uniform_real_distribution<double> dist(-10, 10.0);
+        for (uint32_t i = 0 ; i < 100 ; i++) {
+            auto r = (float) dist(mt);
+
+            auto sphereEntity = engine::Entity("Sphere" + std::to_string(i), app->activeScene.get());
+            auto sphereTransform = engine::TransformComponents::newTransform3d(
+                    { r, r, r },
+                    { r, r, r },
+                    { r, r, r }
+            );
+            auto sphereTexture = engine::TextureComponent {
+                "demo.png",
+                "diffuseSampler",
+                0
+            };
+
+            sphereEntity.add<engine::Transform3dComponent>(sphereTransform);
+            sphereEntity.add<engine::TextureComponent>(sphereTexture);
+
+            sphereFamily.addEntity(sphereEntity);
+        }
+
+        app->activeScene->addFamily(sphereFamily);
     }
 
     void FLLayer::destroy() {

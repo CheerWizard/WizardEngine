@@ -10,23 +10,20 @@
 namespace engine {
 
     Entity Scene::createEntity(const std::string &tag) {
-        auto entity = Entity {_registry.create(), this };
-        entity.add<TagComponent>(tag);
+        auto entity = Entity(tag, this);
         _entities.push_back(entity);
         return entity;
     }
 
     Entity Scene::createEntity2d(const std::string &tag) {
-        auto entity = Entity {_registry.create(), this };
-        entity.add<TagComponent>(tag);
+        auto entity = Entity(tag, this);
         entity.add<Transform2dComponent>(TransformComponents::newTransform2d());
         _entities.push_back(entity);
         return entity;
     }
 
     Entity Scene::createEntity3d(const std::string &tag) {
-        auto entity = Entity {_registry.create(), this };
-        entity.add<TagComponent>(tag);
+        auto entity = Entity(tag, this);
         entity.add<Transform3dComponent>(TransformComponents::newTransform3d());
         _entities.push_back(entity);
         return entity;
@@ -45,8 +42,7 @@ namespace engine {
     }
 
     Family Scene::createFamily(const std::string &tag) {
-        auto family = Family {_registry.create(), this };
-        family.add<TagComponent>(tag);
+        auto family = Family(tag, this);
         _families.push_back(family);
         return family;
     }
@@ -71,5 +67,10 @@ namespace engine {
 
     void Scene::addFamily(const Entity &entity) {
         _families.push_back((const Family&) entity);
+    }
+
+    void Scene::setFamily(const Family &family) {
+        auto it = std::find(_families.begin(), _families.end(), family);
+        _families.emplace(it, family);
     }
 }

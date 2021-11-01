@@ -19,6 +19,14 @@ namespace engine {
                _entities(entities),
                Entity(id, container) {}
 
+        Family(EntityContainer* container) : Entity(container) {
+            create();
+        }
+
+        Family(const std::string &tag, EntityContainer* container) : Entity(container) {
+            create(tag);
+        }
+
         Family(const Family &family) = default;
 
     public:
@@ -39,11 +47,15 @@ namespace engine {
         void clear();
         size_t size() const;
         const Entity& getEntity(const uint32_t &index);
+        void addEntity(const Entity& entity);
+        void setEntity(const Entity& entity);
 
     public:
         inline const Entity& operator[](const uint32_t &index) const;
 
     private:
+        void create();
+        void create(const std::string &tag);
         void destroy();
 
     private:
