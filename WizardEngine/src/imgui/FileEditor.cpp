@@ -15,14 +15,12 @@ namespace engine {
     }
 
     void FileEditor::onUpdate(Time dt) {
-        if (!_props.isVisible) return;
+        if (!props.isVisible) return;
 
-        static bool open = true;
-        auto isClosed = !ImGui::Begin(_props.title.c_str(), &open);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2 {0 , 0});
 
-        if (isClosed && _props.isClosable) {
-            _props.isVisible = false;
-            ImGui::End();
+        if (!ImGui::Begin(props.title.c_str(), &props.isVisible)) {
+            end();
             return;
         }
 
@@ -35,7 +33,7 @@ namespace engine {
                 }
 
                 if (ImGui::MenuItem("Exit")) {
-                    _props.isVisible = false;
+                    props.isVisible = false;
                     ImGui::EndMenu();
                     ImGui::EndMenuBar();
                     ImGui::End();
@@ -59,14 +57,13 @@ namespace engine {
         memset(buffer, 0, bufferSize);
         std::strncpy(buffer, _source.c_str(), bufferSize);
 
-        // todo crash when pressing on text field and file editor is docked to any port.
         if (ImGui::InputTextMultiline("", buffer, bufferSize, textFieldSize, flags)) {
             _source = std::string(buffer);
         }
 
         ImGui::PopFont();
 
-        ImGui::End();
+        end();
     }
 
     void FileEditor::save() {
@@ -75,6 +72,11 @@ namespace engine {
 
     void FileEditor::destroy() {
         textFieldFont = nullptr;
+    }
+
+    void FileEditor::end() {
+        ImGui::End();
+        ImGui::PopStyleVar();
     }
 
 }

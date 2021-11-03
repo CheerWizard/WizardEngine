@@ -1,20 +1,20 @@
-# WizardGE
-A complex game development platform, with all necessary solutions.
-
-Includes : 
-1. WizardEngine; 
-2. WizardTest;
-3. WizardEditor; 
-4. WizardGame;
-
-# WizardEngine
+![wizard_engine_logo](https://user-images.githubusercontent.com/37471793/136009687-db49dad7-966c-43c2-831f-fe8791c4e160.jpg)
+# Wizard Engine
 A game engine library, responsible to provide an easy and flexible toolchain with all necessary technical solutions for a game.
 
-# WizardTest
-A test framework, responsible to provide all necessary test suites that will cover all tech side of WizardEngine project. Has static link to WizardEngine.
+This library could also be used for developing a software, which need to support only few tools from actual library. 
+For example, maybe you just want to build your own 3D modelling software and you don't really care about game stuff? 
+Well, in this case, WizardEngine can also feet your needs, as it can provide you lightweigth functions to include ot exclude any kind of systems that you want.
 
-# WizardEditor
-Not planned yet.
+Right now, this library is aimed only for "single player" games. It means, that network systems are not super priority at least right now.
 
-# WizardGame
-Not planned yet.
+![fairy_lab_logo](https://user-images.githubusercontent.com/37471793/136240880-2f24e32e-166a-42cc-8676-49521aeb74da.jpg)
+# Fairy Lab
+A GUI desktop application. Provides toolchain to manipulate with WizardEngine components, systems, etc. The actual application is going to include :
+1. LevelEditor - creating and editing objects in the Scene or World. World may include muktiple Scenes.
+2. CharacterEditor - not decided yet.
+3. MaterialEditor - creating and editing material component.
+4. MeshEditor - editing geometry, shapes, meshes.
+5. ShaderEditor - creating and editing Shader.
+6. Entity and Component panels - creating and editing Entity and Component.
+7. Assets browser - manipulation with Asset files. Loading, saving, etc. It may be texture, shader, .obj and so on.

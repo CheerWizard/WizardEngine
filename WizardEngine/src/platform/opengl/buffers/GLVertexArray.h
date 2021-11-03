@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../../graphics/buffers/VertexArray.h"
+#include "../../../graphics/core/buffers/VertexArray.h"
 
 namespace engine {
 

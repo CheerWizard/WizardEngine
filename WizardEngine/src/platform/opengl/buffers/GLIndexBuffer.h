@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../../graphics/buffers/IndexBuffer.h"
+#include "../../../graphics/core/buffers/IndexBuffer.h"
 
 namespace engine {
 

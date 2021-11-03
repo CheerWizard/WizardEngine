@@ -8,7 +8,7 @@
 #include <core/FileDialog.h>
 #include <core/File.h>
 
-#include <graphics/buffers/TextureBuffer.h>
+#include <graphics/core/buffers/TextureBuffer.h>
 
 #define EDITOR_TEXTURES_PATH "editor/textures"
 #define EDITOR_SHADERS_PATH "editor/shaders"

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../../graphics/shader/Shader.h"
+#include "../../../graphics/core/shader/Shader.h"
 #include "../../../core/Assert.h"
 
 #include "unordered_map"

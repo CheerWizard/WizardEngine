@@ -155,6 +155,7 @@ namespace engine {
 
     void WindowsWindow::onUpdate() {
         glfwPollEvents();
+        glfwSwapBuffers(_window);
     }
 
     void WindowsWindow::onClose() {

@@ -9,18 +9,14 @@
 #include "Events.h"
 #include "LayerStack.h"
 #include "Input.h"
-#include "../camera/CameraController.h"
+#include "../graphics/camera/CameraController.h"
 #include "FpsController.h"
 #include "String.h"
 #include "FileDialog.h"
 
 #include "../ecs/Scene.h"
 
-#include "../graphics/GraphicsContext.h"
-#include "../graphics/render/RenderSystem.h"
-#include "../graphics/sources/MeshSource.h"
-#include "../graphics/sources/TextureSource.h"
-#include "../graphics/sources/ShaderSource.h"
+#include "../graphics/GraphicsModule.h"
 
 #define DEFAULT_CAMERA_NAME "camera"
 
@@ -43,19 +39,11 @@ namespace engine {
         void run();
 
     public:
-        inline const Ref<GraphicsFactory>& getGraphicsFactory() {
-            return _graphicsFactory;
-        }
-
         inline const Scope<Window>& getWindow() {
             return _window;
         }
 
-        inline const Ref<RenderSystem>& getRenderSystem() {
-            return _renderSystem;
-        }
-
-        inline MeshSource& getMeshSource() {
+        inline Scope<MeshSource>& getMeshSource() {
             return _meshSource;
         }
 
@@ -63,12 +51,20 @@ namespace engine {
             return _textureSource;
         }
 
-        inline const Ref<ShaderSource>& getShaderSource() {
+        inline const Scope<ShaderSource>& getShaderSource() {
             return _shaderSource;
         }
 
         inline void bindCloseKey(const KeyCode& keyCode) {
             _closeKeyPressed = keyCode;
+        }
+
+        inline const Ref<RenderSettings>& getRenderSettings() {
+            return _renderSettings;
+        }
+
+        inline const Scope<GraphicsModule>& getGraphicsModule() {
+            return _graphicsModule;
         }
 
     public:
@@ -111,7 +107,6 @@ namespace engine {
         void restart();
 
         void createGraphics();
-        void createSources();
         void createFrameSpecs();
 
     public:
@@ -127,13 +122,15 @@ namespace engine {
 
         LayerStack _layerStack;
         Scope<Window> _window;
-        Scope<GraphicsContext> _graphicsContext;
-        Ref<RenderSystem> _renderSystem;
+        // graphics module
+        Scope<GraphicsModule> _graphicsModule;
+        Scope<RenderSystem> _renderSystem;
         // data sources
-        Ref<GraphicsFactory> _graphicsFactory;
-        MeshSource _meshSource;
+        Scope<MeshSource> _meshSource;
         Ref<TextureSource> _textureSource;
-        Ref<ShaderSource> _shaderSource;
+        Scope<ShaderSource> _shaderSource;
+        // tools
+        Ref<RenderSettings> _renderSettings;
     };
 
     Application* createApplication();
