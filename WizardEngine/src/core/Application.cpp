@@ -18,15 +18,14 @@ namespace engine {
     }
 
     void Application::onCreate() {
-        ENGINE_INFO("create()");
+        ENGINE_INFO("onCreate()");
 
         _window = INIT_WINDOW(createWindowProps());
 
         fpsController.setMaxFps(getRefreshRate());
 
-        _graphicsContext = INIT_GRAPHICS_CONTEXT(_window->getNativeWindow());
-        _graphicsContext->onCreate();
-        _graphicsContext->printInfo();
+        _graphicsModule = GRAPHICS_MODULE;
+        _graphicsModule->createContext(_window->getNativeWindow());
         createGraphics();
 
         _window->setWindowCallback(this);
@@ -40,6 +39,7 @@ namespace engine {
     }
 
     void Application::onPrepare() {
+        _renderSettings->printInfo();
         _window->onPrepare();
         createFrameSpecs();
         _layerStack.onPrepare();
@@ -53,11 +53,12 @@ namespace engine {
         auto dt = fpsController.getDeltaTime();
         fpsController.begin();
 
+        // render
         _renderSystem->onUpdate();
-
+        // simulate
         _layerStack.onUpdate(dt);
+        // poll events + swap chain
         _window->onUpdate();
-        _graphicsContext->swapBuffers();
 
         fpsController.end();
     }
@@ -163,20 +164,17 @@ namespace engine {
         return INIT_FILE_DIALOG(_window->getNativeWindow());
     }
 
-    void Application::createSources() {
-        _textureSource = createRef<TextureSource>(_graphicsFactory);
-        _shaderSource = createRef<ShaderSource>(_graphicsFactory);
-    }
-
     void Application::createFrameSpecs() {
         activeFrameController->updateSpecs(getWindowWidth(), getWindowHeight());
         activeScene->setTextureId(activeFrameController->getFrameColors()[0]);
     }
 
     void Application::createGraphics() {
-        _graphicsFactory = _graphicsContext->newGraphicsFactory();
-        activeFrameController = createRef<FrameController>(_graphicsFactory->newFrameBuffer());
-        createSources();
-        _renderSystem = createRef<RenderSystem>(_graphicsFactory, activeFrameController, _shaderSource, _textureSource);
+        _renderSettings = _graphicsModule->newRenderSettings();
+        activeFrameController = _graphicsModule->newFrameController();
+        _meshSource = _graphicsModule->newMeshSource();
+        _textureSource = _graphicsModule->newTextureSource();
+        _shaderSource = _graphicsModule->newShaderSource();
+        _renderSystem = _graphicsModule->newRenderSystem(_textureSource, _shaderSource, activeFrameController);
     }
 }

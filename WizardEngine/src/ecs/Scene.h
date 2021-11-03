@@ -25,11 +25,11 @@ namespace engine {
             _textureId = textureId;
         }
 
-        inline const std::vector<Family>& getFamilies() {
+        inline const std::vector<Family>& getFamilies() const {
             return _families;
         }
 
-        inline const std::vector<Entity>& getEntities() {
+        inline const std::vector<Entity>& getEntities() const {
             return _entities;
         }
 

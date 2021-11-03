@@ -5,7 +5,7 @@
 #include "SceneHierarchy.h"
 
 #include "../ecs/Components.h"
-#include "../transform/TransformComponents.h"
+#include "../graphics/transform/TransformComponents.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>

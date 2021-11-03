@@ -5,8 +5,12 @@ in vec2 f_uv;
 out vec4 fragment;
 
 uniform sampler2D diffuseSampler[1];
-uniform vec4 color;
+
+uniform float strength;
+uniform vec3 color;
 
 void main() {
-    fragment = texture(diffuseSampler[0], f_uv);
+    vec3 ambient = strength * color;
+    vec4 objColor = vec4(ambient, 1.0) * texture(diffuseSampler[0], f_uv);
+    fragment = objColor;
 }

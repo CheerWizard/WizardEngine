@@ -9,6 +9,10 @@
 
 #include "random"
 
+#include "graphics/material/MaterialComponents.h"
+#include "graphics/transform/TransformComponents.h"
+#include "graphics/light/LightComponents.h"
+
 namespace fairy {
 
     void FLLayer::create() {
@@ -27,19 +31,13 @@ namespace fairy {
         );
         app->activeScene->addEntity(activeSceneCamera);
 
-        const auto& graphicsFactory = app->getGraphicsFactory();
-
         auto objPreviewShader = app->getShaderSource()->create(engine::ShaderProps {
             "obj",
             "v_obj",
             "f_obj",
             EDITOR_SHADERS_PATH
         });
-        auto objRenderer = engine::createRef<engine::Renderer>(
-                graphicsFactory,
-                objPreviewShader,
-                app->getTextureSource()
-        );
+        auto objRenderer = app->getGraphicsModule()->newTextureRenderer(objPreviewShader, app->getTextureSource());
 
         auto objCamera = engine::Camera3D {
             "obj",
@@ -59,7 +57,7 @@ namespace fairy {
         objCamera.add<engine::TextureComponent>(objTexture);
         editorScene->addEntity(objCamera);
 
-        auto objFrameController = engine::createRef<engine::FrameController>(graphicsFactory->newFrameBuffer());
+        auto objFrameController = app->getGraphicsModule()->newFrameController();
         objFrameController->updateSpecs(app->getWindowWidth(), app->getWindowHeight());
 
         _objPreview = engine::createRef<engine::MeshLayout>(
@@ -76,6 +74,8 @@ namespace fairy {
         );
         objCamera.add<engine::Transform3dComponent>(objTransform);
 
+        objCamera.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient({1.0, 1.0, 1.0}, 1.3));
+
         _objPreview->setEntity(objCamera);
 
         _scenePreviewCallback = new FLLayer::ScenePreviewCallback(*this);
@@ -89,7 +89,7 @@ namespace fairy {
         app->getTextureSource()->loadTexture("demo_texture.jpg");
 
         _humanEntity = app->activeScene->createEntity("Human");
-        auto humanMesh = app->getMeshSource().getMesh("human.obj");
+        auto humanMesh = app->getMeshSource()->getMesh("human.obj");
         auto humanTransform = engine::TransformComponents::newTransform3d(
                 { 2.5, 0, 12 },
                 {135, 0, 0},
@@ -103,9 +103,10 @@ namespace fairy {
         _humanEntity.add<engine::Transform3dComponent>(humanTransform);
         _humanEntity.add<engine::MeshComponent>(humanMesh);
         _humanEntity.add<engine::TextureComponent>(humanTexture);
+        _humanEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient({0.5, 0.25, 0.75}, 0.25));
 
         _cubeEntity = app->activeScene->createEntity("Cube");
-        auto cubeMesh = app->getMeshSource().getCube("cube");
+        auto cubeMesh = app->getMeshSource()->getCube("cube");
         auto cubeTransform = engine::TransformComponents::newTransform3d(
                 { 10, 0, 12 },
                 { 135, 0, 0 },
@@ -119,9 +120,10 @@ namespace fairy {
         _cubeEntity.add<engine::Transform3dComponent>(cubeTransform);
         _cubeEntity.add<engine::MeshComponent>(cubeMesh);
         _cubeEntity.add<engine::TextureComponent>(cubeTexture);
+        _cubeEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient({1.0, 1.0, 1.0}, 0.75));
 
         auto sphereFamily = engine::Family("Spheres", app->activeScene.get());
-        auto sphereMesh = app->getMeshSource().getMesh("sphere.obj");
+        auto sphereMesh = app->getMeshSource()->getMesh("sphere.obj");
         sphereFamily.add<engine::MeshComponent>(sphereMesh);
 
         sphereFamily.addEntity(activeSceneCamera);
@@ -147,6 +149,7 @@ namespace fairy {
 
             sphereEntity.add<engine::Transform3dComponent>(sphereTransform);
             sphereEntity.add<engine::TextureComponent>(sphereTexture);
+            sphereEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient({1.0, 1.0, 1.0}, 0.75));
 
             sphereFamily.addEntity(sphereEntity);
         }
@@ -175,8 +178,6 @@ namespace fairy {
         activeSceneCameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
         activeSceneCameraController->setPosition({0, 0, -1});
         activeSceneCameraController->applyChanges();
-
-        _scenePreview.setId(app->activeScene->getTextureId());
 
         _texturePreview.hide();
         _objPreview->hide();
@@ -209,6 +210,8 @@ namespace fairy {
     void FLLayer::onUpdate(engine::Time dt) {
         ImGuiLayer::onUpdate(dt);
         activeSceneCameraController->setDeltaTime(dt);
+        // update scene texture id!
+        _scenePreview.setId(app->activeScene->getTextureId());
     }
 
     void FLLayer::onKeyPressed(engine::KeyCode keyCode) {
@@ -279,7 +282,7 @@ namespace fairy {
 
     void FLLayer::onObjOpen(const std::string &fileName) {
         ENGINE_INFO("onObjOpen({0})", fileName);
-        const auto& objMesh = app->getMeshSource().getMesh(fileName);
+        const auto& objMesh = app->getMeshSource()->getMesh(fileName);
         _objPreview->setMesh(objMesh);
         _objPreview->show();
     }

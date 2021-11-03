@@ -4,6 +4,8 @@
 
 #include "MeshLayout.h"
 
+#include "../graphics/transform/TransformComponents.h"
+
 namespace engine {
 
     void MeshLayout::create() {

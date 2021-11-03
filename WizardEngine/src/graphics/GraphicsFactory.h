@@ -6,16 +6,18 @@
 
 #include "../core/Memory.h"
 
-#include "buffers/VertexArray.h"
-#include "buffers/IndexBuffer.h"
-#include "buffers/VertexBuffer.h"
-#include "buffers/TextureBuffer.h"
-#include "frame/FrameBuffer.h"
-#include "buffers/UniformBuffer.h"
+#include "core/Drawer.h"
+#include "core/RenderSettings.h"
 
-#include "render/Drawer.h"
+#include "core/buffers/VertexArray.h"
+#include "core/buffers/IndexBuffer.h"
+#include "core/buffers/VertexBuffer.h"
+#include "core/buffers/TextureBuffer.h"
+#include "core/buffers/UniformBuffer.h"
 
-#include "shader/Shader.h"
+#include "core/frame/FrameBuffer.h"
+
+#include "core/shader/Shader.h"
 
 namespace engine {
 
@@ -23,7 +25,7 @@ namespace engine {
 
     public:
         GraphicsFactory() = default;
-        ~GraphicsFactory() = default;
+        virtual ~GraphicsFactory() = default;
 
     public:
         virtual Ref<Drawer> newDrawer() = 0;
@@ -46,6 +48,7 @@ namespace engine {
         virtual Ref<Shader> newShader(const ShaderProps& shaderProps, VertexFormat* vertexFormat) = 0;
         virtual Ref<Shader> newShader(const ShaderProps& shaderProps) = 0;
 
+        virtual Ref<RenderSettings> newRenderSettings() = 0;
     };
 
 }

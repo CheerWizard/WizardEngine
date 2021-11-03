@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../../graphics/buffers/TextureBuffer.h"
+#include "../../../graphics/core/buffers/TextureBuffer.h"
 
 namespace engine {
 

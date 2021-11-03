@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../../graphics/buffers/VertexBuffer.h"
+#include "../../../graphics/core/buffers/VertexBuffer.h"
 
 namespace engine {
 

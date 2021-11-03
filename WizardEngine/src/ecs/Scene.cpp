@@ -5,7 +5,7 @@
 #include "Scene.h"
 
 #include "Components.h"
-#include "../transform/TransformComponents.h"
+#include "../graphics/transform/TransformComponents.h"
 
 namespace engine {
 
