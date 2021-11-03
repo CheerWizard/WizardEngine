@@ -98,56 +98,56 @@ namespace engine {
 
     void Camera3dController::zoom(const ZoomType &zoomType) {
         ENGINE_INFO("{0}: zoom()", tag);
-        auto& component = camera.get<Camera3dComponent>();
+        auto& viewPosition = camera.get<Camera3dComponent>().viewMatrix.position.value;
         switch (zoomType) {
             case ZoomType::IN:
-                component.viewMatrix.position.z -= zoomSpeed / dt;
+                viewPosition.z -= zoomSpeed / dt;
                 break;
             case ZoomType::OUT:
-                component.viewMatrix.position.z += zoomSpeed / dt;
+                viewPosition.z += zoomSpeed / dt;
                 break;
         }
     }
 
     void Camera3dController::move(const MoveType &moveType) {
         ENGINE_INFO("{0}: move()", tag);
-        auto& component = camera.get<Camera3dComponent>();
+        auto& viewPosition = camera.get<Camera3dComponent>().viewMatrix.position.value;
         switch (moveType) {
             case MoveType::DOWN:
                 ENGINE_INFO("Camera moved: DOWN");
-                component.viewMatrix.position.y += moveSpeed / dt;
+                viewPosition.y += moveSpeed / dt;
                 break;
             case MoveType::UP:
                 ENGINE_INFO("Camera moved: UP");
-                component.viewMatrix.position.y -= moveSpeed / dt;
+                viewPosition.y -= moveSpeed / dt;
                 break;
             case MoveType::LEFT:
                 ENGINE_INFO("Camera moved: LEFT");
-                component.viewMatrix.position.x += moveSpeed / dt;
+                viewPosition.x += moveSpeed / dt;
                 break;
             case MoveType::RIGHT:
                 ENGINE_INFO("Camera moved: RIGHT");
-                component.viewMatrix.position.x -= moveSpeed / dt;
+                viewPosition.x -= moveSpeed / dt;
                 break;
             case MoveType::RIGHT_DOWN:
                 ENGINE_INFO("Camera moved: RIGHT_DOWN");
-                component.viewMatrix.position.x -= moveSpeed / dt;
-                component.viewMatrix.position.y += moveSpeed / dt;
+                viewPosition.x -= moveSpeed / dt;
+                viewPosition.y += moveSpeed / dt;
                 break;
             case MoveType::RIGHT_UP:
                 ENGINE_INFO("Camera moved: RIGHT_UP");
-                component.viewMatrix.position.x -= moveSpeed / dt;
-                component.viewMatrix.position.y -= moveSpeed / dt;
+                viewPosition.x -= moveSpeed / dt;
+                viewPosition.y -= moveSpeed / dt;
                 break;
             case MoveType::LEFT_DOWN:
                 ENGINE_INFO("Camera moved: LEFT_DOWN");
-                component.viewMatrix.position.x += moveSpeed / dt;
-                component.viewMatrix.position.y += moveSpeed / dt;
+                viewPosition.x += moveSpeed / dt;
+                viewPosition.y += moveSpeed / dt;
                 break;
             case MoveType::LEFT_UP:
                 ENGINE_INFO("Camera moved: LEFT_UP");
-                component.viewMatrix.position.x += moveSpeed / dt;
-                component.viewMatrix.position.y -= moveSpeed / dt;
+                viewPosition.x += moveSpeed / dt;
+                viewPosition.y -= moveSpeed / dt;
                 break;
         }
     }
@@ -186,7 +186,7 @@ namespace engine {
     void Camera3dController::applyChanges() {
         auto& component = camera.get<Camera3dComponent>();
         ENGINE_INFO("{0}: applyChanges()", tag);
-        ENGINE_INFO("{0}: position({1},{2},{3})", tag, component.viewMatrix.position.x, component.viewMatrix.position.y, component.viewMatrix.position.z);
+        ENGINE_INFO("{0}: position({1},{2},{3})", tag, component.viewMatrix.position.value.x, component.viewMatrix.position.value.y, component.viewMatrix.position.value.z);
         ENGINE_INFO("{0}: rotation({1},{2},{3})", tag, component.viewMatrix.rotation.x, component.viewMatrix.rotation.y, component.viewMatrix.rotation.z);
         ENGINE_INFO("{0}: scale({1})", tag, component.viewMatrix.scale);
         component.applyChanges();
@@ -290,7 +290,7 @@ namespace engine {
 
     void Camera3dController::setPosition(const glm::vec3 &position) {
         auto& component = camera.get<Camera3dComponent>();
-        component.viewMatrix.position = position;
+        component.viewMatrix.position.value = position;
         component.applyChanges();
     }
 

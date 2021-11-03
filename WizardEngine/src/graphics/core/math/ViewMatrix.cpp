@@ -9,7 +9,8 @@ namespace engine {
     ViewMatrix3d &ViewMatrix3d::applyChanges() {
         auto yAxis = glm::vec3(0, 1, 0);
         auto zAxis = glm::vec3(0, 0, 1);
-        value = glm::lookAt(position, position + zAxis, yAxis);
+        position.applyChanges();
+        value = glm::lookAt(position.value, position.value + zAxis, yAxis);
         isUpdated = true;
         return *this;
     }

@@ -13,13 +13,13 @@
 namespace engine {
 
     struct ViewMatrix3d : Mat4fUniform {
-        glm::vec3 position;
+        Vec3fUniform position;
         glm::vec3 rotation;
         float scale;
 
         ViewMatrix3d(
                 const char* name,
-                const glm::vec3 &position = DEFAULT_VIEW_POS_3D,
+                const Vec3fUniform &position = { "viewPosition", DEFAULT_VIEW_POS_3D },
                 const glm::vec3 &rotation = DEFAULT_VIEW_ROT_3D,
                 const float &scale = 1
         ) : Mat4fUniform(name), position(position), rotation(rotation), scale(scale) {}

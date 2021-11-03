@@ -74,7 +74,9 @@ namespace fairy {
         );
         objCamera.add<engine::Transform3dComponent>(objTransform);
 
-        objCamera.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient({1.0, 1.0, 1.0}, 1.3));
+        objCamera.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient());
+        objCamera.add<engine::DiffuseLightComponent>(engine::LightComponents::newDiffuse({1, 1, 1}, {25, 25, 25}));
+        objCamera.add<engine::SpecularLightComponent>(engine::LightComponents::newSpecular({1, 1, 1}, {25, 25, 25}));
 
         _objPreview->setEntity(objCamera);
 
@@ -103,7 +105,9 @@ namespace fairy {
         _humanEntity.add<engine::Transform3dComponent>(humanTransform);
         _humanEntity.add<engine::MeshComponent>(humanMesh);
         _humanEntity.add<engine::TextureComponent>(humanTexture);
-        _humanEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient({0.5, 0.25, 0.75}, 0.25));
+        _humanEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient());
+        _humanEntity.add<engine::DiffuseLightComponent>(engine::LightComponents::newDiffuse({1, 1, 1}, {25, 25, 25}));
+        _humanEntity.add<engine::SpecularLightComponent>(engine::LightComponents::newSpecular({1, 1, 1}, {25, 25, 25}));
 
         _cubeEntity = app->activeScene->createEntity("Cube");
         auto cubeMesh = app->getMeshSource()->getCube("cube");
@@ -120,26 +124,27 @@ namespace fairy {
         _cubeEntity.add<engine::Transform3dComponent>(cubeTransform);
         _cubeEntity.add<engine::MeshComponent>(cubeMesh);
         _cubeEntity.add<engine::TextureComponent>(cubeTexture);
-        _cubeEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient({1.0, 1.0, 1.0}, 0.75));
+        _cubeEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient());
+        _cubeEntity.add<engine::DiffuseLightComponent>(engine::LightComponents::newDiffuse({1, 1, 1}, {25, 25, 25}));
+        _cubeEntity.add<engine::SpecularLightComponent>(engine::LightComponents::newSpecular({1, 1, 1}, {25, 25, 25}));
 
-        auto sphereFamily = engine::Family("Spheres", app->activeScene.get());
-        auto sphereMesh = app->getMeshSource()->getMesh("sphere.obj");
+        auto sphereFamily = engine::Family("Cars", app->activeScene.get());
+        auto sphereMesh = app->getMeshSource()->getMesh("ferrari.obj");
         sphereFamily.add<engine::MeshComponent>(sphereMesh);
-
         sphereFamily.addEntity(activeSceneCamera);
 
         // randomize 100 spheres. testing Instance Rendering and Family approach!
         std::random_device rd;
         std::mt19937 mt(rd());
-        std::uniform_real_distribution<double> dist(-10, 10.0);
-        for (uint32_t i = 0 ; i < 100 ; i++) {
+        std::uniform_real_distribution<double> dist(-100, 100);
+        for (uint32_t i = 0 ; i < 10 ; i++) {
             auto r = (float) dist(mt);
 
-            auto sphereEntity = engine::Entity("Sphere" + std::to_string(i), app->activeScene.get());
+            auto sphereEntity = engine::Entity("Ferrari" + std::to_string(i), app->activeScene.get());
             auto sphereTransform = engine::TransformComponents::newTransform3d(
                     { r, r, r },
                     { r, r, r },
-                    { r, r, r }
+                    { 0.2, 0.2, 0.2 }
             );
             auto sphereTexture = engine::TextureComponent {
                 "demo.png",
@@ -149,7 +154,9 @@ namespace fairy {
 
             sphereEntity.add<engine::Transform3dComponent>(sphereTransform);
             sphereEntity.add<engine::TextureComponent>(sphereTexture);
-            sphereEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient({1.0, 1.0, 1.0}, 0.75));
+            sphereEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient());
+            sphereEntity.add<engine::DiffuseLightComponent>(engine::LightComponents::newDiffuse({1, 1, 1}, {25, 25, 25}));
+            sphereEntity.add<engine::SpecularLightComponent>(engine::LightComponents::newSpecular({1, 1, 1}, {25, 25, 25}));
 
             sphereFamily.addEntity(sphereEntity);
         }

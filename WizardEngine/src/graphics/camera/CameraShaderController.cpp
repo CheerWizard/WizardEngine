@@ -13,7 +13,9 @@ namespace engine {
         }
 
         if (entity.has<Camera3dComponent>()) {
-            shader->tryUpdateUniformBuffer(entity.get<Camera3dComponent>());
+            auto camera = entity.get<Camera3dComponent>();
+            shader->tryUpdateUniformBuffer(camera);
+            shader->setUniform(camera.viewMatrix.position);
         }
     }
 
