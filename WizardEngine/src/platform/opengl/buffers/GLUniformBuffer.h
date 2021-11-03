@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../../graphics/buffers/UniformBuffer.h"
+#include "../../../graphics/core/buffers/UniformBuffer.h"
 
 namespace engine {
 

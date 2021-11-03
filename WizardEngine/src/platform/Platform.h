@@ -54,9 +54,9 @@
     #define INIT_FILE_DIALOG(nativeWindow) createRef<WindowsFileDialog>(nativeWindow)
 
     #ifdef GL
-	    #include "opengl/GLContext.h"
+	    #include "opengl/GLModule.h"
         #define GLFW_INCLUDE_NONE
-        #define INIT_GRAPHICS_CONTEXT(nativeWindow) createScope<GLContext>(nativeWindow)
+        #define GRAPHICS_MODULE createScope<GLModule>()
         #define GL_CORE_VERSION "#version 400"
 
     #elif defined(VK)

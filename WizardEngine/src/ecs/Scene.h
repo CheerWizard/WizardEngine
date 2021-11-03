@@ -25,11 +25,11 @@ namespace engine {
             _textureId = textureId;
         }
 
-        inline const std::vector<Family>& getFamilies() {
+        inline const std::vector<Family>& getFamilies() const {
             return _families;
         }
 
-        inline const std::vector<Entity>& getEntities() {
+        inline const std::vector<Entity>& getEntities() const {
             return _entities;
         }
 
@@ -50,8 +50,8 @@ namespace engine {
         void deleteEntity(const Entity& entity) override;
 
         void addEntity(const Entity &entity) override;
-
         void addFamily(const Entity &entity) override;
+        void setFamily(const Family &family);
 
     private:
         entt::registry _registry; // registry of all entities for this Scene.

@@ -12,7 +12,8 @@
 #include "buffers/GLUniformBuffer.h"
 
 #include "shader/GLShader.h"
-#include "render/GLDrawer.h"
+#include "GLDrawer.h"
+#include "GLRenderSettings.h"
 
 namespace engine {
 
@@ -64,8 +65,12 @@ namespace engine {
         return createRef<GLUniformBuffer>(uniformBlockFormat);
     }
 
-    Ref<engine::UniformBuffer> GLFactory::newUniformBuffer() {
+    Ref<UniformBuffer> GLFactory::newUniformBuffer() {
         return createRef<GLUniformBuffer>();
+    }
+
+    Ref<RenderSettings> GLFactory::newRenderSettings() {
+        return createRef<GLRenderSettings>();
     }
 
 }

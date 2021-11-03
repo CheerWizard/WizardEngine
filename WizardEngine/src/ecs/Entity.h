@@ -23,6 +23,7 @@ namespace engine {
         virtual void deleteEntity(const Entity& entity) = 0;
         virtual void addEntity(const Entity& entity) = 0;
         virtual void addFamily(const Entity& entity) = 0;
+        entt::entity createEntityId();
 
     public:
         template<typename T, typename... Args>
@@ -115,9 +116,6 @@ namespace engine {
                 }
             }
         }
-
-    private:
-        entt::entity createEntityId();
 
         friend class Entity;
     };

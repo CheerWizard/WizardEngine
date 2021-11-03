@@ -19,7 +19,6 @@ namespace engine {
     void Entity::create(const std::string &tag) {
         id = container->createEntityId();
         add<TagComponent>(tag);
-        container->addEntity(*this);
     }
 
     void Entity::destroy() {

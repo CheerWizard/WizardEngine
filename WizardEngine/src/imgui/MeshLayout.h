@@ -6,9 +6,9 @@
 
 #include "ImageLayout.h"
 
-#include "../graphics/render/Renderer.h"
-#include "../camera/CameraController.h"
-#include "../graphics/frame/FrameController.h"
+#include "../graphics/core/Renderer.h"
+#include "../graphics/camera/CameraController.h"
+#include "../graphics/core/frame/FrameController.h"
 
 namespace engine {
 

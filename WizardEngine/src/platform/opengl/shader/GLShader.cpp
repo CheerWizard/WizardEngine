@@ -4,6 +4,8 @@
 
 #include "GLShader.h"
 
+#include "../buffers/GLUniformBuffer.h"
+
 namespace engine {
 
     void GLShader::onCreate() {
@@ -375,6 +377,10 @@ namespace engine {
             state = NO_UNIFORM_BLOCKS;
             return;
         }
+
+        uniformBuffer = createRef<GLUniformBuffer>();
+        bindUniformBlock();
+        uniformBuffer->prepare(getUniformBlockFormat());
 
         ENGINE_INFO("Shader has found uniform blocks!");
     }

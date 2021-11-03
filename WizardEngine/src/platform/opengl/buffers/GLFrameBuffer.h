@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../../graphics/frame/FrameBuffer.h"
+#include "../../../graphics/core/frame/FrameBuffer.h"
 
 namespace engine {
 

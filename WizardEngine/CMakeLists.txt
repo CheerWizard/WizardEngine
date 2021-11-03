@@ -9,7 +9,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(WizardEngine ${ENGINE_SRC})
+add_library(WizardEngine ${ENGINE_SRC} src/graphics/light/LightShaderController.h src/graphics/light/LightShaderController.cpp)
 
 #/ adding dependencies.
 
