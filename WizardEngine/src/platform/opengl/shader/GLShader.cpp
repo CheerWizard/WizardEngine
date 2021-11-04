@@ -6,6 +6,8 @@
 
 #include "../buffers/GLUniformBuffer.h"
 
+#include "sstream"
+
 namespace engine {
 
     void GLShader::onCreate() {
@@ -58,6 +60,24 @@ namespace engine {
     void GLShader::bindUniformBlock() {
         auto uniformBlockIndex = glGetUniformBlockIndex(programId, uniformBlockFormat->getName().c_str());
         glUniformBlockBinding(programId, uniformBlockIndex, 0);
+    }
+
+    GLint GLShader::getUniformArrayElementLocation(const char* name, const uint32_t &index) {
+        std::stringstream ss;
+        ss << name << "[" << std::to_string(index) << "]";
+        return glGetUniformLocation(programId, ss.str().c_str());
+    }
+
+    GLint GLShader::getUniformArrayStructLocation(const char* structName, const char* fieldName, const uint32_t &index) {
+        std::stringstream ss;
+        ss << structName << "[" << std::to_string(index) << "]" << "." << fieldName;
+        return glGetUniformLocation(programId, ss.str().c_str());
+    }
+
+    GLint GLShader::getUniformStructLocation(const char *structName, const char *fieldName) {
+        std::stringstream ss;
+        ss << structName << "." << fieldName;
+        return glGetUniformLocation(programId, ss.str().c_str());
     }
 
     void GLShader::setUniform(FloatUniform &uniform) {
@@ -127,7 +147,6 @@ namespace engine {
     }
 
     void GLShader::setUniform(Mat4fUniform &uniform) {
-        ENGINE_INFO("Mat4Uniform is updated : {0}", uniform.isUpdated);
         if (!uniform.isUpdated) return;
         uniform.isUpdated = false;
         auto location = glGetUniformLocation(programId, uniform.name);
@@ -135,29 +154,57 @@ namespace engine {
     }
 
     void GLShader::setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) {
-        ENGINE_INFO("Mat4Uniform array element {0} is updated: {1}", uniform.name, uniform.isUpdated);
         if (!uniform.isUpdated) return;
         uniform.isUpdated = false;
-
-        auto name = std::string(uniform.name) + "[" + std::to_string(index) + "]";
-        auto c_name = name.c_str();
-        auto location = glGetUniformLocation(programId, c_name);
-
-        ENGINE_INFO("Uploading Mat4Uniform array element into {0}", c_name);
-        glUniformMatrix4fv(location, 1, GL_FALSE, uniform.toFloatPtr());
+        glUniformMatrix4fv(getUniformArrayElementLocation(uniform.name, index), 1, GL_FALSE, uniform.toFloatPtr());
     }
 
     void GLShader::setUniformArrayElement(const uint32_t &index, IntUniform &uniform) {
-        ENGINE_INFO("IntUniform array element {0} is updated: {1}", uniform.name, uniform.isUpdated);
         if (!uniform.isUpdated) return;
         uniform.isUpdated = false;
+        glUniform1i(getUniformArrayElementLocation(uniform.name, index), uniform.value);
+    }
 
-        auto name = std::string(uniform.name) + "[" + std::to_string(index) + "]";
-        auto c_name = name.c_str();
-        auto location = glGetUniformLocation(programId, c_name);
+    void GLShader::setUniformArrayElement(const uint32_t &index, FloatUniform &uniform) {
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+        glUniform1f(getUniformArrayElementLocation(uniform.name, index), uniform.value);
+    }
 
-        ENGINE_INFO("Uploading IntUniform array element into {0}", c_name);
-        glUniform1i(location, uniform.value);
+    void GLShader::setUniformArrayStructField(const uint32_t &index, const char* structName, FloatUniform &structField) {
+        if (!structField.isUpdated) return;
+        structField.isUpdated = false;
+        glUniform1f(getUniformArrayStructLocation(structName, structField.name, index), structField.value);
+    }
+
+    void GLShader::setUniformArrayStructField(const uint32_t &index, const char *structName, Vec3fUniform &structField) {
+        if (!structField.isUpdated) return;
+        structField.isUpdated = false;
+        glUniform3fv(getUniformArrayStructLocation(structName, structField.name, index), 1, structField.toFloatPtr());
+    }
+
+    void GLShader::setUniformArrayStructField(const uint32_t &index, const char *structName, Vec4fUniform &structField) {
+        if (!structField.isUpdated) return;
+        structField.isUpdated = false;
+        glUniform4fv(getUniformArrayStructLocation(structName, structField.name, index), 1, structField.toFloatPtr());
+    }
+
+    void GLShader::setUniformStructField(const char *structName, FloatUniform &structField) {
+        if (!structField.isUpdated) return;
+        structField.isUpdated = false;
+        glUniform1f(getUniformStructLocation(structName, structField.name), structField.value);
+    }
+
+    void GLShader::setUniformStructField(const char *structName, Vec3fUniform &structField) {
+        if (!structField.isUpdated) return;
+        structField.isUpdated = false;
+        glUniform3fv(getUniformStructLocation(structName, structField.name), 1, structField.toFloatPtr());
+    }
+
+    void GLShader::setUniformStructField(const char *structName, Vec4fUniform &structField) {
+        if (!structField.isUpdated) return;
+        structField.isUpdated = false;
+        glUniform4fv(getUniformStructLocation(structName, structField.name), 1, structField.toFloatPtr());
     }
 
     bool GLShader::compile() {
@@ -388,5 +435,4 @@ namespace engine {
 
         ENGINE_INFO("Shader has found uniform blocks!");
     }
-
 }

@@ -116,6 +116,29 @@ namespace engine {
 
         virtual void setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) = 0;
         virtual void setUniformArrayElement(const uint32_t &index, IntUniform &uniform) = 0;
+        virtual void setUniformArrayElement(const uint32_t &index, FloatUniform &uniform) = 0;
+
+        virtual void setUniformStructField(const char* structName, FloatUniform &structField) = 0;
+        virtual void setUniformStructField(const char* structName, Vec3fUniform &structField) = 0;
+        virtual void setUniformStructField(const char* structName, Vec4fUniform &structField) = 0;
+
+        virtual void setUniformArrayStructField(
+                const uint32_t &index,
+                const char* structName,
+                FloatUniform &structField
+        ) = 0;
+
+        virtual void setUniformArrayStructField(
+                const uint32_t &index,
+                const char* structName,
+                Vec3fUniform &structField
+        ) = 0;
+
+        virtual void setUniformArrayStructField(
+                const uint32_t &index,
+                const char* structName,
+                Vec4fUniform &structField
+        ) = 0;
 
     protected:
         uint32_t programId;

@@ -17,6 +17,7 @@ namespace engine {
 
     public:
         virtual void updateShader(const Ref<Shader> &shader, const Entity &entity) = 0;
+        virtual void updateShader(const Ref<Shader> &shader, const Entity &entity, const uint32_t &instanceId) = 0;
 
     };
 

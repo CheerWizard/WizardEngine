@@ -51,8 +51,10 @@ namespace fairy {
 
         auto objTexture = engine::TextureComponent {
             "demo.png",
-            "diffuseSampler",
-            0
+            {
+                    "diffuseSampler",
+                    0
+            }
         };
         objCamera.add<engine::TextureComponent>(objTexture);
         editorScene->addEntity(objCamera);
@@ -74,9 +76,9 @@ namespace fairy {
         );
         objCamera.add<engine::Transform3dComponent>(objTransform);
 
-        objCamera.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient());
-        objCamera.add<engine::DiffuseLightComponent>(engine::LightComponents::newDiffuse({1, 1, 1}, {25, 25, 25}));
-        objCamera.add<engine::SpecularLightComponent>(engine::LightComponents::newSpecular({1, 1, 1}, {25, 25, 25}));
+        objCamera.add<engine::AmbientLightComponent>(engine::AmbientLightComponent());
+        objCamera.add<engine::DiffuseLightComponent>(engine::DiffuseLightComponent());
+        objCamera.add<engine::SpecularLightComponent>(engine::SpecularLightComponent());
 
         _objPreview->setEntity(objCamera);
 
@@ -97,14 +99,10 @@ namespace fairy {
                 {135, 0, 0},
                 {0.5, 0.5, 0.5}
         );
-        auto humanTexture = engine::TextureComponent {
-            "demo.png",
-            "diffuseSampler",
-            0
-        };
+        auto humanMaterial = engine::MaterialComponent();
         _humanEntity.add<engine::Transform3dComponent>(humanTransform);
         _humanEntity.add<engine::MeshComponent>(humanMesh);
-        _humanEntity.add<engine::TextureComponent>(humanTexture);
+        _humanEntity.add<engine::MaterialComponent>(humanMaterial);
 
         _cubeEntity = app->activeScene->createEntity("Cube");
         auto cubeMesh = app->getMeshSource()->getCube("cube");
@@ -113,14 +111,10 @@ namespace fairy {
                 { 135, 0, 0 },
                 { 0.5, 0.5, 0.5 }
         );
-        auto cubeTexture = engine::TextureComponent {
-            "demo_texture.jpg",
-            "diffuseSampler",
-            1
-        };
+        auto cubeMaterial = engine::MaterialComponent();
         _cubeEntity.add<engine::Transform3dComponent>(cubeTransform);
         _cubeEntity.add<engine::MeshComponent>(cubeMesh);
-        _cubeEntity.add<engine::TextureComponent>(cubeTexture);
+        _cubeEntity.add<engine::MaterialComponent>(cubeMaterial);
 
         auto sphereFamily = engine::Family("Cars", app->activeScene.get());
         auto sphereMesh = app->getMeshSource()->getMesh("ferrari.obj");
@@ -141,22 +135,18 @@ namespace fairy {
                     { r, r, r },
                     { 0.2, 0.2, 0.2 }
             );
-            auto sphereTexture = engine::TextureComponent {
-                "demo.png",
-                "diffuseSampler",
-                0
-            };
+            auto sphereMaterial = engine::MaterialComponent();
 
             sphereEntity.add<engine::Transform3dComponent>(sphereTransform);
-            sphereEntity.add<engine::TextureComponent>(sphereTexture);
+            sphereEntity.add<engine::MaterialComponent>(sphereMaterial);
 
             sphereFamily.addEntity(sphereEntity);
         }
 
-        app->activeScene->addFamily(sphereFamily);
-
         // light
         auto phongLight = engine::RegularLight(app->activeScene.get());
+        sphereFamily.addEntity(phongLight);
+        app->activeScene->addFamily(sphereFamily);
         app->activeScene->addEntity(phongLight);
     }
 

@@ -17,6 +17,10 @@ namespace engine {
         ~MaterialShaderController();
 
         void updateShader(const Ref<Shader> &shader, const Entity &entity) override;
+        void updateShader(const Ref<Shader> &shader, const Entity &entity, const uint32_t &instanceId) override;
+
+    private:
+        void updateTexture(const Ref<Shader> &shader, const Entity &entity);
 
     private:
         Ref<TextureSource> _textureSource;

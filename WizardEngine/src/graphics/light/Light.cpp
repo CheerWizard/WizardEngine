@@ -7,9 +7,9 @@
 namespace engine {
 
     void RegularLight::create() {
-        add<AmbientLightComponent>(LightComponents::newAmbient());
-        add<DiffuseLightComponent>(LightComponents::newDiffuse());
-        add<SpecularLightComponent>(LightComponents::newSpecular());
+        add<AmbientLightComponent>(AmbientLightComponent());
+        add<DiffuseLightComponent>(DiffuseLightComponent());
+        add<SpecularLightComponent>(SpecularLightComponent());
     }
 
 }

@@ -4,8 +4,6 @@
 
 #include "Renderer.h"
 
-#include "shader/InstanceID.h"
-
 namespace engine {
 
     void Renderer::create(const Ref<GraphicsFactory> &graphicsFactory) {
@@ -46,8 +44,7 @@ namespace engine {
             uint32_t instanceId = 0;
             for (uint32_t i = entityCounter ; i < limitedEntitiesCount ; i++) {
                 const auto& entity = entities[i];
-                entity.set<InstanceID>(InstanceID { instanceId++ });
-                updateShaderControllers(entity);
+                updateShaderControllers(entity, instanceId++);
                 tryUpdatePolygonMode(entity);
             }
 
@@ -80,8 +77,7 @@ namespace engine {
             uint32_t instanceId = 0;
             for (uint32_t i = entityCounter ; i < limitedEntitiesCount ; i++) {
                 const auto& entity = entities[i];
-                entity.set<InstanceID>(InstanceID { instanceId });
-                updateShaderControllers(entity);
+                updateShaderControllers(entity, instanceId);
                 // if entity has mesh - it will increment instanceID! otherwise - no!
                 tryUploadMesh(instanceId, entity, totalVertexCount, totalIndexCount);
                 tryUpdatePolygonMode(entity);
@@ -200,5 +196,11 @@ namespace engine {
     void Renderer::end() {
         vertexArray->unbind();
         shader->stop();
+    }
+
+    void Renderer::updateShaderControllers(const Entity &entity, const uint32_t &instanceId) {
+        for (const auto& shaderController : shaderControllers) {
+            shaderController->updateShader(shader, entity, instanceId);
+        }
     }
 }

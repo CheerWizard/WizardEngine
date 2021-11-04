@@ -63,6 +63,7 @@ namespace engine {
         void drawElements(const uint32_t &indexCount);
         void drawElements(const uint32_t &indexCount, const uint32_t &instanceCount);
         void updateShaderControllers(const Entity &entity);
+        void updateShaderControllers(const Entity &entity, const uint32_t &instanceId);
         void begin();
         void end();
 

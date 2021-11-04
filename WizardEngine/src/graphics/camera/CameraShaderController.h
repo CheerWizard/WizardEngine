@@ -15,6 +15,8 @@ namespace engine {
         ~CameraShaderController() override = default;
 
         void updateShader(const Ref<Shader> &shader, const Entity &entity) override;
+
+        void updateShader(const Ref<Shader> &shader, const Entity &entity, const uint32_t &instanceId) override;
     };
 
 }

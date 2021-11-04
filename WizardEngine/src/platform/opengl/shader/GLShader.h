@@ -50,10 +50,30 @@ namespace engine {
         void bindUniformBlock() override;
 
         void setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) override;
-
         void setUniformArrayElement(const uint32_t &index, IntUniform &uniform) override;
+        void setUniformArrayElement(const uint32_t &index, FloatUniform &uniform) override;
+
+        void setUniformArrayStructField(
+                const uint32_t &index,
+                const char* structName,
+                FloatUniform &uniform
+        ) override;
+
+        void setUniformArrayStructField(const uint32_t &index, const char *structName, Vec3fUniform &uniform) override;
+
+        void
+        setUniformArrayStructField(const uint32_t &index, const char *structName, Vec4fUniform &structField) override;
+
+        void setUniformStructField(const char *structName, FloatUniform &structField) override;
+
+        void setUniformStructField(const char *structName, Vec3fUniform &structField) override;
+
+        void setUniformStructField(const char *structName, Vec4fUniform &structField) override;
 
     private:
+        GLint getUniformArrayElementLocation(const char* name, const uint32_t &index);
+        GLint getUniformArrayStructLocation(const char* structName, const char* fieldName, const uint32_t &index);
+        GLint getUniformStructLocation(const char* structName, const char* fieldName);
         static std::string toStringShaderType(GLenum type);
 
     private:

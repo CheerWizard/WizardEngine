@@ -19,4 +19,12 @@ namespace engine {
         }
     }
 
+    void CameraShaderController::updateShader(
+            const Ref<engine::Shader> &shader,
+            const Entity &entity,
+            const uint32_t &instanceId
+    ) {
+        updateShader(shader, entity);
+    }
+
 }
