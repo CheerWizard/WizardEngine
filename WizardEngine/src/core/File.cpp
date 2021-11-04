@@ -11,7 +11,7 @@
 namespace engine {
 
     std::string File::readAsset(const std::string &assetName) const {
-        return read(createPath(assetName));
+        return read(createFullPath(assetName));
     }
 
     void File::createName() {
@@ -23,7 +23,7 @@ namespace engine {
         name = assetPath.substr(lastSlash, count);
     }
 
-    std::string File::createPath(const std::string &assetName) const {
+    std::string File::createFullPath(const std::string &assetName) const {
         std::stringstream assetFullPath;
         assetFullPath << assetPath << "/" << assetName << getExtensionName();
         return assetFullPath.str();
@@ -85,4 +85,54 @@ namespace engine {
         return isRemoved;
     }
 
+    // Returns the folder path of full file path.
+    std::string File::getFolderPath(const std::string &fullPath) {
+        size_t folderPathSize = fullPath.find_last_of("/\\");
+        return fullPath.substr(0, folderPathSize + 1);
+    }
+
+    std::string File::readWithIncludes(const std::string &fullPath, const std::string &includeToken) {
+        std::string result;
+        std::ifstream file(fullPath);
+        static bool isRecursiveCall = false;
+
+        if (!file.is_open()) {
+            ENGINE_ERR("Could not open file: {0}", fullPath);
+            return result;
+        }
+
+        std::string lineBuffer;
+        while (std::getline(file, lineBuffer)) {
+            // Find new include token
+            if (lineBuffer.find(includeToken) != std::string::npos) {
+                // Remove include token
+                lineBuffer.erase(0, includeToken.size() + 1);
+
+                // Concat include path and relative path
+                std::string includeFullPath = getFolderPath(fullPath);
+                lineBuffer.insert(0, includeFullPath);
+
+                // Recursively adding includes to result
+                isRecursiveCall = true;
+                result += readWithIncludes(lineBuffer, includeToken);
+
+                continue;
+            }
+
+            result += lineBuffer + '\n';
+        }
+
+        // Only add the null terminator at the end of the complete file
+        if (!isRecursiveCall) {
+            result += '\0';
+        }
+
+        file.close();
+
+        return result;
+    }
+
+    std::string File::readAssetWithIncludes(const std::string &assetName, const std::string &includeToken) const {
+        return readWithIncludes(createFullPath(assetName), includeToken);
+    }
 }

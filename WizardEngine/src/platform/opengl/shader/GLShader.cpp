@@ -9,17 +9,21 @@
 namespace engine {
 
     void GLShader::onCreate() {
-        auto vShader = readAsset(props.vFileName);
+        auto vShader = readAssetWithIncludes(props.vFileName, props.includeToken);
         if (vShader.empty()) {
             state = FAILED_READ_FILE;
             return;
         }
+        ENGINE_INFO("Vertex shader {0}: ", props.vFileName);
+        ENGINE_INFO(vShader);
 
-        auto fShader = readAsset(props.fFileName);
+        auto fShader = readAssetWithIncludes(props.fFileName, props.includeToken);
         if (fShader.empty()) {
             state = FAILED_READ_FILE;
             return;
         }
+        ENGINE_INFO("Fragment shader {0}: ", props.fFileName);
+        ENGINE_INFO(fShader);
 
         _typeSources[GL_VERTEX_SHADER] = vShader;
         _typeSources[GL_FRAGMENT_SHADER] = fShader;

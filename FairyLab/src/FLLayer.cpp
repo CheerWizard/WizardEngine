@@ -11,7 +11,7 @@
 
 #include "graphics/material/MaterialComponents.h"
 #include "graphics/transform/TransformComponents.h"
-#include "graphics/light/LightComponents.h"
+#include "graphics/light/Light.h"
 
 namespace fairy {
 
@@ -105,9 +105,6 @@ namespace fairy {
         _humanEntity.add<engine::Transform3dComponent>(humanTransform);
         _humanEntity.add<engine::MeshComponent>(humanMesh);
         _humanEntity.add<engine::TextureComponent>(humanTexture);
-        _humanEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient());
-        _humanEntity.add<engine::DiffuseLightComponent>(engine::LightComponents::newDiffuse({1, 1, 1}, {25, 25, 25}));
-        _humanEntity.add<engine::SpecularLightComponent>(engine::LightComponents::newSpecular({1, 1, 1}, {25, 25, 25}));
 
         _cubeEntity = app->activeScene->createEntity("Cube");
         auto cubeMesh = app->getMeshSource()->getCube("cube");
@@ -124,13 +121,11 @@ namespace fairy {
         _cubeEntity.add<engine::Transform3dComponent>(cubeTransform);
         _cubeEntity.add<engine::MeshComponent>(cubeMesh);
         _cubeEntity.add<engine::TextureComponent>(cubeTexture);
-        _cubeEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient());
-        _cubeEntity.add<engine::DiffuseLightComponent>(engine::LightComponents::newDiffuse({1, 1, 1}, {25, 25, 25}));
-        _cubeEntity.add<engine::SpecularLightComponent>(engine::LightComponents::newSpecular({1, 1, 1}, {25, 25, 25}));
 
         auto sphereFamily = engine::Family("Cars", app->activeScene.get());
         auto sphereMesh = app->getMeshSource()->getMesh("ferrari.obj");
         sphereFamily.add<engine::MeshComponent>(sphereMesh);
+        // camera
         sphereFamily.addEntity(activeSceneCamera);
 
         // randomize 100 spheres. testing Instance Rendering and Family approach!
@@ -154,14 +149,15 @@ namespace fairy {
 
             sphereEntity.add<engine::Transform3dComponent>(sphereTransform);
             sphereEntity.add<engine::TextureComponent>(sphereTexture);
-            sphereEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient());
-            sphereEntity.add<engine::DiffuseLightComponent>(engine::LightComponents::newDiffuse({1, 1, 1}, {25, 25, 25}));
-            sphereEntity.add<engine::SpecularLightComponent>(engine::LightComponents::newSpecular({1, 1, 1}, {25, 25, 25}));
 
             sphereFamily.addEntity(sphereEntity);
         }
 
         app->activeScene->addFamily(sphereFamily);
+
+        // light
+        auto phongLight = engine::RegularLight(app->activeScene.get());
+        app->activeScene->addEntity(phongLight);
     }
 
     void FLLayer::destroy() {

@@ -6,6 +6,7 @@
 
 #include "../ecs/Components.h"
 #include "../graphics/transform/TransformComponents.h"
+#include "../graphics/light/LightComponents.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -50,11 +51,28 @@ namespace engine {
 
     }
 
-    static void drawVec3Controller(const std::string& label,
-                                   glm::vec3& values,
-                                   bool &isUpdated,
-                                   float resetValue = 0.0f,
-                                   float columnWidth = 100.0f) {
+    struct FloatRange {
+        float begin;
+        float end;
+    };
+
+    static void drawFloatController(
+            const std::string &label,
+            float &value,
+            bool &isUpdated,
+            const FloatRange &range = {0, 1},
+            const float &resetValue = 0.0f
+    ) {
+        isUpdated = ImGui::SliderFloat(label.c_str(), &value, range.begin, range.end);
+    }
+
+    static void drawVec3Controller(
+            const std::string& label,
+            glm::vec3& values,
+            bool &isUpdated,
+            float resetValue = 0.0f,
+            float columnWidth = 100.0f
+    ) {
         ImGuiIO& io = ImGui::GetIO();
         auto boldFont = io.Fonts->Fonts[0];
 
@@ -85,7 +103,7 @@ namespace engine {
         ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
-        auto xDragged = ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
+        auto xDragged = ImGui::DragFloat("##X", &values.x, 0.05f, 0.0f, 0.0f, "%.2f");
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -103,7 +121,7 @@ namespace engine {
         ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
-        auto yDragged = ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
+        auto yDragged = ImGui::DragFloat("##Y", &values.y, 0.05f, 0.0f, 0.0f, "%.2f");
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -121,7 +139,7 @@ namespace engine {
         ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
-        auto zDragged = ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
+        auto zDragged = ImGui::DragFloat("##Z", &values.z, 0.05f, 0.0f, 0.0f, "%.2f");
         ImGui::PopItemWidth();
 
         ImGui::PopStyleVar();
@@ -135,48 +153,48 @@ namespace engine {
 
     template<typename T, typename UIFunction>
     static void drawComponent(const std::string& name, const Entity &entity, UIFunction uiFunction) {
+        if (!entity.template has<T>()) return;
+
         const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen
                 | ImGuiTreeNodeFlags_Framed
                 | ImGuiTreeNodeFlags_SpanAvailWidth
                 | ImGuiTreeNodeFlags_AllowItemOverlap
                 | ImGuiTreeNodeFlags_FramePadding;
 
-        if (entity.template has<T>()) {
-            auto& component = entity.template get<T>();
-            ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
+        auto& component = entity.template get<T>();
+        ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
 
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
 
-            float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-            ImGui::Separator();
+        float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+        ImGui::Separator();
 
-            bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, "%s", name.c_str());
+        bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, "%s", name.c_str());
 
-            ImGui::PopStyleVar();
+        ImGui::PopStyleVar();
 
-            ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
+        ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
 
-            if (ImGui::Button("+", ImVec2{ lineHeight, lineHeight })) {
-                ImGui::OpenPopup("ComponentSettings");
+        if (ImGui::Button("+", ImVec2{ lineHeight, lineHeight })) {
+            ImGui::OpenPopup("ComponentSettings");
+        }
+
+        bool removeComponent = false;
+        if (ImGui::BeginPopup("ComponentSettings")) {
+            if (ImGui::MenuItem("Remove component")) {
+                removeComponent = true;
             }
 
-            bool removeComponent = false;
-            if (ImGui::BeginPopup("ComponentSettings")) {
-                if (ImGui::MenuItem("Remove component")) {
-                    removeComponent = true;
-                }
+            ImGui::EndPopup();
+        }
 
-                ImGui::EndPopup();
-            }
+        if (open) {
+            uiFunction(component);
+            ImGui::TreePop();
+        }
 
-            if (open) {
-                uiFunction(component);
-                ImGui::TreePop();
-            }
-
-            if (removeComponent) {
-                entity.template remove<T>();
-            }
+        if (removeComponent) {
+            entity.template remove<T>();
         }
     }
 
@@ -217,7 +235,23 @@ namespace engine {
             if (transform.isUpdated) {
                 transform.applyChanges();
             }
-            ENGINE_INFO("Transform is updated : {0}", transform.isUpdated);
+            CLIENT_INFO("Transform is updated : {0}", transform.isUpdated);
+        });
+
+        drawComponent<AmbientLightComponent>("AmbientLight", entity, [](AmbientLightComponent& ambientLight) {
+            drawVec3Controller("Color", ambientLight.color.value, ambientLight.color.isUpdated);
+            drawFloatController("Strength", ambientLight.strength.value, ambientLight.strength.isUpdated, {0, 1.5 });
+        });
+
+        drawComponent<DiffuseLightComponent>("DiffuseLight", entity, [](DiffuseLightComponent& diffuseLight) {
+            drawVec3Controller("Position", diffuseLight.position.value, diffuseLight.position.isUpdated);
+            drawVec3Controller("Color", diffuseLight.color.value, diffuseLight.color.isUpdated);
+        });
+
+        drawComponent<SpecularLightComponent>("SpecularLight", entity, [](SpecularLightComponent& specularLight) {
+            drawVec3Controller("Position", specularLight.position.value, specularLight.position.isUpdated);
+            drawVec3Controller("Color", specularLight.color.value, specularLight.color.isUpdated);
+            drawFloatController("Strength", specularLight.strength.value, specularLight.strength.isUpdated, { 0, 5 });
         });
     }
 

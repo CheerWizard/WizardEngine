@@ -4,6 +4,8 @@
 
 #include "Shader.h"
 
+#include "fstream"
+
 namespace engine {
 
     const VertexAttribute& Shader::getAttribute(const uint32_t &index) const {

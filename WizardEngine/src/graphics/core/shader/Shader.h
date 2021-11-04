@@ -18,6 +18,8 @@
 #define ENGINE_SHADERS_PATH "../WizardEngine/assets/shaders/glsl/4.0"
 #endif
 
+#define DEFAULT_INCLUDE_TOKEN "#include"
+
 namespace engine {
 
     enum ShaderState : unsigned char {
@@ -34,6 +36,7 @@ namespace engine {
         std::string vFileName;
         std::string fFileName;
         std::string assetPath = CLIENT_SHADERS_PATH;
+        std::string includeToken = DEFAULT_INCLUDE_TOKEN;
     };
 
     class Shader : public File {
@@ -121,7 +124,6 @@ namespace engine {
         VertexFormat* vertexFormat = nullptr;
         UniformBlockFormat* uniformBlockFormat = nullptr;
         Ref<UniformBuffer> uniformBuffer = nullptr;
-
     };
 
 }

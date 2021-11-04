@@ -31,11 +31,10 @@ namespace engine {
         ~LightComponents() = default;
 
     public:
-        inline static AmbientLightComponent newAmbient() {
-            return newAmbient({0.5, 0.5, 0.5}, 0.5);
-        }
-
-        inline static AmbientLightComponent newAmbient(const glm::vec3 &color, const float &strength) {
+        inline static AmbientLightComponent newAmbient(
+                const glm::vec3 &color = {0.5f, 0.5f, 0.5f },
+                const float &strength = 0.5f
+        ) {
             return {
                     { "ambientLight.color", color },
                     { "ambientLight.strength", strength }

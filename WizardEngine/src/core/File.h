@@ -44,8 +44,9 @@ namespace engine {
         }
 
     public:
-        std::string createPath(const std::string &assetName) const;
+        std::string createFullPath(const std::string &assetName) const;
         std::string readAsset(const std::string &assetName) const;
+        std::string readAssetWithIncludes(const std::string &assetName, const std::string &includeToken) const;
 
     public:
         static std::string read(const std::string &filePath);
@@ -53,6 +54,8 @@ namespace engine {
         static std::string getCurrentWorkingDirectory();
         static bool copy(const std::string &src, const std::string &dest);
         static bool remove(const std::string &target);
+        static std::string getFolderPath(const std::string &fullPath);
+        static std::string readWithIncludes(const std::string &fullPath, const std::string &includeToken);
 
     protected:
         void createName();
