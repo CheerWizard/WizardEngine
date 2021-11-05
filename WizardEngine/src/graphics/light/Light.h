@@ -9,20 +9,20 @@
 
 namespace engine {
 
-    class RegularLight : public Entity {
+    class PhongLight : public Entity {
 
     public:
-        RegularLight() = default;
+        PhongLight() = default;
 
-        RegularLight(const std::string &tag, EntityContainer* container) : Entity(tag, container) {
+        PhongLight(const std::string &tag, EntityContainer* container) : Entity(tag, container) {
             create();
         }
 
-        RegularLight(EntityContainer* container) : Entity("RegularLight", container) {
+        PhongLight(EntityContainer* container) : Entity("PhongLight", container) {
             create();
         }
 
-        ~RegularLight() = default;
+        ~PhongLight() = default;
 
     private:
         void create();

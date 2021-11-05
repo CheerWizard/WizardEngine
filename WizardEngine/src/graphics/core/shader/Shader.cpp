@@ -24,34 +24,29 @@ namespace engine {
         vertexFormat->replace(index, attribute);
     }
 
-    uint32_t Shader::addUniformBlockAttr(const UniformAttribute &uniformAttribute) {
-        return uniformBlockFormat->add(uniformAttribute);
+    void Shader::bindVUniformBlock() {
+        bindUniformBlock(vUniformBlockFormat);
     }
 
-    const UniformAttribute& Shader::getUniformBlockAttr(const uint32_t &index) {
-        return uniformBlockFormat->get(index);
+    void Shader::bindFUniformBlock() {
+        bindUniformBlock(fUniformBlockFormat);
     }
 
-    void Shader::updateUniformBuffer(Mat4fUniform &uniform) {
-        if (uniform.isUpdated) {
-            uniform.isUpdated = false;
-
-            auto uniformData = UniformData {
-                uniform.toFloatPtr(),
-                0
-            };
-            uniformBuffer->setUniformBlockPointer();
-            uniformBuffer->bind();
-            uniformBuffer->load(uniformData);
-            uniformBuffer->unbind();
-        }
+    void Shader::updateUniformBuffer(
+            const Ref<UniformBuffer> &uniformBuffer,
+            const UniformData &uniformData
+    ) {
+        uniformBuffer->setUniformBlockPointer();
+        uniformBuffer->bind();
+        uniformBuffer->load(uniformData);
+        uniformBuffer->unbind();
     }
 
-    void Shader::tryUpdateUniformBuffer(Mat4fUniform &uniform) {
-        if (state == ShaderState::NO_UNIFORM_BLOCKS) {
-            setUniform(uniform);
-        } else {
-            updateUniformBuffer(uniform);
-        }
+    void Shader::updateVUniformBuffer(const UniformData &uniformData) {
+        updateUniformBuffer(vUniformBuffer, uniformData);
+    }
+
+    void Shader::updateFUniformBuffer(const UniformData &uniformData) {
+        updateUniformBuffer(fUniformBuffer, uniformData);
     }
 }

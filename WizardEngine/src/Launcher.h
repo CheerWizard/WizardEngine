@@ -10,8 +10,9 @@
 extern engine::Application* engine::createApplication();
 
 int main() {
-    INIT_CLIENT_LOG("Client");
     INIT_ENGINE_LOG("Engine");
+    INIT_EDITOR_LOG("Editor");
+    INIT_RUNTIME_LOG("Runtime");
 
     ENGINE_INFO("Running Application...");
     auto* app = engine::createApplication();

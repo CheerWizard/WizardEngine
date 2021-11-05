@@ -32,7 +32,7 @@ namespace engine {
         Vec3fUniform color = { "color", { 1, 1, 1 } };
         Vec3fUniform position = { "position", { 0.5f, 0.5f, 0.5f } };
         FloatUniform ambientStrength = { "ambientStrength", 0.5f};
-        FloatUniform specularStrength = { "ambientStrength", 0.5f};
+        FloatUniform specularStrength = { "specularStrength", 0.5f};
     };
 
     struct DirectionLightComponent {

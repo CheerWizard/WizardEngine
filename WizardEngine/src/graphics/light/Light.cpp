@@ -6,10 +6,8 @@
 
 namespace engine {
 
-    void RegularLight::create() {
-        add<AmbientLightComponent>(AmbientLightComponent());
-        add<DiffuseLightComponent>(DiffuseLightComponent());
-        add<SpecularLightComponent>(SpecularLightComponent());
+    void PhongLight::create() {
+        add<PhongLightComponent>(PhongLightComponent());
     }
 
 }

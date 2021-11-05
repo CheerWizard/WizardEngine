@@ -58,7 +58,7 @@ namespace engine {
     }
 
     void GraphicsModule::provideShaderControllers(Ref<Renderer> &renderer, const Ref<TextureSource> &textureSource) {
-        renderer->add(createRef<CameraShaderController>());
+        renderer->add(createRef<Camera3dShaderController>());
         renderer->add(createRef<TransformShaderController>());
         renderer->add(createRef<MaterialShaderController>(textureSource));
         renderer->add(createRef<LightShaderController>());

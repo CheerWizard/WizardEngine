@@ -45,7 +45,8 @@ namespace engine {
         const UniformAttribute& get(const uint32_t &index) const;
         void clear();
         void remove(const uint32_t &index);
-        bool isEmpty();
+        bool isEmpty() const;
+        void add(const std::vector<UniformAttribute> &attributes);
 
     public:
         const UniformAttribute& operator [](const uint32_t &index) const {

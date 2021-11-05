@@ -344,7 +344,7 @@ namespace engine {
             if (transform.isUpdated) {
                 transform.applyChanges();
             }
-            CLIENT_INFO("Transform is updated : {0}", transform.isUpdated);
+            EDITOR_INFO("Transform is updated : {0}", transform.isUpdated);
         });
         // draw light components
         drawComponent<AmbientLightComponent>("AmbientLight", entity, [](AmbientLightComponent& ambientLight) {

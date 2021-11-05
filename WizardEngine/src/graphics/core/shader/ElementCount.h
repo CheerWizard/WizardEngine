@@ -7,6 +7,7 @@
 namespace engine {
 
     enum ElementCount : unsigned char {
+        NONE = 0,
         SINGLE = 1,
         VEC2 = 2,
         VEC3 = 3,

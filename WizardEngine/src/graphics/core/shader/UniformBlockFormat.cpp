@@ -4,6 +4,8 @@
 
 #include "UniformBlockFormat.h"
 
+#include "../../../core/Logger.h"
+
 namespace engine {
 
     const UniformAttribute& UniformBlockFormat::get(const uint32_t &index) const {
@@ -39,6 +41,12 @@ namespace engine {
     }
 
     uint32_t UniformBlockFormat::add(const UniformAttribute &attribute) {
+        ENGINE_INFO(
+                "Adding new uniform block attribute {0} {1}, block name : {2}",
+                attribute.elementCount,
+                attribute.name,
+                _name
+        );
         _attributes.emplace_back(attribute);
         return _attributes.size() - 1;
     }
@@ -47,8 +55,13 @@ namespace engine {
         _attributes.erase(_attributes.begin() + index);
     }
 
-    bool UniformBlockFormat::isEmpty() {
+    bool UniformBlockFormat::isEmpty() const {
         return _attributes.empty();
     }
 
+    void UniformBlockFormat::add(const std::vector<UniformAttribute> &attributes) {
+        for (const auto& attribute : attributes) {
+            add(attribute);
+        }
+    }
 }

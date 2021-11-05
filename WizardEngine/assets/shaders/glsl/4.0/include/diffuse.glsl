@@ -4,11 +4,11 @@ struct DiffuseLight {
 };
 uniform DiffuseLight diffuseLight;
 
-// objPos - not normalized vector position of object in scene
-// objNormal - normalized vector normal of object in scene
-vec3 diff3(vec3 objPos, vec3 objNormal) {
-    vec3 lightDir = normalize(diffuseLight.position - objPos);
-    float diff = max(dot(objNormal, lightDir), 0.0);
+// pos - not normalized vector position of object in scene
+// normal - normalized vector normal of object in scene
+vec3 diff3(vec3 pos, vec3 normal) {
+    vec3 lightDir = normalize(diffuseLight.position - pos);
+    float diff = max(dot(normal, lightDir), 0.0);
     return diff * diffuseLight.color;
 }
 

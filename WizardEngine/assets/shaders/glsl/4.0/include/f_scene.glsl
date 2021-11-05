@@ -14,5 +14,5 @@ uniform Material material[32];
 
 void updateFragment() {
     vec3 normal = normalize(f_normal);
-    fragment = mtl4(material[f_id], f_objPos, normal, viewPosition);
+    fragment = mtl4_phong(material[f_id], f_objPos, normal, viewPosition);
 }

@@ -54,7 +54,7 @@ namespace engine {
             this->vertexFormat = vertexFormat;
         }
 
-        inline VertexFormat* getVertexFormat() const {
+        [[nodiscard]] inline VertexFormat* getVertexFormat() const {
             return vertexFormat;
         }
 
@@ -62,24 +62,41 @@ namespace engine {
             props = shaderProps;
         }
 
-        inline const ShaderProps& getProps() const {
+        [[nodiscard]] inline const ShaderProps& getProps() const {
             return props;
         }
 
-        inline ShaderState getState() const {
+        [[nodiscard]] inline ShaderState getState() const {
             return state;
         }
 
-        inline const uint32_t& getId() const {
+        [[nodiscard]] inline const uint32_t& getId() const {
             return programId;
         }
 
-        inline void setUniformFormat(UniformBlockFormat* uniformBlockFormat) {
-            this->uniformBlockFormat = uniformBlockFormat;
+        [[nodiscard]] inline UniformBlockFormat* getVertexUniformFormat() const {
+            return vUniformBlockFormat;
         }
 
-        inline UniformBlockFormat* getUniformBlockFormat() const {
-            return uniformBlockFormat;
+        inline void setVertexUniformFormat(UniformBlockFormat* uniformBlockFormat) {
+            vUniformBlockFormat = uniformBlockFormat;
+        }
+
+        [[nodiscard]] inline UniformBlockFormat* getFragmentUniformFormat() const {
+            return fUniformBlockFormat;
+        }
+
+        inline void setFragmentUniformFormat(UniformBlockFormat* uniformBlockFormat) {
+            fUniformBlockFormat = uniformBlockFormat;
+        }
+
+        [[nodiscard]] inline bool hasVUniformBlocks() const {
+            return !vUniformBlockFormat->isEmpty();
+
+        }
+
+        [[nodiscard]] inline bool hasFUniformBlocks() const {
+            return !fUniformBlockFormat->isEmpty();
         }
 
     public:
@@ -88,18 +105,17 @@ namespace engine {
         const VertexAttribute& getAttribute(const uint32_t &index) const;
         void removeAttribute(const uint32_t &index);
 
-        uint32_t addUniformBlockAttr(const UniformAttribute &uniformAttribute);
-        const UniformAttribute& getUniformBlockAttr(const uint32_t &index);
+        void updateVUniformBuffer(const UniformData &uniformData);
+        void updateFUniformBuffer(const UniformData &uniformData);
 
-        void tryUpdateUniformBuffer(Mat4fUniform &uniform);
-        void updateUniformBuffer(Mat4fUniform &uniform);
+        void bindVUniformBlock();
+        void bindFUniformBlock();
 
     public:
         virtual void start() = 0;
         virtual void stop() = 0;
 
         virtual void bindAttributes() = 0;
-        virtual void bindUniformBlock() = 0;
 
         virtual void setUniform(FloatUniform &uniform) = 0;
         virtual void setUniform(BoolUniform &uniform) = 0;
@@ -141,12 +157,18 @@ namespace engine {
         ) = 0;
 
     protected:
+        void updateUniformBuffer(const Ref<UniformBuffer> &uniformBuffer, const UniformData &uniformData);
+        virtual void bindUniformBlock(UniformBlockFormat* uniformBlockFormat) = 0;
+
+    protected:
         uint32_t programId;
         ShaderProps props;
         ShaderState state = READY;
         VertexFormat* vertexFormat = nullptr;
-        UniformBlockFormat* uniformBlockFormat = nullptr;
-        Ref<UniformBuffer> uniformBuffer = nullptr;
+        Ref<UniformBuffer> vUniformBuffer = nullptr;
+        UniformBlockFormat* vUniformBlockFormat = nullptr;
+        Ref<UniformBuffer> fUniformBuffer = nullptr;
+        UniformBlockFormat* fUniformBlockFormat = nullptr;
     };
 
 }

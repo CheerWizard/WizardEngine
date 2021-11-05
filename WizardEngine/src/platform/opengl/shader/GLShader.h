@@ -47,8 +47,6 @@ namespace engine {
         void setUniform(Mat3fUniform &uniform) override;
         void setUniform(Mat4fUniform &uniform) override;
 
-        void bindUniformBlock() override;
-
         void setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) override;
         void setUniformArrayElement(const uint32_t &index, IntUniform &uniform) override;
         void setUniformArrayElement(const uint32_t &index, FloatUniform &uniform) override;
@@ -83,11 +81,13 @@ namespace engine {
         void detachShaders();
         void deleteShaders();
         void findAttributes();
-        void findUniformBlocks();
+        void findUniformBlocks(const GLenum &shaderType, UniformBlockFormat* uniformBlockFormat, Ref<UniformBuffer>& uniformBuffer);
         static ElementCount toElementCount(const std::string &elementCountStr);
 
     protected:
         const char* getExtensionName() const override;
+
+        void bindUniformBlock(UniformBlockFormat *uniformBlockFormat) override;
 
     private:
         std::unordered_map<GLenum, std::string> _typeSources;

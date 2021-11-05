@@ -42,7 +42,7 @@ namespace fairy {
             auto relativePath = std::filesystem::relative(path, _props.assetPath);
             const auto& fileName = relativePath.filename().string();
             const auto& fileExtension = relativePath.extension().string();
-            ENGINE_INFO("Asset file name : {0}, relative path : {1}", fileName, path);
+            EDITOR_INFO("Asset file name : {0}, relative path : {1}", fileName, path);
 
             bool isDirectory = directoryEntry.is_directory();
             uint32_t iconId = _items.dirItem.iconId;
@@ -50,10 +50,7 @@ namespace fairy {
             if (!isDirectory) {
                 for (const auto& item : _items.items) {
                     const auto* fileExtensionStr = fileExtension.c_str();
-                    ENGINE_INFO("Current file extension : {0}", fileExtensionStr);
-                    ENGINE_INFO("Current item extension : {0}", item.extension);
                     if (strcmp(fileExtensionStr, item.extension) == 0) {
-                        ENGINE_INFO("Found icon id {0} for current {1} file!", item.iconId, item.extension);
                         iconId = item.iconId;
                         break;
                     }
@@ -155,7 +152,7 @@ namespace fairy {
 
         auto importPath = _fileDialog->getImportPath(filter);
         if (importPath.empty()) {
-            ENGINE_INFO("Importing asset has been dismissed!");
+            EDITOR_INFO("Importing asset has been dismissed!");
             return;
         }
 
@@ -163,7 +160,7 @@ namespace fairy {
         std::filesystem::path asset_dir_path(assetDirPath);
         auto importFileName = import_path.filename().string();
         asset_dir_path /= importFileName;
-        ENGINE_INFO("Import path : {0}, import file name : {1}", importPath, importFileName);
+        EDITOR_INFO("Import path : {0}, import file name : {1}", importPath, importFileName);
 
         auto isImported = engine::File::copy(importPath, asset_dir_path.string());
         if (isImported) {
@@ -192,10 +189,10 @@ namespace fairy {
         }
 
         auto exportPath = _fileDialog->getExportPath(filter);
-        ENGINE_INFO("Export path : {0}", exportPath);
+        EDITOR_INFO("Export path : {0}", exportPath);
 
         if (exportPath.empty()) {
-            ENGINE_INFO("Exporting asset has been dismissed!");
+            EDITOR_INFO("Exporting asset has been dismissed!");
             return;
         }
 

@@ -16,7 +16,6 @@ namespace engine {
 
     public:
         void updateShader(const Ref<engine::Shader> &shader, const Entity &entity) override;
-
         void updateShader(const Ref<Shader> &shader, const Entity &entity, const uint32_t &instanceId) override;
 
     };

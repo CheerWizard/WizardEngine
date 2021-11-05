@@ -19,6 +19,10 @@ namespace engine {
         virtual void updateShader(const Ref<Shader> &shader, const Entity &entity) = 0;
         virtual void updateShader(const Ref<Shader> &shader, const Entity &entity, const uint32_t &instanceId) = 0;
 
+    protected:
+        void updateVUniform(const Ref<Shader> &shader, Mat4fUniform &uniform, const uint32_t &uniformDataIndex = 0);
+        void updateFUniform(const Ref<Shader> &shader, Mat4fUniform &uniform, const uint32_t &uniformDataIndex = 0);
+
     };
 
 }

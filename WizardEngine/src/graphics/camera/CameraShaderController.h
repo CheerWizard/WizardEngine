@@ -8,15 +8,26 @@
 
 namespace engine {
 
-    class CameraShaderController : public ShaderController {
+    class Camera2dShaderController : public ShaderController {
 
     public:
-        CameraShaderController(): ShaderController() {}
-        ~CameraShaderController() override = default;
+        Camera2dShaderController(): ShaderController() {}
+        ~Camera2dShaderController() override = default;
 
         void updateShader(const Ref<Shader> &shader, const Entity &entity) override;
-
         void updateShader(const Ref<Shader> &shader, const Entity &entity, const uint32_t &instanceId) override;
+
+    };
+
+    class Camera3dShaderController : public ShaderController {
+
+    public:
+        Camera3dShaderController(): ShaderController() {}
+        ~Camera3dShaderController() override = default;
+
+        void updateShader(const Ref<Shader> &shader, const Entity &entity) override;
+        void updateShader(const Ref<Shader> &shader, const Entity &entity, const uint32_t &instanceId) override;
+
     };
 
 }

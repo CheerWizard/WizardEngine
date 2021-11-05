@@ -12,14 +12,8 @@ namespace engine {
 
     struct UniformAttribute {
         std::string name;
-        ElementCount elementCount;
-        uint32_t count;
-
-        UniformAttribute(
-            const std::string& name,
-            const ElementCount &elementCount = SINGLE,
-            const uint32_t &count = 1
-        ) : name(name), elementCount(elementCount), count(count) {}
+        ElementCount elementCount = SINGLE;
+        uint32_t count = 1;
 
         size_t size() const {
             return count * elementCount * sizeof(float);
@@ -28,6 +22,11 @@ namespace engine {
         size_t elementSize() const {
             return elementCount * sizeof(float);
         }
+    };
+
+    struct UniformStructAttribute {
+        std::string name;
+        std::vector<UniformAttribute> uniformAttributes;
     };
 
 }

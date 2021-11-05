@@ -119,8 +119,6 @@ namespace fairy {
         auto sphereFamily = engine::Family("Cars", app->activeScene.get());
         auto sphereMesh = app->getMeshSource()->getMesh("ferrari.obj");
         sphereFamily.add<engine::MeshComponent>(sphereMesh);
-        // camera
-        sphereFamily.addEntity(activeSceneCamera);
 
         // randomize 100 spheres. testing Instance Rendering and Family approach!
         std::random_device rd;
@@ -144,8 +142,8 @@ namespace fairy {
         }
 
         // light
-        auto phongLight = engine::RegularLight(app->activeScene.get());
-        sphereFamily.addEntity(phongLight);
+        auto phongLight = engine::PhongLight(app->activeScene.get());
+//        sphereFamily.addEntity(phongLight);
         app->activeScene->addFamily(sphereFamily);
         app->activeScene->addEntity(phongLight);
     }
@@ -158,7 +156,7 @@ namespace fairy {
     }
 
     void FLLayer::onPrepare() {
-        CLIENT_INFO("onPrepare()");
+        EDITOR_INFO("onPrepare()");
         ImGuiLayer::onPrepare();
         app->bindCloseKey(engine::KeyCode::Escape);
         activeSceneCameraController->bind(engine::KeyCode::W, engine::MoveType::UP);
@@ -267,21 +265,21 @@ namespace fairy {
     }
 
     void FLLayer::onImageOpen(const std::string &fileName) {
-        ENGINE_INFO("onImageOpen({0})", fileName);
+        EDITOR_INFO("onImageOpen({0})", fileName);
         const uint32_t &textureId = app->getTextureSource()->getTextureBuffer(fileName)->getId();
         _texturePreview.setId(textureId);
         _texturePreview.show();
     }
 
     void FLLayer::onObjOpen(const std::string &fileName) {
-        ENGINE_INFO("onObjOpen({0})", fileName);
+        EDITOR_INFO("onObjOpen({0})", fileName);
         const auto& objMesh = app->getMeshSource()->getMesh(fileName);
         _objPreview->setMesh(objMesh);
         _objPreview->show();
     }
 
     void FLLayer::onGlslOpen(const std::string &filePath, const std::string &fileName) {
-        ENGINE_INFO("onGlslOpen({0})", filePath);
+        EDITOR_INFO("onGlslOpen({0})", filePath);
         _fileEditor.props.title = filePath;
         _fileEditor.open(filePath);
         _fileEditor.show();
@@ -299,19 +297,19 @@ namespace fairy {
     }
 
     void FLLayer::onAssetImported(const std::string &assetPath) {
-        ENGINE_INFO("onAssetImported() - {0}", assetPath);
+        EDITOR_INFO("onAssetImported() - {0}", assetPath);
     }
 
     void FLLayer::onAssetExported(const std::string &assetPath) {
-        ENGINE_INFO("onAssetExported() - {0}", assetPath);
+        EDITOR_INFO("onAssetExported() - {0}", assetPath);
     }
 
     void FLLayer::onAssetRemoved(const std::string &assetPath) {
-        ENGINE_INFO("onAssetRemoved() - {0}", assetPath);
+        EDITOR_INFO("onAssetRemoved() - {0}", assetPath);
     }
 
     void FLLayer::onEntityRemoved(const engine::Entity &entity) {
-        ENGINE_INFO("onEntityRemoved({0})", entity.operator unsigned int());
+        EDITOR_INFO("onEntityRemoved({0})", entity.operator unsigned int());
         app->activeFrameController->resetFrame();
     }
 

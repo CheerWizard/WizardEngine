@@ -34,8 +34,15 @@ namespace engine {
             if (vertexFormat == nullptr) {
                 findAttributes();
             }
-            if (uniformBlockFormat == nullptr) {
-                findUniformBlocks();
+
+            if (vUniformBlockFormat == nullptr) {
+                vUniformBlockFormat = new UniformBlockFormat();
+                findUniformBlocks(GL_VERTEX_SHADER, vUniformBlockFormat, vUniformBuffer);
+            }
+
+            if (fUniformBlockFormat == nullptr) {
+                fUniformBlockFormat = new UniformBlockFormat();
+                findUniformBlocks(GL_FRAGMENT_SHADER, fUniformBlockFormat, fUniformBuffer);
             }
         }
     }
@@ -57,7 +64,7 @@ namespace engine {
         }
     }
 
-    void GLShader::bindUniformBlock() {
+    void GLShader::bindUniformBlock(UniformBlockFormat* uniformBlockFormat) {
         auto uniformBlockIndex = glGetUniformBlockIndex(programId, uniformBlockFormat->getName().c_str());
         glUniformBlockBinding(programId, uniformBlockIndex, 0);
     }
@@ -287,7 +294,8 @@ namespace engine {
         _shaderIds.clear();
         _typeSources.clear();
         delete vertexFormat;
-        delete uniformBlockFormat;
+        delete vUniformBlockFormat;
+        delete fUniformBlockFormat;
     }
 
     void GLShader::detachShaders() {
@@ -348,9 +356,18 @@ namespace engine {
     }
 
     ElementCount GLShader::toElementCount(const std::string &elementCountStr) {
-        ElementCount elementCount = SINGLE;
+        ElementCount elementCount = NONE;
 
         SWITCH(elementCountStr.c_str()) {
+            CASE("float"):
+                elementCount = SINGLE;
+                break;
+            CASE("int"):
+                elementCount = SINGLE;
+                break;
+            CASE("bool"):
+                elementCount = SINGLE;
+                break;
             CASE("vec2"):
                 elementCount = VEC2;
                 break;
@@ -374,26 +391,31 @@ namespace engine {
         return elementCount;
     }
 
-    void GLShader::findUniformBlocks() {
-        auto vShader = _typeSources[GL_VERTEX_SHADER];
-        ENGINE_INFO("Shader is trying to find uniform blocks...");
-        auto vShaderTokens = split(vShader, "\r\n; ");
+    void GLShader::findUniformBlocks(const GLenum &shaderType, UniformBlockFormat* uniformBlockFormat, Ref<UniformBuffer>& uniformBuffer) {
+        auto shader = _typeSources[shaderType];
+        auto shaderTypeStr = toStringShaderType(shaderType);
+        ENGINE_INFO("{0} shader is trying to find uniform blocks...", shaderTypeStr);
+        auto shaderTokens = split(shader, "\r\n; ");
 
-        uniformBlockFormat = new UniformBlockFormat();
-        for (auto i = 0 ; i < vShaderTokens.size() ; i++) {
-            if (vShaderTokens[i] == "uniform") {
-                // if uniform starts with curly brace, then this is uniform block
-                if (vShaderTokens[i + 2] != "{") continue;
+        auto uniformStructs = std::unordered_map<std::string, UniformStructAttribute>();
+        // find all structs and uniform blocks!
+        for (auto i = 0; i < shaderTokens.size(); i++) {
+            if (shaderTokens[i] == "struct") {
+                auto uniformStructName = shaderTokens[i + 1];
+                auto uniformStruct = UniformStructAttribute { uniformStructName };
+                ENGINE_INFO("Found struct {0} !", uniformStructName);
+                // find all attrs in struct!
+                auto uniformStructAttrs = std::vector<UniformAttribute>();
+                auto j = i + 2;
+                while (shaderTokens[j + 1] != "}") {
+                    auto attrElementToken = shaderTokens[j + 1];
+                    auto attrElementCount = toElementCount(attrElementToken);
+                    if (attrElementCount == NONE) {
+                        //todo we don't handle inner structs for now!
+                        continue;
+                    }
 
-                auto uniformBlockName = vShaderTokens[i + 1];
-                ENGINE_INFO("Found new uniform block - name : {0}", uniformBlockName);
-                uniformBlockFormat->setName(uniformBlockName);
-
-                auto j = i + 2; // start of block {
-                while (vShaderTokens[j + 1] != "}") {
-                    auto attrElementCount = toElementCount(vShaderTokens[j + 1]);
-
-                    auto attrName = vShaderTokens[j + 2];
+                    auto attrName = shaderTokens[j + 2];
                     uint32_t attrCount = 1;
                     // check if this attr is attr array.
                     auto attrNameTokens = split(attrName, "[]");
@@ -403,36 +425,80 @@ namespace engine {
                     }
 
                     auto attr = UniformAttribute {
-                        attrName,
-                        attrElementCount,
-                        attrCount
+                            attrName,
+                            attrElementCount,
+                            attrCount
                     };
 
-                    ENGINE_INFO(
-                        "Adding new uniform block attribute - elementCount : {0}, block name : {1}",
-                        attrElementCount,
-                        uniformBlockName
-                    );
-                    addUniformBlockAttr(attr);
+                    ENGINE_INFO("Adding uniform attribute {0} {1} to struct {2}", attrElementToken, attrName, uniformStructName);
+                    uniformStructAttrs.emplace_back(attr);
 
                     j += 2;
                 }
 
-                // skip searching next blocks
+                // cache uniform struct
+                uniformStructs[uniformStructName] = uniformStruct;
+            }
+
+            if (shaderTokens[i] == "uniform") {
+                // if uniform starts with curly brace, then this is uniform block
+                if (shaderTokens[i + 2] != "{") continue;
+
+                auto uniformBlockName = shaderTokens[i + 1];
+                ENGINE_INFO("Found new uniform block - name : {0}", uniformBlockName);
+                uniformBlockFormat->setName(uniformBlockName);
+
+                auto j = i + 2; // start of block {
+                while (shaderTokens[j + 1] != "}") {
+                    auto attrElementToken = shaderTokens[j + 1];
+                    auto attrElementCount = toElementCount(attrElementToken);
+                    //check if element is struct
+                    if (attrElementCount == NONE) {
+                        // check if struct exists in cache
+                        if (uniformStructs.find(attrElementToken) != uniformStructs.end()) {
+                            auto uniformStruct = uniformStructs[attrElementToken];
+                            uniformBlockFormat->add(uniformStruct.uniformAttributes);
+                        }
+                        continue;
+                    }
+
+                    auto attrName = shaderTokens[j + 2];
+                    uint32_t attrCount = 1;
+                    // check if this attr is attr array.
+                    auto attrNameTokens = split(attrName, "[]");
+                    if (attrNameTokens.size() > 1) {
+                        attrName = attrNameTokens[0];
+                        attrCount = TO_UINT32(attrNameTokens[1]);
+                    }
+
+                    auto attr = UniformAttribute {
+                            attrName,
+                            attrElementCount,
+                            attrCount
+                    };
+
+                    uniformBlockFormat->add(attr);
+
+                    j += 2;
+                }
+            }
+            // if we found function main(), then we can stop searching, as all data should be declared before main() function!
+            if (shaderTokens[i] == "void" && shaderTokens[i + 1] == "main()") {
+                ENGINE_INFO("Found void main() function. Ending searching of uniform blocks!");
                 break;
             }
         }
 
         if (uniformBlockFormat->isEmpty()) {
-            ENGINE_WARN("Shader '{0}' doesn't has uniform blocks!", props.name);
+            ENGINE_WARN("{0} shader {1} doesn't has uniform blocks!", shaderTypeStr, props.name);
             state = NO_UNIFORM_BLOCKS;
             return;
         }
 
         uniformBuffer = createRef<GLUniformBuffer>();
-        bindUniformBlock();
-        uniformBuffer->prepare(getUniformBlockFormat());
+        bindUniformBlock(uniformBlockFormat);
+        uniformBuffer->prepare(uniformBlockFormat);
 
-        ENGINE_INFO("Shader has found uniform blocks!");
+        ENGINE_INFO("{0} shader has found uniform blocks!", shaderTypeStr);
     }
 }
