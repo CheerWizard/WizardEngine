@@ -7,7 +7,7 @@
 #include "Launcher.h"
 
 engine::Application* engine::createApplication() {
-    CLIENT_INFO("Creating FLApplication...");
+    EDITOR_INFO("Creating FLApplication...");
     return new fairy::FLApplication();
 }
 
@@ -15,7 +15,7 @@ namespace fairy {
 
     void FLApplication::onCreate() {
         Application::onCreate();
-        CLIENT_INFO("Current workspace '{0}'", CURRENT_WORKING_DIR);
+        EDITOR_INFO("Current workspace '{0}'", CURRENT_WORKING_DIR);
 
         auto* flLayer = new FLLayer(
                 this,

@@ -6,63 +6,48 @@
 
 #include "../core/shader/Uniform.h"
 
+using namespace engine::shader;
+
 namespace engine {
 
-    struct AmbientLightComponent {
-        Vec3fUniform color;
-        FloatUniform strength;
+    struct PhongLightComponent {
+        const char* name = "phongLight";
+        Vec4fUniform position = { "position", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform diffuse = { "diffuse", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f, 0 } };
     };
 
-    struct DiffuseLightComponent {
-        Vec3fUniform color;
-        Vec3fUniform position;
+    struct DirectLightComponent {
+        const char* name = "directLight";
+        Vec4fUniform direction = { "direction", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform diffuse = { "diffuse", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f, 0 } };
     };
 
-    struct SpecularLightComponent {
-        Vec3fUniform color;
-        Vec3fUniform position;
-        FloatUniform strength;
+    struct PointLightComponent {
+        const char* name = "pointLight";
+        Vec4fUniform position = { "position", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform diffuse = { "diffuse", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f, 0 } };
+        FloatUniform constant = { "constant", 1};
+        FloatUniform linear = { "linear", 0.045f};
+        FloatUniform quadratic = { "quadratic", 0.0075f};
     };
 
-    class LightComponents {
-
-    private:
-        LightComponents() = default;
-        ~LightComponents() = default;
-
-    public:
-        inline static AmbientLightComponent newAmbient() {
-            return newAmbient({0.5, 0.5, 0.5}, 0.5);
-        }
-
-        inline static AmbientLightComponent newAmbient(const glm::vec3 &color, const float &strength) {
-            return {
-                    { "ambientLight.color", color },
-                    { "ambientLight.strength", strength }
-            };
-        }
-
-        inline static DiffuseLightComponent newDiffuse(
-                const glm::vec3 &color = {1, 1, 1},
-                const glm::vec3 &pos = {0.5, 0.5, 0.5}
-        ) {
-            return {
-                    { "diffuseLight.color", color },
-                    { "diffuseLight.position", pos }
-            };
-        }
-
-        inline static SpecularLightComponent newSpecular(
-                const glm::vec3 &color = {1, 1, 1},
-                const glm::vec3 &pos = {0.5, 0.5, 0.5},
-                const float &strength = 0.5
-        ) {
-            return {
-                    { "specularLight.color", color },
-                    { "specularLight.position", pos },
-                    { "specularLight.strength", strength }
-            };
-        }
+    struct FlashLightComponent {
+        const char* name = "flashLight";
+        Vec4fUniform position = { "position", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform direction = { "direction", { 0.5f, 0.5f, 0.5f, 0 } };
+        FloatUniform cutoff = { "cutoff", 0.5};
+        FloatUniform outerCutoff = { "outerCutoff", 0.5};
+        Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform diffuse = { "diffuse", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f, 0 } };
+        FloatUniform constant = { "constant", 1};
+        FloatUniform linear = { "linear", 0.045f};
+        FloatUniform quadratic = { "quadratic", 0.0075f};
     };
-
 }

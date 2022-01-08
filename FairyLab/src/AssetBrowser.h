@@ -6,12 +6,14 @@
 
 #include <core/Time.h>
 #include <core/FileDialog.h>
-#include <core/File.h>
+#include <core/FileSystem.h>
+#include <core/FileEditor.h>
 
-#include <graphics/core/buffers/TextureBuffer.h>
+#include <platform/opengl/buffers/TextureBuffer.h>
 
 #define EDITOR_TEXTURES_PATH "editor/textures"
 #define EDITOR_SHADERS_PATH "editor/shaders"
+#define DRAG_DROP_ITEM_TYPE "ASSET_BROWSER_ITEM"
 
 namespace fairy {
 
@@ -23,7 +25,6 @@ namespace fairy {
     public:
         virtual void onImageOpen(const std::string &fileName) = 0;
         virtual void onObjOpen(const std::string &fileName) = 0;
-        virtual void onGlslOpen(const std::string &filePath, const std::string &fileName) = 0;
         virtual void onAssetImported(const std::string &assetPath) = 0;
         virtual void onAssetExported(const std::string &assetPath) = 0;
         virtual void onAssetRemoved(const std::string &assetPath) = 0;
@@ -50,17 +51,13 @@ namespace fairy {
     class AssetBrowser {
 
     public:
-        static constexpr size_t itemsCount = 5;
-
-    public:
         AssetBrowser(const AssetBrowserProps &props,
-                     const AssetBrowserItems<itemsCount> &items,
+                     const AssetBrowserItems<6> &items,
                      const engine::Ref<engine::FileDialog>& fileDialog) :
                 _props(props),
                 _items(items),
                 _currentDir(props.assetPath),
                 _fileDialog(fileDialog) {
-            create();
         }
 
         ~AssetBrowser() {
@@ -84,7 +81,6 @@ namespace fairy {
         void onUpdate(engine::Time dt);
 
     private:
-        void create();
         void destroy();
         void importAsset(const std::filesystem::path &assetDir);
         void exportAsset(const std::string &assetPath);
@@ -93,16 +89,15 @@ namespace fairy {
 
     private:
         AssetBrowserProps _props;
-        AssetBrowserItems<itemsCount> _items;
-
-        std::filesystem::path _currentDir;
+        AssetBrowserItems<6> _items;
 
         engine::Ref<engine::FileDialog> _fileDialog;
 
         AssetBrowserCallback* _callback = nullptr;
 
-        std::string _rightClickedAssetPath;
+        std::filesystem::path _currentDir;
         std::filesystem::path _rightClickedDir;
+        std::filesystem::path _rightClickedAssetPath;
     };
 
 }

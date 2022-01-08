@@ -39,7 +39,8 @@ namespace engine {
         virtual void onRender(Time dt) = 0;
 
     public:
-        static void setTheme();
+        static void setDarkTheme();
+        static void setDarkThemeV2();
         static void setDockSpaceOption(const bool &isFullscreen);
         static void openDockSpace();
         static void hideDockSpace();

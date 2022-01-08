@@ -3,16 +3,18 @@
 //
 
 #include "ShaderSource.h"
+#include "../../../core/Assert.h"
 
-namespace engine {
+namespace engine::shader {
 
-    void ShaderSource::add(const Ref<Shader> &shader) {
-        auto name = shader->getName();
+    Ref<ShaderSource> ShaderSource::instance = createRef<ShaderSource>();
+
+    void ShaderSource::add(const std::string &name, const BaseShader &shader) {
         ENGINE_ASSERT(!exists(name), "Shader already exists!");
         _shaders[name] = shader;
     }
 
-    const Ref<Shader>& ShaderSource::get(const std::string &name) {
+    const BaseShader& ShaderSource::get(const std::string &name) {
         ENGINE_ASSERT(exists(name), "Shader not found!");
         return _shaders[name];
     }
@@ -24,13 +26,10 @@ namespace engine {
 
     void ShaderSource::clear() {
         ENGINE_INFO("ShaderSource: clear()");
+        for (auto& it : *this) {
+            it.second.release();
+        }
         _shaders.clear();
-    }
-
-    const Ref<Shader>& ShaderSource::create(const ShaderProps &props) {
-        ENGINE_INFO("ShaderSource: create(name: {0})", props.name);
-        add(_factory->newShader(props));
-        return _shaders[props.name];
     }
 
     void ShaderSource::remove(const std::string &name) {

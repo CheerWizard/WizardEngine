@@ -4,12 +4,9 @@
 
 #pragma once
 
-namespace engine {
-    namespace file_extensions {
-        static constexpr char* GLSL = ".glsl";
-        static constexpr char* OBJ = ".obj";
-        static constexpr char* PNG = ".png";
-        static constexpr char* JPG = ".jpg";
-        static constexpr char* TTF = ".ttf";
-    };
-}
+#define OBJ_EXT ".obj"
+#define PNG_EXT ".png"
+#define JPG_EXT ".jpg"
+#define GLSL_EXT ".glsl"
+#define TTF_EXT ".ttf"
+#define CPP_EXT ".cpp"

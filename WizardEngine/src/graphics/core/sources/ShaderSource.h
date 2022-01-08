@@ -4,23 +4,27 @@
 
 #pragma once
 
-#include "../shader/Shader.h"
-#include "../../GraphicsFactory.h"
+#include "../shader/BaseShader.h"
 
 #include "string"
 #include "unordered_map"
 
-namespace engine {
+namespace engine::shader {
 
-    typedef std::unordered_map<std::string, Ref<Shader>> Shaders;
+    typedef std::unordered_map<std::string, BaseShader> Shaders;
     typedef Shaders::iterator ShaderIterator;
 
     class ShaderSource {
 
     public:
-        ShaderSource(const Ref<GraphicsFactory> &factory) : _factory(factory) {}
+        ShaderSource() = default;
         ~ShaderSource() {
             clear();
+        }
+
+    public:
+        static const Ref<ShaderSource>& get() {
+            return instance;
         }
 
     public:
@@ -33,22 +37,21 @@ namespace engine {
         }
 
     public:
-        const Ref<Shader>& create(const ShaderProps& props);
-        void add(const Ref<Shader>& shader);
-        const Ref<Shader>& get(const std::string& name);
-        bool exists(const std::string& name) const;
+        void add(const std::string& name, const BaseShader& shader);
+        const BaseShader& get(const std::string& name);
+        [[nodiscard]] bool exists(const std::string& name) const;
         void remove(const std::string& name);
         void clear();
 
     public:
-        const Ref<Shader>& operator[](const std::string &name) {
+        const BaseShader& operator[](const std::string &name) {
             return get(name);
         }
 
     private:
         Shaders _shaders;
-        Ref<GraphicsFactory> _factory;
 
+    private:
+        static Ref<ShaderSource> instance;
     };
-
 }

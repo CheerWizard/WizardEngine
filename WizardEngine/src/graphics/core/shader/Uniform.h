@@ -7,43 +7,16 @@
 #include "glm/glm.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
-namespace engine {
+namespace engine::shader {
 
     template<typename V>
     struct Uniform {
-        const char* name;
+        const char* name = nullptr;
         V value;
-        bool isUpdated = true; // used to notify Shader system that this uniform should be uploaded to GPU.
-
-        Uniform(const char* name = "") : name(name) {
-        }
-
-        Uniform(const char* name, const V &value) :
-        name(name),
-        value(value) {
-        }
-
-    public:
-        float* toFloatPtr() {
-            return glm::value_ptr(value);
-        }
-
-        int* toIntPtr() {
-            return glm::value_ptr(value);
-        }
-
-    public:
-        virtual Uniform<V>& applyChanges(); // call this method to upload your uniform on the GPU.
-
+        bool isUpdated = true; // flag to minimize GPU calls.
     };
 
-    template<typename V>
-    Uniform<V>& Uniform<V>::applyChanges() {
-        isUpdated = true;
-        return *this;
-    }
-
-    typedef Uniform<float> FloatUniform;
+    typedef Uniform<glm::float32> FloatUniform;
     typedef Uniform<int> IntUniform;
     typedef Uniform<bool> BoolUniform;
     typedef Uniform<double> DoubleUniform;
@@ -55,5 +28,15 @@ namespace engine {
     typedef Uniform<glm::fmat2> Mat2fUniform;
     typedef Uniform<glm::fmat3> Mat3fUniform;
     typedef Uniform<glm::fmat4> Mat4fUniform;
+
+    template<typename V>
+    inline float* toFloatPtr(Uniform<V> &uniform) {
+        return glm::value_ptr(uniform.value);
+    }
+
+    template<typename V>
+    inline float* toIntPtr(Uniform<V> &uniform) {
+        return glm::value_ptr(uniform.value);
+    }
 
 }

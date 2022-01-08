@@ -3,8 +3,10 @@
 //
 
 #include "Application.h"
-
 #include "../platform/Platform.h"
+#include "../graphics/camera/CameraShaderScript.h"
+#include "../graphics/material/MaterialShaderScript.h"
+#include "../graphics/light/LightShaderScript.h"
 
 namespace engine {
 
@@ -24,8 +26,6 @@ namespace engine {
 
         fpsController.setMaxFps(getRefreshRate());
 
-        _graphicsModule = GRAPHICS_MODULE;
-        _graphicsModule->createContext(_window->getNativeWindow());
         createGraphics();
 
         _window->setWindowCallback(this);
@@ -35,27 +35,31 @@ namespace engine {
 
         input = INIT_INPUT(_window->getNativeWindow());
 
+        createScripting();
+
         createActiveScene();
     }
 
     void Application::onPrepare() {
-        _renderSettings->printInfo();
+        RenderCommands::logApiInfo();
         _window->onPrepare();
+        _window->setInCenter();
         createFrameSpecs();
         _layerStack.onPrepare();
+        enableMSAA();
     }
 
     void Application::onDestroy() {
         ENGINE_INFO("onDestroy()");
+        _scriptSystem->onDestroy();
     }
 
     void Application::onUpdate() {
         auto dt = fpsController.getDeltaTime();
         fpsController.begin();
-
-        // render
-        _renderSystem->onUpdate();
-        // simulate
+        // update runtime systems
+        updateRuntime(dt);
+        // update editor/tools
         _layerStack.onUpdate(dt);
         // poll events + swap chain
         _window->onUpdate();
@@ -76,7 +80,6 @@ namespace engine {
     void Application::onWindowClosed() {
         ENGINE_INFO("Application : onWindowClosed()");
         _layerStack.onWindowClosed();
-        _isRunning = false;
     }
 
     void Application::onWindowResized(const uint32_t &width , const uint32_t &height) {
@@ -88,9 +91,6 @@ namespace engine {
     }
 
     void Application::onKeyPressed(KeyCode keyCode) {
-        if (_closeKeyPressed == keyCode) {
-            onWindowClosed();
-        }
         _layerStack.onKeyPressed(keyCode);
     }
 
@@ -129,6 +129,7 @@ namespace engine {
     void Application::createActiveScene() {
         activeScene = createRef<Scene>();
         _renderSystem->setActiveScene(activeScene);
+        _scriptSystem->setActiveScene(activeScene);
     }
 
     void Application::restart() {
@@ -170,11 +171,68 @@ namespace engine {
     }
 
     void Application::createGraphics() {
-        _renderSettings = _graphicsModule->newRenderSettings();
-        activeFrameController = _graphicsModule->newFrameController();
-        _meshSource = _graphicsModule->newMeshSource();
-        _textureSource = _graphicsModule->newTextureSource();
-        _shaderSource = _graphicsModule->newShaderSource();
-        _renderSystem = _graphicsModule->newRenderSystem(_textureSource, _shaderSource, activeFrameController);
+        GraphicsInitializer::createContext(_window->getNativeWindow());
+        activeFrameController = createRef<FrameController>();
+        // create batch renderer
+        auto vBatchShader = shader::BaseShader({
+           camera3dUboScript()
+        });
+        auto fBatchShader = shader::BaseShader({
+           materialScript(),
+           phongLightScript(),
+           materialMapScript(),
+           pointLightArrayScript()
+        });
+        auto batchShader = shader::BaseShaderProgram(
+            shader::ShaderProps {
+                "batch",
+                "v_batch.glsl",
+                "f_batch.glsl",
+                ENGINE_SHADERS_PATH
+            },
+            vBatchShader,
+            fBatchShader
+        );
+        auto batchRenderer = createRef<Renderer>(batchShader);
+        // create instance renderer
+        auto vInstanceShader = shader::BaseShader({
+            camera3dUboScript()
+        });
+        auto fInstanceShader = shader::BaseShader({
+            materialScript(),
+            phongLightScript(),
+            materialMapScript(),
+            pointLightArrayScript()
+        });
+        auto instanceShader = shader::BaseShaderProgram(
+            shader::ShaderProps {
+                "instance",
+                "v_instance.glsl",
+                "f_instance.glsl",
+                ENGINE_SHADERS_PATH
+            },
+            vInstanceShader,
+            fInstanceShader
+        );
+        auto instanceRenderer = createRef<Renderer>(instanceShader);
+        // create render system
+        _renderSystem = createScope<RenderSystem>(activeFrameController, batchRenderer, instanceRenderer);
+    }
+
+    void Application::updateRuntime(Time dt) {
+        if (activeScene != nullptr && !activeScene->isEmpty()) {
+            _scriptSystem->onUpdate(dt);
+            _renderSystem->onUpdate();
+        } else {
+            ENGINE_WARN("Active scene is null or empty!");
+        }
+    }
+
+    void Application::shutdown() {
+        _isRunning = false;
+    }
+
+    void Application::createScripting() {
+        _scriptSystem = createScope<ScriptSystem>();
     }
 }

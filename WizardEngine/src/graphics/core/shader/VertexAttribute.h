@@ -9,14 +9,14 @@
 
 #include "glm/glm.hpp"
 
-namespace engine {
+namespace engine::shader {
 
-    enum AttributeCategory : unsigned char {
+    enum AttributeCategory : uint8_t {
         VERTEX = 0,
         INSTANCE = 1
     };
 
-    enum AttributeBool : unsigned char {
+    enum AttributeBool : uint8_t {
         FALSE = 0,
         TRUE = 1
     };
@@ -24,22 +24,14 @@ namespace engine {
     struct VertexAttribute {
         std::string name;
         uint32_t location;
-        uint32_t offset;
-        ElementCount elementCount;
-        AttributeBool normalized;
-        AttributeCategory category;
-
-        VertexAttribute(const std::string& name,
-                        const uint32_t &location,
-                        const ElementCount &elementCount = SINGLE,
-                        const uint32_t &offset = 0,
-                        const AttributeCategory &category = VERTEX,
-                        const AttributeBool &normalized = FALSE) :
-                  name(name), location(location),
-                  offset(offset), elementCount(elementCount),
-                  normalized(normalized), category(category)
-                  {}
-
+        uint32_t offset = 0;
+        ElementCount elementCount = SINGLE;
+        AttributeBool normalized = FALSE;
+        AttributeCategory category = VERTEX;
     };
+
+    inline size_t elementSize(const VertexAttribute &vertexAttribute) {
+        return vertexAttribute.elementCount * sizeof(float);
+    }
 
 }

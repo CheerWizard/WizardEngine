@@ -4,20 +4,23 @@
 
 #pragma once
 
-#include "FrameBuffer.h"
 #include "../../../core/Memory.h"
+#include "../../../platform/includes/graphics/fbo.h"
 
 namespace engine {
 
     class FrameController {
 
     public:
-        FrameController(const Ref<FrameBuffer> &frameBuffer) : _frameBuffer(frameBuffer) {}
-        ~FrameController() = default;
+        FrameController() = default;
+        FrameController(const FrameBuffer &frameBuffer) : _frameBuffer(frameBuffer) {}
+        ~FrameController() {
+            release();
+        }
 
     public:
         inline const std::vector<uint32_t>& getFrameColors() {
-            return _frameBuffer->getColorAttachments();
+            return _frameBuffer.getColorAttachments();
         }
 
     public:
@@ -28,9 +31,10 @@ namespace engine {
         void setViewPort();
         void resetFrame();
         const std::vector<uint32_t>& updateSpecs(const uint32_t &width, const uint32_t &height);
+        void release();
 
     private:
-        Ref<FrameBuffer> _frameBuffer;
+        FrameBuffer _frameBuffer;
 
     };
 

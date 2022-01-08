@@ -24,7 +24,7 @@ namespace engine {
 
         ImVec2 imageSize = ImGui::GetContentRegionAvail();
 
-        if (!_isHoldingMouse && (imageSize.x != (float) _props.width || imageSize.y != (float) _props.height)) {
+        if (_isFocused && (imageSize.x != (float) _props.width || imageSize.y != (float) _props.height)) {
             // we will resize image content only if user stopped holding mouse!
             _props.width = (uint32_t) imageSize.x;
             _props.height = (uint32_t) imageSize.y;
@@ -34,6 +34,7 @@ namespace engine {
         }
 
         ImGui::Image((void*) id, imageSize);
+        onRender(dt);
         end();
     }
 
@@ -55,6 +56,10 @@ namespace engine {
     void ImageLayout::end() {
         ImGui::End();
         ImGui::PopStyleVar();
+    }
+
+    void ImageLayout::onRender(const Time &dt) {
+        // do nothing here!
     }
 
 }

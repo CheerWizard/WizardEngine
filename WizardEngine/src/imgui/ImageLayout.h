@@ -32,6 +32,9 @@ namespace engine {
     public:
         virtual void onUpdate(Time dt);
 
+    protected:
+        virtual void onRender(const Time &dt);
+
     public:
         inline void setCallback(ImageLayoutCallback* imageLayoutCallback) {
             _callback = imageLayoutCallback;
@@ -64,8 +67,6 @@ namespace engine {
 
     protected:
         void end();
-
-    private:
         void destroy();
 
     protected:

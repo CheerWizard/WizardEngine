@@ -4,10 +4,12 @@
 
 #pragma once
 
-#include "obj/ObjFile.h"
+#include "../io/ObjFile.h"
 #include "../geometry/Shapes.h"
 
 #include "unordered_map"
+
+#define GET_MESH(objName) engine::MeshSource::get()->getMesh(objName)
 
 namespace engine {
 
@@ -17,6 +19,11 @@ namespace engine {
         MeshSource() = default;
         ~MeshSource() {
             destroy();
+        }
+
+    public:
+        static const Ref<MeshSource>& get() {
+            return instance;
         }
 
     public:
@@ -45,9 +52,11 @@ namespace engine {
         void destroy();
 
     private:
+        // key - .obj file name or mesh name
+        // value - actual mesh loaded from .obj file or constructed directly
         std::unordered_map<std::string, MeshComponent> _cache;
-        ObjFile _objFile;
 
+    private:
+        static Ref<MeshSource> instance;
     };
-
 }

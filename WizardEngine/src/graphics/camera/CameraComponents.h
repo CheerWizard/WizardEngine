@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../core/math/ViewProjectionMatrix.h"
+#include "../core/math/ViewProjections.h"
 
 #define DEFAULT_CAMERA_NAME "camera"
 
@@ -17,55 +17,31 @@ namespace engine {
 
     public:
         // stack allocated cameras!
-        inline static Camera2dComponent camera2D() {
-            return {
-                DEFAULT_CAMERA_NAME,
-                ViewMatrix2d {
-                        nullptr
-                },
-                OrthographicMatrix {
-                    ""
-                }
-            };
+        static Camera2dComponent camera2D() {
+            auto camera = Camera2dComponent {};
+            camera.name = DEFAULT_CAMERA_NAME;
+            return camera;
         }
 
-        inline static Camera3dComponent camera3D(const float& aspectRatio) {
-            return {
-                DEFAULT_CAMERA_NAME,
-                ViewMatrix3d {
-                nullptr
-                },
-                PerspectiveMatrix {
-                nullptr,
-                aspectRatio
-                }
-            };
+        static Camera3dComponent camera3D(const float& aspectRatio) {
+            auto camera = Camera3dComponent {};
+            camera.name = DEFAULT_CAMERA_NAME;
+            camera.perspectiveMatrix.aspectRatio = aspectRatio;
+            return camera;
         }
 
         // heap allocated cameras!
-        inline static Camera2dComponent* newCamera2D() {
-            return new Camera2dComponent {
-                DEFAULT_CAMERA_NAME,
-                ViewMatrix2d {
-                    nullptr
-                    },
-                    OrthographicMatrix {
-                    ""
-                }
-            };
+        static Camera2dComponent* newCamera2D() {
+            auto* camera = new Camera2dComponent {};
+            camera->name = DEFAULT_CAMERA_NAME;
+            return camera;
         }
 
-        inline static Camera3dComponent* newCamera3D(const float& aspectRatio) {
-            return new Camera3dComponent {
-                DEFAULT_CAMERA_NAME,
-                ViewMatrix3d {
-                    nullptr
-                    },
-                    PerspectiveMatrix {
-                    nullptr,
-                    aspectRatio
-                }
-            };
+        static Camera3dComponent* newCamera3D(const float& aspectRatio) {
+            auto* camera = new Camera3dComponent {};
+            camera->name = DEFAULT_CAMERA_NAME;
+            camera->perspectiveMatrix.aspectRatio = aspectRatio;
+            return camera;
         }
     };
 }

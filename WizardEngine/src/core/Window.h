@@ -7,8 +7,8 @@
 
 #include <string>
 
-#define DEFAULT_WINDOW_WIDTH 1920
-#define DEFAULT_WINDOW_HEIGHT 1080
+#define DEFAULT_WINDOW_WIDTH 1024
+#define DEFAULT_WINDOW_HEIGHT 768
 
 namespace engine {
 
@@ -17,6 +17,7 @@ namespace engine {
         uint32_t width;
         uint32_t height;
         bool vSyncEnabled;
+        uint32_t sampleSize;
 
         WindowCallback* windowCallback = nullptr;
         KeyboardCallback* keyboardCallback = nullptr;
@@ -27,9 +28,9 @@ namespace engine {
                 const std::string& title = "Wizard Engine",
                 uint32_t width = DEFAULT_WINDOW_WIDTH,
                 uint32_t height = DEFAULT_WINDOW_HEIGHT,
-                bool vSyncEnabled = false)
-        : title(title), width(width), height(height), vSyncEnabled(vSyncEnabled) {
-
+                bool vSyncEnabled = false,
+                uint32_t sampleSize = 4
+        ) : title(title), width(width), height(height), vSyncEnabled(vSyncEnabled), sampleSize(sampleSize) {
         }
 
     };
@@ -42,7 +43,9 @@ namespace engine {
         virtual ~Window() = default;
 
     public:
-        virtual void* getNativeWindow() const = 0;
+        [[nodiscard]] virtual void* getNativeWindow() const {
+            return window;
+        }
 
         virtual void onPrepare() = 0;
         virtual void onUpdate() = 0;
@@ -53,23 +56,13 @@ namespace engine {
         virtual void setWindowIcon(const std::string &filePath) = 0;
         virtual void disableFullScreen() = 0;
         virtual void enableFullScreen() = 0;
+        virtual void setSampleSize(const uint32_t &size) = 0;
+        virtual void setPosition(const uint32_t &x, const uint32_t &y) = 0;
 
     public:
-        void removeCallbacks() {
-            removeWindowCallback();
-            removeKeyboardCallback();
-            removeMouseCallback();
-            removeCursorCallback();
-        }
-
-        void toggleFullScreen() {
-            isFullScreen = !isFullScreen;
-            if (isFullScreen) {
-                enableFullScreen();
-            } else {
-                disableFullScreen();
-            }
-        }
+        void removeCallbacks();
+        void toggleFullScreen();
+        void setInCenter();
 
     public:
         virtual void enableVSync() {
@@ -133,6 +126,7 @@ namespace engine {
         }
 
     protected:
+        void* window;
         WindowProps windowProps;
         bool isInitialized = false;
         bool isFullScreen = false;

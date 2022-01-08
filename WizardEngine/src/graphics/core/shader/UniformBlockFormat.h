@@ -6,27 +6,21 @@
 
 #include "UniformAttribute.h"
 
-namespace engine {
+namespace engine::shader {
 
-    class UniformBlockFormat {
+    class UniformBlockFormat final {
 
     public:
-        UniformBlockFormat(
-                const std::string& name = "",
-                const std::vector<UniformAttribute>& attributes = std::vector<UniformAttribute>()) :
-        _attributes(attributes),
-        _name(name) {}
-
-        ~UniformBlockFormat() {
-            destroy();
-        }
+        UniformBlockFormat() = default;
+        UniformBlockFormat(const uint32_t& id) : _id(id) {}
+        ~UniformBlockFormat();
 
     public:
         inline std::vector<UniformAttribute>& getAttributes() {
             return _attributes;
         }
 
-        inline const std::string getName() {
+        [[nodiscard]] inline const std::string& getName() const {
             return _name;
         }
 
@@ -34,18 +28,22 @@ namespace engine {
             _name = name;
         }
 
+        [[nodiscard]] inline const uint32_t& getId() const {
+            return _id;
+        }
+
     public:
-        void destroy();
+        [[nodiscard]] uint32_t getElementCount() const;
+        [[nodiscard]] size_t size() const;
+        [[nodiscard]] uint32_t count() const;
 
-        uint32_t getElementCount() const;
-        size_t size() const;
-
-        uint32_t add(const UniformAttribute &attribute); // returns index of new element.
+        uint32_t add(UniformAttribute &attribute); // returns index of new element.
         void replace(const uint32_t &index, const UniformAttribute &attribute);
-        const UniformAttribute& get(const uint32_t &index) const;
+        [[nodiscard]] const UniformAttribute& get(const uint32_t &index) const;
         void clear();
         void remove(const uint32_t &index);
-        bool isEmpty();
+        [[nodiscard]] bool isEmpty() const;
+        void add(std::vector<UniformAttribute> &attributes);
 
     public:
         const UniformAttribute& operator [](const uint32_t &index) const {
@@ -53,6 +51,7 @@ namespace engine {
         }
 
     private:
+        uint32_t _id = 0;
         std::string _name;
         std::vector<UniformAttribute> _attributes;
 

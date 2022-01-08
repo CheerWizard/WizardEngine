@@ -3,13 +3,28 @@
 //
 
 #include "Entity.h"
-
 #include "Components.h"
 
 namespace engine {
 
     entt::entity EntityContainer::createEntityId() {
-        return getRegistry().create();
+        return registry.create();
+    }
+
+    void EntityContainer::deleteEntity(const Entity &entity) {
+        registry.destroy(entity);
+    }
+
+    void EntityContainer::clear() {
+        registry.clear<>();
+    }
+
+    bool EntityContainer::isEmpty() {
+        return registry.empty<>();
+    }
+
+    size_t EntityContainer::size() {
+        return registry.size();
     }
 
     void Entity::create() {
@@ -19,9 +34,5 @@ namespace engine {
     void Entity::create(const std::string &tag) {
         id = container->createEntityId();
         add<TagComponent>(tag);
-    }
-
-    void Entity::destroy() {
-        container = nullptr;
     }
 }

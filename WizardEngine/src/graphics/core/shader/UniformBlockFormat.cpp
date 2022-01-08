@@ -4,14 +4,12 @@
 
 #include "UniformBlockFormat.h"
 
-namespace engine {
+#include "../../../core/Logger.h"
+
+namespace engine::shader {
 
     const UniformAttribute& UniformBlockFormat::get(const uint32_t &index) const {
         return _attributes[index];
-    }
-
-    void UniformBlockFormat::destroy() {
-        clear();
     }
 
     uint32_t UniformBlockFormat::getElementCount() const {
@@ -25,7 +23,7 @@ namespace engine {
     size_t UniformBlockFormat::size() const {
         size_t size = 0;
         for (const auto &attribute : _attributes) {
-            size += attribute.size();
+            size += size_of(attribute);
         }
         return size;
     }
@@ -38,7 +36,14 @@ namespace engine {
         _attributes.emplace(_attributes.begin() + index, attribute);
     }
 
-    uint32_t UniformBlockFormat::add(const UniformAttribute &attribute) {
+    uint32_t UniformBlockFormat::add(UniformAttribute &attribute) {
+        ENGINE_INFO(
+                "Adding new uniform block attribute {0} {1}, block name : {2}",
+                attribute.elementCount,
+                attribute.name,
+                _name
+        );
+        attribute.offset = size();
         _attributes.emplace_back(attribute);
         return _attributes.size() - 1;
     }
@@ -47,8 +52,21 @@ namespace engine {
         _attributes.erase(_attributes.begin() + index);
     }
 
-    bool UniformBlockFormat::isEmpty() {
+    bool UniformBlockFormat::isEmpty() const {
         return _attributes.empty();
     }
 
+    void UniformBlockFormat::add(std::vector<UniformAttribute> &attributes) {
+        for (auto& attribute : attributes) {
+            add(attribute);
+        }
+    }
+
+    uint32_t UniformBlockFormat::count() const {
+        return _attributes.size();
+    }
+
+    UniformBlockFormat::~UniformBlockFormat() {
+        clear();
+    }
 }

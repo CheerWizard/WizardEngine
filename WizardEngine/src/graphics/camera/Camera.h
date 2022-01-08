@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "CameraComponents.h"
 #include "../../ecs/Entity.h"
+#include "CameraComponents.h"
 
 namespace engine {
 

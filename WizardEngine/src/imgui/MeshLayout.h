@@ -30,7 +30,7 @@ namespace engine {
         }
 
     public:
-        void onUpdate(Time dt) override;
+        void onRender(const Time &dt) override;
 
     public:
         inline const Ref<CameraController>& getCameraController() {
@@ -45,6 +45,10 @@ namespace engine {
             _entity.set<MeshComponent>(meshComponent);
         }
 
+        inline void setRotateEntity(const bool &enabled) {
+            _shouldRotateEntity = enabled;
+        }
+
     public:
         void onImageResized(const uint32_t &width, const uint32_t &height) override;
 
@@ -56,12 +60,14 @@ namespace engine {
     private:
         void create();
         void destroy();
+        void rotateEntity(const Time &dt);
 
     private:
         Ref<Renderer> _renderer;
         Ref<FrameController> _frameController;
         Ref<CameraController> _cameraController;
         Entity _entity;
+        bool _shouldRotateEntity = true;
 
     };
 

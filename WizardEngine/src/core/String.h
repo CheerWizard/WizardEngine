@@ -12,11 +12,15 @@
 #define SWITCH(str) switch(engine::str_hash_for_switch(str))
 #define CASE(str) static_assert(engine::str_is_correct(str) && (engine::str_len(str) <= MAX_LENGTH), "CASE : string is incorrect or length is higher than 10"); \
 case engine::str_hash(str, engine::str_len(str))
-
+// number conversions
 #define TO_FLOAT(v) std::stof(v)
 #define TO_INT(v) std::stoi(v)
 #define TO_DOUBLE(v) std::stod(v)
 #define TO_UINT32(v) static_cast<uint32_t>(std::stoul(v))
+#define TO_UINT16(v) static_cast<uint16_t>(TO_INT(v)) // undefined behaviour if v is out of uint16_t range!
+// string conversions
+#define STR_FROM_WCHAR(v) engine::string::from(v)
+#define SAME(v1, v2) engine::string::equals(v1, v2)
 
 namespace engine {
 
@@ -132,6 +136,11 @@ namespace engine {
 
         static const bool equals(const char* str1, const char* str2) {
             return strcmp(str1, str2) == 0;
+        }
+
+        static std::string from(const wchar_t* w_chars) {
+            std::wstring ws(w_chars);
+            return { ws.begin(), ws.end() };
         }
 
     }

@@ -9,38 +9,50 @@
 
 namespace engine {
 
-    Ref<spdlog::logger> Logger::_clientLogger;
-    Ref<spdlog::logger> Logger::_engineLogger;
+    Ref<Log> Logger::_runtimeLogger = nullptr;
+    Ref<Log> Logger::_engineLogger = nullptr;
+    Ref<Log> Logger::_editorLogger = nullptr;
 
-    void Logger::createEngineLogger(const std::string &name = "WizardEngine") {
-        auto logSinks = createLogSinks(name);
-        _engineLogger = createRef<spdlog::logger>(name, std::begin(logSinks), std::end(logSinks));
-        spdlog::register_logger(_engineLogger);
-        _engineLogger->set_level(spdlog::level::trace);
-        _engineLogger->flush_on(spdlog::level::trace);
+    void Logger::createEngineLogger(const std::string &name) {
+        if (_engineLogger != nullptr) {
+            ENGINE_WARN("Engine logger is already created!");
+            return;
+        }
+        createLogger(_engineLogger, name);
     }
 
-    void Logger::createClientLogger(const std::string &name = "WizardClient") {
-        auto logSinks = createLogSinks(name);
-        _clientLogger = createRef<spdlog::logger>(name, std::begin(logSinks), std::end(logSinks));
-        spdlog::register_logger(_clientLogger);
-        _clientLogger->set_level(spdlog::level::trace);
-        _clientLogger->flush_on(spdlog::level::trace);
+    void Logger::createRuntimeLogger(const std::string &name) {
+        if (_runtimeLogger != nullptr) {
+            ENGINE_WARN("Runtime logger is already created!");
+            return;
+        }
+        createLogger(_runtimeLogger, name);
+    }
+
+    void Logger::createEditorLogger(const std::string &name) {
+        if (_editorLogger != nullptr) {
+            ENGINE_WARN("Editor logger is already created!");
+            return;
+        }
+        createLogger(_editorLogger, name);
     }
 
     void Logger::setPattern(const std::string& pattern) {
         spdlog::set_pattern(pattern);
     }
 
-    std::vector<spdlog::sink_ptr> Logger::createLogSinks(const std::string &logFileName) {
+    void Logger::createLogger(Ref<Log> &logger, const std::string &name) {
         std::vector<spdlog::sink_ptr> logSinks;
         logSinks.emplace_back(createRef<spdlog::sinks::stdout_color_sink_mt>());
-        logSinks.emplace_back(createRef<spdlog::sinks::basic_file_sink_mt>(logFileName + ".log", true));
+        logSinks.emplace_back(createRef<spdlog::sinks::basic_file_sink_mt>(name + ".log", true));
 
         logSinks[0]->set_pattern("%^[%T] %n: %v%$");
         logSinks[1]->set_pattern("[%T] [%l] %n: %v");
 
-        return logSinks;
-    }
+        logger = createRef<Log>(name, std::begin(logSinks), std::end(logSinks));
 
+        spdlog::register_logger(logger);
+        logger->set_level(spdlog::level::trace);
+        logger->flush_on(spdlog::level::trace);
+    }
 }

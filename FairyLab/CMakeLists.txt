@@ -13,7 +13,7 @@ include_directories(
         ../WizardEngine/src
         ../WizardEngine/vendor
 )
-set(ICON_RC "${CMAKE_CURRENT_SOURCE_DIR}/icon.rc")
+set(ICON_RC "${CMAKE_CURRENT_SOURCE_DIR}/icon.rc" src/SceneViewport.h src/SceneViewport.cpp assets/scripts/LogScript.cpp)
 
 add_executable(FairyLab ${FAIRY_SRC} ${ICON_RC})
 

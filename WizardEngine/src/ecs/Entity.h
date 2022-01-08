@@ -15,15 +15,20 @@ namespace engine {
     class EntityContainer {
 
     public:
-        virtual entt::registry& getRegistry() = 0;
-        virtual Entity createEntity(const std::string &tag) = 0;
-        virtual Entity createEntity2d(const std::string &tag) = 0;
-        virtual Entity createEntity3d(const std::string &tag) = 0;
-        virtual void deleteEntityFromRegistry(const Entity& entity) = 0;
-        virtual void deleteEntity(const Entity& entity) = 0;
-        virtual void addEntity(const Entity& entity) = 0;
-        virtual void addFamily(const Entity& entity) = 0;
-        entt::entity createEntityId();
+        virtual ~EntityContainer() = default;
+
+    public:
+        void deleteEntity(const Entity& entity);
+        [[nodiscard]] entt::entity createEntityId();
+
+        virtual void clear();
+        [[nodiscard]] virtual bool isEmpty();
+        [[nodiscard]] size_t size();
+
+    public:
+        inline entt::registry& getRegistry() {
+            return registry;
+        }
 
     public:
         template<typename T, typename... Args>
@@ -32,7 +37,7 @@ namespace engine {
                 ENGINE_WARN("Entity {0} already has a component!", entityId);
                 return false;
             }
-            getRegistry().emplace<T>(entityId, std::forward<Args>(args)...);
+            registry.emplace<T>(entityId, std::forward<Args>(args)...);
             return true;
         }
 
@@ -42,7 +47,7 @@ namespace engine {
                 ENGINE_WARN("Entity {0} does not have a component!", entityId);
                 return false;
             }
-            getRegistry().replace<T>(entityId, std::forward<Args>(args)...);
+            registry.replace<T>(entityId, std::forward<Args>(args)...);
             return true;
         }
 
@@ -52,21 +57,26 @@ namespace engine {
         inline void setComponent(const entt::entity& entityId, Args &&... args) {
             if (hasComponent<T>(entityId)) {
                 ENGINE_INFO("Updating component for entity id: {0}", entityId);
-                getRegistry().replace<T>(entityId, std::forward<Args>(args)...);
+                registry.replace<T>(entityId, std::forward<Args>(args)...);
             } else {
                 ENGINE_INFO("Adding component for entity id: {0}", entityId);
-                getRegistry().emplace<T>(entityId, std::forward<Args>(args)...);
+                registry.emplace<T>(entityId, std::forward<Args>(args)...);
             }
         }
 
         template<typename T>
         inline T& getComponent(const entt::entity& entityId) {
-            return *getRegistry().try_get<T>(entityId);
+            return *registry.try_get<T>(entityId);
+        }
+
+        template<typename T>
+        inline T* getComponentPtr(const entt::entity& entityId) {
+            return registry.try_get<T>(entityId);
         }
 
         template<typename T>
         inline bool hasComponent(const entt::entity& entityId) {
-            return getRegistry().try_get<T>(entityId) != nullptr;
+            return getComponentPtr<T>(entityId) != nullptr;
         }
 
         template<typename T>
@@ -75,19 +85,19 @@ namespace engine {
                 ENGINE_WARN("Entity {0} does not have a component!", entityId);
                 return false;
             }
-            getRegistry().remove<T>(entityId);
+            registry.remove<T>(entityId);
             return true;
         }
 
         template <typename... Components>
         std::vector<Entity> filter() {
-            return getRegistry().template view<std::add_const<Components>...>();
+            return registry.template view<std::add_const<Components>...>();
         }
 
         template <typename... Components, typename Predicate>
         std::vector<entt::entity> filter(Predicate &&predicate) {
             std::vector<entt::entity> filteredEntities;
-            auto viewEntities = getRegistry().template view<std::add_const_t<Components>...>();
+            auto viewEntities = registry.template view<std::add_const_t<Components>...>();
             for (const auto& viewEntity : viewEntities) {
                 if (predicate(viewEntities.template get<std::add_const_t<Components>>(viewEntity)...)) {
                     filteredEntities.push_back(viewEntity);
@@ -107,7 +117,7 @@ namespace engine {
                 std::vector<entt::entity> &out_entities1,
                 std::vector<entt::entity> &out_entities2
         ) {
-            auto viewEntities = getRegistry().template view<std::add_const_t<Components>...>();
+            auto viewEntities = registry.template view<std::add_const_t<Components>...>();
             for (const auto& viewEntity : viewEntities) {
                 if (predicate(viewEntities.template get<std::add_const_t<Components>>(viewEntity)...)) {
                     out_entities1.push_back(viewEntity);
@@ -116,6 +126,9 @@ namespace engine {
                 }
             }
         }
+
+    protected:
+        entt::registry registry;
 
         friend class Entity;
     };
@@ -137,14 +150,8 @@ namespace engine {
             create(tag);
         }
 
-        Entity(const Entity& other) = default;
-
-        ~Entity() {
-            destroy();
-        }
-
     public:
-        inline uint32_t getId() const {
+        [[nodiscard]] inline uint32_t getId() const {
             return (uint32_t) id;
         }
 
@@ -156,6 +163,9 @@ namespace engine {
 
         template<typename T>
         inline T& get() const;
+
+        template<typename T>
+        inline T* getPtr() const;
 
         template<typename T>
         inline bool has() const;
@@ -186,7 +196,6 @@ namespace engine {
     private:
         void create();
         void create(const std::string &tag);
-        void destroy();
 
     };
 
@@ -218,5 +227,10 @@ namespace engine {
     template<typename T, typename... Args>
     inline void Entity::set(Args &&... args) const {
         container->setComponent<T>(id, std::forward<Args>(args)...);
+    }
+
+    template<typename T>
+    inline T* Entity::getPtr() const {
+        return container->getComponentPtr<T>(id);
     }
 }

@@ -6,28 +6,12 @@
 
 #include "../graphics/transform/TransformComponents.h"
 
+#include "imgui.h"
+
 namespace engine {
 
     void MeshLayout::create() {
         setCallback(this);
-    }
-
-    void MeshLayout::onUpdate(Time dt) {
-        if (_isVisible) {
-            id = _frameController->getFrameColors()[0];
-
-            _cameraController->setDeltaTime(dt);
-
-            auto& transform = _entity.get<Transform3dComponent>();
-            transform.rotation.y += 0.0001f / dt;
-            transform.applyChanges();
-
-            _frameController->begin();
-            _renderer->render(_entity);
-            _frameController->end();
-        }
-
-        ImageLayout::onUpdate(dt);
     }
 
     void MeshLayout::destroy() {
@@ -62,6 +46,30 @@ namespace engine {
     void MeshLayout::onKeyTyped(KeyCode keyCode) {
         if (_isFocused) {
             _cameraController->onKeyTyped(keyCode);
+        }
+    }
+
+    void MeshLayout::rotateEntity(const Time &dt) {
+        auto& transform = _entity.get<Transform3dComponent>();
+        transform.rotation.y += 0.000025f / dt;
+        ModelMatrices::update(transform);
+    }
+
+    void MeshLayout::onRender(const Time &dt) {
+        id = _frameController->getFrameColors()[0];
+
+        _cameraController->setDeltaTime(dt);
+
+        if (_shouldRotateEntity) {
+            rotateEntity(dt);
+        }
+
+        _frameController->begin();
+        _renderer->render(_entity);
+        _frameController->end();
+
+        if (ImGui::Button("Auto-Rotate", { 120, 36 })) {
+            setRotateEntity(!_shouldRotateEntity);
         }
     }
 }
