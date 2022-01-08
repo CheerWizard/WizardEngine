@@ -10,19 +10,17 @@
 namespace engine {
 
     struct NativeScriptComponent {
-        Entity* script = nullptr;
+        Entity script;
         // lifecycle functions
-        std::function<void()> destructFunction;
-        std::function<void(Entity*)> onCreateFunction;
-        std::function<void(Entity*)> onDestroyFunction;
-        std::function<void(Entity*, Time)> onUpdateFunction;
+        std::function<void(Entity&)> onCreateFunction;
+        std::function<void(Entity&)> onDestroyFunction;
+        std::function<void(Entity&, Time)> onUpdateFunction;
 
         template<class T>
         void bind() {
-            destructFunction = [&]() { delete (T*)script; };
-            onCreateFunction = [](Entity* script) { ((T*) script)->onCreate(); };
-            onDestroyFunction = [](Entity* script) { ((T*) script)->onDestroy(); };
-            onUpdateFunction = [](Entity* script, Time dt) { ((T*) script)->onUpdate(dt); };
+            onCreateFunction = [](Entity& script) { ((T&) script).onCreate(); };
+            onDestroyFunction = [](Entity& script) { ((T&) script).onDestroy(); };
+            onUpdateFunction = [](Entity& script, Time dt) { ((T&) script).onUpdate(dt); };
         }
     };
 
