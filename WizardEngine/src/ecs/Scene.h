@@ -6,13 +6,15 @@
 
 #include "Family.h"
 
+#include "set"
+
 namespace engine {
 
     class Scene : public EntityContainer {
 
     public:
         Scene() = default;
-        ~Scene() {
+        ~Scene() override {
             clear();
         }
 
@@ -25,39 +27,20 @@ namespace engine {
             _textureId = textureId;
         }
 
-        inline const std::vector<Family>& getFamilies() const {
+        inline std::vector<Family>& getFamilies() {
             return _families;
         }
 
-        inline const std::vector<Entity>& getEntities() const {
-            return _entities;
-        }
-
-        inline entt::registry& getRegistry() override {
-            return _registry;
-        }
-
     public:
-        Family createFamily(const std::string &tag);
-        void deleteFamily(const Family& family);
-        void clear();
-        bool isEmpty() const;
-
-        Entity createEntity(const std::string &tag) override;
-        Entity createEntity2d(const std::string &tag) override;
-        Entity createEntity3d(const std::string &tag) override;
-        void deleteEntityFromRegistry(const Entity& entity) override;
-        void deleteEntity(const Entity& entity) override;
-
-        void addEntity(const Entity &entity) override;
-        void addFamily(const Entity &entity) override;
-        void setFamily(const Family &family);
+        void addFamily(const Family &family);
+        void removeFamily(const Family& family);
+        void clear() override;
+        bool isEmpty() override;
+        bool isEmptyFamilies();
 
     private:
-        entt::registry _registry; // registry of all entities for this Scene.
-        std::vector<Family> _families;
-        std::vector<Entity> _entities; // entities that are not included to Family.
-        uint32_t _textureId; // id of texture that stores pixels of this Scene.
+        uint32_t _textureId = 0; // id of texture that stores pixels of this scene
+        std::vector<Family> _families; // list of all families
     };
 
 }

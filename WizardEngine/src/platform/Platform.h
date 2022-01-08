@@ -53,15 +53,11 @@
     #define INIT_INPUT(nativeWindow) createScope<WindowsInput>(nativeWindow)
     #define INIT_FILE_DIALOG(nativeWindow) createRef<WindowsFileDialog>(nativeWindow)
 
-    #ifdef GL
-	    #include "opengl/GLModule.h"
-        #define GLFW_INCLUDE_NONE
-        #define GRAPHICS_MODULE createScope<GLModule>()
-        #define GL_CORE_VERSION "#version 400"
-
+#ifdef GL
+    #define GLFW_INCLUDE_NONE
+    #define GL_CORE_VERSION "#version 400"
     #elif defined(VK)
         #error "Vulkan graphics context is not supported!"
-
     #endif
 
 #endif

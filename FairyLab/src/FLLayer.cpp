@@ -9,15 +9,18 @@
 
 #include "random"
 
-#include "graphics/material/MaterialComponents.h"
-#include "graphics/transform/TransformComponents.h"
-#include "graphics/light/LightComponents.h"
+#include "graphics/light/Light.h"
+#include "graphics/camera/CameraShaderScript.h"
+#include "graphics/material/MaterialShaderScript.h"
+#include "graphics/light/LightShaderScript.h"
+#include "graphics/GraphicsObject.h"
+#include "../assets/scripts/LogScript.cpp"
+
+using namespace engine::shader;
 
 namespace fairy {
 
     void FLLayer::create() {
-        ImGui::StyleColorsLight();
-
         createAssetBrowser();
 
         activeSceneCamera = engine::Camera3D {
@@ -29,15 +32,25 @@ namespace fairy {
                 "ActiveSceneCameraController",
                 activeSceneCamera
         );
-        app->activeScene->addEntity(activeSceneCamera);
 
-        auto objPreviewShader = app->getShaderSource()->create(engine::ShaderProps {
-            "obj",
-            "v_obj",
-            "f_obj",
-            EDITOR_SHADERS_PATH
+        auto vObjShader = BaseShader({
+            camera3dScript()
         });
-        auto objRenderer = app->getGraphicsModule()->newTextureRenderer(objPreviewShader, app->getTextureSource());
+        auto fObjShader = BaseShader({
+            materialScript(),
+            phongLightScript()
+        });
+        auto objShader = BaseShaderProgram(
+                ShaderProps {
+                    "obj",
+                    "v_obj.glsl",
+                    "f_obj.glsl",
+                    EDITOR_SHADERS_PATH
+                },
+                vObjShader,
+                fObjShader
+        );
+        auto objRenderer = engine::createRef<engine::Renderer>(objShader);
 
         auto objCamera = engine::Camera3D {
             "obj",
@@ -49,15 +62,25 @@ namespace fairy {
                 objCamera
         );
 
-        auto objTexture = engine::TextureComponent {
-            "demo.png",
-            "diffuseSampler",
-            0
-        };
-        objCamera.add<engine::TextureComponent>(objTexture);
-        editorScene->addEntity(objCamera);
+        auto objTransform = engine::transform3d(
+                { 2.5, 0, 12 },
+                {135, 0, 0},
+                {0.5, 0.5, 0.5}
+        );
+        objCamera.add<engine::Transform3dComponent>(objTransform);
 
-        auto objFrameController = app->getGraphicsModule()->newFrameController();
+        auto objMaterial = engine::MaterialComponent();
+        objMaterial.color.value = { 0.25, 0, 0, 1 };
+        objCamera.add<engine::MaterialComponent>(objMaterial);
+
+        auto objPhongLight = engine::PhongLightComponent();
+        objPhongLight.position.value = { 25, 25, -25, 0 };
+        objPhongLight.ambient.value = { 0.05, 0.05, 0.05, 0 };
+        objPhongLight.diffuse.value = { 0.4, 0.4, 0.4, 0 };
+        objPhongLight.specular.value = { 0.4, 0.4, 0.4, 0 };
+        objCamera.add<engine::PhongLightComponent>(objPhongLight);
+
+        auto objFrameController = engine::createRef<engine::FrameController>();
         objFrameController->updateSpecs(app->getWindowWidth(), app->getWindowHeight());
 
         _objPreview = engine::createRef<engine::MeshLayout>(
@@ -67,114 +90,118 @@ namespace fairy {
                 objCameraController
         );
 
-        auto objTransform = engine::TransformComponents::newTransform3d(
-                { 2.5, 0, 12 },
-                {135, 0, 0},
-                {0.5, 0.5, 0.5}
-        );
-        objCamera.add<engine::Transform3dComponent>(objTransform);
-
-        objCamera.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient());
-        objCamera.add<engine::DiffuseLightComponent>(engine::LightComponents::newDiffuse({1, 1, 1}, {25, 25, 25}));
-        objCamera.add<engine::SpecularLightComponent>(engine::LightComponents::newSpecular({1, 1, 1}, {25, 25, 25}));
-
         _objPreview->setEntity(objCamera);
 
         _scenePreviewCallback = new FLLayer::ScenePreviewCallback(*this);
         _imagePreviewCallback = new FLLayer::ImagePreviewCallback(*this);
 
-        _scenePreview.setCallback(_scenePreviewCallback);
+        sceneViewport.setCallback(_scenePreviewCallback);
+        sceneViewport.setDragDropCallback(this);
         _texturePreview.setCallback(_imagePreviewCallback);
         _assetBrowser->setCallback(this);
 
-        app->getTextureSource()->loadTexture("demo.png");
-        app->getTextureSource()->loadTexture("demo_texture.jpg");
+//        app->getTextureSource()->loadTexture("demo.png");
+//        app->getTextureSource()->loadTexture("demo_texture.jpg");
 
-        _humanEntity = app->activeScene->createEntity("Human");
-        auto humanMesh = app->getMeshSource()->getMesh("human.obj");
-        auto humanTransform = engine::TransformComponents::newTransform3d(
-                { 2.5, 0, 12 },
-                {135, 0, 0},
-                {0.5, 0.5, 0.5}
+        auto car = engine::Object3d(
+                app->activeScene.get(),
+                "Car",
+                engine::transform3d(
+                        { 2.5, 0, 12 },
+                        {135, 0, 0},
+                        {0.5, 0.5, 0.5}
+                ),
+                GET_MESH("ferrari.obj")
         );
-        auto humanTexture = engine::TextureComponent {
-            "demo.png",
-            "diffuseSampler",
-            0
-        };
-        _humanEntity.add<engine::Transform3dComponent>(humanTransform);
-        _humanEntity.add<engine::MeshComponent>(humanMesh);
-        _humanEntity.add<engine::TextureComponent>(humanTexture);
-        _humanEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient());
-        _humanEntity.add<engine::DiffuseLightComponent>(engine::LightComponents::newDiffuse({1, 1, 1}, {25, 25, 25}));
-        _humanEntity.add<engine::SpecularLightComponent>(engine::LightComponents::newSpecular({1, 1, 1}, {25, 25, 25}));
 
-        _cubeEntity = app->activeScene->createEntity("Cube");
-        auto cubeMesh = app->getMeshSource()->getCube("cube");
-        auto cubeTransform = engine::TransformComponents::newTransform3d(
+//        _cubeEntity = engine::Entity("Cube", app->activeScene.get());
+//        auto cubeMesh = app->getMeshSource()->getCube("cube");
+//        auto cubeMaterial = engine::MaterialComponent();
+//        auto cubeMaterialMaps = engine::MaterialMapsComponent();
+//        cubeMaterialMaps.diffuseFileName = "wood_diffuse.png";
+//        cubeMaterialMaps.specularFileName = "wood_specular.png";
+//        _cubeEntity.add<engine::Transform3dComponent>(cubeTransform);
+//        _cubeEntity.add<engine::MeshComponent>(cubeMesh);
+//        _cubeEntity.add<engine::MaterialComponent>(cubeMaterial);
+//        _cubeEntity.add<engine::MaterialMapsComponent>(cubeMaterialMaps);
+
+//        auto sphereFamily = engine::Family("Cars");
+//        auto sphereMesh = app->getMeshSource()->getMesh("ferrari.obj");
+//        sphereFamily.add<engine::MeshComponent>(sphereMesh);
+//
+//        // randomize 100 spheres. testing Instance Rendering and Family approach!
+//        std::random_device rd;
+//        std::mt19937 mt(rd());
+//        std::uniform_real_distribution<double> dist(-100, 100);
+//        for (uint32_t i = 0 ; i < 10 ; i++) {
+//            auto r = (float) dist(mt);
+//
+//            auto sphereEntity = engine::Entity("Ferrari" + std::to_string(i), &sphereFamily);
+//            auto sphereTransform = engine::TransformComponents::newTransform3d(
+//                    { r, r, r },
+//                    { r, r, r },
+//                    { 0.2, 0.2, 0.2 }
+//            );
+//            auto sphereMaterial = engine::MaterialComponent();
+//
+//            sphereEntity.add<engine::Transform3dComponent>(sphereTransform);
+//            sphereEntity.add<engine::MaterialComponent>(sphereMaterial);
+//        }
+//        app->activeScene->addFamily(sphereFamily);
+
+        // light
+//        auto phongLight = engine::PhongLight(app->activeScene.get());
+//        auto directLight = engine::DirectLight(app->activeScene.get());
+//        auto pointLight = engine::PointLight(app->activeScene.get());
+//        auto lightMesh = engine::Shapes::newSquare();
+        auto lightTransform = engine::transform3d(
                 { 10, 0, 12 },
                 { 135, 0, 0 },
                 { 0.5, 0.5, 0.5 }
         );
-        auto cubeTexture = engine::TextureComponent {
-            "demo_texture.jpg",
-            "diffuseSampler",
-            1
-        };
-        _cubeEntity.add<engine::Transform3dComponent>(cubeTransform);
-        _cubeEntity.add<engine::MeshComponent>(cubeMesh);
-        _cubeEntity.add<engine::TextureComponent>(cubeTexture);
-        _cubeEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient());
-        _cubeEntity.add<engine::DiffuseLightComponent>(engine::LightComponents::newDiffuse({1, 1, 1}, {25, 25, 25}));
-        _cubeEntity.add<engine::SpecularLightComponent>(engine::LightComponents::newSpecular({1, 1, 1}, {25, 25, 25}));
+        auto phongLight = engine::PhongLight(app->activeScene.get());
+        phongLight.add<engine::Transform3dComponent>(lightTransform);
+//        phongLight.add<engine::MeshComponent>(lightMesh);
+//
+        auto pointLight = engine::PointLight(app->activeScene.get());
+        pointLight.add<engine::Transform3dComponent>(lightTransform);
 
-        auto sphereFamily = engine::Family("Cars", app->activeScene.get());
-        auto sphereMesh = app->getMeshSource()->getMesh("ferrari.obj");
-        sphereFamily.add<engine::MeshComponent>(sphereMesh);
-        sphereFamily.addEntity(activeSceneCamera);
+        auto pointLight2 = engine::PointLight(app->activeScene.get());
+        pointLight2.add<engine::Transform3dComponent>(lightTransform);
 
-        // randomize 100 spheres. testing Instance Rendering and Family approach!
-        std::random_device rd;
-        std::mt19937 mt(rd());
-        std::uniform_real_distribution<double> dist(-100, 100);
-        for (uint32_t i = 0 ; i < 10 ; i++) {
-            auto r = (float) dist(mt);
+        auto pointLight3 = engine::PointLight(app->activeScene.get());
+        pointLight3.add<engine::Transform3dComponent>(lightTransform);
 
-            auto sphereEntity = engine::Entity("Ferrari" + std::to_string(i), app->activeScene.get());
-            auto sphereTransform = engine::TransformComponents::newTransform3d(
-                    { r, r, r },
-                    { r, r, r },
-                    { 0.2, 0.2, 0.2 }
-            );
-            auto sphereTexture = engine::TextureComponent {
-                "demo.png",
-                "diffuseSampler",
-                0
-            };
+        auto pointLight4 = engine::PointLight(app->activeScene.get());
+        pointLight4.add<engine::Transform3dComponent>(lightTransform);
 
-            sphereEntity.add<engine::Transform3dComponent>(sphereTransform);
-            sphereEntity.add<engine::TextureComponent>(sphereTexture);
-            sphereEntity.add<engine::AmbientLightComponent>(engine::LightComponents::newAmbient());
-            sphereEntity.add<engine::DiffuseLightComponent>(engine::LightComponents::newDiffuse({1, 1, 1}, {25, 25, 25}));
-            sphereEntity.add<engine::SpecularLightComponent>(engine::LightComponents::newSpecular({1, 1, 1}, {25, 25, 25}));
+//        pointLight.add<engine::MeshComponent>(engine::copy(lightMesh));
 
-            sphereFamily.addEntity(sphereEntity);
-        }
+//        auto sponzaEntity = engine::Entity("Sponza", app->activeScene.get());
+//        auto sponzaMesh = app->getMeshSource()->getMesh("sponza.obj");
+//        auto sponzaTransform = engine::TransformComponents::newTransform3d(
+//                { 10, 0, 12 },
+//                { 135, 0, 0 },
+//                { 0.5, 0.5, 0.5 }
+//        );
+//        sponzaEntity.add<engine::Transform3dComponent>(sponzaTransform);
+//        sponzaEntity.add<engine::MeshComponent>(sponzaMesh);
+        auto humanMaterialMaps = engine::MaterialMapsComponent();
+        humanMaterialMaps.diffuseFileName = "wood_diffuse.png";
+        humanMaterialMaps.specularFileName = "wood_specular.png";
+        car.add<engine::MaterialMapsComponent>(humanMaterialMaps);
 
-        app->activeScene->addFamily(sphereFamily);
+        engine::addScript<LogScript>(car);
     }
 
     void FLLayer::destroy() {
-        _scenePreview.removeCallback();
-        _texturePreview.removeCallback();
         delete _imagePreviewCallback;
         delete _scenePreviewCallback;
     }
 
     void FLLayer::onPrepare() {
-        CLIENT_INFO("onPrepare()");
+        EDITOR_INFO("onPrepare()");
         ImGuiLayer::onPrepare();
-        app->bindCloseKey(engine::KeyCode::Escape);
         activeSceneCameraController->bind(engine::KeyCode::W, engine::MoveType::UP);
         activeSceneCameraController->bind(engine::KeyCode::A, engine::MoveType::LEFT);
         activeSceneCameraController->bind(engine::KeyCode::S, engine::MoveType::DOWN);
@@ -201,24 +228,22 @@ namespace fairy {
         objCameraController->setPosition({0, 0, -1});
         objCameraController->applyChanges();
 
-        _fileEditor.setTextFieldFont(resizableFont);
         _sceneHierarchy.setCallback(this);
     }
 
     void FLLayer::onRender(engine::Time dt) {
-        _scenePreview.onUpdate(dt);
+        sceneViewport.onUpdate(dt);
         _sceneHierarchy.onUpdate(dt);
         _assetBrowser->onUpdate(dt);
         _texturePreview.onUpdate(dt);
         _objPreview->onUpdate(dt);
-        _fileEditor.onUpdate(dt);
     }
 
     void FLLayer::onUpdate(engine::Time dt) {
         ImGuiLayer::onUpdate(dt);
         activeSceneCameraController->setDeltaTime(dt);
         // update scene texture id!
-        _scenePreview.setId(app->activeScene->getTextureId());
+        sceneViewport.setId(app->activeScene->getTextureId());
     }
 
     void FLLayer::onKeyPressed(engine::KeyCode keyCode) {
@@ -226,20 +251,18 @@ namespace fairy {
 
         _objPreview->onKeyPressed(keyCode);
 
-        if (_scenePreview.isFocused()) {
+        if (sceneViewport.isFocused()) {
             activeSceneCameraController->onKeyPressed(keyCode);
         }
 
-        // L-CTRL + F - toggles fullscreen/windowed modes.
+        // L-CTRL + F - enable fullscreen mode.
         if (keyCode == engine::KeyCode::F && app->input->isKeyPressed(engine::KeyCode::LeftControl)) {
-            app->getWindow()->toggleFullScreen();
+            app->getWindow()->enableFullScreen();
         }
 
-        // L-CTRL + S - saves file changes in FileEditor if it's visible.
-        if (keyCode == engine::KeyCode::S && app->input->isKeyPressed(engine::KeyCode::LeftControl)) {
-            if (_fileEditor.props.isVisible) {
-                _fileEditor.save();
-            }
+        // ESC - exit fullscreen mode.
+        if (keyCode == engine::Escape) {
+            app->getWindow()->disableFullScreen();
         }
     }
 
@@ -247,7 +270,7 @@ namespace fairy {
         engine::ImGuiLayer::onKeyHold(keyCode);
         _objPreview->onKeyHold(keyCode);
 
-        if (_scenePreview.isFocused()) {
+        if (sceneViewport.isFocused()) {
             activeSceneCameraController->onKeyHold(keyCode);
         }
     }
@@ -256,7 +279,7 @@ namespace fairy {
         engine::ImGuiLayer::onKeyReleased(keyCode);
         _objPreview->onKeyReleased(keyCode);
 
-        if (_scenePreview.isFocused()) {
+        if (sceneViewport.isFocused()) {
             activeSceneCameraController->onKeyReleased(keyCode);
         }
     }
@@ -265,40 +288,33 @@ namespace fairy {
         engine::ImGuiLayer::onKeyTyped(keyCode);
         _objPreview->onKeyTyped(keyCode);
 
-        if (_scenePreview.isFocused()) {
+        if (sceneViewport.isFocused()) {
             activeSceneCameraController->onKeyTyped(keyCode);
         }
     }
 
     void FLLayer::onMousePressed(engine::MouseCode mouseCode) {
         engine::ImGuiLayer::onMousePressed(mouseCode);
-        _scenePreview.onMousePressed(mouseCode);
+        sceneViewport.onMousePressed(mouseCode);
     }
 
     void FLLayer::onMouseRelease(engine::MouseCode mouseCode) {
         engine::ImGuiLayer::onMouseRelease(mouseCode);
-        _scenePreview.onMouseRelease(mouseCode);
+        sceneViewport.onMouseRelease(mouseCode);
     }
 
     void FLLayer::onImageOpen(const std::string &fileName) {
-        ENGINE_INFO("onImageOpen({0})", fileName);
-        const uint32_t &textureId = app->getTextureSource()->getTextureBuffer(fileName)->getId();
+        EDITOR_INFO("onImageOpen({0})", fileName);
+        const uint32_t &textureId = GET_TEXTURE_ID(fileName);
         _texturePreview.setId(textureId);
         _texturePreview.show();
     }
 
     void FLLayer::onObjOpen(const std::string &fileName) {
-        ENGINE_INFO("onObjOpen({0})", fileName);
-        const auto& objMesh = app->getMeshSource()->getMesh(fileName);
+        EDITOR_INFO("onObjOpen({0})", fileName);
+        const auto& objMesh = GET_MESH(fileName);
         _objPreview->setMesh(objMesh);
         _objPreview->show();
-    }
-
-    void FLLayer::onGlslOpen(const std::string &filePath, const std::string &fileName) {
-        ENGINE_INFO("onGlslOpen({0})", filePath);
-        _fileEditor.props.title = filePath;
-        _fileEditor.open(filePath);
-        _fileEditor.show();
     }
 
     void FLLayer::ImagePreviewCallback::onImageResized(const uint32_t &width, const uint32_t &height) {
@@ -313,68 +329,88 @@ namespace fairy {
     }
 
     void FLLayer::onAssetImported(const std::string &assetPath) {
-        ENGINE_INFO("onAssetImported() - {0}", assetPath);
+        EDITOR_INFO("onAssetImported() - {0}", assetPath);
     }
 
     void FLLayer::onAssetExported(const std::string &assetPath) {
-        ENGINE_INFO("onAssetExported() - {0}", assetPath);
+        EDITOR_INFO("onAssetExported() - {0}", assetPath);
     }
 
     void FLLayer::onAssetRemoved(const std::string &assetPath) {
-        ENGINE_INFO("onAssetRemoved() - {0}", assetPath);
+        EDITOR_INFO("onAssetRemoved() - {0}", assetPath);
     }
 
     void FLLayer::onEntityRemoved(const engine::Entity &entity) {
-        ENGINE_INFO("onEntityRemoved({0})", entity.operator unsigned int());
+        EDITOR_INFO("onEntityRemoved({0})", entity.operator unsigned int());
         app->activeFrameController->resetFrame();
     }
 
     void FLLayer::createAssetBrowser() {
-        const auto& textureSource = app->getTextureSource();
-
         auto props = AssetBrowserProps {
-            "Asset Browser",
-            CLIENT_ASSET_PATH
+                "Asset Browser",
+                RUNTIME_ASSET_PATH
         };
 
         auto dirItem = AssetBrowserItem {
             "",
-            textureSource->loadTexture("dir_icon.png", EDITOR_TEXTURES_PATH)
+            LOAD_TEXTURE("dir_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto pngItem = AssetBrowserItem {
-            engine::file_extensions::PNG,
-            textureSource->loadTexture("png_icon.png", EDITOR_TEXTURES_PATH)
+            PNG_EXT,
+            LOAD_TEXTURE("png_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto jpgItem = AssetBrowserItem {
-            engine::file_extensions::JPG,
-            textureSource->loadTexture("jpg_icon.png", EDITOR_TEXTURES_PATH)
+            JPG_EXT,
+            LOAD_TEXTURE("jpg_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto glslItem = AssetBrowserItem {
-            engine::file_extensions::GLSL,
-            textureSource->loadTexture("glsl_icon.png", EDITOR_TEXTURES_PATH)
+            GLSL_EXT,
+            LOAD_TEXTURE("glsl_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto objItem = AssetBrowserItem {
-            engine::file_extensions::OBJ,
-            textureSource->loadTexture("obj_icon.png", EDITOR_TEXTURES_PATH)
+            OBJ_EXT,
+            LOAD_TEXTURE("obj_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto ttfItem = AssetBrowserItem {
-            engine::file_extensions::TTF,
-            textureSource->loadTexture("ttf_icon.png", EDITOR_TEXTURES_PATH)
+            TTF_EXT,
+            LOAD_TEXTURE("ttf_icon.png", EDITOR_TEXTURES_PATH)
         };
 
-        auto items = AssetBrowserItems<AssetBrowser::itemsCount> {
+        auto cppItem = AssetBrowserItem {
+            CPP_EXT,
+            LOAD_TEXTURE("cpp_icon.png", EDITOR_TEXTURES_PATH)
+        };
+
+        auto items = AssetBrowserItems<6> {
             dirItem,
-            { pngItem, jpgItem, glslItem, objItem, ttfItem }
+            { pngItem, jpgItem, glslItem, objItem, ttfItem, cppItem }
         };
 
         auto fileDialog = app->createFileDialog();
 
         _assetBrowser = engine::createRef<AssetBrowser>(props, items, fileDialog);
+    }
+
+    void FLLayer::onWindowClosed() {
+        Layer::onWindowClosed();
+        app->shutdown();
+    }
+
+    void FLLayer::onObjDragged(const std::string &fileName) {
+        EDITOR_INFO("onObjDragged({0})", fileName);
+        auto newObject3d = engine::Object3d { app->activeScene.get(), engine::FileSystem::getFileName(fileName), GET_MESH(fileName) };
+        // this function is required to reload objects into video memory!
+        // otherwise, they will not be displayed, until mesh and transform will not be changed!
+        engine::updateObjects3d(app->activeScene);
+    }
+
+    void FLLayer::onImageDragged(const std::string &fileName) {
+        EDITOR_INFO("onImageDragged({0})", fileName);
     }
 
 }

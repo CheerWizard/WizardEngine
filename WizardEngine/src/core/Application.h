@@ -9,14 +9,17 @@
 #include "Events.h"
 #include "LayerStack.h"
 #include "Input.h"
-#include "../graphics/camera/CameraController.h"
 #include "FpsController.h"
 #include "String.h"
 #include "FileDialog.h"
 
-#include "../ecs/Scene.h"
+#include "../platform/includes/graphics/initializer.h"
+#include "../graphics/core/RenderSystem.h"
+#include "../graphics/core/sources/MeshSource.h"
+#include "../graphics/core/sources/TextureSource.h"
+#include "../graphics/core/sources/ShaderSource.h"
 
-#include "../graphics/GraphicsModule.h"
+#include "../scripting/ScriptSystem.h"
 
 #define DEFAULT_CAMERA_NAME "camera"
 
@@ -37,34 +40,11 @@ namespace engine {
 
     public:
         void run();
+        void shutdown();
 
     public:
         inline const Scope<Window>& getWindow() {
             return _window;
-        }
-
-        inline Scope<MeshSource>& getMeshSource() {
-            return _meshSource;
-        }
-
-        inline const Ref<TextureSource>& getTextureSource() {
-            return _textureSource;
-        }
-
-        inline const Scope<ShaderSource>& getShaderSource() {
-            return _shaderSource;
-        }
-
-        inline void bindCloseKey(const KeyCode& keyCode) {
-            _closeKeyPressed = keyCode;
-        }
-
-        inline const Ref<RenderSettings>& getRenderSettings() {
-            return _renderSettings;
-        }
-
-        inline const Scope<GraphicsModule>& getGraphicsModule() {
-            return _graphicsModule;
         }
 
     public:
@@ -86,7 +66,6 @@ namespace engine {
         virtual void onCreate();
         virtual void onPrepare();
         virtual void onDestroy();
-        virtual void onUpdate();
         virtual WindowProps createWindowProps();
 
     public:
@@ -105,9 +84,12 @@ namespace engine {
 
     private:
         void restart();
+        void onUpdate();
+        void updateRuntime(Time dt);
 
         void createGraphics();
         void createFrameSpecs();
+        void createScripting();
 
     public:
         Scope<Input> input; // input controller!
@@ -118,19 +100,14 @@ namespace engine {
     private:
         EngineType _engineType;
         bool _isRunning = true;
-        KeyCode _closeKeyPressed;
-
+        // core systems
         LayerStack _layerStack;
         Scope<Window> _window;
-        // graphics module
-        Scope<GraphicsModule> _graphicsModule;
+        // graphics system
         Scope<RenderSystem> _renderSystem;
-        // data sources
-        Scope<MeshSource> _meshSource;
-        Ref<TextureSource> _textureSource;
-        Scope<ShaderSource> _shaderSource;
-        // tools
-        Ref<RenderSettings> _renderSettings;
+        // scripting system
+        Scope<ScriptSystem> _scriptSystem;
+
     };
 
     Application* createApplication();

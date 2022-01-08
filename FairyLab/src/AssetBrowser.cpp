@@ -11,9 +11,6 @@
 
 namespace fairy {
 
-    void AssetBrowser::create() {
-    }
-
     void AssetBrowser::destroy() {
         removeCallback();
     }
@@ -42,7 +39,7 @@ namespace fairy {
             auto relativePath = std::filesystem::relative(path, _props.assetPath);
             const auto& fileName = relativePath.filename().string();
             const auto& fileExtension = relativePath.extension().string();
-            ENGINE_INFO("Asset file name : {0}, relative path : {1}", fileName, path);
+            EDITOR_INFO("Asset file name : {0}, relative path : {1}", fileName, path);
 
             bool isDirectory = directoryEntry.is_directory();
             uint32_t iconId = _items.dirItem.iconId;
@@ -50,10 +47,7 @@ namespace fairy {
             if (!isDirectory) {
                 for (const auto& item : _items.items) {
                     const auto* fileExtensionStr = fileExtension.c_str();
-                    ENGINE_INFO("Current file extension : {0}", fileExtensionStr);
-                    ENGINE_INFO("Current item extension : {0}", item.extension);
                     if (strcmp(fileExtensionStr, item.extension) == 0) {
-                        ENGINE_INFO("Found icon id {0} for current {1} file!", item.iconId, item.extension);
                         iconId = item.iconId;
                         break;
                     }
@@ -71,28 +65,25 @@ namespace fairy {
             );
 
             if (!isDirectory && iconClicked) {
-                SWITCH(fileExtension.c_str()) {
-                    CASE(engine::file_extensions::JPG):
-                    _callback->onImageOpen(fileName);
-                    break;
-
-                    CASE(engine::file_extensions::PNG):
-                    _callback->onImageOpen(fileName);
-                    break;
-
-                    CASE(engine::file_extensions::OBJ):
-                    _callback->onObjOpen(fileName);
-                    break;
-
-                    CASE(engine::file_extensions::GLSL):
-                    _callback->onGlslOpen(path.string(), fileName);
-                    break;
+                const char* fileExtensionStr = fileExtension.c_str();
+                SWITCH(fileExtensionStr) {
+                    CASE(JPG_EXT):
+                        _callback->onImageOpen(fileName);
+                        break;
+                    CASE(PNG_EXT):
+                        _callback->onImageOpen(fileName);
+                        break;
+                    CASE(OBJ_EXT):
+                        _callback->onObjOpen(fileName);
+                        break;
                 }
             }
 
+            // send drag-drop item path
             if (ImGui::BeginDragDropSource()) {
                 const wchar_t* itemPath = relativePath.c_str();
-                ImGui::SetDragDropPayload("ASSET_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+                ImGui::SetDragDropPayload(DRAG_DROP_ITEM_TYPE, itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+                EDITOR_INFO("AssetBrowser: Packaging drag-drop data item path : {0}", STR_FROM_WCHAR(itemPath));
                 ImGui::EndDragDropSource();
             }
 
@@ -107,11 +98,12 @@ namespace fairy {
                     _rightClickedAssetPath = "";
                     _rightClickedDir = path;
                 } else {
-                    _rightClickedAssetPath = path.string();
+                    _rightClickedAssetPath = path;
                 }
             }
 
-            ImGui::TextWrapped("%s", fileName.c_str());
+            std::string rawName = fileName.substr(0, fileName.find_last_of('.'));
+            ImGui::TextWrapped("%s", rawName.c_str());
             ImGui::NextColumn();
             ImGui::PopID();
         }
@@ -128,10 +120,6 @@ namespace fairy {
         }
 
         ImGui::Columns(1);
-
-        ImGui::SliderFloat("Thumbnail Size", &_props.thumbnailSize, 16, 512);
-        ImGui::SliderFloat("Padding", &_props.padding, 0, 32);
-
         ImGui::End();
     }
 
@@ -151,11 +139,14 @@ namespace fairy {
             CASE("obj"):
                 filter = "OBJ model (*.obj)\0*.obj\0";
                 break;
+            CASE("scripts"):
+                filter = "C++ script (*.cpp)\0*.cpp\0";
+                break;
         }
 
         auto importPath = _fileDialog->getImportPath(filter);
         if (importPath.empty()) {
-            ENGINE_INFO("Importing asset has been dismissed!");
+            EDITOR_INFO("Importing asset has been dismissed!");
             return;
         }
 
@@ -163,9 +154,9 @@ namespace fairy {
         std::filesystem::path asset_dir_path(assetDirPath);
         auto importFileName = import_path.filename().string();
         asset_dir_path /= importFileName;
-        ENGINE_INFO("Import path : {0}, import file name : {1}", importPath, importFileName);
+        EDITOR_INFO("Import path : {0}, import file name : {1}", importPath, importFileName);
 
-        auto isImported = engine::File::copy(importPath, asset_dir_path.string());
+        auto isImported = engine::FileSystem::copy(importPath, asset_dir_path.string());
         if (isImported) {
             _callback->onAssetImported(assetDirPath);
         }
@@ -177,36 +168,39 @@ namespace fairy {
 
         const char* filter;
         SWITCH(assetExtension.c_str()) {
-            CASE(".png"):
+            CASE(PNG_EXT):
                 filter = "PNG image (*.png)\0*.png\0";
                 break;
-            CASE(".jpg"):
+            CASE(JPG_EXT):
                 filter = "JPG image (*.jpg)\0*.jpg\0";
                 break;
-            CASE(".glsl"):
+            CASE(GLSL_EXT):
                 filter = "GLSL shader (*.glsl)\0*.glsl\0";
                 break;
-            CASE(".obj"):
+            CASE(OBJ_EXT):
                 filter = "OBJ model (*.obj)\0*.obj\0";
+                break;
+            CASE(CPP_EXT):
+                filter = "C++ script (*.cpp)\0*.cpp\0";
                 break;
         }
 
         auto exportPath = _fileDialog->getExportPath(filter);
-        ENGINE_INFO("Export path : {0}", exportPath);
+        EDITOR_INFO("Export path : {0}", exportPath);
 
         if (exportPath.empty()) {
-            ENGINE_INFO("Exporting asset has been dismissed!");
+            EDITOR_INFO("Exporting asset has been dismissed!");
             return;
         }
 
-        auto isExported = engine::File::copy(assetPath, exportPath);
+        auto isExported = engine::FileSystem::copy(assetPath, exportPath);
         if (isExported) {
             _callback->onAssetExported(exportPath);
         }
     }
 
     void AssetBrowser::removeAsset(const std::string &assetPath) {
-        auto isRemoved = engine::File::remove(assetPath);
+        auto isRemoved = engine::FileSystem::remove(assetPath);
         if (isRemoved) {
             _callback->onAssetRemoved(assetPath);
         }
@@ -214,13 +208,25 @@ namespace fairy {
 
     void AssetBrowser::popupAssetMenu(const char* id) {
         if (ImGui::BeginPopupContextWindow(id)) {
+            if (ImGui::MenuItem("Open in Visual Studio")) {
+                engine::FileEditor::openVisualStudio(_rightClickedAssetPath.string());
+            }
+
+            if (ImGui::MenuItem("Open in VS Code")) {
+                engine::FileEditor::openVSCode(_rightClickedAssetPath.string());
+            }
+
+            if (ImGui::MenuItem("Open in Notepad")) {
+                engine::FileEditor::openNotepad(_rightClickedAssetPath.string());
+            }
+
             if (ImGui::MenuItem("Export")) {
-                exportAsset(_rightClickedAssetPath);
+                exportAsset(_rightClickedAssetPath.string());
                 _rightClickedAssetPath = "";
             }
 
             if (ImGui::MenuItem("Remove")) {
-                removeAsset(_rightClickedAssetPath);
+                removeAsset(_rightClickedAssetPath.string());
                 _rightClickedAssetPath = "";
             }
 
