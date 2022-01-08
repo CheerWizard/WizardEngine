@@ -6,18 +6,13 @@
 
 #include "VertexAttribute.h"
 
-namespace engine {
+namespace engine::shader {
 
     class VertexFormat {
 
     public:
-
-        VertexFormat(const std::vector<VertexAttribute>& attributes = std::vector<VertexAttribute>()) :
-        _attributes(attributes) {}
-
-        ~VertexFormat() {
-            destroy();
-        }
+        VertexFormat() = default;
+        ~VertexFormat() = default;
 
     public:
         inline std::vector<VertexAttribute>& getAttributes() {
@@ -34,9 +29,6 @@ namespace engine {
         void clear();
         void remove(const uint32_t &index);
         bool isEmpty();
-
-    private:
-        void destroy();
 
     private:
         std::vector<VertexAttribute> _attributes;

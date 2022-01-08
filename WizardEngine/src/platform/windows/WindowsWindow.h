@@ -31,14 +31,14 @@ namespace engine {
         void disableVSync() override;
 
     public:
-        void* getNativeWindow() const override { return _window; }
-
         uint32_t getRefreshRate() override;
 
         void setWindowIcon(const std::string &filePath) override;
 
         void enableFullScreen() override;
         void disableFullScreen() override;
+        void setSampleSize(const uint32_t &size) override;
+        void setPosition(const uint32_t &x, const uint32_t &y) override;
 
     private:
         static void handleError(int error, const char* description);
@@ -48,9 +48,6 @@ namespace engine {
         void destroy();
 
         void onWindowResized(const uint32_t &width, const uint32_t &height);
-
-    private:
-        GLFWwindow* _window;
 
     };
 

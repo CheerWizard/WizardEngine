@@ -4,11 +4,16 @@
 
 #pragma once
 
-#include "../GraphicsFactory.h"
-#include "shader/ShaderController.h"
 #include "../../ecs/Components.h"
 #include "../../ecs/Family.h"
+
 #include "geometry/MeshComponent.h"
+#include "shader/BaseShader.h"
+#include "commands/RenderCommands.h"
+
+#include "../../platform/includes/graphics/vao.h"
+#include "../../platform/includes/graphics/vbo.h"
+#include "../../platform/includes/graphics/ibo.h"
 
 #define INSTANCE_COUNT_LIMIT 128
 
@@ -17,66 +22,46 @@ namespace engine {
     class Renderer {
 
     public:
-        Renderer(const Ref<Shader> &shader, const Ref<GraphicsFactory> &graphicsFactory) : shader(shader) {
-            create(graphicsFactory);
-        }
-
-        Renderer(
-                const Ref<Shader> &shader,
-                const Ref<GraphicsFactory> &graphicsFactory,
-                const std::vector<Ref<ShaderController>> &shaderControllers
-        ) : shaderControllers(shaderControllers), shader(shader) {
-            create(graphicsFactory);
+        Renderer(const shader::BaseShaderProgram &shaderProgram) : shaderProgram(shaderProgram) {
+            create();
         }
 
         ~Renderer() {
-            clear();
+            release();
         }
 
     public:
         void render(const Entity& entity);
-        void renderInstanced(const Family &family);
-        void renderBatched(const std::vector<Entity> &entities);
-
-        void tryUpdatePolygonMode(const Entity &entity);
+        void renderInstanced(MeshComponent &familyMesh, entt::registry &familyRegistry);
+        void renderBatched(entt::registry &registry);
 
     public:
         void tryUploadMesh(
-                const Entity& entity,
+                MeshComponent& meshComponent,
                 uint32_t &previousVertexCount,
                 uint32_t &previousIndexCount
         );
         void tryUploadMesh(
-                uint32_t &instanceID,
-                const Entity& entity,
+                const uint32_t &instanceId,
+                MeshComponent& meshComponent,
                 uint32_t &previousVertexCount,
                 uint32_t &previousIndexCount
         );
         void uploadMesh(MeshComponent &meshComponent);
 
-        void add(const Ref<ShaderController> &shaderController);
-        void clear();
-
-    private:
-        void create(const Ref<GraphicsFactory> &graphicsFactory);
-
-        void drawElements(const uint32_t &indexCount);
-        void drawElements(const uint32_t &indexCount, const uint32_t &instanceCount);
-        void updateShaderControllers(const Entity &entity);
-        void updateShaderControllers(const Entity &entity, const uint32_t &instanceId);
+    protected:
+        void create();
         void begin();
         void end();
+        void release();
 
-    private:
-        Ref<Drawer> drawer;
-        Ref<RenderSettings> settings;
-        // buffers
-        Ref<VertexArray> vertexArray;
-        Ref<VertexBuffer> vertexBuffer;
-        Ref<IndexBuffer> indexBuffer;
-        // shader controllers
-        Ref<Shader> shader;
-        std::vector<Ref<ShaderController>> shaderControllers;
+    protected:
+        // GPU buffers API
+        VertexArray vertexArray;
+        VertexBuffer vertexBuffer;
+        IndexBuffer indexBuffer;
+        // Shader API
+        shader::BaseShaderProgram shaderProgram;
     };
 
 }

@@ -10,4 +10,16 @@ namespace engine {
         add<PhongLightComponent>(PhongLightComponent());
     }
 
+    void DirectLight::create() {
+        add<DirectLightComponent>(DirectLightComponent());
+    }
+
+    void PointLight::create() {
+        add<PointLightComponent>(PointLightComponent());
+    }
+
+    void FlashLight::create() {
+        add<FlashLightComponent>(FlashLightComponent());
+    }
+
 }

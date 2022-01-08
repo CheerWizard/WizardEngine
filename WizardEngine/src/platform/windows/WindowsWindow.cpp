@@ -11,10 +11,11 @@
 #include <GLFW/glfw3native.h>
 #include <stb_image.h>
 
-#define GET_WINDOW_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).windowCallback
-#define GET_KEYBOARD_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).keyboardCallback
-#define GET_MOUSE_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).mouseCallback
-#define GET_CURSOR_CALLBACK(...) (*(WindowProps*)glfwGetWindowUserPointer(__VA_ARGS__)).cursorCallback
+#define GET_WINDOW_CALLBACK(x) (*(WindowProps*)glfwGetWindowUserPointer((GLFWwindow*) (x))).windowCallback
+#define GET_KEYBOARD_CALLBACK(x) (*(WindowProps*)glfwGetWindowUserPointer((GLFWwindow*) (x))).keyboardCallback
+#define GET_MOUSE_CALLBACK(x) (*(WindowProps*)glfwGetWindowUserPointer((GLFWwindow*) (x))).mouseCallback
+#define GET_CURSOR_CALLBACK(x) (*(WindowProps*)glfwGetWindowUserPointer((GLFWwindow*) (x))).cursorCallback
+#define NATIVE_WINDOW (GLFWwindow*)window
 
 namespace engine {
 
@@ -27,7 +28,9 @@ namespace engine {
             glfwSetErrorCallback(handleError);
         }
 
-        _window = glfwCreateWindow(
+        setSampleSize(windowProps.sampleSize);
+
+        window = glfwCreateWindow(
                 (int)windowProps.width,
                 (int)windowProps.height,
                 windowProps.title.c_str(),
@@ -36,9 +39,12 @@ namespace engine {
     }
 
     void WindowsWindow::enableFullScreen() {
+        if (isFullScreen) return;
+        isFullScreen = true;
+
         auto* monitor = glfwGetPrimaryMonitor();
         auto* videoMode = glfwGetVideoMode(monitor);
-        glfwSetWindowMonitor(_window,
+        glfwSetWindowMonitor(NATIVE_WINDOW,
                              monitor,
                              0,
                              0,
@@ -49,16 +55,20 @@ namespace engine {
     }
 
     void WindowsWindow::disableFullScreen() {
+        if (!isFullScreen) return;
+        isFullScreen = false;
+
         int refreshRate = getRefreshRate();
-        glfwSetWindowMonitor(_window, nullptr, 0, 0, windowProps.width, windowProps.height, refreshRate);
+        glfwSetWindowMonitor(NATIVE_WINDOW, nullptr, 0, 0, windowProps.width, windowProps.height, refreshRate);
         onWindowResized(windowProps.width, windowProps.height);
+        setInCenter();
     }
 
     void WindowsWindow::destroy() {
         removeCallbacks();
         glfwSetErrorCallback(nullptr);
-        glfwDestroyWindow(_window);
-        _window = nullptr;
+        glfwDestroyWindow(NATIVE_WINDOW);
+        window = nullptr;
         glfwTerminate();
     }
 
@@ -67,9 +77,9 @@ namespace engine {
     }
 
     void WindowsWindow::onPrepare() {
-        glfwSetWindowUserPointer(_window, &windowProps);
+        glfwSetWindowUserPointer(NATIVE_WINDOW, &windowProps);
 
-        glfwSetWindowSizeCallback(_window, [](GLFWwindow* window, int width, int height) {
+        glfwSetWindowSizeCallback(NATIVE_WINDOW, [](GLFWwindow* window, int width, int height) {
             auto callback = GET_WINDOW_CALLBACK(window);
 
             if (callback != nullptr) {
@@ -77,7 +87,7 @@ namespace engine {
             }
         });
 
-        glfwSetWindowCloseCallback(_window, [](GLFWwindow* window) {
+        glfwSetWindowCloseCallback(NATIVE_WINDOW, [](GLFWwindow* window) {
             auto callback = GET_WINDOW_CALLBACK(window);
 
             if (callback != nullptr) {
@@ -85,7 +95,7 @@ namespace engine {
             }
         });
 
-        glfwSetKeyCallback(_window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        glfwSetKeyCallback(NATIVE_WINDOW, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
             auto callback = GET_KEYBOARD_CALLBACK(window);
 
             if (callback != nullptr) {
@@ -108,7 +118,7 @@ namespace engine {
             }
         });
 
-        glfwSetCharCallback(_window, [](GLFWwindow* window, unsigned int key) {
+        glfwSetCharCallback(NATIVE_WINDOW, [](GLFWwindow* window, unsigned int key) {
             auto callback = GET_KEYBOARD_CALLBACK(window);
             auto keycode = (KeyCode) key;
 
@@ -117,7 +127,7 @@ namespace engine {
             }
         });
 
-        glfwSetMouseButtonCallback(_window, [](GLFWwindow* window, int button, int action, int mods) {
+        glfwSetMouseButtonCallback(NATIVE_WINDOW, [](GLFWwindow* window, int button, int action, int mods) {
             auto callback = GET_MOUSE_CALLBACK(window);
 
             if (callback != nullptr) {
@@ -136,7 +146,7 @@ namespace engine {
             }
         });
 
-        glfwSetScrollCallback(_window, [](GLFWwindow* window, double xOffset, double yOffset) {
+        glfwSetScrollCallback(NATIVE_WINDOW, [](GLFWwindow* window, double xOffset, double yOffset) {
             auto callback = GET_MOUSE_CALLBACK(window);
 
             if (callback != nullptr) {
@@ -144,7 +154,7 @@ namespace engine {
             }
         });
 
-        glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xPos, double yPos) {
+        glfwSetCursorPosCallback(NATIVE_WINDOW, [](GLFWwindow* window, double xPos, double yPos) {
             auto callback = GET_CURSOR_CALLBACK(window);
 
             if (callback != nullptr) {
@@ -154,12 +164,12 @@ namespace engine {
     }
 
     void WindowsWindow::onUpdate() {
-        glfwSwapBuffers(_window);
+        glfwSwapBuffers(NATIVE_WINDOW);
         glfwPollEvents();
     }
 
     void WindowsWindow::onClose() {
-        glfwSetWindowShouldClose(_window, GLFW_TRUE);
+        glfwSetWindowShouldClose(NATIVE_WINDOW, GLFW_TRUE);
     }
 
     void WindowsWindow::enableVSync() {
@@ -183,16 +193,24 @@ namespace engine {
                                      &images[0].height,
                                      nullptr,
                                      4);
-        glfwSetWindowIcon(_window, 1, images);
+        glfwSetWindowIcon((GLFWwindow*) window, 1, images);
         stbi_image_free(images[0].pixels);
     }
 
     void WindowsWindow::onWindowResized(const uint32_t &width, const uint32_t &height) {
-        auto callback = GET_WINDOW_CALLBACK(_window);
+        auto callback = GET_WINDOW_CALLBACK(window);
 
         if (callback != nullptr) {
             callback->onWindowResized(width, height);
         }
+    }
+
+    void WindowsWindow::setSampleSize(const uint32_t &size) {
+        glfwWindowHint(GLFW_SAMPLES, size);
+    }
+
+    void WindowsWindow::setPosition(const uint32_t &x, const uint32_t &y) {
+        glfwSetWindowPos(NATIVE_WINDOW, x, y);
     }
 
 }

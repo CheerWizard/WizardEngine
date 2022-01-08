@@ -1,22 +1,11 @@
-struct SpecularLight {
-    vec3 color;
-    vec3 position;
-    float strength;
-};
-uniform SpecularLight specularLight;
+const float shinyMax = 32;
 
-// pos - not normalized vector position of object in scene
-// normal - normalized vector normal of object in scene
-vec3 spec3(vec3 pos, vec3 normal, vec3 viewPos, float shiny) {
-    vec3 specularLightDir = normalize(specularLight.position - pos);
-    vec3 viewDir = normalize(viewPos - pos);
-    vec3 reflectDir = reflect(-specularLightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shiny);
-    return specularLight.strength * spec * specularLight.color;
+vec3 spec(vec3 lightColor, vec3 lightDir, vec3 normal, vec3 viewDir, float shiny) {
+    vec3 reflectDir = reflect(-lightDir, normal);
+    return pow(max(dot(viewDir, reflectDir), 0.0), shinyMax - shiny) * lightColor;
 }
 
-// pos - not normalized vector position of object in scene
-// normal - normalized vector normal of object in scene
-vec4 spec4(vec3 pos, vec3 normal, vec3 viewPos, float shiny) {
-    return vec4(spec3(pos, normal, viewPos, shiny), 1.0);
+vec3 spec(vec3 lightColor, vec3 lightPos, vec3 pos, vec3 normal, vec3 viewDir, float shiny) {
+    vec3 lightDir = normalize(lightPos - pos);
+    return spec(lightColor, lightDir, normal, viewDir, shiny);
 }

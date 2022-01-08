@@ -189,7 +189,7 @@ namespace engine {
         ENGINE_INFO("{0}: position({1},{2},{3})", tag, component.viewMatrix.position.value.x, component.viewMatrix.position.value.y, component.viewMatrix.position.value.z);
         ENGINE_INFO("{0}: rotation({1},{2},{3})", tag, component.viewMatrix.rotation.x, component.viewMatrix.rotation.y, component.viewMatrix.rotation.z);
         ENGINE_INFO("{0}: scale({1})", tag, component.viewMatrix.scale);
-        component.applyChanges();
+        ViewProjections::update(component);
     }
 
     void Camera3dController::setCamera(const Camera2D &camera) {
@@ -271,7 +271,7 @@ namespace engine {
     }
 
     void Camera2dController::applyChanges() {
-        camera.get<Camera2dComponent>().applyChanges();
+        ViewProjections::update(camera.get<Camera2dComponent>());
     }
 
     void Camera2dController::setCamera(const Camera2D &camera) {
@@ -285,13 +285,13 @@ namespace engine {
     void Camera2dController::setPosition(const glm::vec3 &position) {
         auto& component = camera.get<Camera2dComponent>();
         component.viewMatrix.position = position;
-        component.applyChanges();
+        ViewProjections::update(component);
     }
 
     void Camera3dController::setPosition(const glm::vec3 &position) {
         auto& component = camera.get<Camera3dComponent>();
         component.viewMatrix.position.value = position;
-        component.applyChanges();
+        ViewProjections::update(component);
     }
 
     void Camera2dController::onWindowResized(const uint32_t &width, const uint32_t &height) {
@@ -306,6 +306,6 @@ namespace engine {
     void Camera3dController::onWindowResized(const uint32_t &width, const uint32_t &height) {
         auto& component = camera.get<Camera3dComponent>();
         component.perspectiveMatrix.aspectRatio = (float) width / (float) height;
-        component.applyChanges();
+        ViewProjections::update(component);
     }
 }

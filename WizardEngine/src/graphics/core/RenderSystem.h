@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include "../../ecs/System.h"
 #include "Renderer.h"
+#include "../../ecs/Scene.h"
 #include "frame/FrameController.h"
 
 namespace engine {
 
-    class RenderSystem : public System {
+    class RenderSystem {
 
     public:
         RenderSystem(
@@ -18,12 +18,19 @@ namespace engine {
                 const Ref<Renderer> &batchRenderer,
                 const Ref<Renderer> &instanceRenderer
         ) : sceneFrameController(frameController), batchRenderer(batchRenderer), instanceRenderer(instanceRenderer) {}
-        ~RenderSystem() override = default;
+
+        ~RenderSystem() = default;
 
     public:
-        void onUpdate() override;
+        void onUpdate();
+
+    public:
+        inline void setActiveScene(const Ref<Scene> &activeScene) {
+            this->activeScene = activeScene;
+        }
 
     private:
+        Ref<Scene> activeScene = nullptr;
         Ref<FrameController> sceneFrameController;
         Ref<Renderer> batchRenderer;
         Ref<Renderer> instanceRenderer;

@@ -12,12 +12,11 @@
 #include "Memory.h"
 #include "String.h"
 
-//todo figure out logs optimization! debug: CPU intensity is 15-30%, release: CPU intensity is only 1%!
 namespace engine {
 
     typedef spdlog::logger Log;
 
-    class Logger {
+    class Logger final {
 
     public:
         static void createEngineLogger(const std::string& name);
@@ -41,7 +40,7 @@ namespace engine {
         }
 
     private:
-        // logger - should be NULL or undefined, as it will be created in scope of this function!
+        // logger is nullable value!
         static void createLogger(Ref<Log> &logger, const std::string &name);
 
     private:

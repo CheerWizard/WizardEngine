@@ -6,53 +6,48 @@
 
 #include "../core/shader/Uniform.h"
 
+using namespace engine::shader;
+
 namespace engine {
-
-    struct AmbientLightComponent {
-        const char* name = "ambientLight";
-        Vec3fUniform color = { "color", { 1, 1, 1 } };
-        FloatUniform strength = { "strength", 0.5f};
-    };
-
-    struct DiffuseLightComponent {
-        const char* name = "diffuseLight";
-        Vec3fUniform color = { "color", { 1, 1, 1 } };
-        Vec3fUniform position = { "position", { 0.5f, 0.5f, 0.5f } };
-    };
-
-    struct SpecularLightComponent {
-        const char* name = "specularLight";
-        Vec3fUniform color = { "color", { 1, 1, 1 } };
-        Vec3fUniform position = { "position", { 0.5f, 0.5f, 0.5f } };
-        FloatUniform strength = { "strength", 0.5f};
-    };
 
     struct PhongLightComponent {
         const char* name = "phongLight";
-        Vec3fUniform color = { "color", { 1, 1, 1 } };
-        Vec3fUniform position = { "position", { 0.5f, 0.5f, 0.5f } };
-        FloatUniform ambientStrength = { "ambientStrength", 0.5f};
-        FloatUniform specularStrength = { "specularStrength", 0.5f};
+        Vec4fUniform position = { "position", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform diffuse = { "diffuse", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f, 0 } };
     };
 
-    struct DirectionLightComponent {
-        const char* name = "directionLight";
-        Vec3fUniform color = { "color", { 1, 1, 1 } };
-        Vec3fUniform direction = { "direction", { 0.5f, 0.5f, 0.5f } };
-        Vec3fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f } };
-        Vec3fUniform diffuse = { "diffuse", { 0.5f, 0.5f, 0.5f } };
-        Vec3fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f } };
+    struct DirectLightComponent {
+        const char* name = "directLight";
+        Vec4fUniform direction = { "direction", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform diffuse = { "diffuse", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f, 0 } };
     };
 
     struct PointLightComponent {
         const char* name = "pointLight";
-        Vec3fUniform color = { "color", { 1, 1, 1 } };
-        Vec3fUniform position = { "position", { 0.5f, 0.5f, 0.5f } };
-        Vec3fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f } };
-        Vec3fUniform diffuse = { "diffuse", { 0.5f, 0.5f, 0.5f } };
-        Vec3fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f } };
-        FloatUniform constant = { "constant", 0.5f};
-        FloatUniform linear = { "linear", 0.5f};
-        FloatUniform quadratic = { "quadratic", 0.5f};
+        Vec4fUniform position = { "position", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform diffuse = { "diffuse", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f, 0 } };
+        FloatUniform constant = { "constant", 1};
+        FloatUniform linear = { "linear", 0.045f};
+        FloatUniform quadratic = { "quadratic", 0.0075f};
+    };
+
+    struct FlashLightComponent {
+        const char* name = "flashLight";
+        Vec4fUniform position = { "position", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform direction = { "direction", { 0.5f, 0.5f, 0.5f, 0 } };
+        FloatUniform cutoff = { "cutoff", 0.5};
+        FloatUniform outerCutoff = { "outerCutoff", 0.5};
+        Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform diffuse = { "diffuse", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec4fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f, 0 } };
+        FloatUniform constant = { "constant", 1};
+        FloatUniform linear = { "linear", 0.045f};
+        FloatUniform quadratic = { "quadratic", 0.0075f};
     };
 }

@@ -8,13 +8,13 @@
 #include "imgui/ImageLayout.h"
 #include "imgui/SceneHierarchy.h"
 #include "imgui/MeshLayout.h"
-#include "imgui/FileEditor.h"
 
 #include "AssetBrowser.h"
+#include "SceneViewport.h"
 
 namespace fairy {
 
-    class FLLayer : public engine::ImGuiLayer, AssetBrowserCallback, engine::SceneHierarchyCallback {
+    class FLLayer : public engine::ImGuiLayer, AssetBrowserCallback, engine::SceneHierarchyCallback, DragDropCallback {
 
         class ImagePreviewCallback : public engine::ImageLayoutCallback {
 
@@ -65,6 +65,8 @@ namespace fairy {
         void onKeyReleased(engine::KeyCode keyCode) override;
         void onKeyTyped(engine::KeyCode keyCode) override;
 
+        void onWindowClosed() override;
+
     protected:
         void onRender(engine::Time dt) override;
 
@@ -76,17 +78,20 @@ namespace fairy {
 
         void onImageOpen(const std::string &fileName) override;
         void onObjOpen(const std::string &fileName) override;
-        void onGlslOpen(const std::string &filePath, const std::string &fileName) override;
 
         void onAssetImported(const std::string &assetPath) override;
         void onAssetExported(const std::string &assetPath) override;
         void onAssetRemoved(const std::string &assetPath) override;
 
+        void onObjDragged(const std::string &fileName) override;
+
+        void onImageDragged(const std::string &fileName) override;
+
         void onEntityRemoved(const engine::Entity &entity) override;
 
     private:
-        engine::ImageLayout _scenePreview = engine::ImageLayout({
-            "Scene Preview",
+        SceneViewport sceneViewport = SceneViewport({
+            "Scene",
                 props.width,
                 props.height
         });
@@ -103,11 +108,6 @@ namespace fairy {
 
         engine::Ref<engine::MeshLayout> _objPreview;
 
-        engine::FileEditor _fileEditor;
-
-        engine::Entity _humanEntity;
-        engine::Entity _cubeEntity;
-
         ImagePreviewCallback* _imagePreviewCallback = nullptr;
         ScenePreviewCallback* _scenePreviewCallback = nullptr;
 
@@ -115,6 +115,8 @@ namespace fairy {
 
         engine::Camera3D activeSceneCamera;
         engine::Ref<engine::Camera3dController> activeSceneCameraController;
+
+        bool windowClosePressed = false;
     };
 
 }

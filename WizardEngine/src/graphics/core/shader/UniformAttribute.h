@@ -8,25 +8,40 @@
 
 #include "ElementCount.h"
 
-namespace engine {
+namespace engine::shader {
 
     struct UniformAttribute {
         std::string name;
         ElementCount elementCount = SINGLE;
-        uint32_t count = 1;
-
-        size_t size() const {
-            return count * elementCount * sizeof(float);
-        }
-
-        size_t elementSize() const {
-            return elementCount * sizeof(float);
-        }
+        uint16_t count = 1;
+        size_t offset = 0;
     };
+
+    inline size_t elementSize(const UniformAttribute &uniformAttribute) {
+        return uniformAttribute.elementCount * sizeof(float);
+    }
+
+    inline size_t size_of(const UniformAttribute &uniformAttribute) {
+        return uniformAttribute.count * elementSize(uniformAttribute);
+    }
 
     struct UniformStructAttribute {
         std::string name;
         std::vector<UniformAttribute> uniformAttributes;
+
+        void add(const UniformAttribute &uniformAttribute) {
+            uniformAttributes.emplace_back(uniformAttribute);
+        }
+
+        void add(const std::vector<UniformAttribute> &uniformAttributes) {
+            for (const auto &uniformAttribute : uniformAttributes) {
+                add(uniformAttribute);
+            }
+        }
+
+        void clear() {
+            uniformAttributes.clear();
+        }
     };
 
 }

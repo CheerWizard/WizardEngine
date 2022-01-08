@@ -4,21 +4,30 @@
 
 #pragma once
 
-#include "../../GraphicsFactory.h"
+#include "../../../platform/includes/graphics/tbo.h"
 
 #include "unordered_map"
 
+#define GET_TEXTURE(path) engine::TextureSource::get()->getTextureBuffer(fileName)
+#define GET_TEXTURE_ID(path) GET_TEXTURE(path).getId()
+#define LOAD_TEXTURE(fileName, assetPath) engine::TextureSource::get()->loadTexture(fileName, assetPath)
+
 namespace engine {
 
-    typedef std::unordered_map<std::string, Ref<TextureBuffer>> Textures;
+    typedef std::unordered_map<std::string, TextureBuffer> Textures;
     typedef Textures::iterator TextureIterator;
 
     class TextureSource {
 
     public:
-        TextureSource(const Ref<GraphicsFactory> &graphicsFactory) : _graphicsFactory(graphicsFactory) {}
+        TextureSource() = default;
         ~TextureSource() {
-            destroy();
+            clear();
+        }
+
+    public:
+        static const Ref<TextureSource>& get() {
+            return instance;
         }
 
     public:
@@ -31,8 +40,8 @@ namespace engine {
         }
 
     public:
-        const Ref<TextureBuffer>& getTextureBuffer(const std::string &fileName);
-        const Ref<TextureBuffer>& getTextureBuffer(const std::string &fileName, const std::string &texturesPath);
+        const TextureBuffer& getTextureBuffer(const std::string &fileName);
+        const TextureBuffer& getTextureBuffer(const std::string &fileName, const std::string &texturesPath);
 
         /**
          * Checks if TextureBuffer already exists in cache by @param fileName.
@@ -54,19 +63,21 @@ namespace engine {
         const uint32_t& loadTexture(const std::string &fileName, const std::string &texturesPath);
 
         void remove(const std::string &fileName);
+        void clear();
 
     public:
-        const Ref<TextureBuffer>& operator [](const std::string &name) {
+        const TextureBuffer& operator [](const std::string &name) {
             return getTextureBuffer(name);
         }
 
     private:
-        void destroy();
         bool exists(const std::string &name);
 
     private:
         Textures _textures;
-        Ref<GraphicsFactory> _graphicsFactory;
+
+    private:
+        static Ref<TextureSource> instance;
 
     };
 

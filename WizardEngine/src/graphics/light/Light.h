@@ -29,4 +29,64 @@ namespace engine {
 
     };
 
+    class DirectLight : public Entity {
+
+    public:
+        DirectLight() = default;
+
+        DirectLight(const std::string &tag, EntityContainer* container) : Entity(tag, container) {
+            create();
+        }
+
+        DirectLight(EntityContainer* container) : Entity("DirectLight", container) {
+            create();
+        }
+
+        ~DirectLight() = default;
+
+    private:
+        void create();
+
+    };
+
+    class PointLight : public Entity {
+
+    public:
+        PointLight() = default;
+
+        PointLight(const std::string &tag, EntityContainer* container) : Entity(tag, container) {
+            create();
+        }
+
+        PointLight(EntityContainer* container) : Entity("PointLight", container) {
+            create();
+        }
+
+        ~PointLight() = default;
+
+    private:
+        void create();
+
+    };
+
+    class FlashLight : public Entity {
+
+    public:
+        FlashLight() = default;
+
+        FlashLight(const std::string &tag, EntityContainer* container) : Entity(tag, container) {
+            create();
+        }
+
+        FlashLight(EntityContainer* container) : Entity("FlashLight", container) {
+            create();
+        }
+
+        ~FlashLight() = default;
+
+    private:
+        void create();
+
+    };
+
 }

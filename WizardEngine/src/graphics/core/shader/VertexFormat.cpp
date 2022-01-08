@@ -4,14 +4,10 @@
 
 #include "VertexFormat.h"
 
-namespace engine {
+namespace engine::shader {
 
     const VertexAttribute& VertexFormat::get(const uint32_t &index) const {
         return _attributes[index];
-    }
-
-    void VertexFormat::destroy() {
-        clear();
     }
 
     uint32_t VertexFormat::getElementCount() const {
@@ -25,7 +21,7 @@ namespace engine {
     size_t VertexFormat::getSize() const {
         size_t size = 0;
         for (const auto &attribute : _attributes) {
-            size += attribute.elementCount * sizeof(float);
+            size += elementSize(attribute);
         }
         return size;
     }
