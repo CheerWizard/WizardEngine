@@ -11,7 +11,7 @@ namespace engine {
     void ScriptSystem::onUpdate(Time dt) {
         activeScene->getRegistry().view<NativeScriptComponent>().each([=](entt::entity entity, auto& ns) {
            if (!ns.script) {
-               ns.script = new Entity(entity, activeScene.get());
+               ns.script = { entity, activeScene.get() };
                ns.onCreateFunction(ns.script);
            }
            ns.onUpdateFunction(ns.script, dt);
@@ -22,7 +22,6 @@ namespace engine {
         activeScene->getRegistry().view<NativeScriptComponent>().each([=](auto entity, auto& ns) {
             if (ns.script) {
                 ns.onDestroyFunction(ns.script);
-                ns.destructFunction();
             }
         });
     }
