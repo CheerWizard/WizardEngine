@@ -8,6 +8,8 @@
 
 namespace engine {
 
+    typedef Task<void(const std::string&), const std::string&> FileEditorTask;
+
     class FileEditor final {
 
     public:
@@ -21,9 +23,9 @@ namespace engine {
         static void openVisualStudioTask(const std::string &filePath);
 
     private:
-        static Task<void(const std::string&), const std::string&> notepadTask;
-        static Task<void(const std::string&), const std::string&> vsCodeTask;
-        static Task<void(const std::string&), const std::string&> visualStudioTask;
+        static FileEditorTask notepadTask;
+        static FileEditorTask vsCodeTask;
+        static FileEditorTask visualStudioTask;
     };
 
 }

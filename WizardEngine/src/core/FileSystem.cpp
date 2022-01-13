@@ -38,7 +38,7 @@ namespace engine {
         return result;
     }
 
-    bool FileSystem::write(const std::string &filePath, const std::string &source) {
+    bool FileSystem::write(const fpath &filePath, const std::string &source) {
         std::ofstream file;
         file.open(filePath);
         file << source;
@@ -122,12 +122,38 @@ namespace engine {
         return filePath.substr(lastSlash, count);
     }
 
-    void FileSystem::newFile(const std::string &filePath) {
-        std::ofstream newFile(filePath);
-        newFile.close();
+    void FileSystem::newFile(const fpath &filePath) {
+        write(filePath, " ");
     }
 
     std::filesystem::path FileSystem::toPath(const wchar_t *path) {
         return { path };
     }
+
+    error FileSystem::move(const fpath &oldPath, const fpath &newPath) {
+        ENGINE_INFO("FileSystem: move({0}, {1})", oldPath, newPath);
+        error e;
+        std::filesystem::rename(oldPath, newPath, e);
+        return e;
+    }
+
+    error FileSystem::rename(const fpath &filePath, const std::string &newFileName) {
+        ENGINE_INFO("FileSystem: rename({0}, {1})", filePath, newFileName);
+        auto newPathStr = filePath.string();
+        newPathStr = newPathStr.substr(0, newPathStr.find_last_of("\\/"));
+        fpath newPath(newPathStr);
+        newPath /= newFileName;
+        return move(filePath, newPath);
+    }
+
+    void FileSystem::newFile(const fpath &currentDir, const std::string &newFileName) {
+        newFile(currentDir/newFileName);
+    }
+
+    void FileSystem::newDirectory(const fpath &path) {
+        if (!std::filesystem::is_directory(path) && !std::filesystem::exists(path)) {
+            std::filesystem::create_directory(path);
+        }
+    }
+
 }

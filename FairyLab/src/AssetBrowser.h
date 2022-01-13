@@ -98,6 +98,8 @@ namespace fairy {
         std::filesystem::path _currentDir;
         std::filesystem::path _rightClickedDir;
         std::filesystem::path _rightClickedAssetPath;
+        std::string _rightClickedAssetExtension;
+        std::string _rightClickedDirExtension;
     };
 
 }
