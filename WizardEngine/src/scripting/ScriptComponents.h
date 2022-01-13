@@ -25,7 +25,7 @@ namespace engine {
     };
 
     template<typename T>
-    void addScript(Entity& entity) {
+    void addNativeScript(Entity& entity) {
         entity.add<NativeScriptComponent>();
         entity.get<NativeScriptComponent>().bind<T>();
     }

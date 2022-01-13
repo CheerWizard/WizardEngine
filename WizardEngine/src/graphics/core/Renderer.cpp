@@ -10,16 +10,19 @@ namespace engine {
 
     void Renderer::create() {
         shaderProgram.bindVertexFormat();
-        vertexArray.bind();
-        vertexBuffer.setFormat(shaderProgram.getVertexFormat());
-        indexBuffer.bind();
-        indexBuffer.alloc();
-        vertexArray.unbind();
+        renderModel.vao.bind();
+        auto& vbo = renderModel.vbos.front();
+        auto& ibo = renderModel.ibos.front();
+        vbo.setFormat(shaderProgram.getVertexFormat());
+        ibo.bind();
+        ibo.alloc();
+        renderModel.vao.unbind();
     }
 
     void Renderer::renderInstanced(MeshComponent &familyMesh, entt::registry& familyRegistry) {
         begin();
 
+        auto& vbo = renderModel.vbos.front();
         shaderProgram.update(familyRegistry);
 
         auto transforms = familyRegistry.view<Transform3dComponent>();
@@ -33,7 +36,7 @@ namespace engine {
             shaderProgram.getVShader().setUniformArrayElement(i++, transform);
             // if transform count is out of limit, then draw current instances and repeat iteration!
             if (i > INSTANCE_COUNT_LIMIT) {
-                vertexBuffer.enableAttributes();
+                vbo.enableAttributes();
                 drawTriangles(totalIndexCount, i);
                 i = 0;
             }
@@ -41,7 +44,7 @@ namespace engine {
 
         // draw rest of instances!
         if (i > 0) {
-            vertexBuffer.enableAttributes();
+            vbo.enableAttributes();
             drawTriangles(totalIndexCount, i);
         }
 
@@ -51,6 +54,7 @@ namespace engine {
     void Renderer::renderBatched(entt::registry &registry) {
         begin();
 
+        auto& vbo = renderModel.vbos.front();
         shaderProgram.update(registry);
 
         auto entities = registry.group<Transform3dComponent, MeshComponent>();
@@ -61,7 +65,7 @@ namespace engine {
             tryUploadMesh(i, mesh, totalVertexCount, totalIndexCount);
             shaderProgram.getVShader().setUniformArrayElement(i++, transform);
             if (i > INSTANCE_COUNT_LIMIT) {
-                vertexBuffer.enableAttributes();
+                vbo.enableAttributes();
                 drawTriangles(totalIndexCount);
                 i = 0;
                 totalVertexCount = 0;
@@ -70,7 +74,7 @@ namespace engine {
         }
 
         if (i > 0) {
-            vertexBuffer.enableAttributes();
+            vbo.enableAttributes();
             drawTriangles(totalIndexCount);
         }
 
@@ -95,22 +99,24 @@ namespace engine {
             shaderProgram.getVShader().setUniform(*transform);
         }
 
-        vertexBuffer.enableAttributes();
+        renderModel.vbos.front().enableAttributes();
         drawTriangles(totalIndexCount);
 
         end();
     }
 
     void Renderer::uploadMesh(MeshComponent &meshComponent) {
-        vertexBuffer.bind();
-        indexBuffer.bind();
+        auto& vbo = renderModel.vbos.front();
+        auto& ibo = renderModel.ibos.front();
 
+        vbo.bind();
+        ibo.bind();
         const auto& meshes = meshComponent.meshes;
         for (auto i = 0; i < meshComponent.meshCount ; i++) {
             const auto& vertexData = meshes[i].vertexData;
-            vertexBuffer.load(vertexData);
+            vbo.load(vertexData);
             const auto& indexData = meshes[i].indexData;
-            indexBuffer.load(indexData);
+            ibo.load(indexData);
         }
     }
 
@@ -143,18 +149,16 @@ namespace engine {
 
     void Renderer::begin() {
         shaderProgram.start();
-        vertexArray.bind();
+        renderModel.vao.bind();
     }
 
     void Renderer::end() {
-        vertexArray.unbind();
+        renderModel.vao.unbind();
         shaderProgram.stop();
     }
 
     void Renderer::release() {
-        vertexArray.destroy();
-        vertexBuffer.destroy();
-        indexBuffer.destroy();
+        engine::release(renderModel);
         shaderProgram.release();
     }
 
