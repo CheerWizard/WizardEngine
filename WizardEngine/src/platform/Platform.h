@@ -61,3 +61,9 @@
     #endif
 
 #endif
+
+#ifdef PLATFORM_WINDOWS
+#include <Windows.h>
+#elif PLATFORM_LINUX
+#include <dlfcn.h>      // dynamic library loading, dlopen() etc
+#endif

@@ -3,9 +3,9 @@
 //
 
 #include "AssetBrowser.h"
-#include "core/FileExtensions.h"
-
+#include <core/FileExtensions.h>
 #include <core/MouseCodes.h>
+#include <core/Build.h>
 
 #include "imgui/imgui/imgui.h"
 
@@ -95,10 +95,13 @@ namespace fairy {
 
             if (ImGui::IsItemClicked(engine::ButtonRight)) {
                 if (isDirectory) {
-                    _rightClickedAssetPath = "";
                     _rightClickedDir = path;
+                    _rightClickedDirExtension = fileExtension;
+                    _rightClickedAssetPath = "";
+                    _rightClickedAssetExtension = "";
                 } else {
                     _rightClickedAssetPath = path;
+                    _rightClickedAssetExtension = fileExtension;
                 }
             }
 
@@ -110,7 +113,13 @@ namespace fairy {
 
         if (_rightClickedAssetPath.empty()) {
             if (ImGui::BeginPopupContextWindow(nullptr)) {
-                if (ImGui::MenuItem("Add Asset")) {
+                if (ImGui::MenuItem("New File")) {
+                    engine::FileSystem::newFile(_rightClickedDir, "templatefile" + _rightClickedDirExtension);
+                }
+                if (ImGui::MenuItem("New Directory")) {
+                    engine::FileSystem::newFile(_rightClickedDir, "templatedir");
+                }
+                if (ImGui::MenuItem("Import")) {
                     importAsset(_rightClickedDir);
                 }
                 ImGui::EndPopup();
@@ -208,16 +217,33 @@ namespace fairy {
 
     void AssetBrowser::popupAssetMenu(const char* id) {
         if (ImGui::BeginPopupContextWindow(id)) {
-            if (ImGui::MenuItem("Open in Visual Studio")) {
-                engine::FileEditor::openVisualStudio(_rightClickedAssetPath.string());
+            if (ImGui::MenuItem("Rename")) {
+                engine::FileSystem::rename(_rightClickedAssetPath, "unknown" + _rightClickedAssetExtension);
+                _rightClickedAssetPath = "";
             }
 
-            if (ImGui::MenuItem("Open in VS Code")) {
-                engine::FileEditor::openVSCode(_rightClickedAssetPath.string());
+            auto* assetExtension = _rightClickedAssetExtension.c_str();
+            if (SAME(assetExtension, CPP_EXT)) {
+                auto itemName = "Build " + engine::FileSystem::getFileName(_rightClickedAssetPath.string()) + ".so";
+                if (ImGui::MenuItem(itemName.c_str())) {
+                    std::string outPath;
+                    engine::LibSO::create(_rightClickedAssetPath.string(), outPath);
+                    engine::Executable::run("FairyLab.exe");
+                }
             }
 
-            if (ImGui::MenuItem("Open in Notepad")) {
-                engine::FileEditor::openNotepad(_rightClickedAssetPath.string());
+            if (SAME(assetExtension, CPP_EXT) || SAME(assetExtension, GLSL_EXT)) {
+                if (ImGui::MenuItem("Open in Visual Studio")) {
+                    engine::FileEditor::openVisualStudio(_rightClickedAssetPath.string());
+                }
+
+                if (ImGui::MenuItem("Open in VS Code")) {
+                    engine::FileEditor::openVSCode(_rightClickedAssetPath.string());
+                }
+
+                if (ImGui::MenuItem("Open in Notepad")) {
+                    engine::FileEditor::openNotepad(_rightClickedAssetPath.string());
+                }
             }
 
             if (ImGui::MenuItem("Export")) {

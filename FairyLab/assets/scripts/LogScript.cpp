@@ -1,4 +1,4 @@
-#include "WizardEngine.h"
+#include "../../../WizardEngine/src/WizardEngine.h"
 
 class LogScript : public Entity {
 

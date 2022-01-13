@@ -6,19 +6,19 @@
 
 namespace engine {
 
-    Task<void(const std::string&), const std::string&> FileEditor::notepadTask = {
+    FileEditorTask FileEditor::notepadTask = {
             "Notepad_Task",
             "Notepad_Thread",
             openNotepadTask
     };
 
-    Task<void(const std::string&), const std::string&> FileEditor::vsCodeTask = {
+    FileEditorTask FileEditor::vsCodeTask = {
             "VSCode_Task",
             "VSCode_Thread",
             openVSCodeTask
     };
 
-    Task<void(const std::string&), const std::string&> FileEditor::visualStudioTask = {
+    FileEditorTask FileEditor::visualStudioTask = {
             "VisualStudio_Task",
             "VisualStudio_Thread",
             openVisualStudioTask

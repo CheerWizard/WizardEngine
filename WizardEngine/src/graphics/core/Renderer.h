@@ -4,16 +4,14 @@
 
 #pragma once
 
+#include "RenderModel.h"
+
 #include "../../ecs/Components.h"
 #include "../../ecs/Family.h"
 
 #include "geometry/MeshComponent.h"
 #include "shader/BaseShader.h"
 #include "commands/RenderCommands.h"
-
-#include "../../platform/includes/graphics/vao.h"
-#include "../../platform/includes/graphics/vbo.h"
-#include "../../platform/includes/graphics/ibo.h"
 
 #define INSTANCE_COUNT_LIMIT 128
 
@@ -56,10 +54,7 @@ namespace engine {
         void release();
 
     protected:
-        // GPU buffers API
-        VertexArray vertexArray;
-        VertexBuffer vertexBuffer;
-        IndexBuffer indexBuffer;
+        RenderModel renderModel;
         // Shader API
         shader::BaseShaderProgram shaderProgram;
     };
