@@ -12,6 +12,10 @@
 		#include "windows/WindowsWindow.h"
 		#include "windows/WindowsInput.h"
         #include "windows/WindowsFileDialog.h"
+        #define LIB_TYPE HINSTANCE
+        #define LOAD_LIB(libpath) LoadLibrary(libpath)
+        #define LOAD_FUNC(lib, fn) GetProcAddress((lib), (fn))
+        #define FREE_LIB(lib) FreeLibrary(lib)
 	#else
 	/* Windows x86 */
 		#error "x86 Builds are not supported!"
@@ -41,6 +45,10 @@
 	#error "Android is not supported!"
 #elif defined(__linux__)
 	#define PLATFORM_LINUX
+    #define LIB_TYPE void*
+    #define LOAD_LIB(libname) dlopen((libname), RTLD_LAZY)
+    #define LOAD_FUNC(lib, fn) dlsym((lib), (fn))
+    #define FREE_LIB(lib) dlclose(lib)
 	#error "Linux is not supported!"
 #else
 	/* Unknown compiler/platform */
