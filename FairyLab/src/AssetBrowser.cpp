@@ -6,6 +6,7 @@
 #include <core/FileExtensions.h>
 #include <core/MouseCodes.h>
 #include <core/Build.h>
+#include "Parent.h"
 
 #include "imgui/imgui/imgui.h"
 
@@ -224,11 +225,19 @@ namespace fairy {
 
             auto* assetExtension = _rightClickedAssetExtension.c_str();
             if (SAME(assetExtension, CPP_EXT)) {
-                auto itemName = "Build " + engine::FileSystem::getFileName(_rightClickedAssetPath.string()) + ".so";
+                auto assetName = engine::FileSystem::getFileName(_rightClickedAssetPath.string());
+                auto itemName = "Build " + assetName + ".so";
+                auto libName = "test_library";
                 if (ImGui::MenuItem(itemName.c_str())) {
-                    std::string outPath;
-                    engine::LibSO::create(_rightClickedAssetPath.string(), outPath);
-                    engine::Executable::run("FairyLab.exe");
+                    engine::Library::compile(_rightClickedAssetPath.string());
+                    engine::Library::compile("../WizardEngine/src/Parent.cpp");
+                    engine::Library::generate(libName);
+                }
+                if (ImGui::MenuItem("Load")) {
+                    auto* parent = engine::Library::load<Parent>(libName);
+                    if (parent) {
+                        parent->print("Hello world!");
+                    }
                 }
             }
 

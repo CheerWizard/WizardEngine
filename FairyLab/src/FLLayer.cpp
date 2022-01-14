@@ -191,7 +191,7 @@ namespace fairy {
         humanMaterialMaps.specularFileName = "wood_specular.png";
         car.add<engine::MaterialMapsComponent>(humanMaterialMaps);
 
-        engine::addNativeScript<LogScript>(car);
+        engine::addStaticScript<LogScript>(car);
     }
 
     void FLLayer::destroy() {

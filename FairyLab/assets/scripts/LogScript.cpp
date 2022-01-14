@@ -3,15 +3,15 @@
 class LogScript : public Entity {
 
 public:
-    void onCreate() {
+    void onCreate() override {
         EDITOR_INFO("LogScript: onCreate()");
     }
 
-    void onDestroy() {
+    void onDestroy() override {
         EDITOR_INFO("LogScript: onDestroy()");
     }
 
-    void onUpdate(Time dt) {
+    void onUpdate(Time dt) override {
         auto tag = get<TagComponent>().tag;
         auto meshCount = get<MeshComponent>().meshCount;
         EDITOR_INFO("LogScript: onUpdate({0}ms)", dt.getMilliseconds());
