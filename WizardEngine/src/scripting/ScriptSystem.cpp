@@ -9,19 +9,33 @@
 namespace engine {
 
     void ScriptSystem::onUpdate(Time dt) {
-        activeScene->getRegistry().view<NativeScriptComponent>().each([=](entt::entity entity, auto& ns) {
-           if (!ns.script) {
-               ns.script = { entity, activeScene.get() };
-               ns.onCreateFunction(ns.script);
+        activeScene->getRegistry().view<StaticScript>().each([=](auto entity, auto& sc) {
+           if (!sc.script) {
+               sc.script = { entity, activeScene.get() };
+               sc.onCreateFunction(sc.script);
            }
-           ns.onUpdateFunction(ns.script, dt);
+            sc.onUpdateFunction(sc.script, dt);
+        });
+        activeScene->getRegistry().view<DynamicScript>().each([=](auto entity, auto& sc) {
+            if (!sc.script) {
+                sc.script = new Entity();
+                sc.script->onCreate();
+            }
+            sc.script->onUpdate(dt);
         });
     }
 
     void ScriptSystem::onDestroy() {
-        activeScene->getRegistry().view<NativeScriptComponent>().each([=](auto entity, auto& ns) {
-            if (ns.script) {
-                ns.onDestroyFunction(ns.script);
+        activeScene->getRegistry().view<StaticScript>().each([=](auto entity, auto& sc) {
+            if (sc.script) {
+                sc.onDestroyFunction(sc.script);
+            }
+        });
+        activeScene->getRegistry().view<DynamicScript>().each([=](auto entity, auto& sc) {
+            if (sc.script) {
+                sc.script->onDestroy();
+                delete sc.script;
+                sc.script = nullptr;
             }
         });
     }

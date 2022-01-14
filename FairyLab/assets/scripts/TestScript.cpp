@@ -2,20 +2,17 @@
 // Created by mecha on 13.01.2022.
 //
 
-#include "string"
+#include "../../../WizardEngine/src/Parent.h"
 
-class Test {
+class Test : public Parent {
+public:
+    Test() = default;
+    ~Test() override = default;
 
-    public:
-        Test() = default;
-        ~Test() = default;
-
-    public:
-        const char* test_cstring() {
-            return "Hello world!";
-        }
-
-        std::string test_string() {
-            return "Hello world!";
-        }
+    void print(const char* msg) override {
+    }
 };
+
+extern "C" __declspec(dllexport) Parent* create_object() {
+    return new Test();
+}

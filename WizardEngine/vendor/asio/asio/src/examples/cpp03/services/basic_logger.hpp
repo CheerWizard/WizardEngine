@@ -43,7 +43,7 @@ public:
     : service_(asio::use_service<Service>(context)),
       impl_(service_.null())
   {
-    service_.create(impl_, identifier);
+      service_.generate(impl_, identifier);
   }
 
   /// Destructor.
