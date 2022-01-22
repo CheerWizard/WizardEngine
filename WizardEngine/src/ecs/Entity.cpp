@@ -36,15 +36,4 @@ namespace engine {
         add<TagComponent>(tag);
     }
 
-    void Entity::onCreate() {
-        // do nothing here!
-    }
-
-    void Entity::onDestroy() {
-        // do nothing here!
-    }
-
-    void Entity::onUpdate(Time dt) {
-        // do nothing here!
-    }
 }

@@ -17,11 +17,9 @@ namespace engine {
             sc.onUpdateFunction(sc.script, dt);
         });
         activeScene->getRegistry().view<DynamicScript>().each([=](auto entity, auto& sc) {
-            if (!sc.script) {
-                sc.script = new Entity();
-                sc.script->onCreate();
+            if (sc.scriptable) {
+                sc.scriptable->onUpdate(dt);
             }
-            sc.script->onUpdate(dt);
         });
     }
 
@@ -32,10 +30,10 @@ namespace engine {
             }
         });
         activeScene->getRegistry().view<DynamicScript>().each([=](auto entity, auto& sc) {
-            if (sc.script) {
-                sc.script->onDestroy();
-                delete sc.script;
-                sc.script = nullptr;
+            if (sc.scriptable) {
+                sc.scriptable->onDestroy();
+                delete sc.scriptable;
+                sc.scriptable = nullptr;
             }
         });
     }

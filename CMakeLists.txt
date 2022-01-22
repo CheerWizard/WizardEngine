@@ -70,3 +70,4 @@ endmacro(replace_dirs)
 # Subprojects from Wizard.
 add_subdirectory(WizardEngine)
 add_subdirectory(FairyLab)
+add_subdirectory(ScriptDLL)

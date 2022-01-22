@@ -13,7 +13,7 @@ namespace engine {
     };
 
     enum PolygonMode : uint8_t {
-        POINT = 0,
+        VERTEX = 0,
         LINE = 1,
         FILL = 2
     };

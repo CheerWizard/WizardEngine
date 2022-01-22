@@ -55,4 +55,3 @@ target_link_libraries(
 )
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
-replace_dirs(WizardEngine/src WizardEngine/src)

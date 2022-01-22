@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include "../ecs/Entity.h"
-#include "../core/Time.h"
+#include "Scriptable.h"
 
 namespace engine {
 
@@ -25,7 +24,7 @@ namespace engine {
     };
 
     struct DynamicScript {
-        Entity* script = nullptr;
+        Scriptable* scriptable = nullptr;
     };
 
     template<typename T>
@@ -33,4 +32,5 @@ namespace engine {
         entity.add<StaticScript>();
         entity.get<StaticScript>().bind<T>();
     }
+
 }

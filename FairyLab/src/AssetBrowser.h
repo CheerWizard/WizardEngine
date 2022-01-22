@@ -7,7 +7,7 @@
 #include <core/Time.h>
 #include <core/FileDialog.h>
 #include <core/FileSystem.h>
-#include <core/FileEditor.h>
+#include <core/Tools.h>
 
 #include <platform/opengl/buffers/TextureBuffer.h>
 
