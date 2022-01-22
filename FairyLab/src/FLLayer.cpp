@@ -4,6 +4,8 @@
 
 #include "FLLayer.h"
 #include "core/FileExtensions.h"
+#include "scripting/Scriptable.h"
+#include "core/Build.h"
 
 #include <imgui/imgui/imgui.h>
 
@@ -14,7 +16,6 @@
 #include "graphics/material/MaterialShaderScript.h"
 #include "graphics/light/LightShaderScript.h"
 #include "graphics/GraphicsObject.h"
-#include "../assets/scripts/LogScript.cpp"
 
 using namespace engine::shader;
 
@@ -191,7 +192,15 @@ namespace fairy {
         humanMaterialMaps.specularFileName = "wood_specular.png";
         car.add<engine::MaterialMapsComponent>(humanMaterialMaps);
 
-        engine::addStaticScript<LogScript>(car);
+        // init script .cpp
+        auto libName = "ScriptDLL";
+        engine::Libs::add(libName, "../ScriptDLL/ScriptDLL.dll");
+        script = engine::createObject<Scriptable>(libName, "create");
+        if (script) {
+            script->entity = Entity(app->activeScene.get());
+            script->onCreate();
+            car.add<DynamicScript>(script);
+        }
     }
 
     void FLLayer::destroy() {
@@ -208,8 +217,8 @@ namespace fairy {
         activeSceneCameraController->bind(engine::KeyCode::D, engine::MoveType::RIGHT);
         activeSceneCameraController->bind(engine::KeyCode::Q, engine::RotateType::LEFT_Z);
         activeSceneCameraController->bind(engine::KeyCode::E, engine::RotateType::RIGHT_Z);
-        activeSceneCameraController->bind(engine::KeyCode::Z, engine::ZoomType::IN);
-        activeSceneCameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
+//        activeSceneCameraController->bind(engine::KeyCode::Z, engine::ZoomType::IN);
+//        activeSceneCameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
         activeSceneCameraController->setPosition({0, 0, -1});
         activeSceneCameraController->applyChanges();
 
@@ -223,8 +232,8 @@ namespace fairy {
         objCameraController->bind(engine::KeyCode::D, engine::MoveType::RIGHT);
         objCameraController->bind(engine::KeyCode::Q, engine::RotateType::LEFT_Z);
         objCameraController->bind(engine::KeyCode::E, engine::RotateType::RIGHT_Z);
-        objCameraController->bind(engine::KeyCode::Z, engine::ZoomType::IN);
-        objCameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
+//        objCameraController->bind(engine::KeyCode::Z, engine::ZoomType::IN);
+//        objCameraController->bind(engine::KeyCode::X, engine::ZoomType::OUT);
         objCameraController->setPosition({0, 0, -1});
         objCameraController->applyChanges();
 

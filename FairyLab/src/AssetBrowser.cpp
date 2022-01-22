@@ -6,7 +6,6 @@
 #include <core/FileExtensions.h>
 #include <core/MouseCodes.h>
 #include <core/Build.h>
-#include "Parent.h"
 
 #include "imgui/imgui/imgui.h"
 
@@ -226,32 +225,49 @@ namespace fairy {
             auto* assetExtension = _rightClickedAssetExtension.c_str();
             if (SAME(assetExtension, CPP_EXT)) {
                 auto assetName = engine::FileSystem::getFileName(_rightClickedAssetPath.string());
-                auto itemName = "Build " + assetName + ".so";
-                auto libName = "test_library";
+                auto itemName = "Build " + assetName;
+                auto libName = "ScriptDLL";
                 if (ImGui::MenuItem(itemName.c_str())) {
-                    engine::Library::compile(_rightClickedAssetPath.string());
-                    engine::Library::compile("../WizardEngine/src/Parent.cpp");
-                    engine::Library::generate(libName);
+//                    engine::Libs::compile(_rightClickedAssetPath.string());
+//                    engine::Libs::compile("../WizardEngine/src/scripting/Scriptable.cpp");
+//                    engine::Libs::generate(libName);
+                    engine::Libs::add(libName, "../ScriptDLL/ScriptDLL.dll");
                 }
                 if (ImGui::MenuItem("Load")) {
-                    auto* parent = engine::Library::load<Parent>(libName);
-                    if (parent) {
-                        parent->print("Hello world!");
-                    }
+//                    auto* parent = engine::createObject<Scriptable>(libName, "create");
+//                    if (parent) {
+//                        parent->onCreate();
+//                    }
                 }
             }
 
-            if (SAME(assetExtension, CPP_EXT) || SAME(assetExtension, GLSL_EXT)) {
+            if (IS_SCRIPT(assetExtension)) {
                 if (ImGui::MenuItem("Open in Visual Studio")) {
-                    engine::FileEditor::openVisualStudio(_rightClickedAssetPath.string());
+                    engine::Tools::openVisualStudio(_rightClickedAssetPath.string());
                 }
 
                 if (ImGui::MenuItem("Open in VS Code")) {
-                    engine::FileEditor::openVSCode(_rightClickedAssetPath.string());
+                    engine::Tools::openVSCode(_rightClickedAssetPath.string());
                 }
 
                 if (ImGui::MenuItem("Open in Notepad")) {
-                    engine::FileEditor::openNotepad(_rightClickedAssetPath.string());
+                    engine::Tools::openNotepad(_rightClickedAssetPath.string());
+                }
+            }
+
+            if (IS_TEXTURE(assetExtension)) {
+                if (ImGui::MenuItem("Open in Photoshop")) {
+                    engine::Tools::openPhotoshop(_rightClickedAssetPath.string());
+                }
+            }
+
+            if (IS_MODEL(assetExtension)) {
+                if (ImGui::MenuItem("Open in Blender")) {
+                    engine::Tools::openBlender(_rightClickedAssetPath.string());
+                }
+
+                if (ImGui::MenuItem("Open in ZBrush")) {
+                    engine::Tools::openZBrush(_rightClickedAssetPath.string());
                 }
             }
 
