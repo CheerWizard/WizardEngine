@@ -33,6 +33,6 @@ public:
 
 };
 
-extern "C" DLL_API void* create() {
+DLL_EXPORT void* create() {
     return new Test();
 }
