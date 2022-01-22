@@ -9,14 +9,14 @@
 namespace engine {
 
     void ScriptSystem::onUpdate(Time dt) {
-        activeScene->getRegistry().view<StaticScript>().each([=](auto entity, auto& sc) {
+        activeScene->getRegistry().view<NativeScript>().each([=](auto entity, auto& sc) {
            if (!sc.script) {
                sc.script = { entity, activeScene.get() };
                sc.onCreateFunction(sc.script);
            }
             sc.onUpdateFunction(sc.script, dt);
         });
-        activeScene->getRegistry().view<DynamicScript>().each([=](auto entity, auto& sc) {
+        activeScene->getRegistry().view<DLLScript>().each([=](auto entity, auto& sc) {
             if (sc.scriptable) {
                 sc.scriptable->onUpdate(dt);
             }
@@ -24,12 +24,12 @@ namespace engine {
     }
 
     void ScriptSystem::onDestroy() {
-        activeScene->getRegistry().view<StaticScript>().each([=](auto entity, auto& sc) {
+        activeScene->getRegistry().view<NativeScript>().each([=](auto entity, auto& sc) {
             if (sc.script) {
                 sc.onDestroyFunction(sc.script);
             }
         });
-        activeScene->getRegistry().view<DynamicScript>().each([=](auto entity, auto& sc) {
+        activeScene->getRegistry().view<DLLScript>().each([=](auto entity, auto& sc) {
             if (sc.scriptable) {
                 sc.scriptable->onDestroy();
                 delete sc.scriptable;

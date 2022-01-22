@@ -117,8 +117,6 @@ namespace fairy {
         engine::Ref<engine::Camera3dController> activeSceneCameraController;
 
         bool windowClosePressed = false;
-
-        Scriptable* script = nullptr;
     };
 
 }

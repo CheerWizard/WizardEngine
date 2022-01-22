@@ -107,4 +107,33 @@ namespace engine {
         }
     }
 
+    template<typename... Args>
+    void createFunction(const std::string &libName, const std::string &fnName, Args&&... args) {
+        ENGINE_INFO("load({0})", libName);
+        if (!Libs::exists(libName)) {
+            ENGINE_ERR("Library with name {0} does not exists in cache!");
+            return;
+        }
+        auto libPath = Libs::get(libName);
+        typedef void (*Function)(Args...); // function pointer to factory function
+
+        HMODULE hmodule = LOAD_LIB(libPath.c_str());
+        if (!hmodule) {
+            ENGINE_ERR("Unable to load library {0}", libPath);
+            return;
+        } else {
+            HModules::add(libName, hmodule);
+            ENGINE_INFO("Library {0} has been loaded!", libPath);
+            Function function = (Function) GetProcAddress(hmodule, fnName.c_str());
+
+            if (function) {
+                ENGINE_INFO("Library function {0} has been loaded!", fnName);
+                function(std::forward<Args>(args)...);
+            } else {
+                ENGINE_ERR("Unable to load library function {0}", fnName);
+            }
+//            HModules::free(libName);
+        }
+    }
+
 }

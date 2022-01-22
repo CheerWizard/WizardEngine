@@ -3,19 +3,17 @@
 //
 
 #include "FLLayer.h"
+
 #include "core/FileExtensions.h"
-#include "scripting/Scriptable.h"
-#include "core/Build.h"
-
-#include <imgui/imgui/imgui.h>
-
-#include "random"
-
 #include "graphics/light/Light.h"
 #include "graphics/camera/CameraShaderScript.h"
 #include "graphics/material/MaterialShaderScript.h"
 #include "graphics/light/LightShaderScript.h"
 #include "graphics/GraphicsObject.h"
+#include "scripting/ScriptBuild.h"
+
+#include <imgui/imgui/imgui.h>
+#include "random"
 
 using namespace engine::shader;
 
@@ -191,16 +189,10 @@ namespace fairy {
         humanMaterialMaps.diffuseFileName = "wood_diffuse.png";
         humanMaterialMaps.specularFileName = "wood_specular.png";
         car.add<engine::MaterialMapsComponent>(humanMaterialMaps);
-
-        // init script .cpp
-        auto libName = "ScriptDLL";
-        engine::Libs::add(libName, "../ScriptDLL/ScriptDLL.dll");
-        script = engine::createObject<Scriptable>(libName, "create");
-        if (script) {
-            script->entity = Entity(app->activeScene.get());
-            script->onCreate();
-            car.add<DynamicScript>(script);
-        }
+        // init script dll
+        ScriptBuild::init({ "Engine", "Runtime" });
+        // add script to entity
+        ScriptBuild::addDLLScript(car);
     }
 
     void FLLayer::destroy() {
