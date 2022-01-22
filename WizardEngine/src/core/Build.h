@@ -11,63 +11,58 @@
 namespace engine {
 
     typedef std::unordered_map<std::string, std::string> StringsMap;
-    typedef std::unordered_map<std::string, HMODULE> LoadedLibMap;
+    typedef std::unordered_map<std::string, HMODULE> HModuleMap;
 
-    class Library {
+    class Libs final {
 
     public:
-        static void compile(const std::string &srcPath);
-        static void generate(const std::string &libName);
+        static void generate(const std::string &name);
         static void clear();
-        static void free(const std::string &libName);
-
-        template<typename Object>
-        static Object* load(const std::string& libName);
+        static void add(const std::string& name, const std::string& libPath);
+        static void remove(const std::string& name);
+        static bool exists(const std::string& name);
+        static const std::string& get(const std::string& name);
 
     private:
-        static void compileTask(const std::string &srcPath);
         static void generateLib(const std::string& libName);
-        static bool exists(const std::string& key);
 
     private:
-        static StringsMap libMap;
-        static StringsMap objectsMap;
-        static LoadedLibMap loadedLibMap;
+        static StringsMap map;
 
     };
 
-    template<typename Object>
-    Object* Library::load(const std::string &libName) {
-        ENGINE_INFO("load({0})", libName);
-        Object* object = nullptr;
-        if (!exists(libName)) {
-            ENGINE_ERR("Library with name {0} does not exists in cache!");
-            return object;
-        }
-        auto libPath = libMap[libName];
-        typedef Object* (__stdcall *FUNCTION)(); // function pointer to exported create_object function.
+    class Objects final {
 
-        HMODULE lib = LOAD_LIB(libPath.c_str());
-        if (!lib) {
-            ENGINE_ERR("Unable to load library {0}", libPath);
-            return object;
-        } else {
-            loadedLibMap[libName] = lib;
-            ENGINE_INFO("Library {0} has been loaded!", libPath);
-            FUNCTION createObject = (FUNCTION) GetProcAddress(lib, "create_object");
+    public:
+        static void compile(const std::string &srcPath);
+        static void add(const std::string &name, const std::string &path);
+        static void remove(const std::string &name);
+        static const std::string& get(const std::string& name);
+        static const StringsMap& getAll();
+        static void clear();
 
-            if (createObject) {
-                ENGINE_INFO("Library function {0} has been loaded!", "create");
-                object = createObject();
-            } else {
-                ENGINE_ERR("Unable to load library function {0}", "create");
-            }
+    private:
+        static void compileTask(const std::string &srcPath);
 
-            return object;
-        }
-    }
+    private:
+        static StringsMap map;
+    };
 
-    class Executable {
+    class HModules final {
+
+    public:
+        static void add(const std::string &name, const HMODULE& hmodule);
+        static void remove(const std::string &name);
+        static const HMODULE& get(const std::string& name);
+        static void free(const std::string &name);
+        static void clear();
+        static bool exists(const std::string& name);
+
+    private:
+        static HModuleMap map;
+    };
+
+    class Executable final {
 
     public:
         static void generate(const std::string &srcPath, std::string& exePath);
@@ -78,5 +73,38 @@ namespace engine {
         static void runExe(const std::string& path);
 
     };
+
+    template<typename Object>
+    Object* createObject(const std::string &libName, const std::string &createFnName) {
+        ENGINE_INFO("load({0})", libName);
+        Object* object = nullptr;
+        if (!Libs::exists(libName)) {
+            ENGINE_ERR("Library with name {0} does not exists in cache!");
+            return object;
+        }
+        auto libPath = Libs::get(libName);
+        typedef void* (*Function)(); // function pointer to factory function
+
+        HMODULE hmodule = LOAD_LIB(libPath.c_str());
+        if (!hmodule) {
+            ENGINE_ERR("Unable to load library {0}", libPath);
+            return object;
+        } else {
+            HModules::add(libName, hmodule);
+            ENGINE_INFO("Library {0} has been loaded!", libPath);
+            Function createFn = (Function) GetProcAddress(hmodule, createFnName.c_str());
+
+            if (createFn) {
+                ENGINE_INFO("Library function {0} has been loaded!", createFnName);
+                object = (Object*)createFn();
+            } else {
+                ENGINE_ERR("Unable to load library function {0}", createFnName);
+            }
+
+//            HModules::free(libName);
+
+            return object;
+        }
+    }
 
 }

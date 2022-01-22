@@ -5,7 +5,6 @@
 #pragma once
 
 #include "../core/Logger.h"
-#include "../core/Time.h"
 
 #include "entt/entt.hpp"
 
@@ -151,9 +150,18 @@ namespace engine {
             create(tag);
         }
 
+        Entity(const Entity& entity) {
+            id = entity.id;
+            container = entity.container;
+        }
+
     public:
         [[nodiscard]] inline uint32_t getId() const {
             return (uint32_t) id;
+        }
+
+        [[nodiscard]] inline entt::entity getEnttId() const {
+            return id;
         }
 
         template<typename T, typename... Args>
@@ -189,11 +197,6 @@ namespace engine {
         bool operator!=(const Entity& other) const {
             return !(*this == other);
         }
-
-    public:
-        virtual void onCreate();
-        virtual void onDestroy();
-        virtual void onUpdate(Time dt);
 
     protected:
         EntityContainer* container = nullptr;

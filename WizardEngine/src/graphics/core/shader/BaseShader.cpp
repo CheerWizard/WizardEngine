@@ -179,7 +179,7 @@ namespace engine::shader {
                 elementCount = SINGLE;
                 break;
             CASE("double"):
-                elementCount = DOUBLE;
+                elementCount = DOUBLE_;
                 break;
             CASE("vec2"):
                 elementCount = VEC2;
@@ -200,7 +200,7 @@ namespace engine::shader {
                 elementCount = D_VEC4;
                 break;
             CASE("mat2"):
-                elementCount = MAT2;
+                elementCount = MAT2_;
                 break;
             CASE("mat3"):
                 elementCount = MAT3;

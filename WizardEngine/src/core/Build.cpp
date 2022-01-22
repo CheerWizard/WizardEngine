@@ -8,28 +8,12 @@
 
 namespace engine {
 
-    StringsMap Library::libMap = {};
-    StringsMap Library::objectsMap = {};
-    LoadedLibMap Library::loadedLibMap = {};
+    StringsMap Libs::map = {};
+    StringsMap Objects::map = {};
+    HModuleMap HModules::map = {};
 
-    void Library::generateLib(const std::string &libName) {
-        ENGINE_INFO("generateLib({0})", libName);
-        FileSystem::newDirectory("lib");
-        auto libPath = "lib/" + libName + ".so";
-        // create dynamic .so library
-        std::stringstream cmd;
-        cmd << "g++ -std=c++17 -shared -o " << libPath;
-        for (const auto &[objName, objPath] : objectsMap) {
-            cmd << " " << objPath;
-        }
-        auto cmdStr = cmd.str();
-        ENGINE_INFO(cmdStr);
-        system(cmdStr.c_str());
-        libMap[libName] = libPath;
-    }
-
-    void Library::generate(const std::string &libName) {
-        Task<void(const std::string&), const std::string&> task = {
+    void Libs::generate(const std::string &libName) {
+        VoidTask<const std::string&> task = {
                 "GenerateLib_Task",
                 "GenerateLib_Thread",
                 generateLib
@@ -37,28 +21,33 @@ namespace engine {
         task.run(libName);
     }
 
-    bool Library::exists(const std::string& key) {
-        return libMap.find(key) != libMap.end();
-    }
-
-    void Library::clear() {
-        ENGINE_INFO("Library: clear()");
-        libMap.clear();
-        loadedLibMap.clear();
-        objectsMap.clear();
-    }
-
-    void Library::free(const std::string &libName) {
-        ENGINE_INFO("free({0})", libName);
-        if (!exists(libName)) {
-            ENGINE_ERR("Can't free library {0} as it was not loaded!");
-        } else {
-            FREE_LIB(loadedLibMap[libName]);
+    void Libs::generateLib(const std::string &libName) {
+        ENGINE_INFO("generateLib({0})", libName);
+        FileSystem::newDirectory("lib");
+        auto libPath = "lib/" + libName + ".so";
+        // create dynamic .so library
+        std::stringstream cmd;
+        cmd << "g++ -std=c++17 -shared -o " << libPath;
+        for (const auto &[objName, objPath] : Objects::getAll()) {
+            cmd << " " << objPath;
         }
+        auto cmdStr = cmd.str();
+        ENGINE_INFO(cmdStr);
+        system(cmdStr.c_str());
+        add(libName, libPath);
     }
 
-    void Library::compile(const std::string &srcPath) {
-        Task<void(const std::string&), const std::string&> task = {
+    bool Libs::exists(const std::string& key) {
+        return map.find(key) != map.end();
+    }
+
+    void Libs::clear() {
+        ENGINE_INFO("Library: clear()");
+        map.clear();
+    }
+
+    void Objects::compile(const std::string &srcPath) {
+        VoidTask<const std::string&> task = {
                 "Compile_Task",
                 "Compile_Thread",
                 compileTask
@@ -66,7 +55,7 @@ namespace engine {
         task.run(srcPath);
     }
 
-    void Library::compileTask(const std::string &srcPath) {
+    void Objects::compileTask(const std::string &srcPath) {
         ENGINE_INFO("compileTask({0})", srcPath);
         auto objectName = FileSystem::getFileName(srcPath);
         FileSystem::newDirectory("objects");
@@ -75,11 +64,77 @@ namespace engine {
         auto cmdCompile = "g++ -std=c++17 -c -o " + objectPath + " " + srcPath;
         ENGINE_INFO(cmdCompile);
         system(cmdCompile.c_str());
-        objectsMap[objectName] = objectPath;
+        add(objectName, objectPath);
+    }
+
+    void Libs::add(const std::string &name, const std::string& path) {
+        ENGINE_INFO("add(libName: {0}, libPath: {1})", name, path);
+        map[name] = path;
+    }
+
+    void Libs::remove(const std::string &name) {
+        ENGINE_INFO("remove(libName: {0})", name);
+        map.erase(name);
+    }
+
+    const std::string& Libs::get(const std::string &name) {
+        return map[name];
+    }
+
+    void Objects::add(const std::string &name, const std::string &path) {
+        ENGINE_INFO("add(objectName: {0}, objectPath: {1})", name, path);
+        map[name] = path;
+    }
+
+    void Objects::remove(const std::string &name) {
+        ENGINE_INFO("remove(objectName: {0})", name);
+        map.erase(name);
+    }
+
+    const std::string &Objects::get(const std::string &name) {
+        return map[name];
+    }
+
+    const StringsMap &Objects::getAll() {
+        return map;
+    }
+
+    void Objects::clear() {
+        map.clear();
+    }
+
+    void HModules::add(const std::string &name, HMODULE const &hmodule) {
+        ENGINE_INFO("add(hmoduleName: {0})", name);
+        map[name] = hmodule;
+    }
+
+    void HModules::remove(const std::string &name) {
+        map.erase(name);
+    }
+
+    const HMODULE &HModules::get(const std::string& name) {
+        return map[name];
+    }
+
+    void HModules::free(const std::string &name) {
+        ENGINE_INFO("free({0})", name);
+        if (!exists(name)) {
+            ENGINE_ERR("Can't free library {0} as it was not loaded!");
+        } else {
+            FREE_LIB(get(name));
+        }
+    }
+
+    bool HModules::exists(const std::string &name) {
+        return map.find(name) != map.end();
+    }
+
+    void HModules::clear() {
+        map.clear();
     }
 
     void Executable::generate(const std::string &srcPath, std::string &exePath) {
-        Task<void(const std::string&, std::string&), const std::string&, std::string&> task = {
+        VoidTask<const std::string&, std::string&> task = {
               "GenerateExe_Task",
               "GenerateExe_Thread",
               generateExe
@@ -99,20 +154,20 @@ namespace engine {
         system(cmdSetLibPath);
     }
 
-    void Executable::runExe(const std::string &path) {
-        ENGINE_INFO("runExe({0})", path);
-        auto cmd = ".\\" + path;
-        ENGINE_INFO(cmd);
-        system(cmd.c_str());
-    }
-
     void Executable::run(const std::string &path) {
-        Task<void(const std::string&), const std::string&> task = {
+        VoidTask<const std::string&> task = {
                 "RunExe_Task",
                 "RunExe_Thread",
                 runExe
         };
         task.run(path);
+    }
+
+    void Executable::runExe(const std::string &path) {
+        ENGINE_INFO("runExe({0})", path);
+        auto cmd = ".\\" + path;
+        ENGINE_INFO(cmd);
+        system(cmd.c_str());
     }
 
 }
