@@ -11,5 +11,6 @@
 #include "graphics/core/sources/ShaderSource.h"
 
 #define DLL_API __declspec(dllexport)
+#define DLL_EXPORT extern "C" DLL_API
 
 using namespace engine;

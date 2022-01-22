@@ -4,7 +4,7 @@
 
 #include "WizardEngine.h"
 
-extern "C" DLL_API void initLogs(const std::string& engineLog, const std::string& runtimeLog) {
+DLL_EXPORT void initLogs(const std::string& engineLog, const std::string& runtimeLog) {
     INIT_ENGINE_LOG(engineLog);
     INIT_RUNTIME_LOG(runtimeLog);
 }
