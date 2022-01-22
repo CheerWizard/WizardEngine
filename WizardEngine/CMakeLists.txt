@@ -9,7 +9,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(WizardEngine ${ENGINE_SRC})
+add_library(WizardEngine ${ENGINE_SRC} src/scripting/ScriptBuild.h src/scripting/ScriptBuild.cpp)
 
 #/ adding dependencies.
 

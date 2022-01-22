@@ -34,7 +34,5 @@ public:
 };
 
 extern "C" DLL_API void* create() {
-    INIT_ENGINE_LOG("Engine");
-    INIT_RUNTIME_LOG("Runtime");
     return new Test();
 }

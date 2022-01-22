@@ -8,7 +8,7 @@
 
 namespace engine {
 
-    struct StaticScript {
+    struct NativeScript {
         Entity script;
         // lifecycle functions
         std::function<void(Entity&)> onCreateFunction;
@@ -23,14 +23,8 @@ namespace engine {
         }
     };
 
-    struct DynamicScript {
+    struct DLLScript {
         Scriptable* scriptable = nullptr;
     };
-
-    template<typename T>
-    void addStaticScript(Entity& entity) {
-        entity.add<StaticScript>();
-        entity.get<StaticScript>().bind<T>();
-    }
 
 }
