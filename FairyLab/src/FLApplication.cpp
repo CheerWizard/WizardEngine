@@ -6,6 +6,7 @@
 #include "FLLayer.h"
 #include "Launcher.h"
 
+
 engine::Application* engine::createApplication() {
     EDITOR_INFO("Creating FLApplication...");
     return new fairy::FLApplication();

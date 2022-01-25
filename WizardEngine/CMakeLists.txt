@@ -9,7 +9,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(WizardEngine ${ENGINE_SRC} src/scripting/ScriptBuild.h src/scripting/ScriptBuild.cpp)
+add_library(WizardEngine ${ENGINE_SRC})
 
 #/ adding dependencies.
 
@@ -55,3 +55,8 @@ target_link_libraries(
 )
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
+#/ Copy script, engine and vendor sources into ScriptDLL
+replace_dirs(ScriptDLL ScriptDLL)
+replace_dirs(WizardEngine/src ScriptDLL/include)
+replace_dirs(WizardEngine/vendor/spdlog ScriptDLL/vendor/spdlog)
+replace_dirs(WizardEngine/vendor/entt ScriptDLL/vendor/entt)

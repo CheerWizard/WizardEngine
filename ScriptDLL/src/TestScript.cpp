@@ -2,7 +2,7 @@
 // Created by mecha on 13.01.2022.
 //
 
-#include "scripting/Scriptable.h"
+#include <scripting/Scriptable.h>
 
 class DLL_API Test : public Scriptable {
 

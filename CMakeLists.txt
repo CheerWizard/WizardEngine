@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(Wizard)
 
-# Macros to build project for specific platform. WizardEngine project will detect and process platform under the hood.
+# Macros to build project for specific platform. Wizard project will detect and process platform under the hood.
 # We should always set it , before adding subprojects!
 if (DEBUG)
     add_definitions(-DDEBUG=1)
@@ -70,4 +70,3 @@ endmacro(replace_dirs)
 # Subprojects from Wizard.
 add_subdirectory(WizardEngine)
 add_subdirectory(FairyLab)
-add_subdirectory(ScriptDLL)
