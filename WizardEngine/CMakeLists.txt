@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(WizardEngine)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake_tools/CMakeLists.txt)
 
 #/ creating a library from sources.
 file(GLOB_RECURSE ENGINE_SRC
@@ -9,12 +10,14 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(WizardEngine ${ENGINE_SRC})
+add_library(${PROJECT_NAME} ${ENGINE_SRC})
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 #/ adding dependencies.
-
+include_directories(src/include)
 #/ Logger.
 add_subdirectory(vendor/spdlog)
+include_directories(vendor/spdlog/include)
 
 #/ Window managing for OpenGL/Vulkan/OpenGLES context.
 add_subdirectory(vendor/glfw)
@@ -27,10 +30,6 @@ include_directories(vendor/glad/include)
 add_subdirectory(vendor/imgui)
 include_directories(vendor/imgui/imgui)
 include_directories(vendor/imgui/imgui/misc/cpp)
-
-#/ Networking and async IO.
-add_subdirectory(vendor/asio)
-include_directories(vendor/asio/asio/include)
 
 #/ Math.
 add_subdirectory(vendor/glm)
@@ -55,8 +54,12 @@ target_link_libraries(
 )
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
-#/ Copy script, engine and vendor sources into ScriptDLL
-replace_dirs(ScriptDLL ScriptDLL)
-replace_dirs(WizardEngine/src ScriptDLL/include)
-replace_dirs(WizardEngine/vendor/spdlog ScriptDLL/vendor/spdlog)
-replace_dirs(WizardEngine/vendor/entt ScriptDLL/vendor/entt)
+replace_dirs(WizardEngine/cpp_scripting WizardEngine/cpp_scripting)
+replace_dirs(WizardEngine/runtime WizardEngine/runtime)
+replace_dirs(WizardEngine/src/include WizardEngine/src/include)
+replace_dirs(WizardEngine/vendor/entt/src WizardEngine/vendor/entt/src)
+replace_dirs(WizardEngine/vendor/glad/include WizardEngine/vendor/glad/include)
+replace_dirs(WizardEngine/vendor/glfw/include WizardEngine/vendor/glfw/include)
+replace_dirs(WizardEngine/vendor/glm/glm WizardEngine/vendor/glm/glm)
+replace_dirs(WizardEngine/vendor/spdlog/include WizardEngine/vendor/spdlog/include)
+replace_dirs(WizardEngine/vendor/stb/stb WizardEngine/vendor/stb/stb)
