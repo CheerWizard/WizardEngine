@@ -17,6 +17,15 @@ uniform PointLight pointLight[maxPointLight];
 uniform Material material;
 uniform MaterialMaps materialMaps;
 
+struct Test {
+    bool flag;
+    mat4 mat;
+    vec3 vec;
+    float number;
+};
+
+uniform Test test;
+
 void updateFragment() {
     vec3 normal = normalize(f_normal);
     vec3 viewDir = normalize(viewPosition - f_pos);
