@@ -19,14 +19,14 @@ namespace engine {
     Mesh copy(const Mesh &mesh);
 
     struct MeshComponent {
-        std::string_view name = nullptr;
         Mesh *meshes = nullptr;
         uint32_t meshCount = MIN_MESH_COUNT;
         uint32_t totalVertexCount = 0;
         uint32_t totalIndexCount = 0;
         uint32_t vertexStart = 0;
         uint32_t indexStart = 0;
-        bool isUpdated = true; // flag to minimize GPU calls
+        bool isUpdated = true;
+        uint32_t renderModelId = 0;
     };
 
     MeshComponent copy(const MeshComponent &meshComponent);

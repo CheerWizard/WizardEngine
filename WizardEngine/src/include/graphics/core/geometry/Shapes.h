@@ -12,9 +12,9 @@ namespace engine {
     class Shapes final {
 
     public:
-        static MeshComponent newTriangle(const std::string_view &name);
-        static MeshComponent newSquare(const std::string_view &name);
-        static MeshComponent newCube(const std::string_view &name);
+        static MeshComponent newTriangle();
+        static MeshComponent newSquare();
+        static MeshComponent newCube();
 
     private:
         static Vertex *newTriangleVertices();

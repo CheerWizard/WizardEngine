@@ -6,7 +6,7 @@
 
 namespace engine {
 
-    MeshComponent Shapes::newTriangle(const std::string_view& name) {
+    MeshComponent Shapes::newTriangle() {
         Mesh* meshes = new Mesh {
                 VertexData {
                         newTriangleVertices(),
@@ -19,10 +19,10 @@ namespace engine {
                         3
                 }
         };
-        return { name, meshes };
+        return { meshes };
     }
 
-    MeshComponent Shapes::newSquare(const std::string_view& name) {
+    MeshComponent Shapes::newSquare() {
         Mesh* meshes = new Mesh {
                 VertexData {
                         newSquareVertices(),
@@ -35,10 +35,10 @@ namespace engine {
                         6
                 }
         };
-        return { name, meshes };
+        return { meshes };
     }
 
-    MeshComponent Shapes::newCube(const std::string_view& name) {
+    MeshComponent Shapes::newCube() {
         Mesh* meshes = new Mesh {
                 VertexData {
                         newCubeVertices(),
@@ -51,7 +51,7 @@ namespace engine {
                         36
                 }
         };
-        return { name, meshes };
+        return { meshes };
     }
 
     Vertex *Shapes::newTriangleVertices() {
