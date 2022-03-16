@@ -40,24 +40,26 @@ namespace engine {
         void tryUploadMesh(
                 MeshComponent& meshComponent,
                 uint32_t &previousVertexCount,
-                uint32_t &previousIndexCount
+                uint32_t &previousIndexCount,
+                RenderModel& renderModel
         );
         void tryUploadMesh(
                 const uint32_t &instanceId,
                 MeshComponent& meshComponent,
                 uint32_t &previousVertexCount,
-                uint32_t &previousIndexCount
+                uint32_t &previousIndexCount,
+                RenderModel& renderModel
         );
-        void uploadMesh(MeshComponent &meshComponent);
+        void uploadMesh(MeshComponent &meshComponent, RenderModel& renderModel);
 
     protected:
         void create();
-        void begin();
-        void end();
+        RenderModel& createRenderModel(const uint32_t& vertexCount, const uint32_t& indexCount);
         void release();
+        bool validate(RenderModel& renderModel, MeshComponent& meshComponent);
 
     protected:
-        RenderModel renderModel;
+        std::vector<RenderModel> renderModels;
         Ref<BaseShaderProgram> shaderProgram;
     };
 

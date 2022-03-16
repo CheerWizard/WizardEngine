@@ -27,7 +27,7 @@ namespace engine {
     const MeshComponent& MeshSource::getTriangle(const std::string &name) {
         if (!exists(name)) {
             ENGINE_INFO("Triangle {0} does not exists in cache! Creating new triangle!", name);
-            _meshes[name] = Shapes::newTriangle(name);
+            _meshes[name] = Shapes::newTriangle();
         }
         return _meshes[name];
     }
@@ -35,7 +35,7 @@ namespace engine {
     const MeshComponent& MeshSource::getSquare(const std::string &name) {
         if (!exists(name)) {
             ENGINE_INFO("Square {0} does not exists in cache! Creating new square!", name);
-            _meshes[name] = Shapes::newSquare(name);
+            _meshes[name] = Shapes::newSquare();
         }
         return _meshes[name];
     }
@@ -43,7 +43,7 @@ namespace engine {
     const MeshComponent& MeshSource::getCube(const std::string &name) {
         if (!exists(name)) {
             ENGINE_INFO("Cube {0} does not exists in cache! Creating new cube!", name);
-            _meshes[name] = Shapes::newCube(name);
+            _meshes[name] = Shapes::newCube();
         }
         return _meshes[name];
     }

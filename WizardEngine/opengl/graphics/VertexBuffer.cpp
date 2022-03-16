@@ -29,6 +29,7 @@ namespace engine {
     }
 
     void VertexBuffer::alloc(const uint32_t &vertexCount) {
+        count = vertexCount;
         size_t size = vertexFormat.getSize() * vertexCount;
         malloc(size);
     }

@@ -6,16 +6,20 @@
 
 #include <graphics/core/shader/VertexFormat.h>
 #include <graphics/core/buffer_data/VertexData.h>
+#include <graphics/core/buffer_data/Buffer.h>
 
-#define DEFAULT_VERTEX_COUNT 400000
+#define DEFAULT_VERTEX_COUNT 1000
 
 namespace engine {
 
     // VBO - Vertex Buffer Object allocated for GPU pipeline
-    class VertexBuffer final {
+    class VertexBuffer final : public Buffer {
 
     public:
-        VertexBuffer() {
+        VertexBuffer() : Buffer(DEFAULT_VERTEX_COUNT) {
+            create();
+        }
+        VertexBuffer(const uint32_t& vertexCount) : Buffer(vertexCount) {
             create();
         }
         ~VertexBuffer() = default;
@@ -29,9 +33,11 @@ namespace engine {
         void bind() const;
         void unbind() const;
         // GPU allocations
-        void alloc(const uint32_t &vertexCount = DEFAULT_VERTEX_COUNT);
+        void alloc();
+        void alloc(const uint32_t &vertexCount);
         void malloc(const size_t &memorySize);
-        void setFormat(const shader::VertexFormat &vertexFormat, const uint32_t &vertexCount = DEFAULT_VERTEX_COUNT);
+        void setFormat(const shader::VertexFormat &vertexFormat);
+        void setFormat(const shader::VertexFormat &vertexFormat, const uint32_t& vertexCount);
         // GPU data load
         void load(const VertexData &vertexData);
 
