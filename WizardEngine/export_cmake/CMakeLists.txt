@@ -1,0 +1,10 @@
+include_directories(
+        ../WizardEngine/src/include
+        ../WizardEngine/vendor/spdlog/include
+        ../WizardEngine/vendor/entt/src
+        ../WizardEngine/vendor/glm
+        ../WizardEngine/vendor/glad/include
+        ../WizardEngine/vendor/glfw/include
+        ../WizardEngine/vendor/imgui
+        ../WizardEngine/vendor/stb
+)
