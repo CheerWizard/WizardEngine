@@ -124,29 +124,25 @@ namespace fairy {
 //        _cubeEntity.add<engine::MaterialComponent>(cubeMaterial);
 //        _cubeEntity.add<engine::MaterialMapsComponent>(cubeMaterialMaps);
 
-//        auto sphereFamily = engine::Family("Cars");
-//        auto sphereMesh = app->getMeshSource()->getMesh("ferrari.obj");
-//        sphereFamily.add<engine::MeshComponent>(sphereMesh);
-//
-//        // randomize 100 spheres. testing Instance Rendering and Family approach!
-//        std::random_device rd;
-//        std::mt19937 mt(rd());
-//        std::uniform_real_distribution<double> dist(-100, 100);
-//        for (uint32_t i = 0 ; i < 10 ; i++) {
-//            auto r = (float) dist(mt);
-//
-//            auto sphereEntity = engine::Entity("Ferrari" + std::to_string(i), &sphereFamily);
-//            auto sphereTransform = engine::TransformComponents::newTransform3d(
-//                    { r, r, r },
-//                    { r, r, r },
-//                    { 0.2, 0.2, 0.2 }
-//            );
-//            auto sphereMaterial = engine::MaterialComponent();
-//
-//            sphereEntity.add<engine::Transform3dComponent>(sphereTransform);
-//            sphereEntity.add<engine::MaterialComponent>(sphereMaterial);
-//        }
-//        app->activeScene->addFamily(sphereFamily);
+        auto humanMesh = GET_MESH("human.obj");
+        // randomize entities
+        std::random_device rd;
+        std::mt19937 mt(rd());
+        std::uniform_real_distribution<double> dist(-10, 10);
+        for (uint32_t i = 0 ; i < 10 ; i++) {
+            auto r = (float) dist(mt);
+            auto humanEntity = engine::Object3d(
+                    app->activeScene.get(),
+                    "Human " + std::to_string(i),
+                    engine::transform3d(
+                            { r, r, r },
+                            { r, r, r },
+                            {0.2, 0.2, 0.2}
+                    ),
+                    copy(humanMesh)
+            );
+            humanEntity.add<engine::MaterialComponent>(MaterialComponent());
+        }
 
         // light
 //        auto phongLight = engine::PhongLight(app->activeScene.get());

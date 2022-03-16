@@ -5,17 +5,21 @@
 #pragma once
 
 #include <graphics/core/buffer_data/IndexData.h>
+#include <graphics/core/buffer_data/Buffer.h>
 
-#define DEFAULT_INDEX_COUNT 2000000
+#define DEFAULT_INDEX_COUNT 5000
 
 namespace engine {
 
     // Single IBO - Index Buffer Object.
     // Can be used as graphics API interface
-    class IndexBuffer final {
+    class IndexBuffer final : public Buffer {
 
     public:
-        IndexBuffer() {
+        IndexBuffer() : Buffer(DEFAULT_INDEX_COUNT) {
+            create();
+        }
+        IndexBuffer(const uint32_t& indexCount) : Buffer(indexCount) {
             create();
         }
         ~IndexBuffer() = default;
@@ -29,7 +33,7 @@ namespace engine {
         void bind();
         void unbind();
         // GPU allocations
-        void alloc(); // allocation with default index count
+        void alloc();
         void alloc(const uint32_t &indexCount);
         void malloc(const size_t &memorySize);
         // GPU data load

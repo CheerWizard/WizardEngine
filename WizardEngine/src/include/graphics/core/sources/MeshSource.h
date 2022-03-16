@@ -15,12 +15,8 @@
 namespace engine {
 
     class MeshSource {
-        // key - .obj file name or mesh name
-        // value - actual mesh loaded from .obj file or constructed directly
+
         typedef std::unordered_map<std::string, MeshComponent> Meshes;
-        // key - mesh component
-        // value - actual mesh loaded from .obj file or constructed directly
-        typedef std::unordered_map<std::string, RenderModel> RenderModels;
 
     public:
         MeshSource() = default;
@@ -59,9 +55,7 @@ namespace engine {
         void destroy();
 
     private:
-
         Meshes _meshes;
-        RenderModels _renderModels;
 
     private:
         static Ref<MeshSource> instance;
