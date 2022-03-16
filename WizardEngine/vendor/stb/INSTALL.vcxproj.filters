@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\CMakeFiles\b2a75ac028a285e6e044a95741458a88\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{AB342F30-1EF5-315D-8013-A3B221CBE8DF}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
