@@ -29,7 +29,7 @@ namespace engine {
         if (ImGui::BeginPopupContextItem()) {
 
             if (ImGui::MenuItem("Delete Entity")) {
-                _scene->deleteEntity(entity);
+                entity.remove();
 
                 if (_selectedEntity == entity) {
                     _selectedEntity = {};
@@ -439,10 +439,8 @@ namespace engine {
     void SceneHierarchy::onUpdate(Time dt) {
         ImGui::Begin(_props.name);
 
-        _scene->getRegistry().each([&](auto entityID) {
-            Entity entity { entityID , _scene.get() };
-            drawEntityNode(entity);
-        });
+        draw(_scene->getBatchRegistry(), false);
+        draw(_scene->getInstanceRegistry(), true);
 
         if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) {
             _selectedEntity = {};
@@ -466,8 +464,16 @@ namespace engine {
         ImGui::End();
     }
 
+    void SceneHierarchy::draw(entt::registry& registry, bool instancingEnabled) {
+        if (registry.empty<>()) return;
+
+        registry.each([&](auto entityID) {
+            Entity entity { entityID , _scene.get(), instancingEnabled };
+            drawEntityNode(entity);
+        });
+    }
+
     void SceneHierarchy::destroy() {
         removeCallback();
     }
-
 }

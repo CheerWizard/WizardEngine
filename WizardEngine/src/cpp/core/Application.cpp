@@ -57,9 +57,9 @@ namespace engine {
     void Application::onUpdate() {
         auto dt = fpsController.getDeltaTime();
         fpsController.begin();
-        // update runtime systems
+        // draw runtime systems
         updateRuntime(dt);
-        // update editor/tools
+        // draw editor/tools
         _layerStack.onUpdate(dt);
         // poll events + swap chain
         _window->onUpdate();

@@ -13,25 +13,42 @@ namespace engine {
     class Object3d : public Entity {
 
     public:
-        Object3d(const std::string &tag, EntityContainer* container) : Entity(tag, container) {
+        Object3d(
+                const std::string &tag,
+                EntityContainer* container,
+                const bool& instancingEnabled = false
+        ) : Entity(tag, container, instancingEnabled) {
             add<Transform3dComponent>(transform3d());
             add<MeshComponent>();
             add<MaterialComponent>();
         }
 
-        Object3d(EntityContainer* container) : Entity("GraphicsObject", container) {
+        Object3d(
+                EntityContainer* container,
+                const bool& instancingEnabled = false
+        ) : Entity("GraphicsObject", container, instancingEnabled) {
             add<Transform3dComponent>(transform3d());
             add<MeshComponent>();
             add<MaterialComponent>();
         }
 
-        Object3d(EntityContainer* container, const std::string &tag, const Transform3dComponent &transform) : Entity(tag, container) {
+        Object3d(
+                EntityContainer* container,
+                const std::string &tag,
+                const Transform3dComponent& transform,
+                const bool& instancingEnabled = false
+        ) : Entity(tag, container, instancingEnabled) {
             add<Transform3dComponent>(transform);
             add<MeshComponent>();
             add<MaterialComponent>();
         }
 
-        Object3d(EntityContainer* container, const std::string &tag, const MeshComponent &mesh) : Entity(tag, container) {
+        Object3d(
+                EntityContainer* container,
+                const std::string &tag,
+                const MeshComponent &mesh,
+                const bool& instancingEnabled = false
+        ) : Entity(tag, container, instancingEnabled) {
             add<Transform3dComponent>(transform3d());
             add<MeshComponent>(mesh);
             add<MaterialComponent>();
@@ -41,23 +58,27 @@ namespace engine {
                 EntityContainer* container,
                 const std::string &tag,
                 const Transform3dComponent &transform,
-                const MeshComponent& mesh
-        ) : Entity(tag, container) {
+                const MeshComponent& mesh,
+                const bool& instancingEnabled = false
+        ) : Entity(tag, container, instancingEnabled) {
             add<Transform3dComponent>(transform);
             add<MeshComponent>(mesh);
             add<MaterialComponent>();
         }
 
         ~Object3d() = default;
-
     };
 
-    void updateObjects3d(const Ref<Scene> &scene) {
-        auto objects = scene->getRegistry().group<Transform3dComponent, MeshComponent>();
+    void updateObjects3d(entt::registry& registry) {
+        auto objects = registry.group<Transform3dComponent, MeshComponent>();
         for (auto [entity, transform, mesh] : objects.each()) {
             transform.isUpdated = true;
             mesh.isUpdated = true;
         }
     }
 
+    void updateObjects3d(const Ref<Scene> &scene) {
+        updateObjects3d(scene->getBatchRegistry());
+        updateObjects3d(scene->getInstanceRegistry());
+    }
 }

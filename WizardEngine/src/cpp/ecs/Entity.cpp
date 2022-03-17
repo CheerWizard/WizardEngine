@@ -7,24 +7,45 @@
 
 namespace engine {
 
-    entt::entity EntityContainer::createEntityId() {
-        return registry.create();
+    void Entity::remove() const {
+        getRegistry().destroy(*this);
     }
 
-    void EntityContainer::deleteEntity(const Entity &entity) {
-        registry.destroy(entity);
+    bool EntityContainer::batchEmpty() {
+        return batchRegistry.empty<>();
     }
 
-    void EntityContainer::clear() {
-        registry.clear<>();
+    bool EntityContainer::instanceEmpty() {
+        return instanceRegistry.empty<>();
     }
 
     bool EntityContainer::isEmpty() {
-        return registry.empty<>();
+        return batchEmpty() && instanceEmpty();
+    }
+
+    size_t EntityContainer::batchSize() {
+        return batchRegistry.size();
+    }
+
+    size_t EntityContainer::instanceSize() {
+        return instanceRegistry.size();
     }
 
     size_t EntityContainer::size() {
-        return registry.size();
+        return batchSize() + instanceSize();
+    }
+
+    void EntityContainer::clearBatches() {
+        batchRegistry.clear<>();
+    }
+
+    void EntityContainer::clearInstances() {
+        instanceRegistry.clear<>();
+    }
+
+    void EntityContainer::clear() {
+        clearBatches();
+        clearInstances();
     }
 
     void Entity::create() {
@@ -32,8 +53,12 @@ namespace engine {
     }
 
     void Entity::create(const std::string &tag) {
-        id = container->createEntityId();
+        id = getRegistry().create();
         add<TagComponent>(tag);
+    }
+
+    entt::registry& Entity::getRegistry() const {
+        return instancingEnabled ? container->getInstanceRegistry() : container->getBatchRegistry();
     }
 
 }

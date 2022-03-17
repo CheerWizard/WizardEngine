@@ -7,7 +7,6 @@
 #include "RenderModel.h"
 
 #include <ecs/Components.h>
-#include <ecs/Family.h>
 
 #include "geometry/MeshComponent.h"
 #include "shader/BaseShader.h"
@@ -33,7 +32,7 @@ namespace engine {
 
     public:
         void render(const Entity& entity);
-        void renderInstanced(MeshComponent &familyMesh, entt::registry &familyRegistry);
+        void renderInstanced(entt::registry &registry);
         void renderBatched(entt::registry &registry);
 
     public:

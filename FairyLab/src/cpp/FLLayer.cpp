@@ -125,13 +125,16 @@ namespace fairy {
 //        _cubeEntity.add<engine::MaterialMapsComponent>(cubeMaterialMaps);
 
         auto humanMesh = GET_MESH("human.obj");
+        auto humanMaterialMaps = engine::MaterialMapsComponent();
+        humanMaterialMaps.diffuseFileName = "wood_diffuse.png";
+        humanMaterialMaps.specularFileName = "wood_specular.png";
         // randomize entities
         std::random_device rd;
         std::mt19937 mt(rd());
         std::uniform_real_distribution<double> dist(-10, 10);
         for (uint32_t i = 0 ; i < 10 ; i++) {
             auto r = (float) dist(mt);
-            auto humanEntity = engine::Object3d(
+            engine::Object3d(
                     app->activeScene.get(),
                     "Human " + std::to_string(i),
                     engine::transform3d(
@@ -139,9 +142,9 @@ namespace fairy {
                             { r, r, r },
                             {0.2, 0.2, 0.2}
                     ),
-                    copy(humanMesh)
+                    copy(humanMesh),
+                    false
             );
-            humanEntity.add<engine::MaterialComponent>(MaterialComponent());
         }
 
         // light
@@ -181,10 +184,10 @@ namespace fairy {
 //        );
 //        sponzaEntity.add<engine::Transform3dComponent>(sponzaTransform);
 //        sponzaEntity.add<engine::MeshComponent>(sponzaMesh);
-        auto humanMaterialMaps = engine::MaterialMapsComponent();
-        humanMaterialMaps.diffuseFileName = "wood_diffuse.png";
-        humanMaterialMaps.specularFileName = "wood_specular.png";
-        car.add<engine::MaterialMapsComponent>(humanMaterialMaps);
+        auto carMaterialMaps = engine::MaterialMapsComponent();
+        carMaterialMaps.diffuseFileName = "wood_diffuse.png";
+        carMaterialMaps.specularFileName = "wood_specular.png";
+        car.add<engine::MaterialMapsComponent>(carMaterialMaps);
     }
 
     void FLLayer::destroy() {
@@ -235,7 +238,7 @@ namespace fairy {
     void FLLayer::onUpdate(engine::Time dt) {
         ImGuiLayer::onUpdate(dt);
         activeSceneCameraController->setDeltaTime(dt);
-        // update scene texture id!
+        // draw scene texture id!
         sceneViewport.setId(app->activeScene->getTextureId());
     }
 
