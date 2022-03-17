@@ -58,6 +58,7 @@ namespace engine {
         }
 
     private:
+        void draw(entt::registry& registry, bool instancingEnabled);
         void drawEntityNode(Entity &entity);
         void drawComponents(Entity &entity);
 

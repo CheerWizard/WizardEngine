@@ -150,6 +150,7 @@ namespace engine::shader {
     }
 
     void activateTexture(const std::string &fileName, const uint32_t &slot) {
+        ENGINE_INFO("activateTexture(fileName={0}, slot={1})", fileName, slot);
         auto& texture = GET_TEXTURE(fileName);
         texture.activate(slot);
         texture.bind();
