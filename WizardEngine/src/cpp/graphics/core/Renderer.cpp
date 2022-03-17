@@ -12,28 +12,35 @@ namespace engine {
         createRenderModel(DEFAULT_VERTEX_COUNT, DEFAULT_INDEX_COUNT);
     }
 
-    void Renderer::renderInstanced(MeshComponent &familyMesh, entt::registry& familyRegistry) {
+    void Renderer::renderInstanced(entt::registry& registry) {
         if (!shaderProgram->isReady()) return;
 
-        auto& renderModel = renderModels[familyMesh.renderModelId];
-        resetCounts(renderModel);
-        validate(renderModel, familyMesh);
-        renderModel = renderModels[familyMesh.renderModelId];
-
         shaderProgram->start();
-        renderModel.vao.bind();
-        shaderProgram->update(familyRegistry);
+        shaderProgram->update(registry);
 
-        auto transforms = familyRegistry.view<Transform3dComponent>();
-        // upload family mesh!
+        auto entities = registry.group<Transform3dComponent, MeshComponent>();
         uint32_t totalVertexCount = 0;
         uint32_t totalIndexCount = 0;
-        tryUploadMesh(familyMesh, totalVertexCount, totalIndexCount, renderModel);
-        // update each transform
         uint32_t i = 0;
-        for (auto [entity, transform] : transforms.each()) {
+        uint32_t renderModelId = 0;
+        bool renderModelReady = false;
+        for (auto [entity, transform, mesh] : entities.each()) {
+            if (!renderModelReady) {
+                auto& oldRenderModel = renderModels[mesh.renderModelId];
+                resetCounts(oldRenderModel);
+                validate(oldRenderModel, mesh);
+                renderModelId = mesh.renderModelId;
+
+                auto& renderModel = renderModels[mesh.renderModelId];
+                renderModel.vao.bind();
+                tryUploadMesh(mesh, totalVertexCount, totalIndexCount, renderModel);
+
+                renderModelReady = true;
+            }
+
             shaderProgram->getVShader().setUniformArrayElement(i++, transform);
             // if transform count is out of limit, then draw current instances and repeat iteration!
+            auto& renderModel = renderModels[renderModelId];
             if (i > INSTANCE_COUNT_LIMIT) {
                 renderModel.vbo.enableAttributes();
                 drawTriangles(totalIndexCount, i);
@@ -41,8 +48,8 @@ namespace engine {
             }
         }
 
-        // draw rest of instances!
-        if (i > 0) {
+        auto& renderModel = renderModels[renderModelId];
+        if (i > 0 && totalIndexCount > 0) {
             renderModel.vbo.enableAttributes();
             drawTriangles(totalIndexCount, i);
         }
@@ -106,10 +113,10 @@ namespace engine {
         auto mesh = entity.getPtr<MeshComponent>();
         if (!shaderProgram->isReady() || !mesh) return;
 
+        auto& oldRenderModel = renderModels[mesh->renderModelId];
+        resetCounts(oldRenderModel);
+        validate(oldRenderModel, *mesh);
         auto& renderModel = renderModels[mesh->renderModelId];
-        resetCounts(renderModel);
-        validate(renderModel, *mesh);
-        renderModel = renderModels[mesh->renderModelId];
 
         shaderProgram->start();
         renderModel.vao.bind();

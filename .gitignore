@@ -1,5 +1,3 @@
 # Project exclude paths
-cmake-build-windowsgldebug
-cmake-build-windowsglrelease
-cmake-build-windowsvkdebug
-cmake-build-windowvkrelease
+WizardDebug
+WizardRelease
