@@ -9,6 +9,10 @@
 
 namespace engine {
 
+    enum DepthTestOperator {
+        ALWAYS, NEVER, EQUAL, NOT_EQUAL, LESS, GREATER, LESS_EQUAL, GREATER_EQUAL
+    };
+
     void drawQuads(const uint32_t &indexCount);
     void drawTriangles(const uint32_t &indexCount);
     void drawTriangles(const uint32_t &indexCount, const uint32_t &instanceCount);
@@ -21,6 +25,9 @@ namespace engine {
     const unsigned char* getVersion();
     void enableMSAA();
     void disableMSAA();
+    void setDepthBufferState(bool readOnly);
+    void setDepthTestOperator(const DepthTestOperator& depthTestOperator);
+    int depthBits();
 
     struct CullingComponent {
         bool enabled = false;

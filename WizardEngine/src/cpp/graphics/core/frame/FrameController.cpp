@@ -44,7 +44,7 @@ namespace engine {
         framebufferSpecification.attachmentSpecification = {
                 engine::FramebufferTextureFormat::RGBA8,
                 engine::FramebufferTextureFormat::RED_INTEGER,
-                engine::FramebufferTextureFormat::Depth
+                engine::FramebufferTextureFormat::DEPTH24STENCIL8
         };
         framebufferSpecification.width = width;
         framebufferSpecification.height = height;

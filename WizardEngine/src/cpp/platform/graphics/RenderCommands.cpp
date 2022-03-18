@@ -5,6 +5,8 @@
 #include <platform/graphics/RenderCommands.h>
 #include <glad/glad.h>
 
+#define GL_DEPTH_BITS 0x0D56
+
 namespace engine {
 
     void drawQuads(const uint32_t &indexCount) {
@@ -57,6 +59,31 @@ namespace engine {
 
     void disableMSAA() {
         glDisable(GL_MULTISAMPLE);
+    }
+
+    void setDepthBufferState(bool readOnly) {
+        glDepthMask(readOnly ? GL_FALSE : GL_TRUE);
+    }
+
+    void setDepthTestOperator(const DepthTestOperator& depthTestOperator) {
+        auto dto = GL_LESS;
+        switch (depthTestOperator) {
+            case ALWAYS: dto = GL_ALWAYS;
+            case NEVER: dto = GL_NEVER;
+            case EQUAL: dto = GL_EQUAL;
+            case NOT_EQUAL: dto = GL_NOTEQUAL;
+            case LESS: dto = GL_LESS;
+            case GREATER: dto = GL_GREATER;
+            case LESS_EQUAL: dto = GL_LEQUAL;
+            case GREATER_EQUAL: dto = GL_GEQUAL;
+        }
+        glDepthFunc(dto);
+    }
+
+    int depthBits() {
+        GLint bits;
+        glGetIntegerv(GL_DEPTH_BITS, &bits);
+        return bits;
     }
 
     PolygonMode RenderCommands::activePolygonMode = FILL;
