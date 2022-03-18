@@ -46,7 +46,7 @@ namespace engine {
         _window->setInCenter();
         createFrameSpecs();
         _layerStack.onPrepare();
-        enableMSAA();
+        setMSAA(true);
     }
 
     void Application::onDestroy() {
@@ -193,7 +193,7 @@ namespace engine {
             vBatchShader,
             fBatchShader
         );
-        auto batchRenderer = createRef<Renderer>(batchShader);
+        auto batchRenderer = createRef<SceneRenderer>(batchShader);
         // create instance renderer
         auto vInstanceShader = shader::BaseShader({
             camera3dUboScript()
@@ -214,7 +214,7 @@ namespace engine {
             vInstanceShader,
             fInstanceShader
         );
-        auto instanceRenderer = createRef<Renderer>(instanceShader);
+        auto instanceRenderer = createRef<SceneRenderer>(instanceShader);
         // create render system
         _renderSystem = createScope<RenderSystem>(activeFrameController, batchRenderer, instanceRenderer);
     }

@@ -5,11 +5,25 @@
 #pragma once
 
 #include <core/String.h>
-#include "ElementCount.h"
 
 #include <glm/glm.hpp>
 
 namespace engine::shader {
+
+    enum ElementCount : uint8_t {
+        NONE = 0,
+        SINGLE = 1,
+        DOUBLE_ = 2,
+        VEC2 = 2,
+        D_VEC2 = 4,
+        VEC3 = 3,
+        D_VEC3 = 6, // double = 2 floats!
+        VEC4 = 4,
+        D_VEC4 = 8, // double = 2 floats!
+        MAT2_ = 4,
+        MAT3 = 9,
+        MAT4 = 16
+    };
 
     enum AttributeCategory : uint8_t {
         VERTEX = 0,

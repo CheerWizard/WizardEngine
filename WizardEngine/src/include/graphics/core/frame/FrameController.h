@@ -24,12 +24,11 @@ namespace engine {
         }
 
     public:
-        void begin();
-        void end();
+        void bind();
+        void unbind();
         const std::vector<uint32_t>& updateSpecs(const FramebufferSpecification &framebufferSpecification);
         void resize(const uint32_t &width, const uint32_t &height);
         void setViewPort();
-        void resetFrame();
         const std::vector<uint32_t>& updateSpecs(const uint32_t &width, const uint32_t &height);
         void release();
 

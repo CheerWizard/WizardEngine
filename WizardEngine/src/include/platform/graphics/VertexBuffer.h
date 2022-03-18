@@ -39,7 +39,9 @@ namespace engine {
         void setFormat(const shader::VertexFormat &vertexFormat);
         void setFormat(const shader::VertexFormat &vertexFormat, const uint32_t& vertexCount);
         // GPU data load
-        void load(const VertexData &vertexData);
+        template<typename T>
+        void load(const VertexData<T> &vertexData);
+        void load(const void* vertices, const size_t& subDataOffset, const size_t& memorySize);
 
     public:
         void enableAttributes();
@@ -52,5 +54,13 @@ namespace engine {
         uint32_t id = 0;
         shader::VertexFormat vertexFormat;
     };
+
+    template<typename T>
+    void VertexBuffer::load(const VertexData<T> &vertexData) {
+        auto vertexSize = vertexFormat.getSize();
+        auto subDataOffset = vertexData.vertexStart * vertexSize;
+        auto memorySize = vertexData.vertexCount * vertexSize;
+        load(vertexData.vertices, subDataOffset, memorySize);
+    }
 
 }

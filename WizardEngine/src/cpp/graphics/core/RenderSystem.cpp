@@ -7,7 +7,18 @@
 namespace engine {
 
     void RenderSystem::onUpdate() {
-        sceneFrameController->begin();
+        sceneFrameController->bind();
+
+        setClearColor({0.2, 0.2, 0.2, 1});
+        setDepthTest(true);
+        clearDepthBuffer();
+
+//        setStencilTest(true);
+//        setStencilTestActions({ KEEP, KEEP, REPLACE });
+//        clearStencilBuffer();
+
+//        setStencilTestOperator(ALWAYS, 1, false);
+//        stencilMask(false);
 
         if (!activeScene->batchEmpty()) {
             batchRenderer->renderBatched(activeScene->getBatchRegistry());
@@ -16,7 +27,12 @@ namespace engine {
             instanceRenderer->renderInstanced(activeScene->getInstanceRegistry());
         }
 
-        sceneFrameController->end();
-    }
+        sceneFrameController->unbind();
 
+//        setStencilTestOperator(NOT_EQUAL, 1, false);
+//        stencilMask(true);
+
+        setDepthTest(false);
+        clearColorBuffer();
+    }
 }

@@ -11,15 +11,55 @@ namespace engine {
     uint32_t ObjFile::normalsCounter = 0;
     uint32_t ObjFile::uvsCounter = 0;
     uint32_t ObjFile::indexCounter = 0;
-    std::vector<Vertex> ObjFile::vertices = {};
+    std::vector<ObjVertex> ObjFile::vertices = {};
     std::vector<glm::vec2> ObjFile::uvs = {};
     std::vector<glm::vec3> ObjFile::normals = {};
     std::vector<uint32_t> ObjFile::indices = {};
     std::vector<Face> ObjFile::faces = {};
-    std::vector<Mesh> ObjFile::meshes = {};
+    std::vector<ObjMesh> ObjFile::meshes = {};
     std::string_view ObjFile::_fileName;
 
-    MeshComponent ObjFile::read(const std::string &fileName) {
+    Vertex toVertex(const ObjVertex& objVertex) {
+        return {
+            objVertex.position,
+            objVertex.textureCoords,
+            objVertex.normal,
+        };
+    }
+
+    Mesh toMesh(const ObjMesh& objMesh) {
+        auto& objVertexData = objMesh.vertexData;
+        auto vertexData = VertexData<Vertex> {
+            new Vertex[objVertexData.vertexCount],
+            objVertexData.vertexStart,
+            objVertexData.vertexCount
+        };
+        for (auto j = 0; j < objVertexData.vertexCount; j++) {
+            vertexData.vertices[j] = toVertex(objVertexData.vertices[j]);
+        }
+
+        return { vertexData, objMesh.indexData };
+    }
+
+    MeshComponent toMeshComponent(const ObjMeshComponent& objMeshComponent) {
+        auto& objMeshes = objMeshComponent.meshes;
+        auto meshes = new Mesh[objMeshComponent.meshCount];
+        for (auto j = 0; j < objMeshComponent.meshCount; j++) {
+            meshes[j] = toMesh(objMeshes[j]);
+        }
+        return {
+            meshes,
+            objMeshComponent.meshCount,
+            objMeshComponent.totalVertexCount,
+            objMeshComponent.totalIndexCount,
+            objMeshComponent.vertexStart,
+            objMeshComponent.indexStart,
+            objMeshComponent.isUpdated,
+            objMeshComponent.renderModelId
+        };
+    }
+
+    BaseMeshComponent<ObjVertex> ObjFile::read(const std::string &fileName) {
         _fileName = fileName;
         // read source from full path
         std::stringstream fullPath;
@@ -44,7 +84,7 @@ namespace engine {
                         TO_FLOAT(tokens[i + 2]),
                         TO_FLOAT(tokens[i + 3])
                 };
-                vertices.emplace_back(Vertex { position });
+                vertices.emplace_back(ObjVertex { position });
 
             } else if (token == "vt") {
                 glm::vec2 uv = {
@@ -174,7 +214,7 @@ namespace engine {
 
         // convert meshes vector into meshes array
         uint32_t meshCount = meshes.size();
-        auto* meshArr = new Mesh[meshCount];
+        auto* meshArr = new ObjMesh [meshCount];
         for (uint32_t i = 0; i < meshCount ; i++) {
             meshArr[i] = meshes[i];
         }
@@ -210,7 +250,7 @@ namespace engine {
         uint32_t indexCount = indices.size();
         uint32_t vertexCount = vertices.size();
         auto* indicesArr = new uint32_t[indexCount];
-        auto* verticesArr = new Vertex[vertexCount];
+        auto* verticesArr = new ObjVertex[vertexCount];
 
         for (auto j = 0 ; j < indexCount ; j++) {
             indicesArr[j] = indices[j];
@@ -220,7 +260,7 @@ namespace engine {
             verticesArr[j] = vertices[j];
         }
 
-        auto vertexData = VertexData {
+        auto vertexData = VertexData<ObjVertex> {
             verticesArr,
             vertexCounter,
             vertexCount
@@ -232,7 +272,7 @@ namespace engine {
             indexCount
         };
 
-        meshes.emplace_back(Mesh {
+        meshes.emplace_back(ObjMesh {
             vertexData,
             indexData
         });

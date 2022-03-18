@@ -49,7 +49,7 @@ namespace fairy {
                 vObjShader,
                 fObjShader
         );
-        auto objRenderer = engine::createRef<engine::Renderer>(objShader);
+        auto objRenderer = engine::createRef<engine::ObjRenderer>(objShader);
 
         auto objCamera = engine::Camera3D {
             "obj",
@@ -110,7 +110,7 @@ namespace fairy {
                         {135, 0, 0},
                         {0.5, 0.5, 0.5}
                 ),
-                GET_MESH("ferrari.obj")
+                GET_SCENE_MESH("ferrari.obj")
         );
 
 //        _cubeEntity = engine::Entity("Cube", app->activeScene.get());
@@ -124,7 +124,7 @@ namespace fairy {
 //        _cubeEntity.add<engine::MaterialComponent>(cubeMaterial);
 //        _cubeEntity.add<engine::MaterialMapsComponent>(cubeMaterialMaps);
 
-        auto humanMesh = GET_MESH("human.obj");
+        auto humanMesh = GET_SCENE_MESH("human.obj");
         auto humanMaterialMaps = engine::MaterialMapsComponent();
         humanMaterialMaps.diffuseFileName = "wood_diffuse.png";
         humanMaterialMaps.specularFileName = "wood_specular.png";
@@ -314,7 +314,7 @@ namespace fairy {
 
     void FLLayer::onObjOpen(const std::string &fileName) {
         EDITOR_INFO("onObjOpen({0})", fileName);
-        const auto& objMesh = GET_MESH(fileName);
+        const auto& objMesh = GET_OBJ(fileName);
         _objPreview->setMesh(objMesh);
         _objPreview->show();
     }
@@ -344,7 +344,14 @@ namespace fairy {
 
     void FLLayer::onEntityRemoved(const engine::Entity &entity) {
         EDITOR_INFO("onEntityRemoved({0})", entity.operator unsigned int());
-        app->activeFrameController->resetFrame();
+        app->activeFrameController->bind();
+        setDepthTest(true);
+        setClearColor({0.2, 0.2, 0.2, 1});
+        clearDepthBuffer();
+
+        app->activeFrameController->unbind();
+        setDepthTest(false);
+        clearColorBuffer();
     }
 
     void FLLayer::createAssetBrowser() {
@@ -405,14 +412,17 @@ namespace fairy {
 
     void FLLayer::onObjDragged(const std::string &fileName) {
         EDITOR_INFO("onObjDragged({0})", fileName);
-        auto newObject3d = engine::Object3d { app->activeScene.get(), engine::FileSystem::getFileName(fileName), GET_MESH(fileName) };
+        auto newObject3d = engine::Object3d {
+            app->activeScene.get(),
+            engine::FileSystem::getFileName(fileName),
+            GET_MESH(ObjVertex, fileName)
+        };
         // this function is required to reload objects into video memory!
         // otherwise, they will not be displayed, until mesh and transform will not be changed!
-        engine::updateObjects3d(app->activeScene);
+        engine::updateObjects3d<Vertex>(app->activeScene);
     }
 
     void FLLayer::onImageDragged(const std::string &fileName) {
         EDITOR_INFO("onImageDragged({0})", fileName);
     }
-
 }

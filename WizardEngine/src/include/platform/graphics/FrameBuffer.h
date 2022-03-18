@@ -52,11 +52,6 @@ namespace engine {
         void resize(uint32_t width, uint32_t height);
         int readPixel(uint32_t attachmentIndex, int x, int y);
         void removeAttachment(uint32_t attachmentIndex, int value);
-        // commands for depth buffer
-        void enableDepth();
-        void disableDepth();
-        void clearDepth(const Color &color);
-        void clearColor(const Color &color);
 
     private:
         bool isCompleted();

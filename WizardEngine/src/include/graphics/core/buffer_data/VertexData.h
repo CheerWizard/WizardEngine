@@ -4,20 +4,28 @@
 
 #pragma once
 
-#include <graphics/core/geometry/Vertex.h>
-
 #include <algorithm>
 
 #define MIN_VERTEX_COUNT 3
 
 namespace engine {
 
+    template<typename T>
     struct VertexData {
-        Vertex* vertices = nullptr;
+        T* vertices = nullptr;
         uint32_t vertexStart = 0;
         uint32_t vertexCount = MIN_VERTEX_COUNT;
     };
 
-    VertexData copy(const VertexData &vertexData);
+    template<typename T>
+    VertexData<T> copy(const VertexData<T> &vertexData) {
+        auto* copyVertices = new T[vertexData.vertexCount];
+        std::copy(vertexData.vertices, vertexData.vertices + vertexData.vertexCount, copyVertices);
 
+        return VertexData<T> {
+                copyVertices,
+                vertexData.vertexStart,
+                vertexData.vertexCount
+        };
+    }
 }

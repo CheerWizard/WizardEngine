@@ -9,12 +9,6 @@
 
 namespace engine {
 
-    struct Color {
-        float r,g,b,a;
-    };
-
-    std::string str(const Color &color);
-
     enum class FramebufferTextureFormat {
         None = 0,
         // Color

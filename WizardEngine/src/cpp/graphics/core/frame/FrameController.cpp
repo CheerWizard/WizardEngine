@@ -3,6 +3,7 @@
 //
 
 #include <graphics/core/frame/FrameController.h>
+#include <platform/graphics/RenderCommands.h>
 
 namespace engine {
 
@@ -18,25 +19,16 @@ namespace engine {
         _frameBuffer.resize(width, height);
     }
 
-    void FrameController::begin() {
+    void FrameController::bind() {
         _frameBuffer.bind();
-        _frameBuffer.enableDepth();
-        _frameBuffer.clearDepth({0.2, 0.2, 0.2, 1});
     }
 
-    void FrameController::end() {
+    void FrameController::unbind() {
         _frameBuffer.unbind();
-        _frameBuffer.disableDepth();
-        _frameBuffer.clearColor({1.0, 1.0, 1.0, 1.0});
     }
 
     void FrameController::setViewPort() {
         _frameBuffer.setViewPort();
-    }
-
-    void FrameController::resetFrame() {
-        begin();
-        end();
     }
 
     const std::vector<uint32_t> &FrameController::updateSpecs(const uint32_t &width, const uint32_t &height) {

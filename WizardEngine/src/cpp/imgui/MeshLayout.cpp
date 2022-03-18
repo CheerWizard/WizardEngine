@@ -63,9 +63,16 @@ namespace engine {
             rotateEntity(dt);
         }
 
-        _frameController->begin();
+        _frameController->bind();
+        setDepthTest(true);
+        setClearColor({0.2, 0.2, 0.2, 1});
+        clearDepthBuffer();
+
         _renderer->render(_entity);
-        _frameController->end();
+
+        _frameController->unbind();
+        setDepthTest(false);
+        clearColorBuffer();
 
         if (ImGui::Button("Auto-Rotate", { 120, 36 })) {
             setRotateEntity(!_shouldRotateEntity);

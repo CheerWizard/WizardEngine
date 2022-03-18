@@ -9,15 +9,18 @@
 #include <graphics/core/Renderer.h>
 #include <graphics/core/frame/FrameController.h>
 #include <graphics/camera/CameraController.h>
+#include <graphics/core/io/ObjFile.h>
 
 namespace engine {
+
+    typedef Renderer<ObjVertex> ObjRenderer;
 
     class MeshLayout : public ImageLayout, public ImageLayoutCallback {
 
     public:
         MeshLayout(
                 const ImageLayoutProps &props,
-                const Ref<Renderer> &renderer,
+                const Ref<ObjRenderer> &renderer,
                 const Ref<FrameController> &frameController,
                 const Ref<CameraController> &cameraController
         ) : ImageLayout(props),
@@ -41,8 +44,8 @@ namespace engine {
             _entity = entity;
         }
 
-        inline void setMesh(const MeshComponent &meshComponent) {
-            _entity.set<MeshComponent>(meshComponent);
+        inline void setMesh(const ObjMeshComponent &objMeshComponent) {
+            _entity.set<ObjMeshComponent>(objMeshComponent);
         }
 
         inline void setRotateEntity(const bool &enabled) {
@@ -63,7 +66,7 @@ namespace engine {
         void rotateEntity(const Time &dt);
 
     private:
-        Ref<Renderer> _renderer;
+        Ref<ObjRenderer> _renderer;
         Ref<FrameController> _frameController;
         Ref<CameraController> _cameraController;
         Entity _entity;
