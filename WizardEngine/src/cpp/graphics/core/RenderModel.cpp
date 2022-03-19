@@ -6,13 +6,22 @@
 
 namespace engine {
 
-    void release(RenderModel& renderModel) {
+    void release(VRenderModel& renderModel) {
+        renderModel.vao.destroy();
+        renderModel.vbo.destroy();
+    }
+
+    void resetCounts(VRenderModel& renderModel) {
+        renderModel.vbo.setCount(0);
+    }
+
+    void release(VIRenderModel& renderModel) {
         renderModel.vao.destroy();
         renderModel.vbo.destroy();
         renderModel.ibo.destroy();
     }
 
-    void resetCounts(RenderModel& renderModel) {
+    void resetCounts(VIRenderModel& renderModel) {
         renderModel.vbo.setCount(0);
         renderModel.ibo.setCount(0);
     }

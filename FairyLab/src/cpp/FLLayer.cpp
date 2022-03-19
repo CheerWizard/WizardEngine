@@ -49,7 +49,7 @@ namespace fairy {
                 vObjShader,
                 fObjShader
         );
-        auto objRenderer = engine::createRef<engine::ObjRenderer>(objShader);
+        auto objRenderer = engine::createRef<engine::Renderer>(objShader);
 
         auto objCamera = engine::Camera3D {
             "obj",
@@ -110,7 +110,7 @@ namespace fairy {
                         {135, 0, 0},
                         {0.5, 0.5, 0.5}
                 ),
-                GET_SCENE_MESH("ferrari.obj")
+                GET_OBJ_MESH(Vertex3d, "ferrari.obj")
         );
 
 //        _cubeEntity = engine::Entity("Cube", app->activeScene.get());
@@ -124,7 +124,6 @@ namespace fairy {
 //        _cubeEntity.add<engine::MaterialComponent>(cubeMaterial);
 //        _cubeEntity.add<engine::MaterialMapsComponent>(cubeMaterialMaps);
 
-        auto humanMesh = GET_SCENE_MESH("human.obj");
         auto humanMaterialMaps = engine::MaterialMapsComponent();
         humanMaterialMaps.diffuseFileName = "wood_diffuse.png";
         humanMaterialMaps.specularFileName = "wood_specular.png";
@@ -142,8 +141,8 @@ namespace fairy {
                             { r, r, r },
                             {0.2, 0.2, 0.2}
                     ),
-                    copy(humanMesh),
-                    false
+                    GET_OBJ_MESH_INSTANCED(Vertex3d, "human.obj"),
+                    true
             );
         }
 
@@ -415,11 +414,8 @@ namespace fairy {
         auto newObject3d = engine::Object3d {
             app->activeScene.get(),
             engine::FileSystem::getFileName(fileName),
-            GET_MESH(ObjVertex, fileName)
+            GET_OBJ_MESH(Vertex3d, fileName)
         };
-        // this function is required to reload objects into video memory!
-        // otherwise, they will not be displayed, until mesh and transform will not be changed!
-        engine::updateObjects3d<Vertex>(app->activeScene);
     }
 
     void FLLayer::onImageDragged(const std::string &fileName) {

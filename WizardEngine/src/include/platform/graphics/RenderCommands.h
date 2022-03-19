@@ -5,6 +5,7 @@
 #pragma once
 
 #include <core/Logger.h>
+#include <graphics/core/geometry/Lines.h>
 #include "cstdint"
 
 namespace engine {
@@ -31,13 +32,13 @@ namespace engine {
     };
 
     enum PolygonMode {
-        DOT, LINE, FILL
+        DOT, LINES, FILL
     };
 
-    void drawQuads(const uint32_t &indexCount);
-    void drawTriangles(const uint32_t &indexCount);
-    void drawTriangles(const uint32_t &indexCount, const uint32_t &instanceCount);
-    void drawLines(const uint32_t &vertexCount);
+    void drawV(const DrawType& drawType, const uint32_t& vertexCount);
+    void drawV(const DrawType& drawType, const uint32_t& vertexCount, const uint32_t& instanceCount);
+    void drawVI(const DrawType& drawType, const uint32_t& indexCount);
+    void drawVI(const DrawType& drawType, const uint32_t& indexCount, const uint32_t& instanceCount);
 
     void enableCulling();
     void disableCulling();

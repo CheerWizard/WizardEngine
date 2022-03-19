@@ -69,19 +69,4 @@ namespace engine {
 
         ~Object3d() = default;
     };
-
-    template<typename T>
-    void updateObjects3d(entt::registry& registry) {
-        auto objects = registry.group<Transform3dComponent, BaseMeshComponent<T>>();
-        for (auto [entity, transform, mesh] : objects.each()) {
-            transform.isUpdated = true;
-            mesh.isUpdated = true;
-        }
-    }
-
-    template<typename T>
-    void updateObjects3d(const Ref<Scene> &scene) {
-        updateObjects3d<T>(scene->getBatchRegistry());
-        updateObjects3d<T>(scene->getInstanceRegistry());
-    }
 }

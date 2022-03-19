@@ -6,11 +6,18 @@
 
 #include <graphics/core/buffer_data/VertexData.h>
 #include <graphics/core/buffer_data/IndexData.h>
-#include <graphics/core/geometry/Vertex.h>
+#include <glm/glm.hpp>
 
 #define MIN_MESH_COUNT 1
 
 namespace engine {
+
+    struct Vertex3d {
+        glm::vec3 position = { 0.5f, 0.5f, 0.5f };
+        glm::vec2 textureCoords = { 0.25f, -0.25f };
+        glm::vec3 normal = { 0, 0, 0 };
+        float textureSlot = 0;
+    };
 
     template<typename T>
     struct BaseMesh {
@@ -33,12 +40,21 @@ namespace engine {
         uint32_t indexStart = 0;
         bool isUpdated = true;
         uint32_t renderModelId = 0;
+        DrawType drawType = TRIANGLE;
     };
 
-    typedef BaseMesh<Vertex> Mesh;
-    typedef BaseMeshComponent<Vertex> MeshComponent;
-
-    void setInstanceId(MeshComponent &meshComponent, const uint32_t &instanceId);
+    template<typename T>
+    void setInstanceId(BaseMeshComponent<InstanceVertex<T>> &meshComponent, const uint32_t &instanceId) {
+        const auto& meshInstanceId = meshComponent.meshes[0].vertexData.vertices[0].instanceId;
+        if (meshInstanceId == instanceId) return;
+        for (auto i = 0 ; i < meshComponent.meshCount ; i++) {
+            const auto& vertexData = meshComponent.meshes[i].vertexData;
+            for (auto j = 0; j < vertexData.vertexCount; j++) {
+                auto& vertex = vertexData.vertices[j];
+                vertex.instanceId = (float) instanceId;
+            }
+        }
+    }
 
     template<typename T>
     BaseMeshComponent<T> copy(const BaseMeshComponent<T> &meshComponent) {

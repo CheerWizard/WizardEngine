@@ -13,14 +13,12 @@
 
 namespace engine {
 
-    typedef Renderer<ObjVertex> ObjRenderer;
-
     class MeshLayout : public ImageLayout, public ImageLayoutCallback {
 
     public:
         MeshLayout(
                 const ImageLayoutProps &props,
-                const Ref<ObjRenderer> &renderer,
+                const Ref<Renderer> &renderer,
                 const Ref<FrameController> &frameController,
                 const Ref<CameraController> &cameraController
         ) : ImageLayout(props),
@@ -66,7 +64,7 @@ namespace engine {
         void rotateEntity(const Time &dt);
 
     private:
-        Ref<ObjRenderer> _renderer;
+        Ref<Renderer> _renderer;
         Ref<FrameController> _frameController;
         Ref<CameraController> _cameraController;
         Entity _entity;

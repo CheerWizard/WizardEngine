@@ -21,10 +21,10 @@ namespace engine {
 //        stencilMask(false);
 
         if (!activeScene->batchEmpty()) {
-            batchRenderer->renderBatched(activeScene->getBatchRegistry());
+            batchRenderer->renderBatched<LineVertex, Vertex3d>(activeScene->getBatchRegistry());
         }
         if (!activeScene->instanceEmpty()) {
-            instanceRenderer->renderInstanced(activeScene->getInstanceRegistry());
+            instanceRenderer->renderInstanced<LineVertex, Vertex3d>(activeScene->getInstanceRegistry());
         }
 
         sceneFrameController->unbind();

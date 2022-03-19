@@ -9,24 +9,35 @@
 
 namespace engine {
 
-    void drawQuads(const uint32_t &indexCount) {
-        ENGINE_INFO("drawQuadsIndices()");
-        glDrawElements(GL_QUADS, (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr);
+    GLenum toGLDrawType(const DrawType& drawType) {
+        switch (drawType) {
+            case QUAD: return GL_QUADS;
+            case TRIANGLE: return GL_TRIANGLES;
+            case LINE: return GL_LINES;
+            case LINE_STRIP: return GL_LINE_STRIP;
+            case LINE_LOOP: return GL_LINE_LOOP;
+            default: return GL_TRIANGLES;
+        }
     }
 
-    void drawTriangles(const uint32_t &indexCount) {
-        ENGINE_INFO("drawElements(indexCount : {0})", indexCount);
-        glDrawElements(GL_TRIANGLES, (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr);
+    void drawV(const DrawType& drawType, const uint32_t& vertexCount) {
+        ENGINE_INFO("drawV(drawType: {0}, vertexCount : {1})", drawType, vertexCount);
+        glDrawArrays(toGLDrawType(drawType), 0, vertexCount);
     }
 
-    void drawTriangles(const uint32_t &indexCount, const uint32_t &instanceCount) {
-        ENGINE_INFO("drawElements(indexCount : {0}, instanceCount : {1})", indexCount, instanceCount);
-        glDrawElementsInstanced(GL_TRIANGLES, (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr, (GLsizei) instanceCount);
+    void drawV(const DrawType& drawType, const uint32_t& vertexCount, const uint32_t& instanceCount) {
+        ENGINE_INFO("drawV(drawType: {0}, vertexCount: {1}, instanceCount: {2})", drawType, vertexCount, instanceCount);
+        glDrawArraysInstanced(toGLDrawType(drawType), 0, vertexCount, instanceCount);
     }
 
-    void drawLines(const uint32_t& vertexCount) {
-        ENGINE_INFO("drawLines(vertexCount : {0})", vertexCount);
-        glDrawArrays(GL_LINES, 0, vertexCount);
+    void drawVI(const DrawType& drawType, const uint32_t& indexCount) {
+        ENGINE_INFO("drawVI(drawType: {0}, indexCount: {1})", drawType, indexCount);
+        glDrawElements(toGLDrawType(drawType), (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr);
+    }
+
+    void drawVI(const DrawType& drawType, const uint32_t& indexCount, const uint32_t& instanceCount) {
+        ENGINE_INFO("drawVI(drawType: {0}, indexCount: {1}, instanceCount: {2})", drawType, indexCount, instanceCount);
+        glDrawElementsInstanced(toGLDrawType(drawType), (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
     }
 
     void enableCulling() {
@@ -40,9 +51,8 @@ namespace engine {
 
     GLenum toGLPolygonMode(const PolygonMode& polygonMode) {
         switch (polygonMode) {
-            case FILL: return GL_FILL;
-            case LINE: return GL_LINE;
             case DOT: return GL_POINT;
+            case LINES: return GL_LINE;
             default: return GL_FILL;
         }
     }

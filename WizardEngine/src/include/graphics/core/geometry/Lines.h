@@ -6,6 +6,7 @@
 
 #include <graphics/core/buffer_data/VertexData.h>
 #include <glm/glm.hpp>
+#include <initializer_list>
 
 namespace engine {
 
@@ -14,20 +15,27 @@ namespace engine {
         glm::vec4 color = { 0, 1, 0, 1 };
     };
 
-    struct LinesComponent {
-        VertexData<LineVertex> vertexData;
-    };
+    typedef InstanceVertex<LineVertex> LinesVertex;
+    typedef VertexDataComponent<LineVertex> LineComponent;
+    typedef VertexDataComponent<LinesVertex> LinesComponent;
 
-    struct Line : LinesComponent {
-        Line(const LineVertex& v1 = { { -0.5, 0.5, 0.5 } },
-             const LineVertex& v2 = { { 0.5, 0.5, 0.5 } }
-         ) : LinesComponent() {
+    struct Line : LineComponent {
+        Line(const std::initializer_list<LineVertex>& linesVertices) : LineComponent() {
             vertexData = VertexData<LineVertex> {
-                new LineVertex[2] { v1, v2 },
-                0,
-                2
+                    const_cast<LineVertex*>(data(linesVertices)),
+                    0,
+                    static_cast<uint32_t>(linesVertices.size())
             };
         }
     };
 
+    struct Lines : LinesComponent {
+        Lines(const std::initializer_list<LinesVertex>& linesVertices) : LinesComponent() {
+            vertexData = VertexData<LinesVertex> {
+                    const_cast<LinesVertex*>(data(linesVertices)),
+                    0,
+                    static_cast<uint32_t>(linesVertices.size())
+            };
+        }
+    };
 }

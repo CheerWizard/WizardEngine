@@ -193,7 +193,7 @@ namespace engine {
             vBatchShader,
             fBatchShader
         );
-        auto batchRenderer = createRef<SceneRenderer>(batchShader);
+        auto batchRenderer = createRef<Renderer>(batchShader);
         // create instance renderer
         auto vInstanceShader = shader::BaseShader({
             camera3dUboScript()
@@ -214,7 +214,7 @@ namespace engine {
             vInstanceShader,
             fInstanceShader
         );
-        auto instanceRenderer = createRef<SceneRenderer>(instanceShader);
+        auto instanceRenderer = createRef<Renderer>(instanceShader);
         // create render system
         _renderSystem = createScope<RenderSystem>(activeFrameController, batchRenderer, instanceRenderer);
     }

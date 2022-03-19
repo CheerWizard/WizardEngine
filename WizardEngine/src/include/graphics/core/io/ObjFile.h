@@ -26,10 +26,6 @@ namespace engine {
     typedef BaseMesh<ObjVertex> ObjMesh;
     typedef BaseMeshComponent<ObjVertex> ObjMeshComponent;
 
-    Vertex toVertex(const ObjVertex& objVertex);
-    Mesh toMesh(const ObjMesh& objMesh);
-    MeshComponent toMeshComponent(const ObjMeshComponent& objMeshComponent);
-
     class ObjFile final {
 
     private:
@@ -37,7 +33,7 @@ namespace engine {
         ~ObjFile() = default;
 
     public:
-        static BaseMeshComponent<ObjVertex> read(const std::string &fileName);
+        static ObjMeshComponent read(const std::string &fileName);
 
     private:
         static void createMesh();
@@ -61,4 +57,46 @@ namespace engine {
         static std::string_view _fileName;
     };
 
+    template<typename T>
+    T toVertex(const ObjVertex& objVertex) {
+        return {
+                objVertex.position,
+                objVertex.textureCoords,
+                objVertex.normal,
+        };
+    }
+
+    template<typename T>
+    BaseMesh<T> toMesh(const ObjMesh& objMesh) {
+        auto& objVertexData = objMesh.vertexData;
+        auto vertexData = VertexData<T> {
+                new T[objVertexData.vertexCount],
+                objVertexData.vertexStart,
+                objVertexData.vertexCount
+        };
+        for (auto j = 0; j < objVertexData.vertexCount; j++) {
+            vertexData.vertices[j] = toVertex<T>(objVertexData.vertices[j]);
+        }
+
+        return { vertexData, objMesh.indexData };
+    }
+
+    template<typename T>
+    BaseMeshComponent<T> toMeshComponent(const ObjMeshComponent& objMeshComponent) {
+        auto& objMeshes = objMeshComponent.meshes;
+        auto meshes = new BaseMesh<T>[objMeshComponent.meshCount];
+        for (auto j = 0; j < objMeshComponent.meshCount; j++) {
+            meshes[j] = toMesh<T>(objMeshes[j]);
+        }
+        return {
+                meshes,
+                objMeshComponent.meshCount,
+                objMeshComponent.totalVertexCount,
+                objMeshComponent.totalIndexCount,
+                objMeshComponent.vertexStart,
+                objMeshComponent.indexStart,
+                objMeshComponent.isUpdated,
+                objMeshComponent.renderModelId
+        };
+    }
 }

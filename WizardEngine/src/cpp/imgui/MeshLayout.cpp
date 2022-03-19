@@ -68,7 +68,7 @@ namespace engine {
         setClearColor({0.2, 0.2, 0.2, 1});
         clearDepthBuffer();
 
-        _renderer->render(_entity);
+        _renderer->render<ObjVertex, ObjVertex>(_entity);
 
         _frameController->unbind();
         setDepthTest(false);

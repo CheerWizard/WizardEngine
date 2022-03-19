@@ -19,46 +19,6 @@ namespace engine {
     std::vector<ObjMesh> ObjFile::meshes = {};
     std::string_view ObjFile::_fileName;
 
-    Vertex toVertex(const ObjVertex& objVertex) {
-        return {
-            objVertex.position,
-            objVertex.textureCoords,
-            objVertex.normal,
-        };
-    }
-
-    Mesh toMesh(const ObjMesh& objMesh) {
-        auto& objVertexData = objMesh.vertexData;
-        auto vertexData = VertexData<Vertex> {
-            new Vertex[objVertexData.vertexCount],
-            objVertexData.vertexStart,
-            objVertexData.vertexCount
-        };
-        for (auto j = 0; j < objVertexData.vertexCount; j++) {
-            vertexData.vertices[j] = toVertex(objVertexData.vertices[j]);
-        }
-
-        return { vertexData, objMesh.indexData };
-    }
-
-    MeshComponent toMeshComponent(const ObjMeshComponent& objMeshComponent) {
-        auto& objMeshes = objMeshComponent.meshes;
-        auto meshes = new Mesh[objMeshComponent.meshCount];
-        for (auto j = 0; j < objMeshComponent.meshCount; j++) {
-            meshes[j] = toMesh(objMeshes[j]);
-        }
-        return {
-            meshes,
-            objMeshComponent.meshCount,
-            objMeshComponent.totalVertexCount,
-            objMeshComponent.totalIndexCount,
-            objMeshComponent.vertexStart,
-            objMeshComponent.indexStart,
-            objMeshComponent.isUpdated,
-            objMeshComponent.renderModelId
-        };
-    }
-
     BaseMeshComponent<ObjVertex> ObjFile::read(const std::string &fileName) {
         _fileName = fileName;
         // read source from full path

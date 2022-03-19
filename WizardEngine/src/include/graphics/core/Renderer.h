@@ -22,11 +22,11 @@ using namespace engine::shader;
 
 namespace engine {
 
-    template<typename T>
     class Renderer {
 
     public:
-        Renderer(const Ref<BaseShaderProgram>& shaderProgram) : shaderProgram(shaderProgram) {
+        Renderer(const Ref<BaseShaderProgram>& shaderProgram, const DrawType& drawType = TRIANGLE)
+        : shaderProgram(shaderProgram), drawType(drawType) {
             create();
         }
 
@@ -35,121 +35,301 @@ namespace engine {
         }
 
     public:
+        template<typename T1, typename T2>
         void render(const Entity& entity);
+        template<typename T1, typename T2>
         void renderInstanced(entt::registry &registry);
+        template<typename T1, typename T2>
         void renderBatched(entt::registry &registry);
 
+        template<typename T>
+        void renderV(const Entity& entity);
+        template<typename T>
+        void renderInstancedV(entt::registry &registry);
+        template<typename T>
+        void renderBatchedV(entt::registry &registry);
+
+        template<typename T>
+        void renderVI(const Entity& entity);
+        template<typename T>
+        void renderInstancedVI(entt::registry &registry);
+        template<typename T>
+        void renderBatchedVI(entt::registry &registry);
+
     public:
-        void tryUploadMesh(
+        template<typename T>
+        void tryUploadInstance(
+                const uint32_t &instanceId,
+                VertexDataComponent<InstanceVertex<T>>& vertexDataComponent,
+                uint32_t &previousVertexCount,
+                VRenderModel& renderModel
+        );
+        template<typename T>
+        void tryUpload(
+                VertexDataComponent<T>& vertexDataComponent,
+                uint32_t &previousVertexCount,
+                VRenderModel& renderModel
+        );
+        template<typename T>
+        void upload(VertexDataComponent<T> &vertexDataComponent, VRenderModel& renderModel);
+
+        template<typename T>
+        void tryUploadMeshInstance(
+                const uint32_t &instanceId,
+                BaseMeshComponent<InstanceVertex<T>>& meshComponent,
+                uint32_t &previousVertexCount,
+                uint32_t &previousIndexCount,
+                VIRenderModel& renderModel
+        );
+        template<typename T>
+        void tryUpload(
                 BaseMeshComponent<T>& meshComponent,
                 uint32_t &previousVertexCount,
                 uint32_t &previousIndexCount,
-                RenderModel& renderModel
+                VIRenderModel& renderModel
         );
-        void tryUploadMesh(
-                const uint32_t &instanceId,
-                MeshComponent& meshComponent,
-                uint32_t &previousVertexCount,
-                uint32_t &previousIndexCount,
-                RenderModel& renderModel
-        );
-        void uploadMesh(BaseMeshComponent<T> &meshComponent, RenderModel& renderModel);
+        template<typename T>
+        void upload(BaseMeshComponent<T> &meshComponent, VIRenderModel& renderModel);
 
     protected:
         void create();
-        RenderModel& createRenderModel(const uint32_t& vertexCount, const uint32_t& indexCount);
+        VRenderModel& createRenderModel(const uint32_t& vertexCount);
+        VIRenderModel& createRenderModel(const uint32_t& vertexCount, const uint32_t& indexCount);
         void release();
-        bool validate(RenderModel& renderModel, BaseMeshComponent<T>& meshComponent);
+
+        template<typename T>
+        bool validate(VRenderModel& renderModel, VertexDataComponent<T>& vertexDataComponent);
+        template<typename T>
+        bool validate(VIRenderModel& renderModel, BaseMeshComponent<T>& meshComponent);
 
     protected:
-        std::vector<RenderModel> renderModels;
+        std::vector<VRenderModel> vRenderModels;
+        std::vector<VIRenderModel> viRenderModels;
         Ref<BaseShaderProgram> shaderProgram;
+        DrawType drawType;
     };
 
-    template<typename T>
-    void Renderer<T>::create() {
-        shaderProgram->bindVertexFormat();
-        createRenderModel(DEFAULT_VERTEX_COUNT, DEFAULT_INDEX_COUNT);
+    template<typename T1, typename T2>
+    void Renderer::render(const Entity& entity) {
+//        renderV<T1>(entity);
+        renderVI<T2>(entity);
+    }
+
+    template<typename T1, typename T2>
+    void Renderer::renderInstanced(entt::registry &registry) {
+//        renderInstancedV<T1>(registry);
+        renderInstancedVI<T2>(registry);
+    }
+
+    template<typename T1, typename T2>
+    void Renderer::renderBatched(entt::registry &registry) {
+//        renderBatchedV<T1>(registry);
+        renderBatchedVI<T2>(registry);
     }
 
     template<typename T>
-    void Renderer<T>::renderInstanced(entt::registry& registry) {
+    void Renderer::renderInstancedV(entt::registry& registry) {
         if (!shaderProgram->isReady()) return;
 
         shaderProgram->start();
         shaderProgram->update(registry);
 
-        auto entities = registry.group<Transform3dComponent, MeshComponent>();
+        auto entities = registry.group<Transform3dComponent, VertexDataComponent<T>>();
         uint32_t totalVertexCount = 0;
-        uint32_t totalIndexCount = 0;
         uint32_t i = 0;
         uint32_t renderModelId = 0;
         bool renderModelReady = false;
-        for (auto [entity, transform, mesh] : entities.each()) {
-            if (!renderModelReady) {
-                auto& oldRenderModel = renderModels[mesh.renderModelId];
-                resetCounts(oldRenderModel);
-                validate(oldRenderModel, mesh);
-                renderModelId = mesh.renderModelId;
+        for (auto [entity, transform, vertexDataComponent] : entities.each()) {
+            if (drawType != vertexDataComponent.drawType) {
+                i++; // shift instanceId
+                continue;
+            }
 
-                auto& renderModel = renderModels[mesh.renderModelId];
-                tryUploadMesh(mesh, totalVertexCount, totalIndexCount, renderModel);
+            if (!renderModelReady) {
+                auto& oldRenderModel = vRenderModels[vertexDataComponent.renderModelId];
+                validate(oldRenderModel, vertexDataComponent);
+                renderModelId = vertexDataComponent.renderModelId;
+
+                auto& renderModel = vRenderModels[vertexDataComponent.renderModelId];
+                tryUpload(vertexDataComponent, totalVertexCount, renderModel);
 
                 renderModelReady = true;
             }
 
             shaderProgram->getVShader().setUniformArrayElement(i++, transform);
             // if transform count is out of limit, then draw current instances and repeat iteration!
-            auto& renderModel = renderModels[renderModelId];
+            auto& renderModel = vRenderModels[renderModelId];
             if (i > INSTANCE_COUNT_LIMIT) {
                 renderModel.vao.bind();
-                drawTriangles(totalIndexCount, i);
+                drawV(drawType, totalVertexCount, i);
                 i = 0;
             }
         }
 
-        auto& renderModel = renderModels[renderModelId];
-        if (i > 0 && totalIndexCount > 0) {
+        auto& renderModel = viRenderModels[renderModelId];
+        if (i > 0 && totalVertexCount > 0) {
             renderModel.vao.bind();
-            drawTriangles(totalIndexCount, i);
+            drawV(drawType, totalVertexCount, i);
         }
 
         shaderProgram->stop();
     }
 
     template<typename T>
-    void Renderer<T>::renderBatched(entt::registry &registry) {
+    void Renderer::renderBatchedV(entt::registry &registry) {
         if (!shaderProgram->isReady()) return;
 
         shaderProgram->start();
         shaderProgram->update(registry);
 
-        auto entities = registry.group<Transform3dComponent, MeshComponent>();
+        auto entities = registry.group<Transform3dComponent, VertexDataComponent<InstanceVertex<T>>>();
 
         uint32_t nextRenderModelId = 0;
-        for (auto [entity, transform, mesh] : entities.each()) {
-            mesh.renderModelId += nextRenderModelId;
-            auto& renderModel = renderModels[mesh.renderModelId];
-            if (!validate(renderModel, mesh)) {
+        for (auto [entity, transform, vertexDataComponent] : entities.each()) {
+            vertexDataComponent.renderModelId += nextRenderModelId;
+            auto& renderModel = vRenderModels[vertexDataComponent.renderModelId];
+            if (!validate<InstanceVertex<T>>(renderModel, vertexDataComponent)) {
                 nextRenderModelId++;
             }
         }
 
-        for (auto& renderModel : renderModels) {
+        for (auto& renderModel : vRenderModels) {
             uint32_t totalVertexCount = 0;
-            uint32_t totalIndexCount = 0;
             uint32_t i = 0;
-            for (auto [entity, transform, mesh] : entities.each()) {
-                if (renderModel.id != mesh.renderModelId) {
+            for (auto [entity, transform, vertexDataComponent] : entities.each()) {
+                if (renderModel.id != vertexDataComponent.renderModelId || drawType != vertexDataComponent.drawType) {
                     i++; // shift instance id
                     continue;
                 }
 
-                tryUploadMesh(i, mesh, totalVertexCount, totalIndexCount, renderModel);
+                tryUploadInstance<>(i, vertexDataComponent, totalVertexCount, renderModel);
                 shaderProgram->getVShader().setUniformArrayElement(i++, transform);
                 if (i > INSTANCE_COUNT_LIMIT) {
                     renderModel.vao.bind();
-                    drawTriangles(totalIndexCount);
+                    drawV(drawType, totalVertexCount);
+                    i = 0;
+                    totalVertexCount = 0;
+                }
+            }
+
+            if (i > 0 && totalVertexCount > 0) {
+                renderModel.vao.bind();
+                drawV(drawType, totalVertexCount);
+            }
+        }
+
+        shaderProgram->stop();
+    }
+
+    template<typename T>
+    void Renderer::renderV(const Entity &entity) {
+        auto vertexDataComponent = entity.getPtr<VertexDataComponent<T>>();
+        if (!shaderProgram->isReady() || !vertexDataComponent || drawType != vertexDataComponent->drawType) return;
+
+        auto& oldRenderModel = vRenderModels[vertexDataComponent->renderModelId];
+        validate(oldRenderModel, *vertexDataComponent);
+        auto& renderModel = vRenderModels[vertexDataComponent->renderModelId];
+
+        shaderProgram->start();
+        shaderProgram->update(entity);
+
+        uint32_t totalVertexCount = 0;
+        tryUpload(*vertexDataComponent, totalVertexCount, renderModel);
+        // try to upload transform
+        auto transform = entity.getPtr<Transform3dComponent>();
+        if (transform) {
+            shaderProgram->getVShader().setUniform(*transform);
+        }
+
+        renderModel.vao.bind();
+        drawV(drawType, totalVertexCount);
+
+        shaderProgram->stop();
+    }
+
+    template<typename T>
+    void Renderer::renderInstancedVI(entt::registry& registry) {
+        if (!shaderProgram->isReady()) return;
+
+        shaderProgram->start();
+        shaderProgram->update(registry);
+
+        auto entities = registry.group<Transform3dComponent, BaseMeshComponent<T>>();
+        uint32_t totalVertexCount = 0;
+        uint32_t totalIndexCount = 0;
+        uint32_t i = 0;
+        uint32_t renderModelId = 0;
+        bool renderModelReady = false;
+        for (auto [entity, transform, mesh] : entities.each()) {
+            if (drawType != mesh.drawType) {
+                i++; // next instanceId
+                continue;
+            }
+
+            if (!renderModelReady) {
+                auto& oldRenderModel = viRenderModels[mesh.renderModelId];
+                resetCounts(oldRenderModel);
+                validate(oldRenderModel, mesh);
+                renderModelId = mesh.renderModelId;
+
+                auto& renderModel = viRenderModels[mesh.renderModelId];
+                tryUpload(mesh, totalVertexCount, totalIndexCount, renderModel);
+
+                renderModelReady = true;
+            }
+
+            shaderProgram->getVShader().setUniformArrayElement(i++, transform);
+            // if transform count is out of limit, then draw current instances and repeat iteration!
+            auto& renderModel = viRenderModels[renderModelId];
+            if (i > INSTANCE_COUNT_LIMIT) {
+                renderModel.vao.bind();
+                drawVI(drawType, totalIndexCount, i);
+                i = 0;
+            }
+        }
+
+        auto& renderModel = viRenderModels[renderModelId];
+        if (i > 0 && totalIndexCount > 0) {
+            renderModel.vao.bind();
+            drawVI(drawType, totalIndexCount, i);
+        }
+
+        shaderProgram->stop();
+    }
+
+    template<typename T>
+    void Renderer::renderBatchedVI(entt::registry &registry) {
+        if (!shaderProgram->isReady()) return;
+
+        shaderProgram->start();
+        shaderProgram->update(registry);
+
+        auto entities = registry.group<Transform3dComponent, BaseMeshComponent<InstanceVertex<T>>>();
+
+        uint32_t nextRenderModelId = 0;
+        for (auto [entity, transform, mesh] : entities.each()) {
+            mesh.renderModelId += nextRenderModelId;
+            auto& renderModel = viRenderModels[mesh.renderModelId];
+            if (!validate<InstanceVertex<T>>(renderModel, mesh)) {
+                nextRenderModelId++;
+            }
+        }
+
+        for (auto& renderModel : viRenderModels) {
+            uint32_t totalVertexCount = 0;
+            uint32_t totalIndexCount = 0;
+            uint32_t i = 0;
+            for (auto [entity, transform, mesh] : entities.each()) {
+                if (renderModel.id != mesh.renderModelId || drawType != mesh.drawType) {
+                    i++; // shift instance id
+                    continue;
+                }
+
+                tryUploadMeshInstance(i, mesh, totalVertexCount, totalIndexCount, renderModel);
+                shaderProgram->getVShader().setUniformArrayElement(i++, transform);
+                if (i > INSTANCE_COUNT_LIMIT) {
+                    renderModel.vao.bind();
+                    drawVI(drawType, totalIndexCount);
                     i = 0;
                     totalVertexCount = 0;
                     totalIndexCount = 0;
@@ -158,7 +338,7 @@ namespace engine {
 
             if (i > 0 && totalIndexCount > 0) {
                 renderModel.vao.bind();
-                drawTriangles(totalIndexCount);
+                drawVI(drawType, totalIndexCount);
             }
             resetCounts(renderModel);
         }
@@ -167,21 +347,21 @@ namespace engine {
     }
 
     template<typename T>
-    void Renderer<T>::render(const Entity &entity) {
+    void Renderer::renderVI(const Entity &entity) {
         auto mesh = entity.getPtr<BaseMeshComponent<T>>();
-        if (!shaderProgram->isReady() || !mesh) return;
+        if (!shaderProgram->isReady() || !mesh || drawType != mesh->drawType) return;
 
-        auto& oldRenderModel = renderModels[mesh->renderModelId];
+        auto& oldRenderModel = viRenderModels[mesh->renderModelId];
         resetCounts(oldRenderModel);
         validate(oldRenderModel, *mesh);
-        auto& renderModel = renderModels[mesh->renderModelId];
+        auto& renderModel = viRenderModels[mesh->renderModelId];
 
         shaderProgram->start();
         shaderProgram->update(entity);
 
         uint32_t totalIndexCount = 0;
         uint32_t totalVertexCount = 0;
-        tryUploadMesh(*mesh, totalVertexCount, totalIndexCount, renderModel);
+        tryUpload(*mesh, totalVertexCount, totalIndexCount, renderModel);
         // try to upload transform
         auto transform = entity.getPtr<Transform3dComponent>();
         if (transform) {
@@ -189,13 +369,78 @@ namespace engine {
         }
 
         renderModel.vao.bind();
-        drawTriangles(totalIndexCount);
+        drawVI(drawType, totalIndexCount);
 
         shaderProgram->stop();
     }
 
     template<typename T>
-    void Renderer<T>::uploadMesh(BaseMeshComponent<T> &meshComponent, RenderModel& renderModel) {
+    void Renderer::tryUploadInstance(
+            const uint32_t &instanceId,
+            VertexDataComponent<InstanceVertex<T>> &vertexDataComponent,
+            uint32_t &previousVertexCount,
+            VRenderModel& renderModel
+    ) {
+        if (vertexDataComponent.isUpdated) {
+            setInstanceId(vertexDataComponent, instanceId);
+        }
+        tryUpload<InstanceVertex<T>>(vertexDataComponent, previousVertexCount, renderModel);
+    }
+
+    template<typename T>
+    void Renderer::tryUpload(
+            VertexDataComponent<T> &vertexDataComponent,
+            uint32_t &previousVertexCount,
+            VRenderModel& renderModel
+    ) {
+        if (vertexDataComponent.isUpdated) {
+            vertexDataComponent.isUpdated = false;
+            updateStart(vertexDataComponent, previousVertexCount);
+            upload(vertexDataComponent, renderModel);
+        }
+        previousVertexCount += vertexDataComponent.vertexData.vertexCount;
+    }
+
+    template<typename T>
+    void Renderer::upload(VertexDataComponent<T> &vertexDataComponent, VRenderModel& renderModel) {
+        renderModel.vao.bind();
+        renderModel.vbo.bind();
+        renderModel.vbo.load(vertexDataComponent.vertexData);
+    }
+
+    template<typename T>
+    void Renderer::tryUploadMeshInstance(
+            const uint32_t &instanceId,
+            BaseMeshComponent<InstanceVertex<T>> &meshComponent,
+            uint32_t &previousVertexCount,
+            uint32_t &previousIndexCount,
+            VIRenderModel& renderModel
+    ) {
+        if (meshComponent.isUpdated) {
+            setInstanceId(meshComponent, instanceId);
+        }
+        tryUpload<InstanceVertex<T>>(meshComponent, previousVertexCount, previousIndexCount, renderModel);
+    }
+
+    template<typename T>
+    void Renderer::tryUpload(
+            BaseMeshComponent<T> &meshComponent,
+            uint32_t &previousVertexCount,
+            uint32_t &previousIndexCount,
+            VIRenderModel& renderModel
+    ) {
+        if (meshComponent.isUpdated) {
+            meshComponent.isUpdated = false;
+            updateStart(meshComponent, previousVertexCount, previousIndexCount);
+            updateCounts(meshComponent);
+            upload(meshComponent, renderModel);
+        }
+        previousIndexCount += meshComponent.totalIndexCount;
+        previousVertexCount += meshComponent.totalVertexCount;
+    }
+
+    template<typename T>
+    void Renderer::upload(BaseMeshComponent<T> &meshComponent, VIRenderModel& renderModel) {
         auto& vbo = renderModel.vbo;
         auto& ibo = renderModel.ibo;
 
@@ -212,66 +457,21 @@ namespace engine {
     }
 
     template<typename T>
-    void Renderer<T>::tryUploadMesh(
-            BaseMeshComponent<T> &meshComponent,
-            uint32_t &previousVertexCount,
-            uint32_t &previousIndexCount,
-            RenderModel& renderModel
-    ) {
-        if (meshComponent.isUpdated) {
-            meshComponent.isUpdated = false;
-            updateStart(meshComponent, previousVertexCount, previousIndexCount);
-            updateCounts(meshComponent);
-            uploadMesh(meshComponent, renderModel);
+    bool Renderer::validate(VRenderModel &renderModel, VertexDataComponent<T>& vertexDataComponent) {
+        if (!hasCapacity(renderModel, vertexDataComponent)) {
+            auto vertexCount = vertexDataComponent.vertexData.vertexCount > DEFAULT_VERTEX_COUNT
+                    ? vertexDataComponent.vertexData.vertexCount * 3 : DEFAULT_VERTEX_COUNT;
+            auto& newRenderModel = createRenderModel(vertexCount);
+            vertexDataComponent.renderModelId = newRenderModel.id;
+            increaseCounts(newRenderModel, vertexDataComponent);
+            return false;
         }
-
-        previousIndexCount += meshComponent.totalIndexCount;
-        previousVertexCount += meshComponent.totalVertexCount;
+        increaseCounts(renderModel, vertexDataComponent);
+        return true;
     }
 
     template<typename T>
-    void Renderer<T>::tryUploadMesh(
-            const uint32_t &instanceId,
-            MeshComponent &meshComponent,
-            uint32_t &previousVertexCount,
-            uint32_t &previousIndexCount,
-            RenderModel& renderModel
-    ) {
-        if (meshComponent.isUpdated) {
-            meshComponent.isUpdated = false;
-            updateStart(meshComponent, previousVertexCount, previousIndexCount);
-            setInstanceId(meshComponent, instanceId);
-            updateCounts(meshComponent);
-            uploadMesh(meshComponent, renderModel);
-        }
-
-        previousIndexCount += meshComponent.totalIndexCount;
-        previousVertexCount += meshComponent.totalVertexCount;
-    }
-
-    template<typename T>
-    void Renderer<T>::release() {
-        for (auto& renderModel : renderModels) {
-            engine::release(renderModel);
-        }
-        renderModels.clear();
-        shaderProgram->release();
-    }
-
-    template<typename T>
-    RenderModel& Renderer<T>::createRenderModel(const uint32_t& vertexCount, const uint32_t& indexCount) {
-        RenderModel renderModel(renderModels.size(), vertexCount, indexCount);
-        renderModel.vao.bind();
-        renderModel.vbo.setFormat(shaderProgram->getVertexFormat());
-        renderModel.ibo.bind();
-        renderModel.ibo.alloc();
-        renderModel.vao.unbind();
-        renderModels.emplace_back(renderModel);
-        return renderModels[renderModel.id];
-    }
-
-    template<typename T>
-    bool Renderer<T>::validate(RenderModel &renderModel, BaseMeshComponent<T>& meshComponent) {
+    bool Renderer::validate(VIRenderModel &renderModel, BaseMeshComponent<T>& meshComponent) {
         if ((meshComponent.totalIndexCount == 0 || meshComponent.totalVertexCount == 0) && meshComponent.meshCount > 0) {
             updateCounts(meshComponent);
         }

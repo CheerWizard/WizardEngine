@@ -10,15 +10,13 @@
 
 namespace engine {
 
-    typedef Renderer<Vertex> SceneRenderer;
-
     class RenderSystem {
 
     public:
         RenderSystem(
                 const Ref<FrameController> &frameController,
-                const Ref<SceneRenderer> &batchRenderer,
-                const Ref<SceneRenderer> &instanceRenderer
+                const Ref<Renderer> &batchRenderer,
+                const Ref<Renderer> &instanceRenderer
         ) : sceneFrameController(frameController), batchRenderer(batchRenderer), instanceRenderer(instanceRenderer) {}
 
         ~RenderSystem() = default;
@@ -34,8 +32,8 @@ namespace engine {
     private:
         Ref<Scene> activeScene = nullptr;
         Ref<FrameController> sceneFrameController;
-        Ref<SceneRenderer> batchRenderer;
-        Ref<SceneRenderer> instanceRenderer;
+        Ref<Renderer> batchRenderer;
+        Ref<Renderer> instanceRenderer;
 
     };
 
