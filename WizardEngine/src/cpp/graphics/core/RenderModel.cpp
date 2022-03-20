@@ -6,26 +6,49 @@
 
 namespace engine {
 
-    void release(RenderModel& renderModel) {
+    void release(VRenderModel& renderModel) {
+        renderModel.vao.destroy();
+        renderModel.vbo.destroy();
+    }
+
+    void resetCounts(VRenderModel& renderModel) {
+        renderModel.vbo.setCount(0);
+    }
+
+    void release(VIRenderModel& renderModel) {
         renderModel.vao.destroy();
         renderModel.vbo.destroy();
         renderModel.ibo.destroy();
     }
 
-    bool hasCapacity(const RenderModel& renderModel, const MeshComponent &meshComponent) {
-        bool hasVertexCapacity = renderModel.vbo.hasCapacity(meshComponent.totalVertexCount);
-        bool hasIndexCapacity = renderModel.ibo.hasCapacity(meshComponent.totalIndexCount);
-        return hasVertexCapacity && hasIndexCapacity;
-    }
-
-    void resetCounts(RenderModel& renderModel) {
+    void resetCounts(VIRenderModel& renderModel) {
         renderModel.vbo.setCount(0);
         renderModel.ibo.setCount(0);
     }
 
-    void increaseCounts(RenderModel& renderModel, const MeshComponent &meshComponent) {
-        renderModel.vbo.increaseCount(meshComponent.totalVertexCount);
-        renderModel.ibo.increaseCount(meshComponent.totalIndexCount);
+    void VertexBuffer::setFormat(const shader::VertexFormat &vertexFormat) {
+        setFormat(vertexFormat, totalCount);
     }
 
+    void VertexBuffer::setFormat(const shader::VertexFormat &vertexFormat, const uint32_t &vertexCount) {
+        this->vertexFormat = vertexFormat;
+        bind();
+        alloc(vertexCount);
+        bindAttributes();
+    }
+
+    void VertexBuffer::recreate() {
+        destroy();
+        create();
+    }
+
+    void VertexBuffer::alloc(const uint32_t &vertexCount) {
+        totalCount = vertexCount;
+        size_t size = vertexFormat.getSize() * vertexCount;
+        malloc(size);
+    }
+
+    void VertexBuffer::alloc() {
+        alloc(totalCount);
+    }
 }

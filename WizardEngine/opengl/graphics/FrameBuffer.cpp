@@ -215,26 +215,4 @@ namespace engine {
         auto textureFormat = convertTextureFormat(spec.textureFormat);
         glClearTexImage(texture, 0, textureFormat, GL_INT,&value);
     }
-
-    void FrameBuffer::enableDepth() {
-        ENGINE_INFO("enableDepth()");
-        glEnable(GL_DEPTH_TEST);
-    }
-
-    void FrameBuffer::disableDepth() {
-        ENGINE_INFO("disableDepth()");
-        glDisable(GL_DEPTH_TEST);
-    }
-
-    void FrameBuffer::clearDepth(const Color &color) {
-        ENGINE_INFO("clearDepth(depthColor = {0})", str(color));
-        glClearColor(color.r, color.g, color.b, color.a);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
-    void FrameBuffer::clearColor(const Color &color) {
-        glClearColor(color.r, color.g, color.b, color.a);
-        glClear(GL_COLOR_BUFFER_BIT);
-    }
-
 }

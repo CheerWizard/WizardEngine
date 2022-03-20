@@ -15,9 +15,6 @@ namespace engine {
     }
 
     void Thread::current_sleep_time(const Time &time) {
-        auto sleepMs = time.getLongMs();
-        ENGINE_WARN("Sleeping current thread on {0} ms!", sleepMs);
-        std::this_thread::sleep_for(MILLIS(sleepMs));
+        current_sleep(time.getLongMs());
     }
-
 }

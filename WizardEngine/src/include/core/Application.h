@@ -94,8 +94,8 @@ namespace engine {
 
     public:
         Scope<Input> input;
-        Ref<Scene> activeScene; // todo add SceneSource and cache multiple Scenes.
-        Ref<FrameController> activeFrameController;
+        Ref<Scene> activeScene;
+        Ref<FrameBuffer> activeFrame;
         FpsController fpsController;
 
     private:

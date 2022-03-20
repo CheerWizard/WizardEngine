@@ -4,9 +4,7 @@
 
 #pragma once
 
-#include <core/String.h>
-
-#include "ElementCount.h"
+#include <graphics/core/shader/VertexAttribute.h>
 
 namespace engine::shader {
 
