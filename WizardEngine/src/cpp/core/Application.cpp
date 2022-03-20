@@ -4,10 +4,6 @@
 
 #include <core/Application.h>
 
-#include <graphics/camera/CameraShaderScript.h>
-#include <graphics/material/MaterialShaderScript.h>
-#include <graphics/light/LightShaderScript.h>
-
 namespace engine {
 
     void Application::run() {
@@ -46,7 +42,7 @@ namespace engine {
         _window->setInCenter();
         createFrameSpecs();
         _layerStack.onPrepare();
-        enableMSAA();
+        setMSAA(true);
     }
 
     void Application::onDestroy() {
@@ -87,7 +83,7 @@ namespace engine {
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
 
         _layerStack.onWindowResized(width, height);
-        activeFrameController->resize(width, height);
+        activeFrame->resize(width, height);
     }
 
     void Application::onKeyPressed(KeyCode keyCode) {
@@ -166,57 +162,14 @@ namespace engine {
     }
 
     void Application::createFrameSpecs() {
-        activeFrameController->updateSpecs(getWindowWidth(), getWindowHeight());
-        activeScene->setTextureId(activeFrameController->getFrameColors()[0]);
+        activeFrame->updateSpecs(getWindowWidth(), getWindowHeight());
+        activeScene->setTextureId(activeFrame->getColorAttachments()[0]);
     }
 
     void Application::createGraphics() {
         GraphicsInitializer::createContext(_window->getNativeWindow());
-        activeFrameController = createRef<FrameController>();
-        // create batch renderer
-        auto vBatchShader = shader::BaseShader({
-           camera3dUboScript()
-        });
-        auto fBatchShader = shader::BaseShader({
-           materialScript(),
-           phongLightScript(),
-           materialMapScript(),
-           pointLightArrayScript()
-        });
-        auto batchShader = createRef<shader::BaseShaderProgram>(
-            shader::ShaderProps {
-                "batch",
-                "v_batch.glsl",
-                "f_batch.glsl",
-                ENGINE_SHADERS_PATH
-            },
-            vBatchShader,
-            fBatchShader
-        );
-        auto batchRenderer = createRef<Renderer>(batchShader);
-        // create instance renderer
-        auto vInstanceShader = shader::BaseShader({
-            camera3dUboScript()
-        });
-        auto fInstanceShader = shader::BaseShader({
-            materialScript(),
-            phongLightScript(),
-            materialMapScript(),
-            pointLightArrayScript()
-        });
-        auto instanceShader = createRef<shader::BaseShaderProgram>(
-            shader::ShaderProps {
-                "instance",
-                "v_instance.glsl",
-                "f_instance.glsl",
-                ENGINE_SHADERS_PATH
-            },
-            vInstanceShader,
-            fInstanceShader
-        );
-        auto instanceRenderer = createRef<Renderer>(instanceShader);
-        // create render system
-        _renderSystem = createScope<RenderSystem>(activeFrameController, batchRenderer, instanceRenderer);
+        activeFrame = createRef<FrameBuffer>();
+        _renderSystem = createScope<RenderSystem>(activeFrame);
     }
 
     void Application::updateRuntime(Time dt) {

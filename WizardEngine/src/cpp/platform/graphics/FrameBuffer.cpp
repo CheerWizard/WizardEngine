@@ -19,6 +19,26 @@ namespace engine {
         }
     }
 
+    const std::vector<uint32_t>& FrameBuffer::updateSpecs(const FramebufferSpecification &framebufferSpecification) {
+        setSpecification(framebufferSpecification);
+        loadAttachments();
+        const auto& colors = getColorAttachments();
+        ENGINE_INFO("Update FBO specs. Color id: {0}", colors[0]);
+        return colors;
+    }
+
+    const std::vector<uint32_t>& FrameBuffer::updateSpecs(const uint32_t &width, const uint32_t &height) {
+        engine::FramebufferSpecification framebufferSpecification;
+        framebufferSpecification.attachmentSpecification = {
+                engine::FramebufferTextureFormat::RGBA8,
+                engine::FramebufferTextureFormat::RED_INTEGER,
+                engine::FramebufferTextureFormat::DEPTH24STENCIL8
+        };
+        framebufferSpecification.width = width;
+        framebufferSpecification.height = height;
+        return updateSpecs(framebufferSpecification);
+    }
+
     void FrameBuffer::loadAttachments() {
         bind();
 
@@ -214,27 +234,6 @@ namespace engine {
         auto& texture = colorAttachments[attachmentIndex];
         auto textureFormat = convertTextureFormat(spec.textureFormat);
         glClearTexImage(texture, 0, textureFormat, GL_INT,&value);
-    }
-
-    void FrameBuffer::enableDepth() {
-        ENGINE_INFO("enableDepth()");
-        glEnable(GL_DEPTH_TEST);
-    }
-
-    void FrameBuffer::disableDepth() {
-        ENGINE_INFO("disableDepth()");
-        glDisable(GL_DEPTH_TEST);
-    }
-
-    void FrameBuffer::clearDepth(const Color &color) {
-        ENGINE_INFO("clearDepth(depthColor = {0})", str(color));
-        glClearColor(color.r, color.g, color.b, color.a);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
-    void FrameBuffer::clearColor(const Color &color) {
-        glClearColor(color.r, color.g, color.b, color.a);
-        glClear(GL_COLOR_BUFFER_BIT);
     }
 
 }

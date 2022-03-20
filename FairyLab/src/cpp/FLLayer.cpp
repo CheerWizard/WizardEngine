@@ -13,7 +13,6 @@
 #include <scripting/ScriptBuilder.h>
 
 #include <imgui/imgui.h>
-#include "random"
 
 using namespace engine::shader;
 
@@ -49,7 +48,7 @@ namespace fairy {
                 vObjShader,
                 fObjShader
         );
-        auto objRenderer = engine::createRef<engine::Renderer>(objShader);
+        auto objRenderer = engine::createRef<engine::VIRenderer>(objShader);
 
         auto objCamera = engine::Camera3D {
             "obj",
@@ -79,13 +78,13 @@ namespace fairy {
         objPhongLight.specular.value = { 0.4, 0.4, 0.4, 0 };
         objCamera.add<engine::PhongLightComponent>(objPhongLight);
 
-        auto objFrameController = engine::createRef<engine::FrameController>();
-        objFrameController->updateSpecs(app->getWindowWidth(), app->getWindowHeight());
+        auto objFrame = engine::createRef<engine::FrameBuffer>();
+        objFrame->updateSpecs(app->getWindowWidth(), app->getWindowHeight());
 
         _objPreview = engine::createRef<engine::MeshLayout>(
                 engine::ImageLayoutProps {"Object Preview"},
                 objRenderer,
-                objFrameController,
+                objFrame,
                 objCameraController
         );
 
@@ -110,7 +109,7 @@ namespace fairy {
                         {135, 0, 0},
                         {0.5, 0.5, 0.5}
                 ),
-                GET_MESH("ferrari.obj")
+                GET_OBJ_MESH(Vertex3d, "ferrari.obj")
         );
 
 //        _cubeEntity = engine::Entity("Cube", app->activeScene.get());
@@ -124,28 +123,23 @@ namespace fairy {
 //        _cubeEntity.add<engine::MaterialComponent>(cubeMaterial);
 //        _cubeEntity.add<engine::MaterialMapsComponent>(cubeMaterialMaps);
 
-        auto humanMesh = GET_MESH("human.obj");
         auto humanMaterialMaps = engine::MaterialMapsComponent();
         humanMaterialMaps.diffuseFileName = "wood_diffuse.png";
         humanMaterialMaps.specularFileName = "wood_specular.png";
-        // randomize entities
-        std::random_device rd;
-        std::mt19937 mt(rd());
-        std::uniform_real_distribution<double> dist(-10, 10);
-        for (uint32_t i = 0 ; i < 10 ; i++) {
-            auto r = (float) dist(mt);
+
+        random(-10, 10, 10, [this](const uint32_t& i, const float& r) {
             engine::Object3d(
-                    app->activeScene.get(),
-                    "Human " + std::to_string(i),
-                    engine::transform3d(
-                            { r, r, r },
-                            { r, r, r },
-                            {0.2, 0.2, 0.2}
-                    ),
-                    copy(humanMesh),
-                    false
+                app->activeScene.get(),
+                "Human " + std::to_string(i),
+                engine::transform3d(
+                        { r, r, r },
+                        { r, r, r },
+                        {0.2, 0.2, 0.2}
+                ),
+                GET_OBJ_MESH_INSTANCED(Vertex3d, "human.obj"),
+                true
             );
-        }
+        });
 
         // light
 //        auto phongLight = engine::PhongLight(app->activeScene.get());
@@ -188,6 +182,60 @@ namespace fairy {
         carMaterialMaps.diffuseFileName = "wood_diffuse.png";
         carMaterialMaps.specularFileName = "wood_specular.png";
         car.add<engine::MaterialMapsComponent>(carMaterialMaps);
+
+        random(-10, 10, 20, [this](const uint32_t& i, const float& r) {
+            glm::vec4 randomColor1 = { random(0, 1), random(0, 1), random(0, 1), 1 };
+            glm::vec4 randomColor2 = { random(0, 1), random(0, 1), random(0, 1), 1 };
+            engine::Object3d<InstanceLineVertex>(
+                    app->activeScene.get(),
+                    "Line " + std::to_string(i),
+                    engine::transform3d(
+                        { r, r, r },
+                        { r, r, r },
+                        { 1, 1, 1 }
+                    ),
+                    Lines({
+                          LineVertex { { -0.5, 0.5, 0.5 }, randomColor1 },
+                          LineVertex { { 0.5, 0.5, 0.5 }, randomColor2 }
+                    })
+            );
+        });
+
+        random(-10, 10, 20, [this](const uint32_t& i, const float& r) {
+            glm::vec4 randomColor1 = { random(0, 1), random(0, 1), random(0, 1), 1 };
+            glm::vec4 randomColor2 = { random(0, 1), random(0, 1), random(0, 1), 1 };
+            engine::Object3d<InstanceLineVertex>(
+                    app->activeScene.get(),
+                    "StripLine " + std::to_string(i),
+                    engine::transform3d(
+                            { r, r, r },
+                            { r, r, r },
+                            { 1, 1, 1 }
+                    ),
+                    Lines({
+                                  LineVertex { { -0.5, 0.5, 0.5 }, randomColor1 },
+                                  LineVertex { { 0.5, 0.5, 0.5 }, randomColor2 }
+                          })
+            );
+        });
+
+        random(-10, 10, 20, [this](const uint32_t& i, const float& r) {
+            glm::vec4 randomColor1 = { random(0, 1), random(0, 1), random(0, 1), 1 };
+            glm::vec4 randomColor2 = { random(0, 1), random(0, 1), random(0, 1), 1 };
+            engine::Object3d<InstanceLineVertex>(
+                    app->activeScene.get(),
+                    "LoopLine " + std::to_string(i),
+                    engine::transform3d(
+                            { r, r, r },
+                            { r, r, r },
+                            { 1, 1, 1 }
+                    ),
+                    Lines({
+                                  LineVertex { { -0.5, 0.5, 0.5 }, randomColor1 },
+                                  LineVertex { { 0.5, 0.5, 0.5 }, randomColor2 }
+                          })
+            );
+        });
     }
 
     void FLLayer::destroy() {
@@ -314,7 +362,7 @@ namespace fairy {
 
     void FLLayer::onObjOpen(const std::string &fileName) {
         EDITOR_INFO("onObjOpen({0})", fileName);
-        const auto& objMesh = GET_MESH(fileName);
+        const auto& objMesh = GET_OBJ(fileName);
         _objPreview->setMesh(objMesh);
         _objPreview->show();
     }
@@ -326,7 +374,7 @@ namespace fairy {
     void FLLayer::ScenePreviewCallback::onImageResized(const uint32_t &width, const uint32_t &height) {
         if (width == 0 || height == 0) return;
 
-        _parent.app->activeFrameController->resize(width, height);
+        _parent.app->activeFrame->resize(width, height);
         _parent.activeSceneCameraController->onWindowResized(width, height);
     }
 
@@ -344,7 +392,14 @@ namespace fairy {
 
     void FLLayer::onEntityRemoved(const engine::Entity &entity) {
         EDITOR_INFO("onEntityRemoved({0})", entity.operator unsigned int());
-        app->activeFrameController->resetFrame();
+        app->activeFrame->bind();
+        setDepthTest(true);
+        setClearColor({0.2, 0.2, 0.2, 1});
+        clearDepthBuffer();
+
+        app->activeFrame->unbind();
+        setDepthTest(false);
+        clearColorBuffer();
     }
 
     void FLLayer::createAssetBrowser() {
@@ -405,14 +460,14 @@ namespace fairy {
 
     void FLLayer::onObjDragged(const std::string &fileName) {
         EDITOR_INFO("onObjDragged({0})", fileName);
-        auto newObject3d = engine::Object3d { app->activeScene.get(), engine::FileSystem::getFileName(fileName), GET_MESH(fileName) };
-        // this function is required to reload objects into video memory!
-        // otherwise, they will not be displayed, until mesh and transform will not be changed!
-        engine::updateObjects3d(app->activeScene);
+        auto newObject3d = engine::Object3d {
+            app->activeScene.get(),
+            engine::FileSystem::getFileName(fileName),
+            GET_OBJ_MESH(Vertex3d, fileName)
+        };
     }
 
     void FLLayer::onImageDragged(const std::string &fileName) {
         EDITOR_INFO("onImageDragged({0})", fileName);
     }
-
 }

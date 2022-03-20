@@ -9,21 +9,16 @@
 
 namespace engine {
 
-    struct Color {
-        float r,g,b,a;
-    };
-
-    std::string str(const Color &color);
-
     enum class FramebufferTextureFormat {
         None = 0,
         // Color
         RGBA8,
         RED_INTEGER,
-        // Depth/stencil
+        // Depth, Stencil
+        DEPTH16,
+        DEPTH24PAD8,
         DEPTH24STENCIL8,
-        // Defaults
-        Depth = DEPTH24STENCIL8
+        DEPTH32
     };
 
     struct FramebufferTextureSpecification {
@@ -48,5 +43,4 @@ namespace engine {
         uint32_t samples = 1;
         bool swapChainTarget = false;
     };
-
 }

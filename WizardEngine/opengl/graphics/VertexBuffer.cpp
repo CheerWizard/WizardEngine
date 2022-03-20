@@ -15,11 +15,6 @@ namespace engine {
         glDeleteBuffers(1, &id);
     }
 
-    void VertexBuffer::recreate() {
-        destroy();
-        create();
-    }
-
     void VertexBuffer::bind() const {
         glBindBuffer(GL_ARRAY_BUFFER, id);
     }
@@ -28,21 +23,8 @@ namespace engine {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    void VertexBuffer::alloc(const uint32_t &vertexCount) {
-        count = vertexCount;
-        size_t size = vertexFormat.getSize() * vertexCount;
-        malloc(size);
-    }
-
     void VertexBuffer::malloc(const size_t &memorySize) {
         glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr) memorySize, nullptr, GL_DYNAMIC_DRAW);
-    }
-
-    void VertexBuffer::setFormat(const shader::VertexFormat &vertexFormat, const uint32_t &vertexCount) {
-        this->vertexFormat = vertexFormat;
-        bind();
-        alloc(vertexCount);
-        bindAttributes();
     }
 
     void VertexBuffer::bindAttributes() {
@@ -58,6 +40,7 @@ namespace engine {
                                   (GLvoid*) offset);
             offset += attribute.elementCount * sizeof(float);
             glVertexAttribDivisor(attribute.location, attribute.category);
+            glEnableVertexAttribArray(attribute.location);
         }
     }
 
