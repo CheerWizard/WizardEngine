@@ -140,7 +140,7 @@ namespace engine {
         shaderProgram->start();
         shaderProgram->update(registry);
 
-        auto entities = registry.group<Transform3dComponent, VertexDataComponent<InstanceVertex<T>>>();
+        auto entities = registry.view<Transform3dComponent, VertexDataComponent<InstanceVertex<T>>>();
 
         uint32_t nextRenderModelId = 0;
         for (auto [entity, transform, vertexDataComponent] : entities.each()) {
@@ -189,7 +189,7 @@ namespace engine {
         shaderProgram->start();
         shaderProgram->update(registry);
 
-        auto entities = registry.group<Transform3dComponent, BaseMeshComponent<InstanceVertex<T>>>();
+        auto entities = registry.view<Transform3dComponent, BaseMeshComponent<InstanceVertex<T>>>();
 
         uint32_t nextRenderModelId = 0;
         for (auto [entity, transform, mesh] : entities.each()) {
@@ -240,7 +240,7 @@ namespace engine {
         shaderProgram->start();
         shaderProgram->update(registry);
 
-        auto entities = registry.group<Transform3dComponent, VertexDataComponent<T>>();
+        auto entities = registry.view<Transform3dComponent, VertexDataComponent<T>>();
         uint32_t totalVertexCount = 0;
         uint32_t i = 0;
         uint32_t renderModelId = 0;
@@ -289,7 +289,7 @@ namespace engine {
         shaderProgram->start();
         shaderProgram->update(registry);
 
-        auto entities = registry.group<Transform3dComponent, BaseMeshComponent<T>>();
+        auto entities = registry.view<Transform3dComponent, BaseMeshComponent<T>>();
         uint32_t totalVertexCount = 0;
         uint32_t totalIndexCount = 0;
         uint32_t i = 0;

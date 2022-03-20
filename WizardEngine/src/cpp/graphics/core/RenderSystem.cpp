@@ -29,14 +29,14 @@ namespace engine {
 //        stencilMask(false);
 
         if (!activeScene->batchEmpty()) {
-//            sceneBatchRenderer->renderVI<Vertex3d>(activeScene->getBatchRegistry());
+            sceneBatchRenderer->renderVI<Vertex3d>(activeScene->getBatchRegistry());
             lineBatchRenderer->renderV<LineVertex>(activeScene->getBatchRegistry());
             stripLineBatchRenderer->renderV<LineVertex>(activeScene->getBatchRegistry());
             loopLineBatchRenderer->renderV<LineVertex>(activeScene->getBatchRegistry());
         }
 
         if (!activeScene->instanceEmpty()) {
-//            sceneInstanceRenderer->renderVI<Vertex3d>(activeScene->getInstanceRegistry());
+            sceneInstanceRenderer->renderVI<Vertex3d>(activeScene->getInstanceRegistry());
             lineInstanceRenderer->renderV<LineVertex>(activeScene->getInstanceRegistry());
             stripLineInstanceRenderer->renderV<LineVertex>(activeScene->getInstanceRegistry());
             loopLineInstanceRenderer->renderV<LineVertex>(activeScene->getInstanceRegistry());
