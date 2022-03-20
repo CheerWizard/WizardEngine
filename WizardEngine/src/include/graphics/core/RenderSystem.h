@@ -6,18 +6,16 @@
 
 #include "Renderer.h"
 #include <ecs/Scene.h>
-#include "frame/FrameController.h"
+#include <platform/graphics/FrameBuffer.h>
 
 namespace engine {
 
     class RenderSystem {
 
     public:
-        RenderSystem(
-                const Ref<FrameController> &frameController,
-                const Ref<Renderer> &batchRenderer,
-                const Ref<Renderer> &instanceRenderer
-        ) : sceneFrameController(frameController), batchRenderer(batchRenderer), instanceRenderer(instanceRenderer) {}
+        RenderSystem(const Ref<FrameBuffer> &sceneFrame) : sceneFrame(sceneFrame) {
+            create();
+        }
 
         ~RenderSystem() = default;
 
@@ -30,11 +28,23 @@ namespace engine {
         }
 
     private:
-        Ref<Scene> activeScene = nullptr;
-        Ref<FrameController> sceneFrameController;
-        Ref<Renderer> batchRenderer;
-        Ref<Renderer> instanceRenderer;
+        void create();
+        void createSceneRenderers();
+        void createLineRenderers();
 
+    private:
+        Ref<Scene> activeScene = nullptr;
+        Ref<FrameBuffer> sceneFrame;
+        // scene renderers
+        Ref<BatchRenderer> sceneBatchRenderer;
+        Ref<InstanceRenderer> sceneInstanceRenderer;
+        // line renderers
+        Ref<BatchRenderer> lineBatchRenderer;
+        Ref<InstanceRenderer> lineInstanceRenderer;
+        Ref<BatchRenderer> stripLineBatchRenderer;
+        Ref<InstanceRenderer> stripLineInstanceRenderer;
+        Ref<BatchRenderer> loopLineBatchRenderer;
+        Ref<InstanceRenderer> loopLineInstanceRenderer;
     };
 
 }

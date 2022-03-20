@@ -19,6 +19,26 @@ namespace engine {
         }
     }
 
+    const std::vector<uint32_t>& FrameBuffer::updateSpecs(const FramebufferSpecification &framebufferSpecification) {
+        setSpecification(framebufferSpecification);
+        loadAttachments();
+        const auto& colors = getColorAttachments();
+        ENGINE_INFO("Update FBO specs. Color id: {0}", colors[0]);
+        return colors;
+    }
+
+    const std::vector<uint32_t>& FrameBuffer::updateSpecs(const uint32_t &width, const uint32_t &height) {
+        engine::FramebufferSpecification framebufferSpecification;
+        framebufferSpecification.attachmentSpecification = {
+                engine::FramebufferTextureFormat::RGBA8,
+                engine::FramebufferTextureFormat::RED_INTEGER,
+                engine::FramebufferTextureFormat::DEPTH24STENCIL8
+        };
+        framebufferSpecification.width = width;
+        framebufferSpecification.height = height;
+        return updateSpecs(framebufferSpecification);
+    }
+
     void FrameBuffer::loadAttachments() {
         bind();
 

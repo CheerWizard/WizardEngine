@@ -44,4 +44,27 @@ namespace engine {
         return viRenderModels[renderModel.id];
     }
 
+    void VRenderer::create() {
+        shaderProgram->bindVertexFormat();
+        vRenderModel.vao.bind();
+        vRenderModel.vbo.setFormat(shaderProgram->getVertexFormat());
+        vRenderModel.vao.unbind();
+    }
+
+    void VRenderer::destroy() {
+        shaderProgram->release();
+    }
+
+    void VIRenderer::create() {
+        shaderProgram->bindVertexFormat();
+        viRenderModel.vao.bind();
+        viRenderModel.vbo.setFormat(shaderProgram->getVertexFormat());
+        viRenderModel.ibo.bind();
+        viRenderModel.ibo.alloc();
+        viRenderModel.vao.unbind();
+    }
+
+    void VIRenderer::destroy() {
+        shaderProgram->release();
+    }
 }

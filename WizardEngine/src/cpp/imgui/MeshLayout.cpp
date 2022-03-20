@@ -20,7 +20,7 @@ namespace engine {
     void MeshLayout::onImageResized(const uint32_t &width, const uint32_t &height) {
         if (width == 0 || height == 0) return;
 
-        _frameController->resize(width, height);
+        _frame->resize(width, height);
         _cameraController->onWindowResized(width, height);
     }
 
@@ -55,7 +55,7 @@ namespace engine {
     }
 
     void MeshLayout::onRender(const Time &dt) {
-        id = _frameController->getFrameColors()[0];
+        id = _frame->getColorAttachments()[0];
 
         _cameraController->setDeltaTime(dt);
 
@@ -63,14 +63,14 @@ namespace engine {
             rotateEntity(dt);
         }
 
-        _frameController->bind();
+        _frame->bind();
         setDepthTest(true);
         setClearColor({0.2, 0.2, 0.2, 1});
         clearDepthBuffer();
 
-        _renderer->render<ObjVertex, ObjVertex>(_entity);
+        _renderer->render<ObjVertex>(_entity);
 
-        _frameController->unbind();
+        _frame->unbind();
         setDepthTest(false);
         clearColorBuffer();
 

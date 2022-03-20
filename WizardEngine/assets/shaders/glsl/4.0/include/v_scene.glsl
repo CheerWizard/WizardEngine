@@ -4,10 +4,7 @@ out flat int f_slot;
 out vec3 f_pos;
 out vec3 f_normal;
 
-layout(std140) uniform Camera {
-    mat4 camera;
-};
-uniform mat4 transform[128];
+#include multiple.glsl
 
 void updateObject(int id) {
     f_id = id;

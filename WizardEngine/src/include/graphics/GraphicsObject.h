@@ -7,6 +7,7 @@
 #include <ecs/Entity.h>
 #include "core/geometry/MeshComponent.h"
 #include "transform/TransformComponents.h"
+#include "core/geometry/Lines.h"
 
 namespace engine {
 
@@ -67,6 +68,18 @@ namespace engine {
             add<MaterialComponent>();
         }
 
+        Object3d(
+            EntityContainer* container,
+            const std::string& tag,
+            const Transform3dComponent &transform,
+            const VertexDataComponent<T> vertexDataComponent,
+            const bool& instancingEnabled = false
+        ) : Entity(tag, container, instancingEnabled) {
+            add<Transform3dComponent>(transform);
+            add<VertexDataComponent<T>>(vertexDataComponent);
+        }
+
         ~Object3d() = default;
     };
+
 }

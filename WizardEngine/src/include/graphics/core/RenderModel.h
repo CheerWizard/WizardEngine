@@ -64,4 +64,86 @@ namespace engine {
         renderModel.vbo.increaseCount(meshComponent.totalVertexCount);
         renderModel.ibo.increaseCount(meshComponent.totalIndexCount);
     }
+
+    template<typename T>
+    void tryUploadInstance(
+            const uint32_t &instanceId,
+            VertexDataComponent<InstanceVertex<T>> &vertexDataComponent,
+            uint32_t &previousVertexCount,
+            VRenderModel& renderModel
+    ) {
+        if (vertexDataComponent.isUpdated) {
+            setInstanceId(vertexDataComponent, instanceId);
+        }
+        tryUpload<InstanceVertex<T>>(vertexDataComponent, previousVertexCount, renderModel);
+    }
+
+    template<typename T>
+    void tryUpload(
+            VertexDataComponent<T> &vertexDataComponent,
+            uint32_t &previousVertexCount,
+            VRenderModel& renderModel
+    ) {
+        if (vertexDataComponent.isUpdated) {
+            vertexDataComponent.isUpdated = false;
+            updateStart(vertexDataComponent, previousVertexCount);
+            upload(vertexDataComponent, renderModel);
+        }
+        previousVertexCount += vertexDataComponent.vertexData.vertexCount;
+    }
+
+    template<typename T>
+    void upload(VertexDataComponent<T> &vertexDataComponent, VRenderModel& renderModel) {
+        renderModel.vao.bind();
+        renderModel.vbo.bind();
+        renderModel.vbo.load(vertexDataComponent.vertexData);
+    }
+
+    template<typename T>
+    void tryUploadMeshInstance(
+            const uint32_t &instanceId,
+            BaseMeshComponent<InstanceVertex<T>> &meshComponent,
+            uint32_t &previousVertexCount,
+            uint32_t &previousIndexCount,
+            VIRenderModel& renderModel
+    ) {
+        if (meshComponent.isUpdated) {
+            setInstanceId(meshComponent, instanceId);
+        }
+        tryUpload<InstanceVertex<T>>(meshComponent, previousVertexCount, previousIndexCount, renderModel);
+    }
+
+    template<typename T>
+    void tryUpload(
+            BaseMeshComponent<T> &meshComponent,
+            uint32_t &previousVertexCount,
+            uint32_t &previousIndexCount,
+            VIRenderModel& renderModel
+    ) {
+        if (meshComponent.isUpdated) {
+            meshComponent.isUpdated = false;
+            updateStart(meshComponent, previousVertexCount, previousIndexCount);
+            updateCounts(meshComponent);
+            upload(meshComponent, renderModel);
+        }
+        previousIndexCount += meshComponent.totalIndexCount;
+        previousVertexCount += meshComponent.totalVertexCount;
+    }
+
+    template<typename T>
+    void upload(BaseMeshComponent<T> &meshComponent, VIRenderModel& renderModel) {
+        auto& vbo = renderModel.vbo;
+        auto& ibo = renderModel.ibo;
+
+        renderModel.vao.bind();
+        vbo.bind();
+        ibo.bind();
+        const auto& meshes = meshComponent.meshes;
+        for (auto i = 0; i < meshComponent.meshCount ; i++) {
+            const auto& vertexData = meshes[i].vertexData;
+            vbo.load(vertexData);
+            const auto& indexData = meshes[i].indexData;
+            ibo.load(indexData);
+        }
+    }
 }

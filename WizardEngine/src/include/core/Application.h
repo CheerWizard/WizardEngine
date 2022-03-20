@@ -95,7 +95,7 @@ namespace engine {
     public:
         Scope<Input> input;
         Ref<Scene> activeScene;
-        Ref<FrameController> activeFrameController;
+        Ref<FrameBuffer> activeFrame;
         FpsController fpsController;
 
     private:

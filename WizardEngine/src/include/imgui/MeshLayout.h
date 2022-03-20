@@ -7,9 +7,9 @@
 #include "ImageLayout.h"
 
 #include <graphics/core/Renderer.h>
-#include <graphics/core/frame/FrameController.h>
 #include <graphics/camera/CameraController.h>
 #include <graphics/core/io/ObjFile.h>
+#include <platform/graphics/FrameBuffer.h>
 
 namespace engine {
 
@@ -18,11 +18,11 @@ namespace engine {
     public:
         MeshLayout(
                 const ImageLayoutProps &props,
-                const Ref<Renderer> &renderer,
-                const Ref<FrameController> &frameController,
+                const Ref<VIRenderer> &renderer,
+                const Ref<FrameBuffer> &frame,
                 const Ref<CameraController> &cameraController
         ) : ImageLayout(props),
-        _renderer(renderer), _frameController(frameController), _cameraController(cameraController) {
+        _renderer(renderer), _frame(frame), _cameraController(cameraController) {
             create();
         }
 
@@ -64,8 +64,8 @@ namespace engine {
         void rotateEntity(const Time &dt);
 
     private:
-        Ref<Renderer> _renderer;
-        Ref<FrameController> _frameController;
+        Ref<VIRenderer> _renderer;
+        Ref<FrameBuffer> _frame;
         Ref<CameraController> _cameraController;
         Entity _entity;
         bool _shouldRotateEntity = true;

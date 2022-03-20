@@ -48,6 +48,8 @@ namespace engine {
         // loading specs, attachments and reading GPU data
         void setSpecification(const FramebufferSpecification &framebufferSpecification);
         void loadAttachments();
+        const std::vector<uint32_t>& updateSpecs(const FramebufferSpecification &framebufferSpecification);
+        const std::vector<uint32_t>& updateSpecs(const uint32_t &width, const uint32_t &height);
         void setViewPort();
         void resize(uint32_t width, uint32_t height);
         int readPixel(uint32_t attachmentIndex, int x, int y);
