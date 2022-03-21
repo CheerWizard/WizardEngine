@@ -30,7 +30,7 @@ namespace engine {
 
     template<typename T>
     BaseMeshComponent<T> Shapes<T>::newTriangle() {
-        BaseMesh<T>* meshes = new Mesh {
+        BaseMesh<T>* meshes = new BaseMesh<T> {
                 VertexData {
                         newTriangleVertices(),
                         0,
@@ -47,7 +47,7 @@ namespace engine {
 
     template<typename T>
     BaseMeshComponent<T> Shapes<T>::newSquare() {
-        BaseMesh<T>* meshes = new Mesh {
+        BaseMesh<T>* meshes = new BaseMesh<T> {
                 VertexData {
                         newSquareVertices(),
                         0,
@@ -64,7 +64,7 @@ namespace engine {
 
     template<typename T>
     BaseMeshComponent<T> Shapes<T>::newCube() {
-        BaseMesh<T>* meshes = new Mesh {
+        BaseMesh<T>* meshes = new BaseMesh<T> {
                 VertexData {
                         newCubeVertices(),
                         0,
@@ -82,18 +82,15 @@ namespace engine {
     template<typename T>
     T *Shapes<T>::newTriangleVertices() {
         auto v1 = T {
-                {-0.5f, -0.5f, 0.0f },
-                {0, 0}
+                {-0.5f, -0.5f, 0.0f }
         };
 
         auto v2 = T {
-                {0.5f, -0.5f, 0.0f},
-                {1, 0}
+                {0.5f, -0.5f, 0.0f}
         };
 
         auto v3 = T {
-                {0.0f,  0.5f, 0.0f },
-                {1, 1}
+                {0.0f,  0.5f, 0.0f }
         };
 
         return new T[] {
@@ -109,23 +106,19 @@ namespace engine {
     template<typename T>
     T *Shapes<T>::newSquareVertices() {
         auto v1 = T {
-                { -1, -1, 0 },
-                {0, 0}
+                { -1, -1, 0 }
         };
 
         auto v2 = T {
-                { -1,  1, 0 },
-                {0, 1}
+                { -1,  1, 0 }
         };
 
         auto v3 = T {
-                {1,  1, 0 },
-                {1, 1}
+                { 1,  1, 0 }
         };
 
         auto v4 = T {
-                {1, -1, 0 },
-                {1, 0}
+                { 1, -1, 0 }
         };
 
         return new T[] {

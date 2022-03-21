@@ -16,6 +16,6 @@ namespace engine {
             const std::function<void(const uint32_t& i, const float& random)>& callback
     );
 
-    float random(const uint32_t& minRange, const uint32_t& maxRange);
+    float random(const int& minRange, const int& maxRange);
 
 }

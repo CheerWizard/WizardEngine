@@ -19,10 +19,6 @@ namespace engine {
         void onUpdate(Time dt);
         void onDestroy();
 
-    private:
-        void update(entt::registry& registry, Time dt);
-        void destroy(entt::registry& registry);
-
     public:
         inline void setActiveScene(const Ref<Scene> &activeScene) {
             this->activeScene = activeScene;

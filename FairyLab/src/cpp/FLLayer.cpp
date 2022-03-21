@@ -136,8 +136,7 @@ namespace fairy {
                         { r, r, r },
                         {0.2, 0.2, 0.2}
                 ),
-                GET_OBJ_MESH_INSTANCED(Vertex3d, "human.obj"),
-                true
+                GET_OBJ_MESH_INSTANCED(Vertex3d, "human.obj")
             );
         });
 
@@ -186,7 +185,9 @@ namespace fairy {
         random(-10, 10, 20, [this](const uint32_t& i, const float& r) {
             glm::vec4 randomColor1 = { random(0, 1), random(0, 1), random(0, 1), 1 };
             glm::vec4 randomColor2 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-            engine::Object3d<InstanceLineVertex>(
+            glm::vec3 randomPos1 = { random(-1, 1), random(-1, 1), random(-1, 1) };
+            glm::vec3 randomPos2 = { random(-1, 1), random(-1, 1), random(-1, 1) };
+            engine::Object3d<BatchLineVertex>(
                     app->activeScene.get(),
                     "Line " + std::to_string(i),
                     engine::transform3d(
@@ -195,45 +196,9 @@ namespace fairy {
                         { 1, 1, 1 }
                     ),
                     Lines({
-                          LineVertex { { -0.5, 0.5, 0.5 }, randomColor1 },
-                          LineVertex { { 0.5, 0.5, 0.5 }, randomColor2 }
+                        { randomPos1, randomColor1 },
+                        { randomPos2, randomColor2 }
                     })
-            );
-        });
-
-        random(-10, 10, 20, [this](const uint32_t& i, const float& r) {
-            glm::vec4 randomColor1 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-            glm::vec4 randomColor2 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-            engine::Object3d<InstanceLineVertex>(
-                    app->activeScene.get(),
-                    "StripLine " + std::to_string(i),
-                    engine::transform3d(
-                            { r, r, r },
-                            { r, r, r },
-                            { 1, 1, 1 }
-                    ),
-                    Lines({
-                                  LineVertex { { -0.5, 0.5, 0.5 }, randomColor1 },
-                                  LineVertex { { 0.5, 0.5, 0.5 }, randomColor2 }
-                          })
-            );
-        });
-
-        random(-10, 10, 20, [this](const uint32_t& i, const float& r) {
-            glm::vec4 randomColor1 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-            glm::vec4 randomColor2 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-            engine::Object3d<InstanceLineVertex>(
-                    app->activeScene.get(),
-                    "LoopLine " + std::to_string(i),
-                    engine::transform3d(
-                            { r, r, r },
-                            { r, r, r },
-                            { 1, 1, 1 }
-                    ),
-                    Lines({
-                                  LineVertex { { -0.5, 0.5, 0.5 }, randomColor1 },
-                                  LineVertex { { 0.5, 0.5, 0.5 }, randomColor2 }
-                          })
             );
         });
     }

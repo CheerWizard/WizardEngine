@@ -44,14 +44,14 @@ namespace engine {
     };
 
     template<typename T>
-    void setInstanceId(BaseMeshComponent<InstanceVertex<T>> &meshComponent, const uint32_t &instanceId) {
-        const auto& meshInstanceId = meshComponent.meshes[0].vertexData.vertices[0].instanceId;
-        if (meshInstanceId == instanceId) return;
+    void setBatchId(BaseMeshComponent<BatchVertex<T>> &meshComponent, const uint32_t &batchId) {
+        const auto& meshInstanceId = meshComponent.meshes[0].vertexData.vertices[0].id;
+        if (meshInstanceId == batchId) return;
         for (auto i = 0 ; i < meshComponent.meshCount ; i++) {
             const auto& vertexData = meshComponent.meshes[i].vertexData;
             for (auto j = 0; j < vertexData.vertexCount; j++) {
                 auto& vertex = vertexData.vertices[j];
-                vertex.instanceId = (float) instanceId;
+                vertex.id = (float) batchId;
             }
         }
     }

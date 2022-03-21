@@ -35,16 +35,12 @@ namespace engine {
     private:
         Ref<Scene> activeScene = nullptr;
         Ref<FrameBuffer> sceneFrame;
-        // scene renderers
-        Ref<BatchRenderer> sceneBatchRenderer;
-        Ref<InstanceRenderer> sceneInstanceRenderer;
+        // scene renderer
+        Ref<MultiRenderer> sceneRenderer;
         // line renderers
-        Ref<BatchRenderer> lineBatchRenderer;
-        Ref<InstanceRenderer> lineInstanceRenderer;
-        Ref<BatchRenderer> stripLineBatchRenderer;
-        Ref<InstanceRenderer> stripLineInstanceRenderer;
-        Ref<BatchRenderer> loopLineBatchRenderer;
-        Ref<InstanceRenderer> loopLineInstanceRenderer;
+        Ref<MultiRenderer> lineRenderer;
+        Ref<MultiRenderer> stripLineRenderer;
+        Ref<MultiRenderer> loopLineRenderer;
     };
 
 }

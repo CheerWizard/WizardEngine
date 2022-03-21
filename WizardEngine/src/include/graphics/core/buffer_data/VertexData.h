@@ -11,9 +11,14 @@
 namespace engine {
 
     template<typename V>
+    struct BatchVertex {
+        V vertex;
+        float id = 0;
+    };
+
+    template<typename V>
     struct InstanceVertex {
         V vertex;
-        float instanceId = 0;
     };
 
     template<typename V>
@@ -54,10 +59,10 @@ namespace engine {
     }
 
     template<typename T>
-    void setInstanceId(VertexDataComponent<InstanceVertex<T>>& vertexDataComponent, const uint32_t& instanceId) {
+    void setBatchId(VertexDataComponent<BatchVertex<T>>& vertexDataComponent, const uint32_t& batchId) {
         auto& vertexData = vertexDataComponent.vertexData;
         for (auto i = 0; i < vertexData.vertexCount; i++) {
-            vertexData.vertices[i].instanceId = (float) instanceId;
+            vertexData.vertices[i].id = (float) batchId;
         }
     }
 
@@ -71,5 +76,31 @@ namespace engine {
     template<typename T>
     void invalidate(VertexDataComponent<T> &vertexDataComponent) {
         vertexDataComponent.vertexData.vertexStart = 0;
+    }
+
+    template<typename T>
+    VertexData<InstanceVertex<T>> toVertexData(const std::vector<InstanceVertex<T>>& instanceVertices) {
+        auto instanceVerticesArray = new InstanceVertex<T>[instanceVertices.size()];
+        for (auto i = 0; i < instanceVertices.size(); i++) {
+            instanceVerticesArray[i] = instanceVertices[i];
+        }
+        return VertexData<InstanceVertex<T>> {
+                instanceVerticesArray,
+                0,
+                static_cast<uint32_t>(instanceVertices.size())
+        };
+    }
+
+    template<typename T>
+    VertexData<BatchVertex<T>> toVertexData(const std::vector<T>& vertices) {
+        auto* batchVertices = new BatchVertex<T>[vertices.size()];
+        for (auto i = 0; i < vertices.size(); i++) {
+            batchVertices[i] = { vertices[i] };
+        }
+        return VertexData<BatchVertex<T>> {
+                batchVertices,
+                0,
+                static_cast<uint32_t>(vertices.size())
+        };
     }
 }

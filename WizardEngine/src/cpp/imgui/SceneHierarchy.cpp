@@ -439,8 +439,7 @@ namespace engine {
     void SceneHierarchy::onUpdate(Time dt) {
         ImGui::Begin(_props.name);
 
-        draw(_scene->getBatchRegistry(), false);
-        draw(_scene->getInstanceRegistry(), true);
+        draw(_scene->getRegistry());
 
         if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) {
             _selectedEntity = {};
@@ -464,11 +463,11 @@ namespace engine {
         ImGui::End();
     }
 
-    void SceneHierarchy::draw(entt::registry& registry, bool instancingEnabled) {
+    void SceneHierarchy::draw(entt::registry& registry) {
         if (registry.empty<>()) return;
 
         registry.each([&](auto entityID) {
-            Entity entity { entityID , _scene.get(), instancingEnabled };
+            Entity entity { entityID , _scene.get() };
             drawEntityNode(entity);
         });
     }

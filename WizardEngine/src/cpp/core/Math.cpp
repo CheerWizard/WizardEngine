@@ -22,7 +22,7 @@ namespace engine {
         }
     }
 
-    float random(const uint32_t& minRange, const uint32_t& maxRange) {
+    float random(const int& minRange, const int& maxRange) {
         std::random_device rd;
         std::mt19937 mt(rd());
         std::uniform_real_distribution<double> dist(minRange, maxRange);
