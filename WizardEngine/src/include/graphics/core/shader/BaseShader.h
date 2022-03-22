@@ -109,6 +109,10 @@ namespace engine::shader {
             return _fShader;
         }
 
+        inline VertexFormat& getVertexFormat() {
+            return vertexFormat;
+        }
+
     public:
         void construct(const ShaderProps& props);
         void detachShaders();

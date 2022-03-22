@@ -9,16 +9,8 @@
 namespace engine {
 
     void ScriptSystem::onUpdate(Time dt) {
-        update(activeScene->getBatchRegistry(), dt);
-        update(activeScene->getInstanceRegistry(), dt);
-    }
+        auto& registry = activeScene->getRegistry();
 
-    void ScriptSystem::onDestroy() {
-        destroy(activeScene->getBatchRegistry());
-        destroy(activeScene->getInstanceRegistry());
-    }
-
-    void ScriptSystem::update(entt::registry &registry, Time dt) {
         registry.view<NativeScript>().each([=](auto entity, auto& sc) {
             if (!sc.script) {
                 sc.script = { entity, activeScene.get() };
@@ -26,6 +18,7 @@ namespace engine {
             }
             sc.onUpdateFunction(sc.script, dt);
         });
+
         registry.view<DLLScript>().each([=](auto entity, auto& sc) {
             if (sc.scriptable) {
                 sc.scriptable->onUpdate(dt);
@@ -33,12 +26,15 @@ namespace engine {
         });
     }
 
-    void ScriptSystem::destroy(entt::registry &registry) {
+    void ScriptSystem::onDestroy() {
+        auto& registry = activeScene->getRegistry();
+
         registry.view<NativeScript>().each([=](auto entity, auto& sc) {
             if (sc.script) {
                 sc.onDestroyFunction(sc.script);
             }
         });
+
         registry.view<DLLScript>().each([=](auto entity, auto& sc) {
             if (sc.scriptable) {
                 sc.scriptable->onDestroy();
