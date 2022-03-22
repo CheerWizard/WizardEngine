@@ -28,5 +28,4 @@ namespace engine {
         std::uniform_real_distribution<double> dist(minRange, maxRange);
         return (float) dist(mt);
     }
-
 }
