@@ -161,10 +161,11 @@ namespace engine {
     void BatchRenderer::renderV(entt::registry &registry) {
         if (!shaderProgram->isReady()) return;
 
+        auto entities = registry.view<Transform3dComponent, VertexDataComponent<BatchVertex<T>>>();
+        if (entities.size_hint() == 0) return; // nothing to render
+
         shaderProgram->start();
         shaderProgram->update(registry);
-
-        auto entities = registry.view<Transform3dComponent, VertexDataComponent<BatchVertex<T>>>();
 
         uint32_t nextRenderModelId = 0;
         for (auto [entity, transform, vertexDataComponent] : entities.each()) {
@@ -210,10 +211,11 @@ namespace engine {
     void BatchRenderer::renderVI(entt::registry &registry) {
         if (!shaderProgram->isReady()) return;
 
+        auto entities = registry.view<Transform3dComponent, BaseMeshComponent<BatchVertex<T>>>();
+        if (entities.size_hint() == 0) return; // nothing to render
+
         shaderProgram->start();
         shaderProgram->update(registry);
-
-        auto entities = registry.view<Transform3dComponent, BaseMeshComponent<BatchVertex<T>>>();
 
         uint32_t nextRenderModelId = 0;
         for (auto [entity, transform, mesh] : entities.each()) {
@@ -261,10 +263,12 @@ namespace engine {
     void InstanceRenderer::renderV(entt::registry& registry) {
         if (!shaderProgram->isReady()) return;
 
+        auto entities = registry.view<Transform3dComponent, VertexDataComponent<InstanceVertex<T>>>();
+        if (entities.size_hint() == 0) return; // nothing to render
+
         shaderProgram->start();
         shaderProgram->update(registry);
 
-        auto entities = registry.view<Transform3dComponent, VertexDataComponent<InstanceVertex<T>>>();
         uint32_t totalVertexCount = 0;
         uint32_t i = 0;
         uint32_t renderModelId = 0;
@@ -310,10 +314,12 @@ namespace engine {
     void InstanceRenderer::renderVI(entt::registry& registry) {
         if (!shaderProgram->isReady()) return;
 
+        auto entities = registry.view<Transform3dComponent, BaseMeshComponent<InstanceVertex<T>>>();
+        if (entities.size_hint() == 0) return; // nothing to render
+
         shaderProgram->start();
         shaderProgram->update(registry);
 
-        auto entities = registry.view<Transform3dComponent, BaseMeshComponent<InstanceVertex<T>>>();
         uint32_t totalVertexCount = 0;
         uint32_t totalIndexCount = 0;
         uint32_t i = 0;
