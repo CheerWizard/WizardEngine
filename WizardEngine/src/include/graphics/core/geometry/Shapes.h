@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "MeshComponent.h"
+#include "Mesh.h"
 #include "string_view"
 
 namespace engine {

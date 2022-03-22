@@ -6,8 +6,9 @@
 
 namespace engine {
 
-    void Renderer::create() {
+    void Renderer::create(const AttributeCategory& attributeCategory) {
         shaderProgram->bindVertexFormat();
+        shaderProgram->getVertexFormat().setAttrCategory(attributeCategory);
         createRenderModel(DEFAULT_VERTEX_COUNT);
         createRenderModel(DEFAULT_VERTEX_COUNT, DEFAULT_INDEX_COUNT);
     }

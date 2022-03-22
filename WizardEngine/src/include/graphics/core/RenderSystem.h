@@ -29,8 +29,10 @@ namespace engine {
 
     private:
         void create();
-        void createSceneRenderers();
+        void createSceneRenderer();
         void createLineRenderers();
+        void createQuadRenderer();
+        void createCircleRenderer();
 
     private:
         Ref<Scene> activeScene = nullptr;
@@ -41,6 +43,10 @@ namespace engine {
         Ref<MultiRenderer> lineRenderer;
         Ref<MultiRenderer> stripLineRenderer;
         Ref<MultiRenderer> loopLineRenderer;
+        // quad renderer
+        Ref<MultiRenderer> quadRenderer;
+        // circle renderer
+        Ref<MultiRenderer> circleRenderer;
     };
 
 }

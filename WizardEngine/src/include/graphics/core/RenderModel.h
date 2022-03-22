@@ -8,7 +8,7 @@
 #include <platform/graphics/VertexBuffer.h>
 #include <platform/graphics/IndexBuffer.h>
 
-#include <graphics/core/geometry/MeshComponent.h>
+#include <graphics/core/geometry/Mesh.h>
 
 namespace engine {
 

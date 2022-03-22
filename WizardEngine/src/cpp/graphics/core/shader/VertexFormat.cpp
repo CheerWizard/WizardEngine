@@ -47,4 +47,9 @@ namespace engine::shader {
         return _attributes.empty();
     }
 
+    void VertexFormat::setAttrCategory(const AttributeCategory& attributeCategory) {
+        for (auto& attribute : _attributes) {
+            attribute.category = attributeCategory;
+        }
+    }
 }

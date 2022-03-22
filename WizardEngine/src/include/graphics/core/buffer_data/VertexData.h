@@ -29,7 +29,7 @@ namespace engine {
     };
 
     enum DrawType {
-        QUAD, TRIANGLE,
+        QUAD, TRIANGLE, TRIANGLE_STRIP,
         LINE, LINE_STRIP, LINE_LOOP
     };
 
@@ -78,29 +78,30 @@ namespace engine {
         vertexDataComponent.vertexData.vertexStart = 0;
     }
 
-    template<typename T>
-    VertexData<InstanceVertex<T>> toVertexData(const std::vector<InstanceVertex<T>>& instanceVertices) {
-        auto instanceVerticesArray = new InstanceVertex<T>[instanceVertices.size()];
-        for (auto i = 0; i < instanceVertices.size(); i++) {
-            instanceVerticesArray[i] = instanceVertices[i];
+    template<typename IN, typename OUT>
+    VertexData<OUT> toVertexData(const std::vector<IN>& inVertices) {
+        size_t size = inVertices.size();
+        auto* outVertices = new OUT[size];
+        for (auto i = 0; i < size; i++) {
+            outVertices[i] = { inVertices[i] };
         }
-        return VertexData<InstanceVertex<T>> {
-                instanceVerticesArray,
+        return VertexData<OUT> {
+                outVertices,
                 0,
-                static_cast<uint32_t>(instanceVertices.size())
+                static_cast<uint32_t>(size)
         };
     }
 
-    template<typename T>
-    VertexData<BatchVertex<T>> toVertexData(const std::vector<T>& vertices) {
-        auto* batchVertices = new BatchVertex<T>[vertices.size()];
-        for (auto i = 0; i < vertices.size(); i++) {
-            batchVertices[i] = { vertices[i] };
+    template<typename IN, typename OUT, size_t Size>
+    VertexData<OUT> toVertexData(const std::array<IN, Size>& inVertices) {
+        auto* outVertices = new OUT[Size];
+        for (auto i = 0; i < Size; i++) {
+            outVertices[i] = { inVertices[i] };
         }
-        return VertexData<BatchVertex<T>> {
-                batchVertices,
+        return VertexData<OUT> {
+                outVertices,
                 0,
-                static_cast<uint32_t>(vertices.size())
+                static_cast<uint32_t>(Size)
         };
     }
 }

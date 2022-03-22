@@ -16,6 +16,7 @@ namespace engine {
             case LINE: return GL_LINES;
             case LINE_STRIP: return GL_LINE_STRIP;
             case LINE_LOOP: return GL_LINE_LOOP;
+            case TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
             default: return GL_TRIANGLES;
         }
     }

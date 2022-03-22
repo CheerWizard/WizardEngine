@@ -5,9 +5,8 @@
 #pragma once
 
 #include <ecs/Entity.h>
-#include "core/geometry/MeshComponent.h"
+#include "core/geometry/Mesh.h"
 #include "transform/TransformComponents.h"
-#include "core/geometry/Lines.h"
 
 namespace engine {
 
@@ -67,10 +66,20 @@ namespace engine {
             EntityContainer* container,
             const std::string& tag,
             const Transform3dComponent &transform,
-            const VertexDataComponent<T> vertexDataComponent
+            const VertexDataComponent<InstanceVertex<T>> vertexDataComponent
         ) : Entity(tag, container) {
             add<Transform3dComponent>(transform);
-            add<VertexDataComponent<T>>(vertexDataComponent);
+            add<VertexDataComponent<InstanceVertex<T>>>(vertexDataComponent);
+        }
+
+        Object3d(
+                EntityContainer* container,
+                const std::string& tag,
+                const Transform3dComponent &transform,
+                const VertexDataComponent<BatchVertex<T>> vertexDataComponent
+        ) : Entity(tag, container) {
+            add<Transform3dComponent>(transform);
+            add<VertexDataComponent<BatchVertex<T>>>(vertexDataComponent);
         }
 
         ~Object3d() = default;

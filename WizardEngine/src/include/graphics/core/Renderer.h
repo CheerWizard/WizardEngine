@@ -5,14 +5,8 @@
 #pragma once
 
 #include "RenderModel.h"
-
-#include <ecs/Components.h>
-
-#include "geometry/MeshComponent.h"
-#include "geometry/Lines.h"
-
 #include "shader/BaseShader.h"
-
+#include <ecs/Components.h>
 #include <graphics/transform/TransformComponents.h>
 #include <platform/graphics/RenderCommands.h>
 
@@ -25,9 +19,12 @@ namespace engine {
     class Renderer {
 
     public:
-        Renderer(const Ref<BaseShaderProgram>& shaderProgram, const DrawType& drawType = TRIANGLE)
-        : shaderProgram(shaderProgram), drawType(drawType) {
-            create();
+        Renderer(
+                const Ref<BaseShaderProgram>& shaderProgram,
+                const DrawType& drawType = TRIANGLE,
+                const AttributeCategory& attributeCategory = VERTEX
+        ) : shaderProgram(shaderProgram), drawType(drawType) {
+            create(attributeCategory);
         }
 
         ~Renderer() {
@@ -40,7 +37,7 @@ namespace engine {
         }
 
     protected:
-        void create();
+        void create(const AttributeCategory& attributeCategory);
         VRenderModel& createRenderModel(const uint32_t& vertexCount);
         VIRenderModel& createRenderModel(const uint32_t& vertexCount, const uint32_t& indexCount);
         void release();

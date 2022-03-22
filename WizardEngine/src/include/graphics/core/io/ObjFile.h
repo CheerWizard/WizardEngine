@@ -5,7 +5,7 @@
 #pragma once
 
 #include <core/FileSystem.h>
-#include <graphics/core/geometry/MeshComponent.h>
+#include <graphics/core/geometry/Mesh.h>
 
 #define RUNTIME_OBJ_PATH "assets/obj"
 

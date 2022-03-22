@@ -5,7 +5,7 @@
 #pragma once
 
 #include <core/Logger.h>
-#include <graphics/core/geometry/Lines.h>
+#include <graphics/core/buffer_data/VertexData.h>
 #include "cstdint"
 
 namespace engine {
@@ -67,6 +67,9 @@ namespace engine {
     void setStencilTestOperator(const TestOperator& testOperator, int value, bool readOnly);
     int stencilMask(bool readOnly);
     void setStencilTestActions(const StencilTestActions& stencilTestActions);
+
+    void setBlendFunc();
+    void setBlendMode(bool isEnabled);
 
     struct CullingComponent {
         bool enabled = false;

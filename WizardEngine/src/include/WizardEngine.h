@@ -6,7 +6,7 @@
 #include "core/Math.h"
 // Graphics
 #include "graphics/transform/TransformComponents.h"
-#include "graphics/core/geometry/MeshComponent.h"
+#include "graphics/core/geometry/Mesh.h"
 
 #define DLL_API __declspec(dllexport)
 #define DLL_EXPORT extern "C" DLL_API

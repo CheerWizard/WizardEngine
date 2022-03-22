@@ -12,6 +12,10 @@
 #include <graphics/GraphicsObject.h>
 #include <scripting/ScriptBuilder.h>
 
+#include <graphics/core/geometry/Line.h>
+#include <graphics/core/geometry/Quad.h>
+#include <graphics/core/geometry/Circle.h>
+
 #include <imgui/imgui.h>
 
 using namespace engine::shader;
@@ -182,12 +186,12 @@ namespace fairy {
         carMaterialMaps.specularFileName = "wood_specular.png";
         car.add<engine::MaterialMapsComponent>(carMaterialMaps);
 
-        random(-10, 10, 20, [this](const uint32_t& i, const float& r) {
+        random(-10, 10, 10, [this](const uint32_t& i, const float& r) {
             glm::vec4 randomColor1 = { random(0, 1), random(0, 1), random(0, 1), 1 };
             glm::vec4 randomColor2 = { random(0, 1), random(0, 1), random(0, 1), 1 };
             glm::vec3 randomPos1 = { random(-1, 1), random(-1, 1), random(-1, 1) };
             glm::vec3 randomPos2 = { random(-1, 1), random(-1, 1), random(-1, 1) };
-            engine::Object3d<BatchLineVertex>(
+            engine::Object3d(
                     app->activeScene.get(),
                     "Line " + std::to_string(i),
                     engine::transform3d(
@@ -195,11 +199,63 @@ namespace fairy {
                         { r, r, r },
                         { 1, 1, 1 }
                     ),
-                    Lines({
+                    InstanceLine({
                         { randomPos1, randomColor1 },
                         { randomPos2, randomColor2 }
                     })
             );
+        });
+
+        random(-10, 10, 10, [this](const uint32_t& i, const float& r) {
+            glm::vec4 randomColor1 = { random(0, 1), random(0, 1), random(0, 1), 1 };
+            glm::vec4 randomColor2 = { random(0, 1), random(0, 1), random(0, 1), 1 };
+            glm::vec4 randomColor3 = { random(0, 1), random(0, 1), random(0, 1), 1 };
+            glm::vec4 randomColor4 = { random(0, 1), random(0, 1), random(0, 1), 1 };
+
+            std::array<QuadVertex, 4> quadVertices = {
+                    QuadVertex { { 0.5, -0.5, 0.5 }, randomColor1 },
+                    QuadVertex { { 0.5, 0.5, 0.5 }, randomColor2 },
+                    QuadVertex { { -0.5, -0.5, 0.5 }, randomColor3 },
+                    QuadVertex { { -0.5, 0.5, 0.5 }, randomColor4 }
+            };
+
+            engine::Object3d(
+                    app->activeScene.get(),
+                    "Quad " + std::to_string(i),
+                    engine::transform3d(
+                            { r, r, r },
+                            { r, r, r },
+                            { 1, 1, 1 }
+                    ),
+                    InstanceQuad(quadVertices)
+            );
+        });
+
+        random(-10, 10, 10, [this](const uint32_t& i, const float& r) {
+            glm::vec4 randomColor1 = { random(0, 1), random(0, 1), random(0, 1), 1 };
+            glm::vec4 randomColor2 = { random(0, 1), random(0, 1), random(0, 1), 1 };
+            glm::vec4 randomColor3 = { random(0, 1), random(0, 1), random(0, 1), 1 };
+            glm::vec4 randomColor4 = { random(0, 1), random(0, 1), random(0, 1), 1 };
+
+            std::array<CircleVertex, 4> circleVertices = {
+                    CircleVertex { { 0.5, -0.5, 0.5 }, { -1, -1 }, randomColor1 },
+                    CircleVertex { { 0.5, 0.5, 0.5 }, { -1, 1 }, randomColor2 },
+                    CircleVertex { { -0.5, -0.5, 0.5 }, { 1, -1 }, randomColor3 },
+                    CircleVertex { { -0.5, 0.5, 0.5 }, { 1, 1 }, randomColor4 }
+            };
+
+            auto circle = engine::Object3d(
+                    app->activeScene.get(),
+                    "Circle " + std::to_string(i),
+                    engine::transform3d(
+                            { r, r, r },
+                            { r, r, r },
+                            { 1, 1, 1 }
+                    ),
+                    InstanceCircle(circleVertices)
+            );
+            auto circleComponent = CircleComponent();
+            circle.add<CircleComponent>(circleComponent);
         });
     }
 

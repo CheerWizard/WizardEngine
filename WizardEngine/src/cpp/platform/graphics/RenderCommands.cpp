@@ -16,6 +16,7 @@ namespace engine {
             case LINE: return GL_LINES;
             case LINE_STRIP: return GL_LINE_STRIP;
             case LINE_LOOP: return GL_LINE_LOOP;
+            case TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
             default: return GL_TRIANGLES;
         }
     }
@@ -165,6 +166,14 @@ namespace engine {
                 toGLTestAction(stencilTestActions.stencilPassDepthFails),
                 toGLTestAction(stencilTestActions.stencilPassDepthPass)
         );
+    }
+
+    void setBlendFunc() {
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    void setBlendMode(bool isEnabled) {
+        isEnabled ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
     }
 
     PolygonMode RenderCommands::activePolygonMode = FILL;
