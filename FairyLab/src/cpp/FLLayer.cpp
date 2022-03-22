@@ -231,17 +231,17 @@ namespace fairy {
             );
         });
 
-        random(-10, 10, 10, [this](const uint32_t& i, const float& r) {
+        random(-10, 10, 1, [this](const uint32_t& i, const float& r) {
             glm::vec4 randomColor1 = { random(0, 1), random(0, 1), random(0, 1), 1 };
             glm::vec4 randomColor2 = { random(0, 1), random(0, 1), random(0, 1), 1 };
             glm::vec4 randomColor3 = { random(0, 1), random(0, 1), random(0, 1), 1 };
             glm::vec4 randomColor4 = { random(0, 1), random(0, 1), random(0, 1), 1 };
 
             std::array<CircleVertex, 4> circleVertices = {
-                    CircleVertex { { 0.5, -0.5, 0.5 }, { -1, -1 }, randomColor1 },
-                    CircleVertex { { 0.5, 0.5, 0.5 }, { -1, 1 }, randomColor2 },
-                    CircleVertex { { -0.5, -0.5, 0.5 }, { 1, -1 }, randomColor3 },
-                    CircleVertex { { -0.5, 0.5, 0.5 }, { 1, 1 }, randomColor4 }
+                    CircleVertex { { 0.5, -0.5, 0.5 }, { 1, -1 }, randomColor1 },
+                    CircleVertex { { 0.5, 0.5, 0.5 }, { 1, 1 }, randomColor2 },
+                    CircleVertex { { -0.5, -0.5, 0.5 }, { -1, -1 }, randomColor3 },
+                    CircleVertex { { -0.5, 0.5, 0.5 }, { -1, 1 }, randomColor4 }
             };
 
             auto circle = engine::Object3d(
@@ -252,10 +252,9 @@ namespace fairy {
                             { r, r, r },
                             { 1, 1, 1 }
                     ),
-                    InstanceCircle(circleVertices)
+                    BatchCircle(circleVertices)
             );
-            auto circleComponent = CircleComponent();
-            circle.add<CircleComponent>(circleComponent);
+            circle.add<CircleComponent>(CircleComponent());
         });
     }
 
