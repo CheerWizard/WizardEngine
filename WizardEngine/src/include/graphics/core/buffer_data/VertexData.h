@@ -11,9 +11,14 @@
 namespace engine {
 
     template<typename V>
+    struct BatchVertex {
+        V vertex;
+        float id = 0;
+    };
+
+    template<typename V>
     struct InstanceVertex {
         V vertex;
-        float instanceId = 0;
     };
 
     template<typename V>
@@ -24,7 +29,7 @@ namespace engine {
     };
 
     enum DrawType {
-        QUAD, TRIANGLE,
+        QUAD, TRIANGLE, TRIANGLE_STRIP,
         LINE, LINE_STRIP, LINE_LOOP
     };
 
@@ -54,10 +59,10 @@ namespace engine {
     }
 
     template<typename T>
-    void setInstanceId(VertexDataComponent<InstanceVertex<T>>& vertexDataComponent, const uint32_t& instanceId) {
+    void setBatchId(VertexDataComponent<BatchVertex<T>>& vertexDataComponent, const uint32_t& batchId) {
         auto& vertexData = vertexDataComponent.vertexData;
         for (auto i = 0; i < vertexData.vertexCount; i++) {
-            vertexData.vertices[i].instanceId = (float) instanceId;
+            vertexData.vertices[i].id = (float) batchId;
         }
     }
 
@@ -71,5 +76,32 @@ namespace engine {
     template<typename T>
     void invalidate(VertexDataComponent<T> &vertexDataComponent) {
         vertexDataComponent.vertexData.vertexStart = 0;
+    }
+
+    template<typename IN, typename OUT>
+    VertexData<OUT> toVertexData(const std::vector<IN>& inVertices) {
+        size_t size = inVertices.size();
+        auto* outVertices = new OUT[size];
+        for (auto i = 0; i < size; i++) {
+            outVertices[i] = { inVertices[i] };
+        }
+        return VertexData<OUT> {
+                outVertices,
+                0,
+                static_cast<uint32_t>(size)
+        };
+    }
+
+    template<typename IN, typename OUT, size_t Size>
+    VertexData<OUT> toVertexData(const std::array<IN, Size>& inVertices) {
+        auto* outVertices = new OUT[Size];
+        for (auto i = 0; i < Size; i++) {
+            outVertices[i] = { inVertices[i] };
+        }
+        return VertexData<OUT> {
+                outVertices,
+                0,
+                static_cast<uint32_t>(Size)
+        };
     }
 }

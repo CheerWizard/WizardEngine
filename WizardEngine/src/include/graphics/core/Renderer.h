@@ -5,14 +5,8 @@
 #pragma once
 
 #include "RenderModel.h"
-
-#include <ecs/Components.h>
-
-#include "geometry/MeshComponent.h"
-#include "geometry/Lines.h"
-
 #include "shader/BaseShader.h"
-
+#include <ecs/Components.h>
 #include <graphics/transform/TransformComponents.h>
 #include <platform/graphics/RenderCommands.h>
 
@@ -25,9 +19,12 @@ namespace engine {
     class Renderer {
 
     public:
-        Renderer(const Ref<BaseShaderProgram>& shaderProgram, const DrawType& drawType = TRIANGLE)
-        : shaderProgram(shaderProgram), drawType(drawType) {
-            create();
+        Renderer(
+                const Ref<BaseShaderProgram>& shaderProgram,
+                const DrawType& drawType = TRIANGLE,
+                const AttributeCategory& attributeCategory = VERTEX
+        ) : shaderProgram(shaderProgram), drawType(drawType) {
+            create(attributeCategory);
         }
 
         ~Renderer() {
@@ -40,7 +37,7 @@ namespace engine {
         }
 
     protected:
-        void create();
+        void create(const AttributeCategory& attributeCategory);
         VRenderModel& createRenderModel(const uint32_t& vertexCount);
         VIRenderModel& createRenderModel(const uint32_t& vertexCount, const uint32_t& indexCount);
         void release();
@@ -80,6 +77,33 @@ namespace engine {
         void renderV(entt::registry &registry);
         template<typename T>
         void renderVI(entt::registry &registry);
+    };
+
+    class MultiRenderer {
+
+    public:
+        MultiRenderer(const Ref<BatchRenderer>& batchRenderer, const Ref<InstanceRenderer>& instanceRenderer)
+        : batchRenderer(batchRenderer), instanceRenderer(instanceRenderer) {}
+
+        MultiRenderer(
+                const Ref<BaseShaderProgram>& batchShader,
+                const Ref<BaseShaderProgram>& instanceShader,
+                const DrawType& drawType = TRIANGLE
+        ) {
+            batchRenderer = createRef<BatchRenderer>(batchShader, drawType);
+            instanceRenderer = createRef<InstanceRenderer>(instanceShader, drawType);
+        }
+
+    public:
+        template<typename T>
+        void renderV(entt::registry& registry);
+        template<typename T>
+        void renderVI(entt::registry& registry);
+
+    private:
+        Ref<BatchRenderer> batchRenderer;
+        Ref<InstanceRenderer> instanceRenderer;
+
     };
 
     class VRenderer {
@@ -140,7 +164,7 @@ namespace engine {
         shaderProgram->start();
         shaderProgram->update(registry);
 
-        auto entities = registry.view<Transform3dComponent, VertexDataComponent<InstanceVertex<T>>>();
+        auto entities = registry.view<Transform3dComponent, VertexDataComponent<BatchVertex<T>>>();
 
         uint32_t nextRenderModelId = 0;
         for (auto [entity, transform, vertexDataComponent] : entities.each()) {
@@ -148,7 +172,7 @@ namespace engine {
 
             vertexDataComponent.renderModelId += nextRenderModelId;
             auto& renderModel = vRenderModels[vertexDataComponent.renderModelId];
-            if (!validate<InstanceVertex<T>>(renderModel, vertexDataComponent)) {
+            if (!validate<BatchVertex<T>>(renderModel, vertexDataComponent)) {
                 nextRenderModelId++;
             }
         }
@@ -162,7 +186,7 @@ namespace engine {
                     continue;
                 }
 
-                tryUploadInstance(i, vertexDataComponent, totalVertexCount, renderModel);
+                tryUploadBatch(i, vertexDataComponent, totalVertexCount, renderModel);
                 shaderProgram->getVShader().setUniformArrayElement(i++, transform);
                 if (i > INSTANCE_COUNT_LIMIT) {
                     renderModel.vao.bind();
@@ -189,7 +213,7 @@ namespace engine {
         shaderProgram->start();
         shaderProgram->update(registry);
 
-        auto entities = registry.view<Transform3dComponent, BaseMeshComponent<InstanceVertex<T>>>();
+        auto entities = registry.view<Transform3dComponent, BaseMeshComponent<BatchVertex<T>>>();
 
         uint32_t nextRenderModelId = 0;
         for (auto [entity, transform, mesh] : entities.each()) {
@@ -197,7 +221,7 @@ namespace engine {
 
             mesh.renderModelId += nextRenderModelId;
             auto& renderModel = viRenderModels[mesh.renderModelId];
-            if (!validate<InstanceVertex<T>>(renderModel, mesh)) {
+            if (!validate<BatchVertex<T>>(renderModel, mesh)) {
                 nextRenderModelId++;
             }
         }
@@ -212,7 +236,7 @@ namespace engine {
                     continue;
                 }
 
-                tryUploadMeshInstance(i, mesh, totalVertexCount, totalIndexCount, renderModel);
+                tryUploadBatchMesh(i, mesh, totalVertexCount, totalIndexCount, renderModel);
                 shaderProgram->getVShader().setUniformArrayElement(i++, transform);
                 if (i > INSTANCE_COUNT_LIMIT) {
                     renderModel.vao.bind();
@@ -240,25 +264,25 @@ namespace engine {
         shaderProgram->start();
         shaderProgram->update(registry);
 
-        auto entities = registry.view<Transform3dComponent, VertexDataComponent<T>>();
+        auto entities = registry.view<Transform3dComponent, VertexDataComponent<InstanceVertex<T>>>();
         uint32_t totalVertexCount = 0;
         uint32_t i = 0;
         uint32_t renderModelId = 0;
         bool renderModelReady = false;
         for (auto [entity, transform, vertexDataComponent] : entities.each()) {
             if (drawType != vertexDataComponent.drawType) {
-                i++; // shift instanceId
+                i++; // shift id
                 continue;
             }
 
             if (!renderModelReady) {
                 auto& oldRenderModel = vRenderModels[vertexDataComponent.renderModelId];
                 resetCounts(oldRenderModel);
-                validate(oldRenderModel, vertexDataComponent);
+                validate<InstanceVertex<T>>(oldRenderModel, vertexDataComponent);
                 renderModelId = vertexDataComponent.renderModelId;
 
                 auto& renderModel = vRenderModels[vertexDataComponent.renderModelId];
-                tryUpload(vertexDataComponent, totalVertexCount, renderModel);
+                tryUpload<InstanceVertex<T>>(vertexDataComponent, totalVertexCount, renderModel);
 
                 renderModelReady = true;
             }
@@ -273,7 +297,7 @@ namespace engine {
             }
         }
 
-        auto& renderModel = viRenderModels[renderModelId];
+        auto& renderModel = vRenderModels[renderModelId];
         if (i > 0 && totalVertexCount > 0) {
             renderModel.vao.bind();
             drawV(drawType, totalVertexCount, i);
@@ -289,7 +313,7 @@ namespace engine {
         shaderProgram->start();
         shaderProgram->update(registry);
 
-        auto entities = registry.view<Transform3dComponent, BaseMeshComponent<T>>();
+        auto entities = registry.view<Transform3dComponent, BaseMeshComponent<InstanceVertex<T>>>();
         uint32_t totalVertexCount = 0;
         uint32_t totalIndexCount = 0;
         uint32_t i = 0;
@@ -297,18 +321,18 @@ namespace engine {
         bool renderModelReady = false;
         for (auto [entity, transform, mesh] : entities.each()) {
             if (drawType != mesh.drawType) {
-                i++; // next instanceId
+                i++; // next id
                 continue;
             }
 
             if (!renderModelReady) {
                 auto& oldRenderModel = viRenderModels[mesh.renderModelId];
                 resetCounts(oldRenderModel);
-                validate(oldRenderModel, mesh);
+                validate<InstanceVertex<T>>(oldRenderModel, mesh);
                 renderModelId = mesh.renderModelId;
 
                 auto& renderModel = viRenderModels[mesh.renderModelId];
-                tryUpload(mesh, totalVertexCount, totalIndexCount, renderModel);
+                tryUpload<InstanceVertex<T>>(mesh, totalVertexCount, totalIndexCount, renderModel);
 
                 renderModelReady = true;
             }
@@ -330,6 +354,18 @@ namespace engine {
         }
 
         shaderProgram->stop();
+    }
+
+    template<typename T>
+    void MultiRenderer::renderV(entt::registry& registry) {
+        batchRenderer->renderV<T>(registry);
+        instanceRenderer->renderV<T>(registry);
+    }
+
+    template<typename T>
+    void MultiRenderer::renderVI(entt::registry& registry) {
+        batchRenderer->renderVI<T>(registry);
+        instanceRenderer->renderVI<T>(registry);
     }
 
     template<typename T>
@@ -407,5 +443,4 @@ namespace engine {
         increaseCounts(renderModel, meshComponent);
         return true;
     }
-
 }

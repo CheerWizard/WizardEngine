@@ -13,9 +13,9 @@
 #define GET_BASE_MESH(T, objName) engine::MeshSource<T>::get()->getMesh(objName)
 #define GET_OBJ(objName) GET_BASE_MESH(ObjVertex, objName)
 // for default (batched) rendering
-#define GET_OBJ_MESH(T, objName) toMeshComponent<InstanceVertex<T>>(GET_OBJ(objName))
+#define GET_OBJ_MESH(T, objName) toMeshComponent<BatchVertex<T>>(GET_OBJ(objName))
 // for instanced rendering
-#define GET_OBJ_MESH_INSTANCED(T, objName) toMeshComponent<T>(GET_OBJ(objName))
+#define GET_OBJ_MESH_INSTANCED(T, objName) toMeshComponent<InstanceVertex<T>>(GET_OBJ(objName))
 
 namespace engine {
 

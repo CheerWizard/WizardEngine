@@ -6,9 +6,9 @@ out vec3 f_normal;
 
 #include multiple.glsl
 
-void updateObject(int id) {
-    f_id = id;
-    vec4 objPos = transform[id] * vec4(position, 1.0);
+void updateObject(int objectId) {
+    f_id = objectId;
+    vec4 objPos = transform[objectId] * vec4(position, 1.0);
 
     f_pos = objPos.xyz;
     f_uv = uv;
@@ -18,6 +18,6 @@ void updateObject(int id) {
     gl_Position = camera * objPos;
 }
 
-void updateObject(float id) {
-    updateObject(int(id));
+void updateObject(float objectId) {
+    updateObject(int(objectId));
 }

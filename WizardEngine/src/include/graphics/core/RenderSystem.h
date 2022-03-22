@@ -29,22 +29,24 @@ namespace engine {
 
     private:
         void create();
-        void createSceneRenderers();
+        void createSceneRenderer();
         void createLineRenderers();
+        void createQuadRenderer();
+        void createCircleRenderer();
 
     private:
         Ref<Scene> activeScene = nullptr;
         Ref<FrameBuffer> sceneFrame;
-        // scene renderers
-        Ref<BatchRenderer> sceneBatchRenderer;
-        Ref<InstanceRenderer> sceneInstanceRenderer;
+        // scene renderer
+        Ref<MultiRenderer> sceneRenderer;
         // line renderers
-        Ref<BatchRenderer> lineBatchRenderer;
-        Ref<InstanceRenderer> lineInstanceRenderer;
-        Ref<BatchRenderer> stripLineBatchRenderer;
-        Ref<InstanceRenderer> stripLineInstanceRenderer;
-        Ref<BatchRenderer> loopLineBatchRenderer;
-        Ref<InstanceRenderer> loopLineInstanceRenderer;
+        Ref<MultiRenderer> lineRenderer;
+        Ref<MultiRenderer> stripLineRenderer;
+        Ref<MultiRenderer> loopLineRenderer;
+        // quad renderer
+        Ref<MultiRenderer> quadRenderer;
+        // circle renderer
+        Ref<MultiRenderer> circleRenderer;
     };
 
 }

@@ -8,7 +8,7 @@
 #include <platform/graphics/VertexBuffer.h>
 #include <platform/graphics/IndexBuffer.h>
 
-#include <graphics/core/geometry/MeshComponent.h>
+#include <graphics/core/geometry/Mesh.h>
 
 namespace engine {
 
@@ -66,16 +66,16 @@ namespace engine {
     }
 
     template<typename T>
-    void tryUploadInstance(
-            const uint32_t &instanceId,
-            VertexDataComponent<InstanceVertex<T>> &vertexDataComponent,
+    void tryUploadBatch(
+            const uint32_t &id,
+            VertexDataComponent<BatchVertex<T>> &vertexDataComponent,
             uint32_t &previousVertexCount,
             VRenderModel& renderModel
     ) {
         if (vertexDataComponent.isUpdated) {
-            setInstanceId(vertexDataComponent, instanceId);
+            setBatchId(vertexDataComponent, id);
         }
-        tryUpload<InstanceVertex<T>>(vertexDataComponent, previousVertexCount, renderModel);
+        tryUpload<BatchVertex<T>>(vertexDataComponent, previousVertexCount, renderModel);
     }
 
     template<typename T>
@@ -100,17 +100,17 @@ namespace engine {
     }
 
     template<typename T>
-    void tryUploadMeshInstance(
-            const uint32_t &instanceId,
-            BaseMeshComponent<InstanceVertex<T>> &meshComponent,
+    void tryUploadBatchMesh(
+            const uint32_t &id,
+            BaseMeshComponent<BatchVertex<T>> &baseMeshComponent,
             uint32_t &previousVertexCount,
             uint32_t &previousIndexCount,
             VIRenderModel& renderModel
     ) {
-        if (meshComponent.isUpdated) {
-            setInstanceId(meshComponent, instanceId);
+        if (baseMeshComponent.isUpdated) {
+            setBatchId(baseMeshComponent, id);
         }
-        tryUpload<InstanceVertex<T>>(meshComponent, previousVertexCount, previousIndexCount, renderModel);
+        tryUpload<BatchVertex<T>>(baseMeshComponent, previousVertexCount, previousIndexCount, renderModel);
     }
 
     template<typename T>

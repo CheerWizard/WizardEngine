@@ -5,9 +5,8 @@
 #pragma once
 
 #include <ecs/Entity.h>
-#include "core/geometry/MeshComponent.h"
+#include "core/geometry/Mesh.h"
 #include "transform/TransformComponents.h"
-#include "core/geometry/Lines.h"
 
 namespace engine {
 
@@ -17,18 +16,16 @@ namespace engine {
     public:
         Object3d(
                 const std::string &tag,
-                EntityContainer* container,
-                const bool& instancingEnabled = false
-        ) : Entity(tag, container, instancingEnabled) {
+                EntityContainer* container
+        ) : Entity(tag, container) {
             add<Transform3dComponent>(transform3d());
             add<BaseMeshComponent<T>>();
             add<MaterialComponent>();
         }
 
         Object3d(
-                EntityContainer* container,
-                const bool& instancingEnabled = false
-        ) : Entity("GraphicsObject", container, instancingEnabled) {
+                EntityContainer* container
+        ) : Entity("GraphicsObject", container) {
             add<Transform3dComponent>(transform3d());
             add<BaseMeshComponent<T>>();
             add<MaterialComponent>();
@@ -37,9 +34,8 @@ namespace engine {
         Object3d(
                 EntityContainer* container,
                 const std::string &tag,
-                const Transform3dComponent& transform,
-                const bool& instancingEnabled = false
-        ) : Entity(tag, container, instancingEnabled) {
+                const Transform3dComponent& transform
+        ) : Entity(tag, container) {
             add<Transform3dComponent>(transform);
             add<BaseMeshComponent<T>>();
             add<MaterialComponent>();
@@ -48,9 +44,8 @@ namespace engine {
         Object3d(
                 EntityContainer* container,
                 const std::string &tag,
-                const BaseMeshComponent<T> &mesh,
-                const bool& instancingEnabled = false
-        ) : Entity(tag, container, instancingEnabled) {
+                const BaseMeshComponent<T> &mesh
+        ) : Entity(tag, container) {
             add<Transform3dComponent>(transform3d());
             add<BaseMeshComponent<T>>(mesh);
             add<MaterialComponent>();
@@ -60,9 +55,8 @@ namespace engine {
                 EntityContainer* container,
                 const std::string &tag,
                 const Transform3dComponent &transform,
-                const BaseMeshComponent<T>& mesh,
-                const bool& instancingEnabled = false
-        ) : Entity(tag, container, instancingEnabled) {
+                const BaseMeshComponent<T>& mesh
+        ) : Entity(tag, container) {
             add<Transform3dComponent>(transform);
             add<BaseMeshComponent<T>>(mesh);
             add<MaterialComponent>();
@@ -72,14 +66,22 @@ namespace engine {
             EntityContainer* container,
             const std::string& tag,
             const Transform3dComponent &transform,
-            const VertexDataComponent<T> vertexDataComponent,
-            const bool& instancingEnabled = false
-        ) : Entity(tag, container, instancingEnabled) {
+            const VertexDataComponent<InstanceVertex<T>> vertexDataComponent
+        ) : Entity(tag, container) {
             add<Transform3dComponent>(transform);
-            add<VertexDataComponent<T>>(vertexDataComponent);
+            add<VertexDataComponent<InstanceVertex<T>>>(vertexDataComponent);
+        }
+
+        Object3d(
+                EntityContainer* container,
+                const std::string& tag,
+                const Transform3dComponent &transform,
+                const VertexDataComponent<BatchVertex<T>> vertexDataComponent
+        ) : Entity(tag, container) {
+            add<Transform3dComponent>(transform);
+            add<VertexDataComponent<BatchVertex<T>>>(vertexDataComponent);
         }
 
         ~Object3d() = default;
     };
-
 }
