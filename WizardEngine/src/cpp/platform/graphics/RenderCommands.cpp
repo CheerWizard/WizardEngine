@@ -168,12 +168,90 @@ namespace engine {
         );
     }
 
-    void setBlendFunc() {
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    GLenum toGLBlendFactor(const BlendFactor& blendFactor) {
+        switch (blendFactor) {
+            case F_ZERO: return GL_ZERO;
+            case F_ONE: return GL_ONE;
+            case SRC_COLOR: return GL_SRC_COLOR;
+            case ONE_MINUS_SRC_COLOR: return GL_ONE_MINUS_SRC_COLOR;
+            case DST_COLOR: return GL_DST_COLOR;
+            case ONE_MINUS_DST_COLOR: return GL_ONE_MINUS_DST_COLOR;
+            case SRC_ALPHA: return GL_SRC_ALPHA;
+            case ONE_MINUS_SRC_ALPHA: return GL_ONE_MINUS_SRC_ALPHA;
+            case DST_ALPHA: return GL_DST_ALPHA;
+            case ONE_MINUS_DST_ALPHA: return GL_ONE_MINUS_DST_ALPHA;
+            case CONSTANT_COLOR: return GL_CONSTANT_COLOR;
+            case ONE_MINUS_CONSTANT_COLOR: return GL_ONE_MINUS_CONSTANT_COLOR;
+            case CONSTANT_ALPHA: return GL_CONSTANT_ALPHA;
+            case ONE_MINUS_CONSTANT_ALPHA: return GL_ONE_MINUS_CONSTANT_ALPHA;
+            default: return GL_SRC_ALPHA;
+        }
     }
 
     void setBlendMode(bool isEnabled) {
         isEnabled ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
+    }
+
+    void setBlendFunction(const BlendFactor& srcFactor, const BlendFactor& destFactor) {
+        glBlendFunc(toGLBlendFactor(srcFactor), toGLBlendFactor(destFactor));
+    }
+
+    void setBlendFunctionSeparate(
+            const BlendFactor& srcRgbFactor,
+            const BlendFactor& destRgbFactor,
+            const BlendFactor& srcAlphaFactor,
+            const BlendFactor& destAlphaFactor
+    ) {
+        glBlendFuncSeparate(
+                toGLBlendFactor(srcRgbFactor),
+                toGLBlendFactor(destRgbFactor),
+                toGLBlendFactor(srcAlphaFactor),
+                toGLBlendFactor(destAlphaFactor)
+        );
+    }
+
+    GLenum toGLBlendOperator(const BlendOperator& blendOperator) {
+        switch (blendOperator) {
+            case ADD: return GL_FUNC_ADD;
+            case SUBTRACT: return GL_FUNC_SUBTRACT;
+            case REVERSE_SUBTRACT: return GL_FUNC_REVERSE_SUBTRACT;
+            case MIN: return GL_MIN;
+            case MAX: return GL_MAX;
+            default: return GL_FUNC_ADD;
+        }
+    }
+
+    void setBlendEquation(const BlendOperator& srcDestOperator) {
+        glBlendEquation(toGLBlendOperator(srcDestOperator));
+    }
+
+    void setCullFaceMode(bool isEnabled) {
+        isEnabled ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
+    }
+
+    GLenum toGLFaceType(const FaceType& faceType) {
+        switch (faceType) {
+            case BACK: return GL_BACK;
+            case FRONT: return GL_FRONT;
+            case FRONT_AND_BACK: return GL_FRONT_AND_BACK;
+            default: return GL_BACK;
+        }
+    }
+
+    void setCullFace(const FaceType& faceType) {
+        glCullFace(toGLFaceType(faceType));
+    }
+
+    GLenum toGLFrontFaceType(const FrontFaceType& frontFaceType) {
+        switch (frontFaceType) {
+            case CLOCK_WISE: return GL_CW;
+            case COUNTER_CLOCK_WISE: return GL_CCW;
+            default: return GL_CW;
+        }
+    }
+
+    void setFrontFace(const FrontFaceType& frontFaceType) {
+        glFrontFace(toGLFrontFaceType(frontFaceType));
     }
 
     PolygonMode RenderCommands::activePolygonMode = FILL;
