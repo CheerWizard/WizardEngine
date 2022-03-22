@@ -1,4 +1,4 @@
-![wizard_engine_logo](https://user-images.githubusercontent.com/37471793/136009687-db49dad7-966c-43c2-831f-fe8791c4e160.jpg)
+![WizardGE_post](https://user-images.githubusercontent.com/37471793/159553487-0ee2a6bb-04d0-4c68-b0bb-bab22804a3ca.png)
 # Wizard Engine
 A game engine library, responsible to provide an easy and flexible toolchain with all necessary technical solutions for a game.
 
@@ -8,7 +8,7 @@ Well, in this case, WizardEngine can also feet your needs, as it can provide you
 
 Right now, this library is aimed only for "single player" games. It means, that network systems are not super priority at least right now.
 
-![fairy_lab_logo](https://user-images.githubusercontent.com/37471793/136240880-2f24e32e-166a-42cc-8676-49521aeb74da.jpg)
+![FL_post_2](https://user-images.githubusercontent.com/37471793/159554720-ab272e6b-55fc-4c6b-8940-2aa0ac3bc146.png)
 # Fairy Lab
 A GUI desktop application. Provides toolchain to manipulate with WizardEngine components, systems, etc. The actual application is going to include :
 1. LevelEditor - creating and editing objects in the Scene or World. World may include muktiple Scenes.
