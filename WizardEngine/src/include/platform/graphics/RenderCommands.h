@@ -68,12 +68,47 @@ namespace engine {
     int stencilMask(bool readOnly);
     void setStencilTestActions(const StencilTestActions& stencilTestActions);
 
-    void setBlendFunc();
+    enum BlendFactor {
+        F_ZERO, F_ONE,
+        SRC_COLOR, ONE_MINUS_SRC_COLOR,
+        DST_COLOR, ONE_MINUS_DST_COLOR,
+        SRC_ALPHA, ONE_MINUS_SRC_ALPHA,
+        DST_ALPHA, ONE_MINUS_DST_ALPHA,
+        CONSTANT_COLOR, ONE_MINUS_CONSTANT_COLOR,
+        CONSTANT_ALPHA, ONE_MINUS_CONSTANT_ALPHA
+    };
+
+    enum BlendOperator {
+        ADD, SUBTRACT, REVERSE_SUBTRACT, MIN, MAX
+    };
+
     void setBlendMode(bool isEnabled);
+    void setBlendFunction(const BlendFactor& srcFactor, const BlendFactor& destFactor);
+    void setBlendFunctionSeparate(
+        const BlendFactor& srcRgbFactor,
+        const BlendFactor& destRgbFactor,
+        const BlendFactor& srcAlphaFactor,
+        const BlendFactor& destAlphaFactor
+    );
+    void setBlendEquation(const BlendOperator& srcDestOperator);
+
+    enum FaceType {
+        BACK, FRONT, FRONT_AND_BACK
+    };
+
+    enum FrontFaceType {
+        CLOCK_WISE, COUNTER_CLOCK_WISE
+    };
 
     struct CullingComponent {
         bool enabled = false;
+        FaceType faceType = BACK;
+        FrontFaceType frontFaceType = CLOCK_WISE;
     };
+
+    void setCullFaceMode(bool isEnabled);
+    void setCullFace(const FaceType& faceType);
+    void setFrontFace(const FrontFaceType& frontFaceType);
 
     class RenderCommands final {
 

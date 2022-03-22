@@ -25,7 +25,7 @@ namespace engine {
 
         // enables transparency
         setBlendMode(true);
-        setBlendFunc();
+        setBlendFunction(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
 
         setClearColor({0.2, 0.2, 0.2, 1});
         setDepthTest(true);
