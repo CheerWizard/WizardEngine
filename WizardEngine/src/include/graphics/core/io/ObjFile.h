@@ -58,45 +58,17 @@ namespace engine {
     };
 
     template<typename T>
-    T toVertex(const ObjVertex& objVertex) {
-        return {
-                objVertex.position,
-                objVertex.textureCoords,
-                objVertex.normal,
-        };
+    T mapPos(const ObjVertex& objVertex) {
+        return { objVertex.position };
     }
 
     template<typename T>
-    BaseMesh<T> toMesh(const ObjMesh& objMesh) {
-        auto& objVertexData = objMesh.vertexData;
-        auto vertexData = VertexData<T> {
-                new T[objVertexData.vertexCount],
-                objVertexData.vertexStart,
-                objVertexData.vertexCount
-        };
-        for (auto j = 0; j < objVertexData.vertexCount; j++) {
-            vertexData.vertices[j] = toVertex<T>(objVertexData.vertices[j]);
-        }
-
-        return { vertexData, objMesh.indexData };
+    T mapPosUv(const ObjVertex& objVertex) {
+        return { objVertex.position, objVertex.textureCoords };
     }
 
     template<typename T>
-    BaseMeshComponent<T> toMeshComponent(const ObjMeshComponent& objMeshComponent) {
-        auto& objMeshes = objMeshComponent.meshes;
-        auto meshes = new BaseMesh<T>[objMeshComponent.meshCount];
-        for (auto j = 0; j < objMeshComponent.meshCount; j++) {
-            meshes[j] = toMesh<T>(objMeshes[j]);
-        }
-        return {
-                meshes,
-                objMeshComponent.meshCount,
-                objMeshComponent.totalVertexCount,
-                objMeshComponent.totalIndexCount,
-                objMeshComponent.vertexStart,
-                objMeshComponent.indexStart,
-                objMeshComponent.isUpdated,
-                objMeshComponent.renderModelId
-        };
+    T map(const ObjVertex& objVertex) {
+        return { objVertex.position, objVertex.textureCoords, objVertex.normal };
     }
 }

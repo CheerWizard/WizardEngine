@@ -7,7 +7,6 @@
 #include <graphics/core/shader/Uniform.h>
 #include <graphics/core/shader/VertexFormat.h>
 #include <graphics/core/shader/UniformBlockFormat.h>
-#include <graphics/core/shader/ShaderData.h>
 
 #include <cstdint>
 #include <unordered_map>
@@ -17,6 +16,16 @@ namespace engine::shader {
 
     typedef int GLint;
     typedef unsigned int GLenum;
+
+    enum ShaderState : uint8_t {
+        READY = 0,
+        FAILED_READ_FILE = 1,
+        FAILED_COMPILE = 2,
+        FAILED_LINKING = 3,
+        NO_VERTEX_ATTRS = 4,
+        NO_UNIFORM_BLOCKS = 5,
+        NOT_READY = 6
+    };
 
     class Shader {
 
@@ -58,6 +67,8 @@ namespace engine::shader {
         void setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) const;
         void setUniformArrayElement(const uint32_t &index, IntUniform &uniform) const;
         void setUniformArrayElement(const uint32_t &index, FloatUniform &uniform) const;
+        void setUniformArrayElement(const uint32_t &index, Vec4fUniform &uniform) const;
+
         void setUniformStructField(const char *structName, BoolUniform &structField) const;
         void setUniformStructField(const char *structName, IntUniform &structField) const;
         void setUniformStructField(const char *structName, FloatUniform &structField) const;

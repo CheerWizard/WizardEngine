@@ -15,6 +15,7 @@
 #include <graphics/core/geometry/Line.h>
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/core/geometry/Circle.h>
+#include <graphics/outline/Outline.h>
 
 #include <imgui/imgui.h>
 
@@ -105,6 +106,10 @@ namespace fairy {
 //        app->getTextureSource()->loadTexture("demo.png");
 //        app->getTextureSource()->loadTexture("demo_texture.jpg");
 
+        auto carMesh = toMeshComponent<ObjVertex, BatchVertex<Vertex3d>>(
+                GET_OBJ("ferrari.obj"),
+                [](const ObjVertex& objVertex) { return map<BatchVertex<Vertex3d>>(objVertex); }
+        );
         car = engine::Object3d(
                 app->activeScene.get(),
                 "Car",
@@ -113,8 +118,9 @@ namespace fairy {
                         {135, 0, 0},
                         {0.5, 0.5, 0.5}
                 ),
-                GET_OBJ_MESH(Vertex3d, "ferrari.obj")
+                carMesh
         );
+        car.add<OutlineBatchMesh>(toOutlineMesh(carMesh));
 
 //        _cubeEntity = engine::Entity("Cube", app->activeScene.get());
 //        auto cubeMesh = app->getMeshSource()->getCube("cube");
@@ -127,12 +133,16 @@ namespace fairy {
 //        _cubeEntity.add<engine::MaterialComponent>(cubeMaterial);
 //        _cubeEntity.add<engine::MaterialMapsComponent>(cubeMaterialMaps);
 
+        auto humanMesh = toMeshComponent<ObjVertex, InstanceVertex<Vertex3d>>(
+                GET_OBJ("human.obj"),
+                [](const ObjVertex& objVertex) { return map<InstanceVertex<Vertex3d>>(objVertex); }
+        );
         auto humanMaterialMaps = engine::MaterialMapsComponent();
         humanMaterialMaps.diffuseFileName = "wood_diffuse.png";
         humanMaterialMaps.specularFileName = "wood_specular.png";
 
-        random(-10, 10, 10, [this](const uint32_t& i, const float& r) {
-            engine::Object3d(
+        random(-10, 10, 10, [this, &humanMesh](const uint32_t& i, const float& r) {
+            auto human = engine::Object3d(
                 app->activeScene.get(),
                 "Human " + std::to_string(i),
                 engine::transform3d(
@@ -140,8 +150,9 @@ namespace fairy {
                         { r, r, r },
                         {0.2, 0.2, 0.2}
                 ),
-                GET_OBJ_MESH_INSTANCED(Vertex3d, "human.obj")
+                humanMesh
             );
+            human.add<OutlineInstanceMesh>(toOutlineMesh(humanMesh));
         });
 
         // light
@@ -480,10 +491,10 @@ namespace fairy {
 
     void FLLayer::onObjDragged(const std::string &fileName) {
         EDITOR_INFO("onObjDragged({0})", fileName);
-        auto newObject3d = engine::Object3d {
+        engine::Object3d {
             app->activeScene.get(),
             engine::FileSystem::getFileName(fileName),
-            GET_OBJ_MESH(Vertex3d, fileName)
+
         };
     }
 

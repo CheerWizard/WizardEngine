@@ -96,6 +96,8 @@ namespace engine {
 
     public:
         template<typename T>
+        void render(entt::registry& registry);
+        template<typename T>
         void renderV(entt::registry& registry);
         template<typename T>
         void renderVI(entt::registry& registry);
@@ -360,6 +362,12 @@ namespace engine {
         }
 
         shaderProgram->stop();
+    }
+
+    template<typename T>
+    void MultiRenderer::render(entt::registry& registry) {
+        renderV<T>(registry);
+        renderVI<T>(registry);
     }
 
     template<typename T>

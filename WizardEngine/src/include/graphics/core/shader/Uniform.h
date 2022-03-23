@@ -38,5 +38,4 @@ namespace engine::shader {
     inline float* toIntPtr(Uniform<V> &uniform) {
         return glm::value_ptr(uniform.value);
     }
-
 }

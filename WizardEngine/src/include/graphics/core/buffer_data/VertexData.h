@@ -104,4 +104,26 @@ namespace engine {
                 static_cast<uint32_t>(Size)
         };
     }
+
+    template<typename FROM, typename TO>
+    VertexData<TO> toVertexData(const VertexData<FROM>& fromVertexData, const std::function<TO(const FROM&)> vertexMapper) {
+        auto* fromVertices = fromVertexData.vertices;
+        auto* toVertices = new TO[fromVertexData.vertexCount];
+        for (auto i = 0; i < fromVertexData.vertexCount; i++) {
+            toVertices[i] = vertexMapper(fromVertices[i]);
+        }
+        return VertexData<TO> {
+                toVertices,
+                fromVertexData.vertexStart,
+                fromVertexData.vertexCount
+        };
+    }
+
+    template<typename FROM, typename TO>
+    VertexDataComponent<TO> toVertexDataComponent(
+            const VertexDataComponent<FROM>& fromVertexDataComponent,
+            const std::function<TO(const FROM&)> vertexMapper
+    ) {
+        return VertexDataComponent<TO>{ toVertexData<FROM, TO>(fromVertexDataComponent.vertexData, vertexMapper) };
+    }
 }

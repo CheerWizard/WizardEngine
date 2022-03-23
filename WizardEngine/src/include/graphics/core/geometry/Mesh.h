@@ -43,6 +43,53 @@ namespace engine {
         DrawType drawType = TRIANGLE;
     };
 
+    template<typename FROM, typename TO>
+    BaseMesh<TO> toMesh(
+            const BaseMesh<FROM>& fromBaseMesh,
+            const std::function<TO(const FROM&)> vertexMapper
+    ) {
+        auto& fromVertexData = fromBaseMesh.vertexData;
+        auto toVertexData = VertexData<TO> {
+                new TO[fromVertexData.vertexCount],
+                fromVertexData.vertexStart,
+                fromVertexData.vertexCount
+        };
+        for (auto j = 0; j < fromVertexData.vertexCount; j++) {
+            toVertexData.vertices[j] = vertexMapper(fromVertexData.vertices[j]);
+        }
+        return {toVertexData, fromBaseMesh.indexData };
+    }
+
+    template<typename FROM, typename TO>
+    BaseMeshComponent<TO> toMeshComponent(
+            const BaseMeshComponent<FROM>& fromBaseMeshComponent,
+            const std::function<TO(const FROM&)> vertexMapper
+    ) {
+        auto& fromMeshes = fromBaseMeshComponent.meshes;
+        auto toMeshes = new BaseMesh<TO>[fromBaseMeshComponent.meshCount];
+        for (auto j = 0; j < fromBaseMeshComponent.meshCount; j++) {
+            toMeshes[j] = toMesh(fromMeshes[j], vertexMapper);
+        }
+        return {
+                toMeshes,
+                fromBaseMeshComponent.meshCount,
+                fromBaseMeshComponent.totalVertexCount,
+                fromBaseMeshComponent.totalIndexCount,
+                fromBaseMeshComponent.vertexStart,
+                fromBaseMeshComponent.indexStart,
+                fromBaseMeshComponent.isUpdated,
+                fromBaseMeshComponent.renderModelId
+        };
+    }
+
+    template<typename T>
+    BaseMeshComponent<InstanceVertex<Vertex3d>> toMesh3dComponent(const BaseMeshComponent<T>& fromBaseMeshComponent) {
+        return toMeshComponent<T, InstanceVertex<Vertex3d>>(
+                fromBaseMeshComponent,
+                [](const T& vertex) { return InstanceVertex<Vertex3d> { vertex }; }
+        )
+    }
+
     template<typename T>
     void setBatchId(BaseMeshComponent<BatchVertex<T>> &meshComponent, const uint32_t &batchId) {
         const auto& meshInstanceId = meshComponent.meshes[0].vertexData.vertices[0].id;

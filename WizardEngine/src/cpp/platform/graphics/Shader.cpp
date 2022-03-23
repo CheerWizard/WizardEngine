@@ -118,6 +118,12 @@ namespace engine::shader {
         glUniform1f(getUniformArrayElementLocation(uniform.name, index), uniform.value);
     }
 
+    void Shader::setUniformArrayElement(const uint32_t &index, Vec4fUniform &uniform) const {
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+        glUniform4fv(getUniformArrayElementLocation(uniform.name, index), 1, toFloatPtr(uniform));
+    }
+
     void Shader::setUniformStructField(const char *structName, BoolUniform &structField) const {
         if (!structField.isUpdated) return;
         structField.isUpdated = false;

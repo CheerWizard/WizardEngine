@@ -10,6 +10,7 @@
 #include <graphics/core/geometry/Line.h>
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/core/geometry/Circle.h>
+#include <graphics/outline/Outline.h>
 
 namespace engine {
 
@@ -21,6 +22,8 @@ namespace engine {
     }
 
     void RenderSystem::onUpdate() {
+        if (activeScene->isEmpty()) return;
+
         sceneFrame->bind();
 
         // enables transparency
@@ -38,15 +41,23 @@ namespace engine {
 //        setStencilTestOperator(ALWAYS, 1, false);
 //        stencilMask(false);
 
-        if (!activeScene->isEmpty()) {
-            auto& registry = activeScene->getRegistry();
-            sceneRenderer->renderVI<Vertex3d>(registry);
-            lineRenderer->renderV<LineVertex>(registry);
-            stripLineRenderer->renderV<LineVertex>(registry);
-            loopLineRenderer->renderV<LineVertex>(registry);
-            quadRenderer->renderV<QuadVertex>(registry);
-            circleRenderer->renderV<CircleVertex>(registry);
-        }
+        auto& registry = activeScene->getRegistry();
+        // scene
+        sceneRenderer->renderVI<Vertex3d>(registry);
+        // lines
+        lineRenderer->renderV<LineVertex>(registry);
+        stripLineRenderer->renderV<LineVertex>(registry);
+        loopLineRenderer->renderV<LineVertex>(registry);
+        // quads
+        quadRenderer->renderV<QuadVertex>(registry);
+        // circles
+        circleRenderer->renderV<CircleVertex>(registry);
+        // outline everything
+        outlineSceneRenderer->render<OutlineVertex>(registry);
+        outlineLineRenderer->render<OutlineVertex>(registry);
+        outlineStripLineRenderer->render<OutlineVertex>(registry);
+        outlineLoopLineRenderer->render<OutlineVertex>(registry);
+        outlineQuadRenderer->render<OutlineVertex>(registry);
 
         sceneFrame->unbind();
 
@@ -189,5 +200,53 @@ namespace engine {
         );
 
         circleRenderer = createRef<MultiRenderer>(batchShader, instanceShader, TRIANGLE_STRIP);
+    }
+
+    void RenderSystem::createOutlineRenderer() {
+        auto outlineScript = ShaderScript();
+        outlineScript.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
+            auto outlines = registry.view<OutlineComponent>();
+            auto i = 0;
+            for (auto [entity, outline] : outlines.each()) {
+                shader.setUniformArrayElement(i, outline.color);
+            }
+        };
+        outlineScript.updateEntity = [](const BaseShader& shader, const Entity& entity) {
+            auto outline = entity.getPtr<OutlineComponent>();
+            if (outline) {
+                shader.setUniform(outline->color);
+            }
+        };
+
+        auto vBatchShader = shader::BaseShader({ camera3dUboScript() });
+        auto fBatchShader = shader::BaseShader({ outlineScript });
+        auto batchShader = createRef<shader::BaseShaderProgram>(
+                shader::ShaderProps {
+                        "outline_batch",
+                        "v_outline_batch.glsl",
+                        "f_outline.glsl",
+                        ENGINE_SHADERS_PATH
+                },
+                vBatchShader,
+                fBatchShader
+        );
+        auto vInstanceShader = shader::BaseShader({ camera3dUboScript() });
+        auto fInstanceShader = shader::BaseShader({ outlineScript });
+        auto instanceShader = createRef<shader::BaseShaderProgram>(
+                shader::ShaderProps {
+                        "outline_instance",
+                        "v_outline_instance.glsl",
+                        "f_outline.glsl",
+                        ENGINE_SHADERS_PATH
+                },
+                vInstanceShader,
+                fInstanceShader
+        );
+
+        outlineSceneRenderer = createRef<MultiRenderer>(batchShader, instanceShader, TRIANGLE);
+        outlineLineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, LINE);
+        outlineStripLineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, LINE_STRIP);
+        outlineLoopLineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, LINE_LOOP);
+        outlineQuadRenderer = createRef<MultiRenderer>(batchShader, instanceShader, TRIANGLE_STRIP);
     }
 }

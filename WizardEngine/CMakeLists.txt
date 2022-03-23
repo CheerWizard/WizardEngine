@@ -10,7 +10,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(${PROJECT_NAME} ${ENGINE_SRC})
+add_library(${PROJECT_NAME} ${ENGINE_SRC} src/include/graphics/outline/Outline.h)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 #/ adding dependencies.
