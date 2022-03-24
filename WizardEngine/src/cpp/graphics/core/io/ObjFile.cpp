@@ -200,7 +200,7 @@ namespace engine {
 
             auto& vertex = vertices[posIndex];
             if (!uvs.empty()) {
-                vertex.textureCoords = uvs[uvIndex];
+                vertex.uv = uvs[uvIndex];
             }
             if (!normals.empty()) {
                 vertex.normal = normals[normalIndex];

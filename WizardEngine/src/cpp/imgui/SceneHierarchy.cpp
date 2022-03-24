@@ -7,6 +7,7 @@
 #include <graphics/transform/TransformComponents.h>
 #include <graphics/light/LightComponents.h>
 #include <graphics/material/MaterialComponents.h>
+#include <graphics/outline/Outline.h>
 #include <imgui.h>
 #include <imgui_internal.h>
 
@@ -433,6 +434,11 @@ namespace engine {
             drawCheckBox(material.specularMapEnabled);
             drawFloatSlider(material.shiny, { 0, 32 });
             material.color.isUpdated = ImGui::ColorPicker4(material.color.name, toFloatPtr(material.color));
+        });
+        // draw outline component
+        drawComponent<OutlineComponent>("Outlining", entity, [](OutlineComponent& outline) {
+            drawFloatSlider(outline.thickness, { 0, 0.1 });
+            outline.color.isUpdated = ImGui::ColorPicker4(outline.color.name, toFloatPtr(outline.color));
         });
     }
 

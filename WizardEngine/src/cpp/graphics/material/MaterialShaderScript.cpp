@@ -12,6 +12,7 @@ namespace engine::shader {
             auto textures = registry.view<TextureComponent>();
             for (auto [entity, texture] : textures.each()) {
                 shader.setUniformArrayElement(texture.sampler.value, texture.sampler);
+                texture.sampler.isUpdated = false;
                 activateTexture(texture.fileName, texture.sampler.value);
             }
         };

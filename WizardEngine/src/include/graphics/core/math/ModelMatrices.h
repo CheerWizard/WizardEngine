@@ -28,7 +28,6 @@ namespace engine {
     public:
         static void update(ModelMatrix2d &modelMatrix2D);
         static void update(ModelMatrix3d &modelMatrix3D);
-
     };
 
     struct ModelMatrix3d : shader::Mat4fUniform {
@@ -42,8 +41,10 @@ namespace engine {
                 const glm::vec3& pos,
                 const glm::vec3& rot,
                 const glm::vec3& scale
-        ) : position(pos), rotation(rot), scale(scale) {
-        }
+        ) : position(pos), rotation(rot), scale(scale) {}
+
+        ModelMatrix3d(const ModelMatrix3d& modelMatrix3D)
+        : position(modelMatrix3D.position), rotation(modelMatrix3D.rotation), scale(modelMatrix3D.scale), Uniform(modelMatrix3D) {}
     };
 
     struct ModelMatrix2d : shader::Mat4fUniform {
@@ -57,8 +58,7 @@ namespace engine {
                 const glm::vec2& pos,
                 const float& rot,
                 const glm::vec2& scale
-        ) : position(pos), rotation(rot), scale(scale) {
-        }
+        ) : position(pos), rotation(rot), scale(scale) {}
     };
 
 }

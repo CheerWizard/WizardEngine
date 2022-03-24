@@ -1,12 +1,12 @@
 #version 400
 
-in vec4 f_color;
 in flat int f_id;
 in vec2 f_uv;
 
 out vec4 fragment;
 
 struct Circle {
+    vec4 color;
     float thickness;
     float fade;
 };
@@ -26,6 +26,6 @@ void main() {
         discard;
     }
 
-    fragment = f_color;
+    fragment = c.color;
     fragment.a *= alpha;
 }

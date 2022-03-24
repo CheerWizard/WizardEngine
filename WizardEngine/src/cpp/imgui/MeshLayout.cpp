@@ -64,14 +64,26 @@ namespace engine {
         }
 
         _frame->bind();
-        setDepthTest(true);
+        // enables transparency
+        setBlendMode(true);
+        setBlendFunction(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
+        // write to stencil buffer
         setClearColor({0.2, 0.2, 0.2, 1});
-        clearDepthBuffer();
+        setDepthTest(true);
+        setStencilTest(true);
+        setStencilTestActions({ KEEP, KEEP, REPLACE });
+        clearStencilBuffer();
+        setStencilTestOperator(ALWAYS, 1, false);
+        stencilMask(false);
 
-        _renderer->render<ObjVertex>(_entity);
+        _renderer->render<Transform3dComponent, ObjVertex>(_entity);
+
+        // stop write to stencil buffer
+        setStencilTestOperator(NOT_EQUAL, 1, false);
+        stencilMask(true);
+        setDepthTest(false);
 
         _frame->unbind();
-        setDepthTest(false);
         clearColorBuffer();
 
         if (ImGui::Button("Auto-Rotate", { 120, 36 })) {

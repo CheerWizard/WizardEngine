@@ -95,14 +95,12 @@ namespace engine::shader {
 
     void Shader::setUniform(Mat4fUniform &uniform) const {
         if (!uniform.isUpdated) return;
-        uniform.isUpdated = false;
         auto location = glGetUniformLocation(programId, uniform.name);
         glUniformMatrix4fv(location, 1, GL_FALSE, toFloatPtr(uniform));
     }
 
     void Shader::setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) const {
         if (!uniform.isUpdated) return;
-        uniform.isUpdated = false;
         glUniformMatrix4fv(getUniformArrayElementLocation(uniform.name, index), 1, GL_FALSE, toFloatPtr(uniform));
     }
 
