@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "ShaderData.h"
 #include <graphics/core/io/ShaderFile.h>
 #include <ecs/Entity.h>
 

@@ -15,6 +15,7 @@
 #include <graphics/core/geometry/Line.h>
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/core/geometry/Circle.h>
+#include <graphics/outline/Outline.h>
 
 #include <imgui/imgui.h>
 
@@ -105,16 +106,20 @@ namespace fairy {
 //        app->getTextureSource()->loadTexture("demo.png");
 //        app->getTextureSource()->loadTexture("demo_texture.jpg");
 
+        auto carMesh = toMesh3dBatch(GET_OBJ("ferrari.obj"));
+        auto carTransform = engine::transform3d(
+                { 2.5, 0, 12 },
+                {135, 0, 0},
+                {0.5, 0.5, 0.5}
+        );
         car = engine::Object3d(
                 app->activeScene.get(),
                 "Car",
-                engine::transform3d(
-                        { 2.5, 0, 12 },
-                        {135, 0, 0},
-                        {0.5, 0.5, 0.5}
-                ),
-                GET_OBJ_MESH(Vertex3d, "ferrari.obj")
+                carTransform,
+                carMesh
         );
+        car.add<OutlineBatchMesh>(toOutlineBatchMesh(copy(carMesh)));
+        car.add<OutlineComponent>(OutlineComponent({ 1, 1, 0, 1 }, 0.01));
 
 //        _cubeEntity = engine::Entity("Cube", app->activeScene.get());
 //        auto cubeMesh = app->getMeshSource()->getCube("cube");
@@ -132,7 +137,9 @@ namespace fairy {
         humanMaterialMaps.specularFileName = "wood_specular.png";
 
         random(-10, 10, 10, [this](const uint32_t& i, const float& r) {
-            engine::Object3d(
+            auto humanMesh = toMesh3dBatch(GET_OBJ("human.obj"));
+            humanMesh = copy(humanMesh);
+            auto human = engine::Object3d(
                 app->activeScene.get(),
                 "Human " + std::to_string(i),
                 engine::transform3d(
@@ -140,8 +147,10 @@ namespace fairy {
                         { r, r, r },
                         {0.2, 0.2, 0.2}
                 ),
-                GET_OBJ_MESH_INSTANCED(Vertex3d, "human.obj")
+                humanMesh
             );
+            human.add<OutlineBatchMesh>(toOutlineBatchMesh(copy(humanMesh)));
+            human.add<OutlineComponent>(OutlineComponent({0, 1, 0, 1}, 0.01));
         });
 
         // light
@@ -218,8 +227,8 @@ namespace fairy {
                     QuadVertex { { -0.5, -0.5, 0.5 }, randomColor3 },
                     QuadVertex { { -0.5, 0.5, 0.5 }, randomColor4 }
             };
-
-            engine::Object3d(
+            auto quadVertexData = InstanceQuad(quadVertices);
+            auto quad = engine::Object3d(
                     app->activeScene.get(),
                     "Quad " + std::to_string(i),
                     engine::transform3d(
@@ -227,21 +236,19 @@ namespace fairy {
                             { r, r, r },
                             { 1, 1, 1 }
                     ),
-                    InstanceQuad(quadVertices)
+                    quadVertexData
             );
+//            quad.add<OutlineInstanceVertexData>(toOutlineInstanceVertexData(copy(quadVertexData)));
+//            quad.add<OutlineComponent>(OutlineComponent({0, 1, 0, 1}, 0.01));
         });
 
-        random(-10, 10, 1, [this](const uint32_t& i, const float& r) {
-            glm::vec4 randomColor1 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-            glm::vec4 randomColor2 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-            glm::vec4 randomColor3 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-            glm::vec4 randomColor4 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-
+        random(-10, 10, 10, [this](const uint32_t& i, const float& r) {
+            glm::vec4 randomColor = { random(0, 1), random(0, 1), random(0, 1), 1 };
             std::array<CircleVertex, 4> circleVertices = {
-                    CircleVertex { { 0.5, -0.5, 0.5 }, { 1, -1 }, randomColor1 },
-                    CircleVertex { { 0.5, 0.5, 0.5 }, { 1, 1 }, randomColor2 },
-                    CircleVertex { { -0.5, -0.5, 0.5 }, { -1, -1 }, randomColor3 },
-                    CircleVertex { { -0.5, 0.5, 0.5 }, { -1, 1 }, randomColor4 }
+                    CircleVertex { { 0.5, -0.5, 0.5 }, { 1, -1 } },
+                    CircleVertex { { 0.5, 0.5, 0.5 }, { 1, 1 } },
+                    CircleVertex { { -0.5, -0.5, 0.5 }, { -1, -1 } },
+                    CircleVertex { { -0.5, 0.5, 0.5 }, { -1, 1 } }
             };
 
             auto circle = engine::Object3d(
@@ -252,9 +259,13 @@ namespace fairy {
                             { r, r, r },
                             { 1, 1, 1 }
                     ),
-                    BatchCircle(circleVertices)
+                    InstanceCircle(circleVertices)
             );
-            circle.add<CircleComponent>(CircleComponent());
+            circle.add<CircleComponent>(CircleComponent(
+                    randomColor,
+                    random(0.0, 0.1),
+                    random(0.0, 0.1)
+            ));
         });
     }
 
@@ -480,10 +491,10 @@ namespace fairy {
 
     void FLLayer::onObjDragged(const std::string &fileName) {
         EDITOR_INFO("onObjDragged({0})", fileName);
-        auto newObject3d = engine::Object3d {
+        engine::Object3d {
             app->activeScene.get(),
             engine::FileSystem::getFileName(fileName),
-            GET_OBJ_MESH(Vertex3d, fileName)
+            toMesh3dBatch(GET_OBJ(fileName))
         };
     }
 

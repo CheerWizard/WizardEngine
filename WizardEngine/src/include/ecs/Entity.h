@@ -127,6 +127,14 @@ namespace engine {
             }
         }
 
+        template<typename T>
+        void updateComponents(const std::function<void(T&)>& updateFunction) {
+            auto entities = registry.view<T>();
+            for (auto [entity, component] : entities.each()) {
+                updateFunction(component);
+            }
+        }
+
     protected:
         entt::registry registry;
 

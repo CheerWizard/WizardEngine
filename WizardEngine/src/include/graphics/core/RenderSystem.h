@@ -33,20 +33,30 @@ namespace engine {
         void createLineRenderers();
         void createQuadRenderer();
         void createCircleRenderer();
+        void createOutlineRenderer();
 
     private:
         Ref<Scene> activeScene = nullptr;
         Ref<FrameBuffer> sceneFrame;
-        // scene renderer
+        // scene
         Ref<MultiRenderer> sceneRenderer;
-        // line renderers
+        // line
         Ref<MultiRenderer> lineRenderer;
         Ref<MultiRenderer> stripLineRenderer;
         Ref<MultiRenderer> loopLineRenderer;
-        // quad renderer
+        // quad
         Ref<MultiRenderer> quadRenderer;
-        // circle renderer
+        // circle
         Ref<MultiRenderer> circleRenderer;
+        // outlining everything
+        // scene
+        Ref<MultiRenderer> outlineSceneRenderer;
+        // line
+        Ref<MultiRenderer> outlineLineRenderer;
+        Ref<MultiRenderer> outlineStripLineRenderer;
+        Ref<MultiRenderer> outlineLoopLineRenderer;
+        // quad
+        Ref<MultiRenderer> outlineQuadRenderer;
     };
 
 }
