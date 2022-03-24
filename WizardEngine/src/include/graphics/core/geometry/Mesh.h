@@ -57,7 +57,7 @@ namespace engine {
         for (auto j = 0; j < fromVertexData.vertexCount; j++) {
             toVertexData.vertices[j] = vertexMapper(fromVertexData.vertices[j]);
         }
-        return {toVertexData, fromBaseMesh.indexData };
+        return { toVertexData, fromBaseMesh.indexData };
     }
 
     template<typename FROM, typename TO>
@@ -83,11 +83,28 @@ namespace engine {
     }
 
     template<typename T>
-    BaseMeshComponent<InstanceVertex<Vertex3d>> toMesh3dComponent(const BaseMeshComponent<T>& fromBaseMeshComponent) {
+    BaseMeshComponent<InstanceVertex<Vertex3d>> toMesh3dInstance(const BaseMeshComponent<T>& fromBaseMeshComponent) {
         return toMeshComponent<T, InstanceVertex<Vertex3d>>(
                 fromBaseMeshComponent,
-                [](const T& vertex) { return InstanceVertex<Vertex3d> { vertex }; }
-        )
+                [](const T& vertex) {
+                    return InstanceVertex<Vertex3d> {
+                        Vertex3d { vertex.position, vertex.uv, vertex.normal }
+                    };
+                }
+        );
+    }
+
+    template<typename T>
+    BaseMeshComponent<BatchVertex<Vertex3d>> toMesh3dBatch(const BaseMeshComponent<T>& fromBaseMeshComponent) {
+        return toMeshComponent<T, BatchVertex<Vertex3d>>(
+                fromBaseMeshComponent,
+                [](const T& vertex) {
+                    return BatchVertex<Vertex3d> {
+                        Vertex3d { vertex.position, vertex.uv, vertex.normal },
+                        0
+                    };
+                }
+        );
     }
 
     template<typename T>

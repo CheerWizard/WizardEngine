@@ -14,9 +14,14 @@ namespace engine::shader {
         const char* name = nullptr;
         V value;
         bool isUpdated = true; // flag to minimize GPU calls.
+
+        Uniform() = default;
+        Uniform(const char* name, const V& value) : name(name), value(value) {}
+        Uniform(const char* name, const V& value, const bool& isUpdated) : name(name), value(value), isUpdated(isUpdated) {}
+        Uniform(const Uniform<V>& uniform) : name(uniform.name), value(uniform.value), isUpdated(uniform.isUpdated) {}
     };
 
-    typedef Uniform<glm::float32> FloatUniform;
+    typedef Uniform<float> FloatUniform;
     typedef Uniform<int> IntUniform;
     typedef Uniform<bool> BoolUniform;
     typedef Uniform<double> DoubleUniform;
@@ -35,7 +40,7 @@ namespace engine::shader {
     }
 
     template<typename V>
-    inline float* toIntPtr(Uniform<V> &uniform) {
+    inline int* toIntPtr(Uniform<V> &uniform) {
         return glm::value_ptr(uniform.value);
     }
 }

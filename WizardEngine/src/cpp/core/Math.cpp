@@ -23,6 +23,10 @@ namespace engine {
     }
 
     float random(const int& minRange, const int& maxRange) {
+        return random((double)minRange, (double)maxRange);
+    }
+
+    float random(const double& minRange, const double& maxRange) {
         std::random_device rd;
         std::mt19937 mt(rd());
         std::uniform_real_distribution<double> dist(minRange, maxRange);

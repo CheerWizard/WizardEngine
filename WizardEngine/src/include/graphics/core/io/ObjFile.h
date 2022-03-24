@@ -19,7 +19,7 @@ namespace engine {
 
     struct ObjVertex {
         glm::vec3 position = { 0.5f, 0.5f, 0.5f };
-        glm::vec2 textureCoords = { 0.25f, -0.25f };
+        glm::vec2 uv = { 0.25f, -0.25f };
         glm::vec3 normal = { 0, 0, 0 };
     };
 
@@ -64,11 +64,11 @@ namespace engine {
 
     template<typename T>
     T mapPosUv(const ObjVertex& objVertex) {
-        return { objVertex.position, objVertex.textureCoords };
+        return { objVertex.position, objVertex.uv };
     }
 
     template<typename T>
     T map(const ObjVertex& objVertex) {
-        return { objVertex.position, objVertex.textureCoords, objVertex.normal };
+        return { objVertex.position, objVertex.uv, objVertex.normal };
     }
 }

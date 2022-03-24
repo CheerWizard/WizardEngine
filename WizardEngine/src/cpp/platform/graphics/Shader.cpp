@@ -59,7 +59,6 @@ namespace engine::shader {
         if (!uniform.isUpdated) return;
         uniform.isUpdated = false;
         auto location = glGetUniformLocation(programId, uniform.name);
-        auto value = uniform.value;
         glUniform2fv(location, 1, toFloatPtr(uniform));
     }
 
@@ -67,7 +66,6 @@ namespace engine::shader {
         if (!uniform.isUpdated) return;
         uniform.isUpdated = false;
         auto location = glGetUniformLocation(programId, uniform.name);
-        auto value = uniform.value;
         glUniform3fv(location, 1, toFloatPtr(uniform));
     }
 
@@ -75,7 +73,6 @@ namespace engine::shader {
         if (!uniform.isUpdated) return;
         uniform.isUpdated = false;
         auto location = glGetUniformLocation(programId, uniform.name);
-        auto value = uniform.value;
         glUniform4fv(location, 1, toFloatPtr(uniform));
     }
 
@@ -95,14 +92,12 @@ namespace engine::shader {
 
     void Shader::setUniform(Mat4fUniform &uniform) const {
         if (!uniform.isUpdated) return;
-        uniform.isUpdated = false;
         auto location = glGetUniformLocation(programId, uniform.name);
         glUniformMatrix4fv(location, 1, GL_FALSE, toFloatPtr(uniform));
     }
 
     void Shader::setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) const {
         if (!uniform.isUpdated) return;
-        uniform.isUpdated = false;
         glUniformMatrix4fv(getUniformArrayElementLocation(uniform.name, index), 1, GL_FALSE, toFloatPtr(uniform));
     }
 
@@ -246,10 +241,10 @@ namespace engine::shader {
                 return "Vertex";
             case GL_FRAGMENT_SHADER:
                 return "Fragment";
+            default:
+                ENGINE_ERR("Cannot convert shader type to string! programId : {0}", id);
+                return "Undefined";
         }
-
-        ENGINE_ERR("Cannot convert shader type to string! programId : {0}", id);
-        return "Undefined";
     }
 
     uint32_t ShaderProgram::bindAttribute(const char* attrName) const {

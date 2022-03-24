@@ -5,6 +5,7 @@
 #pragma once
 
 #include <algorithm>
+#include <functional>
 
 #define MIN_VERTEX_COUNT 3
 
