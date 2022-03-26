@@ -9,15 +9,12 @@
 #include "MaterialComponents.h"
 
 namespace engine::shader {
-    ShaderScript textureScript();
-    ShaderScript textureUboScript();
     ShaderScript materialScript();
     ShaderScript materialUboScript();
     ShaderScript materialArrayScript();
     ShaderScript materialMapScript();
     ShaderScript materialMapUboScript();
     ShaderScript materialMapArrayScript();
-    void activateTexture(const std::string &fileName, const uint32_t &slot);
     void updateMaterial(const BaseShader& shader, MaterialComponent& material);
     void updateMaterial(const BaseShader& shader, MaterialComponent& material, const uint32_t& index);
     void updateMaterialUbo(const BaseShader& shader, MaterialComponent& material, const uint32_t& index);

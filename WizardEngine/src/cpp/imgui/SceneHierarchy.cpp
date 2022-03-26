@@ -387,7 +387,7 @@ namespace engine {
 
             transform.isUpdated = isPosUpdated || isRotUpdated || isScaleUpdated;
             if (transform.isUpdated) {
-                ModelMatrices::update(transform);
+                updateModel3d(transform);
             }
             EDITOR_INFO("Transform is updated : {0}", transform.isUpdated);
         });

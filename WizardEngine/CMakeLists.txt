@@ -10,7 +10,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(${PROJECT_NAME} ${ENGINE_SRC} src/include/graphics/outline/Outline.h)
+add_library(${PROJECT_NAME} ${ENGINE_SRC} src/include/graphics/outline/Outline.h src/include/graphics/skybox/Skybox.h src/include/graphics/core/texture/Texture.h src/cpp/graphics/core/texture/Texture.cpp src/include/graphics/core/geometry/Cube.h)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 #/ adding dependencies.

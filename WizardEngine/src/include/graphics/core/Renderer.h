@@ -384,6 +384,8 @@ namespace engine {
 
     template<typename T, typename V>
     void VRenderer::render(const Entity &entity) {
+        if (!entity.isValid()) return;
+
         auto vertexDataComponent = entity.getPtr<VertexDataComponent<V>>();
         if (!shaderProgram->isReady() || !vertexDataComponent) return;
 
@@ -406,6 +408,8 @@ namespace engine {
 
     template<typename T, typename V>
     void VIRenderer::render(const Entity &entity) {
+        if (!entity.isValid()) return;
+
         auto mesh = entity.getPtr<BaseMeshComponent<V>>();
         if (!shaderProgram->isReady() || !mesh) return;
 

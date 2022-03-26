@@ -6,45 +6,6 @@
 
 namespace engine::shader {
 
-    ShaderScript textureScript() {
-        auto script = ShaderScript();
-        script.updateRegistry = [](const BaseShader& shader, entt::registry &registry) {
-            auto textures = registry.view<TextureComponent>();
-            for (auto [entity, texture] : textures.each()) {
-                shader.setUniformArrayElement(texture.sampler.value, texture.sampler);
-                texture.sampler.isUpdated = false;
-                activateTexture(texture.fileName, texture.sampler.value);
-            }
-        };
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto texture = entity.getPtr<TextureComponent>();
-            if (texture) {
-                shader.setUniformArrayElement(texture->sampler.value, texture->sampler);
-                activateTexture(texture->fileName, texture->sampler.value);
-            }
-        };
-        return script;
-    }
-
-    ShaderScript textureUboScript() {
-        auto script = ShaderScript();
-        script.updateRegistry = [](const BaseShader& shader, entt::registry &registry) {
-            auto textures = registry.view<TextureComponent>();
-            for (auto [entity, texture] : textures.each()) {
-                shader.updateUniformBuffer(texture.sampler, 0);
-                activateTexture(texture.fileName, texture.sampler.value);
-            }
-        };
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto texture = entity.getPtr<TextureComponent>();
-            if (texture) {
-                shader.updateUniformBuffer(texture->sampler, 0);
-                activateTexture(texture->fileName, texture->sampler.value);
-            }
-        };
-        return script;
-    }
-
     ShaderScript materialScript() {
         auto script = ShaderScript();
         script.updateRegistry = [](const BaseShader& shader, entt::registry &registry) {
@@ -150,13 +111,6 @@ namespace engine::shader {
         return script;
     }
 
-    void activateTexture(const std::string &fileName, const uint32_t &slot) {
-        ENGINE_INFO("activateTexture(fileName={0}, slot={1})", fileName, slot);
-        auto& texture = GET_TEXTURE(fileName);
-        texture.activate(slot);
-        texture.bind();
-    }
-
     void updateMaterial(const BaseShader& shader, MaterialComponent& material) {
         shader.setUniformStructField(material.name, material.color);
         shader.setUniformStructField(material.name, material.ambient);
@@ -178,17 +132,17 @@ namespace engine::shader {
     }
 
     void updateMaterialMaps(const BaseShader& shader, MaterialMapsComponent& materialMaps) {
-        shader.setUniformStructField(materialMaps.name, materialMaps.diffuse);
-        activateTexture(materialMaps.diffuseFileName, materialMaps.diffuse.value);
-        shader.setUniformStructField(materialMaps.name, materialMaps.specular);
-        activateTexture(materialMaps.specularFileName, materialMaps.specular.value);
+        shader.setUniformStructField(materialMaps.name, materialMaps.diffuse.sampler);
+        ACTIVATE_TEXTURE(materialMaps.diffuse);
+        shader.setUniformStructField(materialMaps.name, materialMaps.specular.sampler);
+        ACTIVATE_TEXTURE(materialMaps.specular);
     }
 
     void updateMaterialMaps(const BaseShader& shader, MaterialMapsComponent& materialMaps, const uint32_t& index) {
-        shader.setUniformArrayStructField(index, materialMaps.name, materialMaps.diffuse);
-        activateTexture(materialMaps.diffuseFileName, materialMaps.diffuse.value);
-        shader.setUniformArrayStructField(index, materialMaps.name, materialMaps.specular);
-        activateTexture(materialMaps.specularFileName, materialMaps.specular.value);
+        shader.setUniformArrayStructField(index, materialMaps.name, materialMaps.diffuse.sampler);
+        ACTIVATE_TEXTURE(materialMaps.diffuse);
+        shader.setUniformArrayStructField(index, materialMaps.name, materialMaps.specular.sampler);
+        ACTIVATE_TEXTURE(materialMaps.specular);
     }
 
     void updateMaterialUbo(const BaseShader& shader, MaterialComponent& material, const uint32_t& index) {
@@ -204,10 +158,10 @@ namespace engine::shader {
 
     void updateMaterialMapsUbo(const BaseShader& shader, MaterialMapsComponent& materialMaps) {
         uint32_t i = 0;
-        shader.updateUniformBuffer(materialMaps.diffuse, i++);
-        activateTexture(materialMaps.diffuseFileName, materialMaps.diffuse.value);
-        shader.updateUniformBuffer(materialMaps.specular, i++);
-        activateTexture(materialMaps.specularFileName, materialMaps.specular.value);
+        shader.updateUniformBuffer(materialMaps.diffuse.sampler, i++);
+        ACTIVATE_TEXTURE(materialMaps.diffuse);
+        shader.updateUniformBuffer(materialMaps.specular.sampler, i++);
+        ACTIVATE_TEXTURE(materialMaps.specular);
     }
 
 }

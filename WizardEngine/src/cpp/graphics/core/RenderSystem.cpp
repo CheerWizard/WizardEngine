@@ -11,6 +11,7 @@
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/core/geometry/Circle.h>
 #include <graphics/outline/Outline.h>
+#include <graphics/skybox/Skybox.h>
 
 namespace engine {
 
@@ -20,6 +21,7 @@ namespace engine {
         createQuadRenderer();
         createCircleRenderer();
         createOutlineRenderer();
+        createSkyboxRenderer();
     }
 
     void RenderSystem::onUpdate() {
@@ -40,6 +42,8 @@ namespace engine {
         stencilMask(false);
 
         auto& registry = activeScene->getRegistry();
+        // skybox
+        skyboxRenderer->render<Transform3dComponent, SkyboxVertex>(skybox);
         // scene
         sceneRenderer->renderVI<Transform3dComponent, Vertex3d>(registry);
         // lines
@@ -209,6 +213,7 @@ namespace engine {
 
     void RenderSystem::createOutlineRenderer() {
         auto outlineScript = ShaderScript();
+
         outlineScript.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
             auto outlines = registry.view<OutlineComponent>();
             auto i = 0;
@@ -217,6 +222,7 @@ namespace engine {
                 shader.setUniformArrayStructField(i++, outline.name, outline.thickness);
             }
         };
+
         outlineScript.updateEntity = [](const BaseShader& shader, const Entity& entity) {
             auto outline = entity.getPtr<OutlineComponent>();
             if (outline) {
@@ -251,9 +257,36 @@ namespace engine {
         );
 
         outlineSceneRenderer = createRef<MultiRenderer>(batchShader, instanceShader, TRIANGLE);
-        outlineLineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, LINE);
-        outlineStripLineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, LINE_STRIP);
-        outlineLoopLineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, LINE_LOOP);
         outlineQuadRenderer = createRef<MultiRenderer>(batchShader, instanceShader, TRIANGLE_STRIP);
+    }
+
+    void RenderSystem::createSkyboxRenderer() {
+        auto skyboxRotation = ShaderScript();
+
+        skyboxRotation.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
+            // do nothing
+        };
+        skyboxRotation.updateEntity = [](const BaseShader& shader, const Entity& entity) {
+            auto transform = entity.getPtr<Transform3dComponent>();
+            if (transform) {
+                transform->rotation.y += 0.0001f;
+                updateModel3d(*transform);
+            }
+        };
+
+        auto vShader = shader::BaseShader({ camera3dUboScript(), skyboxRotation });
+        auto fShader = shader::BaseShader({ cubeMapTextureScript() });
+        auto shader = createRef<shader::BaseShaderProgram>(
+                shader::ShaderProps {
+                        "cubemap",
+                        "v_cubemap.glsl",
+                        "f_cubemap.glsl",
+                        ENGINE_SHADERS_PATH
+                },
+                vShader,
+                fShader
+        );
+
+        skyboxRenderer = createRef<VRenderer>(shader);
     }
 }

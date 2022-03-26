@@ -19,17 +19,6 @@ namespace engine {
     struct ModelMatrix2d;
     struct ModelMatrix3d;
 
-    class ModelMatrices final {
-
-    private:
-        ModelMatrices() = default;
-        ~ModelMatrices() = default;
-
-    public:
-        static void update(ModelMatrix2d &modelMatrix2D);
-        static void update(ModelMatrix3d &modelMatrix3D);
-    };
-
     struct ModelMatrix3d : shader::Mat4fUniform {
         glm::fvec3 position = DEFAULT_TRANSLATION_3D;
         glm::fvec3 rotation = DEFAULT_ROTATION_3D;
@@ -60,5 +49,8 @@ namespace engine {
                 const glm::vec2& scale
         ) : position(pos), rotation(rot), scale(scale) {}
     };
+
+    void updateModel2d(ModelMatrix2d &modelMatrix2D);
+    void updateModel3d(ModelMatrix3d &modelMatrix3D);
 
 }

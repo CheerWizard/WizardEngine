@@ -16,6 +16,7 @@
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/core/geometry/Circle.h>
 #include <graphics/outline/Outline.h>
+#include <graphics/skybox/Skybox.h>
 
 #include <imgui/imgui.h>
 
@@ -133,8 +134,8 @@ namespace fairy {
 //        _cubeEntity.add<engine::MaterialMapsComponent>(cubeMaterialMaps);
 
         auto humanMaterialMaps = engine::MaterialMapsComponent();
-        humanMaterialMaps.diffuseFileName = "wood_diffuse.png";
-        humanMaterialMaps.specularFileName = "wood_specular.png";
+        humanMaterialMaps.diffuse.fileName = "wood_diffuse.png";
+        humanMaterialMaps.specular.fileName = "wood_specular.png";
 
         random(-10, 10, 10, [this](const uint32_t& i, const float& r) {
             auto humanMesh = toMesh3dBatch(GET_OBJ("human.obj"));
@@ -191,8 +192,8 @@ namespace fairy {
 //        sponzaEntity.add<engine::Transform3dComponent>(sponzaTransform);
 //        sponzaEntity.add<engine::MeshComponent>(sponzaMesh);
         auto carMaterialMaps = engine::MaterialMapsComponent();
-        carMaterialMaps.diffuseFileName = "wood_diffuse.png";
-        carMaterialMaps.specularFileName = "wood_specular.png";
+        carMaterialMaps.diffuse.fileName = "wood_diffuse.png";
+        carMaterialMaps.specular.fileName = "wood_specular.png";
         car.add<engine::MaterialMapsComponent>(carMaterialMaps);
 
         random(-10, 10, 10, [this](const uint32_t& i, const float& r) {
@@ -267,6 +268,22 @@ namespace fairy {
                     random(0.0, 0.1)
             ));
         });
+
+        app->setSkybox(engine::SkyboxCube(
+            "Skybox",
+            app->activeScene.get(),
+            CubeMapTextureComponent {
+                "skybox",
+                {
+                    { "skybox/front.jpg", TextureFaceType::FRONT },
+                    { "skybox/back.jpg", TextureFaceType::BACK },
+                    { "skybox/left.jpg", TextureFaceType::LEFT },
+                    { "skybox/right.jpg", TextureFaceType::RIGHT },
+                    { "skybox/top.jpg", TextureFaceType::TOP },
+                    { "skybox/bottom.jpg", TextureFaceType::BOTTOM },
+                }
+            }
+        ));
     }
 
     void FLLayer::destroy() {
@@ -386,7 +403,8 @@ namespace fairy {
 
     void FLLayer::onImageOpen(const std::string &fileName) {
         EDITOR_INFO("onImageOpen({0})", fileName);
-        const uint32_t &textureId = GET_TEXTURE_ID(fileName);
+        auto texture = TextureComponent { fileName, TextureType::TEXTURE_2D };
+        const uint32_t &textureId = GET_TEXTURE_ID(texture, RUNTIME_TEXTURES_PATH);
         _texturePreview.setId(textureId);
         _texturePreview.show();
     }
@@ -441,37 +459,37 @@ namespace fairy {
 
         auto dirItem = AssetBrowserItem {
             "",
-            LOAD_TEXTURE("dir_icon.png", EDITOR_TEXTURES_PATH)
+            LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "dir_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto pngItem = AssetBrowserItem {
             PNG_EXT,
-            LOAD_TEXTURE("png_icon.png", EDITOR_TEXTURES_PATH)
+            LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "png_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto jpgItem = AssetBrowserItem {
             JPG_EXT,
-            LOAD_TEXTURE("jpg_icon.png", EDITOR_TEXTURES_PATH)
+            LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "jpg_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto glslItem = AssetBrowserItem {
             GLSL_EXT,
-            LOAD_TEXTURE("glsl_icon.png", EDITOR_TEXTURES_PATH)
+            LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "glsl_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto objItem = AssetBrowserItem {
             OBJ_EXT,
-            LOAD_TEXTURE("obj_icon.png", EDITOR_TEXTURES_PATH)
+            LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "obj_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto ttfItem = AssetBrowserItem {
             TTF_EXT,
-            LOAD_TEXTURE("ttf_icon.png", EDITOR_TEXTURES_PATH)
+            LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "ttf_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto cppItem = AssetBrowserItem {
             CPP_EXT,
-            LOAD_TEXTURE("cpp_icon.png", EDITOR_TEXTURES_PATH)
+            LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "cpp_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto items = AssetBrowserItems<6> {

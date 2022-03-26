@@ -146,18 +146,13 @@ namespace engine {
     public:
         Entity() = default;
 
-        Entity(entt::entity id, EntityContainer* container, const bool& instancingEnabled = false) :
-        id(id),
-        container(container) {
-        }
+        Entity(entt::entity id, EntityContainer* container) : id(id), container(container) {}
 
-        Entity(EntityContainer* container, const bool& instancingEnabled = false) :
-        container(container) {
+        Entity(EntityContainer* container) : container(container) {
             create();
         }
 
-        Entity(const std::string &tag, EntityContainer* container, const bool& instancingEnabled = false) :
-        container(container) {
+        Entity(const std::string &tag, EntityContainer* container) : container(container) {
             create(tag);
         }
 
@@ -173,6 +168,10 @@ namespace engine {
 
         [[nodiscard]] inline entt::entity getEnttId() const {
             return id;
+        }
+
+        [[nodiscard]] inline bool isValid() const {
+            return container != nullptr;
         }
 
         template<typename T, typename... Args>
