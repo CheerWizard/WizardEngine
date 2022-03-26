@@ -4,18 +4,13 @@
 
 #pragma once
 
-#include <graphics/core/shader/Uniform.h>
+#include <graphics/core/texture/Texture.h>
 
 #include "string"
 
 using namespace engine::shader;
 
 namespace engine {
-
-    struct TextureComponent {
-        std::string fileName;
-        IntUniform sampler;
-    };
 
     struct MaterialComponent {
         const char* name = "material";
@@ -30,9 +25,8 @@ namespace engine {
 
     struct MaterialMapsComponent {
         const char* name = "materialMaps";
-        std::string diffuseFileName;
-        std::string specularFileName;
-        IntUniform diffuse = { "diffuse", 0 };
-        IntUniform specular = { "specular", 1 };
+        TextureComponent diffuse = { { "diffuse", 0 } };
+        TextureComponent specular = { { "specular", 1 } };
     };
+
 }

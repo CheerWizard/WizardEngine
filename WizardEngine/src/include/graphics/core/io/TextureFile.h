@@ -22,11 +22,11 @@ namespace engine {
         ~TextureFile() = default;
 
     public:
-        // if read has failed, it will return TextureData, but with data = nullptr!
+        // read functions will return NULL value, if the read process failed!
         static TextureData read(const std::string_view &fileName);
         static TextureData read(const std::string_view &fileName, const std::string_view &texturesPath);
-        static void free(void* data);
 
+        static void free(void* data);
     };
 
 }

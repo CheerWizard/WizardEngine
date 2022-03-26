@@ -51,7 +51,7 @@ namespace engine {
     void MeshLayout::rotateEntity(const Time &dt) {
         auto& transform = _entity.get<Transform3dComponent>();
         transform.rotation.y += 0.000025f / dt;
-        ModelMatrices::update(transform);
+        updateModel3d(transform);
     }
 
     void MeshLayout::onRender(const Time &dt) {

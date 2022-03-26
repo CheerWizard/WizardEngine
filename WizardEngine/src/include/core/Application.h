@@ -79,6 +79,8 @@ namespace engine {
         void setWindowIcon(const std::string &filePath);
         Ref<FileDialog> createFileDialog();
 
+        void setSkybox(const Entity& skybox);
+
     protected:
         void pushFront(Layer* layer);
         void pushBack(Layer* overlay);

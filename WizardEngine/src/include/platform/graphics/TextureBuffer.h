@@ -5,6 +5,7 @@
 #pragma once
 
 #include <graphics/core/io/TextureFile.h>
+#include <graphics/core/texture/Texture.h>
 
 #include "string"
 
@@ -13,33 +14,38 @@ namespace engine {
     class TextureBuffer final {
 
     public:
-        TextureBuffer() {
-            create();
+        TextureBuffer() = default;
+        TextureBuffer(const TextureType& type) {
+            create(type);
         }
         ~TextureBuffer() = default;
 
     public:
-        [[nodiscard]] inline const uint32_t& getId() const {
+        [[nodiscard]] inline uint32_t getId() const {
             return id;
         }
 
     public:
         // lifetime functions
-        void create();
+        void create(const TextureType& textureType);
         void destroy();
         void recreate();
         // bind/unbind tbo
         void bind() const;
-        void unbind();
+        void unbind() const;
         // activating tbo
         void activate(const uint32_t &slot) const;
-        // streaming from file into tbo
+        // read from file and load to tbo
         void loadFrom(const std::string_view &fileName);
         void loadFrom(const std::string_view &fileName, const std::string_view &texturesPath);
+        void loadTexture2d(const std::string_view& filename, const std::string_view& texturesPath);
+        void loadCubeMap(const std::vector<TextureFace>& faces, const std::string_view& texturesPath);
         // loading texture data into tbo
         void load(const TextureData &textureData);
+        void load(const TextureFaceType& faceType, const TextureData& textureData);
 
     private:
         uint32_t id;
+        uint32_t type;
     };
 }
