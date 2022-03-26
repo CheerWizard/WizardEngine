@@ -9,7 +9,7 @@
 namespace engine {
 
     enum class TextureType : unsigned int {
-        TEXTURE_2D = 0, CUBE_MAP = 1
+        TEXTURE_2D = 0, CUBE_MAP = 1, TEXTURE_2D_MULTISAMPLE = 2
     };
 
     enum class TextureFaceType {
@@ -19,7 +19,7 @@ namespace engine {
     };
 
     struct TextureFace {
-        std::string fileName = "";
+        std::string fileName;
         TextureFaceType type;
 
         TextureFace(const std::string& fileName, const TextureFaceType& type)
