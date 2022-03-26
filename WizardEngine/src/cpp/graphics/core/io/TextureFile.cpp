@@ -25,15 +25,15 @@ namespace engine {
 
         int width, height, channels;
 
-        ENGINE_INFO("Loading texture from '{0}'", fullPath);
+        ENGINE_INFO("Reading texture from '{0}'", fullPath);
         void* data = stbi_load(fullPath.c_str(), &width, &height, &channels, 0);
 
         if (data == nullptr) {
             if (stbi_failure_reason()) {
                 ENGINE_ERR("Error occurs when loading texture from '{0}'", fullPath);
                 ENGINE_ERR("stbi failure reason : {0}", stbi_failure_reason());
-                return { width, height, channels };
             }
+            return { width, height, channels };
         }
 
         return { width, height, channels, data };

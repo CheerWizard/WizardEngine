@@ -188,4 +188,8 @@ namespace engine {
     void Application::createScripting() {
         _scriptSystem = createScope<ScriptSystem>();
     }
+
+    void Application::setSkybox(const Entity& skybox) {
+        _renderSystem->setSkybox(skybox);
+    }
 }

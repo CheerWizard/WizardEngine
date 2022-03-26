@@ -6,7 +6,7 @@
 
 namespace engine {
 
-    void ModelMatrices::update(ModelMatrix2d &modelMatrix2D) {
+    void updateModel2d(ModelMatrix2d &modelMatrix2D) {
         modelMatrix2D.isUpdated = true;
 
         auto identity = glm::mat4(1);
@@ -15,7 +15,7 @@ namespace engine {
         modelMatrix2D.value = glm::scale(rotationMatrix, glm::vec3(modelMatrix2D.scale, 1));
     }
 
-    void ModelMatrices::update(ModelMatrix3d &modelMatrix3D) {
+    void updateModel3d(ModelMatrix3d &modelMatrix3D) {
         modelMatrix3D.isUpdated = true;
 
         auto identity = glm::mat4(1);

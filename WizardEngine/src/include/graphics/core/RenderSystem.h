@@ -27,6 +27,10 @@ namespace engine {
             this->activeScene = activeScene;
         }
 
+        inline void setSkybox(const Entity& skybox) {
+            this->skybox = skybox;
+        }
+
     private:
         void create();
         void createSceneRenderer();
@@ -34,9 +38,12 @@ namespace engine {
         void createQuadRenderer();
         void createCircleRenderer();
         void createOutlineRenderer();
+        void createSkyboxRenderer();
 
     private:
         Ref<Scene> activeScene = nullptr;
+        Entity skybox;
+
         Ref<FrameBuffer> sceneFrame;
         // scene
         Ref<MultiRenderer> sceneRenderer;
@@ -51,12 +58,10 @@ namespace engine {
         // outlining everything
         // scene
         Ref<MultiRenderer> outlineSceneRenderer;
-        // line
-        Ref<MultiRenderer> outlineLineRenderer;
-        Ref<MultiRenderer> outlineStripLineRenderer;
-        Ref<MultiRenderer> outlineLoopLineRenderer;
         // quad
         Ref<MultiRenderer> outlineQuadRenderer;
+        // skybox
+        Ref<VRenderer> skyboxRenderer;
     };
 
 }

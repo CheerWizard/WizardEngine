@@ -8,9 +8,11 @@
 
 #include "unordered_map"
 
-#define GET_TEXTURE(path) engine::TextureSource::get()->getTextureBuffer(fileName)
-#define GET_TEXTURE_ID(path) GET_TEXTURE(path).getId()
-#define LOAD_TEXTURE(fileName, assetPath) engine::TextureSource::get()->loadTexture(fileName, assetPath)
+#define GET_TEXTURE(texture, assetPath) engine::TextureSource::get()->getTextureBuffer(texture, assetPath)
+#define GET_TEXTURE_ID(texture, assetPath) GET_TEXTURE(texture, assetPath).getId()
+#define LOAD_TEXTURE(texture, assetPath) engine::TextureSource::get()->loadTexture(texture, assetPath)
+#define LOAD_TEXTURE_PARAMS(type, fileName, assetPath) engine::TextureSource::get()->loadTexture(type, fileName, assetPath)
+#define ACTIVATE_TEXTURE(texture) engine::TextureSource::get()->activate(texture)
 
 namespace engine {
 
@@ -40,8 +42,20 @@ namespace engine {
         }
 
     public:
-        const TextureBuffer& getTextureBuffer(const std::string &fileName);
-        const TextureBuffer& getTextureBuffer(const std::string &fileName, const std::string &texturesPath);
+        const TextureBuffer& getTextureBuffer(const TextureComponent& textureComponent);
+        const TextureBuffer& getTextureBuffer(
+                const TextureComponent& textureComponent,
+                const std::string& texturesPath
+        );
+        const TextureBuffer& getTextureBuffer(
+                const TextureType& type,
+                const std::string& fileName,
+                const std::string& texturesPath
+        );
+        const TextureBuffer& getTextureBuffer(
+                const CubeMapTextureComponent& cubeMapTextureComponent,
+                const std::string& texturesPath
+        );
 
         /**
          * Checks if TextureBuffer already exists in cache by @param fileName.
@@ -50,7 +64,7 @@ namespace engine {
          * save it by @param fileName into cache and proceed condition 1.
          * @return TextureBuffer ID from TextureBuffer that has loaded a texture from @param fileName
          */
-        const uint32_t& loadTexture(const std::string &fileName);
+        uint32_t loadTexture(const TextureComponent& textureComponent);
 
         /**
          * Checks if TextureBuffer already exists in cache by @param fileName.
@@ -60,15 +74,27 @@ namespace engine {
          * @param texturesPath - path to actual textures folder!
          * @return TextureBuffer ID from TextureBuffer that has loaded a texture from @param fileName
          */
-        const uint32_t& loadTexture(const std::string &fileName, const std::string &texturesPath);
+        uint32_t loadTexture(
+                const TextureComponent& textureComponent,
+                const std::string &texturesPath
+        );
+
+        uint32_t loadTexture(
+                const TextureType& type,
+                const std::string& fileName,
+                const std::string& texturesPath
+        );
+
+        uint32_t loadTexture(
+                const CubeMapTextureComponent& cubeMapTextureComponent,
+                const std::string& texturesPath
+        );
+
+        void activate(const TextureComponent& textureComponent);
+        void activate(const CubeMapTextureComponent& cubeMapTextureComponent);
 
         void remove(const std::string &fileName);
         void clear();
-
-    public:
-        const TextureBuffer& operator [](const std::string &name) {
-            return getTextureBuffer(name);
-        }
 
     private:
         bool exists(const std::string &name);
