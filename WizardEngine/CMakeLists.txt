@@ -10,7 +10,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(${PROJECT_NAME} ${ENGINE_SRC})
+add_library(${PROJECT_NAME} ${ENGINE_SRC} src/cpp/graphics/text/Text.cpp)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 #/ adding dependencies.
@@ -41,6 +41,10 @@ include_directories(vendor/stb/stb)
 #/ ECS lib.
 add_subdirectory(vendor/entt)
 
+#/ FreeType for text font rendering
+add_subdirectory(vendor/freetype2)
+include_directories(vendor/freetype2/include)
+
 #/ linking dependencies.
 target_link_libraries(
         WizardEngine PUBLIC
@@ -51,6 +55,7 @@ target_link_libraries(
         glm::glm
         stb
         EnTT
+        freetype
 )
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)

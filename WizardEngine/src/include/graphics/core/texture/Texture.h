@@ -6,7 +6,25 @@
 
 #include <graphics/core/shader/BaseShader.h>
 
+#define CHANNEL_RED 0
+#define CHANNEL_RGB 3
+#define CHANNEL_RGBA 4
+
 namespace engine {
+
+    enum class TextureParamName {
+        MIN_FILTER, MAG_FILTER,
+        WRAP_S, WRAP_T, WRAP_R
+    };
+
+    enum class TextureParamValue {
+        LINEAR, REPEAT, CLAMP_TO_EDGE
+    };
+
+    struct TextureParam {
+        TextureParamName name;
+        TextureParamValue value;
+    };
 
     enum class TextureType : unsigned int {
         TEXTURE_2D = 0, CUBE_MAP = 1, TEXTURE_2D_MULTISAMPLE = 2

@@ -26,6 +26,9 @@ namespace engine {
         }
 
     public:
+        static void disableByteAlignment();
+
+    public:
         // lifetime functions
         void create(const TextureType& textureType);
         void destroy();
@@ -43,6 +46,7 @@ namespace engine {
         // loading texture data into tbo
         void load(const TextureData &textureData);
         void load(const TextureFaceType& faceType, const TextureData& textureData);
+        void setParams(const std::vector<TextureParam>& params) const;
 
     private:
         uint32_t id;
