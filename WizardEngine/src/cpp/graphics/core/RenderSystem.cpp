@@ -42,8 +42,6 @@ namespace engine {
         stencilMask(false);
 
         auto& registry = activeScene->getRegistry();
-        // skybox
-        skyboxRenderer->render<Transform3dComponent, SkyboxVertex>(skybox);
         // scene
         sceneRenderer->renderVI<Transform3dComponent, Vertex3d>(registry);
         // lines
@@ -60,12 +58,15 @@ namespace engine {
         setDepthTest(false);
         // outlining
         outlineSceneRenderer->render<Transform3dComponent, OutlineVertex>(registry);
-
         // write to stencil buffer
         stencilMask(false);
         setStencilTestOperator(ALWAYS, 0, false);
         setDepthTest(true);
-
+        // skybox
+        setDepthTestOperator(LESS_EQUAL); // we need to pass depth test for some skybox pixels
+        skyboxRenderer->render<Transform3dComponent, SkyboxVertex>(skybox);
+        setDepthTestOperator(LESS);
+        // finish frame
         sceneFrame->unbind();
         setDepthTest(false);
         clearColorBuffer();

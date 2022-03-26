@@ -8,5 +8,6 @@ out vec3 f_dir;
 
 void main() {
     f_dir = position;
-    gl_Position = camera * transform * vec4(position, 1.0);
+    vec4 pos = camera * transform * vec4(position, 1.0);
+    gl_Position = pos.xyww;
 }
