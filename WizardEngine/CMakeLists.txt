@@ -10,7 +10,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(${PROJECT_NAME} ${ENGINE_SRC} src/cpp/graphics/text/Text.cpp)
+add_library(${PROJECT_NAME} ${ENGINE_SRC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 #/ adding dependencies.
@@ -68,3 +68,4 @@ replace_dirs(WizardEngine/vendor/glfw/include WizardEngine/vendor/glfw/include)
 replace_dirs(WizardEngine/vendor/glm/glm WizardEngine/vendor/glm/glm)
 replace_dirs(WizardEngine/vendor/spdlog/include WizardEngine/vendor/spdlog/include)
 replace_dirs(WizardEngine/vendor/stb/stb WizardEngine/vendor/stb/stb)
+replace_dirs(WizardEngine/vendor/freetype2/include WizardEngine/vendor/freetype2/include)

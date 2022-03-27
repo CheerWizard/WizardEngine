@@ -9,6 +9,7 @@
 #define CHANNEL_RED 0
 #define CHANNEL_RGB 3
 #define CHANNEL_RGBA 4
+#define MAX_TEXTURE_SLOTS 16
 
 namespace engine {
 

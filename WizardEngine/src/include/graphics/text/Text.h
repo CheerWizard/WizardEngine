@@ -6,8 +6,22 @@
 
 #include <graphics/core/shader/Uniform.h>
 #include <graphics/core/buffer_data/VertexData.h>
-#include <graphics/text/FontSource.h>
+#include <platform/graphics/TextureBuffer.h>
 #include <ecs/Entity.h>
+#include <core/Memory.h>
+#include <graphics/core/math/Projections.h>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+#include <glm/glm.hpp>
+#include <unordered_map>
+
+#define FONT_SOURCE engine::FontSource::get()
+#define FONT_LOAD(fontPath) FONT_SOURCE.load(fontPath)
+#define FONT_LOAD_CHARS(fontSize) FONT_SOURCE.loadChars(fontSize)
+#define CHAR_VIEW(ch) FONT_SOURCE.getCharView(ch)
+#define FONTS_PATH "assets/fonts"
 
 namespace engine {
 
@@ -16,12 +30,100 @@ namespace engine {
         glm::vec2 uv = { 0.5, 0.5 };
     };
 
-    struct TextComponent {
-        std::string text;
-        shader::Vec3fUniform color = { "color", { 1, 1, 1 } };
-        float size;
-        glm::vec2 position = { 1, 1 };
+    // visual presentation of char symbol
+    struct FontGlyph {
+        VertexDataComponent<TextVertex> quad;
+        glm::vec2 size {};
+        glm::vec2 bearing {};
+        long advance = 0;
     };
+
+    class FontFace {
+
+    public:
+        FontFace() = default;
+
+        FontFace(const FT_Face& face, const size_t& fontSize) : face(face) {
+            initGlyphs(fontSize);
+        }
+        ~FontFace() {
+            destroy();
+        }
+
+    public:
+        void initGlyphs(const size_t& fontSize);
+        bool initGlyph(const uint8_t& glyph, const FT_Int32& flag);
+        bool renderGlyph(const FT_Render_Mode_& renderMode);
+        bool setFontSize(const size_t& fontSize);
+        void destroy();
+        const FT_Face& get();
+
+    private:
+        FT_Face face = nullptr;
+        // key - char symbol
+        // value - visual presentation of char symbol
+        std::unordered_map<char, FontGlyph> glyphs;
+    };
+
+    class FontSource {
+
+    private:
+        FontSource() {
+            init();
+        }
+
+    public:
+        FontSource(const FontSource&) = delete;
+        FontSource& operator=(const FontSource &) = delete;
+        FontSource(FontSource &&) = delete;
+        FontSource& operator=(FontSource &&) = delete;
+
+    public:
+        static auto& get() {
+            static FontSource instance;
+            return instance;
+        }
+
+    public:
+        bool load(const std::string& fontPath, const size_t& fontSize);
+        void generateBitmap(
+                const std::string& fontFilename,
+                const int& fontSize,
+                const std::string& bitmapFilename,
+                const std::string& widthsFilename
+        );
+
+    private:
+        bool exists(const std::string& fontPath);
+        void init();
+        void clear();
+
+    private:
+        FT_Library ftLibrary;
+        // key - font file name
+        // value - actual font face
+        std::unordered_map<std::string, FontFace> fonts;
+    };
+
+    struct TextComponent {
+        std::string string;
+        shader::Vec3fUniform color = { "color", { 1, 1, 1 } };
+        glm::vec2 position = { 0, 0 };
+        float size = 0;
+
+        TextComponent() = default;
+        TextComponent(const std::string& string,
+                      const Vec3fUniform& color,
+                      const glm::vec2& position,
+                      const float& size)
+        : string(string), color(color), position(position), size(size) {
+            update();
+        }
+
+        void update();
+    };
+
+    struct StaticTextProjection : OrthographicMatrix {};
 
     class TextView : public Entity {
 
@@ -33,47 +135,8 @@ namespace engine {
 
     private:
         void init(const TextComponent& textComponent) {
-            add<VertexDataComponent<TextVertex>>(initSquare(textComponent));
             add<TextComponent>(textComponent);
         }
-
-        VertexDataComponent<TextVertex> initSquare(const TextComponent& textComponent) {
-            // iterate through all characters
-            std::string::const_iterator c;
-            auto& text = textComponent.text;
-            auto& size = textComponent.size;
-            auto& position = textComponent.position;
-            for (c = text.begin(); c != text.end(); c++) {
-                auto& charView = CHAR_VIEW(*c);
-                float x = position.x + charView.bearing.x * size;
-                float y = position.y - (charView.size.y - charView.bearing.y) * size;
-                float w = charView.size.x * size;
-                float h = charView.size.y * size;
-                // update VBO for each character
-                float vertices[6][4] = {
-                        { x,     y + h, 0.0f, 0.0f },
-                        { x,     y,     0.0f, 1.0f },
-                        { x + w, y,     1.0f, 1.0f },
-
-                        { x,     y + h, 0.0f, 0.0f },
-                        { x + w, y,     1.0f, 1.0f },
-                        { x + w, y + h, 1.0f, 0.0f }
-                };
-                // render glyph texture over quad
-                glBindTexture(GL_TEXTURE_2D, ch.textureID);
-                // update content of VBO memory
-                glBindBuffer(GL_ARRAY_BUFFER, VBO);
-                glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
-                // render quad
-                glDrawArrays(GL_TRIANGLES, 0, 6);
-                // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-                position.x += (charView.advance >> 6) * size; // bitshift by 6 to get value in pixels (2^6 = 64)
-            }
-        }
     };
-
-    using namespace shader;
-    ShaderScript textShaderScript();
 
 }
