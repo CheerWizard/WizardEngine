@@ -44,6 +44,7 @@ add_subdirectory(vendor/entt)
 #/ FreeType for text font rendering
 add_subdirectory(vendor/freetype2)
 include_directories(vendor/freetype2/include)
+include_directories(vendor/freetype2/src)
 
 #/ linking dependencies.
 target_link_libraries(

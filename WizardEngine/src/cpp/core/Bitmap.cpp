@@ -6,7 +6,6 @@
 #include <core/Logger.h>
 
 #include <cstdio>
-#include <fstream>
 
 namespace engine {
 
@@ -39,7 +38,7 @@ namespace engine {
         return bitmapBuffer;
     }
 
-    bool Bitmap::write(const std::string& bitmapFileName, const BitmapData& bitMapData) {
+    bool Bitmap::write(const std::string& bitmapPath, const BitmapData& bitMapData) {
         uint8_t* buffer = bitMapData.buffer;
         int bufferSize = *bitMapData.bufferSize;
         int imageWidth = bitMapData.imageWidth;
@@ -69,9 +68,9 @@ namespace engine {
         };
 
         FILE* file;
-        fopen_s(&file, bitmapFileName.c_str(), "wb");
+        fopen_s(&file, bitmapPath.c_str(), "wb");
         if (!file) {
-            ENGINE_ERR("Bitmap : failed to save bitmap file {0}", bitmapFileName);
+            ENGINE_ERR("Bitmap : failed to save bitmap file {0}", bitmapPath);
             return false;
         }
 

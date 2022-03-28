@@ -10,6 +10,7 @@ macro(include_engine)
             ../WizardEngine/vendor/imgui
             ../WizardEngine/vendor/stb
             ../WizardEngine/vendor/freetype2/include
+            ../WizardEngine/vendor/freetype2/src
     )
 endmacro()
 # use this macro to link WizardEngine and all it's dependencies!

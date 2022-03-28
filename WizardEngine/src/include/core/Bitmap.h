@@ -45,7 +45,7 @@ namespace engine {
 
     public:
         static uint8_t* toBitmapBuffer(const BitmapData& bitMapData);
-        static bool write(const std::string& bitmapFileName, const BitmapData& bitMapData);
+        static bool write(const std::string& bitmapPath, const BitmapData& bitMapData);
 
     };
 
