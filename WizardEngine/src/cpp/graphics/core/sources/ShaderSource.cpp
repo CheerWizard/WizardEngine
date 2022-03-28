@@ -7,8 +7,6 @@
 
 namespace engine::shader {
 
-    Ref<ShaderSource> ShaderSource::instance = createRef<ShaderSource>();
-
     void ShaderSource::add(const std::string &name, const Ref<BaseShaderProgram> &shaderProgram) {
         ENGINE_ASSERT(!exists(name), "Shader already exists!");
         _shaders[name] = shaderProgram;

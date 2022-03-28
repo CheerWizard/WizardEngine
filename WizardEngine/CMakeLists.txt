@@ -42,9 +42,8 @@ include_directories(vendor/stb/stb)
 add_subdirectory(vendor/entt)
 
 #/ FreeType for text font rendering
-add_subdirectory(vendor/freetype2)
-include_directories(vendor/freetype2/include)
-include_directories(vendor/freetype2/src)
+add_subdirectory(vendor/freetype)
+include_directories(vendor/freetype)
 
 #/ linking dependencies.
 target_link_libraries(
@@ -69,4 +68,4 @@ replace_dirs(WizardEngine/vendor/glfw/include WizardEngine/vendor/glfw/include)
 replace_dirs(WizardEngine/vendor/glm/glm WizardEngine/vendor/glm/glm)
 replace_dirs(WizardEngine/vendor/spdlog/include WizardEngine/vendor/spdlog/include)
 replace_dirs(WizardEngine/vendor/stb/stb WizardEngine/vendor/stb/stb)
-replace_dirs(WizardEngine/vendor/freetype2/include WizardEngine/vendor/freetype2/include)
+replace_dirs(WizardEngine/vendor/freetype/include WizardEngine/vendor/freetype/include)

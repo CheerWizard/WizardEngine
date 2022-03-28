@@ -18,7 +18,7 @@
 #include <graphics/outline/Outline.h>
 #include <graphics/skybox/Skybox.h>
 
-#include <core/Fonts.h>
+#include <core/BitmapFile.h>
 
 #include <imgui/imgui.h>
 
@@ -287,10 +287,16 @@ namespace fairy {
             }
         ));
 
-        FONTS_GENERATE_BITMAP("assets/fonts/opensans/OpenSans-Bold.ttf",
-                              14,
-                              "assets/bitmaps/OpenSans-Bold.bmp",
-                              "assets/bitmaps/OpenSans-Bold.txt");
+//        FONTS_GENERATE_BITMAP("assets/fonts/opensans/OpenSans-Bold.ttf",
+//                              14,
+//                              "assets/bitmaps/OpenSans-Bold.bmp",
+//                              "assets/bitmaps/OpenSans-Bold.txt");
+        BitmapFile::create(
+                "assets/fonts/opensans/OpenSans-Bold.ttf",
+                40,
+                "assets/bitmaps/OpenSans-Bold.bmp",
+                "assets/bitmaps/OpenSans-Bold.txt"
+        );
     }
 
     void FLLayer::destroy() {
