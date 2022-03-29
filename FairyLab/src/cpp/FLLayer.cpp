@@ -12,13 +12,11 @@
 #include <graphics/GraphicsObject.h>
 #include <scripting/ScriptBuilder.h>
 
-#include <graphics/core/geometry/Line.h>
-#include <graphics/core/geometry/Quad.h>
-#include <graphics/core/geometry/Circle.h>
 #include <graphics/outline/Outline.h>
 #include <graphics/skybox/Skybox.h>
+#include <graphics/text/Text.h>
 
-#include <core/BitmapFile.h>
+#include <core/Fonts.h>
 
 #include <imgui/imgui.h>
 
@@ -106,16 +104,17 @@ namespace fairy {
         _texturePreview.setCallback(_imagePreviewCallback);
         _assetBrowser->setCallback(this);
 
-//        app->getTextureSource()->loadTexture("demo.png");
-//        app->getTextureSource()->loadTexture("demo_texture.jpg");
+        createTest();
+    }
 
+    void FLLayer::createTest() {
         auto carMesh = toMesh3dBatch(GET_OBJ("ferrari.obj"));
-        auto carTransform = engine::transform3d(
+        auto carTransform = transform3d(
                 { 2.5, 0, 12 },
                 {135, 0, 0},
                 {0.5, 0.5, 0.5}
         );
-        car = engine::Object3d(
+        car = Object3d(
                 app->activeScene.get(),
                 "Car",
                 carTransform,
@@ -123,179 +122,56 @@ namespace fairy {
         );
         car.add<OutlineBatchMesh>(toOutlineBatchMesh(copy(carMesh)));
         car.add<OutlineComponent>(OutlineComponent({ 1, 1, 0, 1 }, 0.01));
-
-//        _cubeEntity = engine::Entity("Cube", app->activeScene.get());
-//        auto cubeMesh = app->getMeshSource()->getCube("cube");
-//        auto cubeMaterial = engine::MaterialComponent();
-//        auto cubeMaterialMaps = engine::MaterialMapsComponent();
-//        cubeMaterialMaps.diffuseFileName = "wood_diffuse.png";
-//        cubeMaterialMaps.specularFileName = "wood_specular.png";
-//        _cubeEntity.add<engine::Transform3dComponent>(cubeTransform);
-//        _cubeEntity.add<engine::MeshComponent>(cubeMesh);
-//        _cubeEntity.add<engine::MaterialComponent>(cubeMaterial);
-//        _cubeEntity.add<engine::MaterialMapsComponent>(cubeMaterialMaps);
-
-        auto humanMaterialMaps = engine::MaterialMapsComponent();
-        humanMaterialMaps.diffuse.fileName = "wood_diffuse.png";
-        humanMaterialMaps.specular.fileName = "wood_specular.png";
-
-        random(-10, 10, 10, [this](const uint32_t& i, const float& r) {
-            auto humanMesh = toMesh3dBatch(GET_OBJ("human.obj"));
-            humanMesh = copy(humanMesh);
-            auto human = engine::Object3d(
-                app->activeScene.get(),
-                "Human " + std::to_string(i),
-                engine::transform3d(
-                        { r, r, r },
-                        { r, r, r },
-                        {0.2, 0.2, 0.2}
-                ),
-                humanMesh
-            );
-            human.add<OutlineBatchMesh>(toOutlineBatchMesh(copy(humanMesh)));
-            human.add<OutlineComponent>(OutlineComponent({0, 1, 0, 1}, 0.01));
+        car.add<MaterialMapsComponent>(MaterialMapsComponent {
+                "wood_diffuse.png",
+                "wood_specular.png"
         });
 
-        // light
-//        auto phongLight = engine::PhongLight(app->activeScene.get());
-//        auto directLight = engine::DirectLight(app->activeScene.get());
-//        auto pointLight = engine::PointLight(app->activeScene.get());
-//        auto lightMesh = engine::Shapes::newSquare();
         auto lightTransform = engine::transform3d(
                 { 10, 0, 12 },
                 { 135, 0, 0 },
                 { 0.5, 0.5, 0.5 }
         );
+
         auto phongLight = engine::PhongLight(app->activeScene.get());
         phongLight.add<engine::Transform3dComponent>(lightTransform);
-//        phongLight.add<engine::MeshComponent>(lightMesh);
-//
+
         auto pointLight = engine::PointLight(app->activeScene.get());
         pointLight.add<engine::Transform3dComponent>(lightTransform);
 
-        auto pointLight2 = engine::PointLight(app->activeScene.get());
-        pointLight2.add<engine::Transform3dComponent>(lightTransform);
-
-        auto pointLight3 = engine::PointLight(app->activeScene.get());
-        pointLight3.add<engine::Transform3dComponent>(lightTransform);
-
-        auto pointLight4 = engine::PointLight(app->activeScene.get());
-        pointLight4.add<engine::Transform3dComponent>(lightTransform);
-
-//        pointLight.add<engine::MeshComponent>(engine::copy(lightMesh));
-
-//        auto sponzaEntity = engine::Entity("Sponza", app->activeScene.get());
-//        auto sponzaMesh = app->getMeshSource()->getMesh("sponza.obj");
-//        auto sponzaTransform = engine::TransformComponents::newTransform3d(
-//                { 10, 0, 12 },
-//                { 135, 0, 0 },
-//                { 0.5, 0.5, 0.5 }
-//        );
-//        sponzaEntity.add<engine::Transform3dComponent>(sponzaTransform);
-//        sponzaEntity.add<engine::MeshComponent>(sponzaMesh);
-        auto carMaterialMaps = engine::MaterialMapsComponent();
-        carMaterialMaps.diffuse.fileName = "wood_diffuse.png";
-        carMaterialMaps.specular.fileName = "wood_specular.png";
-        car.add<engine::MaterialMapsComponent>(carMaterialMaps);
-
-        random(-10, 10, 10, [this](const uint32_t& i, const float& r) {
-            glm::vec4 randomColor1 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-            glm::vec4 randomColor2 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-            glm::vec3 randomPos1 = { random(-1, 1), random(-1, 1), random(-1, 1) };
-            glm::vec3 randomPos2 = { random(-1, 1), random(-1, 1), random(-1, 1) };
-            engine::Object3d(
-                    app->activeScene.get(),
-                    "Line " + std::to_string(i),
-                    engine::transform3d(
-                        { r, r, r },
-                        { r, r, r },
-                        { 1, 1, 1 }
-                    ),
-                    InstanceLine({
-                        { randomPos1, randomColor1 },
-                        { randomPos2, randomColor2 }
-                    })
-            );
-        });
-
-        random(-10, 10, 10, [this](const uint32_t& i, const float& r) {
-            glm::vec4 randomColor1 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-            glm::vec4 randomColor2 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-            glm::vec4 randomColor3 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-            glm::vec4 randomColor4 = { random(0, 1), random(0, 1), random(0, 1), 1 };
-
-            std::array<QuadVertex, 4> quadVertices = {
-                    QuadVertex { { 0.5, -0.5, 0.5 }, randomColor1 },
-                    QuadVertex { { 0.5, 0.5, 0.5 }, randomColor2 },
-                    QuadVertex { { -0.5, -0.5, 0.5 }, randomColor3 },
-                    QuadVertex { { -0.5, 0.5, 0.5 }, randomColor4 }
-            };
-            auto quadVertexData = InstanceQuad(quadVertices);
-            auto quad = engine::Object3d(
-                    app->activeScene.get(),
-                    "Quad " + std::to_string(i),
-                    engine::transform3d(
-                            { r, r, r },
-                            { r, r, r },
-                            { 1, 1, 1 }
-                    ),
-                    quadVertexData
-            );
-//            quad.add<OutlineInstanceVertexData>(toOutlineInstanceVertexData(copy(quadVertexData)));
-//            quad.add<OutlineComponent>(OutlineComponent({0, 1, 0, 1}, 0.01));
-        });
-
-        random(-10, 10, 10, [this](const uint32_t& i, const float& r) {
-            glm::vec4 randomColor = { random(0, 1), random(0, 1), random(0, 1), 1 };
-            std::array<CircleVertex, 4> circleVertices = {
-                    CircleVertex { { 0.5, -0.5, 0.5 }, { 1, -1 } },
-                    CircleVertex { { 0.5, 0.5, 0.5 }, { 1, 1 } },
-                    CircleVertex { { -0.5, -0.5, 0.5 }, { -1, -1 } },
-                    CircleVertex { { -0.5, 0.5, 0.5 }, { -1, 1 } }
-            };
-
-            auto circle = engine::Object3d(
-                    app->activeScene.get(),
-                    "Circle " + std::to_string(i),
-                    engine::transform3d(
-                            { r, r, r },
-                            { r, r, r },
-                            { 1, 1, 1 }
-                    ),
-                    InstanceCircle(circleVertices)
-            );
-            circle.add<CircleComponent>(CircleComponent(
-                    randomColor,
-                    random(0.0, 0.1),
-                    random(0.0, 0.1)
-            ));
-        });
-
         app->setSkybox(engine::SkyboxCube(
-            "Skybox",
-            app->activeScene.get(),
-            CubeMapTextureComponent {
-                "skybox",
-                {
-                    { "skybox/front.jpg", TextureFaceType::FRONT },
-                    { "skybox/back.jpg", TextureFaceType::BACK },
-                    { "skybox/left.jpg", TextureFaceType::LEFT },
-                    { "skybox/right.jpg", TextureFaceType::RIGHT },
-                    { "skybox/top.jpg", TextureFaceType::TOP },
-                    { "skybox/bottom.jpg", TextureFaceType::BOTTOM },
+                "Skybox",
+                app->activeScene.get(),
+                CubeMapTextureComponent {
+                        "skybox",
+                        {
+                                { "skybox/front.jpg", TextureFaceType::FRONT },
+                                { "skybox/back.jpg", TextureFaceType::BACK },
+                                { "skybox/left.jpg", TextureFaceType::LEFT },
+                                { "skybox/right.jpg", TextureFaceType::RIGHT },
+                                { "skybox/top.jpg", TextureFaceType::TOP },
+                                { "skybox/bottom.jpg", TextureFaceType::BOTTOM },
+                        }
                 }
-            }
         ));
 
-//        FONTS_GENERATE_BITMAP("assets/fonts/opensans/OpenSans-Bold.ttf",
-//                              14,
-//                              "assets/bitmaps/OpenSans-Bold.bmp",
-//                              "assets/bitmaps/OpenSans-Bold.txt");
-        BitmapFile::create(
+        FONTS.create(
                 "assets/fonts/opensans/OpenSans-Bold.ttf",
                 40,
                 "assets/bitmaps/OpenSans-Bold.bmp",
                 "assets/bitmaps/OpenSans-Bold.txt"
+        );
+
+        TextView(
+             "Text",
+             app->activeScene.get(),
+             TextComponent {
+                    "Hello World!",
+                    "assets/fonts/opensans/OpenSans-Bold.ttf",
+                    "OpenSans-Bold.bmp",
+                    transform3d(),
+                    { 1, 0, 0, 1 }
+             }
         );
     }
 
@@ -347,7 +223,6 @@ namespace fairy {
     void FLLayer::onUpdate(engine::Time dt) {
         ImGuiLayer::onUpdate(dt);
         activeSceneCameraController->setDeltaTime(dt);
-        // draw scene texture id!
         sceneViewport.setId(app->activeScene->getTextureId());
     }
 

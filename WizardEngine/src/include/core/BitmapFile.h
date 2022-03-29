@@ -1,12 +1,5 @@
 #pragma once
 
-#include <graphics/core/buffer_data/VertexData.h>
-
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
-#include <glm/glm.hpp>
-
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -35,14 +28,11 @@ namespace engine {
         int importantColorsUsed;
     };
 
-    struct CharVertex {
-        glm::vec2 position = { 0.5, 0.5 };
-        glm::vec2 uv = { 0, 0 };
-    };
-
-    struct Character {
-        VertexDataComponent<CharVertex> vertexDataComponent;
-        glm::vec2 size = { 0, 0 };
+    struct BitmapData {
+        int imageWidth;
+        int imageHeight;
+        uint8_t* buffer;
+        int* bufferSize;
     };
 
     class BitmapFile final {
@@ -52,15 +42,7 @@ namespace engine {
         ~BitmapFile() = default;
 
     public:
-        static bool create(
-                const std::string& fontPath,
-                const int& fontSize,
-                const std::string& bitmapPath,
-                const std::string& widthsPath
-        );
-
-    private:
-        static std::unordered_map<char, Character> chars;
+        static bool write(const std::string& bitmapPath, const BitmapData& bitmapData);
     };
 
 }

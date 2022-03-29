@@ -11,12 +11,16 @@ namespace engine {
     class TextRenderer : public Renderer {
 
     public:
-        TextRenderer(const Ref<BaseShaderProgram>& shaderProgram, const DrawType& drawType = TRIANGLE)
-        : Renderer(shaderProgram, drawType) {}
+        TextRenderer(const Ref<BaseShaderProgram>& shaderProgram)
+        : Renderer(shaderProgram, TRIANGLE_STRIP, VERTEX) {
+            init();
+        }
 
     public:
         void render(entt::registry& registry);
 
+    private:
+        void init();
     };
 
 }

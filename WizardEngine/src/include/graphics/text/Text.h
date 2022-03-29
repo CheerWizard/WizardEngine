@@ -4,41 +4,39 @@
 
 #pragma once
 
-#include <graphics/core/shader/Uniform.h>
-#include <graphics/core/buffer_data/VertexData.h>
-#include <platform/graphics/TextureBuffer.h>
 #include <ecs/Entity.h>
-#include <core/Memory.h>
 #include <graphics/core/math/Projections.h>
-
-#include <glm/glm.hpp>
+#include <graphics/transform/TransformComponents.h>
+#include <graphics/core/texture/Texture.h>
 
 namespace engine {
 
     struct TextComponent {
-        std::string string;
-        shader::Vec3fUniform color = { "color", { 1, 1, 1 } };
-        glm::vec2 position = { 0, 0 };
-        float size = 0;
+        std::string text;
+        std::string font;
+        shader::Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
+        Transform3dComponent transform;
+        TextureComponent bitmap;
 
         TextComponent() = default;
-        TextComponent(const std::string& string,
-                      const Vec3fUniform& color,
-                      const glm::vec2& position,
-                      const float& size)
-        : string(string), color(color), position(position), size(size) {
-            update();
-        }
-
-        void update();
+        TextComponent(
+                const std::string& text,
+                const std::string& font,
+                const std::string& bitmap,
+                const Transform3dComponent& transform,
+                const glm::vec4& color
+        ) : text(text), font(font), bitmap({ bitmap, TextureType::TEXTURE_2D, { "bitmap", 0 } }),
+        transform(transform), color({ "color", color }) {}
     };
-
-    struct StaticTextProjection : OrthographicMatrix {};
 
     class TextView : public Entity {
 
     public:
-        TextView(const std::string& tag, EntityContainer* container, const TextComponent& textComponent)
+        TextView(
+                const std::string& tag,
+                EntityContainer* container,
+                const TextComponent& textComponent
+        )
         : Entity(tag, container) {
             init(textComponent);
         }

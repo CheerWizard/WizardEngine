@@ -6,6 +6,4 @@
 
 namespace engine {
 
-    void TextComponent::update() {
-    }
 }

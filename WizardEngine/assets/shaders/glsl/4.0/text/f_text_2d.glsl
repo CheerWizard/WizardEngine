@@ -5,10 +5,10 @@ in flat int f_id;
 
 out vec4 fragment;
 
-uniform sampler2D char[16];
-uniform vec3 color;
+uniform sampler2D bitmap;
+uniform vec4 color[128];
 
 void main() {
-    vec4 sampled = vec4(1.0, 1.0, 1.0, texture(char[f_id], f_uv).r);
-    fragment = vec4(color, 1.0) * sampled;
+    vec4 char = vec4(1.0, 1.0, 1.0, texture(bitmap, f_uv).r);
+    fragment = color[f_id] * char;
 }

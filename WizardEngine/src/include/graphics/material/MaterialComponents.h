@@ -25,8 +25,11 @@ namespace engine {
 
     struct MaterialMapsComponent {
         const char* name = "materialMaps";
-        TextureComponent diffuse = { { "diffuse", 0 } };
-        TextureComponent specular = { { "specular", 1 } };
+        TextureComponent diffuse = { IntUniform { "diffuse", 0 } };
+        TextureComponent specular = { IntUniform { "specular", 1 } };
+
+        MaterialMapsComponent(const std::string& diffuseFileName, const std::string& specularFileName)
+        : diffuse(diffuseFileName, { "diffuse", 0 }), specular(specularFileName, { "specular", 1 }) {}
     };
 
 }

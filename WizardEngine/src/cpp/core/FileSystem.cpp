@@ -187,7 +187,6 @@ namespace engine {
             return false;
         }
 
-        delete[] data;
         return true;
     }
 

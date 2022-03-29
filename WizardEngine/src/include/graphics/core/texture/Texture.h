@@ -50,6 +50,9 @@ namespace engine {
         TextureType type = TextureType::TEXTURE_2D;
         shader::IntUniform sampler;
 
+        TextureComponent(const std::string& fileName, const shader::IntUniform& sampler)
+        : fileName(fileName), sampler(sampler) {}
+
         TextureComponent(const std::string& fileName, const TextureType& type) : fileName(fileName), type(type) {}
 
         TextureComponent(const std::string& fileName, const TextureType& type, const shader::IntUniform& sampler)

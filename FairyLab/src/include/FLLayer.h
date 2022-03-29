@@ -72,6 +72,7 @@ namespace fairy {
 
     private:
         void create();
+        void createTest();
         void destroy();
 
         void createAssetBrowser();
