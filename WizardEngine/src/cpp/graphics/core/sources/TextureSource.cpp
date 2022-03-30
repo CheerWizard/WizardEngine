@@ -89,7 +89,11 @@ namespace engine {
     }
 
     void TextureSource::activate(const TextureComponent &textureComponent) {
-        auto& texture = getTextureBuffer(textureComponent, RUNTIME_TEXTURES_PATH);
+        activate(textureComponent, RUNTIME_TEXTURES_PATH);
+    }
+
+    void TextureSource::activate(const TextureComponent &textureComponent, const std::string& assetPath) {
+        auto& texture = getTextureBuffer(textureComponent, assetPath);
         texture.activate(textureComponent.sampler.value);
         texture.bind();
     }

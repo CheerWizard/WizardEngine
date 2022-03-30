@@ -10,7 +10,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(${PROJECT_NAME} ${ENGINE_SRC} src/include/graphics/outline/Outline.h src/include/graphics/skybox/Skybox.h src/include/graphics/core/texture/Texture.h src/cpp/graphics/core/texture/Texture.cpp src/include/graphics/core/geometry/Cube.h)
+add_library(${PROJECT_NAME} ${ENGINE_SRC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 #/ adding dependencies.
@@ -41,6 +41,10 @@ include_directories(vendor/stb/stb)
 #/ ECS lib.
 add_subdirectory(vendor/entt)
 
+#/ FreeType for text font rendering
+add_subdirectory(vendor/freetype)
+include_directories(vendor/freetype)
+
 #/ linking dependencies.
 target_link_libraries(
         WizardEngine PUBLIC
@@ -51,6 +55,7 @@ target_link_libraries(
         glm::glm
         stb
         EnTT
+        freetype
 )
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
@@ -63,3 +68,4 @@ replace_dirs(WizardEngine/vendor/glfw/include WizardEngine/vendor/glfw/include)
 replace_dirs(WizardEngine/vendor/glm/glm WizardEngine/vendor/glm/glm)
 replace_dirs(WizardEngine/vendor/spdlog/include WizardEngine/vendor/spdlog/include)
 replace_dirs(WizardEngine/vendor/stb/stb WizardEngine/vendor/stb/stb)
+replace_dirs(WizardEngine/vendor/freetype/include WizardEngine/vendor/freetype/include)

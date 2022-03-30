@@ -26,6 +26,7 @@ namespace engine {
 
     public:
         static bool write(const fpath &filePath, const std::string &source);
+        static bool write(const fpath &filePath, const int* data, const uint32_t& dataSize);
         static std::string getCurrentWorkingDirectory();
         static bool copy(const std::string &src, const std::string &dest);
         static bool remove(const std::string &target);

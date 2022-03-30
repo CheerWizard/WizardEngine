@@ -6,8 +6,9 @@
 
 #include <cstdint>
 #include <functional>
+#include <glm/glm.hpp>
 
-namespace engine {
+namespace engine::math {
     void random(
             const int& minRange,
             const int& maxRange,

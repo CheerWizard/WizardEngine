@@ -9,8 +9,6 @@ namespace engine {
     void Renderer::create(const AttributeCategory& attributeCategory) {
         shaderProgram->bindVertexFormat();
         shaderProgram->getVertexFormat().setAttrCategory(attributeCategory);
-        createRenderModel(DEFAULT_VERTEX_COUNT);
-        createRenderModel(DEFAULT_VERTEX_COUNT, DEFAULT_INDEX_COUNT);
     }
 
     void Renderer::release() {
@@ -43,6 +41,16 @@ namespace engine {
         renderModel.vao.unbind();
         viRenderModels.emplace_back(renderModel);
         return viRenderModels[renderModel.id];
+    }
+
+    void BatchRenderer::init() {
+        createRenderModel(DEFAULT_VERTEX_COUNT);
+        createRenderModel(DEFAULT_VERTEX_COUNT, DEFAULT_INDEX_COUNT);
+    }
+
+    void InstanceRenderer::init() {
+        createRenderModel(DEFAULT_VERTEX_COUNT);
+        createRenderModel(DEFAULT_VERTEX_COUNT, DEFAULT_INDEX_COUNT);
     }
 
     void VRenderer::create() {

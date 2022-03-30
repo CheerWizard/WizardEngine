@@ -5,7 +5,7 @@
 #include <core/Math.h>
 #include "random"
 
-namespace engine {
+namespace engine::math {
 
     void random(
             const int& minRange,

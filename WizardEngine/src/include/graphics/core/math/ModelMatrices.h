@@ -44,10 +44,21 @@ namespace engine {
         ModelMatrix2d() = default;
 
         ModelMatrix2d(
+                const char* name,
                 const glm::vec2& pos,
                 const float& rot,
                 const glm::vec2& scale
-        ) : position(pos), rotation(rot), scale(scale) {}
+        ) : position(pos), rotation(rot), scale(scale) {
+            this->name = name;
+        }
+
+        ModelMatrix2d(
+                const glm::vec2& pos,
+                const float& rot,
+                const glm::vec2& scale
+        ) : position(pos), rotation(rot), scale(scale) {
+            name = "transform";
+        }
     };
 
     void updateModel2d(ModelMatrix2d &modelMatrix2D);

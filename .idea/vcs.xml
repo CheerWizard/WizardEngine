@@ -2,12 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/ScriptDLL/engine/asio" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/ScriptDLL/engine/entt" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/ScriptDLL/engine/glfw" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/ScriptDLL/engine/glm" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/ScriptDLL/engine/imgui/imgui" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/ScriptDLL/engine/spdlog" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/ScriptDLL/engine/stb/stb" vcs="Git" />
   </component>
 </project>

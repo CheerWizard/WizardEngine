@@ -9,8 +9,8 @@
 #include "string"
 #include "unordered_map"
 
-#define GET_SHADER_PROGRAM(name) engine::shader::ShaderSource::get()->get(name)
-#define RECOMPILE_SHADER_PROGRAM(name) engine::shader::ShaderSource::get()->recompile(name)
+#define GET_SHADER_PROGRAM(name) engine::shader::ShaderSource::get().get(name)
+#define RECOMPILE_SHADER_PROGRAM(name) engine::shader::ShaderSource::get().recompile(name)
 
 namespace engine::shader {
 
@@ -20,14 +20,21 @@ namespace engine::shader {
     // Singleton class. Stores and provides ShaderProgram instances from memory.
     class ShaderSource {
 
-    public:
+    private:
         ShaderSource() = default;
         ~ShaderSource() {
             clear();
         }
 
     public:
-        static const Ref<ShaderSource>& get() {
+        ShaderSource(const ShaderSource&) = delete;
+        ShaderSource& operator=(const ShaderSource &) = delete;
+        ShaderSource(ShaderSource &&) = delete;
+        ShaderSource& operator=(ShaderSource &&) = delete;
+
+    public:
+        static auto& get() {
+            static ShaderSource instance;
             return instance;
         }
 
@@ -55,8 +62,5 @@ namespace engine::shader {
 
     private:
         ShaderPrograms _shaders;
-
-    private:
-        static Ref<ShaderSource> instance;
     };
 }
