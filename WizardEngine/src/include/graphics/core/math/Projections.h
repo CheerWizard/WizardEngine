@@ -18,7 +18,9 @@ namespace engine {
         float bottom = -1;
         float top = 1;
 
-        OrthographicMatrix() = default;
+        OrthographicMatrix() {
+            name = "projection";
+        }
 
         OrthographicMatrix(
                 const char* name,
@@ -45,6 +47,10 @@ namespace engine {
         float fieldOfView = DEFAULT_FIELD_OF_VIEW;
         float zNear = DEFAULT_Z_NEAR;
         float zFar = DEFAULT_Z_FAR;
+
+        PerspectiveMatrix() {
+            name = "projection";
+        }
     };
 
     class Projections final {

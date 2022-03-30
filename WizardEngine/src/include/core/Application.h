@@ -22,8 +22,6 @@
 
 #include <scripting/ScriptSystem.h>
 
-#define DEFAULT_CAMERA_NAME "camera"
-
 namespace engine {
 
     enum EngineType : bool {

@@ -7,11 +7,11 @@
 namespace engine {
 
     void Camera2D::create() {
-        add<Camera2dComponent>(CameraComponents::camera2D());
+        add<Camera2dComponent>(Camera2dComponent());
     }
 
     void Camera3D::create(const float& aspectRatio) {
-        add<Camera3dComponent>(CameraComponents::camera3D(aspectRatio));
+        add<Camera3dComponent>(Camera3dComponent(aspectRatio));
     }
 
 }

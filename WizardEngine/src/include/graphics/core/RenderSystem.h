@@ -40,7 +40,7 @@ namespace engine {
         void createCircleRenderer();
         void createOutlineRenderer();
         void createSkyboxRenderer();
-        void createTextRenderer();
+        void createTextRenderers();
 
     private:
         Ref<Scene> activeScene = nullptr;
@@ -65,7 +65,8 @@ namespace engine {
         // skybox
         Ref<VRenderer> skyboxRenderer;
         // text
-        Ref<TextRenderer> textRenderer;
+        Ref<TextRenderer> text2dRenderer;
+        Ref<TextRenderer> text3dRenderer;
     };
 
 }
