@@ -13,6 +13,8 @@
 #include <unordered_map>
 
 #define FONTS engine::Fonts::get()
+#define FONT_EXISTS(fontPath) FONTS.exists(fontPath)
+#define FONT_ABSENT(fontPath) !FONTS.exists(fontPath)
 #define GET_FONT(fontPath) FONTS.getFont(fontPath)
 #define GET_CHARACTER(fontPath, c) FONTS.getCharacter(fontPath, c)
 
@@ -28,6 +30,8 @@ namespace engine {
     struct Character {
         VertexDataComponent<BatchCharVertex> vertexDataComponent;
         glm::vec2 size = { 0, 0 };
+        glm::vec2 bearing = { 0, 0 };
+        float advance = 0;
     };
 
     typedef std::unordered_map<char, Character> Characters;
@@ -59,6 +63,7 @@ namespace engine {
         Characters& getFont(const std::string& fontPath);
         Character& getCharacter(const std::string& fontPath, const char& c);
         void clear();
+        bool exists(const std::string& fontPath);
 
     private:
         // key - font file path

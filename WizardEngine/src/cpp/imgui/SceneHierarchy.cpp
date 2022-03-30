@@ -8,6 +8,7 @@
 #include <graphics/light/LightComponents.h>
 #include <graphics/material/MaterialComponents.h>
 #include <graphics/outline/Outline.h>
+#include <graphics/text/Text.h>
 #include <imgui.h>
 #include <imgui_internal.h>
 
@@ -59,6 +60,14 @@ namespace engine {
         float begin;
         float end;
     };
+
+    static void drawFloatSlider(
+            const char* label,
+            float& value,
+            const FloatRange& range = { 0, 1 }
+    ) {
+        ImGui::SliderFloat(label, &value, range.begin, range.end);
+    }
 
     static void drawFloatSlider(
             const std::string &label,
@@ -353,29 +362,7 @@ namespace engine {
         uniform.isUpdated = ImGui::Checkbox(uniform.name, &uniform.value);
     }
 
-    void SceneHierarchy::drawComponents(Entity &entity) {
-        // draw tag component
-        if (entity.has<TagComponent>()) {
-            auto& tag = entity.get<TagComponent>().tag;
-
-            char buffer[256];
-            memset(buffer, 0, sizeof(buffer));
-            strncpy(buffer, tag.c_str(), sizeof(buffer));
-
-            if (ImGui::InputText("##Tag", buffer, sizeof(buffer))) {
-                tag = std::string(buffer);
-            }
-
-            ImGui::SameLine();
-            ImGui::PushItemWidth(-1);
-
-            if (ImGui::Button("New", { 92, 22 })) {
-                ImGui::OpenPopup("NewComponent");
-            }
-
-            ImGui::PopItemWidth();
-        }
-        // draw transform component
+    void drawTransformComponent(const Entity& entity) {
         drawComponent<Transform3dComponent>("Transform", entity, [](Transform3dComponent& transform) {
             bool isPosUpdated = false;
             bool isRotUpdated = false;
@@ -391,6 +378,54 @@ namespace engine {
             }
             EDITOR_INFO("Transform is updated : {0}", transform.isUpdated);
         });
+    }
+
+    void drawTextField(const char* label, std::string& text) {
+        char buffer[256];
+        memset(buffer, 0, sizeof(buffer));
+        strncpy(buffer, text.c_str(), sizeof(buffer));
+
+        if (ImGui::InputText(label, buffer, sizeof(buffer))) {
+            text = std::string(buffer);
+        }
+    }
+
+    void drawColorPicker(Vec4fUniform& color) {
+        color.isUpdated = ImGui::ColorPicker4(color.name, toFloatPtr(color));
+    }
+
+    void drawTransform3dController(Transform3dComponent& transform) {
+        bool isPosUpdated = false;
+        bool isRotUpdated = false;
+        bool isScaleUpdated = false;
+
+        drawVec3Controller("Translation", transform.position, isPosUpdated);
+        drawVec3Controller("Rotation", transform.rotation, isRotUpdated);
+        drawVec3Controller("Scale", transform.scale, isScaleUpdated, 1.0f);
+
+        transform.isUpdated = isPosUpdated || isRotUpdated || isScaleUpdated;
+        if (transform.isUpdated) {
+            updateModel3d(transform);
+        }
+        EDITOR_INFO("Transform is updated : {0}", transform.isUpdated);
+    }
+
+    void SceneHierarchy::drawComponents(Entity &entity) {
+        // draw tag component
+        if (entity.has<TagComponent>()) {
+            drawTextField("##Tag", entity.get<TagComponent>().tag);
+
+            ImGui::SameLine();
+            ImGui::PushItemWidth(-1);
+
+            if (ImGui::Button("New", { 92, 22 })) {
+                ImGui::OpenPopup("NewComponent");
+            }
+
+            ImGui::PopItemWidth();
+        }
+        // draw transform
+        drawTransformComponent(entity);
         // draw light components
         drawComponent<PhongLightComponent>("PhongLight", entity, [](PhongLightComponent& phongLight) {
             drawVec3Controller(phongLight.position.name, phongLight.position, phongLight.position.isUpdated);
@@ -439,6 +474,16 @@ namespace engine {
         drawComponent<OutlineComponent>("Outlining", entity, [](OutlineComponent& outline) {
             drawFloatSlider(outline.thickness, { 0, 0.1 });
             outline.color.isUpdated = ImGui::ColorPicker4(outline.color.name, toFloatPtr(outline.color));
+        });
+        // draw text component
+        drawComponent<TextComponent>("Text", entity, [](TextComponent& textComponent) {
+            drawTextField("##Text", textComponent.text);
+            drawTextField("##Font", textComponent.font);
+            drawTextField("##Bitmap", textComponent.bitmap.fileName);
+            drawColorPicker(textComponent.color);
+            drawTransform3dController(textComponent.transform);
+            drawFloatSlider("Padding", textComponent.padding);
+            drawFloatSlider("WhitespaceWidth", textComponent.whiteSpaceWidth);
         });
     }
 

@@ -15,6 +15,7 @@
 #include <graphics/outline/Outline.h>
 #include <graphics/skybox/Skybox.h>
 #include <graphics/text/Text.h>
+#include <graphics/core/geometry/Quad.h>
 
 #include <core/Fonts.h>
 
@@ -108,37 +109,6 @@ namespace fairy {
     }
 
     void FLLayer::createTest() {
-        auto carMesh = toMesh3dBatch(GET_OBJ("ferrari.obj"));
-        auto carTransform = transform3d(
-                { 2.5, 0, 12 },
-                {135, 0, 0},
-                {0.5, 0.5, 0.5}
-        );
-        car = Object3d(
-                app->activeScene.get(),
-                "Car",
-                carTransform,
-                carMesh
-        );
-        car.add<OutlineBatchMesh>(toOutlineBatchMesh(copy(carMesh)));
-        car.add<OutlineComponent>(OutlineComponent({ 1, 1, 0, 1 }, 0.01));
-        car.add<MaterialMapsComponent>(MaterialMapsComponent {
-                "wood_diffuse.png",
-                "wood_specular.png"
-        });
-
-        auto lightTransform = engine::transform3d(
-                { 10, 0, 12 },
-                { 135, 0, 0 },
-                { 0.5, 0.5, 0.5 }
-        );
-
-        auto phongLight = engine::PhongLight(app->activeScene.get());
-        phongLight.add<engine::Transform3dComponent>(lightTransform);
-
-        auto pointLight = engine::PointLight(app->activeScene.get());
-        pointLight.add<engine::Transform3dComponent>(lightTransform);
-
         app->setSkybox(engine::SkyboxCube(
                 "Skybox",
                 app->activeScene.get(),
@@ -162,17 +132,48 @@ namespace fairy {
                 "assets/bitmaps/OpenSans-Bold.txt"
         );
 
+        auto texture = TextureComponent { "OpenSans-Bold.bmp", TextureType::TEXTURE_2D };
+        GET_TEXTURE(texture, "assets/bitmaps")
+        .setParams({
+            { TextureParamName::MIN_FILTER, TextureParamValue::LINEAR },
+            { TextureParamName::MAG_FILTER, TextureParamValue::LINEAR },
+            { TextureParamName::WRAP_S, TextureParamValue::CLAMP_TO_EDGE },
+            { TextureParamName::WRAP_T, TextureParamValue::CLAMP_TO_EDGE }
+        });
+
         TextView(
              "Text",
              app->activeScene.get(),
              TextComponent {
-                    "Hello World!",
+                    "A A A",
                     "assets/fonts/opensans/OpenSans-Bold.ttf",
                     "OpenSans-Bold.bmp",
-                    transform3d(),
-                    { 1, 0, 0, 1 }
+                    transform3d(
+                            { 0, 0, 0 },
+                            { 3, 3, 0 },
+                            { 1, 1, 1 }
+                    ),
+                    { 1, 1, 1, 1 }
              }
         );
+
+        math::random(-10, 10, 5, [this](const uint32_t& i, const float& r) {
+            Object3d(
+                app->activeScene.get(),
+                "Quad" + std::to_string(i),
+                transform3d(
+                        { r, r, r },
+                        { r, r, r },
+                        { 1, 1, 1 }
+                ),
+                BatchQuad({
+                    QuadVertex {{ -0.5, -0.5, 1 }, {1, 1, 0, 1}},
+                    QuadVertex {{ 0.5, -0.5, 1 }, {1, 1, 0, 1}},
+                    QuadVertex {{ 0.5, 0.5, 1 }, {1, 1, 0, 1}},
+                    QuadVertex {{ -0.5, 0.5, 1 }, {1, 1, 0, 1}},
+                })
+            );
+        });
     }
 
     void FLLayer::destroy() {

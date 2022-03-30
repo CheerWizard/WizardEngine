@@ -6,7 +6,7 @@
 #include <core/Logger.h>
 #include <core/BitmapFile.h>
 #include <core/FileSystem.h>
-#include <graphics/core/sources/TextureSource.h>
+#include <core/Math.h>
 
 namespace engine {
 
@@ -100,6 +100,8 @@ namespace engine {
             // save the character width
             auto w = face->glyph->metrics.width / 64;
             auto h = face->glyph->metrics.height / 64;
+            glm::vec2 bearing = { face->glyph->bitmap_left, face->glyph->bitmap_top };
+            int advance = face->glyph->advance.x;
             widths[i] = w;
             // find the tile position where we have to draw the character
             int x = (i % 16) * (fontSize + 2);
@@ -107,24 +109,42 @@ namespace engine {
             x += 1; // 1 pixel padding from the left side of the tile
             y += (fontSize + 2) - face->glyph->bitmap_top + maxUnderBaseline - 1;
             // store metrics data into Character struct
-            BatchCharVertex charVertices[4] = {
-                    BatchCharVertex { CharVertex { { 0, 0 }, { x, y } } },
-                    BatchCharVertex { CharVertex { { 0, 0 }, { x + w, y } } },
-                    BatchCharVertex { CharVertex { { 0, 0 }, { x + w, y + h } } },
-                    BatchCharVertex { CharVertex { { 0, 0 }, { x, y + h } } }
+            glm::vec2 imageSize = { imageWidth, imageHeight };
+            auto* charVertices = new BatchCharVertex[4] {
+                    BatchCharVertex { CharVertex {
+                        { 0, 0 },
+                        (2.0f * glm::vec2 { x,  y } - 1.0f) / (2.0f * imageSize)
+                    } },
+                    BatchCharVertex { CharVertex {
+                        { 0, 0 },
+                        (2.0f * glm::vec2 { x + w, y } - 1.0f) / (2.0f * imageSize)
+                    } },
+                    BatchCharVertex { CharVertex {
+                        { 0, 0 },
+                        (2.0f * glm::vec2 { x + w, y + h } - 1.0f) / (2.0f * imageSize)
+                    } },
+                    BatchCharVertex { CharVertex {
+                        { 0, 0 },
+                        (2.0f * glm::vec2 { x, y + h } - 1.0f) / (2.0f * imageSize)
+                    } }
             };
             auto charVertexData = VertexData<BatchCharVertex> { charVertices, 0, 4 };
             auto charVertexDataComponent = VertexDataComponent<BatchCharVertex> {
-                    charVertexData, true, 0, TRIANGLE_STRIP
+                    charVertexData, true, 0, QUAD
             };
-            auto character = Character { charVertexDataComponent, { w, h } };
+            auto character = Character {
+                charVertexDataComponent,
+                glm::vec2 { w, h } / imageSize,
+                bearing / imageSize,
+                (float)advance / (float)imageWidth
+            };
             // map char and appropriate Character struct
             characters.insert(std::pair<char, Character>(i, character));
             ENGINE_INFO("Fonts : mapping char '{0}' into Character : ", i);
-            for (auto& charVertex : charVertices) {
+            for (int j = 0; j < charVertexData.vertexCount; j++) {
                 ENGINE_INFO("CharVertex[x : {0}, y : {1}]",
-                            charVertex.vertex.uv.x,
-                            charVertex.vertex.uv.y);
+                            charVertices[j].vertex.uv.x,
+                            charVertices[j].vertex.uv.y);
             }
             ENGINE_INFO("Character[size : {0} , {1}]", character.size.x, character.size.y);
             // draw the character
@@ -172,4 +192,7 @@ namespace engine {
         fonts.clear();
     }
 
+    bool Fonts::exists(const std::string& fontPath) {
+        return fonts.find(fontPath) != fonts.end();
+    }
 }

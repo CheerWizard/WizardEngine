@@ -11,7 +11,7 @@ out flat int f_id;
 
 void main() {
     int int_id = int(id);
-    gl_Position = camera * transform[int_id] * vec4(position, 1.0, 1.0);
+    gl_Position = camera * transform[int_id] * vec4(position, 0.0, 1.0);
     f_uv = uv;
     f_id = int_id;
 }

@@ -17,16 +17,21 @@ namespace engine {
         shader::Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
         Transform3dComponent transform;
         TextureComponent bitmap;
+        float padding = 0;
+        float whiteSpaceWidth = 0.1f;
 
-        TextComponent() = default;
         TextComponent(
                 const std::string& text,
                 const std::string& font,
                 const std::string& bitmap,
                 const Transform3dComponent& transform,
-                const glm::vec4& color
-        ) : text(text), font(font), bitmap({ bitmap, TextureType::TEXTURE_2D, { "bitmap", 0 } }),
-        transform(transform), color({ "color", color }) {}
+                const glm::vec4& color,
+                const float& padding = 0,
+                const float& whiteSpaceWidth = 0.1f
+        ) : text(text), font(font),
+        bitmap({ bitmap, TextureType::TEXTURE_2D, { "bitmap", 1 } }),
+        transform(transform), color({ "color", color }),
+        padding(padding), whiteSpaceWidth(whiteSpaceWidth) {}
     };
 
     class TextView : public Entity {

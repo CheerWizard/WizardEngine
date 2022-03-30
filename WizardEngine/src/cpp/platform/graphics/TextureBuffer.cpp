@@ -96,12 +96,6 @@ namespace engine {
             ENGINE_WARN("Can't stream texture {0} from NULL data!", filename);
         } else {
             load(textureData);
-            setParams({
-                { TextureParamName::MIN_FILTER, TextureParamValue::LINEAR },
-                { TextureParamName::MAG_FILTER, TextureParamValue::LINEAR },
-                { TextureParamName::WRAP_S, TextureParamValue::REPEAT },
-                { TextureParamName::WRAP_T, TextureParamValue::REPEAT }
-            });
         }
 
         TextureFile::free(textureData.data);
@@ -171,11 +165,15 @@ namespace engine {
         int channels = textureData.channels, width = textureData.width, height = textureData.height;
 
         switch (channels) {
-            case 3:
+            case CHANNEL_RED:
+                internalFormat = GL_RED;
+                dataFormat = GL_RED;
+                break;
+            case CHANNEL_RGB:
                 internalFormat = GL_RGB8;
                 dataFormat = GL_RGB;
                 break;
-            case 4:
+            case CHANNEL_RGBA:
                 internalFormat = GL_RGBA8;
                 dataFormat = GL_RGBA;
                 break;
@@ -192,7 +190,7 @@ namespace engine {
             );
         }
 
-        glTexImage2D(toGLTextureFaceType(faceType), 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData.data);
+        glTexImage2D(toGLTextureFaceType(faceType), 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
     }
 
     void TextureBuffer::disableByteAlignment() {
@@ -204,5 +202,4 @@ namespace engine {
             glTextureParameteri(id, toGLTextureParamName(param.name), toGLTextureParamValue(param.value));
         }
     }
-
 }

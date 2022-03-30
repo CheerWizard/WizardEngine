@@ -171,11 +171,15 @@ namespace engine {
         int channels = textureData.channels, width = textureData.width, height = textureData.height;
 
         switch (channels) {
-            case 3:
+            case CHANNEL_RED:
+                internalFormat = GL_RED;
+                dataFormat = GL_RED;
+                break;
+            case CHANNEL_RGB:
                 internalFormat = GL_RGB8;
                 dataFormat = GL_RGB;
                 break;
-            case 4:
+            case CHANNEL_RGBA:
                 internalFormat = GL_RGBA8;
                 dataFormat = GL_RGBA;
                 break;
@@ -192,7 +196,7 @@ namespace engine {
             );
         }
 
-        glTexImage2D(toGLTextureFaceType(faceType), 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData.data);
+        glTexImage2D(toGLTextureFaceType(faceType), 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
     }
 
     void TextureBuffer::disableByteAlignment() {

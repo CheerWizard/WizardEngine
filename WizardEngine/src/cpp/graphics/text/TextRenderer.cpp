@@ -20,6 +20,8 @@ namespace engine {
 
         uint32_t nextRenderModelId = 0;
         for (auto [entity, text] : entities.each()) {
+            if (FONT_ABSENT(text.font)) continue;
+
             auto& font = GET_FONT(text.font);
             for (auto& c : text.text) {
                 auto& character = font[c];
@@ -37,34 +39,45 @@ namespace engine {
             uint32_t totalVertexCount = 0;
             uint32_t i = 0;
             for (auto [entity, text] : entities.each()) {
+                if (FONT_ABSENT(text.font)) continue;
+
                 shaderProgram->getVShader().setUniformArrayElement(i, text.transform);
                 shaderProgram->getFShader().setUniformArrayElement(i, text.color);
                 shaderProgram->getFShader().setUniform(text.bitmap.sampler);
                 ACTIVATE_TEXTURE_PATH(text.bitmap, "assets/bitmaps");
 
                 auto& font = GET_FONT(text.font);
-                float textW = 0;
+                float textX = 0;
                 for (auto& c : text.text) {
-                    Character& character = font[c];
-                    auto& vertexDataComponent = character.vertexDataComponent;
+                    int code = int((uint8_t) c);
+                    ENGINE_INFO("Character[code : {0}, value : {1}]", code, c);
+                    Character character = font[c];
+                    auto vertexDataComponent = character.vertexDataComponent;
 
                     if (renderModel.id != vertexDataComponent.renderModelId) {
                         i++; // shift instance id
                         continue;
                     }
 
+                    // is whitespace char
+                    if (code == 32) {
+                        textX += text.whiteSpaceWidth;
+                        continue;
+                    }
+
+                    float x = textX + character.bearing.x;
+                    float y = character.bearing.y - character.size.y;
                     float w = character.size.x;
                     float h = character.size.y;
-                    float x = textW + 2;
-                    float y = 0;
+
                     if (vertexDataComponent.isUpdated) {
                         auto& vertices = vertexDataComponent.vertexData.vertices;
-                        vertices[0].vertex.position = { x, y };
-                        vertices[1].vertex.position = { x + w, y };
-                        vertices[2].vertex.position = { x + w, y + h };
-                        vertices[3].vertex.position = { x, y + h };
+                        vertices[3].vertex.position = { x, y };
+                        vertices[2].vertex.position = { x + w, y };
+                        vertices[1].vertex.position = { x + w, y + h };
+                        vertices[0].vertex.position = { x, y + h };
                     }
-                    textW += character.size.x;
+                    textX += character.size.x + text.padding;
 
                     tryUploadBatch(i, vertexDataComponent, totalVertexCount, renderModel);
                 }

@@ -36,6 +36,7 @@ namespace engine {
         // write to stencil buffer
         setClearColor({0.2, 0.2, 0.2, 1});
         setDepthTest(true);
+        clearDepthBuffer();
         setStencilTest(true);
         setStencilTestActions({ KEEP, KEEP, REPLACE });
         clearStencilBuffer();
@@ -164,7 +165,7 @@ namespace engine {
                 fInstanceShader
         );
 
-        quadRenderer = createRef<MultiRenderer>(batchShader, instanceShader, TRIANGLE_STRIP);
+        quadRenderer = createRef<MultiRenderer>(batchShader, instanceShader, QUAD);
     }
 
     void RenderSystem::createCircleRenderer() {
@@ -212,7 +213,7 @@ namespace engine {
                 fInstanceShader
         );
 
-        circleRenderer = createRef<MultiRenderer>(batchShader, instanceShader, TRIANGLE_STRIP);
+        circleRenderer = createRef<MultiRenderer>(batchShader, instanceShader, QUAD);
     }
 
     void RenderSystem::createOutlineRenderer() {

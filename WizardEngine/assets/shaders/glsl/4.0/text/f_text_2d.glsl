@@ -9,6 +9,9 @@ uniform sampler2D bitmap;
 uniform vec4 color[128];
 
 void main() {
-    vec4 char = vec4(1.0, 1.0, 1.0, texture(bitmap, f_uv).r);
-    fragment = color[f_id] * char;
+    vec4 char = vec4(color[f_id].rgb, texture(bitmap, f_uv).r);
+    if (char.a == 0) {
+        discard;
+    }
+    fragment = char;
 }

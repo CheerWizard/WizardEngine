@@ -12,7 +12,7 @@ namespace engine {
 
     public:
         TextRenderer(const Ref<BaseShaderProgram>& shaderProgram)
-        : Renderer(shaderProgram, TRIANGLE_STRIP, VERTEX) {
+        : Renderer(shaderProgram, QUAD, VERTEX) {
             init();
         }
 
