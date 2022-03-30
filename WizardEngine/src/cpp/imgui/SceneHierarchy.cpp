@@ -358,6 +358,10 @@ namespace engine {
         }
     }
 
+    void drawCheckBox(const char* label, bool& value) {
+        ImGui::Checkbox(label, &value);
+    }
+
     void drawCheckBox(BoolUniform &uniform) {
         uniform.isUpdated = ImGui::Checkbox(uniform.name, &uniform.value);
     }
@@ -408,6 +412,17 @@ namespace engine {
             updateModel3d(transform);
         }
         EDITOR_INFO("Transform is updated : {0}", transform.isUpdated);
+    }
+
+    void drawTextComponent(TextComponent& textComponent) {
+        drawTextField("##Text", textComponent.text);
+        drawTextField("##Font", textComponent.font);
+        drawTextField("##Bitmap", textComponent.bitmap.fileName);
+        drawColorPicker(textComponent.color);
+        drawTransform3dController(textComponent.transform);
+        drawFloatSlider("Padding X", textComponent.paddingX);
+        drawFloatSlider("Padding Y", textComponent.paddingY);
+        drawFloatSlider("WhitespaceWidth", textComponent.whiteSpaceWidth);
     }
 
     void SceneHierarchy::drawComponents(Entity &entity) {
@@ -475,15 +490,12 @@ namespace engine {
             drawFloatSlider(outline.thickness, { 0, 0.1 });
             outline.color.isUpdated = ImGui::ColorPicker4(outline.color.name, toFloatPtr(outline.color));
         });
-        // draw text component
-        drawComponent<TextComponent>("Text", entity, [](TextComponent& textComponent) {
-            drawTextField("##Text", textComponent.text);
-            drawTextField("##Font", textComponent.font);
-            drawTextField("##Bitmap", textComponent.bitmap.fileName);
-            drawColorPicker(textComponent.color);
-            drawTransform3dController(textComponent.transform);
-            drawFloatSlider("Padding", textComponent.padding);
-            drawFloatSlider("WhitespaceWidth", textComponent.whiteSpaceWidth);
+        // draw text components
+        drawComponent<Text2d>("Text2D", entity, [](Text2d& textComponent) {
+            drawTextComponent(textComponent);
+        });
+        drawComponent<Text3d>("Text3D", entity, [](Text3d& textComponent) {
+            drawTextComponent(textComponent);
         });
     }
 

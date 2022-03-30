@@ -8,6 +8,7 @@
 #include <graphics/core/math/Projections.h>
 #include <graphics/transform/TransformComponents.h>
 #include <graphics/core/texture/Texture.h>
+#include <graphics/camera/CameraComponents.h>
 
 namespace engine {
 
@@ -17,8 +18,9 @@ namespace engine {
         shader::Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
         Transform3dComponent transform;
         TextureComponent bitmap;
-        float padding = 0;
-        float whiteSpaceWidth = 0.1f;
+        float paddingX = 0;
+        float paddingY = 0;
+        float whiteSpaceWidth = 0.02f;
 
         TextComponent(
                 const std::string& text,
@@ -26,30 +28,75 @@ namespace engine {
                 const std::string& bitmap,
                 const Transform3dComponent& transform,
                 const glm::vec4& color,
-                const float& padding = 0,
-                const float& whiteSpaceWidth = 0.1f
+                const float& paddingX = 0,
+                const float& paddingY = 0,
+                const float& whiteSpaceWidth = 0.02f
         ) : text(text), font(font),
         bitmap({ bitmap, TextureType::TEXTURE_2D, { "bitmap", 1 } }),
         transform(transform), color({ "color", color }),
-        padding(padding), whiteSpaceWidth(whiteSpaceWidth) {}
+        paddingX(paddingX), paddingY(paddingY),
+        whiteSpaceWidth(whiteSpaceWidth) {}
     };
 
-    class TextView : public Entity {
+    // just separate types for ecs as we want to process text 2D/3D separately
+    struct Text2d : TextComponent {
+        Text2d(
+                const std::string& text,
+                const std::string& font,
+                const std::string& bitmap,
+                const Transform3dComponent& transform,
+                const glm::vec4& color,
+                const float& padding = 0,
+                const float& whiteSpaceWidth = 0.02f
+        ) : TextComponent(text, font, bitmap, transform, color, padding, whiteSpaceWidth) {}
+    };
+
+    struct Text3d : TextComponent {
+        Text3d(
+                const std::string& text,
+                const std::string& font,
+                const std::string& bitmap,
+                const Transform3dComponent& transform,
+                const glm::vec4& color,
+                const float& padding = 0,
+                const float& whiteSpaceWidth = 0.02f
+        ) : TextComponent(text, font, bitmap, transform, color, padding, whiteSpaceWidth) {}
+    };
+
+    struct TextProjection : Camera3dComponent {
+        TextProjection(const float& aspectRatio) : Camera3dComponent(aspectRatio) {}
+    };
+
+    class Text2dView : public Entity {
 
     public:
-        TextView(
+        Text2dView(
                 const std::string& tag,
                 EntityContainer* container,
-                const TextComponent& textComponent
-        )
-        : Entity(tag, container) {
-            init(textComponent);
-        }
-
-    private:
-        void init(const TextComponent& textComponent) {
-            add<TextComponent>(textComponent);
+                const Text2d& text,
+                const float& aspectRatio
+        ) : Entity(tag, container) {
+            add<Text2d>(text);
+            auto textProjection = TextProjection(aspectRatio);
+            textProjection.viewMatrix.position.value = {0, 0, -1};
+            ViewProjections::update(textProjection);
+            add<TextProjection>(textProjection);
         }
     };
+
+    class Text3dView : public Entity {
+
+    public:
+        Text3dView(
+                const std::string& tag,
+                EntityContainer* container,
+                const Text3d& text
+        ) : Entity(tag, container) {
+            add<Text3d>(text);
+        }
+    };
+
+    using namespace shader;
+    ShaderScript textProjectionScript();
 
 }

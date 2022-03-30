@@ -12,12 +12,8 @@
 #include <graphics/GraphicsObject.h>
 #include <scripting/ScriptBuilder.h>
 
-#include <graphics/outline/Outline.h>
 #include <graphics/skybox/Skybox.h>
-#include <graphics/text/Text.h>
 #include <graphics/core/geometry/Quad.h>
-
-#include <core/Fonts.h>
 
 #include <imgui/imgui.h>
 
@@ -29,9 +25,9 @@ namespace fairy {
         createAssetBrowser();
 
         activeSceneCamera = engine::Camera3D {
-            "SceneCamera",
-            app->getAspectRatio(),
-            app->activeScene.get()
+                "SceneCamera",
+                app->getAspectRatio(),
+                app->activeScene.get()
         };
         activeSceneCameraController = engine::createRef<engine::Camera3dController>(
                 "ActiveSceneCameraController",
@@ -39,18 +35,18 @@ namespace fairy {
         );
 
         auto vObjShader = BaseShader({
-            camera3dScript()
-        });
+                                             camera3dScript()
+                                     });
         auto fObjShader = BaseShader({
-            materialScript(),
-            phongLightScript()
-        });
+                                             materialScript(),
+                                             phongLightScript()
+                                     });
         auto objShader = createRef<BaseShaderProgram>(
                 ShaderProps {
-                    "obj",
-                    "v_obj.glsl",
-                    "f_obj.glsl",
-                    EDITOR_SHADERS_PATH
+                        "obj",
+                        "v_obj.glsl",
+                        "f_obj.glsl",
+                        EDITOR_SHADERS_PATH
                 },
                 vObjShader,
                 fObjShader
@@ -58,9 +54,9 @@ namespace fairy {
         auto objRenderer = engine::createRef<engine::VIRenderer>(objShader);
 
         auto objCamera = engine::Camera3D {
-            "obj",
-            app->getAspectRatio(),
-            editorScene.get()
+                "obj",
+                app->getAspectRatio(),
+                editorScene.get()
         };
         auto objCameraController = engine::createRef<engine::Camera3dController>(
                 "ObjCameraController",
@@ -127,51 +123,84 @@ namespace fairy {
 
         FONTS.create(
                 "assets/fonts/opensans/OpenSans-Bold.ttf",
-                40,
+                90,
                 "assets/bitmaps/OpenSans-Bold.bmp",
                 "assets/bitmaps/OpenSans-Bold.txt"
         );
 
-        auto texture = TextureComponent { "OpenSans-Bold.bmp", TextureType::TEXTURE_2D };
-        GET_TEXTURE(texture, "assets/bitmaps")
-        .setParams({
-            { TextureParamName::MIN_FILTER, TextureParamValue::LINEAR },
-            { TextureParamName::MAG_FILTER, TextureParamValue::LINEAR },
-            { TextureParamName::WRAP_S, TextureParamValue::CLAMP_TO_EDGE },
-            { TextureParamName::WRAP_T, TextureParamValue::CLAMP_TO_EDGE }
-        });
+        FONTS.create(
+                "assets/fonts/roboto/Roboto-Bold.ttf",
+                90,
+                "assets/bitmaps/Roboto-Bold.bmp",
+                "assets/bitmaps/Roboto-Bold.txt"
+        );
 
-        TextView(
-             "Text",
-             app->activeScene.get(),
-             TextComponent {
-                    "A A A",
-                    "assets/fonts/opensans/OpenSans-Bold.ttf",
-                    "OpenSans-Bold.bmp",
-                    transform3d(
-                            { 0, 0, 0 },
-                            { 3, 3, 0 },
-                            { 1, 1, 1 }
-                    ),
-                    { 1, 1, 1, 1 }
-             }
+        auto openSans = TextureComponent { "OpenSans-Bold.bmp", TextureType::TEXTURE_2D };
+        GET_TEXTURE(openSans, "assets/bitmaps")
+                .setParams({
+                                   { TextureParamName::MIN_FILTER, TextureParamValue::LINEAR },
+                                   { TextureParamName::MAG_FILTER, TextureParamValue::LINEAR },
+                                   { TextureParamName::WRAP_S, TextureParamValue::CLAMP_TO_EDGE },
+                                   { TextureParamName::WRAP_T, TextureParamValue::CLAMP_TO_EDGE }
+                           });
+
+        auto roboto = TextureComponent { "Roboto-Bold.bmp", TextureType::TEXTURE_2D };
+        GET_TEXTURE(roboto, "assets/bitmaps")
+                .setParams({
+                                   { TextureParamName::MIN_FILTER, TextureParamValue::LINEAR },
+                                   { TextureParamName::MAG_FILTER, TextureParamValue::LINEAR },
+                                   { TextureParamName::WRAP_S, TextureParamValue::CLAMP_TO_EDGE },
+                                   { TextureParamName::WRAP_T, TextureParamValue::CLAMP_TO_EDGE }
+                           });
+
+        Text2dView(
+                "Text2D",
+                app->activeScene.get(),
+                Text2d {
+                        "OpenSans-Bold",
+                        "assets/fonts/opensans/OpenSans-Bold.ttf",
+                        "OpenSans-Bold.bmp",
+                        transform3d(
+                                { 0, 0, 0 },
+                                { 3, 3, 0 },
+                                { 1, 1, 1 }
+                        ),
+                        { 1, 1, 1, 1 }
+                },
+                app->getAspectRatio()
+        );
+
+        Text3dView(
+                "Text3D",
+                app->activeScene.get(),
+                Text3d {
+                        "Roboto-Bold",
+                        "assets/fonts/roboto/Roboto-Bold.ttf",
+                        "Roboto-Bold.bmp",
+                        transform3d(
+                                { 0, 0, 0 },
+                                { 3, 3, 0 },
+                                { 1, 1, 1 }
+                        ),
+                        { 1, 1, 1, 1 }
+                }
         );
 
         math::random(-10, 10, 5, [this](const uint32_t& i, const float& r) {
             Object3d(
-                app->activeScene.get(),
-                "Quad" + std::to_string(i),
-                transform3d(
-                        { r, r, r },
-                        { r, r, r },
-                        { 1, 1, 1 }
-                ),
-                BatchQuad({
-                    QuadVertex {{ -0.5, -0.5, 1 }, {1, 1, 0, 1}},
-                    QuadVertex {{ 0.5, -0.5, 1 }, {1, 1, 0, 1}},
-                    QuadVertex {{ 0.5, 0.5, 1 }, {1, 1, 0, 1}},
-                    QuadVertex {{ -0.5, 0.5, 1 }, {1, 1, 0, 1}},
-                })
+                    app->activeScene.get(),
+                    "Quad" + std::to_string(i),
+                    transform3d(
+                            { r, r, r },
+                            { r, r, r },
+                            { 1, 1, 1 }
+                    ),
+                    BatchQuad({
+                                      QuadVertex {{ -0.5, -0.5, 1 }, {1, 1, 0, 1}},
+                                      QuadVertex {{ 0.5, -0.5, 1 }, {1, 1, 0, 1}},
+                                      QuadVertex {{ 0.5, 0.5, 1 }, {1, 1, 0, 1}},
+                                      QuadVertex {{ -0.5, 0.5, 1 }, {1, 1, 0, 1}},
+                              })
             );
         });
     }
@@ -347,43 +376,43 @@ namespace fairy {
         };
 
         auto dirItem = AssetBrowserItem {
-            "",
-            LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "dir_icon.png", EDITOR_TEXTURES_PATH)
+                "",
+                LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "dir_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto pngItem = AssetBrowserItem {
-            PNG_EXT,
-            LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "png_icon.png", EDITOR_TEXTURES_PATH)
+                PNG_EXT,
+                LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "png_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto jpgItem = AssetBrowserItem {
-            JPG_EXT,
-            LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "jpg_icon.png", EDITOR_TEXTURES_PATH)
+                JPG_EXT,
+                LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "jpg_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto glslItem = AssetBrowserItem {
-            GLSL_EXT,
-            LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "glsl_icon.png", EDITOR_TEXTURES_PATH)
+                GLSL_EXT,
+                LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "glsl_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto objItem = AssetBrowserItem {
-            OBJ_EXT,
-            LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "obj_icon.png", EDITOR_TEXTURES_PATH)
+                OBJ_EXT,
+                LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "obj_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto ttfItem = AssetBrowserItem {
-            TTF_EXT,
-            LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "ttf_icon.png", EDITOR_TEXTURES_PATH)
+                TTF_EXT,
+                LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "ttf_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto cppItem = AssetBrowserItem {
-            CPP_EXT,
-            LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "cpp_icon.png", EDITOR_TEXTURES_PATH)
+                CPP_EXT,
+                LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "cpp_icon.png", EDITOR_TEXTURES_PATH)
         };
 
         auto items = AssetBrowserItems<6> {
-            dirItem,
-            { pngItem, jpgItem, glslItem, objItem, ttfItem, cppItem }
+                dirItem,
+                { pngItem, jpgItem, glslItem, objItem, ttfItem, cppItem }
         };
 
         auto fileDialog = app->createFileDialog();
@@ -399,9 +428,9 @@ namespace fairy {
     void FLLayer::onObjDragged(const std::string &fileName) {
         EDITOR_INFO("onObjDragged({0})", fileName);
         engine::Object3d {
-            app->activeScene.get(),
-            engine::FileSystem::getFileName(fileName),
-            toMesh3dBatch(GET_OBJ(fileName))
+                app->activeScene.get(),
+                engine::FileSystem::getFileName(fileName),
+                toMesh3dBatch(GET_OBJ(fileName))
         };
     }
 
