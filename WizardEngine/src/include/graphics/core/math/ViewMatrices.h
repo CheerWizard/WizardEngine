@@ -18,11 +18,19 @@ namespace engine {
         Vec3fUniform position = { "viewPosition", DEFAULT_VIEW_POS_3D };
         glm::vec3 rotation = DEFAULT_VIEW_ROT_3D;
         float scale = 1;
+
+        ViewMatrix3d() {
+            name = "view";
+        }
     };
 
     struct ViewMatrix2d : Mat4fUniform {
         glm::vec3 position = DEFAULT_VIEW_POS_2D;
         float rotation = 0;
+
+        ViewMatrix2d() {
+            name = "view";
+        }
     };
 
     class ViewMatrices {

@@ -22,7 +22,7 @@ namespace engine {
         createCircleRenderer();
         createOutlineRenderer();
         createSkyboxRenderer();
-        createTextRenderer();
+        createTextRenderers();
     }
 
     void RenderSystem::onUpdate() {
@@ -55,7 +55,8 @@ namespace engine {
         // circles
         circleRenderer->renderV<Transform3dComponent, CircleVertex>(registry);
         // text
-        textRenderer->render(registry);
+        text2dRenderer->render<Text2d>(registry);
+        text3dRenderer->render<Text3d>(registry);
         // stop write to stencil buffer
         setStencilTestOperator(NOT_EQUAL, 1, false);
         stencilMask(true);
@@ -188,7 +189,7 @@ namespace engine {
             }
         };
 
-        auto vBatchShader = shader::BaseShader({ camera3dUboScript() });
+        auto vBatchShader = shader::BaseShader();
         auto fBatchShader = shader::BaseShader({ circleArrayScript });
         auto batchShader = createRef<shader::BaseShaderProgram>(
                 shader::ShaderProps {
@@ -200,7 +201,7 @@ namespace engine {
                 vBatchShader,
                 fBatchShader
         );
-        auto vInstanceShader = shader::BaseShader({ camera3dUboScript() });
+        auto vInstanceShader = shader::BaseShader();
         auto fInstanceShader = shader::BaseShader({ circleArrayScript });
         auto instanceShader = createRef<shader::BaseShaderProgram>(
                 shader::ShaderProps {
@@ -236,7 +237,7 @@ namespace engine {
             }
         };
 
-        auto vBatchShader = shader::BaseShader({ camera3dUboScript(), outlineScript });
+        auto vBatchShader = shader::BaseShader({ outlineScript });
         auto fBatchShader = shader::BaseShader();
         auto batchShader = createRef<shader::BaseShaderProgram>(
                 shader::ShaderProps {
@@ -248,7 +249,7 @@ namespace engine {
                 vBatchShader,
                 fBatchShader
         );
-        auto vInstanceShader = shader::BaseShader({ camera3dUboScript(), outlineScript });
+        auto vInstanceShader = shader::BaseShader({ outlineScript });
         auto fInstanceShader = shader::BaseShader();
         auto instanceShader = createRef<shader::BaseShaderProgram>(
                 shader::ShaderProps {
@@ -279,7 +280,7 @@ namespace engine {
             }
         };
 
-        auto vShader = shader::BaseShader({ camera3dUboScript(), skyboxRotation });
+        auto vShader = shader::BaseShader({ skyboxRotation });
         auto fShader = shader::BaseShader({ cubeMapTextureScript() });
         auto shader = createRef<shader::BaseShaderProgram>(
                 shader::ShaderProps {
@@ -295,19 +296,33 @@ namespace engine {
         skyboxRenderer = createRef<VRenderer>(shader);
     }
 
-    void RenderSystem::createTextRenderer() {
-        auto vShader = shader::BaseShader({ camera3dUboScript() });
-        auto fShader = shader::BaseShader();
-        auto shader = createRef<shader::BaseShaderProgram>(
+    void RenderSystem::createTextRenderers() {
+        auto fTextShader = shader::BaseShader();
+
+        auto vText2dShader = shader::BaseShader({ textProjectionScript() });
+        auto text2dShader = createRef<shader::BaseShaderProgram>(
                 shader::ShaderProps {
                         "text2d",
                         "text/v_text_2d.glsl",
-                        "text/f_text_2d.glsl",
+                        "text/f_text.glsl",
                         ENGINE_SHADERS_PATH
                 },
-                vShader,
-                fShader
+                vText2dShader,
+                fTextShader
         );
-        textRenderer = createRef<TextRenderer>(shader);
+        text2dRenderer = createRef<TextRenderer>(text2dShader);
+
+        auto vText3dShader = shader::BaseShader();
+        auto text3dShader = createRef<shader::BaseShaderProgram>(
+                shader::ShaderProps {
+                        "text3d",
+                        "text/v_text_3d.glsl",
+                        "text/f_text.glsl",
+                        ENGINE_SHADERS_PATH
+                },
+                vText3dShader,
+                fTextShader
+        );
+        text3dRenderer = createRef<TextRenderer>(text3dShader);
     }
 }

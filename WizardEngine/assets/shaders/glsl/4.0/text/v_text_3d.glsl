@@ -7,7 +7,9 @@ layout (location = 2) in float id;
 out vec2 f_uv;
 out flat int f_id;
 
-uniform mat4 camera;
+layout(std140) uniform Camera {
+    mat4 camera;
+};
 uniform mat4 transform[128];
 
 void main() {
