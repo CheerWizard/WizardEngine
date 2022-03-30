@@ -194,6 +194,7 @@ namespace engine {
     }
 
     void Window::setSampleSize(const uint32_t &size) {
+        windowProps.sampleSize = size;
         glfwWindowHint(GLFW_SAMPLES, size);
     }
 

@@ -7,6 +7,7 @@
 #include "Renderer.h"
 #include <ecs/Scene.h>
 #include <platform/graphics/FrameBuffer.h>
+#include <graphics/text/TextRenderer.h>
 
 namespace engine {
 
@@ -39,6 +40,7 @@ namespace engine {
         void createCircleRenderer();
         void createOutlineRenderer();
         void createSkyboxRenderer();
+        void createTextRenderer();
 
     private:
         Ref<Scene> activeScene = nullptr;
@@ -62,6 +64,8 @@ namespace engine {
         Ref<MultiRenderer> outlineQuadRenderer;
         // skybox
         Ref<VRenderer> skyboxRenderer;
+        // text
+        Ref<TextRenderer> textRenderer;
     };
 
 }

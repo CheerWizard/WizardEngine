@@ -33,6 +33,24 @@ namespace engine {
         }
     }
 
+    GLenum toGLTextureParamName(const TextureParamName& textureParamName) {
+        switch (textureParamName) {
+            case TextureParamName::MAG_FILTER: return GL_TEXTURE_MAG_FILTER;
+            case TextureParamName::MIN_FILTER: return GL_TEXTURE_MIN_FILTER;
+            case TextureParamName::WRAP_R: return GL_TEXTURE_WRAP_R;
+            case TextureParamName::WRAP_S: return GL_TEXTURE_WRAP_S;
+            case TextureParamName::WRAP_T: return GL_TEXTURE_WRAP_T;
+        }
+    }
+
+    GLint toGLTextureParamValue(const TextureParamValue& textureParamValue) {
+        switch (textureParamValue) {
+            case TextureParamValue::CLAMP_TO_EDGE: return GL_CLAMP_TO_EDGE;
+            case TextureParamValue::LINEAR: return GL_LINEAR;
+            case TextureParamValue::REPEAT: return GL_REPEAT;
+        }
+    }
+
     void TextureBuffer::create(const TextureType& textureType) {
         toGLTextureType(textureType, type);
         glCreateTextures(type, 1, &id);
@@ -78,6 +96,12 @@ namespace engine {
             ENGINE_WARN("Can't stream texture {0} from NULL data!", filename);
         } else {
             load(textureData);
+            setParams({
+                              { TextureParamName::MIN_FILTER, TextureParamValue::LINEAR },
+                              { TextureParamName::MAG_FILTER, TextureParamValue::LINEAR },
+                              { TextureParamName::WRAP_S, TextureParamValue::REPEAT },
+                              { TextureParamName::WRAP_T, TextureParamValue::REPEAT }
+                      });
         }
 
         TextureFile::free(textureData.data);
@@ -99,11 +123,13 @@ namespace engine {
             TextureFile::free(textureData.data);
         }
 
-        glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTextureParameteri(id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTextureParameteri(id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTextureParameteri(id, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        setParams({
+                          { TextureParamName::MAG_FILTER, TextureParamValue::LINEAR },
+                          { TextureParamName::MIN_FILTER, TextureParamValue::LINEAR },
+                          { TextureParamName::WRAP_S, TextureParamValue::CLAMP_TO_EDGE },
+                          { TextureParamName::WRAP_T, TextureParamValue::CLAMP_TO_EDGE },
+                          { TextureParamName::WRAP_R, TextureParamValue::CLAMP_TO_EDGE },
+                  });
     }
 
     void TextureBuffer::load(const TextureData &textureData) {
@@ -111,11 +137,15 @@ namespace engine {
         int channels = textureData.channels, width = textureData.width, height = textureData.height;
 
         switch (channels) {
-            case 3:
+            case CHANNEL_RED:
+                internalFormat = GL_RED;
+                dataFormat = GL_RED;
+                break;
+            case CHANNEL_RGB:
                 internalFormat = GL_RGB8;
                 dataFormat = GL_RGB;
                 break;
-            case 4:
+            case CHANNEL_RGBA:
                 internalFormat = GL_RGBA8;
                 dataFormat = GL_RGBA;
                 break;
@@ -133,10 +163,6 @@ namespace engine {
         }
 
         glTextureStorage2D(id, 1, internalFormat, width, height);
-        glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTextureParameteri(id, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTextureParameteri(id, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTextureSubImage2D(id, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
     }
 
@@ -145,11 +171,15 @@ namespace engine {
         int channels = textureData.channels, width = textureData.width, height = textureData.height;
 
         switch (channels) {
-            case 3:
+            case CHANNEL_RED:
+                internalFormat = GL_RED;
+                dataFormat = GL_RED;
+                break;
+            case CHANNEL_RGB:
                 internalFormat = GL_RGB8;
                 dataFormat = GL_RGB;
                 break;
-            case 4:
+            case CHANNEL_RGBA:
                 internalFormat = GL_RGBA8;
                 dataFormat = GL_RGBA;
                 break;
@@ -166,17 +196,17 @@ namespace engine {
             );
         }
 
-        glTexImage2D(
-                toGLTextureFaceType(faceType),
-                0,
-                internalFormat,
-                width,
-                height,
-                0,
-                dataFormat,
-                GL_UNSIGNED_BYTE,
-                textureData.data
-        );
+        glTexImage2D(toGLTextureFaceType(faceType), 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
+    }
+
+    void TextureBuffer::disableByteAlignment() {
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    }
+
+    void TextureBuffer::setParams(const std::vector<TextureParam>& params) const {
+        for (auto& param : params) {
+            glTextureParameteri(id, toGLTextureParamName(param.name), toGLTextureParamValue(param.value));
+        }
     }
 
 }

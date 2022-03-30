@@ -17,6 +17,27 @@ namespace engine {
         float right = 1;
         float bottom = -1;
         float top = 1;
+
+        OrthographicMatrix() = default;
+
+        OrthographicMatrix(
+                const char* name,
+                const float& left,
+                const float& right,
+                const float& bottom,
+                const float& top
+        ) : left(left), right(right), bottom(bottom), top(top) {
+            this->name = name;
+        }
+
+        OrthographicMatrix(
+                const float& left,
+                const float& right,
+                const float& bottom,
+                const float& top
+        ) : left(left), right(right), bottom(bottom), top(top) {
+            name = "projection";
+        }
     };
 
     struct PerspectiveMatrix : shader::Mat4fUniform {

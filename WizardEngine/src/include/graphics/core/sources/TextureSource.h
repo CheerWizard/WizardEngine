@@ -8,11 +8,13 @@
 
 #include "unordered_map"
 
-#define GET_TEXTURE(texture, assetPath) engine::TextureSource::get()->getTextureBuffer(texture, assetPath)
+#define TEXTURES engine::TextureSource::get()
+#define GET_TEXTURE(texture, assetPath) TEXTURES->getTextureBuffer(texture, assetPath)
 #define GET_TEXTURE_ID(texture, assetPath) GET_TEXTURE(texture, assetPath).getId()
-#define LOAD_TEXTURE(texture, assetPath) engine::TextureSource::get()->loadTexture(texture, assetPath)
-#define LOAD_TEXTURE_PARAMS(type, fileName, assetPath) engine::TextureSource::get()->loadTexture(type, fileName, assetPath)
-#define ACTIVATE_TEXTURE(texture) engine::TextureSource::get()->activate(texture)
+#define LOAD_TEXTURE(texture, assetPath) TEXTURES->loadTexture(texture, assetPath)
+#define LOAD_TEXTURE_PARAMS(type, fileName, assetPath) TEXTURES->loadTexture(type, fileName, assetPath)
+#define ACTIVATE_TEXTURE(texture) TEXTURES->activate(texture)
+#define ACTIVATE_TEXTURE_PATH(texture, assetPath) TEXTURES->activate(texture, assetPath)
 
 namespace engine {
 
@@ -91,6 +93,7 @@ namespace engine {
         );
 
         void activate(const TextureComponent& textureComponent);
+        void activate(const TextureComponent& textureComponent, const std::string& assetPath);
         void activate(const CubeMapTextureComponent& cubeMapTextureComponent);
 
         void remove(const std::string &fileName);

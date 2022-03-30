@@ -22,6 +22,7 @@ namespace engine {
         createCircleRenderer();
         createOutlineRenderer();
         createSkyboxRenderer();
+        createTextRenderer();
     }
 
     void RenderSystem::onUpdate() {
@@ -35,6 +36,7 @@ namespace engine {
         // write to stencil buffer
         setClearColor({0.2, 0.2, 0.2, 1});
         setDepthTest(true);
+        clearDepthBuffer();
         setStencilTest(true);
         setStencilTestActions({ KEEP, KEEP, REPLACE });
         clearStencilBuffer();
@@ -52,6 +54,8 @@ namespace engine {
         quadRenderer->renderV<Transform3dComponent, QuadVertex>(registry);
         // circles
         circleRenderer->renderV<Transform3dComponent, CircleVertex>(registry);
+        // text
+        textRenderer->render(registry);
         // stop write to stencil buffer
         setStencilTestOperator(NOT_EQUAL, 1, false);
         stencilMask(true);
@@ -161,7 +165,7 @@ namespace engine {
                 fInstanceShader
         );
 
-        quadRenderer = createRef<MultiRenderer>(batchShader, instanceShader, TRIANGLE_STRIP);
+        quadRenderer = createRef<MultiRenderer>(batchShader, instanceShader, QUAD);
     }
 
     void RenderSystem::createCircleRenderer() {
@@ -209,7 +213,7 @@ namespace engine {
                 fInstanceShader
         );
 
-        circleRenderer = createRef<MultiRenderer>(batchShader, instanceShader, TRIANGLE_STRIP);
+        circleRenderer = createRef<MultiRenderer>(batchShader, instanceShader, QUAD);
     }
 
     void RenderSystem::createOutlineRenderer() {
@@ -289,5 +293,21 @@ namespace engine {
         );
 
         skyboxRenderer = createRef<VRenderer>(shader);
+    }
+
+    void RenderSystem::createTextRenderer() {
+        auto vShader = shader::BaseShader({ camera3dUboScript() });
+        auto fShader = shader::BaseShader();
+        auto shader = createRef<shader::BaseShaderProgram>(
+                shader::ShaderProps {
+                        "text2d",
+                        "text/v_text_2d.glsl",
+                        "text/f_text_2d.glsl",
+                        ENGINE_SHADERS_PATH
+                },
+                vShader,
+                fShader
+        );
+        textRenderer = createRef<TextRenderer>(shader);
     }
 }

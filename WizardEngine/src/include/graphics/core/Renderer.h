@@ -31,11 +31,6 @@ namespace engine {
             release();
         }
 
-    public:
-        inline void setDrawType(const DrawType& drawType) {
-            this->drawType = drawType;
-        }
-
     protected:
         void create(const AttributeCategory& attributeCategory);
         VRenderModel& createRenderModel(const uint32_t& vertexCount);
@@ -57,26 +52,36 @@ namespace engine {
 
     public:
         BatchRenderer(const Ref<BaseShaderProgram>& shaderProgram, const DrawType& drawType = TRIANGLE)
-        : Renderer(shaderProgram, drawType) {}
+        : Renderer(shaderProgram, drawType) {
+            init();
+        }
 
     public:
         template<typename T, typename V>
         void renderV(entt::registry &registry);
         template<typename T, typename V>
         void renderVI(entt::registry &registry);
+
+    private:
+        void init();
     };
 
     class InstanceRenderer : public Renderer {
 
     public:
         InstanceRenderer(const Ref<BaseShaderProgram>& shaderProgram, const DrawType& drawType = TRIANGLE)
-        : Renderer(shaderProgram, drawType) {}
+        : Renderer(shaderProgram, drawType) {
+            init();
+        }
 
     public:
         template<typename T, typename V>
         void renderV(entt::registry &registry);
         template<typename T, typename V>
         void renderVI(entt::registry &registry);
+
+    private:
+        void init();
     };
 
     class MultiRenderer {

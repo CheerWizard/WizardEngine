@@ -173,4 +173,21 @@ namespace engine {
         return removed;
     }
 
+    bool FileSystem::write(const fpath &filePath, const int* data, const uint32_t& dataSize) {
+        std::ofstream ofs;
+        ofs.open(filePath);
+
+        if (ofs.is_open()) {
+            for (int i = 0; i < dataSize; ++i) {
+                ofs << data[i] << std::endl;
+            }
+            ofs.close();
+        } else {
+            ENGINE_ERR("FileSystem : failed write to {0} file with data size {1}", filePath.string(), dataSize);
+            return false;
+        }
+
+        return true;
+    }
+
 }
