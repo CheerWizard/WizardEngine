@@ -9,9 +9,24 @@
 #define CHANNEL_RED 0
 #define CHANNEL_RGB 3
 #define CHANNEL_RGBA 4
-#define MAX_TEXTURE_SLOTS 16
 
 namespace engine {
+
+    // texture format for color buffer
+    enum class ColorFormat {
+        NONE = 0,
+        RGBA8,
+        RED_INTEGER
+    };
+
+    // texture format for depth and stencil buffers
+    enum class DepthStencilFormat {
+        NONE = 0,
+        DEPTH16,
+        DEPTH24PAD8,
+        DEPTH24STENCIL8,
+        DEPTH32
+    };
 
     enum class TextureParamName {
         MIN_FILTER, MAG_FILTER,

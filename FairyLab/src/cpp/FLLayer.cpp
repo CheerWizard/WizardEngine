@@ -82,7 +82,15 @@ namespace fairy {
         objCamera.add<engine::PhongLightComponent>(objPhongLight);
 
         auto objFrame = engine::createRef<engine::FrameBuffer>();
-        objFrame->updateSpecs(app->getWindowWidth(), app->getWindowHeight());
+        engine::FrameBufferFormat objFrameFormat;
+        objFrameFormat.colorAttachments = {
+                { engine::ColorFormat::RGBA8 }
+        };
+        objFrameFormat.depthStencilAttachment = {engine::DepthStencilFormat::DEPTH24STENCIL8 };
+        objFrameFormat.width = app->getWindow()->getWidth();
+        objFrameFormat.height = app->getWindow()->getHeight();
+        objFrameFormat.samples = 1;
+        objFrame->updateFormat(objFrameFormat);
 
         _objPreview = engine::createRef<engine::MeshLayout>(
                 engine::ImageLayoutProps {"Object Preview"},
@@ -240,6 +248,22 @@ namespace fairy {
         objCameraController->applyChanges();
 
         _sceneHierarchy.setCallback(this);
+
+        app->eventController.onKeyPressedMap[KeyCode::D1] = { [this](KeyCode keyCode) { app->setSampleSize(1); } };
+        app->eventController.onKeyPressedMap[KeyCode::D4] = { [this](KeyCode keyCode) { app->setSampleSize(4); } };
+        app->eventController.onKeyPressedMap[KeyCode::F] = { [this](KeyCode keyCode) {
+            if (app->input->isKeyPressed(engine::KeyCode::LeftControl)) {
+                app->getWindow()->enableFullScreen();
+            }
+        }};
+        app->eventController.onKeyPressedMap[KeyCode::Escape] = { [this](KeyCode keyCode) {
+            app->getWindow()->disableFullScreen();
+        }};
+        app->eventController.onKeyPressedMap[KeyCode::L] = { [this](KeyCode keyCode) {
+            // add script to entity
+            Entity newEntity(copy(app->activeScene).get());
+            addDLLScript(newEntity, "Test");
+        }};
     }
 
     void FLLayer::onRender(engine::Time dt) {
@@ -258,34 +282,15 @@ namespace fairy {
 
     void FLLayer::onKeyPressed(engine::KeyCode keyCode) {
         engine::ImGuiLayer::onKeyPressed(keyCode);
-
         _objPreview->onKeyPressed(keyCode);
-
         if (sceneViewport.isFocused()) {
             activeSceneCameraController->onKeyPressed(keyCode);
-        }
-
-        // L-CTRL + F - enable fullscreen mode.
-        if (keyCode == engine::KeyCode::F && app->input->isKeyPressed(engine::KeyCode::LeftControl)) {
-            app->getWindow()->enableFullScreen();
-        }
-
-        // ESC - exit fullscreen mode.
-        if (keyCode == engine::Escape) {
-            app->getWindow()->disableFullScreen();
-        }
-
-        if (keyCode == engine::L) {
-            // add script to entity
-            Entity newEntity(copy(app->activeScene).get());
-            addDLLScript(newEntity, "Test");
         }
     }
 
     void FLLayer::onKeyHold(engine::KeyCode keyCode) {
         engine::ImGuiLayer::onKeyHold(keyCode);
         _objPreview->onKeyHold(keyCode);
-
         if (sceneViewport.isFocused()) {
             activeSceneCameraController->onKeyHold(keyCode);
         }
@@ -294,7 +299,6 @@ namespace fairy {
     void FLLayer::onKeyReleased(engine::KeyCode keyCode) {
         engine::ImGuiLayer::onKeyReleased(keyCode);
         _objPreview->onKeyReleased(keyCode);
-
         if (sceneViewport.isFocused()) {
             activeSceneCameraController->onKeyReleased(keyCode);
         }
@@ -303,7 +307,6 @@ namespace fairy {
     void FLLayer::onKeyTyped(engine::KeyCode keyCode) {
         engine::ImGuiLayer::onKeyTyped(keyCode);
         _objPreview->onKeyTyped(keyCode);
-
         if (sceneViewport.isFocused()) {
             activeSceneCameraController->onKeyTyped(keyCode);
         }
@@ -341,7 +344,7 @@ namespace fairy {
     void FLLayer::ScenePreviewCallback::onImageResized(const uint32_t &width, const uint32_t &height) {
         if (width == 0 || height == 0) return;
 
-        _parent.app->activeFrame->resize(width, height);
+        _parent.app->activeSceneFrame->resize(width, height);
         _parent.activeSceneCameraController->onWindowResized(width, height);
     }
 
@@ -359,12 +362,12 @@ namespace fairy {
 
     void FLLayer::onEntityRemoved(const engine::Entity &entity) {
         EDITOR_INFO("onEntityRemoved({0})", entity.operator unsigned int());
-        app->activeFrame->bind();
+        app->activeSceneFrame->bind();
         setDepthTest(true);
         setClearColor({0.2, 0.2, 0.2, 1});
         clearDepthBuffer();
 
-        app->activeFrame->unbind();
+        app->activeSceneFrame->unbind();
         setDepthTest(false);
         clearColorBuffer();
     }

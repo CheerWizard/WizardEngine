@@ -32,7 +32,7 @@ namespace engine {
         Ref<MouseCallback<Application>> mouseCallback = nullptr;
         Ref<CursorCallback<Application>> cursorCallback = nullptr;
 
-        explicit WindowProps(
+        WindowProps(
                 const std::string& title = "Wizard Engine",
                 uint32_t width = DEFAULT_WINDOW_WIDTH,
                 uint32_t height = DEFAULT_WINDOW_HEIGHT,
@@ -90,6 +90,10 @@ namespace engine {
 
         inline const uint32_t& getHeight() const {
             return windowProps.height;
+        }
+
+        inline const uint32_t& getSampleSize() const {
+            return windowProps.sampleSize;
         }
 
         inline float getAspectRatio() const {

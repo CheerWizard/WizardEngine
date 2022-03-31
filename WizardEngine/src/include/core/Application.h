@@ -24,17 +24,10 @@
 
 namespace engine {
 
-    enum EngineType : bool {
-        ENGINE_2D = false,
-        ENGINE_3D = true
-    };
-
     class Application {
 
     public:
-        Application(const EngineType &engineType = ENGINE_3D) :
-        _engineType(engineType) {}
-
+        Application() = default;
         virtual ~Application() = default;
 
     public:
@@ -76,6 +69,7 @@ namespace engine {
         void* getNativeWindow();
         void setWindowIcon(const std::string &filePath);
         Ref<FileDialog> createFileDialog();
+        void setSampleSize(const uint32_t& samples);
 
         void setSkybox(const Entity& skybox);
 
@@ -89,17 +83,17 @@ namespace engine {
         void updateRuntime(Time dt);
 
         void createGraphics();
-        void createFrameSpecs();
         void createScripting();
 
     public:
         Scope<Input> input;
         Ref<Scene> activeScene;
-        Ref<FrameBuffer> activeFrame;
+        Ref<FrameBuffer> activeSceneFrame;
+        Ref<FrameBuffer> screenFrame;
         FpsController fpsController;
+        EventController eventController;
 
     private:
-        EngineType _engineType;
         bool _isRunning = true;
         // core systems
         LayerStack _layerStack;

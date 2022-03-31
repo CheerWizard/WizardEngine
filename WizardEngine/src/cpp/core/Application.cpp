@@ -40,7 +40,7 @@ namespace engine {
         RenderCommands::logApiInfo();
         _window->onPrepare();
         _window->setInCenter();
-        createFrameSpecs();
+        setSampleSize(1);
         _layerStack.onPrepare();
         setMSAA(true);
     }
@@ -76,6 +76,7 @@ namespace engine {
     void Application::onWindowClosed() {
         ENGINE_INFO("Application : onWindowClosed()");
         _layerStack.onWindowClosed();
+        eventController.onWindowClosed.function();
     }
 
     void Application::onWindowResized(const uint32_t &width , const uint32_t &height) {
@@ -83,35 +84,44 @@ namespace engine {
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
 
         _layerStack.onWindowResized(width, height);
-        activeFrame->resize(width, height);
+//        activeSceneFrame->resize(width, height);
+//        screenFrame->resize(width, height);
+        eventController.onWindowResized.function(width, height);
     }
 
     void Application::onKeyPressed(KeyCode keyCode) {
         _layerStack.onKeyPressed(keyCode);
+        eventController.onKeyPressedMap[keyCode].function(keyCode);
     }
 
     void Application::onKeyHold(KeyCode keyCode) {
         _layerStack.onKeyHold(keyCode);
+        eventController.onKeyHoldMap[keyCode].function(keyCode);
     }
 
     void Application::onKeyReleased(KeyCode keyCode) {
         _layerStack.onKeyReleased(keyCode);
+        eventController.onKeyReleasedMap[keyCode].function(keyCode);
     }
 
     void Application::onMousePressed(MouseCode mouseCode) {
         _layerStack.onMousePressed(mouseCode);
+        eventController.onMousePressedMap[mouseCode].function(mouseCode);
     }
 
     void Application::onMouseRelease(MouseCode mouseCode) {
         _layerStack.onMouseRelease(mouseCode);
+        eventController.onMouseReleasedMap[mouseCode].function(mouseCode);
     }
 
     void Application::onMouseScrolled(double xOffset, double yOffset) {
         _layerStack.onMouseScrolled(xOffset, yOffset);
+        eventController.onMouseScrolled.function(xOffset, yOffset);
     }
 
     void Application::onCursorMoved(double xPos, double yPos) {
         _layerStack.onCursorMoved(xPos, yPos);
+        eventController.onCursorMoved.function(xPos, yPos);
     }
 
     void Application::onKeyTyped(KeyCode keyCode) {
@@ -150,7 +160,7 @@ namespace engine {
     }
 
     WindowProps Application::createWindowProps() {
-        return WindowProps();
+        return {};
     }
 
     void Application::setWindowIcon(const std::string &filePath) {
@@ -161,15 +171,36 @@ namespace engine {
         return createRef<FileDialog>(_window->getNativeWindow());
     }
 
-    void Application::createFrameSpecs() {
-        activeFrame->updateSpecs(getWindowWidth(), getWindowHeight());
-        activeScene->setTextureId(activeFrame->getColorAttachments()[0]);
+    void Application::setSampleSize(const uint32_t& samples) {
+        _window->setSampleSize(samples);
+        // update active scene fbo
+        engine::FrameBufferFormat activeSceneFrameFormat;
+        activeSceneFrameFormat.colorAttachments = {
+                { engine::ColorFormat::RGBA8 }
+        };
+        activeSceneFrameFormat.renderBufferAttachment = {DepthStencilFormat::DEPTH24STENCIL8 };
+        activeSceneFrameFormat.width = _window->getWidth();
+        activeSceneFrameFormat.height = _window->getHeight();
+        activeSceneFrameFormat.samples = samples;
+        activeSceneFrame->updateFormat(activeSceneFrameFormat);
+        // update screen fbo
+        FrameBufferFormat screenFrameFormat;
+        screenFrameFormat.colorAttachments = {
+                { engine::ColorFormat::RGBA8 }
+        };
+        screenFrameFormat.width = _window->getWidth();
+        screenFrameFormat.height = _window->getHeight();
+        screenFrameFormat.samples = 1;
+        screenFrame->updateFormat(screenFrameFormat);
+
+        activeScene->setTextureId(screenFrame->getColorAttachment(0).id);
     }
 
     void Application::createGraphics() {
         GraphicsInitializer::createContext(_window->getNativeWindow());
-        activeFrame = createRef<FrameBuffer>();
-        _renderSystem = createScope<RenderSystem>(activeFrame);
+        activeSceneFrame = createRef<FrameBuffer>();
+        screenFrame = createRef<FrameBuffer>();
+        _renderSystem = createScope<RenderSystem>(activeSceneFrame, screenFrame);
     }
 
     void Application::updateRuntime(Time dt) {
