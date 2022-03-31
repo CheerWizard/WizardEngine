@@ -14,7 +14,8 @@ namespace engine {
     class RenderSystem {
 
     public:
-        RenderSystem(const Ref<FrameBuffer> &sceneFrame) : sceneFrame(sceneFrame) {
+        RenderSystem(const Ref<FrameBuffer> &sceneFrame, const Ref<FrameBuffer>& screenFrame)
+        : sceneFrame(sceneFrame), screenFrame(screenFrame) {
             create();
         }
 
@@ -47,6 +48,7 @@ namespace engine {
         Entity skybox;
 
         Ref<FrameBuffer> sceneFrame;
+        Ref<FrameBuffer> screenFrame;
         // scene
         Ref<MultiRenderer> sceneRenderer;
         // line

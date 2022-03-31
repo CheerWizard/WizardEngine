@@ -55,7 +55,7 @@ namespace engine {
     }
 
     void MeshLayout::onRender(const Time &dt) {
-        id = _frame->getColorAttachments()[0];
+        id = _frame->getColorAttachment(0).id;
 
         _cameraController->setDeltaTime(dt);
 
