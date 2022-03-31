@@ -14,7 +14,7 @@
 
 #define FONTS engine::Fonts::get()
 #define FONT_EXISTS(fontPath) FONTS.exists(fontPath)
-#define FONT_ABSENT(fontPath) !FONTS.exists(fontPath)
+#define FONT_ABSENT(fontPath) !FONT_EXISTS(fontPath)
 #define GET_FONT(fontPath) FONTS.getFont(fontPath)
 #define GET_CHARACTER(fontPath, c) FONTS.getCharacter(fontPath, c)
 

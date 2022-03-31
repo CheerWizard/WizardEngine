@@ -21,6 +21,7 @@ namespace engine {
         float paddingX = 0;
         float paddingY = 0;
         float whiteSpaceWidth = 0.02f;
+        bool isUpdated = true; // flag should be updated, once this text has been changed
 
         TextComponent(
                 const std::string& text,

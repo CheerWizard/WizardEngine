@@ -61,12 +61,14 @@ namespace engine {
         float end;
     };
 
-    static void drawFloatSlider(
+    static bool drawFloatSlider(
             const char* label,
+            float oldValue,
             float& value,
             const FloatRange& range = { 0, 1 }
     ) {
         ImGui::SliderFloat(label, &value, range.begin, range.end);
+        return oldValue != value;
     }
 
     static void drawFloatSlider(
@@ -384,7 +386,7 @@ namespace engine {
         });
     }
 
-    void drawTextField(const char* label, std::string& text) {
+    bool drawTextField(const char* label, std::string oldText, std::string& text) {
         char buffer[256];
         memset(buffer, 0, sizeof(buffer));
         strncpy(buffer, text.c_str(), sizeof(buffer));
@@ -392,6 +394,8 @@ namespace engine {
         if (ImGui::InputText(label, buffer, sizeof(buffer))) {
             text = std::string(buffer);
         }
+
+        return oldText != text;
     }
 
     void drawColorPicker(Vec4fUniform& color) {
@@ -415,20 +419,24 @@ namespace engine {
     }
 
     void drawTextComponent(TextComponent& textComponent) {
-        drawTextField("##Text", textComponent.text);
-        drawTextField("##Font", textComponent.font);
-        drawTextField("##Bitmap", textComponent.bitmap.fileName);
+        bool textUpdated = drawTextField("##Text", textComponent.text, textComponent.text);
+        bool fontUpdated = drawTextField("##Font", textComponent.font, textComponent.font);
+        bool bmpUpdated = drawTextField("##Bitmap", textComponent.bitmap.fileName, textComponent.bitmap.fileName);
         drawColorPicker(textComponent.color);
         drawTransform3dController(textComponent.transform);
-        drawFloatSlider("Padding X", textComponent.paddingX);
-        drawFloatSlider("Padding Y", textComponent.paddingY);
-        drawFloatSlider("WhitespaceWidth", textComponent.whiteSpaceWidth);
+        bool paddingXUpdated = drawFloatSlider("Padding X", textComponent.paddingX, textComponent.paddingX);
+        bool paddingYUpdated = drawFloatSlider("Padding Y", textComponent.paddingY, textComponent.paddingY);
+        bool wwUpdated = drawFloatSlider("WhitespaceWidth", textComponent.whiteSpaceWidth, textComponent.whiteSpaceWidth);
+        textComponent.isUpdated = textUpdated
+                || fontUpdated || bmpUpdated
+                || paddingXUpdated || paddingYUpdated
+                || wwUpdated;
     }
 
     void SceneHierarchy::drawComponents(Entity &entity) {
         // draw tag component
         if (entity.has<TagComponent>()) {
-            drawTextField("##Tag", entity.get<TagComponent>().tag);
+            drawTextField("##Tag", "", entity.get<TagComponent>().tag);
 
             ImGui::SameLine();
             ImGui::PushItemWidth(-1);

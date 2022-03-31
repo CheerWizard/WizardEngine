@@ -61,12 +61,24 @@ namespace engine {
             uint32_t totalVertexCount = 0;
             uint32_t i = 0;
             for (auto [entity, text] : entities.each()) {
-                if (FONT_ABSENT(text.font)) continue;
+                // skip full text rendering, if font is absent in memory for this text
+                if (FONT_ABSENT(text.font)) {
+                    i++;
+                    continue;
+                }
 
                 vShader.setUniformArrayElement(i, text.transform);
                 fShader.setUniformArrayElement(i, text.color);
                 fShader.setUniform(text.bitmap.sampler);
                 ACTIVATE_TEXTURE_PATH(text.bitmap, "assets/bitmaps");
+
+                // no needs to update each character again, if the text didn't change!
+                if (!text.isUpdated) {
+                    i++;
+                    totalVertexCount += text.text.length() * 4; // need this to redraw same text, without changes
+                    continue;
+                }
+                text.isUpdated = false;
 
                 auto& font = GET_FONT(text.font);
                 float textX = 0;
@@ -79,6 +91,7 @@ namespace engine {
                     Character character = font[currentChar];
                     auto vertexDataComponent = character.vertexDataComponent;
 
+                    // todo can be optimized or completely removed!
                     if (renderModel.id != vertexDataComponent.renderModelId) {
                         i++; // shift instance id
                         continue;
