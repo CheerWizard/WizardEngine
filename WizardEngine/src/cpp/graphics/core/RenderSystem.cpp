@@ -71,6 +71,8 @@ namespace engine {
         setDepthTestOperator(LESS_EQUAL); // we need to pass depth test for some skybox pixels
         skyboxRenderer->render<Transform3dComponent, SkyboxVertex>(skybox);
         setDepthTestOperator(LESS);
+        // read/write from scene frame into screen frame
+        FrameBuffer::readWriteFrameBuffers(*sceneFrame.get(), *screenFrame.get());
         // finish frame
         sceneFrame->unbind();
         setDepthTest(false);

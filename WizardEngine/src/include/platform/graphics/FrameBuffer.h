@@ -5,9 +5,34 @@
 #pragma once
 
 #include <core/Assert.h>
-#include <graphics/core/buffer_data/FrameSpecs.h>
+#include <graphics/core/texture/Texture.h>
 
 namespace engine {
+
+    struct ColorAttachment {
+        ColorFormat format = ColorFormat::NONE;
+        uint32_t id = 0;
+    };
+
+    struct DepthStencilAttachment {
+        DepthStencilFormat format = DepthStencilFormat::NONE;
+        uint32_t id = 0;
+    };
+
+    struct RenderBufferAttachment {
+        DepthStencilFormat format = DepthStencilFormat::NONE;
+        uint32_t id = 0;
+    };
+
+    struct FrameBufferFormat {
+        uint32_t width = 0, height = 0;
+        uint32_t samples = 1;
+        bool useIdenticalSampleLocations = true;
+        bool swapChainTarget = false;
+        std::vector<ColorAttachment> colorAttachments;
+        DepthStencilAttachment depthStencilAttachment;
+        RenderBufferAttachment renderBufferAttachment;
+    };
 
     class FrameBuffer final {
 
@@ -16,25 +41,33 @@ namespace engine {
             create();
         }
 
-        FrameBuffer(const FramebufferSpecification &specification) {
+        FrameBuffer(const FrameBufferFormat &format) {
             create();
-            setSpecification(specification);
+            setFormat(format);
         }
 
         ~FrameBuffer() = default;
 
     public:
-        inline const FramebufferSpecification& getSpecification() {
-            return specification;
+        inline const FrameBufferFormat& getFormat() {
+            return format;
         }
 
-        [[nodiscard]] const uint32_t& getColorAttachment(uint32_t index = 0) const {
-            ENGINE_ASSERT(index < colorAttachments.size(), "getColorAttachment()");
-            return colorAttachments[index];
+        [[nodiscard]] ColorAttachment getColorAttachment(uint32_t index = 0) const {
+            const auto& size = format.colorAttachments.size();
+            if (index >= size) {
+                ENGINE_ERR("getColorAttachment() failed with index out of bounds : [index: {0}, size: {1}]", index, size);
+                return {};
+            }
+            return format.colorAttachments[index];
         }
 
-        inline const std::vector<uint32_t>& getColorAttachments() {
-            return colorAttachments;
+        inline const std::vector<ColorAttachment>& getColorAttachments() {
+            return format.colorAttachments;
+        }
+
+        inline const DepthStencilAttachment& getDepthStencilAttachment() {
+            return format.depthStencilAttachment;
         }
 
     public:
@@ -43,41 +76,36 @@ namespace engine {
         void destroy();
         void recreate();
         // bind/unbind
-        void bind();
+        void bind() const;
         void unbind();
+        void bindRead() const;
+        void bindWrite() const;
         // loading specs, attachments and reading GPU data
-        void setSpecification(const FramebufferSpecification &framebufferSpecification);
+        void setFormat(const FrameBufferFormat &format);
         void loadAttachments();
-        const std::vector<uint32_t>& updateSpecs(const FramebufferSpecification &framebufferSpecification);
-        const std::vector<uint32_t>& updateSpecs(const uint32_t &width, const uint32_t &height);
-        void setViewPort();
+        const std::vector<ColorAttachment>& updateFormat(const FrameBufferFormat &format);
+        void setViewPort() const;
         void resize(uint32_t width, uint32_t height);
-        int readPixel(uint32_t attachmentIndex, int x, int y);
+        int readPixel(uint32_t attachmentIndex, int x, int y) const;
         void removeAttachment(uint32_t attachmentIndex, int value);
 
     private:
         bool isCompleted();
-        void attachColorSpecs();
-        void attachDepthSpecs();
-        void createDrawBuffers();
+        void attachColors();
+        void attachDepthStencil();
+        void attachRbo();
+        void createDrawBuffers() const;
         void attachColorTextures();
         void attachDepthTexture();
-        void createTextures(const uint32_t &count, uint32_t* outAttachmentId);
         void bindTexture(const uint32_t &attachmentId);
-        uint32_t getTextureTarget();
-        void convertTextureFormat(const uint32_t &specIndex,
-                                  uint32_t &outInternalFormat,
-                                  uint32_t &outFormat);
-        static uint32_t convertTextureFormat(const FramebufferTextureFormat &format);
+        uint32_t getTextureTarget() const;
 
     private:
         uint32_t id = 0;
-        FramebufferSpecification specification;
-        FramebufferTextureSpecification depthAttachmentSpec = FramebufferTextureFormat::None;
-        std::vector<FramebufferTextureSpecification> colorAttachmentSpecs;
-        std::vector<uint32_t> colorAttachments;
-        uint32_t depthAttachment = 0;
+        FrameBufferFormat format;
 
+    public:
+        static void readWriteFrameBuffers(FrameBuffer& src, FrameBuffer& target);
     };
 
 }

@@ -4,26 +4,59 @@
 
 #include <platform/graphics/FrameBuffer.h>
 #include <sstream>
-#include <glad/glad.h>
+#include "glad/glad.h"
 
 namespace engine {
 
-    void FrameBuffer::setSpecification(const FramebufferSpecification &specification) {
-        this->specification = specification;
-        for (const auto& spec : specification.attachmentSpecification.textureSpecs) {
-            if (spec.textureFormat != FramebufferTextureFormat::DEPTH24STENCIL8) {
-                colorAttachmentSpecs.emplace_back(spec);
-            } else {
-                depthAttachmentSpec = spec;
-            }
+    uint32_t toGLColorFormat(const ColorFormat &format) {
+        switch (format) {
+            case ColorFormat::RGBA8:       return GL_RGBA8;
+            case ColorFormat::RED_INTEGER: return GL_RED_INTEGER;
+            default: return 0;
         }
+    }
+
+    uint32_t toGLDepthStencilFormat(const DepthStencilFormat &format) {
+        switch (format) {
+            case DepthStencilFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
+            case DepthStencilFormat::DEPTH16:         return GL_DEPTH_COMPONENT16;
+            case DepthStencilFormat::DEPTH32:         return GL_DEPTH32F_STENCIL8;
+            default: return 0;
+        }
+    }
+
+    void toGLInternalAndDataFormat(const ColorFormat& colorFormat, uint32_t &internalFormat, uint32_t &dataFormat) {
+        switch (colorFormat) {
+            case ColorFormat::RGBA8:
+                internalFormat = GL_RGBA8;
+                dataFormat = GL_RGBA;
+                break;
+            case ColorFormat::RED_INTEGER:
+                internalFormat = GL_R32I;
+                dataFormat = GL_RED_INTEGER;
+                break;
+            default: break;
+        }
+    }
+
+    void FrameBuffer::setFormat(const FrameBufferFormat &format) {
+        this->format = format;
+    }
+
+    const std::vector<ColorAttachment>& FrameBuffer::updateFormat(const FrameBufferFormat &format) {
+        setFormat(format);
+        loadAttachments();
+        const auto& colors = getColorAttachments();
+        ENGINE_INFO("Update FBO format. Color buffer id: {0}", colors[0].id);
+        return colors;
     }
 
     void FrameBuffer::loadAttachments() {
         bind();
 
-        attachColorSpecs();
-        attachDepthSpecs();
+        attachColors();
+        attachDepthStencil();
+        attachRbo();
         createDrawBuffers();
 
         ENGINE_ASSERT(isCompleted(), "Framebuffer is incomplete!");
@@ -37,10 +70,12 @@ namespace engine {
 
     void FrameBuffer::destroy() {
         glDeleteFramebuffers(1, &id);
-        glDeleteTextures((GLsizei) colorAttachments.size(), colorAttachments.data());
-        glDeleteTextures(1, &depthAttachment);
-        colorAttachments.clear();
-        depthAttachment = 0;
+
+        for (auto& colorAttachment : format.colorAttachments) {
+            glDeleteTextures(1, &colorAttachment.id);
+        }
+        glDeleteTextures(1, &format.depthStencilAttachment.id);
+        glDeleteRenderbuffers(1, &format.renderBufferAttachment.id);
     }
 
     void FrameBuffer::recreate() {
@@ -49,70 +84,111 @@ namespace engine {
     }
 
     bool FrameBuffer::isCompleted() {
-        return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+        auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        ENGINE_INFO("FrameBuffer [id: {0}, status: {1}]", id, status);
+        return status == GL_FRAMEBUFFER_COMPLETE;
     }
 
-    void FrameBuffer::attachColorSpecs() {
-        auto specsSize = colorAttachmentSpecs.size();
-        if (specsSize) {
-            colorAttachments.resize(specsSize);
-            createTextures(colorAttachments.size(), colorAttachments.data());
-            attachColorTextures();
+    void FrameBuffer::attachColors() {
+        if (format.colorAttachments.empty()) return;
+
+        for (auto& colorAttachment : format.colorAttachments) {
+            glCreateTextures(getTextureTarget(), 1, &colorAttachment.id);
         }
+        attachColorTextures();
     }
 
-    void FrameBuffer::attachDepthSpecs() {
-        if (depthAttachmentSpec.textureFormat != FramebufferTextureFormat::None) {
-            createTextures(1, &depthAttachment);
-            attachDepthTexture();
+    void FrameBuffer::attachDepthStencil() {
+        if (format.depthStencilAttachment.format == DepthStencilFormat::NONE) return;
+
+        glCreateTextures(getTextureTarget(), 1, &format.depthStencilAttachment.id);
+        attachDepthTexture();
+    }
+
+    void FrameBuffer::attachRbo() {
+        if (format.renderBufferAttachment.format == DepthStencilFormat::NONE) return;
+
+        auto& rbo = format.renderBufferAttachment;
+        glCreateRenderbuffers(1, &rbo.id);
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo.id);
+
+        auto depthStencilFormat = toGLDepthStencilFormat(format.renderBufferAttachment.format);
+
+        if (format.samples > 1) {
+            glRenderbufferStorageMultisample(
+                    GL_RENDERBUFFER,
+                    format.samples,
+                    depthStencilFormat,
+                    format.width,
+                    format.height
+            );
+        } else {
+            glRenderbufferStorage(
+                    GL_RENDERBUFFER,
+                    depthStencilFormat,
+                    format.width,
+                    format.height
+            );
         }
+
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        glFramebufferRenderbuffer(
+                GL_FRAMEBUFFER,
+                GL_DEPTH_STENCIL_ATTACHMENT,
+                GL_RENDERBUFFER,
+                format.renderBufferAttachment.id
+        );
     }
 
-    void FrameBuffer::createDrawBuffers() {
-        if (colorAttachments.size() > 1) {
-            ENGINE_ASSERT(colorAttachments.size() <= 4, "createDrawBuffers()");
-            GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
-            glDrawBuffers((GLsizei) colorAttachments.size(), buffers);
-        } else if (colorAttachments.empty()) {
+    void FrameBuffer::createDrawBuffers() const {
+        if (format.colorAttachments.empty()) {
             // Only depth-pass
             glDrawBuffer(GL_NONE);
+            return;
         }
-    }
 
-    uint32_t FrameBuffer::convertTextureFormat(const FramebufferTextureFormat &format) {
-        switch (format) {
-            case FramebufferTextureFormat::RGBA8:       return GL_RGBA8;
-            case FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
-            case FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
-            default: return 0;
+        auto colorsSize = format.colorAttachments.size();
+        if (colorsSize > 1) {
+            ENGINE_ASSERT(colorsSize <= 4, "createDrawBuffers()");
+            GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+            glDrawBuffers((GLsizei) colorsSize, buffers);
+        } else {
+            GLenum buffer[1] = { GL_COLOR_ATTACHMENT0 };
+            glDrawBuffers(1, buffer);
         }
     }
 
     void FrameBuffer::attachColorTextures() {
-        for (auto i = 0 ; i < colorAttachments.size() ; i++) {
-            bindTexture(colorAttachments[i]);
+        for (int i = 0 ; i < format.colorAttachments.size() ; i++) {
+            auto& colorAttachment = format.colorAttachments[i];
 
-            uint32_t colorFormat;
+            bindTexture(colorAttachment.id);
+
             uint32_t colorInternalFormat;
-            convertTextureFormat(i, colorInternalFormat, colorFormat);
+            uint32_t colorDataFormat;
+            toGLInternalAndDataFormat(colorAttachment.format, colorInternalFormat, colorDataFormat);
 
-            if (specification.samples > 1) {
-                glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
-                                        (GLsizei) specification.samples,
-                                        colorInternalFormat,
-                                        (GLsizei) specification.width,
-                                        (GLsizei) specification.height,
-                                        GL_FALSE);
+            if (format.samples > 1) {
+                glTexImage2DMultisample(
+                        GL_TEXTURE_2D_MULTISAMPLE,
+                        (GLsizei) format.samples,
+                        colorInternalFormat,
+                        (GLsizei) format.width,
+                        (GLsizei) format.height,
+                        format.useIdenticalSampleLocations ? GL_TRUE : GL_FALSE
+                );
             } else {
-                glTexImage2D(GL_TEXTURE_2D,
-                             0,
-                             (GLint) colorInternalFormat,
-                             (GLsizei) specification.width,
-                             (GLsizei) specification.height,
-                             0,
-                             colorFormat,
-                             GL_UNSIGNED_BYTE,
-                             nullptr);
+                glTexImage2D(
+                        GL_TEXTURE_2D,
+                        0,
+                        (GLint) colorInternalFormat,
+                        (GLsizei) format.width,
+                        (GLsizei) format.height,
+                        0,
+                        colorDataFormat,
+                        GL_UNSIGNED_BYTE,
+                        nullptr
+                );
 
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -121,23 +197,26 @@ namespace engine {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             }
 
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, getTextureTarget(), colorAttachments[i], 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, getTextureTarget(), colorAttachment.id, 0);
         }
     }
 
     void FrameBuffer::attachDepthTexture() {
-        bindTexture(depthAttachment);
-        auto depthFormat = convertTextureFormat(depthAttachmentSpec.textureFormat);
+        auto& depthStencilAttachment = format.depthStencilAttachment;
+        bindTexture(depthStencilAttachment.id);
+        auto depthFormat = toGLDepthStencilFormat(depthStencilAttachment.format);
 
-        if (specification.samples > 1) {
-            glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
-                                    (GLsizei) specification.samples,
-                                    depthFormat,
-                                    (GLsizei) specification.width,
-                                    (GLsizei) specification.height,
-                                    GL_FALSE);
+        if (format.samples > 1) {
+            glTexImage2DMultisample(
+                    GL_TEXTURE_2D_MULTISAMPLE,
+                    (GLsizei) format.samples,
+                    depthFormat,
+                    (GLsizei) format.width,
+                    (GLsizei) format.height,
+                    format.useIdenticalSampleLocations ? GL_TRUE : GL_FALSE
+            );
         } else {
-            glTexStorage2D(GL_TEXTURE_2D, 1, depthFormat,(GLsizei) specification.width,(GLsizei) specification.height);
+            glTexStorage2D(GL_TEXTURE_2D, 1, depthFormat,(GLsizei) format.width,(GLsizei) format.height);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -145,40 +224,31 @@ namespace engine {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         }
 
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, getTextureTarget(), depthAttachment, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, getTextureTarget(), depthStencilAttachment.id, 0);
     }
 
-    uint32_t FrameBuffer::getTextureTarget() {
-        return specification.samples > 1 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
-    }
-
-    void FrameBuffer::createTextures(const uint32_t &count, uint32_t *outAttachmentId) {
-        glCreateTextures(getTextureTarget(), (GLsizei) count, outAttachmentId);
+    uint32_t FrameBuffer::getTextureTarget() const {
+        return format.samples > 1 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
     }
 
     void FrameBuffer::bindTexture(const uint32_t &attachmentId) {
         glBindTexture(getTextureTarget(), attachmentId);
     }
 
-    void FrameBuffer::convertTextureFormat(const uint32_t &specIndex, uint32_t &outInternalFormat, uint32_t &outFormat) {
-        switch (colorAttachmentSpecs[specIndex].textureFormat) {
-            case FramebufferTextureFormat::RGBA8:
-                outInternalFormat = GL_RGBA8;
-                outFormat = GL_RGBA;
-                break;
-            case FramebufferTextureFormat::RED_INTEGER:
-                outInternalFormat = GL_R32I;
-                outFormat = GL_RED_INTEGER;
-                break;
-        }
-    }
-
-    void FrameBuffer::bind() {
+    void FrameBuffer::bind() const {
         glBindFramebuffer(GL_FRAMEBUFFER, id);
     }
 
-    void FrameBuffer::setViewPort() {
-        glViewport(0, 0, (GLsizei) specification.width, (GLsizei) specification.height);
+    void FrameBuffer::bindRead() const {
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, id);
+    }
+
+    void FrameBuffer::bindWrite() const {
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, id);
+    }
+
+    void FrameBuffer::setViewPort() const {
+        glViewport(0, 0, (GLsizei) format.width, (GLsizei) format.height);
     }
 
     void FrameBuffer::unbind() {
@@ -190,16 +260,16 @@ namespace engine {
             ENGINE_WARN("Attempted to resize framebuffer to {0}, {1}", width, height);
             return;
         }
-        specification.width = width;
-        specification.height = height;
+        format.width = width;
+        format.height = height;
 
         recreate();
         loadAttachments();
         setViewPort();
     }
 
-    int FrameBuffer::readPixel(uint32_t attachmentIndex, int x, int y) {
-        ENGINE_ASSERT(attachmentIndex < colorAttachments.size(), "readPixel()");
+    int FrameBuffer::readPixel(uint32_t attachmentIndex, int x, int y) const {
+        ENGINE_ASSERT(attachmentIndex < format.colorAttachments.size(), "readPixel()");
 
         glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
         int pixelData;
@@ -208,11 +278,23 @@ namespace engine {
     }
 
     void FrameBuffer::removeAttachment(uint32_t attachmentIndex, int value) {
-        ENGINE_ASSERT(attachmentIndex < colorAttachments.size(), "removeAttachment()");
+        ENGINE_ASSERT(attachmentIndex < format.colorAttachments.size(), "removeAttachment()");
 
-        auto& spec = colorAttachmentSpecs[attachmentIndex];
-        auto& texture = colorAttachments[attachmentIndex];
-        auto textureFormat = convertTextureFormat(spec.textureFormat);
-        glClearTexImage(texture, 0, textureFormat, GL_INT,&value);
+        auto& colorAttachment = format.colorAttachments[attachmentIndex];
+        auto textureFormat = toGLColorFormat(colorAttachment.format);
+        glClearTexImage(colorAttachment.id, 0, textureFormat, GL_INT,&value);
     }
+
+    void FrameBuffer::readWriteFrameBuffers(FrameBuffer& src, FrameBuffer& target) {
+        src.bindRead();
+        target.bindWrite();
+        const auto& srcFormat = src.getFormat();
+        const auto& targetFormat = target.getFormat();
+        glBlitFramebuffer(
+                0, 0, srcFormat.width, srcFormat.height,
+                0, 0, targetFormat.width, targetFormat.height,
+                GL_COLOR_BUFFER_BIT, GL_NEAREST
+        );
+    }
+
 }
