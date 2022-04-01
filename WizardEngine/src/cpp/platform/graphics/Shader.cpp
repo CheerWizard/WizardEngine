@@ -192,6 +192,10 @@ namespace engine::shader {
         id = glCreateShader(GL_FRAGMENT_SHADER);
     }
 
+    void Shader::createGShader() {
+        id = glCreateShader(GL_GEOMETRY_SHADER);
+    }
+
     void Shader::attach() const {
         glAttachShader(programId, id);
     }

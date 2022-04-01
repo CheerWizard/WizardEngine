@@ -40,7 +40,7 @@ namespace engine {
         uint32_t indexStart = 0;
         bool isUpdated = true;
         uint32_t renderModelId = 0;
-        DrawType drawType = TRIANGLE;
+        DrawType drawType = DrawType::TRIANGLE;
     };
 
     template<typename FROM, typename TO>

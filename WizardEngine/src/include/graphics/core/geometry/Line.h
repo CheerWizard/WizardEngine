@@ -18,7 +18,7 @@ namespace engine {
         InstanceLine(const std::vector<LineVertex>& linesVertices)
         : VertexDataComponent<InstanceVertex<LineVertex>>() {
             vertexData = toVertexData<LineVertex, InstanceVertex<LineVertex>>(linesVertices);
-            this->drawType = LINE;
+            this->drawType = DrawType::LINE;
         }
     };
 
@@ -26,7 +26,7 @@ namespace engine {
         BatchLine(const std::vector<LineVertex>& linesVertices)
         : VertexDataComponent<BatchVertex<LineVertex>>() {
             vertexData = toVertexData<LineVertex, BatchVertex<LineVertex>>(linesVertices);
-            this->drawType = LINE;
+            this->drawType = DrawType::LINE;
         }
     };
 }

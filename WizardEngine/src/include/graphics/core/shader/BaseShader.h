@@ -87,9 +87,25 @@ namespace engine::shader {
 
         BaseShaderProgram(
                 const ShaderProps &props,
+                const BaseShader &vShader
+        ) : _vShader(vShader) {
+            construct(props);
+        }
+
+        BaseShaderProgram(
+                const ShaderProps &props,
                 const BaseShader &vShader,
                 const BaseShader &fShader
         ) : _vShader(vShader), _fShader(fShader) {
+            construct(props);
+        }
+
+        BaseShaderProgram(
+                const ShaderProps &props,
+                const BaseShader &vShader,
+                const BaseShader &fShader,
+                const BaseShader &gShader
+        ) : _vShader(vShader), _fShader(fShader), _gShader(gShader) {
             construct(props);
         }
 
@@ -132,6 +148,7 @@ namespace engine::shader {
     private:
         BaseShader _vShader; // Vertex Shader
         BaseShader _fShader; // Fragment/Pixel Shader
+        BaseShader _gShader; // Geometry shader
         VertexFormat vertexFormat;
         uint32_t uniformBlockSlots = 0;
 

@@ -29,9 +29,10 @@ namespace engine {
         uint32_t vertexCount = MIN_VERTEX_COUNT;
     };
 
-    enum DrawType {
+    enum class DrawType {
         QUAD, TRIANGLE, TRIANGLE_STRIP,
-        LINE, LINE_STRIP, LINE_LOOP
+        LINE, LINE_STRIP, LINE_LOOP,
+        POINTS
     };
 
     template<typename T>
@@ -39,7 +40,7 @@ namespace engine {
         VertexData<T> vertexData;
         bool isUpdated = true;
         uint32_t renderModelId = 0;
-        DrawType drawType = QUAD;
+        DrawType drawType = DrawType::QUAD;
     };
 
     template<typename T>

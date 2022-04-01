@@ -17,13 +17,34 @@ namespace engine::shader {
         std::string name;
         std::string vFileName;
         std::string fFileName;
+        std::string gFileName;
         std::string assetPath = getRuntimeShadersPath();
         std::string includeToken = DEFAULT_INCLUDE_TOKEN;
+
+        ShaderProps() = default;
+
+        ShaderProps(
+                const std::string& name,
+                const std::string& vFileName,
+                const std::string& fFileName,
+                const std::string& assetPath
+        ) : name(name), vFileName(vFileName), fFileName(fFileName),
+        assetPath(assetPath) {}
+
+        ShaderProps(
+                const std::string& name,
+                const std::string& vFileName,
+                const std::string& fFileName,
+                const std::string& gFileName,
+                const std::string& assetPath
+        ) : name(name), vFileName(vFileName), fFileName(fFileName), gFileName(gFileName),
+        assetPath(assetPath) {}
     };
 
     struct ShaderSources {
         std::string vSrc;
         std::string fSrc;
+        std::string gSrc;
     };
 
     typedef std::unordered_map<std::string, ShaderProps> ShaderPropsMap;

@@ -56,7 +56,7 @@ namespace engine {
             };
 
             this->vertexData = { vertices, 0, 36 };
-            this->drawType = TRIANGLE;
+            this->drawType = DrawType::TRIANGLE;
         }
     };
 }
