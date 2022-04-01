@@ -69,6 +69,7 @@ namespace engine {
 
                 vShader.setUniformArrayElement(i, text.transform);
                 fShader.setUniformArrayElement(i, text.color);
+                fShader.setUniformArrayElement(i, text.transparency);
                 fShader.setUniform(text.bitmap.sampler);
                 ACTIVATE_TEXTURE_PATH(text.bitmap, "assets/bitmaps");
 

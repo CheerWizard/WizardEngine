@@ -7,11 +7,14 @@ out vec4 fragment;
 
 uniform sampler2D bitmap;
 uniform vec4 color[128];
+uniform float transparency[128];
 
 void main() {
     vec4 char = vec4(color[f_id].rgb, texture(bitmap, f_uv).r);
-    if (char.a == 0) {
+
+    if (char.a < transparency[f_id]) {
         discard;
     }
+
     fragment = char;
 }

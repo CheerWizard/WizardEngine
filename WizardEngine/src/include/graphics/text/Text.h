@@ -21,6 +21,7 @@ namespace engine {
         float paddingX = 0;
         float paddingY = 0;
         float whiteSpaceWidth = 0.02f;
+        FloatUniform transparency = { "transparency", 0.5f };
         bool isUpdated = true; // flag should be updated, once this text has been changed
 
         TextComponent(
@@ -31,12 +32,13 @@ namespace engine {
                 const glm::vec4& color,
                 const float& paddingX = 0,
                 const float& paddingY = 0,
-                const float& whiteSpaceWidth = 0.02f
+                const float& whiteSpaceWidth = 0.02f,
+                const float& transparency = 0.5f
         ) : text(text), font(font),
         bitmap({ bitmap, TextureType::TEXTURE_2D, { "bitmap", 1 } }),
         transform(transform), color({ "color", color }),
         paddingX(paddingX), paddingY(paddingY),
-        whiteSpaceWidth(whiteSpaceWidth) {}
+        whiteSpaceWidth(whiteSpaceWidth), transparency({ "transparency", 0.5f }) {}
     };
 
     // just separate types for ecs as we want to process text 2D/3D separately
