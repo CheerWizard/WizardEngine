@@ -17,14 +17,14 @@ namespace engine {
     struct InstanceQuad : VertexDataComponent<InstanceVertex<QuadVertex>> {
         InstanceQuad(const std::array<QuadVertex, 4>& quadVertices) : VertexDataComponent<InstanceVertex<QuadVertex>>() {
             vertexData = toVertexData<QuadVertex, InstanceVertex<QuadVertex>>(quadVertices);
-            this->drawType = QUAD;
+            this->drawType = DrawType::QUAD;
         }
     };
 
     struct BatchQuad : VertexDataComponent<BatchVertex<QuadVertex>> {
         BatchQuad(const std::array<QuadVertex, 4>& quadVertices) : VertexDataComponent<BatchVertex<QuadVertex>>() {
             vertexData = toVertexData<QuadVertex, BatchVertex<QuadVertex>>(quadVertices);
-            this->drawType = QUAD;
+            this->drawType = DrawType::QUAD;
         }
     };
 }

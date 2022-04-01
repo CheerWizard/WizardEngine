@@ -10,14 +10,14 @@ namespace engine::shader {
 
     void BaseShaderProgram::construct(const ShaderProps &props) {
         auto sources = ShaderFile::readAssetWithIncludes(props);
-
+        // required shader, if failed - skip construction!
         if (sources.vSrc.empty()) {
             state = FAILED_READ_FILE;
             return;
         }
         ENGINE_INFO("Vertex shader {0}: ", props.vFileName);
         ENGINE_INFO(sources.vSrc);
-
+        // required shader, if failed - skip construction!
         if (sources.fSrc.empty()) {
             state = FAILED_READ_FILE;
             return;
@@ -27,6 +27,15 @@ namespace engine::shader {
 
         _vShader.setSrc(sources.vSrc.c_str());
         _fShader.setSrc(sources.fSrc.c_str());
+
+        // optional shader, if failed - continue construction
+        if (sources.gSrc.empty()) {
+            ENGINE_WARN("Geometry shader failed to read from file : {0}", props.gFileName);
+        } else {
+            ENGINE_INFO("Geometry shader {0}: ", props.gFileName);
+            ENGINE_INFO(sources.gSrc);
+        }
+        _gShader.setSrc(sources.gSrc.c_str());
 
         if (invalidate()) {
             parseVertexFormat();
@@ -130,24 +139,39 @@ namespace engine::shader {
 
     bool BaseShaderProgram::invalidate() {
         create();
+
         _vShader.setProgramId(id);
         _fShader.setProgramId(id);
+        _gShader.setProgramId(id);
 
+        // required shader, if compilation failed - skip invalidation
         _vShader.createVShader();
         if (!_vShader.compile()) {
-            ENGINE_ERR("Shader compilation failure!");
+            ENGINE_ERR("Vertex shader compilation failure!");
             state = FAILED_COMPILE;
             return false;
         }
         _vShader.attach();
 
+        // required shader, if compilation failed - skip invalidation
         _fShader.createFShader();
         if (!_fShader.compile()) {
-            ENGINE_ERR("Shader compilation failure!");
+            ENGINE_ERR("Fragment shader compilation failure!");
             state = FAILED_COMPILE;
             return false;
         }
         _fShader.attach();
+
+        // optional shader, if compilation failed - continue invalidation
+        if (_gShader.hasSrc()) {
+            _gShader.createGShader();
+
+            if (!_gShader.compile()) {
+                ENGINE_WARN("Geometry shader compilation failure!");
+            } else {
+                _gShader.attach();
+            }
+        }
 
         if (!link()) {
             return false;

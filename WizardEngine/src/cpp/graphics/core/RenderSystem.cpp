@@ -12,6 +12,7 @@
 #include <graphics/core/geometry/Circle.h>
 #include <graphics/outline/Outline.h>
 #include <graphics/skybox/Skybox.h>
+#include <graphics/core/geometry/Point.h>
 
 namespace engine {
 
@@ -24,12 +25,13 @@ namespace engine {
         createOutlineRenderer();
         createSkyboxRenderer();
         createTextRenderers();
+        createPointRenderer();
     }
 
     void RenderSystem::onUpdate() {
         sceneFrame->bind();
 
-        setClearColor({1, 1, 1, 1});
+        setClearColor({0, 0, 0, 1});
         clearDepthBuffer();
         setDepthTest(true);
 
@@ -57,6 +59,10 @@ namespace engine {
         // text
         text2dRenderer->render<Text2d>(registry);
         text3dRenderer->render<Text3d>(registry);
+        // points
+        registry.view<Points>().each([=](auto entity, auto& points) {
+            pointRenderer->render(points);
+        });
         // outlining
         // stop write to stencil buffer
         setStencilTestOperator(NOT_EQUAL, 1, false);
@@ -137,9 +143,9 @@ namespace engine {
                 fInstanceShader
         );
 
-        lineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, LINE);
-        stripLineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, LINE_STRIP);
-        loopLineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, LINE_LOOP);
+        lineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, DrawType::LINE);
+        stripLineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, DrawType::LINE_STRIP);
+        loopLineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, DrawType::LINE_LOOP);
     }
 
     void RenderSystem::createQuadRenderer() {
@@ -168,7 +174,7 @@ namespace engine {
                 fInstanceShader
         );
 
-        quadRenderer = createRef<MultiRenderer>(batchShader, instanceShader, QUAD);
+        quadRenderer = createRef<MultiRenderer>(batchShader, instanceShader, DrawType::QUAD);
     }
 
     void RenderSystem::createCircleRenderer() {
@@ -216,7 +222,7 @@ namespace engine {
                 fInstanceShader
         );
 
-        circleRenderer = createRef<MultiRenderer>(batchShader, instanceShader, QUAD);
+        circleRenderer = createRef<MultiRenderer>(batchShader, instanceShader, DrawType::QUAD);
     }
 
     void RenderSystem::createOutlineRenderer() {
@@ -264,8 +270,8 @@ namespace engine {
                 fInstanceShader
         );
 
-        outlineSceneRenderer = createRef<MultiRenderer>(batchShader, instanceShader, TRIANGLE);
-        outlineQuadRenderer = createRef<MultiRenderer>(batchShader, instanceShader, TRIANGLE_STRIP);
+        outlineSceneRenderer = createRef<MultiRenderer>(batchShader, instanceShader, DrawType::TRIANGLE);
+        outlineQuadRenderer = createRef<MultiRenderer>(batchShader, instanceShader, DrawType::TRIANGLE_STRIP);
     }
 
     void RenderSystem::createSkyboxRenderer() {
@@ -282,7 +288,7 @@ namespace engine {
             }
         };
 
-        auto vShader = shader::BaseShader({ skyboxRotation });
+        auto vShader = shader::BaseShader({ camera3dUboScript(), skyboxRotation });
         auto fShader = shader::BaseShader({ cubeMapTextureScript() });
         auto shader = createRef<shader::BaseShaderProgram>(
                 shader::ShaderProps {
@@ -343,5 +349,19 @@ namespace engine {
         );
 
         screenRenderer = createRef<VRenderer>(shader);
+    }
+
+    void RenderSystem::createPointRenderer() {
+        auto shader = createRef<shader::BaseShaderProgram>(
+                shader::ShaderProps {
+                        "point",
+                        "geometry/v_point.glsl",
+                        "geometry/f_point.glsl",
+                        "geometry/g_point.glsl",
+                        ENGINE_SHADERS_PATH
+                }
+        );
+
+        pointRenderer = createRef<VRenderer>(shader);
     }
 }

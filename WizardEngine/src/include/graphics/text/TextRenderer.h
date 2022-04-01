@@ -16,7 +16,7 @@ namespace engine {
 
     public:
         TextRenderer(const Ref<BaseShaderProgram>& shaderProgram)
-        : Renderer(shaderProgram, QUAD, VERTEX) {
+        : Renderer(shaderProgram, DrawType::QUAD, VERTEX) {
             init();
         }
 
