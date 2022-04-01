@@ -83,7 +83,7 @@ namespace engine {
         stencilMask(true);
         setDepthTest(false);
 
-        _frame->unbind();
+        FrameBuffer::bindDefault();
         clearColorBuffer();
 
         if (ImGui::Button("Auto-Rotate", { 120, 36 })) {

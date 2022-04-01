@@ -61,7 +61,7 @@ namespace engine {
 
         ENGINE_ASSERT(isCompleted(), "Framebuffer is incomplete!");
 
-        unbind();
+        bindDefault();
     }
 
     void FrameBuffer::create() {
@@ -92,17 +92,100 @@ namespace engine {
     void FrameBuffer::attachColors() {
         if (format.colorAttachments.empty()) return;
 
-        for (auto& colorAttachment : format.colorAttachments) {
+        for (int i = 0 ; i < format.colorAttachments.size() ; i++) {
+            auto& colorAttachment = format.colorAttachments[i];
+
             glCreateTextures(getTextureTarget(), 1, &colorAttachment.id);
+            bindTexture(colorAttachment.id);
+
+            uint32_t colorInternalFormat;
+            uint32_t colorDataFormat;
+            toGLInternalAndDataFormat(colorAttachment.format, colorInternalFormat, colorDataFormat);
+
+            if (format.samples > 1) {
+//                glTexImage2DMultisample(
+//                        GL_TEXTURE_2D_MULTISAMPLE,
+//                        (GLsizei) format.samples,
+//                        colorInternalFormat,
+//                        (GLsizei) format.width,
+//                        (GLsizei) format.height,
+//                        format.useIdenticalSampleLocations ? GL_TRUE : GL_FALSE
+//                );
+                glTexImage2DMultisample(
+                        GL_TEXTURE_2D_MULTISAMPLE,
+                        format.samples,
+                        GL_RGB,
+                        format.width,
+                        format.height,
+                        GL_TRUE
+                );
+
+                glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            } else {
+                glTexImage2D(
+                        GL_TEXTURE_2D,
+                        0,
+                        (GLint) colorInternalFormat,
+                        (GLsizei) format.width,
+                        (GLsizei) format.height,
+                        0,
+                        colorDataFormat,
+                        GL_UNSIGNED_BYTE,
+                        nullptr
+                );
+
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            }
+
+            bindTexture(0);
+
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, getTextureTarget(), colorAttachment.id, 0);
         }
-        attachColorTextures();
     }
 
     void FrameBuffer::attachDepthStencil() {
         if (format.depthStencilAttachment.format == DepthStencilFormat::NONE) return;
 
-        glCreateTextures(getTextureTarget(), 1, &format.depthStencilAttachment.id);
-        attachDepthTexture();
+        auto& depthStencilAttachment = format.depthStencilAttachment;
+        glCreateTextures(getTextureTarget(), 1, &depthStencilAttachment.id);
+        bindTexture(depthStencilAttachment.id);
+
+        auto depthFormat = toGLDepthStencilFormat(depthStencilAttachment.format);
+
+        if (format.samples > 1) {
+            glTexImage2DMultisample(
+                    GL_TEXTURE_2D_MULTISAMPLE,
+                    (GLsizei) format.samples,
+                    depthFormat,
+                    (GLsizei) format.width,
+                    (GLsizei) format.height,
+                    format.useIdenticalSampleLocations ? GL_TRUE : GL_FALSE
+            );
+            glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        } else {
+            glTexStorage2D(GL_TEXTURE_2D, 1, depthFormat,(GLsizei) format.width,(GLsizei) format.height);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        }
+
+        bindTexture(0);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, getTextureTarget(), depthStencilAttachment.id, 0);
     }
 
     void FrameBuffer::attachRbo() {
@@ -158,75 +241,6 @@ namespace engine {
         }
     }
 
-    void FrameBuffer::attachColorTextures() {
-        for (int i = 0 ; i < format.colorAttachments.size() ; i++) {
-            auto& colorAttachment = format.colorAttachments[i];
-
-            bindTexture(colorAttachment.id);
-
-            uint32_t colorInternalFormat;
-            uint32_t colorDataFormat;
-            toGLInternalAndDataFormat(colorAttachment.format, colorInternalFormat, colorDataFormat);
-
-            if (format.samples > 1) {
-                glTexImage2DMultisample(
-                        GL_TEXTURE_2D_MULTISAMPLE,
-                        (GLsizei) format.samples,
-                        colorInternalFormat,
-                        (GLsizei) format.width,
-                        (GLsizei) format.height,
-                        format.useIdenticalSampleLocations ? GL_TRUE : GL_FALSE
-                );
-            } else {
-                glTexImage2D(
-                        GL_TEXTURE_2D,
-                        0,
-                        (GLint) colorInternalFormat,
-                        (GLsizei) format.width,
-                        (GLsizei) format.height,
-                        0,
-                        colorDataFormat,
-                        GL_UNSIGNED_BYTE,
-                        nullptr
-                );
-
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            }
-
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, getTextureTarget(), colorAttachment.id, 0);
-        }
-    }
-
-    void FrameBuffer::attachDepthTexture() {
-        auto& depthStencilAttachment = format.depthStencilAttachment;
-        bindTexture(depthStencilAttachment.id);
-        auto depthFormat = toGLDepthStencilFormat(depthStencilAttachment.format);
-
-        if (format.samples > 1) {
-            glTexImage2DMultisample(
-                    GL_TEXTURE_2D_MULTISAMPLE,
-                    (GLsizei) format.samples,
-                    depthFormat,
-                    (GLsizei) format.width,
-                    (GLsizei) format.height,
-                    format.useIdenticalSampleLocations ? GL_TRUE : GL_FALSE
-            );
-        } else {
-            glTexStorage2D(GL_TEXTURE_2D, 1, depthFormat,(GLsizei) format.width,(GLsizei) format.height);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        }
-
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, getTextureTarget(), depthStencilAttachment.id, 0);
-    }
-
     uint32_t FrameBuffer::getTextureTarget() const {
         return format.samples > 1 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
     }
@@ -251,7 +265,7 @@ namespace engine {
         glViewport(0, 0, (GLsizei) format.width, (GLsizei) format.height);
     }
 
-    void FrameBuffer::unbind() {
+    void FrameBuffer::bindDefault() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
@@ -293,7 +307,7 @@ namespace engine {
         glBlitFramebuffer(
                 0, 0, srcFormat.width, srcFormat.height,
                 0, 0, targetFormat.width, targetFormat.height,
-                GL_COLOR_BUFFER_BIT, GL_NEAREST
+                GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST
         );
     }
 

@@ -97,6 +97,12 @@ namespace fairy {
                 props.height
         });
 
+        SceneViewport screenViewport = SceneViewport({
+            "Screen",
+            props.width,
+            props.height
+        });
+
         engine::ImageLayout _texturePreview = engine::ImageLayout({
             "Texture Preview",
             512,

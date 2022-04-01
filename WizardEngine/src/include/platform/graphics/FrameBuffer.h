@@ -77,7 +77,6 @@ namespace engine {
         void recreate();
         // bind/unbind
         void bind() const;
-        void unbind();
         void bindRead() const;
         void bindWrite() const;
         // loading specs, attachments and reading GPU data
@@ -95,8 +94,6 @@ namespace engine {
         void attachDepthStencil();
         void attachRbo();
         void createDrawBuffers() const;
-        void attachColorTextures();
-        void attachDepthTexture();
         void bindTexture(const uint32_t &attachmentId);
         uint32_t getTextureTarget() const;
 
@@ -105,6 +102,7 @@ namespace engine {
         FrameBufferFormat format;
 
     public:
+        static void bindDefault();
         static void readWriteFrameBuffers(FrameBuffer& src, FrameBuffer& target);
     };
 

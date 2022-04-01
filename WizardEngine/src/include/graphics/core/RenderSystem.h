@@ -8,6 +8,7 @@
 #include <ecs/Scene.h>
 #include <platform/graphics/FrameBuffer.h>
 #include <graphics/text/TextRenderer.h>
+#include <graphics/core/geometry/Screen.h>
 
 namespace engine {
 
@@ -29,12 +30,9 @@ namespace engine {
             this->activeScene = activeScene;
         }
 
-        inline void setSkybox(const Entity& skybox) {
-            this->skybox = skybox;
-        }
-
     private:
         void create();
+        void createScreenRenderer();
         void createSceneRenderer();
         void createLineRenderers();
         void createQuadRenderer();
@@ -45,10 +43,12 @@ namespace engine {
 
     private:
         Ref<Scene> activeScene = nullptr;
-        Entity skybox;
 
         Ref<FrameBuffer> sceneFrame;
         Ref<FrameBuffer> screenFrame;
+        // screen
+        Ref<VRenderer> screenRenderer;
+        Screen screen;
         // scene
         Ref<MultiRenderer> sceneRenderer;
         // line

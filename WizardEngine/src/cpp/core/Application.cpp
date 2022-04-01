@@ -33,7 +33,9 @@ namespace engine {
 
         createScripting();
 
-        createActiveScene();
+        activeScene = createRef<Scene>();
+        scenes.emplace_back(activeScene);
+        setActiveScene(activeScene);
     }
 
     void Application::onPrepare() {
@@ -42,7 +44,6 @@ namespace engine {
         _window->setInCenter();
         setSampleSize(1);
         _layerStack.onPrepare();
-        setMSAA(true);
     }
 
     void Application::onDestroy() {
@@ -84,8 +85,8 @@ namespace engine {
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
 
         _layerStack.onWindowResized(width, height);
-//        activeSceneFrame->resize(width, height);
-//        screenFrame->resize(width, height);
+        activeSceneFrame->resize(width, height);
+        screenFrame->resize(width, height);
         eventController.onWindowResized.function(width, height);
     }
 
@@ -132,10 +133,9 @@ namespace engine {
         return _window->getAspectRatio();
     }
 
-    void Application::createActiveScene() {
-        activeScene = createRef<Scene>();
-        _renderSystem->setActiveScene(activeScene);
-        _scriptSystem->setActiveScene(activeScene);
+    void Application::setActiveScene(const Ref<Scene>& scene) {
+        _renderSystem->setActiveScene(scene);
+        _scriptSystem->setActiveScene(scene);
     }
 
     void Application::restart() {
@@ -174,11 +174,11 @@ namespace engine {
     void Application::setSampleSize(const uint32_t& samples) {
         _window->setSampleSize(samples);
         // update active scene fbo
-        engine::FrameBufferFormat activeSceneFrameFormat;
+        FrameBufferFormat activeSceneFrameFormat;
         activeSceneFrameFormat.colorAttachments = {
                 { engine::ColorFormat::RGBA8 }
         };
-        activeSceneFrameFormat.renderBufferAttachment = {DepthStencilFormat::DEPTH24STENCIL8 };
+        activeSceneFrameFormat.renderBufferAttachment = { DepthStencilFormat::DEPTH24STENCIL8 };
         activeSceneFrameFormat.width = _window->getWidth();
         activeSceneFrameFormat.height = _window->getHeight();
         activeSceneFrameFormat.samples = samples;
@@ -192,8 +192,8 @@ namespace engine {
         screenFrameFormat.height = _window->getHeight();
         screenFrameFormat.samples = 1;
         screenFrame->updateFormat(screenFrameFormat);
-
-        activeScene->setTextureId(screenFrame->getColorAttachment(0).id);
+        // resolve size issue
+        onWindowResized(_window->getWidth(), _window->getHeight());
     }
 
     void Application::createGraphics() {
@@ -204,11 +204,11 @@ namespace engine {
     }
 
     void Application::updateRuntime(Time dt) {
-        if (activeScene != nullptr && !activeScene->isEmpty()) {
+        if (!activeScene->isEmpty()) {
             _scriptSystem->onUpdate(dt);
             _renderSystem->onUpdate();
         } else {
-            ENGINE_WARN("Active scene is null or empty!");
+            ENGINE_WARN("Active scene is empty!");
         }
     }
 
@@ -220,7 +220,9 @@ namespace engine {
         _scriptSystem = createScope<ScriptSystem>();
     }
 
-    void Application::setSkybox(const Entity& skybox) {
-        _renderSystem->setSkybox(skybox);
+    void Application::setActiveScene(const uint32_t& activeSceneId) {
+        activeScene = scenes[activeSceneId];
+        setActiveScene(activeScene);
+        _renderSystem->onUpdate();
     }
 }

@@ -6,7 +6,7 @@
 
 #include <graphics/core/shader/Uniform.h>
 
-#define DEFAULT_VIEW_POS_3D {0, 0, 1}
+#define DEFAULT_VIEW_POS_3D {0, 0, -1}
 #define DEFAULT_VIEW_ROT_3D {0, 0, 0}
 #define DEFAULT_VIEW_POS_2D {0, 0, 1}
 

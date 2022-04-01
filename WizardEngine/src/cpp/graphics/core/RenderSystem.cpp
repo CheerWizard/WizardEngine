@@ -16,6 +16,7 @@
 namespace engine {
 
     void RenderSystem::create() {
+        createScreenRenderer();
         createSceneRenderer();
         createLineRenderers();
         createQuadRenderer();
@@ -26,17 +27,16 @@ namespace engine {
     }
 
     void RenderSystem::onUpdate() {
-        if (activeScene->isEmpty()) return;
-
         sceneFrame->bind();
+
+        setClearColor({1, 1, 1, 1});
+        clearDepthBuffer();
+        setDepthTest(true);
 
         // enables transparency
         setBlendMode(true);
         setBlendFunction(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
         // write to stencil buffer
-        setClearColor({0.2, 0.2, 0.2, 1});
-        setDepthTest(true);
-        clearDepthBuffer();
         setStencilTest(true);
         setStencilTestActions({ KEEP, KEEP, REPLACE });
         clearStencilBuffer();
@@ -57,11 +57,11 @@ namespace engine {
         // text
         text2dRenderer->render<Text2d>(registry);
         text3dRenderer->render<Text3d>(registry);
+        // outlining
         // stop write to stencil buffer
         setStencilTestOperator(NOT_EQUAL, 1, false);
         stencilMask(true);
         setDepthTest(false);
-        // outlining
         outlineSceneRenderer->render<Transform3dComponent, OutlineVertex>(registry);
         // write to stencil buffer
         stencilMask(false);
@@ -69,12 +69,12 @@ namespace engine {
         setDepthTest(true);
         // skybox
         setDepthTestOperator(LESS_EQUAL); // we need to pass depth test for some skybox pixels
-        skyboxRenderer->render<Transform3dComponent, SkyboxVertex>(skybox);
+        skyboxRenderer->render<Transform3dComponent, SkyboxVertex>(activeScene->getSkybox());
         setDepthTestOperator(LESS);
         // read/write from scene frame into screen frame
         FrameBuffer::readWriteFrameBuffers(*sceneFrame.get(), *screenFrame.get());
-        // finish frame
-        sceneFrame->unbind();
+        // bind to window frame buffer and draw screen
+        FrameBuffer::bindDefault();
         setDepthTest(false);
         clearColorBuffer();
 
@@ -326,5 +326,22 @@ namespace engine {
                 fTextShader
         );
         text3dRenderer = createRef<TextRenderer>(text3dShader);
+    }
+
+    void RenderSystem::createScreenRenderer() {
+        auto vShader = shader::BaseShader();
+        auto fShader = shader::BaseShader();
+        auto shader = createRef<shader::BaseShaderProgram>(
+                shader::ShaderProps {
+                        "screen",
+                        "v_screen.glsl",
+                        "f_screen.glsl",
+                        ENGINE_SHADERS_PATH
+                },
+                vShader,
+                fShader
+        );
+
+        screenRenderer = createRef<VRenderer>(shader);
     }
 }

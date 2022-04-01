@@ -9,6 +9,7 @@
 #include <ecs/Components.h>
 #include <graphics/transform/TransformComponents.h>
 #include <platform/graphics/RenderCommands.h>
+#include <platform/graphics/TextureBuffer.h>
 
 #define INSTANCE_COUNT_LIMIT 128
 
@@ -128,6 +129,8 @@ namespace engine {
     public:
         template<typename T, typename V>
         void render(const Entity& entity);
+        template<typename V>
+        void render(VertexDataComponent<V>& vertexDataComponent, const uint32_t& textureId);
 
     private:
         void create();
@@ -407,6 +410,23 @@ namespace engine {
 
         vRenderModel.vao.bind();
         drawV(vertexDataComponent->drawType, totalVertexCount);
+
+        shaderProgram->stop();
+    }
+
+    template<typename V>
+    void VRenderer::render(VertexDataComponent<V>& vertexDataComponent, const uint32_t& textureId) {
+        if (!shaderProgram->isReady()) return;
+
+        shaderProgram->start();
+
+        TextureBuffer::activate(0);
+        TextureBuffer::bind(textureId);
+
+        uint32_t totalVertexCount = 0;
+        tryUpload(vertexDataComponent, totalVertexCount, vRenderModel);
+        vRenderModel.vao.bind();
+        drawV(vertexDataComponent.drawType, totalVertexCount);
 
         shaderProgram->stop();
     }
