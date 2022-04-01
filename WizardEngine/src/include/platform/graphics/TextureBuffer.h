@@ -36,8 +36,6 @@ namespace engine {
         // bind/unbind tbo
         void bind() const;
         void unbind() const;
-        // activating tbo
-        void activate(const uint32_t &slot) const;
         // read from file and load to tbo
         void loadFrom(const std::string_view &fileName);
         void loadFrom(const std::string_view &fileName, const std::string_view &texturesPath);
@@ -47,6 +45,10 @@ namespace engine {
         void load(const TextureData &textureData);
         void load(const TextureFaceType& faceType, const TextureData& textureData);
         void setParams(const std::vector<TextureParam>& params) const;
+
+    public:
+        static void bind(const uint32_t& id);
+        static void activate(const uint32_t& slot);
 
     private:
         uint32_t id;

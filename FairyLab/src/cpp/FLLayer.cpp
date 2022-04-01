@@ -17,22 +17,14 @@
 
 #include <imgui/imgui.h>
 
+#define BIND_KEY_PRESS(keycode, action) app->eventController.onKeyPressedMap[keycode] = { [this](KeyCode keyCode) { action }}
+
 using namespace engine::shader;
 
 namespace fairy {
 
     void FLLayer::create() {
         createAssetBrowser();
-
-        activeSceneCamera = engine::Camera3D {
-                "SceneCamera",
-                app->getAspectRatio(),
-                app->activeScene.get()
-        };
-        activeSceneCameraController = engine::createRef<engine::Camera3dController>(
-                "ActiveSceneCameraController",
-                activeSceneCamera
-        );
 
         auto vObjShader = BaseShader({
                                              camera3dScript()
@@ -106,6 +98,9 @@ namespace fairy {
 
         sceneViewport.setCallback(_scenePreviewCallback);
         sceneViewport.setDragDropCallback(this);
+        screenViewport.setCallback(_scenePreviewCallback);
+        screenViewport.setDragDropCallback(this);
+
         _texturePreview.setCallback(_imagePreviewCallback);
         _assetBrowser->setCallback(this);
 
@@ -113,9 +108,23 @@ namespace fairy {
     }
 
     void FLLayer::createTest() {
-        app->setSkybox(engine::SkyboxCube(
+        auto scene1 = createRef<Scene>();
+        app->scenes.emplace_back(scene1);
+
+        activeSceneCamera = engine::Camera3D {
+                "SceneCamera",
+                app->getAspectRatio(),
+                scene1.get()
+        };
+
+        activeSceneCameraController = engine::createRef<engine::Camera3dController>(
+                "ActiveSceneCameraController",
+                activeSceneCamera
+        );
+
+        scene1->setSkybox(engine::SkyboxCube(
                 "Skybox",
-                app->activeScene.get(),
+                scene1.get(),
                 CubeMapTextureComponent {
                         "skybox",
                         {
@@ -163,7 +172,7 @@ namespace fairy {
 
         Text2dView(
                 "Text2D",
-                app->activeScene.get(),
+                scene1.get(),
                 Text2d {
                         "OpenSans-Bold",
                         "assets/fonts/opensans/OpenSans-Bold.ttf",
@@ -180,7 +189,7 @@ namespace fairy {
 
         Text3dView(
                 "Text3D",
-                app->activeScene.get(),
+                scene1.get(),
                 Text3d {
                         "Roboto-Bold",
                         "assets/fonts/roboto/Roboto-Bold.ttf",
@@ -194,9 +203,9 @@ namespace fairy {
                 }
         );
 
-        math::random(-10, 10, 5, [this](const uint32_t& i, const float& r) {
+        math::random(-10, 10, 5, [&scene1](const uint32_t& i, const float& r) {
             Object3d(
-                    app->activeScene.get(),
+                    scene1.get(),
                     "Quad" + std::to_string(i),
                     transform3d(
                             { r, r, r },
@@ -221,6 +230,7 @@ namespace fairy {
     void FLLayer::onPrepare() {
         EDITOR_INFO("onPrepare()");
         ImGuiLayer::onPrepare();
+
         activeSceneCameraController->bind(engine::KeyCode::W, engine::MoveType::UP);
         activeSceneCameraController->bind(engine::KeyCode::A, engine::MoveType::LEFT);
         activeSceneCameraController->bind(engine::KeyCode::S, engine::MoveType::DOWN);
@@ -249,25 +259,29 @@ namespace fairy {
 
         _sceneHierarchy.setCallback(this);
 
-        app->eventController.onKeyPressedMap[KeyCode::D1] = { [this](KeyCode keyCode) { app->setSampleSize(1); } };
-        app->eventController.onKeyPressedMap[KeyCode::D4] = { [this](KeyCode keyCode) { app->setSampleSize(4); } };
-        app->eventController.onKeyPressedMap[KeyCode::F] = { [this](KeyCode keyCode) {
-            if (app->input->isKeyPressed(engine::KeyCode::LeftControl)) {
-                app->getWindow()->enableFullScreen();
-            }
-        }};
-        app->eventController.onKeyPressedMap[KeyCode::Escape] = { [this](KeyCode keyCode) {
-            app->getWindow()->disableFullScreen();
-        }};
-        app->eventController.onKeyPressedMap[KeyCode::L] = { [this](KeyCode keyCode) {
-            // add script to entity
-            Entity newEntity(copy(app->activeScene).get());
-            addDLLScript(newEntity, "Test");
-        }};
+        // switch between scenes : Scene0, Scene1
+        BIND_KEY_PRESS(KeyCode::D0,
+                       app->setActiveScene(0);
+                        _sceneHierarchy.setScene(app->scenes[0]);
+        );
+        BIND_KEY_PRESS(KeyCode::D1,
+                       app->setActiveScene(1);
+                        _sceneHierarchy.setScene(app->scenes[1]);
+        );
+        // switch between fullscreen/windowed modes
+        BIND_KEY_PRESS(KeyCode::F, if (app->input->isKeyPressed(engine::KeyCode::LeftControl)) {
+            app->getWindow()->enableFullScreen();
+        });
+        BIND_KEY_PRESS(KeyCode::Escape, app->getWindow()->disableFullScreen(););
+        BIND_KEY_PRESS(KeyCode::M, app->setSampleSize(8););
+        BIND_KEY_PRESS(KeyCode::N, app->setSampleSize(1););
+
+        setMSAA(true);
     }
 
     void FLLayer::onRender(engine::Time dt) {
         sceneViewport.onUpdate(dt);
+        screenViewport.onUpdate(dt);
         _sceneHierarchy.onUpdate(dt);
         _assetBrowser->onUpdate(dt);
         _texturePreview.onUpdate(dt);
@@ -277,13 +291,14 @@ namespace fairy {
     void FLLayer::onUpdate(engine::Time dt) {
         ImGuiLayer::onUpdate(dt);
         activeSceneCameraController->setDeltaTime(dt);
-        sceneViewport.setId(app->activeScene->getTextureId());
+        sceneViewport.setId(app->screenFrame->getColorAttachment(0).id);
+        screenViewport.setId(app->screenFrame->getColorAttachment(0).id);
     }
 
     void FLLayer::onKeyPressed(engine::KeyCode keyCode) {
         engine::ImGuiLayer::onKeyPressed(keyCode);
         _objPreview->onKeyPressed(keyCode);
-        if (sceneViewport.isFocused()) {
+        if (sceneViewport.isFocused() || screenViewport.isFocused()) {
             activeSceneCameraController->onKeyPressed(keyCode);
         }
     }
@@ -291,7 +306,7 @@ namespace fairy {
     void FLLayer::onKeyHold(engine::KeyCode keyCode) {
         engine::ImGuiLayer::onKeyHold(keyCode);
         _objPreview->onKeyHold(keyCode);
-        if (sceneViewport.isFocused()) {
+        if (sceneViewport.isFocused() || screenViewport.isFocused()) {
             activeSceneCameraController->onKeyHold(keyCode);
         }
     }
@@ -299,7 +314,7 @@ namespace fairy {
     void FLLayer::onKeyReleased(engine::KeyCode keyCode) {
         engine::ImGuiLayer::onKeyReleased(keyCode);
         _objPreview->onKeyReleased(keyCode);
-        if (sceneViewport.isFocused()) {
+        if (sceneViewport.isFocused() || screenViewport.isFocused()) {
             activeSceneCameraController->onKeyReleased(keyCode);
         }
     }
@@ -307,7 +322,7 @@ namespace fairy {
     void FLLayer::onKeyTyped(engine::KeyCode keyCode) {
         engine::ImGuiLayer::onKeyTyped(keyCode);
         _objPreview->onKeyTyped(keyCode);
-        if (sceneViewport.isFocused()) {
+        if (sceneViewport.isFocused() || screenViewport.isFocused()) {
             activeSceneCameraController->onKeyTyped(keyCode);
         }
     }
@@ -315,11 +330,13 @@ namespace fairy {
     void FLLayer::onMousePressed(engine::MouseCode mouseCode) {
         engine::ImGuiLayer::onMousePressed(mouseCode);
         sceneViewport.onMousePressed(mouseCode);
+        screenViewport.onMousePressed(mouseCode);
     }
 
     void FLLayer::onMouseRelease(engine::MouseCode mouseCode) {
         engine::ImGuiLayer::onMouseRelease(mouseCode);
         sceneViewport.onMouseRelease(mouseCode);
+        screenViewport.onMouseRelease(mouseCode);
     }
 
     void FLLayer::onImageOpen(const std::string &fileName) {
@@ -345,6 +362,7 @@ namespace fairy {
         if (width == 0 || height == 0) return;
 
         _parent.app->activeSceneFrame->resize(width, height);
+        _parent.app->screenFrame->resize(width, height);
         _parent.activeSceneCameraController->onWindowResized(width, height);
     }
 
@@ -367,7 +385,7 @@ namespace fairy {
         setClearColor({0.2, 0.2, 0.2, 1});
         clearDepthBuffer();
 
-        app->activeSceneFrame->unbind();
+        FrameBuffer::bindDefault();
         setDepthTest(false);
         clearColorBuffer();
     }
