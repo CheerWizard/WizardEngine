@@ -61,17 +61,16 @@ namespace engine {
         virtual WindowProps createWindowProps();
 
     public:
-        float getAspectRatio() const;
+        [[nodiscard]] float getAspectRatio() const;
         const uint32_t& getWindowWidth();
         const uint32_t& getWindowHeight();
-        void createActiveScene();
         uint32_t getRefreshRate();
         void* getNativeWindow();
         void setWindowIcon(const std::string &filePath);
         Ref<FileDialog> createFileDialog();
         void setSampleSize(const uint32_t& samples);
-
-        void setSkybox(const Entity& skybox);
+        void setActiveScene(const Ref<Scene>& activeScene);
+        void setActiveScene(const uint32_t& activeSceneId);
 
     protected:
         void pushFront(Layer* layer);
@@ -87,6 +86,7 @@ namespace engine {
 
     public:
         Scope<Input> input;
+        std::vector<Ref<Scene>> scenes;
         Ref<Scene> activeScene;
         Ref<FrameBuffer> activeSceneFrame;
         Ref<FrameBuffer> screenFrame;
@@ -96,13 +96,12 @@ namespace engine {
     private:
         bool _isRunning = true;
         // core systems
-        LayerStack _layerStack;
+        LayerStack _layerStack; // todo consider remove LayerStack. Instead create an Editor class.
         Scope<Window> _window;
         // graphics system
         Scope<RenderSystem> _renderSystem;
         // scripting system
         Scope<ScriptSystem> _scriptSystem;
-
     };
 
     Application* createApplication();

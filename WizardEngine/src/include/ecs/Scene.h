@@ -12,23 +12,24 @@ namespace engine {
 
     public:
         Scene() = default;
+
         ~Scene() {
             clear();
         }
 
+        Scene(const Scene& scene) = default;
+
     public:
-        inline const uint32_t& getTextureId() const {
-            return _textureId;
+        inline void setSkybox(const Entity& skybox) {
+            this->skybox = skybox;
         }
 
-        inline void setTextureId(const uint32_t &textureId) {
-            _textureId = textureId;
+        inline const Entity& getSkybox() const {
+            return skybox;
         }
 
     private:
-        uint32_t _textureId = 0; // id of texture that stores pixels of this scene
+        Entity skybox;
     };
-
-    Ref<Scene> copy(Ref<Scene>& scene);
 
 }

@@ -33,7 +33,7 @@ namespace engine {
             }
         }
 
-        ImGui::Image((void*) id, imageSize);
+        ImGui::Image((void*)id, imageSize);
         onRender(dt);
         end();
     }

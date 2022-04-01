@@ -69,11 +69,15 @@ namespace engine {
         glBindTexture(type, id);
     }
 
+    void TextureBuffer::bind(const uint32_t& id) {
+        glBindTexture(GL_TEXTURE_2D, id);
+    }
+
     void TextureBuffer::unbind() const {
         glBindTexture(type, 0);
     }
 
-    void TextureBuffer::activate(const uint32_t &slot) const {
+    void TextureBuffer::activate(const uint32_t &slot) {
         glActiveTexture(GL_TEXTURE0 + slot);
     }
 

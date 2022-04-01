@@ -13,6 +13,9 @@ namespace fairy {
         void onCreate() override;
 
         engine::WindowProps createWindowProps() override;
+
+    private:
+        void createTest();
     };
 
 }
