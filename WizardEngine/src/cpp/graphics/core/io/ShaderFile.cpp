@@ -14,7 +14,8 @@ namespace engine::shader {
         shaderPropsMap[props.name] = props;
         return {
             readAssetWithIncludes(props.assetPath, props.vFileName, props.includeToken),
-            readAssetWithIncludes(props.assetPath, props.fFileName, props.includeToken)
+            readAssetWithIncludes(props.assetPath, props.fFileName, props.includeToken),
+            readAssetWithIncludes(props.assetPath, props.gFileName, props.includeToken)
         };
     }
 

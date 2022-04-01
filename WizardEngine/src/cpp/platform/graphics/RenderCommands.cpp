@@ -11,12 +11,13 @@ namespace engine {
 
     GLenum toGLDrawType(const DrawType& drawType) {
         switch (drawType) {
-            case QUAD: return GL_QUADS;
-            case TRIANGLE: return GL_TRIANGLES;
-            case LINE: return GL_LINES;
-            case LINE_STRIP: return GL_LINE_STRIP;
-            case LINE_LOOP: return GL_LINE_LOOP;
-            case TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
+            case DrawType::QUAD: return GL_QUADS;
+            case DrawType::TRIANGLE: return GL_TRIANGLES;
+            case DrawType::LINE: return GL_LINES;
+            case DrawType::LINE_STRIP: return GL_LINE_STRIP;
+            case DrawType::LINE_LOOP: return GL_LINE_LOOP;
+            case DrawType::TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
+            case DrawType::POINTS: return GL_POINTS;
             default: return GL_TRIANGLES;
         }
     }

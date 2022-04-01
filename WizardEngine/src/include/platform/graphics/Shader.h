@@ -43,9 +43,14 @@ namespace engine::shader {
             this->src = src;
         }
 
+        [[nodiscard]] inline bool hasSrc() const {
+            return !src.empty();
+        }
+
     public:
         void createVShader();
         void createFShader();
+        void createGShader();
         void attach() const;
         void detach() const;
         void destroy() const;

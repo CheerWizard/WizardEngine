@@ -18,14 +18,14 @@ namespace engine {
     struct InstanceCircle : VertexDataComponent<InstanceVertex<CircleVertex>> {
         InstanceCircle(const std::array<CircleVertex, 4>& circleVertices) : VertexDataComponent<InstanceVertex<CircleVertex>>() {
             vertexData = toVertexData<CircleVertex, InstanceVertex<CircleVertex>>(circleVertices);
-            this->drawType = QUAD;
+            this->drawType = DrawType::QUAD;
         }
     };
 
     struct BatchCircle : VertexDataComponent<BatchVertex<CircleVertex>> {
         BatchCircle(const std::array<CircleVertex, 4>& circleVertices) : VertexDataComponent<BatchVertex<CircleVertex>>() {
             vertexData = toVertexData<CircleVertex, BatchVertex<CircleVertex>>(circleVertices);
-            this->drawType = QUAD;
+            this->drawType = DrawType::QUAD;
         }
     };
 

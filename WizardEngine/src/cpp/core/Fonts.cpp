@@ -130,7 +130,7 @@ namespace engine {
             };
             auto charVertexData = VertexData<BatchCharVertex> { charVertices, 0, 4 };
             auto charVertexDataComponent = VertexDataComponent<BatchCharVertex> {
-                    charVertexData, true, 0, QUAD
+                    charVertexData, true, 0, DrawType::QUAD
             };
             auto character = Character {
                 charVertexDataComponent,

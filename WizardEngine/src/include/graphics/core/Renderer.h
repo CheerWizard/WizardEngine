@@ -22,7 +22,7 @@ namespace engine {
     public:
         Renderer(
                 const Ref<BaseShaderProgram>& shaderProgram,
-                const DrawType& drawType = TRIANGLE,
+                const DrawType& drawType = DrawType::TRIANGLE,
                 const AttributeCategory& attributeCategory = VERTEX
         ) : shaderProgram(shaderProgram), drawType(drawType) {
             create(attributeCategory);
@@ -52,7 +52,7 @@ namespace engine {
     class BatchRenderer : public Renderer {
 
     public:
-        BatchRenderer(const Ref<BaseShaderProgram>& shaderProgram, const DrawType& drawType = TRIANGLE)
+        BatchRenderer(const Ref<BaseShaderProgram>& shaderProgram, const DrawType& drawType = DrawType::TRIANGLE)
         : Renderer(shaderProgram, drawType) {
             init();
         }
@@ -70,7 +70,7 @@ namespace engine {
     class InstanceRenderer : public Renderer {
 
     public:
-        InstanceRenderer(const Ref<BaseShaderProgram>& shaderProgram, const DrawType& drawType = TRIANGLE)
+        InstanceRenderer(const Ref<BaseShaderProgram>& shaderProgram, const DrawType& drawType = DrawType::TRIANGLE)
         : Renderer(shaderProgram, drawType) {
             init();
         }
@@ -94,7 +94,7 @@ namespace engine {
         MultiRenderer(
                 const Ref<BaseShaderProgram>& batchShader,
                 const Ref<BaseShaderProgram>& instanceShader,
-                const DrawType& drawType = TRIANGLE
+                const DrawType& drawType = DrawType::TRIANGLE
         ) {
             batchRenderer = createRef<BatchRenderer>(batchShader, drawType);
             instanceRenderer = createRef<InstanceRenderer>(instanceShader, drawType);
@@ -129,6 +129,8 @@ namespace engine {
     public:
         template<typename T, typename V>
         void render(const Entity& entity);
+        template<typename V>
+        void render(VertexDataComponent<V>& vertexDataComponent);
         template<typename V>
         void render(VertexDataComponent<V>& vertexDataComponent, const uint32_t& textureId);
 
@@ -410,6 +412,20 @@ namespace engine {
 
         vRenderModel.vao.bind();
         drawV(vertexDataComponent->drawType, totalVertexCount);
+
+        shaderProgram->stop();
+    }
+
+    template<typename V>
+    void VRenderer::render(VertexDataComponent<V>& vertexDataComponent) {
+        if (!shaderProgram->isReady()) return;
+
+        shaderProgram->start();
+
+        uint32_t totalVertexCount = 0;
+        tryUpload(vertexDataComponent, totalVertexCount, vRenderModel);
+        vRenderModel.vao.bind();
+        drawV(vertexDataComponent.drawType, totalVertexCount);
 
         shaderProgram->stop();
     }

@@ -14,7 +14,7 @@ namespace engine {
                 ScreenVertex { { -0.5, 0.5 }, { 0, 1 } }
         };
         vertexData = VertexData<ScreenVertex> { vertices, 0, 4 };
-        drawType = QUAD;
+        drawType = DrawType::QUAD;
     }
 
 }
