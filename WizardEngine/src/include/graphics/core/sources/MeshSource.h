@@ -4,33 +4,32 @@
 
 #pragma once
 
-#include <graphics/core/io/ModeFile.h>
+#include <graphics/core/io/ModelFile.h>
 #include <graphics/core/geometry/Shapes.h>
 #include <graphics/core/RenderModel.h>
 
 #include "unordered_map"
 
-#define GET_BASE_MESH(T, objName) engine::MeshSource<T>::get()->getMesh(objName)
-#define GET_OBJ(objName) GET_BASE_MESH(ObjVertex, objName)
+#define GET_MESH_COMPONENT(T, name) engine::MeshSource<T>::get().getMesh(name)
 
 namespace engine {
 
     template<typename T>
-    class MeshSource {
+    class MeshSource final {
+
         typedef std::unordered_map<std::string, BaseMeshComponent<T>> Meshes;
 
-    public:
+    private:
         MeshSource() = default;
-        ~MeshSource() {
-            destroy();
-        }
 
     public:
-        static const Ref<MeshSource>& get() {
+        static MeshSource& get() {
+            static MeshSource<T> instance;
             return instance;
         }
 
     public:
+        void clear();
         /**
          * @return MeshComponent from either cache or .obj file.
          */
@@ -53,17 +52,10 @@ namespace engine {
 
     private:
         bool exists(const std::string &name);
-        void destroy();
 
     private:
         Meshes _meshes;
-
-    private:
-        static Ref<MeshSource> instance;
     };
-
-    template<typename T>
-    Ref<MeshSource<T>> MeshSource<T>::instance = createRef<MeshSource>();
 
     template<typename T>
     bool MeshSource<T>::exists(const std::string &name) {
@@ -71,15 +63,14 @@ namespace engine {
     }
 
     template<typename T>
-    void MeshSource<T>::destroy() {
-        _meshes.clear();
-    }
-
-    template<typename T>
     const BaseMeshComponent<T>& MeshSource<T>::getMesh(const std::string &fileName) {
         if (!exists(fileName)) {
             ENGINE_INFO("Obj file {0} data does not exists in cache! Reading data from .obj file!", fileName);
-            _meshes[fileName] = ModeFile::read(fileName);
+            auto model = io::ModelFile::read(fileName);
+            std::function<T(const io::ModelVertex&)> vertexMapper = [](const io::ModelVertex& modelVertex) {
+                    return io::map<T>(modelVertex);
+            };
+            _meshes[fileName] = toMeshComponent(model.meshComponent, vertexMapper);
         }
         return _meshes[fileName];
     }
@@ -109,5 +100,10 @@ namespace engine {
             _meshes[name] = Shapes<T>::newCube();
         }
         return _meshes[name];
+    }
+
+    template<typename T>
+    void MeshSource<T>::clear() {
+        _meshes.clear();
     }
 }

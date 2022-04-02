@@ -8,7 +8,7 @@
 
 #include <graphics/core/Renderer.h>
 #include <graphics/camera/CameraController.h>
-#include <graphics/core/io/ModeFile.h>
+#include <graphics/core/io/ModelFile.h>
 #include <platform/graphics/FrameBuffer.h>
 
 namespace engine {
@@ -42,8 +42,8 @@ namespace engine {
             _entity = entity;
         }
 
-        inline void setMesh(const ObjMeshComponent &objMeshComponent) {
-            _entity.set<ObjMeshComponent>(objMeshComponent);
+        inline void setMesh(const io::ModelMeshComponent &meshComponent) {
+            _entity.set<BaseMeshComponent<io::ModelVertex>>(meshComponent);
         }
 
         inline void setRotateEntity(const bool &enabled) {

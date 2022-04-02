@@ -76,7 +76,7 @@ namespace engine {
         setStencilTestOperator(ALWAYS, 1, false);
         stencilMask(false);
 
-        _renderer->render<Transform3dComponent, ObjVertex>(_entity);
+        _renderer->render<Transform3dComponent, io::ModelVertex>(_entity);
 
         // stop write to stencil buffer
         setStencilTestOperator(NOT_EQUAL, 1, false);
