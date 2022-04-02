@@ -46,7 +46,7 @@ add_subdirectory(vendor/freetype)
 include_directories(vendor/freetype)
 
 #/ Assimp for importing/exporting assets
-add_subdirectory(vendor/assimp)
+#/ Must build as DLL!
 include_directories(vendor/assimp/include)
 
 #/ linking dependencies.
@@ -60,10 +60,11 @@ target_link_libraries(
         stb
         EnTT
         freetype
-        assimp
+        ../WizardEngine/vendor/dlls/assimp-vc143-mtd
 )
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
+replace_dirs(WizardEngine/vendor/dlls WizardEngine/vendor/dlls)
 #replace_dirs(WizardEngine/cpp_scripting WizardEngine/cpp_scripting)
 #replace_dirs(WizardEngine/runtime WizardEngine/runtime)
 #replace_dirs(WizardEngine/src/include WizardEngine/src/include)

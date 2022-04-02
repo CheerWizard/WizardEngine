@@ -27,3 +27,5 @@ replace_dirs(WizardStudio/assets/bitmaps WizardStudio/assets/bitmaps)
 replace_dirs(WizardStudio/assets/scripts WizardStudio/assets/scripts)
 configure_file(imgui.ini imgui.ini COPYONLY)
 configure_file(WizardStudio.png WizardStudio.png COPYONLY)
+# need to link to assimp DLL
+replace_file(../WizardEngine/vendor/dlls/assimp-vc143-mtd.dll assimp-vc143-mtd.dll)

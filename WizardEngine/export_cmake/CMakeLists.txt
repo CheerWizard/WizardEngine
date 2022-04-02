@@ -26,6 +26,5 @@ macro(link_to_engine project)
             stb
             EnTT
             freetype
-            assimp
     )
 endmacro()
