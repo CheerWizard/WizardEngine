@@ -10,6 +10,7 @@ macro(include_engine)
             ../WizardEngine/vendor/imgui
             ../WizardEngine/vendor/stb
             ../WizardEngine/vendor/freetype
+            ../WizardEngine/vendor/assimp/include
     )
 endmacro()
 # use this macro to link WizardEngine and all it's dependencies!
@@ -25,5 +26,6 @@ macro(link_to_engine project)
             stb
             EnTT
             freetype
+            assimp
     )
 endmacro()

@@ -6,4 +6,4 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake_tools/CMakeLists.txt)
 replace_dirs(cmake_tools cmake_tools)
 
 add_subdirectory(WizardEngine)
-add_subdirectory(FairyLab)
+add_subdirectory(WizardStudio)
