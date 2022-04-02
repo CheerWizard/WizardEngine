@@ -10,7 +10,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(${PROJECT_NAME} ${ENGINE_SRC} src/include/graphics/core/geometry/Screen.h src/cpp/graphics/core/geometry/Screen.cpp src/include/graphics/core/geometry/Point.h)
+add_library(${PROJECT_NAME} ${ENGINE_SRC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 #/ adding dependencies.
@@ -45,6 +45,10 @@ add_subdirectory(vendor/entt)
 add_subdirectory(vendor/freetype)
 include_directories(vendor/freetype)
 
+#/ Assimp for importing/exporting assets
+add_subdirectory(vendor/assimp)
+include_directories(vendor/assimp/include)
+
 #/ linking dependencies.
 target_link_libraries(
         WizardEngine PUBLIC
@@ -56,16 +60,17 @@ target_link_libraries(
         stb
         EnTT
         freetype
+        assimp
 )
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
-replace_dirs(WizardEngine/cpp_scripting WizardEngine/cpp_scripting)
-replace_dirs(WizardEngine/runtime WizardEngine/runtime)
-replace_dirs(WizardEngine/src/include WizardEngine/src/include)
-replace_dirs(WizardEngine/vendor/entt/src WizardEngine/vendor/entt/src)
-replace_dirs(WizardEngine/vendor/glad/include WizardEngine/vendor/glad/include)
-replace_dirs(WizardEngine/vendor/glfw/include WizardEngine/vendor/glfw/include)
-replace_dirs(WizardEngine/vendor/glm/glm WizardEngine/vendor/glm/glm)
-replace_dirs(WizardEngine/vendor/spdlog/include WizardEngine/vendor/spdlog/include)
-replace_dirs(WizardEngine/vendor/stb/stb WizardEngine/vendor/stb/stb)
-replace_dirs(WizardEngine/vendor/freetype/include WizardEngine/vendor/freetype/include)
+#replace_dirs(WizardEngine/cpp_scripting WizardEngine/cpp_scripting)
+#replace_dirs(WizardEngine/runtime WizardEngine/runtime)
+#replace_dirs(WizardEngine/src/include WizardEngine/src/include)
+#replace_dirs(WizardEngine/vendor/entt/src WizardEngine/vendor/entt/src)
+#replace_dirs(WizardEngine/vendor/glad/include WizardEngine/vendor/glad/include)
+#replace_dirs(WizardEngine/vendor/glfw/include WizardEngine/vendor/glfw/include)
+#replace_dirs(WizardEngine/vendor/glm/glm WizardEngine/vendor/glm/glm)
+#replace_dirs(WizardEngine/vendor/spdlog/include WizardEngine/vendor/spdlog/include)
+#replace_dirs(WizardEngine/vendor/stb/stb WizardEngine/vendor/stb/stb)
+#replace_dirs(WizardEngine/vendor/freetype/include WizardEngine/vendor/freetype/include)
