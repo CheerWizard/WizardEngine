@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <graphics/core/io/ObjFile.h>
+#include <graphics/core/io/ModeFile.h>
 #include <graphics/core/geometry/Shapes.h>
 #include <graphics/core/RenderModel.h>
 
@@ -79,7 +79,7 @@ namespace engine {
     const BaseMeshComponent<T>& MeshSource<T>::getMesh(const std::string &fileName) {
         if (!exists(fileName)) {
             ENGINE_INFO("Obj file {0} data does not exists in cache! Reading data from .obj file!", fileName);
-            _meshes[fileName] = ObjFile::read(fileName);
+            _meshes[fileName] = ModeFile::read(fileName);
         }
         return _meshes[fileName];
     }

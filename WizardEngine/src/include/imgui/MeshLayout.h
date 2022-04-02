@@ -8,7 +8,7 @@
 
 #include <graphics/core/Renderer.h>
 #include <graphics/camera/CameraController.h>
-#include <graphics/core/io/ObjFile.h>
+#include <graphics/core/io/ModeFile.h>
 #include <platform/graphics/FrameBuffer.h>
 
 namespace engine {

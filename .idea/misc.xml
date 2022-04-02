@@ -3,11 +3,11 @@
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
   <component name="CidrRootsConfiguration">
     <sourceRoots>
-      <file path="$PROJECT_DIR$/FairyLab" />
       <file path="$PROJECT_DIR$/Game" />
       <file path="$PROJECT_DIR$/ScriptDLL" />
       <file path="$PROJECT_DIR$/WizardEngine" />
       <file path="$PROJECT_DIR$/WizardEngine/vendor/spdlog" />
+      <file path="$PROJECT_DIR$/WizardStudio" />
       <file path="$PROJECT_DIR$/WizardTest" />
     </sourceRoots>
   </component>
