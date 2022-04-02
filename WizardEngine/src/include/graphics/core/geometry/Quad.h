@@ -22,6 +22,16 @@ namespace engine {
     };
 
     struct BatchQuad : VertexDataComponent<BatchVertex<QuadVertex>> {
+        BatchQuad() : VertexDataComponent<BatchVertex<QuadVertex>>() {
+            vertexData = toVertexData<QuadVertex, BatchVertex<QuadVertex>>({
+                QuadVertex { { -0.5, -0.5, 0.5 } },
+                QuadVertex { { 0.5, -0.5, 0.5 } },
+                QuadVertex { { 0.5, 0.5, 0.5 } },
+                QuadVertex { { -0.5, 0.5, 0.5 } }
+            });
+            this->drawType = DrawType::QUAD;
+        }
+
         BatchQuad(const std::array<QuadVertex, 4>& quadVertices) : VertexDataComponent<BatchVertex<QuadVertex>>() {
             vertexData = toVertexData<QuadVertex, BatchVertex<QuadVertex>>(quadVertices);
             this->drawType = DrawType::QUAD;
