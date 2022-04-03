@@ -7,3 +7,4 @@ replace_dirs(cmake_tools cmake_tools)
 
 add_subdirectory(WizardEngine)
 add_subdirectory(WizardStudio)
+add_subdirectory(WizardTest)

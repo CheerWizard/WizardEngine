@@ -3,19 +3,21 @@
 //
 
 #include <ecs/ecs.h>
-#include <core/Logger.h>
 
 namespace engine::ecs {
 
-    vector<ComponentType> BaseComponent::componentTypes;
+    vector<ComponentType>* BaseComponent::componentTypes;
 
     u32 BaseComponent::registerComponentType(
             ComponentCreateFunction createFunction,
             ComponentDestroyFunction destroyFunction,
             component_size size
     ) {
-        u32 id = componentTypes.size();
-        componentTypes.emplace_back(ComponentType(createFunction, destroyFunction, size));
+        if (componentTypes == nullptr) {
+            componentTypes = new vector<ComponentType>();
+        }
+        u32 id = componentTypes->size();
+        componentTypes->emplace_back(ComponentType(createFunction, destroyFunction, size));
         return id;
     }
 
@@ -43,6 +45,7 @@ namespace engine::ecs {
     }
 
     void Registry::deleteEntity(entity_id entityId) {
+        validate_entity("deleteEntity()", entityId, )
         // remove component ids and indexes
         entity_data entityData = toEntityData(entityId);
         for (const auto& componentIdAndIndex : entityData) {
@@ -53,6 +56,7 @@ namespace engine::ecs {
         u32 srcIndex = entities.size() - 1;
         delete entities[destIndex];
         entities[destIndex] = entities[srcIndex];
+        entities[destIndex]->first = destIndex;
         entities.pop_back();
     }
 

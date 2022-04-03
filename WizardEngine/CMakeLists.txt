@@ -10,7 +10,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(${PROJECT_NAME} ${ENGINE_SRC} src/include/core/map.h src/include/core/immutable.h)
+add_library(${PROJECT_NAME} ${ENGINE_SRC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 #/ adding dependencies.
@@ -65,6 +65,7 @@ target_link_libraries(
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
 replace_dirs(WizardEngine/vendor/dlls WizardEngine/vendor/dlls)
+replace_file(vendor/dlls/assimp-vc143-mtd.dll assimp-vc143-mtd.dll)
 #replace_dirs(WizardEngine/cpp_scripting WizardEngine/cpp_scripting)
 #replace_dirs(WizardEngine/runtime WizardEngine/runtime)
 #replace_dirs(WizardEngine/src/include WizardEngine/src/include)

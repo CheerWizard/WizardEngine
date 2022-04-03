@@ -1,16 +1,16 @@
 # use this macro to include all dirs of WizardEngine, including it's dependencies!
-macro(include_engine)
+macro(include_engine path)
     include_directories(
-            ../WizardEngine/src/include
-            ../WizardEngine/vendor/spdlog/include
-            ../WizardEngine/vendor/entt/src
-            ../WizardEngine/vendor/glm
-            ../WizardEngine/vendor/glad/include
-            ../WizardEngine/vendor/glfw/include
-            ../WizardEngine/vendor/imgui
-            ../WizardEngine/vendor/stb
-            ../WizardEngine/vendor/freetype
-            ../WizardEngine/vendor/assimp/include
+            ${path}/src/include
+            ${path}/vendor/spdlog/include
+            ${path}/vendor/entt/src
+            ${path}/vendor/glm
+            ${path}/vendor/glad/include
+            ${path}/vendor/glfw/include
+            ${path}/vendor/imgui
+            ${path}/vendor/stb
+            ${path}/vendor/freetype
+            ${path}/vendor/assimp/include
     )
 endmacro()
 # use this macro to link WizardEngine and all it's dependencies!

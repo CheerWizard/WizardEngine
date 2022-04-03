@@ -39,23 +39,23 @@ namespace engine::ecs {
 
     public:
         inline static const ComponentType& getType(component_id id) {
-            return componentTypes[id];
+            return (*componentTypes)[id];
         }
 
         inline static ComponentCreateFunction getCreateFunction(component_id id) {
-            return std::get<0>(componentTypes[id]);
+            return std::get<0>((*componentTypes)[id]);
         }
 
         inline static ComponentDestroyFunction getDestroyFunction(component_id id) {
-            return std::get<1>(componentTypes[id]);
+            return std::get<1>((*componentTypes)[id]);
         }
 
         inline static component_size getSize(component_id id) {
-            return std::get<2>(componentTypes[id]);
+            return std::get<2>((*componentTypes)[id]);
         }
 
         inline static bool isValid(component_id id) {
-            return id >= componentTypes.size();
+            return componentTypes->size() > id;
         }
 
         template<class Component>
@@ -64,8 +64,18 @@ namespace engine::ecs {
         }
 
     private:
-        static vector<ComponentType> componentTypes;
+        static vector<ComponentType>* componentTypes;
     };
+
+#define validate_entity(tag, entityId, result) if ((entityId) == invalid_entity_id) { \
+        ENGINE_WARN("{0}: entity is invalid!", tag);                 \
+        return result;                                                             \
+}
+
+#define validate_component(tag, Component, result) if (!BaseComponent::isValid<Component>()) {   \
+        ENGINE_WARN("{0}: component type with id {1} is invalid!", tag, Component::ID); \
+        return result;                                                            \
+}
 
     // Component
 
@@ -84,14 +94,14 @@ namespace engine::ecs {
         u32 componentIndex = data.size();
         data.resize(componentIndex + Component::TYPE_SIZE);
         // we use new() operator here to just set component_data in memory, rather than allocate it!
-        Component* newComponent = new(&data[componentIndex]) Component(*(Component*) component);
+        auto* newComponent = new(&data[componentIndex]) Component(*(Component*) component);
         newComponent->entityId = entityId;
         return componentIndex;
     }
 
     template<class Component>
     void destroyComponent(BaseComponent* component) {
-        Component* actualComponent = (Component*) component;
+        auto* actualComponent = (Component*) component;
         actualComponent->~Component();
     }
 
@@ -164,19 +174,32 @@ namespace engine::ecs {
             iterate<Component>(function);
         }
 
+        template<class Component1, class Component2>
+        inline void read(const std::function<void(const Component1*, const Component2*)>& function) {
+            iterate<Component1, Component2>(function);
+        }
+
+        template<class Component1, class Component2>
+        inline void write(const std::function<void(Component1*, Component2*)>& function) {
+            iterate<Component1, Component2>(function);
+        }
+
         template<class Component, typename Function>
         void iterate(const std::function<Function>& function);
 
+        template<class Component1, class Component2, typename Function>
+        void iterate(const std::function<Function>& function);
+
     private:
-        inline entity* toEntity(entity_id entityId) {
+        static inline entity* toEntity(entity_id entityId) {
             return (entity*) entityId;
         }
 
-        inline u32 toEntityIndex(entity_id entityId) {
+        static inline u32 toEntityIndex(entity_id entityId) {
             return toEntity(entityId)->first;
         }
 
-        inline entity_data& toEntityData(entity_id entityId) {
+        static inline entity_data& toEntityData(entity_id entityId) {
             return toEntity(entityId)->second;
         }
 
@@ -191,22 +214,19 @@ namespace engine::ecs {
 
     template<class Component, typename... Args>
     entity_id Registry::createEntity(Args&&... componentArgs) {
-        // validate component type
-        if (!BaseComponent::isValid<Component>()) {
-            ENGINE_ERR("createEntity(): component type with id {0} is invalid!", Component::ID);
-            return invalid_entity_id;
-        }
+        validate_component("createEntity()", Component, invalid_entity_id);
 
         entity_id newEntityId = createEntity();
         addComponent<Component>(newEntityId, std::forward<Args>(componentArgs)...);
-
         return newEntityId;
     }
 
     template<class Component, typename... Args>
     void Registry::addComponent(entity_id entityId, Args&&... componentArgs) {
-        auto component = Component { std::forward<Args>(componentArgs)... };
+        validate_entity("addComponent()", entityId, );
+        validate_component("addComponent", Component, );
 
+        auto component = Component { std::forward<Args>(componentArgs)... };
         component_id componentId = Component::ID;
         auto createFunction = BaseComponent::getCreateFunction(componentId);
         std::pair<component_id, u32> componentIdAndIndex;
@@ -223,12 +243,14 @@ namespace engine::ecs {
 
     template<class Component>
     bool Registry::removeComponent(entity_id entityId) {
+        validate_entity("removeComponent()", entityId, false);
+        validate_component("removeComponent()", Component, false);
+
         component_id componentId = Component::ID;
         entity_data entityData = toEntityData(entityId);
 
         for (u32 i = 0 ; i < entityData.size() ; i++) {
             const auto& componentIdAndIndex = entityData[i];
-
             if (componentId == componentIdAndIndex.first) {
                 removeComponentInternal(componentIdAndIndex.first, componentIdAndIndex.second);
                 u32 srcIndex = entityData.size() - 1;
@@ -244,6 +266,9 @@ namespace engine::ecs {
 
     template<class Component>
     Component* Registry::getComponent(entity_id entityId) {
+        validate_entity("getComponent()", entityId, invalid_entity_id);
+        validate_component("getComponent()", Component, nullptr);
+
         entity_data entityData = toEntityData(entityId);
         component_id componentId = Component::ID;
 
@@ -258,52 +283,12 @@ namespace engine::ecs {
 
     template<class Component, typename Function>
     void Registry::iterate(const std::function<Function>& function) {
+        validate_component("iterate()", Component, );
+
         component_data& componentData = components[Component::ID];
         component_size componentSize = BaseComponent::getSize(Component::ID);
         for (u32 i = 0 ; i < componentData.size() ; i += componentSize) {
             function((Component*) &componentData[i]);
         }
     }
-
-    class Entity {
-
-    };
-}
-
-namespace engine::test {
-
-    using namespace ecs;
-
-    struct TestComponent : Component<TestComponent> {
-        f32 x = 0;
-        f32 y = 0;
-        bool flag = false;
-        u32 i = 0;
-    };
-
-    void test() {
-        Registry registry;
-        TestComponent test;
-
-        // entities
-        entity_id entityId = registry.createEntity();
-        entity_id entityId2 = registry.createEntity<TestComponent>(TestComponent {});
-        entity_id entityId3 = registry.createEntity<TestComponent>(test);
-        registry.deleteEntity(entityId3);
-
-        // components
-        registry.addComponent<TestComponent>(entityId, test);
-        registry.addComponent<TestComponent>(entityId, TestComponent {});
-        auto* testPtr = registry.getComponent<TestComponent>(entityId);
-        registry.removeComponent<TestComponent>(entityId);
-
-        // iterations
-        registry.read<TestComponent>([](const TestComponent* tc) {
-        });
-        registry.write<TestComponent>([](TestComponent* tc) {
-        });
-
-        registry.deleteEntity(entityId);
-    }
-
 }

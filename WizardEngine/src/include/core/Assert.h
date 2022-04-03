@@ -19,9 +19,11 @@
 #endif
 
 #ifdef DEBUG
+    #define ASSERT(x, msg) static_assert(x, msg);
     #define CLIENT_ASSERT(x, ...) { if (!(x)) { CLIENT_ERR("Assertion failed : {0}", __VA_ARGS__); DEBUGBREAK(); } }
     #define ENGINE_ASSERT(x, ...) { if (!(x)) { ENGINE_ERR("Assertion failed : {0}", __VA_ARGS__); DEBUGBREAK(); } }
 #else
+    #define ASSERT(x, msg) x
     #define CLIENT_ASSERT(x, ...) x
     #define ENGINE_ASSERT(x, ...) x
 #endif
