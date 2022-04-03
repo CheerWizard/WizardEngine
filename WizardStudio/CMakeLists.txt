@@ -17,7 +17,7 @@ set(ICON_RC "${CMAKE_CURRENT_SOURCE_DIR}/icon.rc")
 add_executable(${PROJECT_NAME} ${STUDIO_SRC} ${ICON_RC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
-include_engine()
+include_engine(../WizardEngine)
 link_to_engine(${PROJECT_NAME})
 # copy assets, editor res and imgui init file.
 replace_dirs(WizardStudio/assets WizardStudio/assets)
@@ -27,5 +27,3 @@ replace_dirs(WizardStudio/assets/bitmaps WizardStudio/assets/bitmaps)
 replace_dirs(WizardStudio/assets/scripts WizardStudio/assets/scripts)
 configure_file(imgui.ini imgui.ini COPYONLY)
 configure_file(WizardStudio.png WizardStudio.png COPYONLY)
-# need to link to assimp DLL
-replace_file(../WizardEngine/vendor/dlls/assimp-vc143-mtd.dll assimp-vc143-mtd.dll)
