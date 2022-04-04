@@ -3,6 +3,7 @@
 //
 
 #pragma once
+
 #include <ecs/ecs.h>
 
 namespace test::ecs {
