@@ -14,22 +14,24 @@ namespace test::ecs {
         u32 i = 0;
     };
 
-    void test_size(size_t expectedSize) {
+    void test_registry_size(size_t expectedSize) {
         Registry registry;
 
         for (u32 i = 0 ; i < expectedSize ; i++) {
             registry.createEntity<TestComponent>();
         }
-        assert_equals("test_size()", registry.size<TestComponent>(), expectedSize)
+
+        assert_equals("test_entity_count()", registry.entity_count(), expectedSize)
+        assert_equals("test_component_count<TestComponent>()", registry.component_count<TestComponent>(), expectedSize)
     }
 
     void test_componentTypesRegistration() {
-        struct Test1 : Component<Test1> {};
-        component(Test2, {
+        component_empty(Test1)
+        component(Test2) {
             float a;
             f32 b;
             u8 flag;
-        })
+        };
         struct Test3 : Component<Test2> {};
 
         assert_equals("isValid<Test1>()",BaseComponent::isValid<Test1>(), true)
@@ -39,8 +41,8 @@ namespace test::ecs {
     }
 
     void test_entity() {
-        component(Test, {})
-        component(Test2, {})
+        component_empty(Test)
+        component_empty(Test2);
         Registry registry;
 
         auto entity1 = registry.createEntity();
@@ -61,9 +63,104 @@ namespace test::ecs {
         assert_null("deleteEntity(entity2)", entity2);
     }
 
+    void test_components() {
+        component(Position) {
+            f32 x = 0;
+            f32 y = 0;
+            Position(const f32& x, const f32& y)
+            : x(x), y(y) {}
+        };
+
+        component(Color) {
+            f32 r = 0;
+            f32 g = 0;
+            f32 b = 0;
+            f32 a = 0;
+            Color(const f32& r, const f32& g, const f32& b, const f32& a)
+            : r(r), g(g), b(b), a(a) {}
+        };
+
+        component(Vertex) {
+            Position position;
+            Color color;
+            Vertex(const Position& position, const Color& color)
+            : position(position), color(color) {}
+        };
+
+        component(Polygon) {
+            Vertex* vertices = nullptr;
+            size_t vertexCount = 0;
+            Polygon(Vertex* vertices, const size_t& vertexCount)
+            : vertices(vertices), vertexCount(vertexCount) {}
+        };
+
+        component(Mesh) {
+            Polygon polygon;
+            u32* indices = nullptr;
+            size_t indexCount = 0;
+            Mesh(const Polygon& polygon, u32* indices, const size_t& indexCount)
+            : polygon(polygon), indices(indices), indexCount(indexCount) {}
+        };
+
+        Registry registry;
+
+        for (u32 i = 0 ; i < 10 ; i++) {
+            registry.createEntity<Polygon>(Polygon {
+                    new Vertex[4] {
+                            Vertex { { 0, 0 }, { 0, 0, 1, 1 } },
+                            Vertex { { 0, 1 }, { 0, 1, 0, 1 } },
+                            Vertex { { 1, 1 }, { 1, 0, 0, 1 } },
+                            Vertex { { 1, 0 }, { 1, 1, 1, 1 } }
+                    },
+                    4
+            });
+        }
+
+        for (u32 i = 0 ; i < 10 ; i++) {
+            registry.createEntity<Mesh>(Mesh {
+                    Polygon {
+                            new Vertex[8]{
+                                    Vertex{{0, 0},
+                                           {0, 0, 1, 1}},
+                                    Vertex{{0, 1},
+                                           {0, 1, 0, 1}},
+                                    Vertex{{1, 1},
+                                           {1, 0, 0, 1}},
+                                    Vertex{{1, 0},
+                                           {1, 1, 1, 1}},
+                                    Vertex{{0, 0},
+                                           {0, 0, 1, 1}},
+                                    Vertex{{0, 1},
+                                           {0, 1, 0, 1}},
+                                    Vertex{{1, 1},
+                                           {1, 0, 0, 1}},
+                                    Vertex{{1, 0},
+                                           {1, 1, 1, 1}}
+                            },
+                            8
+                    },
+                    new u32[8] {
+                            0, 1, 2, 3, 4, 5, 6, 7
+                    },
+                    8
+            });
+        }
+
+        assert_equals("test_entity_count()", registry.entity_count(), 20)
+        assert_equals("test_component_count<Polygon>()", registry.component_count<Polygon>(), 10)
+        assert_equals("test_component_count<Mesh>()", registry.component_count<Polygon>(), 10)
+
+        registry.each<Polygon>([](Polygon* polygon) {
+        });
+
+        registry.each<Mesh>([](Mesh* mesh){
+        });
+    }
+
     void test_suite() {
-        test_size(100);
+        test_registry_size(100);
         test_componentTypesRegistration();
         test_entity();
+        test_components();
     }
 }

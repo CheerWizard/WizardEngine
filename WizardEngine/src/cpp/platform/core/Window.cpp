@@ -6,11 +6,8 @@
 #include <core/Assert.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
+#include <core/Application.h>
 
-#define GET_WINDOW_CALLBACK(x) (*(WindowProps*)glfwGetWindowUserPointer((GLFWwindow*) (x))).windowCallback
-#define GET_KEYBOARD_CALLBACK(x) (*(WindowProps*)glfwGetWindowUserPointer((GLFWwindow*) (x))).keyboardCallback
-#define GET_MOUSE_CALLBACK(x) (*(WindowProps*)glfwGetWindowUserPointer((GLFWwindow*) (x))).mouseCallback
-#define GET_CURSOR_CALLBACK(x) (*(WindowProps*)glfwGetWindowUserPointer((GLFWwindow*) (x))).cursorCallback
 #define NATIVE_WINDOW (GLFWwindow*)window
 
 namespace engine {
@@ -76,86 +73,58 @@ namespace engine {
         glfwSetWindowUserPointer(NATIVE_WINDOW, &windowProps);
 
         glfwSetWindowSizeCallback(NATIVE_WINDOW, [](GLFWwindow* window, int width, int height) {
-            auto callback = GET_WINDOW_CALLBACK(window);
-
-            if (callback != nullptr) {
-                callback->onWindowResized(width, height);
-            }
+            Application::get().onWindowResized(width, height);
         });
 
         glfwSetWindowCloseCallback(NATIVE_WINDOW, [](GLFWwindow* window) {
-            auto callback = GET_WINDOW_CALLBACK(window);
-
-            if (callback != nullptr) {
-                callback->onWindowClosed();
-            }
+            Application::get().onWindowClosed();
         });
 
         glfwSetKeyCallback(NATIVE_WINDOW, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            auto callback = GET_KEYBOARD_CALLBACK(window);
-
-            if (callback != nullptr) {
-                auto keycode = (KeyCode) key;
-
-                switch (action) {
-                    case GLFW_PRESS: {
-                        callback->onKeyPressed(keycode);
-                        break;
-                    }
-                    case GLFW_RELEASE: {
-                        callback->onKeyReleased(keycode);
-                        break;
-                    }
-                    case GLFW_REPEAT: {
-                        callback->onKeyHold(keycode);
-                        break;
-                    }
+            auto keycode = (KeyCode) key;
+            switch (action) {
+                case GLFW_PRESS: {
+                    Application::get().onKeyPressed(keycode);
+                    break;
                 }
+                case GLFW_RELEASE: {
+                    Application::get().onKeyReleased(keycode);
+                    break;
+                }
+                case GLFW_REPEAT: {
+                    Application::get().onKeyHold(keycode);
+                    break;
+                }
+                default: break;
             }
         });
 
         glfwSetCharCallback(NATIVE_WINDOW, [](GLFWwindow* window, unsigned int key) {
-            auto callback = GET_KEYBOARD_CALLBACK(window);
             auto keycode = (KeyCode) key;
-
-            if (callback != nullptr) {
-                callback->onKeyTyped(keycode);
-            }
+            Application::get().onKeyTyped(keycode);
         });
 
         glfwSetMouseButtonCallback(NATIVE_WINDOW, [](GLFWwindow* window, int button, int action, int mods) {
-            auto callback = GET_MOUSE_CALLBACK(window);
-
-            if (callback != nullptr) {
-                auto mouseCode = (MouseCode) button;
-
-                switch (action) {
-                    case GLFW_PRESS: {
-                        callback->onMousePressed(mouseCode);
-                        break;
-                    }
-                    case GLFW_RELEASE: {
-                        callback->onMouseRelease(mouseCode);
-                        break;
-                    }
+            auto mouseCode = (MouseCode) button;
+            switch (action) {
+                case GLFW_PRESS: {
+                    Application::get().onMousePressed(mouseCode);
+                    break;
                 }
+                case GLFW_RELEASE: {
+                    Application::get().onMouseRelease(mouseCode);
+                    break;
+                }
+                default: break;
             }
         });
 
         glfwSetScrollCallback(NATIVE_WINDOW, [](GLFWwindow* window, double xOffset, double yOffset) {
-            auto callback = GET_MOUSE_CALLBACK(window);
-
-            if (callback != nullptr) {
-                callback->onMouseScrolled(xOffset, yOffset);
-            }
+            Application::get().onMouseScrolled(xOffset, yOffset);
         });
 
         glfwSetCursorPosCallback(NATIVE_WINDOW, [](GLFWwindow* window, double xPos, double yPos) {
-            auto callback = GET_CURSOR_CALLBACK(window);
-
-            if (callback != nullptr) {
-                callback->onCursorMoved(xPos, yPos);
-            }
+            Application::get().onCursorMoved(xPos, yPos);
         });
     }
 
