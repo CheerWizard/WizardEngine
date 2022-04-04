@@ -44,10 +44,10 @@ namespace engine::ecs {
         return newEntity;
     }
 
-    void Registry::deleteEntity(entity_id entityId) {
-        validate_entity("deleteEntity()", entityId, )
+    entity_id Registry::deleteEntity(entity_id entityId) {
+        validate_entity("deleteEntity()", entityId, invalid_entity_id)
         // remove component ids and indexes
-        entity_data entityData = toEntityData(entityId);
+        auto& entityData = toEntityData(entityId);
         for (const auto& componentIdAndIndex : entityData) {
             removeComponentInternal(componentIdAndIndex.first, componentIdAndIndex.second);
         }
@@ -58,6 +58,8 @@ namespace engine::ecs {
         entities[destIndex] = entities[srcIndex];
         entities[destIndex]->first = destIndex;
         entities.pop_back();
+
+        return invalid_entity_id;
     }
 
     void Registry::removeComponentInternal(component_id componentId, u32 componentIndex) {
@@ -77,7 +79,7 @@ namespace engine::ecs {
 
         memcpy(destComponent, srcComponent, typeSize);
 
-        entity_data entityData = toEntityData(srcComponent->entityId);
+        auto& entityData = toEntityData(srcComponent->entityId);
         for (auto& componentIdAndIndex : entityData) {
             if (componentId == componentIdAndIndex.first && srcIndex == componentIdAndIndex.second) {
                 componentIdAndIndex.second = componentIndex;
@@ -86,22 +88,5 @@ namespace engine::ecs {
         }
 
         data.resize(srcIndex);
-    }
-
-    void Registry::addSystem(System& system) {
-        systems.emplace_back(&system);
-    }
-
-    bool Registry::removeSystem(System& system) {
-        for (u32 i = 0 ; i < systems.size() ; i++) {
-            if (&system == systems[i]) {
-                systems.erase(systems.begin() + i);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    void Registry::updateSystems(Time dt) {
     }
 }
