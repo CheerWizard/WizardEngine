@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <core/FileSystem.h>
+#include <core/filesystem.h>
 #include <platform/graphics/tools/ShaderPath.h>
 
 #include "string"

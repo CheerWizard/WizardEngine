@@ -3,12 +3,13 @@
 //
 #pragma once
 
-#include <cstdint>
+#include <core/primitives.h>
 
-namespace engine {
+namespace engine::core {
 
-    enum MouseCode : uint16_t {
+    enum MouseCode : u8 {
         NoneButton             = 16,
+
         Button0                = 0,
         Button1                = 1,
         Button2                = 2,

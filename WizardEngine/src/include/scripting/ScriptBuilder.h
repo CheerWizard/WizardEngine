@@ -8,7 +8,7 @@
 
 #include <core/Tools.h>
 #include <core/Build.h>
-#include <core/FileSystem.h>
+#include <core/filesystem.h>
 
 #define ENGINE_LIB_PATH "../WizardEngine/WizardEngine.lib"
 #define SCRIPT_MAKE_FILE_PATH "../ScriptDLL/CMakeLists.txt"

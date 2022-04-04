@@ -3,11 +3,11 @@
 //
 #pragma once
 
-#include <cstdint>
+#include <core/primitives.h>
 
-namespace engine {
+namespace engine::core {
 
-    enum KeyCode : unsigned int {
+    enum KeyCode : u16 {
         None                = 0,
         Space               = 32,
         Apostrophe          = 39, /* ' */

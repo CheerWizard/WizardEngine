@@ -2,21 +2,21 @@
 // Created by mecha on 11.09.2021.
 //
 
-#include <core/FileSystem.h>
+#include <core/filesystem.h>
 
 #include <direct.h>
 #include <sstream>
 #include <fstream>
 
-namespace engine {
+namespace engine::filesystem {
 
-    std::string FileSystem::getCurrentWorkingDirectory() {
+    std::string getCurrentWorkingDirectory() {
         char buff[FILENAME_MAX]; //create string buffer to hold path
         _getcwd(buff, FILENAME_MAX);
         return buff;
     }
 
-    std::string FileSystem::read(const std::string &filePath) {
+    std::string read(const std::string &filePath) {
         std::string result;
         std::ifstream input(filePath, std::ios::in | std::ios::binary);
 
@@ -29,16 +29,16 @@ namespace engine {
                 input.seekg(0, std::ios::beg);
                 input.read(&result[0], size);
             } else {
-                ENGINE_ERR("Could not read from file '{0}'", filePath);
+                ENGINE_ERR("filesystem: could not read from file '{0}'", filePath);
             }
         } else {
-            ENGINE_ERR("Could not open file '{0}'", filePath);
+            ENGINE_ERR("filesystem: could not open file '{0}'", filePath);
         }
 
         return result;
     }
 
-    bool FileSystem::write(const fpath &filePath, const std::string &source) {
+    bool write(const fpath &filePath, const std::string &source) {
         std::ofstream file;
         file.open(filePath);
         file << source;
@@ -46,39 +46,39 @@ namespace engine {
         return true;
     }
 
-    bool FileSystem::copy(const std::string &src, const std::string &dest) {
+    bool copy(const std::string &src, const std::string &dest) {
         auto isCopied = std::filesystem::copy_file(src, dest);
         if (isCopied) {
-            ENGINE_INFO("File has been copied. Source: {0} , Destination: {1}", src, dest);
+            ENGINE_INFO("filesystem: file has been copied. Source: {0} , Destination: {1}", src, dest);
         } else {
-            ENGINE_ERR("File has not been copied. Source: {0} , Destination: {1}", src, dest);
+            ENGINE_ERR("filesystem: file has not been copied. Source: {0} , Destination: {1}", src, dest);
         }
         return isCopied;
     }
 
-    bool FileSystem::remove(const std::string &target) {
+    bool remove(const std::string &target) {
         auto isRemoved = std::filesystem::remove(target);
         if (isRemoved) {
-            ENGINE_INFO("File has been removed. File path: {0}", target);
+            ENGINE_INFO("filesystem: file has been removed. File path: {0}", target);
         } else {
-            ENGINE_ERR("File has not been removed. File path: {0}", target);
+            ENGINE_ERR("filesystem: file has not been removed. File path: {0}", target);
         }
         return isRemoved;
     }
 
     // Returns the folder path of full file path.
-    std::string FileSystem::getFolderPath(const std::string &fullPath) {
+    std::string getFolderPath(const std::string &fullPath) {
         size_t folderPathSize = fullPath.find_last_of("/\\");
         return fullPath.substr(0, folderPathSize + 1);
     }
 
-    std::string FileSystem::readWithIncludes(const std::string &fullPath, const std::string &includeToken) {
+    std::string readWithIncludes(const std::string &fullPath, const std::string &includeToken) {
         std::string result;
         std::ifstream file(fullPath);
         static bool isRecursiveCall = false;
 
         if (!file.is_open()) {
-            ENGINE_ERR("Could not open file: {0}", fullPath);
+            ENGINE_ERR("filesystem: could not open file: {0}", fullPath);
             return result;
         }
 
@@ -113,7 +113,7 @@ namespace engine {
         return result;
     }
 
-    std::string FileSystem::getFileName(const std::string &filePath) {
+    std::string getFileName(const std::string &filePath) {
         // Extract file name from filepath
         uint32_t lastSlash = filePath.find_last_of("/\\");
         lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
@@ -122,23 +122,23 @@ namespace engine {
         return filePath.substr(lastSlash, count);
     }
 
-    void FileSystem::newFile(const fpath &filePath) {
+    void newFile(const fpath &filePath) {
         write(filePath, " ");
     }
 
-    std::filesystem::path FileSystem::toPath(const wchar_t *path) {
+    std::filesystem::path toPath(const wchar_t *path) {
         return { path };
     }
 
-    error FileSystem::move(const fpath &oldPath, const fpath &newPath) {
-        ENGINE_INFO("FileSystem: move({0}, {1})", oldPath, newPath);
+    error move(const fpath &oldPath, const fpath &newPath) {
+        ENGINE_INFO("filesystem: move({0}, {1})", oldPath, newPath);
         error e;
         std::filesystem::rename(oldPath, newPath, e);
         return e;
     }
 
-    error FileSystem::rename(const fpath &filePath, const std::string &newFileName) {
-        ENGINE_INFO("FileSystem: rename({0}, {1})", filePath, newFileName);
+    error rename(const fpath &filePath, const std::string &newFileName) {
+        ENGINE_INFO("filesystem: rename({0}, {1})", filePath, newFileName);
         auto newPathStr = filePath.string();
         newPathStr = newPathStr.substr(0, newPathStr.find_last_of("\\/"));
         fpath newPath(newPathStr);
@@ -146,21 +146,21 @@ namespace engine {
         return move(filePath, newPath);
     }
 
-    void FileSystem::newFile(const fpath &currentDir, const std::string &newFileName) {
+    void newFile(const fpath &currentDir, const std::string &newFileName) {
         newFile(currentDir/newFileName);
     }
 
-    void FileSystem::newDirectory(const fpath &path) {
+    void newDirectory(const fpath &path) {
         if (!std::filesystem::is_directory(path) && !std::filesystem::exists(path)) {
             std::filesystem::create_directory(path);
         }
     }
 
-    bool FileSystem::exists(const fpath &path) {
+    bool exists(const fpath &path) {
         return std::filesystem::exists(path);
     }
 
-    bool FileSystem::replace(const std::string& src, const std::string& dest) {
+    bool replace(const std::string& src, const std::string& dest) {
         bool removed = false;
         if (exists(dest)) {
             removed = remove(dest);
@@ -173,7 +173,7 @@ namespace engine {
         return removed;
     }
 
-    bool FileSystem::write(const fpath &filePath, const int* data, const uint32_t& dataSize) {
+    bool write(const fpath &filePath, const int* data, const uint32_t& dataSize) {
         std::ofstream ofs;
         ofs.open(filePath);
 
@@ -183,7 +183,7 @@ namespace engine {
             }
             ofs.close();
         } else {
-            ENGINE_ERR("FileSystem : failed write to {0} file with data size {1}", filePath.string(), dataSize);
+            ENGINE_ERR("filesystem : failed write to {0} file with data size {1}", filePath.string(), dataSize);
             return false;
         }
 

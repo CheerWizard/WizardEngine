@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <core/FileSystem.h>
+#include <core/filesystem.h>
 
 #define RUNTIME_TEXTURES_PATH "assets/textures"
 

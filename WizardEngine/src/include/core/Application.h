@@ -22,7 +22,7 @@
 
 #include <scripting/ScriptSystem.h>
 
-namespace engine {
+namespace engine::core {
 
     class Application {
 
@@ -45,19 +45,23 @@ namespace engine {
         }
 
     public:
+        // window events
         void onWindowClosed();
         void onWindowResized(const uint32_t &width, const uint32_t &height);
-
+        // input keyboard events
         void onKeyPressed(KeyCode keyCode);
         void onKeyHold(KeyCode keyCode);
         void onKeyReleased(KeyCode keyCode);
         void onKeyTyped(KeyCode keyCode);
-
+        // input mouse events
         void onMousePressed(MouseCode mouseCode);
         void onMouseRelease(MouseCode mouseCode);
         void onMouseScrolled(double xOffset, double yOffset);
-
+        // input mouse cursor events
         void onCursorMoved(double xPos, double yPos);
+        // input gamepad events
+        void onGamepadConnected(s32 joystickId) const;
+        void onGamepadDisconnected(s32 joystickId) const;
 
     protected:
         virtual void onCreate();
@@ -96,12 +100,12 @@ namespace engine {
         Ref<FrameBuffer> activeSceneFrame;
         Ref<FrameBuffer> screenFrame;
         FpsController fpsController;
-        EventController eventController;
+        EventRegistry eventController;
 
     private:
         bool _isRunning = true;
         // core systems
-        LayerStack _layerStack; // todo consider remove LayerStack. Instead create an Editor class.
+        LayerStack _layerStack; // todo consider remove LayerStack. Instead create an Activity class.
         Scope<Window> _window;
         // graphics system
         Scope<RenderSystem> _renderSystem;

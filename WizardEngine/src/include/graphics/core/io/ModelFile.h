@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <core/FileSystem.h>
+#include <core/filesystem.h>
 #include <graphics/core/geometry/Mesh.h>
 
 #include <assimp/scene.h>

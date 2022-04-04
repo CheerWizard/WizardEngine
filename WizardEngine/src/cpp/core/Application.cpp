@@ -4,7 +4,7 @@
 
 #include <core/Application.h>
 
-namespace engine {
+namespace engine::core {
 
     void Application::run() {
         onCreate();
@@ -23,11 +23,6 @@ namespace engine {
         fpsController.setMaxFps(getRefreshRate());
 
         createGraphics();
-
-        WINDOW_CALLBACK(_window, this);
-        KEYBOARD_CALLBACK(_window, this);
-        MOUSE_CALLBACK(_window, this);
-        CURSOR_CALLBACK(_window, this);
 
         input = createScope<Input>(_window->getNativeWindow());
 
@@ -224,5 +219,13 @@ namespace engine {
         activeScene = scenes[activeSceneId];
         setActiveScene(activeScene);
         _renderSystem->onUpdate();
+    }
+
+    void Application::onGamepadConnected(s32 joystickId) const {
+        input->setJoystickId(joystickId);
+    }
+
+    void Application::onGamepadDisconnected(s32 joystickId) const {
+        input->setJoystickId(joystickId);
     }
 }

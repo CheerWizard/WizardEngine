@@ -8,7 +8,7 @@
 #include "scripting/ScriptBuilder.h"
 
 // needs to be defined on Client side.
-extern engine::Application* engine::createApplication();
+extern engine::core::Application* engine::core::createApplication();
 extern const char* engineLogName();
 extern const char* editorLogName();
 extern const char* runtimeLogName();
@@ -23,7 +23,7 @@ int main() {
 //    ScriptBuilder::init({engineLog, runtimeLog});
 
     ENGINE_INFO("Running Application...");
-    auto* app = engine::createApplication();
+    auto* app = engine::core::createApplication();
     app->run();
 
     ENGINE_INFO("Application terminated!");

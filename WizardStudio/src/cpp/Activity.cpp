@@ -217,6 +217,7 @@ namespace studio {
         BIND_KEY_PRESS(KeyCode::N, app->setSampleSize(1););
 
         setMSAA(true);
+        app->getWindow()->loadGamepadMappings("assets/db/game_controller_db.txt");
     }
 
     void Activity::onRender(engine::Time dt) {

@@ -5,7 +5,7 @@
 #pragma once
 
 #include <core/Time.h>
-#include <core/FileSystem.h>
+#include <core/filesystem.h>
 #include <core/Tools.h>
 
 #include <platform/tools/FileDialog.h>

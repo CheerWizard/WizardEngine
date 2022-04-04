@@ -3,7 +3,7 @@
 //
 
 #include <core/Build.h>
-#include <core/FileSystem.h>
+#include <core/filesystem.h>
 #include "sstream"
 
 namespace engine {

@@ -7,8 +7,9 @@
 #include "MouseCodes.h"
 #include <functional>
 
-namespace engine {
+namespace engine::core {
 
+    // just a wrapper of functional object
     template<typename ...T>
     struct Action {
         std::function<void(T...)> function;
@@ -22,7 +23,9 @@ namespace engine {
         Action(const std::function<void(T...)>&& function) : function(function) {}
     };
 
-    struct EventController {
+    // registry of window and input events.
+    // maps window and input event with appropriate action function.
+    struct EventRegistry {
         Action<> onWindowClosed;
         Action<const uint32_t&, const uint32_t&> onWindowResized;
 

@@ -45,7 +45,7 @@ namespace studio {
         };
 
     public:
-        Activity(engine::Application* app, const engine::ImGuiLayerProps &props) : engine::ImGuiLayer(app, props) {
+        Activity(engine::core::Application* app, const engine::ImGuiLayerProps &props) : engine::ImGuiLayer(app, props) {
             create();
         }
 
@@ -57,13 +57,13 @@ namespace studio {
         void onPrepare() override;
         void onUpdate(engine::Time dt) override;
 
-        void onMousePressed(engine::MouseCode mouseCode) override;
-        void onMouseRelease(engine::MouseCode mouseCode) override;
+        void onMousePressed(engine::core::MouseCode mouseCode) override;
+        void onMouseRelease(engine::core::MouseCode mouseCode) override;
 
-        void onKeyPressed(engine::KeyCode keyCode) override;
-        void onKeyHold(engine::KeyCode keyCode) override;
-        void onKeyReleased(engine::KeyCode keyCode) override;
-        void onKeyTyped(engine::KeyCode keyCode) override;
+        void onKeyPressed(engine::core::KeyCode keyCode) override;
+        void onKeyHold(engine::core::KeyCode keyCode) override;
+        void onKeyReleased(engine::core::KeyCode keyCode) override;
+        void onKeyTyped(engine::core::KeyCode keyCode) override;
 
         void onWindowClosed() override;
 

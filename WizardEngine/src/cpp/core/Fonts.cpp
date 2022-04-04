@@ -5,7 +5,7 @@
 #include <core/Fonts.h>
 #include <core/Logger.h>
 #include <core/BitmapFile.h>
-#include <core/FileSystem.h>
+#include <core/filesystem.h>
 #include <core/Math.h>
 
 namespace engine {

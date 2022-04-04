@@ -5,7 +5,7 @@
 #include <platform/core/Input.h>
 #include <GLFW/glfw3.h>
 
-namespace engine {
+namespace engine::core {
 
     bool Input::isKeyPressed(KeyCode keyCode) {
         auto state = glfwGetKey((GLFWwindow*) nativeWindow, keyCode);
@@ -20,13 +20,51 @@ namespace engine {
     MousePosition Input::getMousePosition() {
         double x, y;
         glfwGetCursorPos((GLFWwindow*) nativeWindow, &x, &y);
-        return {
-            (float) x,
-            (float) y
-        };
+        return { (f32) x, (f32) y };
     }
 
     void Input::destroy() {
         nativeWindow = nullptr;
+    }
+
+    bool Input::isJoystickPresent() {
+        return glfwJoystickPresent(joystickId) == 1;
+    }
+
+    JoystickAxisStates Input::getJoystickAxisStates() {
+        s32 count;
+        const f32* axes = glfwGetJoystickAxes(joystickId, &count);
+        return { axes, count };
+    }
+
+    JoystickButtonStates Input::getJoystickButtonStates() {
+        s32 count;
+        const u8* buttons = glfwGetJoystickButtons(joystickId, &count);\
+        return { buttons, count };
+    }
+
+    JoystickHatStates Input::getJoystickHatStates() {
+        s32 count;
+        const u8* hats = glfwGetJoystickHats(joystickId, &count);
+        return { hats, count };
+    }
+
+    const char* Input::getJoystickName() const {
+        return glfwGetJoystickName(joystickId);
+    }
+
+    bool Input::isGamepadPresent() const {
+        return glfwJoystickIsGamepad(joystickId);
+    }
+
+    const char* Input::getGamepadName() const {
+        return glfwGetGamepadName(joystickId);
+    }
+
+    GamepadState Input::getGamepadState() const {
+        GLFWgamepadstate state;
+        glfwGetGamepadState(joystickId, &state);
+        GamepadState gamepadState = { state.buttons, state.axes };
+        return gamepadState;
     }
 }

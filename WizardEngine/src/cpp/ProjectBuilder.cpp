@@ -4,7 +4,7 @@
 
 #include <ProjectBuilder.h>
 #include <core/Logger.h>
-#include <core/FileSystem.h>
+#include <core/filesystem.h>
 #include <core/Build.h>
 #include <core/Tools.h>
 #include <sstream>

@@ -10,7 +10,7 @@
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/GraphicsObject.h>
 
-engine::Application* engine::createApplication() {
+engine::core::Application* engine::createApplication() {
     EDITOR_INFO("Creating Application...");
     return new studio::Application();
 }
@@ -30,7 +30,7 @@ extern const char* runtimeLogName() {
 namespace studio {
 
     void Application::onCreate() {
-        engine::Application::onCreate();
+        engine::core::Application::onCreate();
         EDITOR_INFO("Current workspace '{0}'", CURRENT_WORKING_DIR);
         setWindowIcon("WizardStudio.png");
 

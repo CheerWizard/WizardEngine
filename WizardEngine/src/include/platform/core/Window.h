@@ -10,9 +10,7 @@
 #define DEFAULT_WINDOW_WIDTH 1024
 #define DEFAULT_WINDOW_HEIGHT 768
 
-namespace engine {
-
-    class Application;
+namespace engine::core {
 
     struct WindowProps {
         std::string title;
@@ -58,13 +56,15 @@ namespace engine {
         void setPosition(const uint32_t &x, const uint32_t &y);
 
     public:
-        void removeCallbacks();
         void toggleFullScreen();
         void setInCenter();
 
     public:
         void enableVSync();
         void disableVSync();
+
+    public:
+        static void loadGamepadMappings(const char* filePath);
 
     public:
         inline const WindowProps& getWindowProps() {
@@ -95,7 +95,7 @@ namespace engine {
         void create();
         void destroy();
         static void handleError(int error, const char *description);
-        void onWindowResized(const uint32_t& width, const uint32_t& height);
+        static void onWindowResized(const uint32_t& width, const uint32_t& height);
 
     protected:
         void* window;
