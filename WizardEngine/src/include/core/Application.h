@@ -35,6 +35,11 @@ namespace engine {
         void shutdown();
 
     public:
+        static inline Application& get() {
+            static Application instance;
+            return instance;
+        }
+
         inline const Scope<Window>& getWindow() {
             return _window;
         }

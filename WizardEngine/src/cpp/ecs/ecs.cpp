@@ -89,4 +89,8 @@ namespace engine::ecs {
 
         data.resize(srcIndex);
     }
+
+    size_t Registry::entity_count() {
+        return entities.size();
+    }
 }

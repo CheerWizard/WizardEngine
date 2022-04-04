@@ -19,7 +19,7 @@ namespace engine::ecs {
     typedef void* entity_id;
     typedef u32 component_id;
     typedef size_t component_size;
-    typedef vector<u8> component_data; // contagious component storage of the same type!
+    typedef vector<u8> component_data; // components raw storage in bytes
 
     struct BaseComponent;
     typedef u32 (*ComponentCreateFunction)(component_data& data, entity_id entityId, BaseComponent* component);
@@ -89,12 +89,13 @@ namespace engine::ecs {
     };
 
     /** You can do some mistakes like:
-    // struct B : Component<B> { float x, y; }; - correct
-    // struct A : Component<B> { bool flag; }; - incorrect type registration, which can lead to unexpected bugs.
-    // And the compiler and runtime will not catch this issue!
-    //
-    / This macro prevents you from doing such mistakes. */
-#define component(type, body) struct type : Component<type> body;
+    struct B : Component<B> { float x, y; }; - correct
+    struct A : Component<B> { bool flag; }; - incorrect type registration, which can lead to unexpected bugs.
+    And the compiler and runtime will not catch this issue!
+
+    This macro prevents you from doing such mistakes. */
+#define component(type) struct type : Component<type>
+#define component_empty(type) component(type) {};
 
     template<class Component>
     u32 createComponent(component_data& data, entity_id entityId, BaseComponent* component) {
@@ -149,34 +150,14 @@ namespace engine::ecs {
         template<class Component>
         Component* getComponent(entity_id entityId);
         // entity/component iterations
-        template<class Component>
-        inline void read(const std::function<void(const Component*)>& function) {
-            iterate<Component>(function);
-        }
-
-        template<class Component>
-        inline void write(const std::function<void(Component*)>& function) {
-            iterate<Component>(function);
-        }
-
-        template<class Component1, class Component2>
-        inline void read(const std::function<void(const Component1*, const Component2*)>& function) {
-            iterate<Component1, Component2>(function);
-        }
-
-        template<class Component1, class Component2>
-        inline void write(const std::function<void(Component1*, Component2*)>& function) {
-            iterate<Component1, Component2>(function);
-        }
-
         template<class Component, typename Function>
-        void iterate(const std::function<Function>& function);
-
+        void each(Function function);
         template<class Component1, class Component2, typename Function>
-        void iterate(const std::function<Function>& function);
+        void each(Function function);
 
         template<class Component>
-        size_t size();
+        size_t component_count();
+        size_t entity_count();
 
     private:
         static inline entity* toEntity(entity_id entityId) {
@@ -270,7 +251,7 @@ namespace engine::ecs {
     }
 
     template<class Component, typename Function>
-    void Registry::iterate(const std::function<Function>& function) {
+    void Registry::each(Function function) {
         validate_component("iterate()", Component, );
 
         component_data& componentData = components[Component::ID];
@@ -281,7 +262,7 @@ namespace engine::ecs {
     }
 
     template<class Component>
-    size_t Registry::size() {
+    size_t Registry::component_count() {
         return components[Component::ID].size() / BaseComponent::getSize(Component::ID);
     }
 }
