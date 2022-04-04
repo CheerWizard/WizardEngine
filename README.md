@@ -8,8 +8,8 @@ Well, in this case, WizardEngine can also feet your needs, as it can provide you
 
 Right now, this library is aimed only for "single player" games. It means, that network systems are not super priority at least right now.
 
-![FL_post_2](https://user-images.githubusercontent.com/37471793/159554720-ab272e6b-55fc-4c6b-8940-2aa0ac3bc146.png)
-# Fairy Lab
+![wizard_logo](https://user-images.githubusercontent.com/37471793/161589647-e2595cf1-a08c-48a9-81d2-424b89c9c55b.png)
+# Wizard Studio
 A GUI desktop application. Provides toolchain to manipulate with WizardEngine components, systems, etc. The actual application is going to include :
 1. LevelEditor - creating and editing objects in the Scene or World. World may include muktiple Scenes.
 2. CharacterEditor - not decided yet.
