@@ -1,4 +1,4 @@
-Temporary project website : https://cheerwizard.github.io/WizardGE/
+Temporary project website : https://cheerwizard.github.io/WizardEngine/
 
 ![WizardGE_post](https://user-images.githubusercontent.com/37471793/159553487-0ee2a6bb-04d0-4c68-b0bb-bab22804a3ca.png)
 # Wizard Engine
