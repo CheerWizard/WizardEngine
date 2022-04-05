@@ -6,7 +6,7 @@
 
 #include <graphics/core/buffer_data/VertexData.h>
 
-namespace engine {
+namespace engine::graphics {
 
     template<typename T>
     struct Cube : VertexDataComponent<T> {

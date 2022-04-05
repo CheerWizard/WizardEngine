@@ -5,9 +5,9 @@
 #pragma once
 
 #include <ecs/Entity.h>
-#include "CameraComponents.h"
+#include <graphics/camera/CameraComponents.h>
 
-namespace engine {
+namespace engine::graphics {
 
     class Camera2D : public Entity {
 

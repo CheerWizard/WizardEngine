@@ -3,7 +3,7 @@
 //
 
 #include <graphics/core/shader/UniformBlockFormat.h>
-#include <core/Logger.h>
+#include <io/Logger.h>
 
 namespace engine::shader {
 

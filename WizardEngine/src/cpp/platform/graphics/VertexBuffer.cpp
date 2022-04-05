@@ -5,7 +5,7 @@
 #include <platform/graphics/VertexBuffer.h>
 #include <glad/glad.h>
 
-namespace engine {
+namespace engine::graphics {
 
     void VertexBuffer::create() {
         glGenBuffers(1, &id);
@@ -19,7 +19,7 @@ namespace engine {
         glBindBuffer(GL_ARRAY_BUFFER, id);
     }
 
-    void VertexBuffer::unbind() const {
+    void VertexBuffer::unbind() {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 

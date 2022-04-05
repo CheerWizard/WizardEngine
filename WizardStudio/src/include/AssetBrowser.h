@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <core/Time.h>
-#include <core/FileSystem.h>
-#include <core/Tools.h>
+#include <time/Time.h>
+#include <core/filesystem.h>
+#include <tools/terminal.h>
 
 #include <platform/tools/FileDialog.h>
 #include <platform/graphics/TextureBuffer.h>
@@ -16,6 +16,10 @@
 #define DRAG_DROP_ITEM_TYPE "ASSET_BROWSER_ITEM"
 
 namespace studio {
+
+    using namespace engine::core;
+    using namespace engine::terminal;
+    using namespace engine::tools;
 
     class AssetBrowserCallback {
 
@@ -53,7 +57,7 @@ namespace studio {
     public:
         AssetBrowser(const AssetBrowserProps &props,
                      const AssetBrowserItems<6> &items,
-                     const engine::Ref<engine::FileDialog>& fileDialog) :
+                     const Ref<FileDialog>& fileDialog) :
                 _props(props),
                 _items(items),
                 _currentDir(props.assetPath),
@@ -78,7 +82,7 @@ namespace studio {
         }
 
     public:
-        void onUpdate(engine::Time dt);
+        void onUpdate(engine::time::Time dt);
 
     private:
         void destroy();
@@ -91,7 +95,7 @@ namespace studio {
         AssetBrowserProps _props;
         AssetBrowserItems<6> _items;
 
-        engine::Ref<engine::FileDialog> _fileDialog;
+        Ref<FileDialog> _fileDialog;
 
         AssetBrowserCallback* _callback = nullptr;
 

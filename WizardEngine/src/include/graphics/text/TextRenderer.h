@@ -4,18 +4,18 @@
 
 #pragma once
 
-#include <core/Fonts.h>
+#include <io/Fonts.h>
 #include <graphics/core/Renderer.h>
 #include <graphics/core/sources/TextureSource.h>
 #include <graphics/text/Text.h>
 #include <graphics/camera/CameraComponents.h>
 
-namespace engine {
+namespace engine::graphics {
 
     class TextRenderer : public Renderer {
 
     public:
-        TextRenderer(const Ref<BaseShaderProgram>& shaderProgram)
+        TextRenderer(const core::Ref<BaseShaderProgram>& shaderProgram)
         : Renderer(shaderProgram, DrawType::QUAD, VERTEX) {
             init();
         }

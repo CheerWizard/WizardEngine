@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <core/vector.h>
 #include <graphics/core/shader/VertexAttribute.h>
 
 namespace engine::shader {
@@ -11,7 +12,7 @@ namespace engine::shader {
     struct UniformAttribute {
         std::string name;
         ElementCount elementCount = SINGLE;
-        uint16_t count = 1;
+        u16 count = 1;
         size_t offset = 0;
     };
 
@@ -25,7 +26,7 @@ namespace engine::shader {
 
     struct UniformStructAttribute {
         std::string name;
-        std::vector<UniformAttribute> uniformAttributes;
+        vector<UniformAttribute> uniformAttributes;
 
         void add(const UniformAttribute &uniformAttribute) {
             uniformAttributes.emplace_back(uniformAttribute);

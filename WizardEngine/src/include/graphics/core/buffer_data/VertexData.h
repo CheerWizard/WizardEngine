@@ -4,17 +4,20 @@
 
 #pragma once
 
+#include <core/primitives.h>
 #include <algorithm>
 #include <functional>
 
 #define MIN_VERTEX_COUNT 3
 
-namespace engine {
+namespace engine::graphics {
+
+    using namespace core;
 
     template<typename V>
     struct BatchVertex {
         V vertex;
-        float id = 0;
+        f32 id = 0;
     };
 
     template<typename V>
@@ -25,8 +28,11 @@ namespace engine {
     template<typename V>
     struct VertexData {
         V* vertices = nullptr;
-        uint32_t vertexStart = 0;
-        uint32_t vertexCount = MIN_VERTEX_COUNT;
+        u32 vertexStart = 0;
+        u32 vertexCount = MIN_VERTEX_COUNT;
+        VertexData() = default;
+        VertexData(V* vertices, const u32& vertexStart, const u32& vertexCount)
+        : vertices(vertices), vertexStart(vertexStart), vertexCount(vertexCount) {}
     };
 
     enum class DrawType {
@@ -39,7 +45,7 @@ namespace engine {
     struct VertexDataComponent {
         VertexData<T> vertexData;
         bool isUpdated = true;
-        uint32_t renderModelId = 0;
+        u8 renderModelId = 0;
         DrawType drawType = DrawType::QUAD;
     };
 

@@ -8,10 +8,11 @@
 
 namespace studio {
 
-    class Application : public engine::Application {
+    class Application : public engine::core::Application {
+
     protected:
         void onCreate() override;
-        engine::WindowProps createWindowProps() override;
+        engine::core::WindowProps createWindowProps() override;
 
     private:
         void createTest();

@@ -4,7 +4,7 @@
 
 #include <graphics/core/RenderModel.h>
 
-namespace engine {
+namespace engine::graphics {
 
     void release(VRenderModel& renderModel) {
         renderModel.vao.destroy();
@@ -30,7 +30,7 @@ namespace engine {
         setFormat(vertexFormat, totalCount);
     }
 
-    void VertexBuffer::setFormat(const shader::VertexFormat &vertexFormat, const uint32_t &vertexCount) {
+    void VertexBuffer::setFormat(const shader::VertexFormat &vertexFormat, const u32 &vertexCount) {
         this->vertexFormat = vertexFormat;
         bind();
         alloc(vertexCount);
@@ -42,7 +42,7 @@ namespace engine {
         create();
     }
 
-    void VertexBuffer::alloc(const uint32_t &vertexCount) {
+    void VertexBuffer::alloc(const u32 &vertexCount) {
         totalCount = vertexCount;
         size_t size = vertexFormat.getSize() * vertexCount;
         malloc(size);

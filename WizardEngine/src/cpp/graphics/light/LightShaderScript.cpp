@@ -4,7 +4,7 @@
 
 #include <graphics/light/LightShaderScript.h>
 
-namespace engine::shader {
+namespace engine::graphics {
 
     ShaderScript phongLightScript() {
         auto script = ShaderScript();

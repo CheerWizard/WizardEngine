@@ -6,7 +6,6 @@
 #include <graphics/camera/CameraShaderScript.h>
 #include <graphics/material/MaterialShaderScript.h>
 #include <graphics/light/LightShaderScript.h>
-
 #include <graphics/core/geometry/Line.h>
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/core/geometry/Circle.h>
@@ -14,7 +13,7 @@
 #include <graphics/skybox/Skybox.h>
 #include <graphics/core/geometry/Point.h>
 
-namespace engine {
+namespace engine::graphics {
 
     void RenderSystem::create() {
         createScreenRenderer();
@@ -82,6 +81,7 @@ namespace engine {
         // bind to window frame buffer and draw screen
         FrameBuffer::bindDefault();
         setDepthTest(false);
+        screenRenderer->render<ScreenVertex>(screen, screenFrame->getColorAttachment(0).id);
         clearColorBuffer();
 
         activeScene->updateComponents<Transform3dComponent>([](Transform3dComponent& transform) {
@@ -93,7 +93,7 @@ namespace engine {
         auto vBatchShader = shader::BaseShader({ camera3dUboScript() });
         auto fBatchShader = shader::BaseShader({ materialScript(), phongLightScript(), materialMapScript(), pointLightArrayScript() });
         auto batchShader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "batch",
                         "v_batch.glsl",
                         "f_batch.glsl",
@@ -105,7 +105,7 @@ namespace engine {
         auto vInstanceShader = shader::BaseShader({ camera3dUboScript() });
         auto fInstanceShader = shader::BaseShader({ materialScript(), phongLightScript(), materialMapScript(), pointLightArrayScript() });
         auto instanceShader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "instance",
                         "v_instance.glsl",
                         "f_instance.glsl",
@@ -121,7 +121,7 @@ namespace engine {
         auto vBatchShader = shader::BaseShader({ camera3dUboScript() });
         auto fBatchShader = shader::BaseShader();
         auto batchShader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "line_batch",
                         "v_line_batch.glsl",
                         "f_line.glsl",
@@ -133,7 +133,7 @@ namespace engine {
         auto vInstanceShader = shader::BaseShader({ camera3dUboScript() });
         auto fInstanceShader = shader::BaseShader();
         auto instanceShader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "line_instance",
                         "v_line_instance.glsl",
                         "f_line.glsl",
@@ -152,7 +152,7 @@ namespace engine {
         auto vBatchShader = shader::BaseShader({ camera3dUboScript() });
         auto fBatchShader = shader::BaseShader();
         auto batchShader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "quad_batch",
                         "v_quad_batch.glsl",
                         "f_quad.glsl",
@@ -164,7 +164,7 @@ namespace engine {
         auto vInstanceShader = shader::BaseShader({ camera3dUboScript() });
         auto fInstanceShader = shader::BaseShader();
         auto instanceShader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "quad_instance",
                         "v_quad_instance.glsl",
                         "f_quad.glsl",
@@ -200,7 +200,7 @@ namespace engine {
         auto vBatchShader = shader::BaseShader();
         auto fBatchShader = shader::BaseShader({ circleArrayScript });
         auto batchShader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "circle_batch",
                         "v_circle_batch.glsl",
                         "f_circle.glsl",
@@ -212,7 +212,7 @@ namespace engine {
         auto vInstanceShader = shader::BaseShader();
         auto fInstanceShader = shader::BaseShader({ circleArrayScript });
         auto instanceShader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "circle_instance",
                         "v_circle_instance.glsl",
                         "f_circle.glsl",
@@ -248,7 +248,7 @@ namespace engine {
         auto vBatchShader = shader::BaseShader({ outlineScript });
         auto fBatchShader = shader::BaseShader();
         auto batchShader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "outline_batch",
                         "v_outline_batch.glsl",
                         "f_outline.glsl",
@@ -260,7 +260,7 @@ namespace engine {
         auto vInstanceShader = shader::BaseShader({ outlineScript });
         auto fInstanceShader = shader::BaseShader();
         auto instanceShader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "outline_instance",
                         "v_outline_instance.glsl",
                         "f_outline.glsl",
@@ -291,7 +291,7 @@ namespace engine {
         auto vShader = shader::BaseShader({ camera3dUboScript(), skyboxRotation });
         auto fShader = shader::BaseShader({ cubeMapTextureScript() });
         auto shader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "cubemap",
                         "v_cubemap.glsl",
                         "f_cubemap.glsl",
@@ -309,7 +309,7 @@ namespace engine {
 
         auto vText2dShader = shader::BaseShader({ textProjectionScript() });
         auto text2dShader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "text2d",
                         "text/v_text_2d.glsl",
                         "text/f_text.glsl",
@@ -322,7 +322,7 @@ namespace engine {
 
         auto vText3dShader = shader::BaseShader();
         auto text3dShader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "text3d",
                         "text/v_text_3d.glsl",
                         "text/f_text.glsl",
@@ -338,7 +338,7 @@ namespace engine {
         auto vShader = shader::BaseShader();
         auto fShader = shader::BaseShader();
         auto shader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "screen",
                         "v_screen.glsl",
                         "f_screen.glsl",
@@ -353,7 +353,7 @@ namespace engine {
 
     void RenderSystem::createPointRenderer() {
         auto shader = createRef<shader::BaseShaderProgram>(
-                shader::ShaderProps {
+                io::ShaderProps {
                         "point",
                         "geometry/v_point.glsl",
                         "geometry/f_point.glsl",

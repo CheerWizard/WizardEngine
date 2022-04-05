@@ -7,10 +7,11 @@
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
 #include <core/Application.h>
+#include <core/filesystem.h>
 
 #define NATIVE_WINDOW (GLFWwindow*)window
 
-namespace engine {
+namespace engine::core {
 
     void Window::create() {
         ENGINE_INFO("Creating window {0} ({1}, {2})", windowProps.title, windowProps.width, windowProps.height);
@@ -58,7 +59,6 @@ namespace engine {
     }
 
     void Window::destroy() {
-        removeCallbacks();
         glfwSetErrorCallback(nullptr);
         glfwDestroyWindow(NATIVE_WINDOW);
         window = nullptr;
@@ -81,7 +81,7 @@ namespace engine {
         });
 
         glfwSetKeyCallback(NATIVE_WINDOW, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            auto keycode = (KeyCode) key;
+            auto keycode = (event::KeyCode) key;
             switch (action) {
                 case GLFW_PRESS: {
                     Application::get().onKeyPressed(keycode);
@@ -100,12 +100,12 @@ namespace engine {
         });
 
         glfwSetCharCallback(NATIVE_WINDOW, [](GLFWwindow* window, unsigned int key) {
-            auto keycode = (KeyCode) key;
+            auto keycode = (event::KeyCode) key;
             Application::get().onKeyTyped(keycode);
         });
 
         glfwSetMouseButtonCallback(NATIVE_WINDOW, [](GLFWwindow* window, int button, int action, int mods) {
-            auto mouseCode = (MouseCode) button;
+            auto mouseCode = (event::MouseCode) button;
             switch (action) {
                 case GLFW_PRESS: {
                     Application::get().onMousePressed(mouseCode);
@@ -125,6 +125,18 @@ namespace engine {
 
         glfwSetCursorPosCallback(NATIVE_WINDOW, [](GLFWwindow* window, double xPos, double yPos) {
             Application::get().onCursorMoved(xPos, yPos);
+        });
+
+        glfwSetJoystickCallback([](int jid, int event) {
+            if (event == GLFW_CONNECTED) {
+                Application::get().onGamepadConnected(jid);
+                return;
+            }
+
+            if (event == GLFW_DISCONNECTED) {
+                Application::get().onGamepadDisconnected(jid);
+                return;
+            }
         });
     }
 
@@ -172,18 +184,7 @@ namespace engine {
     }
 
     void Window::onWindowResized(const uint32_t& width, const uint32_t& height) {
-        auto callback = GET_WINDOW_CALLBACK(window);
-
-        if (callback != nullptr) {
-            callback->onWindowResized(width, height);
-        }
-    }
-
-    void Window::removeCallbacks() {
-        removeWindowCallback();
-        removeKeyboardCallback();
-        removeMouseCallback();
-        removeCursorCallback();
+        Application::get().onWindowResized(width, height);
     }
 
     void Window::toggleFullScreen() {
@@ -197,6 +198,11 @@ namespace engine {
 
     void Window::setInCenter() {
         setPosition(windowProps.width / 2, windowProps.height / 2);
+    }
+
+    void Window::loadGamepadMappings(const char* filePath) {
+        auto mappings = engine::filesystem::read(filePath);
+        glfwUpdateGamepadMappings(mappings.c_str());
     }
 
 }

@@ -8,7 +8,7 @@
 #include <graphics/core/shader/BaseShader.h>
 #include <glm/glm.hpp>
 
-namespace engine {
+namespace engine::graphics {
 
     struct CircleVertex {
         glm::vec3 position = { 0.5, 0.5, 0.5 };

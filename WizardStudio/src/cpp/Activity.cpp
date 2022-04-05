@@ -20,9 +20,10 @@
 
 #define BIND_KEY_PRESS(keycode, action) app->eventController.onKeyPressedMap[keycode] = { [this](KeyCode keyCode) { action }}
 
-using namespace engine::shader;
-
 namespace studio {
+
+    using namespace engine::shader;
+    using namespace engine::io;
 
     void Activity::create() {
         createAssetBrowser();
@@ -44,49 +45,49 @@ namespace studio {
                 vObjShader,
                 fObjShader
         );
-        auto objRenderer = engine::createRef<engine::VIRenderer>(objShader);
+        auto objRenderer = createRef<VIRenderer>(objShader);
 
-        auto objCamera = engine::Camera3D {
+        auto objCamera = Camera3D {
                 "obj",
                 app->getAspectRatio(),
                 editorScene.get()
         };
-        auto objCameraController = engine::createRef<engine::Camera3dController>(
+        auto objCameraController = createRef<Camera3dController>(
                 "ObjCameraController",
                 objCamera
         );
 
-        auto objTransform = engine::transform3d(
+        auto objTransform = graphics::transform3d(
                 { 2.5, 0, 12 },
                 {135, 0, 0},
                 {0.5, 0.5, 0.5}
         );
-        objCamera.add<engine::Transform3dComponent>(objTransform);
+        objCamera.add<Transform3dComponent>(objTransform);
 
-        auto objMaterial = engine::MaterialComponent();
+        auto objMaterial = MaterialComponent();
         objMaterial.color.value = { 0.25, 0, 0, 1 };
-        objCamera.add<engine::MaterialComponent>(objMaterial);
+        objCamera.add<MaterialComponent>(objMaterial);
 
-        auto objPhongLight = engine::PhongLightComponent();
+        auto objPhongLight = PhongLightComponent();
         objPhongLight.position.value = { 25, 25, -25, 0 };
         objPhongLight.ambient.value = { 0.05, 0.05, 0.05, 0 };
         objPhongLight.diffuse.value = { 0.4, 0.4, 0.4, 0 };
         objPhongLight.specular.value = { 0.4, 0.4, 0.4, 0 };
-        objCamera.add<engine::PhongLightComponent>(objPhongLight);
+        objCamera.add<PhongLightComponent>(objPhongLight);
 
-        auto objFrame = engine::createRef<engine::FrameBuffer>();
-        engine::FrameBufferFormat objFrameFormat;
+        auto objFrame = createRef<FrameBuffer>();
+        FrameBufferFormat objFrameFormat;
         objFrameFormat.colorAttachments = {
-                { engine::ColorFormat::RGBA8 }
+                { ColorFormat::RGBA8 }
         };
-        objFrameFormat.depthStencilAttachment = {engine::DepthStencilFormat::DEPTH24STENCIL8 };
+        objFrameFormat.depthStencilAttachment = { DepthStencilFormat::DEPTH24STENCIL8 };
         objFrameFormat.width = app->getWindow()->getWidth();
         objFrameFormat.height = app->getWindow()->getHeight();
         objFrameFormat.samples = 1;
         objFrame->updateFormat(objFrameFormat);
 
-        _objPreview = engine::createRef<engine::MeshLayout>(
-                engine::ImageLayoutProps {"Object Preview"},
+        _objPreview = createRef<MeshLayout>(
+                ImageLayoutProps {"Object Preview"},
                 objRenderer,
                 objFrame,
                 objCameraController
@@ -112,18 +113,18 @@ namespace studio {
         auto scene1 = createRef<Scene>();
         app->scenes.emplace_back(scene1);
 
-        activeSceneCamera = engine::Camera3D {
+        activeSceneCamera = Camera3D {
                 "SceneCamera",
                 app->getAspectRatio(),
                 scene1.get()
         };
 
-        activeSceneCameraController = engine::createRef<engine::Camera3dController>(
+        activeSceneCameraController = createRef<Camera3dController>(
                 "ActiveSceneCameraController",
                 activeSceneCamera
         );
 
-        scene1->setSkybox(engine::SkyboxCube(
+        scene1->setSkybox(SkyboxCube(
                 "Skybox",
                 scene1.get(),
                 CubeMapTextureComponent {
@@ -171,14 +172,14 @@ namespace studio {
         EDITOR_INFO("onPrepare()");
         ImGuiLayer::onPrepare();
 
-        activeSceneCameraController->bind(engine::KeyCode::W, engine::MoveType::UP);
-        activeSceneCameraController->bind(engine::KeyCode::A, engine::MoveType::LEFT);
-        activeSceneCameraController->bind(engine::KeyCode::S, engine::MoveType::DOWN);
-        activeSceneCameraController->bind(engine::KeyCode::D, engine::MoveType::RIGHT);
-        activeSceneCameraController->bind(engine::KeyCode::Q, engine::RotateType::LEFT_Z);
-        activeSceneCameraController->bind(engine::KeyCode::E, engine::RotateType::RIGHT_Z);
-        activeSceneCameraController->bind(engine::KeyCode::Z, engine::ZoomType::ZOOM_IN);
-        activeSceneCameraController->bind(engine::KeyCode::X, engine::ZoomType::ZOOM_OUT);
+        activeSceneCameraController->bind(KeyCode::W, MoveType::UP);
+        activeSceneCameraController->bind(KeyCode::A, MoveType::LEFT);
+        activeSceneCameraController->bind(KeyCode::S, MoveType::DOWN);
+        activeSceneCameraController->bind(KeyCode::D, MoveType::RIGHT);
+        activeSceneCameraController->bind(KeyCode::Q, RotateType::LEFT_Z);
+        activeSceneCameraController->bind(KeyCode::E, RotateType::RIGHT_Z);
+        activeSceneCameraController->bind(KeyCode::Z, ZoomType::ZOOM_IN);
+        activeSceneCameraController->bind(KeyCode::X, ZoomType::ZOOM_OUT);
         activeSceneCameraController->setPosition({0, 0, -1});
         activeSceneCameraController->applyChanges();
 
@@ -186,14 +187,14 @@ namespace studio {
         _objPreview->hide();
 
         const auto& objCameraController = _objPreview->getCameraController();
-        objCameraController->bind(engine::KeyCode::W, engine::MoveType::UP);
-        objCameraController->bind(engine::KeyCode::A, engine::MoveType::LEFT);
-        objCameraController->bind(engine::KeyCode::S, engine::MoveType::DOWN);
-        objCameraController->bind(engine::KeyCode::D, engine::MoveType::RIGHT);
-        objCameraController->bind(engine::KeyCode::Q, engine::RotateType::LEFT_Z);
-        objCameraController->bind(engine::KeyCode::E, engine::RotateType::RIGHT_Z);
-        objCameraController->bind(engine::KeyCode::Z, engine::ZoomType::ZOOM_IN);
-        objCameraController->bind(engine::KeyCode::X, engine::ZoomType::ZOOM_OUT);
+        objCameraController->bind(KeyCode::W, MoveType::UP);
+        objCameraController->bind(KeyCode::A, MoveType::LEFT);
+        objCameraController->bind(KeyCode::S, MoveType::DOWN);
+        objCameraController->bind(KeyCode::D, MoveType::RIGHT);
+        objCameraController->bind(KeyCode::Q, RotateType::LEFT_Z);
+        objCameraController->bind(KeyCode::E, RotateType::RIGHT_Z);
+        objCameraController->bind(KeyCode::Z, ZoomType::ZOOM_IN);
+        objCameraController->bind(KeyCode::X, ZoomType::ZOOM_OUT);
         objCameraController->setPosition({0, 0, -1});
         objCameraController->applyChanges();
 
@@ -209,7 +210,7 @@ namespace studio {
                         _sceneHierarchy.setScene(app->scenes[1]);
         );
         // switch between fullscreen/windowed modes
-        BIND_KEY_PRESS(KeyCode::F, if (app->input->isKeyPressed(engine::KeyCode::LeftControl)) {
+        BIND_KEY_PRESS(KeyCode::F, if (app->input->isKeyPressed(KeyCode::LeftControl)) {
             app->getWindow()->enableFullScreen();
         });
         BIND_KEY_PRESS(KeyCode::Escape, app->getWindow()->disableFullScreen(););
@@ -217,9 +218,10 @@ namespace studio {
         BIND_KEY_PRESS(KeyCode::N, app->setSampleSize(1););
 
         setMSAA(true);
+        app->getWindow()->loadGamepadMappings("assets/db/game_controller_db.txt");
     }
 
-    void Activity::onRender(engine::Time dt) {
+    void Activity::onRender(engine::time::Time dt) {
         sceneViewport.onUpdate(dt);
         screenViewport.onUpdate(dt);
         _sceneHierarchy.onUpdate(dt);
@@ -228,53 +230,53 @@ namespace studio {
         _objPreview->onUpdate(dt);
     }
 
-    void Activity::onUpdate(engine::Time dt) {
+    void Activity::onUpdate(engine::time::Time dt) {
         ImGuiLayer::onUpdate(dt);
         activeSceneCameraController->setDeltaTime(dt);
         sceneViewport.setId(app->screenFrame->getColorAttachment(0).id);
         screenViewport.setId(app->screenFrame->getColorAttachment(0).id);
     }
 
-    void Activity::onKeyPressed(engine::KeyCode keyCode) {
-        engine::ImGuiLayer::onKeyPressed(keyCode);
+    void Activity::onKeyPressed(KeyCode keyCode) {
+        ImGuiLayer::onKeyPressed(keyCode);
         _objPreview->onKeyPressed(keyCode);
         if (sceneViewport.isFocused() || screenViewport.isFocused()) {
             activeSceneCameraController->onKeyPressed(keyCode);
         }
     }
 
-    void Activity::onKeyHold(engine::KeyCode keyCode) {
-        engine::ImGuiLayer::onKeyHold(keyCode);
+    void Activity::onKeyHold(KeyCode keyCode) {
+        ImGuiLayer::onKeyHold(keyCode);
         _objPreview->onKeyHold(keyCode);
         if (sceneViewport.isFocused() || screenViewport.isFocused()) {
             activeSceneCameraController->onKeyHold(keyCode);
         }
     }
 
-    void Activity::onKeyReleased(engine::KeyCode keyCode) {
-        engine::ImGuiLayer::onKeyReleased(keyCode);
+    void Activity::onKeyReleased(KeyCode keyCode) {
+        ImGuiLayer::onKeyReleased(keyCode);
         _objPreview->onKeyReleased(keyCode);
         if (sceneViewport.isFocused() || screenViewport.isFocused()) {
             activeSceneCameraController->onKeyReleased(keyCode);
         }
     }
 
-    void Activity::onKeyTyped(engine::KeyCode keyCode) {
-        engine::ImGuiLayer::onKeyTyped(keyCode);
+    void Activity::onKeyTyped(KeyCode keyCode) {
+        ImGuiLayer::onKeyTyped(keyCode);
         _objPreview->onKeyTyped(keyCode);
         if (sceneViewport.isFocused() || screenViewport.isFocused()) {
             activeSceneCameraController->onKeyTyped(keyCode);
         }
     }
 
-    void Activity::onMousePressed(engine::MouseCode mouseCode) {
-        engine::ImGuiLayer::onMousePressed(mouseCode);
+    void Activity::onMousePressed(MouseCode mouseCode) {
+        ImGuiLayer::onMousePressed(mouseCode);
         sceneViewport.onMousePressed(mouseCode);
         screenViewport.onMousePressed(mouseCode);
     }
 
-    void Activity::onMouseRelease(engine::MouseCode mouseCode) {
-        engine::ImGuiLayer::onMouseRelease(mouseCode);
+    void Activity::onMouseRelease(MouseCode mouseCode) {
+        ImGuiLayer::onMouseRelease(mouseCode);
         sceneViewport.onMouseRelease(mouseCode);
         screenViewport.onMouseRelease(mouseCode);
     }
@@ -378,19 +380,18 @@ namespace studio {
 
         auto fileDialog = app->createFileDialog();
 
-        _assetBrowser = engine::createRef<AssetBrowser>(props, items, fileDialog);
+        _assetBrowser = createRef<AssetBrowser>(props, items, fileDialog);
     }
 
     void Activity::onWindowClosed() {
         Layer::onWindowClosed();
-        app->shutdown();
     }
 
     void Activity::onObjDragged(const std::string &fileName) {
         EDITOR_INFO("onObjDragged({0})", fileName);
-        engine::Object3d {
+        Object3d {
                 app->activeScene.get(),
-                engine::FileSystem::getFileName(fileName),
+                engine::filesystem::getFileName(fileName),
                 GET_MESH_COMPONENT(BatchVertex<Vertex3d>, fileName)
         };
     }

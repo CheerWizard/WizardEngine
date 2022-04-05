@@ -6,6 +6,8 @@
 
 namespace engine::shader {
 
+    using namespace graphics;
+
     ShaderScript materialScript() {
         auto script = ShaderScript();
         script.updateRegistry = [](const BaseShader& shader, entt::registry &registry) {

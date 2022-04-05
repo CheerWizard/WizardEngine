@@ -4,10 +4,10 @@
 
 #include <graphics/core/io/TextureFile.h>
 
-#include "stb_image.h"
-#include "sstream"
+#include <stb_image.h>
+#include <sstream>
 
-namespace engine {
+namespace engine::io {
 
     TextureData TextureFile::read(const std::string_view &fileName) {
         return read(fileName, RUNTIME_TEXTURES_PATH);

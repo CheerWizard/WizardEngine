@@ -9,7 +9,7 @@
 
 #define DEFAULT_INDEX_COUNT 5000
 
-namespace engine {
+namespace engine::graphics {
 
     // Single IBO - Index Buffer Object.
     // Can be used as graphics API interface
@@ -40,7 +40,7 @@ namespace engine {
         void load(const IndexData &indexData);
 
     private:
-        uint32_t id = 0;
+        u32 id = 0;
 
     };
 

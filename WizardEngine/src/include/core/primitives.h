@@ -3,6 +3,7 @@
 //
 
 #pragma once
+
 #include <cstdint>
 
 namespace engine::core {

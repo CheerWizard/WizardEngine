@@ -4,13 +4,15 @@
 
 #pragma once
 
-#include <cstdint>
+#include <core/primitives.h>
 
 namespace engine::shader {
 
+    using namespace core;
+
     struct UniformData {
-        float* uniforms;
-        uint32_t index;
+        f32* uniforms;
+        u32 index;
     };
 
 }

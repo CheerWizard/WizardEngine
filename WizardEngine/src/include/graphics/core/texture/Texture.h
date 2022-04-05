@@ -10,7 +10,7 @@
 #define CHANNEL_RGB 3
 #define CHANNEL_RGBA 4
 
-namespace engine {
+namespace engine::graphics {
 
     // texture format for color buffer
     enum class ColorFormat {

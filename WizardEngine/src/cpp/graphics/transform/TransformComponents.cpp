@@ -4,31 +4,31 @@
 
 #include <graphics/transform/TransformComponents.h>
 
-namespace engine {
+namespace engine::graphics {
 
     Transform2dComponent transform2d() {
-        ModelMatrix2d transform = {};
+        math::ModelMatrix2d transform = {};
         transform.name = DEFAULT_TRANSFORM_NAME;
         updateModel2d(transform);
         return transform;
     }
 
     Transform3dComponent transform3d() {
-        ModelMatrix3d transform = {};
+        math::ModelMatrix3d transform = {};
         transform.name = DEFAULT_TRANSFORM_NAME;
         updateModel3d(transform);
         return transform;
     }
 
     Transform3dComponent transform3d(const glm::vec3 &pos, const glm::vec3 &rot, const glm::vec3 &scale) {
-        ModelMatrix3d transform = {pos, rot, scale};
+        math::ModelMatrix3d transform = {pos, rot, scale};
         transform.name = DEFAULT_TRANSFORM_NAME;
         updateModel3d(transform);
         return transform;
     }
 
     Transform3dComponent transform3dScale(const glm::vec3 &scale) {
-        ModelMatrix3d transform = {};
+        math::ModelMatrix3d transform = {};
         transform.scale = scale;
         transform.name = DEFAULT_TRANSFORM_NAME;
         updateModel3d(transform);

@@ -4,7 +4,7 @@
 
 #include <graphics/core/Renderer.h>
 
-namespace engine {
+namespace engine::graphics {
 
     void Renderer::create(const AttributeCategory& attributeCategory) {
         shaderProgram->bindVertexFormat();
@@ -13,10 +13,10 @@ namespace engine {
 
     void Renderer::release() {
         for (auto& vRenderModel : vRenderModels) {
-            engine::release(vRenderModel);
+            engine::graphics::release(vRenderModel);
         }
         for (auto& viRenderModel : viRenderModels) {
-            engine::release(viRenderModel);
+            engine::graphics::release(viRenderModel);
         }
         vRenderModels.clear();
         viRenderModels.clear();

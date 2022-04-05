@@ -4,7 +4,7 @@
 
 #include <graphics/camera/Camera.h>
 
-namespace engine {
+namespace engine::graphics {
 
     void Camera2D::create() {
         add<Camera2dComponent>(Camera2dComponent());

@@ -4,7 +4,7 @@
 
 #include <core/LayerStack.h>
 
-namespace engine {
+namespace engine::core {
 
     LayerStack::~LayerStack() {
         for (Layer* layer : _layers) {
@@ -42,7 +42,7 @@ namespace engine {
         return 0;
     }
 
-    void LayerStack::onUpdate(Time deltaTime) {
+    void LayerStack::onUpdate(time::Time deltaTime) {
         for (Layer* layer : _layers) {
             layer->onUpdate(deltaTime);
         }
@@ -60,31 +60,31 @@ namespace engine {
         }
     }
 
-    void LayerStack::onKeyPressed(KeyCode keyCode) {
+    void LayerStack::onKeyPressed(event::KeyCode keyCode) {
         for (Layer* layer : _layers) {
             layer->onKeyPressed(keyCode);
         }
     }
 
-    void LayerStack::onKeyHold(KeyCode keyCode) {
+    void LayerStack::onKeyHold(event::KeyCode keyCode) {
         for (Layer* layer : _layers) {
             layer->onKeyHold(keyCode);
         }
     }
 
-    void LayerStack::onKeyReleased(KeyCode keyCode) {
+    void LayerStack::onKeyReleased(event::KeyCode keyCode) {
         for (Layer* layer : _layers) {
             layer->onKeyReleased(keyCode);
         }
     }
 
-    void LayerStack::onMousePressed(MouseCode mouseCode) {
+    void LayerStack::onMousePressed(event::MouseCode mouseCode) {
         for (Layer* layer : _layers) {
             layer->onMousePressed(mouseCode);
         }
     }
 
-    void LayerStack::onMouseRelease(MouseCode mouseCode) {
+    void LayerStack::onMouseRelease(event::MouseCode mouseCode) {
         for (Layer* layer : _layers) {
             layer->onMouseRelease(mouseCode);
         }
@@ -102,7 +102,7 @@ namespace engine {
         }
     }
 
-    void LayerStack::onKeyTyped(KeyCode keyCode) {
+    void LayerStack::onKeyTyped(event::KeyCode keyCode) {
         for (Layer* layer : _layers) {
             layer->onKeyTyped(keyCode);
         }

@@ -4,7 +4,7 @@
 
 #include <graphics/text/TextRenderer.h>
 
-namespace engine {
+namespace engine::graphics {
 
     void TextRenderer::init() {
         createRenderModel(DEFAULT_VERTEX_COUNT);

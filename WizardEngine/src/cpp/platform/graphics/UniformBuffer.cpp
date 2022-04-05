@@ -24,7 +24,7 @@ namespace engine::shader {
         glBindBuffer(GL_UNIFORM_BUFFER, id);
     }
 
-    void UniformBuffer::unbind() const {
+    void UniformBuffer::unbind() {
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
@@ -33,7 +33,7 @@ namespace engine::shader {
         alloc(size);
     }
 
-    void UniformBuffer::alloc(const size_t &memorySize) const {
+    void UniformBuffer::alloc(const size_t &memorySize) {
         glBufferData(GL_UNIFORM_BUFFER, (GLsizeiptr) memorySize, nullptr, GL_DYNAMIC_DRAW);
     }
 

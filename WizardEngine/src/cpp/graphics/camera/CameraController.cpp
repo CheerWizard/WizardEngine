@@ -4,33 +4,33 @@
 
 #include <graphics/camera/CameraController.h>
 
-namespace engine {
+namespace engine::graphics {
 
     CameraController::~CameraController() {
         clearAllBindings();
     }
 
-    void CameraController::bind(const KeyCode &keyCode, const MoveType &moveType) {
+    void CameraController::bind(const event::KeyCode &keyCode, const MoveType &moveType) {
         moveKeys[keyCode] = moveType;
     }
 
-    void CameraController::bind(const KeyCode &keyCode, const RotateType &rotateType) {
+    void CameraController::bind(const event::KeyCode &keyCode, const RotateType &rotateType) {
         rotateKeys[keyCode] = rotateType;
     }
 
-    void CameraController::bind(const KeyCode &keyCode, const ZoomType &zoomType) {
+    void CameraController::bind(const event::KeyCode &keyCode, const ZoomType &zoomType) {
         zoomKeys[keyCode] = zoomType;
     }
 
-    void CameraController::unbindMove(const KeyCode &keyCode) {
+    void CameraController::unbindMove(const event::KeyCode &keyCode) {
         moveKeys[keyCode] = NONE_TYPE(MoveType);
     }
 
-    void CameraController::unbindRotate(const KeyCode &keyCode) {
+    void CameraController::unbindRotate(const event::KeyCode &keyCode) {
         rotateKeys[keyCode] = NONE_TYPE(RotateType);
     }
 
-    void CameraController::unbindZoom(const KeyCode &keyCode) {
+    void CameraController::unbindZoom(const event::KeyCode &keyCode) {
         zoomKeys[keyCode] = NONE_TYPE(ZoomType);
     }
 
@@ -52,7 +52,7 @@ namespace engine {
         clearRotateBindings();
     }
 
-    void CameraController::onKeyPressed(KeyCode keyCode) {
+    void CameraController::onKeyPressed(event::KeyCode keyCode) {
         auto moveKey = moveKeys[keyCode];
         if (moveKey != NONE_TYPE(MoveType)) {
             move(moveKey);
@@ -75,15 +75,15 @@ namespace engine {
         }
     }
 
-    void CameraController::onKeyHold(KeyCode keyCode) {
+    void CameraController::onKeyHold(event::KeyCode keyCode) {
         onKeyPressed(keyCode);
     }
 
-    void CameraController::onKeyReleased(KeyCode keyCode) {
+    void CameraController::onKeyReleased(event::KeyCode keyCode) {
         // no needs to support it for now!
     }
 
-    void CameraController::onKeyTyped(KeyCode keyCode) {
+    void CameraController::onKeyTyped(event::KeyCode keyCode) {
         // no needs to support it for now!
     }
 
@@ -93,7 +93,7 @@ namespace engine {
     void CameraController::onWindowResized(const uint32_t &width, const uint32_t &height) {
         auto& component = getCamera().get<Camera3dComponent>();
         component.perspectiveMatrix.aspectRatio = (float) width / (float) height;
-        ViewProjections::update(component);
+        math::ViewProjections::update(component);
     }
 
     Entity Camera2dController::getCamera() {
@@ -202,7 +202,7 @@ namespace engine {
         ENGINE_INFO("{0}: rotation({1},{2},{3})", tag, component.viewMatrix.rotation.x, component.viewMatrix.rotation.y,
                     component.viewMatrix.rotation.z);
         ENGINE_INFO("{0}: scale({1})", tag, component.viewMatrix.scale);
-        ViewProjections::update(component);
+        math::ViewProjections::update(component);
     }
 
     void Camera3dController::setCamera(const Camera2D &camera) {
@@ -284,7 +284,7 @@ namespace engine {
     }
 
     void Camera2dController::applyChanges() {
-        ViewProjections::update(camera.get<Camera2dComponent>());
+        math::ViewProjections::update(camera.get<Camera2dComponent>());
     }
 
     void Camera2dController::setCamera(const Camera2D &camera) {
@@ -298,12 +298,12 @@ namespace engine {
     void Camera2dController::setPosition(const glm::vec3 &position) {
         auto &component = camera.get<Camera2dComponent>();
         component.viewMatrix.position = position;
-        ViewProjections::update(component);
+        math::ViewProjections::update(component);
     }
 
     void Camera3dController::setPosition(const glm::vec3 &position) {
         auto &component = camera.get<Camera3dComponent>();
         component.viewMatrix.position.value = position;
-        ViewProjections::update(component);
+        math::ViewProjections::update(component);
     }
 }

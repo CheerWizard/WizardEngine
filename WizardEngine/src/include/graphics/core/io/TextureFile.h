@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include <core/FileSystem.h>
+#include <core/filesystem.h>
 
 #define RUNTIME_TEXTURES_PATH "assets/textures"
 
-namespace engine {
+namespace engine::io {
 
     struct TextureData {
         int width = 0, height = 0, channels = 0;

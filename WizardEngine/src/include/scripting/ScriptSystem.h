@@ -5,9 +5,11 @@
 #pragma once
 
 #include <ecs/Scene.h>
-#include "ScriptComponents.h"
+#include <scripting/ScriptComponents.h>
 
-namespace engine {
+namespace engine::scripting {
+
+    using namespace core;
 
     class ScriptSystem {
 
@@ -16,7 +18,7 @@ namespace engine {
         ~ScriptSystem() = default;
 
     public:
-        void onUpdate(Time dt);
+        void onUpdate(time::Time dt);
         void onDestroy();
 
     public:
@@ -26,7 +28,6 @@ namespace engine {
 
     private:
         Ref<Scene> activeScene = nullptr;
-
     };
 
 }

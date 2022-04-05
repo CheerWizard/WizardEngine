@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <core/FileSystem.h>
+#include <core/filesystem.h>
 #include <graphics/core/geometry/Mesh.h>
 
 #include <assimp/scene.h>
@@ -33,8 +33,8 @@ namespace engine::io {
         std::vector<ModelTexture> textures;
     };
 
-    typedef BaseMesh<ModelVertex> ModelMesh;
-    typedef BaseMeshComponent<ModelVertex> ModelMeshComponent;
+    typedef graphics::BaseMesh<ModelVertex> ModelMesh;
+    typedef graphics::BaseMeshComponent<ModelVertex> ModelMeshComponent;
 
     struct Model {
         ModelMeshComponent meshComponent;

@@ -7,9 +7,9 @@
 #include <graphics/core/io/TextureFile.h>
 #include <graphics/core/texture/Texture.h>
 
-#include "string"
+#include <string>
 
-namespace engine {
+namespace engine::graphics {
 
     class TextureBuffer final {
 
@@ -42,8 +42,8 @@ namespace engine {
         void loadTexture2d(const std::string_view& filename, const std::string_view& texturesPath);
         void loadCubeMap(const std::vector<TextureFace>& faces, const std::string_view& texturesPath);
         // loading texture data into tbo
-        void load(const TextureData &textureData);
-        void load(const TextureFaceType& faceType, const TextureData& textureData);
+        void load(const io::TextureData &textureData);
+        void load(const TextureFaceType& faceType, const io::TextureData& textureData);
         void setParams(const std::vector<TextureParam>& params) const;
 
     public:
@@ -51,7 +51,7 @@ namespace engine {
         static void activate(const uint32_t& slot);
 
     private:
-        uint32_t id;
-        uint32_t type;
+        u32 id;
+        u32 type;
     };
 }

@@ -4,7 +4,7 @@
 
 #include <graphics/text/Text.h>
 
-namespace engine {
+namespace engine::graphics {
 
     ShaderScript textProjectionScript() {
         auto script = ShaderScript();

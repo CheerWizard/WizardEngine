@@ -4,7 +4,7 @@
 
 #include <graphics/core/buffer_data/Buffer.h>
 
-namespace engine {
+namespace engine::graphics {
 
     void Buffer::setCount(const uint32_t &count) {
         this->count = count;

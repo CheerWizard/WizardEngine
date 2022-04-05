@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "UniformAttribute.h"
+#include <graphics/core/shader/UniformAttribute.h>
 
 namespace engine::shader {
 
@@ -12,7 +12,7 @@ namespace engine::shader {
 
     public:
         UniformBlockFormat() = default;
-        UniformBlockFormat(const uint32_t& id) : _id(id) {}
+        UniformBlockFormat(const u32& id) : _id(id) {}
         ~UniformBlockFormat();
 
     public:
@@ -46,14 +46,14 @@ namespace engine::shader {
         void add(std::vector<UniformAttribute> &attributes);
 
     public:
-        const UniformAttribute& operator [](const uint32_t &index) const {
+        const UniformAttribute& operator [](const u32 &index) const {
             return _attributes[index];
         }
 
     private:
-        uint32_t _id = 0;
+        u32 _id = 0;
         std::string _name;
-        std::vector<UniformAttribute> _attributes;
+        vector<UniformAttribute> _attributes;
 
     };
 
