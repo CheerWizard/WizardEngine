@@ -7,7 +7,7 @@
 
 #define GL_DEPTH_BITS 0x0D56
 
-namespace engine {
+namespace engine::graphics {
 
     GLenum toGLDrawType(const DrawType& drawType) {
         switch (drawType) {

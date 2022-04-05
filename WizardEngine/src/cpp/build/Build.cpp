@@ -4,16 +4,16 @@
 
 #include <build/Build.h>
 #include <core/filesystem.h>
-#include "sstream"
+#include <sstream>
 
-namespace engine {
+namespace engine::build {
 
     StringsMap Libs::map = {};
     StringsMap Objects::map = {};
     HModuleMap HModules::map = {};
 
     void Libs::generate(const std::string &libName) {
-        VoidTask<const std::string&> task = {
+        thread::VoidTask<const std::string&> task = {
                 "GenerateLib_Task",
                 "GenerateLib_Thread",
                 generateLib
@@ -23,7 +23,7 @@ namespace engine {
 
     void Libs::generateLib(const std::string &libName) {
         ENGINE_INFO("generateLib({0})", libName);
-        FileSystem::newDirectory("lib");
+        filesystem::newDirectory("lib");
         auto libPath = "lib/" + libName + ".so";
         // create dynamic .so library
         std::stringstream cmd;
@@ -47,7 +47,7 @@ namespace engine {
     }
 
     void Objects::compile(const std::string &srcPath) {
-        VoidTask<const std::string&> task = {
+        thread::VoidTask<const std::string&> task = {
                 "Compile_Task",
                 "Compile_Thread",
                 compileTask
@@ -57,8 +57,8 @@ namespace engine {
 
     void Objects::compileTask(const std::string &srcPath) {
         ENGINE_INFO("compileTask({0})", srcPath);
-        auto objectName = FileSystem::getFileName(srcPath);
-        FileSystem::newDirectory("objects");
+        auto objectName = filesystem::getFileName(srcPath);
+        filesystem::newDirectory("objects");
         auto objectPath = "objects/" + objectName + ".o";
         // compile code to Object file, using G++/GCC compiler.
         auto cmdCompile = "g++ -std=c++17 -c -o " + objectPath + " " + srcPath;
@@ -134,7 +134,7 @@ namespace engine {
     }
 
     void Executable::generate(const std::string &srcPath, std::string &exePath) {
-        VoidTask<const std::string&, std::string&> task = {
+        thread::VoidTask<const std::string&, std::string&> task = {
               "GenerateExe_Task",
               "GenerateExe_Thread",
               generateExe
@@ -155,7 +155,7 @@ namespace engine {
     }
 
     void Executable::run(const std::string &path) {
-        VoidTask<const std::string&> task = {
+        thread::VoidTask<const std::string&> task = {
                 "RunExe_Task",
                 "RunExe_Thread",
                 runExe

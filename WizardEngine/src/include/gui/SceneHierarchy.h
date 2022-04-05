@@ -60,7 +60,7 @@ namespace engine::gui {
     private:
         void draw(entt::registry& registry);
         void drawEntityNode(Entity &entity);
-        void drawComponents(Entity &entity);
+        static void drawComponents(Entity &entity);
 
     private:
         void destroy();

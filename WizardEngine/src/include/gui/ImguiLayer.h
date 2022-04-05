@@ -46,13 +46,13 @@ namespace engine::gui {
         static void hideDockSpace();
         static void toggleDockSpace();
 
-        void onKeyPressed(KeyCode keyCode) override;
-        void onKeyHold(KeyCode keyCode) override;
-        void onKeyReleased(KeyCode keyCode) override;
-        void onKeyTyped(KeyCode keyCode) override;
+        void onKeyPressed(event::KeyCode keyCode) override;
+        void onKeyHold(event::KeyCode keyCode) override;
+        void onKeyReleased(event::KeyCode keyCode) override;
+        void onKeyTyped(event::KeyCode keyCode) override;
         void onMouseScrolled(double xOffset, double yOffset) override;
-        void onMousePressed(MouseCode mouseCode) override;
-        void onMouseRelease(MouseCode mouseCode) override;
+        void onMousePressed(event::MouseCode mouseCode) override;
+        void onMouseRelease(event::MouseCode mouseCode) override;
         void onCursorMoved(double xPos, double yPos) override;
 
     private:

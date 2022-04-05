@@ -13,26 +13,24 @@
 namespace engine::graphics {
 
     struct VRenderModel {
-        uint32_t id = 0;
+        u8 id = 0;
         VertexArray vao;
         VertexBuffer vbo;
-
         VRenderModel(
-                const uint32_t &id,
-                const uint32_t& vertexCount
+                const u8 &id,
+                const u32& vertexCount
         ): id(id), vbo(vertexCount) {}
     };
 
     struct VIRenderModel {
-        uint32_t id = 0;
+        u8 id = 0;
         VertexArray vao;
         VertexBuffer vbo;
         IndexBuffer ibo;
-
         VIRenderModel(
-                const uint32_t &id,
-                const uint32_t& vertexCount,
-                const uint32_t& indexCount
+                const u8 &id,
+                const u32& vertexCount,
+                const u32& indexCount
         ): id(id), vbo(vertexCount), ibo(indexCount) {}
     };
 

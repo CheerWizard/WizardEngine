@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Scriptable.h"
+#include <scripting/Scriptable.h>
 
 namespace engine::scripting {
 

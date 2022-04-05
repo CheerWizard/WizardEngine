@@ -12,13 +12,13 @@
 
 #include <unordered_map>
 
-#define FONTS engine::Fonts::get()
+#define FONTS engine::io::Fonts::get()
 #define FONT_EXISTS(fontPath) FONTS.exists(fontPath)
 #define FONT_ABSENT(fontPath) !FONT_EXISTS(fontPath)
 #define GET_FONT(fontPath) FONTS.getFont(fontPath)
 #define GET_CHARACTER(fontPath, c) FONTS.getCharacter(fontPath, c)
 
-namespace engine::io {
+namespace engine::graphics {
 
     struct CharVertex {
         glm::vec2 position = { 0.5, 0.5 };
@@ -28,13 +28,16 @@ namespace engine::io {
     typedef BatchVertex<CharVertex> BatchCharVertex;
 
     struct Character {
-        VertexDataComponent<BatchCharVertex> vertexDataComponent;
+        graphics::VertexDataComponent<BatchCharVertex> vertexDataComponent;
         glm::vec2 size = { 0, 0 };
         glm::vec2 bearing = { 0, 0 };
         float advance = 0;
     };
 
     typedef std::unordered_map<char, Character> Characters;
+}
+
+namespace engine::io {
 
     class Fonts {
 
@@ -60,15 +63,16 @@ namespace engine::io {
                 const std::string& bitmapPath,
                 const std::string& widthsPath
         );
-        Characters& getFont(const std::string& fontPath);
-        Character& getCharacter(const std::string& fontPath, const char& c);
+        graphics::Characters& getFont(const std::string& fontPath);
+        graphics::Character& getCharacter(const std::string& fontPath, const char& c);
         void clear();
         bool exists(const std::string& fontPath);
 
     private:
         // key - font file path
         // value - characters map
-        std::unordered_map<std::string, Characters> fonts;
+        // todo we don't really need to store file path as key, instead we can generate a hash id or something similar!
+        std::unordered_map<std::string, graphics::Characters> fonts;
     };
 
 }

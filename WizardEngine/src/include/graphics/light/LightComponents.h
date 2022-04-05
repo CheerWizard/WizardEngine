@@ -8,7 +8,7 @@
 
 using namespace engine::shader;
 
-namespace engine {
+namespace engine::graphics {
 
     struct PhongLightComponent {
         const char* name = "phongLight";

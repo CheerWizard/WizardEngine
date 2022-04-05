@@ -2,9 +2,9 @@
 // Created by mecha on 25.09.2021.
 //
 
-#include <graphics/core/math/Projections.h>
+#include <math/Projections.h>
 
-namespace engine {
+namespace engine::math {
 
     void Projections::update(OrthographicMatrix &orthographicMatrix) {
         orthographicMatrix.isUpdated = true;

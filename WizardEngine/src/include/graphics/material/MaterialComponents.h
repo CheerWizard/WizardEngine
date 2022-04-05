@@ -10,7 +10,7 @@
 
 using namespace engine::shader;
 
-namespace engine {
+namespace engine::graphics {
 
     struct MaterialComponent {
         const char* name = "material";

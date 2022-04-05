@@ -9,6 +9,7 @@
 #include "MaterialComponents.h"
 
 namespace engine::shader {
+    using namespace graphics;
     ShaderScript materialScript();
     ShaderScript materialUboScript();
     ShaderScript materialArrayScript();

@@ -2,7 +2,7 @@
 // Created by mecha on 03.10.2021.
 //
 
-#include <imgui/SceneHierarchy.h>
+#include <gui/SceneHierarchy.h>
 #include <ecs/Components.h>
 #include <graphics/transform/TransformComponents.h>
 #include <graphics/light/LightComponents.h>
@@ -16,7 +16,7 @@
 #define BUTTON_HOVER_COLOR ImVec4 { 0.2f, 0.7f, 0.9f, 1 }
 #define BUTTON_PRESSED_COLOR ImVec4 { 0.1f, 0.6f, 0.8f, 1 }
 
-namespace engine {
+namespace engine::gui {
 
     void SceneHierarchy::drawEntityNode(Entity &entity) {
         auto& tag = entity.get<TagComponent>().tag;
@@ -369,7 +369,7 @@ namespace engine {
     }
 
     void drawTransformComponent(const Entity& entity) {
-        drawComponent<Transform3dComponent>("Transform", entity, [](Transform3dComponent& transform) {
+        drawComponent<graphics::Transform3dComponent>("Transform", entity, [](graphics::Transform3dComponent& transform) {
             bool isPosUpdated = false;
             bool isRotUpdated = false;
             bool isScaleUpdated = false;
@@ -386,7 +386,7 @@ namespace engine {
         });
     }
 
-    bool drawTextField(const char* label, std::string oldText, std::string& text) {
+    bool drawTextField(const char* label, std::string &oldText, std::string &text) {
         char buffer[256];
         memset(buffer, 0, sizeof(buffer));
         strncpy(buffer, text.c_str(), sizeof(buffer));
@@ -402,7 +402,7 @@ namespace engine {
         color.isUpdated = ImGui::ColorPicker4(color.name, toFloatPtr(color));
     }
 
-    void drawTransform3dController(Transform3dComponent& transform) {
+    void drawTransform3dController(graphics::Transform3dComponent& transform) {
         bool isPosUpdated = false;
         bool isRotUpdated = false;
         bool isScaleUpdated = false;
@@ -418,7 +418,7 @@ namespace engine {
         EDITOR_INFO("Transform is updated : {0}", transform.isUpdated);
     }
 
-    void drawTextComponent(TextComponent& textComponent) {
+    void drawTextComponent(graphics::TextComponent& textComponent) {
         drawTransform3dController(textComponent.transform);
         bool textUpdated = drawTextField("##Text", textComponent.text, textComponent.text);
         bool fontUpdated = drawTextField("##Font", textComponent.font, textComponent.font);
@@ -438,7 +438,8 @@ namespace engine {
     void SceneHierarchy::drawComponents(Entity &entity) {
         // draw tag component
         if (entity.has<TagComponent>()) {
-            drawTextField("##Tag", "", entity.get<TagComponent>().tag);
+            auto& tag = entity.get<TagComponent>().tag;
+            gui::drawTextField("##Tag", tag, tag);
 
             ImGui::SameLine();
             ImGui::PushItemWidth(-1);
@@ -452,19 +453,19 @@ namespace engine {
         // draw transform
         drawTransformComponent(entity);
         // draw light components
-        drawComponent<PhongLightComponent>("PhongLight", entity, [](PhongLightComponent& phongLight) {
+        drawComponent<graphics::PhongLightComponent>("PhongLight", entity, [](graphics::PhongLightComponent& phongLight) {
             drawVec3Controller(phongLight.position.name, phongLight.position, phongLight.position.isUpdated);
             drawVec3Controller(phongLight.ambient.name, phongLight.ambient, phongLight.ambient.isUpdated);
             drawVec3Controller(phongLight.diffuse.name, phongLight.diffuse, phongLight.diffuse.isUpdated);
             drawVec3Controller(phongLight.specular.name, phongLight.specular, phongLight.specular.isUpdated);
         });
-        drawComponent<DirectLightComponent>("DirectLight", entity, [](DirectLightComponent& directLight) {
+        drawComponent<graphics::DirectLightComponent>("DirectLight", entity, [](graphics::DirectLightComponent& directLight) {
             drawVec3Controller(directLight.direction.name, directLight.direction, directLight.direction.isUpdated);
             drawVec3Controller(directLight.ambient.name, directLight.ambient, directLight.ambient.isUpdated);
             drawVec3Controller(directLight.diffuse.name, directLight.diffuse, directLight.diffuse.isUpdated);
             drawVec3Controller(directLight.specular.name, directLight.specular, directLight.specular.isUpdated);
         });
-        drawComponent<PointLightComponent>("PointLight", entity, [](PointLightComponent& pointLight) {
+        drawComponent<graphics::PointLightComponent>("PointLight", entity, [](graphics::PointLightComponent& pointLight) {
             drawVec3Controller(pointLight.position.name, pointLight.position, pointLight.position.isUpdated);
             drawVec3Controller(pointLight.ambient.name, pointLight.ambient, pointLight.ambient.isUpdated);
             drawVec3Controller(pointLight.diffuse.name, pointLight.diffuse, pointLight.diffuse.isUpdated);
@@ -473,7 +474,7 @@ namespace engine {
             drawFloatSlider(pointLight.linear, {0, 1});
             drawFloatSlider(pointLight.quadratic, {0, 2});
         });
-        drawComponent<FlashLightComponent>("FlashLight", entity, [](FlashLightComponent& flashLight) {
+        drawComponent<graphics::FlashLightComponent>("FlashLight", entity, [](graphics::FlashLightComponent& flashLight) {
             drawVec3Controller(flashLight.position.name, flashLight.position, flashLight.position.isUpdated);
             drawVec3Controller(flashLight.direction.name, flashLight.direction, flashLight.direction.isUpdated);
             drawFloatSlider(flashLight.cutoff, {0, 1});
@@ -486,7 +487,7 @@ namespace engine {
             drawFloatSlider(flashLight.quadratic, {0, 2});
         });
         // draw material components
-        drawComponent<MaterialComponent>("Material", entity, [](MaterialComponent& material) {
+        drawComponent<graphics::MaterialComponent>("Material", entity, [](graphics::MaterialComponent& material) {
             drawFloatSlider(material.ambient);
             drawFloatSlider(material.diffuse);
             drawCheckBox(material.diffuseMapEnabled);
@@ -496,20 +497,20 @@ namespace engine {
             material.color.isUpdated = ImGui::ColorPicker4(material.color.name, toFloatPtr(material.color));
         });
         // draw outline component
-        drawComponent<OutlineComponent>("Outlining", entity, [](OutlineComponent& outline) {
+        drawComponent<graphics::OutlineComponent>("Outlining", entity, [](graphics::OutlineComponent& outline) {
             drawFloatSlider(outline.thickness, { 0, 0.1 });
             outline.color.isUpdated = ImGui::ColorPicker4(outline.color.name, toFloatPtr(outline.color));
         });
         // draw text components
-        drawComponent<Text2d>("Text2D", entity, [](Text2d& textComponent) {
+        drawComponent<graphics::Text2d>("Text2D", entity, [](graphics::Text2d& textComponent) {
             drawTextComponent(textComponent);
         });
-        drawComponent<Text3d>("Text3D", entity, [](Text3d& textComponent) {
+        drawComponent<graphics::Text3d>("Text3D", entity, [](graphics::Text3d& textComponent) {
             drawTextComponent(textComponent);
         });
     }
 
-    void SceneHierarchy::onUpdate(Time dt) {
+    void SceneHierarchy::onUpdate(time::Time dt) {
         ImGui::Begin(_props.name);
 
         draw(_scene->getRegistry());

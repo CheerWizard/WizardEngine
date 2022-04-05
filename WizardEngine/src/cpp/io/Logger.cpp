@@ -7,14 +7,14 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
-namespace engine {
+namespace engine::io {
 
     Ref<Log> Logger::_runtimeLogger = nullptr;
     Ref<Log> Logger::_engineLogger = nullptr;
     Ref<Log> Logger::_editorLogger = nullptr;
 
     void Logger::createEngineLogger(const std::string &name) {
-        if (_engineLogger != nullptr) {
+        if (_engineLogger) {
             ENGINE_WARN("Engine logger is already created!");
             return;
         }
@@ -22,7 +22,7 @@ namespace engine {
     }
 
     void Logger::createRuntimeLogger(const std::string &name) {
-        if (_runtimeLogger != nullptr) {
+        if (_runtimeLogger) {
             ENGINE_WARN("Runtime logger is already created!");
             return;
         }
@@ -30,7 +30,7 @@ namespace engine {
     }
 
     void Logger::createEditorLogger(const std::string &name) {
-        if (_editorLogger != nullptr) {
+        if (_editorLogger) {
             ENGINE_WARN("Editor logger is already created!");
             return;
         }

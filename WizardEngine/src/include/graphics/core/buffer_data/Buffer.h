@@ -4,24 +4,26 @@
 
 #pragma once
 
-#include <cstdint>
+#include <core/primitives.h>
 
 namespace engine::graphics {
+
+    using namespace core;
 
     class Buffer {
 
     public:
-        Buffer(const uint32_t& totalCount) : totalCount(totalCount) {}
+        Buffer(const u32& totalCount) : totalCount(totalCount) {}
         ~Buffer() = default;
 
     public:
-        void setCount(const uint32_t& count);
-        void increaseCount(const uint32_t& count);
-        [[nodiscard]] bool hasCapacity(const uint32_t& count) const;
+        void setCount(const u32& count);
+        void increaseCount(const u32& count);
+        [[nodiscard]] bool hasCapacity(const u32& count) const;
 
     protected:
-        uint32_t totalCount;
-        uint32_t count = 0;
+        u32 totalCount;
+        u32 count = 0;
 
     };
 

@@ -4,11 +4,10 @@
 
 #pragma once
 
-#include <scripting/ScriptComponents.h>
-
-#include <tools/Tools.h>
-#include <build/Build.h>
 #include <core/filesystem.h>
+#include <scripting/ScriptComponents.h>
+#include <tools/terminal.h>
+#include <build/Build.h>
 
 #define ENGINE_LIB_PATH "../WizardEngine/WizardEngine.lib"
 #define SCRIPT_MAKE_FILE_PATH "../ScriptDLL/CMakeLists.txt"
@@ -16,8 +15,8 @@
 #ifdef WIN32
 #define SCRIPT_LIB_PATH "../ScriptDLL/Debug/ScriptDLL.dll"
 #define SCRIPT_PROJECT_PATH "../ScriptDLL/ScriptDLL.sln"
-#define SCRIPT_PROJECT_BUILD engine::tools::msBuild(SCRIPT_PROJECT_PATH)
-#define SCRIPT_PROJECT_GENERATE engine::tools::cmake(SCRIPT_MAKE_FILE_PATH)
+#define SCRIPT_PROJECT_BUILD engine::terminal::msBuild(SCRIPT_PROJECT_PATH)
+#define SCRIPT_PROJECT_GENERATE engine::terminal::cmake(SCRIPT_MAKE_FILE_PATH)
 #endif
 
 namespace engine::scripting {

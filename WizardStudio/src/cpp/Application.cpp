@@ -10,7 +10,7 @@
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/GraphicsObject.h>
 
-engine::core::Application* engine::createApplication() {
+engine::core::Application* engine::core::createApplication() {
     EDITOR_INFO("Creating Application...");
     return new studio::Application();
 }
@@ -36,7 +36,7 @@ namespace studio {
 
         auto* activity = new Activity(
                 this,
-                engine::ImGuiLayerProps {
+                ImGuiLayerProps {
                     getWindowWidth(),
                     getWindowHeight()
                 }
@@ -47,8 +47,8 @@ namespace studio {
 //        createTest();
     }
 
-    engine::WindowProps Application::createWindowProps() {
-        return engine::WindowProps {
+    WindowProps Application::createWindowProps() {
+        return WindowProps {
             "Wizard Studio"
         };
     }
@@ -56,13 +56,13 @@ namespace studio {
     void Application::createTest() {
         auto scene1 = activeScene;
 
-        engine::Camera3D {
+        Camera3D {
                 "SceneCamera",
                 getAspectRatio(),
                 scene1.get()
         };
 
-        scene1->setSkybox(engine::SkyboxCube(
+        scene1->setSkybox(SkyboxCube(
                 "Skybox",
                 scene1.get(),
                 CubeMapTextureComponent {

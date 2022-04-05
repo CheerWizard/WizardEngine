@@ -6,7 +6,7 @@
 #include "glad/glad.h"
 #include <array>
 
-namespace engine {
+namespace engine::graphics {
 
     void toGLTextureType(const TextureType& textureType, GLenum& glTextureType) {
         switch (textureType) {
@@ -94,7 +94,7 @@ namespace engine {
     }
 
     void TextureBuffer::loadTexture2d(const std::string_view& filename, const std::string_view &texturesPath) {
-        auto textureData = TextureFile::read(filename, texturesPath);
+        auto textureData = io::TextureFile::read(filename, texturesPath);
 
         if (textureData.data == nullptr) {
             ENGINE_WARN("Can't stream texture {0} from NULL data!", filename);
@@ -102,7 +102,7 @@ namespace engine {
             load(textureData);
         }
 
-        TextureFile::free(textureData.data);
+        io::TextureFile::free(textureData.data);
     }
 
     void TextureBuffer::loadCubeMap(
@@ -110,7 +110,7 @@ namespace engine {
             const std::string_view &texturesPath
     ) {
         for (auto& face : faces) {
-            auto textureData = TextureFile::read(face.fileName, texturesPath);
+            auto textureData = io::TextureFile::read(face.fileName, texturesPath);
 
             if (textureData.data == nullptr) {
                 ENGINE_WARN("Can't stream texture {0} from NULL data!", face.fileName);
@@ -118,7 +118,7 @@ namespace engine {
                 load(face.type, textureData);
             }
 
-            TextureFile::free(textureData.data);
+            io::TextureFile::free(textureData.data);
         }
 
         setParams({
@@ -130,7 +130,7 @@ namespace engine {
         });
     }
 
-    void TextureBuffer::load(const TextureData &textureData) {
+    void TextureBuffer::load(const io::TextureData &textureData) {
         GLenum internalFormat = 0, dataFormat = 0;
         int channels = textureData.channels, width = textureData.width, height = textureData.height;
 
@@ -164,7 +164,7 @@ namespace engine {
         glTextureSubImage2D(id, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
     }
 
-    void TextureBuffer::load(const TextureFaceType &faceType, const TextureData &textureData) {
+    void TextureBuffer::load(const TextureFaceType &faceType, const io::TextureData &textureData) {
         GLint internalFormat = 0, dataFormat = 0;
         int channels = textureData.channels, width = textureData.width, height = textureData.height;
 

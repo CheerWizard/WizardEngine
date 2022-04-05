@@ -7,7 +7,7 @@
 #include <ecs/Entity.h>
 #include "LightComponents.h"
 
-namespace engine {
+namespace engine::graphics {
 
     class PhongLight : public Entity {
 

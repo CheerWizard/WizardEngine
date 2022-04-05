@@ -5,7 +5,7 @@
 #include <platform/core/Input.h>
 #include <GLFW/glfw3.h>
 
-namespace engine::core {
+namespace engine::event {
 
     bool Input::isKeyPressed(KeyCode keyCode) {
         auto state = glfwGetKey((GLFWwindow*) nativeWindow, keyCode);

@@ -13,7 +13,7 @@
 #include <platform/core/Window.h>
 #include <platform/core/Input.h>
 #include <platform/tools/FileDialog.h>
-#include <platform/graphics/GraphicsInitializer.h>
+#include <platform/graphics/Context.h>
 
 #include <graphics/core/RenderSystem.h>
 #include <graphics/core/sources/MeshSource.h>
@@ -24,20 +24,20 @@
 
 namespace engine::core {
 
+    // The entry point in core hierarchy, behaves as singleton.
+    // It's standalone class, which can NOT be created several times and should be created only once!
     class Application {
 
     public:
-        Application() = default;
-        virtual ~Application() = default;
+        Application();
+        virtual ~Application();
 
     public:
         void run();
-        void shutdown();
 
     public:
         static inline Application& get() {
-            static Application instance;
-            return instance;
+            return *instance;
         }
 
         inline const Scope<Window>& getWindow() {
@@ -54,8 +54,8 @@ namespace engine::core {
         void onKeyReleased(event::KeyCode keyCode);
         void onKeyTyped(event::KeyCode keyCode);
         // input mouse events
-        void onMousePressed(event::KeyCode mouseCode);
-        void onMouseRelease(event::KeyCode mouseCode);
+        void onMousePressed(event::MouseCode mouseCode);
+        void onMouseRelease(event::MouseCode mouseCode);
         void onMouseScrolled(double xOffset, double yOffset);
         // input mouse cursor events
         void onCursorMoved(double xPos, double yPos);
@@ -76,7 +76,7 @@ namespace engine::core {
         uint32_t getRefreshRate();
         void* getNativeWindow();
         void setWindowIcon(const std::string &filePath);
-        Ref<FileDialog> createFileDialog();
+        Ref<tools::FileDialog> createFileDialog();
         void setSampleSize(const uint32_t& samples);
         void setActiveScene(const Ref<Scene>& activeScene);
         void setActiveScene(const uint32_t& activeSceneId);
@@ -86,6 +86,7 @@ namespace engine::core {
         void pushBack(Layer* overlay);
 
     private:
+        void shutdown();
         void restart();
         void onUpdate();
         void updateRuntime(time::Time dt);
@@ -94,7 +95,7 @@ namespace engine::core {
         void createScripting();
 
     public:
-        Scope<Input> input;
+        Scope<event::Input> input;
         std::vector<Ref<Scene>> scenes;
         Ref<Scene> activeScene;
         Ref<FrameBuffer> activeSceneFrame;
@@ -103,14 +104,17 @@ namespace engine::core {
         event::EventRegistry eventController;
 
     private:
+        static Application* instance;
+
+    private:
         bool _isRunning = true;
         // core systems
-        LayerStack _layerStack; // todo consider remove LayerStack. Instead create an Activity class.
+        LayerStack _layerStack; // todo consider remove LayerStack. Instead replace with Activity class.
         Scope<Window> _window;
         // graphics system
         Scope<RenderSystem> _renderSystem;
         // scripting system
-        Scope<ScriptSystem> _scriptSystem;
+        Scope<scripting::ScriptSystem> _scriptSystem;
     };
 
     Application* createApplication();

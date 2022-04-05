@@ -4,10 +4,10 @@
 
 #include <scripting/ScriptBuilder.h>
 
-namespace engine {
+namespace engine::scripting {
 
     void ScriptBuilder::init(const ScriptBuildProps &scriptBuildProps) {
-        VoidTask<const ScriptBuildProps&> task = {
+        thread::VoidTask<const ScriptBuildProps&> task = {
                 "ScriptBuildInit_Task",
                 "ScriptBuildInit_Thread",
                 initTask
@@ -16,15 +16,15 @@ namespace engine {
     }
 
     void ScriptBuilder::initTask(const ScriptBuildProps &scriptBuildProps) {
-        if (!FileSystem::exists(SCRIPT_LIB_PATH)) {
+        if (!filesystem::exists(SCRIPT_LIB_PATH)) {
             rebuild();
         }
-        engine::Libs::add("ScriptDLL", SCRIPT_LIB_PATH);
-        engine::createFunction("ScriptDLL", "initLogs", scriptBuildProps.engineLoggerName, scriptBuildProps.runtimeLoggerName);
+        build::Libs::add("ScriptDLL", SCRIPT_LIB_PATH);
+        build::createFunction("ScriptDLL", "initLogs", scriptBuildProps.engineLoggerName, scriptBuildProps.runtimeLoggerName);
     }
 
     void ScriptBuilder::rebuildTask() {
-        VoidTask<> task = {
+        thread::VoidTask<> task = {
                 "ScriptRebuild_Task",
                 "ScriptRebuild_Thread",
                 rebuild
@@ -33,17 +33,17 @@ namespace engine {
     }
 
     void ScriptBuilder::rebuild() {
-        if (!FileSystem::exists(SCRIPT_PROJECT_PATH)) {
+        if (!filesystem::exists(SCRIPT_PROJECT_PATH)) {
             SCRIPT_PROJECT_GENERATE;
         }
-        if (!FileSystem::exists("../ScriptDLL/WizardEngine.lib")) {
-            FileSystem::copy(ENGINE_LIB_PATH, "../ScriptDLL/WizardEngine.lib");
+        if (!filesystem::exists("../ScriptDLL/WizardEngine.lib")) {
+            filesystem::copy(ENGINE_LIB_PATH, "../ScriptDLL/WizardEngine.lib");
         }
         SCRIPT_PROJECT_BUILD;
     }
 
     void ScriptBuilder::addDLLScript(Entity &entity, const std::string &scriptName) {
-        auto dllScript = engine::createObject<Scriptable>("ScriptDLL", "create" + scriptName);
+        auto dllScript = build::createObject<Scriptable>("ScriptDLL", "create" + scriptName);
         if (dllScript) {
             dllScript->entity = entity;
             dllScript->onCreate();

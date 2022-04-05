@@ -5,7 +5,7 @@
 #include <graphics/core/texture/Texture.h>
 #include <graphics/core/sources/TextureSource.h>
 
-namespace engine {
+namespace engine::graphics {
 
     ShaderScript textureScript() {
         auto script = ShaderScript();

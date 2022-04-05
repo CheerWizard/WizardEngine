@@ -4,17 +4,19 @@
 
 #pragma once
 
-#include <cstdint>
+#include <core/primitives.h>
 #include <functional>
 #include <glm/glm.hpp>
 
 namespace engine::math {
+    using namespace core;
+
     void random(
-            const int& minRange,
-            const int& maxRange,
-            const uint32_t& count,
-            const std::function<void(const uint32_t& i, const float& random)>& callback
+            const s32& minRange,
+            const s32& maxRange,
+            const u32& count,
+            const std::function<void(const u32& i, const f32& random)>& callback
     );
-    float random(const double& minRange, const double& maxRange);
-    float random(const int& minRange, const int& maxRange);
+    f32 random(const double& minRange, const double& maxRange);
+    f32 random(const s32& minRange, const s32& maxRange);
 }

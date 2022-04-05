@@ -6,7 +6,7 @@
 
 #include <chrono>
 
-#define MILLIS(millis) ms(millis)
+#define MILLIS(millis) time::ms(millis)
 #define NANO_UNIT 1.0E-9
 #define MILLI_UNIT 1000.0f
 

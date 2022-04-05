@@ -6,7 +6,7 @@
 
 #include <scripting/ScriptSystem.h>
 
-namespace engine {
+namespace engine::scripting {
 
     void ScriptSystem::onUpdate(Time dt) {
         auto& registry = activeScene->getRegistry();

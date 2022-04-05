@@ -5,12 +5,12 @@
 #pragma once
 
 #include <ecs/Entity.h>
-#include <graphics/core/math/Projections.h>
+#include <math/Projections.h>
 #include <graphics/transform/TransformComponents.h>
 #include <graphics/core/texture/Texture.h>
 #include <graphics/camera/CameraComponents.h>
 
-namespace engine {
+namespace engine::graphics {
 
     struct TextComponent {
         std::string text;
@@ -82,7 +82,7 @@ namespace engine {
             add<Text2d>(text);
             auto textProjection = TextProjection(aspectRatio);
             textProjection.viewMatrix.position.value = {0, 0, -1};
-            ViewProjections::update(textProjection);
+            math::ViewProjections::update(textProjection);
             add<TextProjection>(textProjection);
         }
     };

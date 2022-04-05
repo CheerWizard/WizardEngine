@@ -8,8 +8,8 @@
 
 namespace engine::gui {
 
-    static inline float Convert_sRGB_FromLinear(float theLinearValue);
-    static inline float Convert_sRGB_ToLinear(float thesRGBValue);
+    float Convert_sRGB_FromLinear(float theLinearValue);
+    float Convert_sRGB_ToLinear(float thesRGBValue);
     ImVec4 ConvertFromSRGB(ImVec4 colour);
     ImVec4 ConvertToSRGB(ImVec4 colour);
 

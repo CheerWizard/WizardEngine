@@ -5,7 +5,7 @@
 #include <time/FpsController.h>
 #include <io/Logger.h>
 
-namespace engine {
+namespace engine::time {
 
     void FpsController::begin() {
         ENGINE_INFO("FpsController: begin()");

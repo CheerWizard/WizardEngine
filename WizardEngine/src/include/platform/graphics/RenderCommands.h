@@ -4,13 +4,13 @@
 
 #pragma once
 
+#include <core/primitives.h>
 #include <io/Logger.h>
 #include <graphics/core/buffer_data/VertexData.h>
-#include "cstdint"
 
-namespace engine {
+namespace engine::graphics {
 
-    struct Color { float r,g,b,a; };
+    struct Color { f32 r,g,b,a; };
 
     enum TestOperator {
         ALWAYS, NEVER,

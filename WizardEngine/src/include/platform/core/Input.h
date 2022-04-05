@@ -4,11 +4,13 @@
 
 #pragma once
 
+#include <core/primitives.h>
 #include <event/KeyCodes.h>
 #include <event/MouseCodes.h>
-#include <core/primitives.h>
 
-namespace engine::core {
+namespace engine::event {
+
+    using namespace core;
 
     struct MousePosition {
         f32 x;

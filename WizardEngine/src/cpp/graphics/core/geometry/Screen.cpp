@@ -4,7 +4,7 @@
 
 #include <graphics/core/geometry/Screen.h>
 
-namespace engine {
+namespace engine::graphics {
 
     Screen::Screen() {
         auto vertices = new ScreenVertex[4] {

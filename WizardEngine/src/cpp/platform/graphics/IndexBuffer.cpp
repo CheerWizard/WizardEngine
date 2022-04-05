@@ -4,9 +4,9 @@
 
 #include <platform/graphics/IndexBuffer.h>
 
-#include "glad/glad.h"
+#include <glad/glad.h>
 
-namespace engine {
+namespace engine::graphics {
 
     void IndexBuffer::create() {
         glGenBuffers(1, &id);

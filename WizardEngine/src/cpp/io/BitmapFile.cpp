@@ -5,7 +5,7 @@
 #include <io/BitmapFile.h>
 #include <io/Logger.h>
 
-namespace engine {
+namespace engine::io {
 
     // convert normal buffer to bitmap buffer
     uint8_t* toBitmapBuffer(const BitmapData& bitmapData) {

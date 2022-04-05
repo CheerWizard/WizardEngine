@@ -6,7 +6,7 @@
 
 #include <core/String.h>
 
-namespace engine {
+namespace engine::tools {
 
     class FileDialog {
 
@@ -21,9 +21,8 @@ namespace engine {
         std::string getImportPath(const char* filter);
         std::string getExportPath(const char* filter);
 
-    protected:
+    private:
         void* nativeWindow;
-
     };
 
 }

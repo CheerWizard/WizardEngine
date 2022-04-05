@@ -9,6 +9,8 @@
 
 namespace engine::scripting {
 
+    using namespace core;
+
     class ScriptSystem {
 
     public:
@@ -20,13 +22,12 @@ namespace engine::scripting {
         void onDestroy();
 
     public:
-        inline void setActiveScene(const core::Ref<Scene> &activeScene) {
+        inline void setActiveScene(const Ref<Scene> &activeScene) {
             this->activeScene = activeScene;
         }
 
     private:
-        core::Ref<Scene> activeScene = nullptr;
-
+        Ref<Scene> activeScene = nullptr;
     };
 
 }

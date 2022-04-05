@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include <graphics/core/math/ModelMatrices.h>
+#include <math/ModelMatrices.h>
 
 #define DEFAULT_TRANSFORM_NAME "transform"
 
-namespace engine {
-    typedef ModelMatrix2d Transform2dComponent;
-    typedef ModelMatrix3d Transform3dComponent;
+namespace engine::graphics {
+    typedef math::ModelMatrix2d Transform2dComponent;
+    typedef math::ModelMatrix3d Transform3dComponent;
 
     Transform2dComponent transform2d();
     Transform3dComponent transform3d();

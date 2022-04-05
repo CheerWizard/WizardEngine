@@ -81,19 +81,19 @@ namespace engine::shader {
         // with using default constructor, you should call construct() function manually!
         BaseShaderProgram() = default;
 
-        BaseShaderProgram(const ShaderProps &props) {
+        BaseShaderProgram(const io::ShaderProps &props) {
             construct(props);
         }
 
         BaseShaderProgram(
-                const ShaderProps &props,
+                const io::ShaderProps &props,
                 const BaseShader &vShader
         ) : _vShader(vShader) {
             construct(props);
         }
 
         BaseShaderProgram(
-                const ShaderProps &props,
+                const io::ShaderProps &props,
                 const BaseShader &vShader,
                 const BaseShader &fShader
         ) : _vShader(vShader), _fShader(fShader) {
@@ -101,7 +101,7 @@ namespace engine::shader {
         }
 
         BaseShaderProgram(
-                const ShaderProps &props,
+                const io::ShaderProps &props,
                 const BaseShader &vShader,
                 const BaseShader &fShader,
                 const BaseShader &gShader
@@ -129,7 +129,7 @@ namespace engine::shader {
         }
 
     public:
-        void construct(const ShaderProps& props);
+        void construct(const io::ShaderProps& props);
         void detachShaders();
         void releaseShaders();
         bool invalidate();

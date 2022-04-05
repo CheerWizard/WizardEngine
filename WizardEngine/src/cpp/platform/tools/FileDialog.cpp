@@ -6,10 +6,10 @@
 #include <platform/tools/FileDialog.h>
 #include <Windows.h>
 #include <GLFW/glfw3.h>
-#define GLFW_EXPOSE_NATIVE_WIN32
+#define GLFW_EXPOSE_NATIVE_WIN32 // avoids "include" conflicts
 #include <GLFW/glfw3native.h>
 
-namespace engine {
+namespace engine::tools {
 
     std::string FileDialog::getImportPath(const char *filter) {
         OPENFILENAMEA ofn;

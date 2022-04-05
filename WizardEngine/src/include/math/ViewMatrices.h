@@ -33,16 +33,7 @@ namespace engine::math {
         }
     };
 
-    class ViewMatrices {
-
-    private:
-        ViewMatrices() = default;
-        ~ViewMatrices() = default;
-
-    public:
-        static void update(ViewMatrix2d &viewMatrix2D);
-        static void update(ViewMatrix3d &viewMatrix3D);
-
-    };
+    void update(ViewMatrix2d &viewMatrix2D);
+    void update(ViewMatrix3d &viewMatrix3D);
 
 }

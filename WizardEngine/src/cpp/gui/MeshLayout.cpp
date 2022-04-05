@@ -2,12 +2,11 @@
 // Created by mecha on 07.10.2021.
 //
 
-#include <imgui/MeshLayout.h>
-#include <graphics/transform/TransformComponents.h>
+#include <gui/MeshLayout.h>
 
 #include "imgui.h"
 
-namespace engine {
+namespace engine::gui {
 
     void MeshLayout::create() {
         setCallback(this);
@@ -24,37 +23,37 @@ namespace engine {
         _cameraController->onWindowResized(width, height);
     }
 
-    void MeshLayout::onKeyPressed(KeyCode keyCode) {
+    void MeshLayout::onKeyPressed(event::KeyCode keyCode) {
         if (_isFocused) {
             _cameraController->onKeyPressed(keyCode);
         }
     }
 
-    void MeshLayout::onKeyHold(KeyCode keyCode) {
+    void MeshLayout::onKeyHold(event::KeyCode keyCode) {
         if (_isFocused) {
             _cameraController->onKeyHold(keyCode);
         }
     }
 
-    void MeshLayout::onKeyReleased(KeyCode keyCode) {
+    void MeshLayout::onKeyReleased(event::KeyCode keyCode) {
         if (_isFocused) {
             _cameraController->onKeyReleased(keyCode);
         }
     }
 
-    void MeshLayout::onKeyTyped(KeyCode keyCode) {
+    void MeshLayout::onKeyTyped(event::KeyCode keyCode) {
         if (_isFocused) {
             _cameraController->onKeyTyped(keyCode);
         }
     }
 
-    void MeshLayout::rotateEntity(const Time &dt) {
-        auto& transform = _entity.get<Transform3dComponent>();
+    void MeshLayout::rotateEntity(const time::Time &dt) {
+        auto& transform = _entity.get<graphics::Transform3dComponent>();
         transform.rotation.y += 0.000025f / dt;
         updateModel3d(transform);
     }
 
-    void MeshLayout::onRender(const Time &dt) {
+    void MeshLayout::onRender(const time::Time &dt) {
         id = _frame->getColorAttachment(0).id;
 
         _cameraController->setDeltaTime(dt);
@@ -65,26 +64,26 @@ namespace engine {
 
         _frame->bind();
         // enables transparency
-        setBlendMode(true);
-        setBlendFunction(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
+        graphics::setBlendMode(true);
+        graphics::setBlendFunction(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
         // write to stencil buffer
-        setClearColor({0.2, 0.2, 0.2, 1});
-        setDepthTest(true);
-        setStencilTest(true);
-        setStencilTestActions({ KEEP, KEEP, REPLACE });
-        clearStencilBuffer();
-        setStencilTestOperator(ALWAYS, 1, false);
-        stencilMask(false);
+        graphics::setClearColor({0.2, 0.2, 0.2, 1});
+        graphics::setDepthTest(true);
+        graphics::setStencilTest(true);
+        graphics::setStencilTestActions({ KEEP, KEEP, REPLACE });
+        graphics::clearStencilBuffer();
+        graphics::setStencilTestOperator(ALWAYS, 1, false);
+        graphics::stencilMask(false);
 
         _renderer->render<Transform3dComponent, io::ModelVertex>(_entity);
 
         // stop write to stencil buffer
-        setStencilTestOperator(NOT_EQUAL, 1, false);
-        stencilMask(true);
-        setDepthTest(false);
+        graphics::setStencilTestOperator(NOT_EQUAL, 1, false);
+        graphics::stencilMask(true);
+        graphics::setDepthTest(false);
 
-        FrameBuffer::bindDefault();
-        clearColorBuffer();
+        graphics::FrameBuffer::bindDefault();
+        graphics::clearColorBuffer();
 
         if (ImGui::Button("Auto-Rotate", { 120, 36 })) {
             setRotateEntity(!_shouldRotateEntity);

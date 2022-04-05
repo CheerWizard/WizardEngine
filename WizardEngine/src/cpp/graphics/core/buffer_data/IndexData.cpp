@@ -4,7 +4,7 @@
 
 #include <graphics/core/buffer_data/IndexData.h>
 
-namespace engine {
+namespace engine::graphics {
 
     IndexData copy(const IndexData &indexData) {
         auto* copyIndices = new uint32_t[indexData.indexCount];

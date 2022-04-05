@@ -2,9 +2,9 @@
 // Created by mecha on 23.09.2021.
 //
 
-#include <graphics/core/math/ModelMatrices.h>
+#include <math/ModelMatrices.h>
 
-namespace engine {
+namespace engine::math {
 
     void updateModel2d(ModelMatrix2d &modelMatrix2D) {
         modelMatrix2D.isUpdated = true;

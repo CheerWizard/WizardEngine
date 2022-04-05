@@ -80,8 +80,8 @@ namespace engine::io {
             }
         }
 
-        VertexData<ModelVertex> vertexData = { vertices, 0, mesh->mNumVertices };
-        IndexData indexData = {
+        graphics::VertexData<ModelVertex> vertexData = { vertices, 0, mesh->mNumVertices };
+        graphics::IndexData indexData = {
                 engine::core::map(indicesVector),
                 0,
                 static_cast<uint32_t>(indicesVector.size())

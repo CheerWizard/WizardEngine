@@ -6,13 +6,13 @@
 #include <io/Logger.h>
 #include <core/filesystem.h>
 #include <build/Build.h>
-#include <tools/Tools.h>
+#include <tools/terminal.h>
 #include <sstream>
 
-namespace engine {
+namespace engine::build {
 
     void ProjectBuilder::buildTask(const Platform &platform) {
-        VoidTask<const Platform&> task = {
+        thread::VoidTask<const Platform&> task = {
                 "PlatformBuild_Task",
                 "PlatformBuild_Thread",
                 buildPlatform
@@ -24,16 +24,16 @@ namespace engine {
         ENGINE_INFO("build({0}, {1})", platform.osPath, platform.gvPath);
         // replace OS cpp packages into platform
         std::string platformCppPath(PLATFORM_CPP_PATH);
-        FileSystem::replace(platform.osPath + "/core", platformCppPath + "/core");
-        FileSystem::replace(platform.osPath + "/tools", platformCppPath + "/tools");
+        filesystem::replace(platform.osPath + "/core", platformCppPath + "/core");
+        filesystem::replace(platform.osPath + "/tools", platformCppPath + "/tools");
         // replace graphics vendor packages into platform
-        FileSystem::replace(platform.gvPath + "/graphics", platformCppPath + "/graphics");
+        filesystem::replace(platform.gvPath + "/graphics", platformCppPath + "/graphics");
         // build WizardEngine project
         build(ENGINE_CMAKE_PATH, ENGINE_PROJECT_PATH);
     }
 
     void ProjectBuilder::buildTask(const ProjectProps& projectProps) {
-        VoidTask<const ProjectProps&> task = {
+        thread::VoidTask<const ProjectProps&> task = {
                 "ProjectBuild_Task",
                 "ProjectBuild_Thread",
                 buildProject
@@ -55,10 +55,10 @@ namespace engine {
     }
 
     void ProjectBuilder::build(const std::string &cmakePath, const std::string& projectPath) {
-        if (!FileSystem::exists(projectPath)) {
-            Tools::cmake(cmakePath, { "DEBUG" });
+        if (!filesystem::exists(projectPath)) {
+            terminal::cmake(cmakePath, { "DEBUG" });
         }
-        Tools::msBuild(projectPath);
+        terminal::msBuild(projectPath);
     }
 
     void ProjectBuilder::runProject(const ProjectProps& projectProps) {
@@ -73,7 +73,7 @@ namespace engine {
     }
 
     void ProjectBuilder::runProjectTask(const ProjectProps &projectProps) {
-        VoidTask<const ProjectProps&> task = {
+        thread::VoidTask<const ProjectProps&> task = {
                 "RunProject_Task",
                 "RunProject_Thread",
                 runProject
@@ -82,7 +82,7 @@ namespace engine {
     }
 
     void ProjectBuilder::run(const ProjectProps &projectProps, const std::string& buildPath) {
-        if (!FileSystem::exists(buildPath)) {
+        if (!filesystem::exists(buildPath)) {
             buildProject(projectProps);
         }
         Executable::run(buildPath);

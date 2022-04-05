@@ -5,9 +5,10 @@
 #pragma once
 
 #include <graphics/core/shader/BaseShader.h>
-#include "LightComponents.h"
+#include <graphics/light/LightComponents.h>
 
-namespace engine::shader {
+namespace engine::graphics {
+    using namespace shader;
     ShaderScript phongLightScript();
     ShaderScript phongLightUboScript();
     ShaderScript pointLightScript();
@@ -19,7 +20,7 @@ namespace engine::shader {
     ShaderScript flashLightUboScript();
     void updateLight(const BaseShader& shader, PhongLightComponent& light);
     void updateLight(const BaseShader& shader, PointLightComponent& light);
-    void updateLight(const BaseShader& shader, PointLightComponent& light, const uint32_t& index);
+    void updateLight(const BaseShader& shader, PointLightComponent& light, const u32& index);
     void updateLight(const BaseShader& shader, DirectLightComponent& light);
     void updateLight(const BaseShader& shader, FlashLightComponent& light);
     void updateUboLight(const BaseShader& shader, PhongLightComponent& light);

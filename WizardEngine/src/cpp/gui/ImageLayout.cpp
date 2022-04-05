@@ -2,13 +2,12 @@
 // Created by mecha on 01.10.2021.
 //
 
-#include <imgui/ImageLayout.h>
-#include <event/MouseCodes.h>
+#include <gui/ImageLayout.h>
 #include <imgui.h>
 
-namespace engine {
+namespace engine::gui {
 
-    void ImageLayout::onUpdate(Time dt) {
+    void ImageLayout::onUpdate(time::Time dt) {
         if (!_isVisible) return;
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2 {0 , 0});
@@ -42,11 +41,11 @@ namespace engine {
         removeCallback();
     }
 
-    void ImageLayout::onMousePressed(MouseCode mouseCode) {
+    void ImageLayout::onMousePressed(event::MouseCode mouseCode) {
         _isHoldingMouse = true;
     }
 
-    void ImageLayout::onMouseRelease(MouseCode mouseCode) {
+    void ImageLayout::onMouseRelease(event::MouseCode mouseCode) {
         _isHoldingMouse = false;
     }
 
@@ -58,7 +57,7 @@ namespace engine {
         ImGui::PopStyleVar();
     }
 
-    void ImageLayout::onRender(const Time &dt) {
+    void ImageLayout::onRender(const time::Time &dt) {
         // do nothing here!
     }
 

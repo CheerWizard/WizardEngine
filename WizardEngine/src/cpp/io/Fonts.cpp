@@ -8,7 +8,9 @@
 #include <core/filesystem.h>
 #include <math/Math.h>
 
-namespace engine {
+namespace engine::io {
+
+    using namespace graphics;
 
     bool Fonts::create(
             const std::string &fontPath,
@@ -168,7 +170,7 @@ namespace engine {
         BitmapFile::write(bitmapPath, { imageWidth, imageHeight, buffer, &paddedSize });
         delete[] buffer;
         // write into widths .txt file
-        FileSystem::write(widthsPath, widths, 128);
+        filesystem::write(widthsPath, widths, 128);
         delete[] widths;
         // shutdown freetype
         error = FT_Done_FreeType(lib);

@@ -33,8 +33,8 @@ namespace engine::io {
         std::vector<ModelTexture> textures;
     };
 
-    typedef BaseMesh<ModelVertex> ModelMesh;
-    typedef BaseMeshComponent<ModelVertex> ModelMeshComponent;
+    typedef graphics::BaseMesh<ModelVertex> ModelMesh;
+    typedef graphics::BaseMeshComponent<ModelVertex> ModelMeshComponent;
 
     struct Model {
         ModelMeshComponent meshComponent;

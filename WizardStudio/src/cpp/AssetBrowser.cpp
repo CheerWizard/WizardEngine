@@ -13,11 +13,13 @@
 
 namespace studio {
 
+    using namespace engine::event;
+
     void AssetBrowser::destroy() {
         removeCallback();
     }
 
-    void AssetBrowser::onUpdate(engine::Time dt) {
+    void AssetBrowser::onUpdate(engine::time::Time dt) {
         ImGui::Begin(_props.name);
 
         if (_currentDir != _props.assetPath) {
@@ -91,11 +93,11 @@ namespace studio {
 
             ImGui::PopStyleColor();
 
-            if (isDirectory && ImGui::IsItemClicked(engine::ButtonLeft)) {
+            if (isDirectory && ImGui::IsItemClicked(ButtonLeft)) {
                 _currentDir /= path.filename();
             }
 
-            if (ImGui::IsItemClicked(engine::ButtonRight)) {
+            if (ImGui::IsItemClicked(ButtonRight)) {
                 if (isDirectory) {
                     _rightClickedDir = path;
                     _rightClickedDirExtension = fileExtension;
@@ -116,10 +118,10 @@ namespace studio {
         if (_rightClickedAssetPath.empty()) {
             if (ImGui::BeginPopupContextWindow(nullptr)) {
                 if (ImGui::MenuItem("New File")) {
-                    engine::FileSystem::newFile(_rightClickedDir, "templatefile" + _rightClickedDirExtension);
+                    engine::filesystem::newFile(_rightClickedDir, "templatefile" + _rightClickedDirExtension);
                 }
                 if (ImGui::MenuItem("New Directory")) {
-                    engine::FileSystem::newFile(_rightClickedDir, "templatedir");
+                    engine::filesystem::newFile(_rightClickedDir, "templatedir");
                 }
                 if (ImGui::MenuItem("Import")) {
                     importAsset(_rightClickedDir);
@@ -167,7 +169,7 @@ namespace studio {
         asset_dir_path /= importFileName;
         EDITOR_INFO("Import path : {0}, import file name : {1}", importPath, importFileName);
 
-        auto isImported = engine::FileSystem::copy(importPath, asset_dir_path.string());
+        auto isImported = engine::filesystem::copy(importPath, asset_dir_path.string());
         if (isImported) {
             _callback->onAssetImported(assetDirPath);
         }
@@ -204,14 +206,14 @@ namespace studio {
             return;
         }
 
-        auto isExported = engine::FileSystem::copy(assetPath, exportPath);
+        auto isExported = engine::filesystem::copy(assetPath, exportPath);
         if (isExported) {
             _callback->onAssetExported(exportPath);
         }
     }
 
     void AssetBrowser::removeAsset(const std::string &assetPath) {
-        auto isRemoved = engine::FileSystem::remove(assetPath);
+        auto isRemoved = engine::filesystem::remove(assetPath);
         if (isRemoved) {
             _callback->onAssetRemoved(assetPath);
         }
@@ -220,13 +222,13 @@ namespace studio {
     void AssetBrowser::popupAssetMenu(const char* id) {
         if (ImGui::BeginPopupContextWindow(id)) {
             if (ImGui::MenuItem("Rename")) {
-                engine::FileSystem::rename(_rightClickedAssetPath, "unknown" + _rightClickedAssetExtension);
+                engine::filesystem::rename(_rightClickedAssetPath, "unknown" + _rightClickedAssetExtension);
                 _rightClickedAssetPath = "";
             }
 
             auto* assetExtension = _rightClickedAssetExtension.c_str();
             if (SAME(assetExtension, CPP_EXT)) {
-                auto assetName = engine::FileSystem::getFileName(_rightClickedAssetPath.string());
+                auto assetName = engine::filesystem::getFileName(_rightClickedAssetPath.string());
                 auto itemName = "Build " + assetName;
                 auto libName = "ScriptDLL";
                 if (ImGui::MenuItem(itemName.c_str())) {
@@ -245,37 +247,37 @@ namespace studio {
 
             if (IS_SCRIPT(assetExtension)) {
                 if (ImGui::MenuItem("Open in Visual Studio")) {
-                    engine::Tools::openVisualStudioTask(_rightClickedAssetPath.string());
+                    engine::terminal::openVisualStudioTask(_rightClickedAssetPath.string());
                 }
 
                 if (ImGui::MenuItem("Open in VS Code")) {
-                    engine::Tools::openVSCodeTask(_rightClickedAssetPath.string());
+                    engine::terminal::openVSCodeTask(_rightClickedAssetPath.string());
                 }
 
                 if (ImGui::MenuItem("Open in Notepad")) {
-                    engine::Tools::openNotepadTask(_rightClickedAssetPath.string());
+                    engine::terminal::openNotepadTask(_rightClickedAssetPath.string());
                 }
             }
 
             if (IS_TEXTURE(assetExtension)) {
                 if (ImGui::MenuItem("Open in Photoshop")) {
-                    engine::Tools::openPhotoshopTask(_rightClickedAssetPath.string());
+                    engine::terminal::openPhotoshopTask(_rightClickedAssetPath.string());
                 }
             }
 
             if (IS_MODEL(assetExtension)) {
                 if (ImGui::MenuItem("Open in Blender")) {
-                    engine::Tools::openBlenderTask(_rightClickedAssetPath.string());
+                    engine::terminal::openBlenderTask(_rightClickedAssetPath.string());
                 }
 
                 if (ImGui::MenuItem("Open in ZBrush")) {
-                    engine::Tools::openZBrushTask(_rightClickedAssetPath.string());
+                    engine::terminal::openZBrushTask(_rightClickedAssetPath.string());
                 }
             }
 
             if (IS_SHADER(assetExtension)) {
                 if (ImGui::MenuItem("Recompile")) {
-                    auto fileName = engine::FileSystem::getFileName(_rightClickedAssetPath.string());
+                    auto fileName = engine::filesystem::getFileName(_rightClickedAssetPath.string());
                     if (engine::string::removePrefix(fileName, { "v_", "f_", "g_" })) {
                         RECOMPILE_SHADER_PROGRAM(fileName);
                     }

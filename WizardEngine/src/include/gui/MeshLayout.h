@@ -9,9 +9,12 @@
 #include <graphics/core/Renderer.h>
 #include <graphics/camera/CameraController.h>
 #include <graphics/core/io/ModelFile.h>
+
 #include <platform/graphics/FrameBuffer.h>
 
 namespace engine::gui {
+
+    using namespace engine::graphics;
 
     class MeshLayout : public ImageLayout, public ImageLayoutCallback {
 
@@ -31,7 +34,7 @@ namespace engine::gui {
         }
 
     public:
-        void onRender(const Time &dt) override;
+        void onRender(const time::Time &dt) override;
 
     public:
         inline const Ref<CameraController>& getCameraController() {
@@ -53,15 +56,15 @@ namespace engine::gui {
     public:
         void onImageResized(const uint32_t &width, const uint32_t &height) override;
 
-        void onKeyPressed(KeyCode keyCode);
-        void onKeyHold(KeyCode keyCode);
-        void onKeyReleased(KeyCode keyCode);
-        void onKeyTyped(KeyCode keyCode);
+        void onKeyPressed(event::KeyCode keyCode);
+        void onKeyHold(event::KeyCode keyCode);
+        void onKeyReleased(event::KeyCode keyCode);
+        void onKeyTyped(event::KeyCode keyCode);
 
     private:
         void create();
         void destroy();
-        void rotateEntity(const Time &dt);
+        void rotateEntity(const time::Time &dt);
 
     private:
         Ref<VIRenderer> _renderer;

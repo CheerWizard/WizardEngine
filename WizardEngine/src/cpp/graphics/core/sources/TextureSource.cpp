@@ -4,7 +4,7 @@
 
 #include <graphics/core/sources/TextureSource.h>
 
-namespace engine {
+namespace engine::graphics {
 
     Ref<TextureSource> TextureSource::instance = createRef<TextureSource>();
 

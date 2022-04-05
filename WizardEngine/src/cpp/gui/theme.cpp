@@ -2,18 +2,18 @@
 // Created by mecha on 07.01.2022.
 //
 
-#include <imgui/theme.h>
-#include "cmath"
+#include <gui/theme.h>
+#include <cmath>
 
-namespace engine::Colours {
+namespace engine::gui {
 
-    static inline float Convert_sRGB_FromLinear(float theLinearValue) {
+    float Convert_sRGB_FromLinear(float theLinearValue) {
         return theLinearValue <= 0.0031308f
                ? theLinearValue * 12.92f
                : powf(theLinearValue, 1.0f / 2.2f) * 1.055f - 0.055f;
     }
 
-    static inline float Convert_sRGB_ToLinear(float thesRGBValue) {
+    float Convert_sRGB_ToLinear(float thesRGBValue) {
         return thesRGBValue <= 0.04045f
                ? thesRGBValue / 12.92f
                : powf((thesRGBValue + 0.055f) / 1.055f, 2.2f);

@@ -24,13 +24,11 @@ namespace engine::core {
 
         createGraphics();
 
-        input = createScope<Input>(_window->getNativeWindow());
+        input = createScope<event::Input>(_window->getNativeWindow());
 
         createScripting();
 
-        activeScene = createRef<Scene>();
-        scenes.emplace_back(activeScene);
-        setActiveScene(activeScene);
+        setActiveScene(createRef<Scene>());
     }
 
     void Application::onPrepare() {
@@ -73,10 +71,11 @@ namespace engine::core {
         ENGINE_INFO("Application : onWindowClosed()");
         _layerStack.onWindowClosed();
         eventController.onWindowClosed.function();
+        shutdown();
     }
 
     void Application::onWindowResized(const uint32_t &width , const uint32_t &height) {
-        if (width == 0 || height == 0 || input->isMousePressed(MouseCode::ButtonLeft)) return;
+        if (width == 0 || height == 0 || input->isMousePressed(event::MouseCode::ButtonLeft)) return;
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
 
         _layerStack.onWindowResized(width, height);
@@ -85,27 +84,27 @@ namespace engine::core {
         eventController.onWindowResized.function(width, height);
     }
 
-    void Application::onKeyPressed(KeyCode keyCode) {
+    void Application::onKeyPressed(event::KeyCode keyCode) {
         _layerStack.onKeyPressed(keyCode);
         eventController.onKeyPressedMap[keyCode].function(keyCode);
     }
 
-    void Application::onKeyHold(KeyCode keyCode) {
+    void Application::onKeyHold(event::KeyCode keyCode) {
         _layerStack.onKeyHold(keyCode);
         eventController.onKeyHoldMap[keyCode].function(keyCode);
     }
 
-    void Application::onKeyReleased(KeyCode keyCode) {
+    void Application::onKeyReleased(event::KeyCode keyCode) {
         _layerStack.onKeyReleased(keyCode);
         eventController.onKeyReleasedMap[keyCode].function(keyCode);
     }
 
-    void Application::onMousePressed(MouseCode mouseCode) {
+    void Application::onMousePressed(event::MouseCode mouseCode) {
         _layerStack.onMousePressed(mouseCode);
         eventController.onMousePressedMap[mouseCode].function(mouseCode);
     }
 
-    void Application::onMouseRelease(MouseCode mouseCode) {
+    void Application::onMouseRelease(event::MouseCode mouseCode) {
         _layerStack.onMouseRelease(mouseCode);
         eventController.onMouseReleasedMap[mouseCode].function(mouseCode);
     }
@@ -120,7 +119,7 @@ namespace engine::core {
         eventController.onCursorMoved.function(xPos, yPos);
     }
 
-    void Application::onKeyTyped(KeyCode keyCode) {
+    void Application::onKeyTyped(event::KeyCode keyCode) {
         _layerStack.onKeyTyped(keyCode);
     }
 
@@ -129,6 +128,8 @@ namespace engine::core {
     }
 
     void Application::setActiveScene(const Ref<Scene>& scene) {
+        scenes.emplace_back(scene);
+        activeScene = scene;
         _renderSystem->setActiveScene(scene);
         _scriptSystem->setActiveScene(scene);
     }
@@ -162,8 +163,8 @@ namespace engine::core {
         _window->setWindowIcon(filePath);
     }
 
-    Ref<FileDialog> Application::createFileDialog() {
-        return createRef<FileDialog>(_window->getNativeWindow());
+    Ref<tools::FileDialog> Application::createFileDialog() {
+        return createRef<tools::FileDialog>(_window->getNativeWindow());
     }
 
     void Application::setSampleSize(const uint32_t& samples) {
@@ -171,7 +172,7 @@ namespace engine::core {
         // update active scene fbo
         FrameBufferFormat activeSceneFrameFormat;
         activeSceneFrameFormat.colorAttachments = {
-                { engine::ColorFormat::RGBA8 }
+                { graphics::ColorFormat::RGBA8 }
         };
         activeSceneFrameFormat.renderBufferAttachment = { DepthStencilFormat::DEPTH24STENCIL8 };
         activeSceneFrameFormat.width = _window->getWidth();
@@ -181,7 +182,7 @@ namespace engine::core {
         // update screen fbo
         FrameBufferFormat screenFrameFormat;
         screenFrameFormat.colorAttachments = {
-                { engine::ColorFormat::RGBA8 }
+                { graphics::ColorFormat::RGBA8 }
         };
         screenFrameFormat.width = _window->getWidth();
         screenFrameFormat.height = _window->getHeight();
@@ -192,7 +193,7 @@ namespace engine::core {
     }
 
     void Application::createGraphics() {
-        GraphicsInitializer::createContext(_window->getNativeWindow());
+        graphics::initContext(_window->getNativeWindow());
         activeSceneFrame = createRef<FrameBuffer>();
         screenFrame = createRef<FrameBuffer>();
         _renderSystem = createScope<RenderSystem>(activeSceneFrame, screenFrame);
@@ -212,12 +213,11 @@ namespace engine::core {
     }
 
     void Application::createScripting() {
-        _scriptSystem = createScope<ScriptSystem>();
+        _scriptSystem = createScope<scripting::ScriptSystem>();
     }
 
     void Application::setActiveScene(const uint32_t& activeSceneId) {
-        activeScene = scenes[activeSceneId];
-        setActiveScene(activeScene);
+        setActiveScene(scenes[activeSceneId]);
         _renderSystem->onUpdate();
     }
 
@@ -227,5 +227,15 @@ namespace engine::core {
 
     void Application::onGamepadDisconnected(s32 joystickId) const {
         input->setJoystickId(joystickId);
+    }
+
+    Application* Application::instance = nullptr;
+
+    Application::Application() {
+        instance = this;
+    }
+
+    Application::~Application() {
+        instance = nullptr;
     }
 }

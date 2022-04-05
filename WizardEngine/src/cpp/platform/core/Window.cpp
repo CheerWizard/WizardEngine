@@ -81,7 +81,7 @@ namespace engine::core {
         });
 
         glfwSetKeyCallback(NATIVE_WINDOW, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            auto keycode = (KeyCode) key;
+            auto keycode = (event::KeyCode) key;
             switch (action) {
                 case GLFW_PRESS: {
                     Application::get().onKeyPressed(keycode);
@@ -100,12 +100,12 @@ namespace engine::core {
         });
 
         glfwSetCharCallback(NATIVE_WINDOW, [](GLFWwindow* window, unsigned int key) {
-            auto keycode = (KeyCode) key;
+            auto keycode = (event::KeyCode) key;
             Application::get().onKeyTyped(keycode);
         });
 
         glfwSetMouseButtonCallback(NATIVE_WINDOW, [](GLFWwindow* window, int button, int action, int mods) {
-            auto mouseCode = (MouseCode) button;
+            auto mouseCode = (event::MouseCode) button;
             switch (action) {
                 case GLFW_PRESS: {
                     Application::get().onMousePressed(mouseCode);
@@ -129,12 +129,12 @@ namespace engine::core {
 
         glfwSetJoystickCallback([](int jid, int event) {
             if (event == GLFW_CONNECTED) {
-                Application::get().onGamepadConnected();
+                Application::get().onGamepadConnected(jid);
                 return;
             }
 
             if (event == GLFW_DISCONNECTED) {
-                Application::get().onGamepadDisconnected();
+                Application::get().onGamepadDisconnected(jid);
                 return;
             }
         });

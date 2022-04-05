@@ -3,8 +3,8 @@
 //
 #pragma once
 
-#include <event/Events.h>
 #include <core/Memory.h>
+#include <event/Events.h>
 #include <string>
 
 #define DEFAULT_WINDOW_WIDTH 1024
@@ -102,7 +102,6 @@ namespace engine::core {
         WindowProps windowProps;
         bool isInitialized = false;
         bool isFullScreen = false;
-
     };
 
 }

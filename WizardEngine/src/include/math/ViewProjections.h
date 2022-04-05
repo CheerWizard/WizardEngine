@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "ViewMatrices.h"
-#include "Projections.h"
+#include <math/ViewMatrices.h>
+#include <math/Projections.h>
 
 namespace engine::math {
 

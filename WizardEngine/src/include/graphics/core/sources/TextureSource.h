@@ -5,10 +5,9 @@
 #pragma once
 
 #include <platform/graphics/TextureBuffer.h>
+#include <core/map.h>
 
-#include "unordered_map"
-
-#define TEXTURES engine::TextureSource::get()
+#define TEXTURES engine::graphics::TextureSource::get()
 #define GET_TEXTURE(texture, assetPath) TEXTURES->getTextureBuffer(texture, assetPath)
 #define GET_TEXTURE_ID(texture, assetPath) GET_TEXTURE(texture, assetPath).getId()
 #define LOAD_TEXTURE(texture, assetPath) TEXTURES->loadTexture(texture, assetPath)
@@ -16,7 +15,7 @@
 #define ACTIVATE_TEXTURE(texture) TEXTURES->activate(texture)
 #define ACTIVATE_TEXTURE_PATH(texture, assetPath) TEXTURES->activate(texture, assetPath)
 
-namespace engine {
+namespace engine::graphics {
 
     typedef std::unordered_map<std::string, TextureBuffer> Textures;
     typedef Textures::iterator TextureIterator;
@@ -30,7 +29,7 @@ namespace engine {
         }
 
     public:
-        static const Ref<TextureSource>& get() {
+        static const core::Ref<TextureSource>& get() {
             return instance;
         }
 
@@ -106,8 +105,7 @@ namespace engine {
         Textures _textures;
 
     private:
-        static Ref<TextureSource> instance;
-
+        static core::Ref<TextureSource> instance;
     };
 
 }

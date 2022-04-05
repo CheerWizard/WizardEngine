@@ -7,6 +7,8 @@
 
 namespace engine::shader {
 
+    using namespace graphics;
+
     ShaderScript camera2dUboScript() {
         auto script = ShaderScript();
         script.updateEntity = [](const BaseShader& shader, const Entity& entity) {

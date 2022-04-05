@@ -4,19 +4,23 @@
 
 #pragma once
 
-#include <imgui/ImguiLayer.h>
-#include <imgui/ImageLayout.h>
-#include <imgui/SceneHierarchy.h>
-#include <imgui/MeshLayout.h>
+#include <gui/ImguiLayer.h>
+#include <gui/ImageLayout.h>
+#include <gui/SceneHierarchy.h>
+#include <gui/MeshLayout.h>
 
 #include "AssetBrowser.h"
 #include "SceneViewport.h"
 
 namespace studio {
 
-    class Activity : public engine::ImGuiLayer, AssetBrowserCallback, engine::SceneHierarchyCallback, DragDropCallback {
+    using namespace engine::core;
+    using namespace engine::gui;
+    using namespace engine::event;
 
-        class ImagePreviewCallback : public engine::ImageLayoutCallback {
+    class Activity : public ImGuiLayer, AssetBrowserCallback, SceneHierarchyCallback, DragDropCallback {
+
+        class ImagePreviewCallback : public ImageLayoutCallback {
 
         public:
             ImagePreviewCallback(Activity &parent) : _parent(parent) {}
@@ -30,7 +34,7 @@ namespace studio {
 
         };
 
-        class ScenePreviewCallback : public engine::ImageLayoutCallback {
+        class ScenePreviewCallback : public ImageLayoutCallback {
 
         public:
             ScenePreviewCallback(Activity &parent) : _parent(parent) {}
@@ -45,7 +49,7 @@ namespace studio {
         };
 
     public:
-        Activity(engine::core::Application* app, const engine::ImGuiLayerProps &props) : engine::ImGuiLayer(app, props) {
+        Activity(Application* app, const ImGuiLayerProps &props) : ImGuiLayer(app, props) {
             create();
         }
 
@@ -55,20 +59,20 @@ namespace studio {
 
     public:
         void onPrepare() override;
-        void onUpdate(engine::Time dt) override;
+        void onUpdate(engine::time::Time dt) override;
 
-        void onMousePressed(engine::core::MouseCode mouseCode) override;
-        void onMouseRelease(engine::core::MouseCode mouseCode) override;
+        void onMousePressed(MouseCode mouseCode) override;
+        void onMouseRelease(MouseCode mouseCode) override;
 
-        void onKeyPressed(engine::core::KeyCode keyCode) override;
-        void onKeyHold(engine::core::KeyCode keyCode) override;
-        void onKeyReleased(engine::core::KeyCode keyCode) override;
-        void onKeyTyped(engine::core::KeyCode keyCode) override;
+        void onKeyPressed(KeyCode keyCode) override;
+        void onKeyHold(KeyCode keyCode) override;
+        void onKeyReleased(KeyCode keyCode) override;
+        void onKeyTyped(KeyCode keyCode) override;
 
         void onWindowClosed() override;
 
     protected:
-        void onRender(engine::Time dt) override;
+        void onRender(engine::time::Time dt) override;
 
     private:
         void create();
@@ -103,25 +107,25 @@ namespace studio {
             props.height
         });
 
-        engine::ImageLayout _texturePreview = engine::ImageLayout({
+        ImageLayout _texturePreview = ImageLayout({
             "Texture Preview",
             512,
             512
         });
 
-        engine::SceneHierarchy _sceneHierarchy = engine::SceneHierarchy(app->activeScene);
+        SceneHierarchy _sceneHierarchy = SceneHierarchy(app->activeScene);
 
-        engine::Ref<AssetBrowser> _assetBrowser;
+        Ref<AssetBrowser> _assetBrowser;
 
-        engine::Ref<engine::MeshLayout> _objPreview;
+        Ref<MeshLayout> _objPreview;
 
         ImagePreviewCallback* _imagePreviewCallback = nullptr;
         ScenePreviewCallback* _scenePreviewCallback = nullptr;
 
-        engine::Ref<engine::Scene> editorScene = engine::createRef<engine::Scene>(); // store entities in scope of Editor and not Runtime!
+        Ref<Scene> editorScene = createRef<Scene>(); // store entities in scope of Editor and not Runtime!
 
-        engine::Camera3D activeSceneCamera;
-        engine::Ref<engine::Camera3dController> activeSceneCameraController;
+        Camera3D activeSceneCamera;
+        Ref<Camera3dController> activeSceneCameraController;
 
         bool windowClosePressed = false;
 

@@ -4,17 +4,16 @@
 
 #include <thread/Thread.h>
 #include <io/Logger.h>
-
 #include <thread>
 
-namespace engine {
+namespace engine::thread {
 
-    void Thread::current_sleep(const uint32_t &millis) {
+    void current_sleep(const uint32_t &millis) {
         ENGINE_WARN("Sleeping current thread on {0} ms!", millis);
         std::this_thread::sleep_for(MILLIS(millis));
     }
 
-    void Thread::current_sleep_time(const Time &time) {
+    void current_sleep_time(const time::Time &time) {
         current_sleep(time.getLongMs());
     }
 }

@@ -33,17 +33,17 @@ namespace engine::shader {
         void recreate();
         // bind/unbind
         void bind() const;
-        void unbind() const;
+        static void unbind() ;
         void bindBlock() const;
         // GPU allocations
         void alloc() const;
-        void alloc(const size_t &memorySize) const;
+        static void alloc(const size_t &memorySize) ;
         void applyFormat(const UniformBlockFormat &uniformBlockFormat);
         // GPU data load
         void load(const UniformData &uniformData) const;
 
     private:
-        uint32_t id = 0;
+        u32 id = 0;
         UniformBlockFormat uniformBlockFormat;
 
     };
