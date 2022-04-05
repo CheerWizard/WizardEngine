@@ -2,8 +2,8 @@
 // Created by mecha on 28.03.2022.
 //
 
-#include <core/BitmapFile.h>
-#include <core/Logger.h>
+#include <io/BitmapFile.h>
+#include <io/Logger.h>
 
 namespace engine {
 

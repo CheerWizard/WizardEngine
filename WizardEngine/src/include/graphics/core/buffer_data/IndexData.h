@@ -9,7 +9,7 @@
 
 #define MIN_INDEX_COUNT 3
 
-namespace engine {
+namespace engine::graphics {
 
     struct IndexData {
         uint32_t* indices = nullptr;

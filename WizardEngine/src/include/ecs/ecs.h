@@ -7,7 +7,7 @@
 #include <core/identifier.h>
 #include <core/vector.h>
 #include <core/map.h>
-#include <core/Time.h>
+#include <time/Time.h>
 #include <core/immutable.h>
 #include <tuple>
 
@@ -252,10 +252,25 @@ namespace engine::ecs {
 
     template<class Component, typename Function>
     void Registry::each(Function function) {
-        validate_component("iterate()", Component, );
+        validate_component("each()", Component, );
 
         component_data& componentData = components[Component::ID];
         component_size componentSize = BaseComponent::getSize(Component::ID);
+        for (u32 i = 0 ; i < componentData.size() ; i += componentSize) {
+            function((Component*) &componentData[i]);
+        }
+    }
+
+    template<class Component1, class Component2, typename Function>
+    void Registry::each(Function function) {
+        validate_component("each()", Component1, );
+        validate_component("each()", Component2, );
+
+        component_data& componentData1 = components[Component1::ID];
+        component_data& componentData2 = components[Component2::ID];
+        component_size componentSize1 = BaseComponent::getSize(Component1::ID);
+        component_size componentSize2 = BaseComponent::getSize(Component2::ID);
+
         for (u32 i = 0 ; i < componentData.size() ; i += componentSize) {
             function((Component*) &componentData[i]);
         }

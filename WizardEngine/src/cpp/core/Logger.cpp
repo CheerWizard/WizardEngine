@@ -2,7 +2,7 @@
 // Created by mecha on 29.08.2021.
 //
 
-#include <core/Logger.h>
+#include <io/Logger.h>
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>

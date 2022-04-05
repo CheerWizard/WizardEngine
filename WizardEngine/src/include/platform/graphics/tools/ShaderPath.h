@@ -10,7 +10,7 @@
 #define RUNTIME_SHADERS_PATH getRuntimeShadersPath()
 #define GRAPHICS_CORE_VERSION getGraphicsCoreVersion()
 
-namespace engine {
+namespace engine::io {
     std::string getRuntimeShadersPath();
     std::string getEngineShadersPath();
     const char* getGraphicsCoreVersion();

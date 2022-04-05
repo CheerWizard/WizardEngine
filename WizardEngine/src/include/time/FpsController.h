@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include "Thread.h"
+#include <thread/Thread.h>
 
 #define DEFAULT_FPS 15
 #define CURRENT_TIME_MS std::chrono::duration_cast<ms>(clock::now().time_since_epoch())
 #define CURRENT_TIME_NANO std::chrono::duration_cast<nano>(clock::now().time_since_epoch())
 
-namespace engine {
+namespace engine::time {
 
     typedef std::chrono::high_resolution_clock clock;
 

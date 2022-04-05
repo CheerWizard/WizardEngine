@@ -4,14 +4,14 @@
 
 #pragma once
 
-#include "ImageLayout.h"
+#include <gui/ImageLayout.h>
 
 #include <graphics/core/Renderer.h>
 #include <graphics/camera/CameraController.h>
 #include <graphics/core/io/ModelFile.h>
 #include <platform/graphics/FrameBuffer.h>
 
-namespace engine {
+namespace engine::gui {
 
     class MeshLayout : public ImageLayout, public ImageLayoutCallback {
 

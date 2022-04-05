@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <core/KeyCodes.h>
-#include <core/MouseCodes.h>
+#include <event/KeyCodes.h>
+#include <event/MouseCodes.h>
 #include <core/primitives.h>
 
 namespace engine::core {

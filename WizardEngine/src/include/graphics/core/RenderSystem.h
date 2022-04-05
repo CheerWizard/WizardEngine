@@ -4,18 +4,18 @@
 
 #pragma once
 
-#include "Renderer.h"
+#include <graphics/core/Renderer.h>
 #include <ecs/Scene.h>
 #include <platform/graphics/FrameBuffer.h>
 #include <graphics/text/TextRenderer.h>
 #include <graphics/core/geometry/Screen.h>
 
-namespace engine {
+namespace engine::graphics {
 
     class RenderSystem {
 
     public:
-        RenderSystem(const Ref<FrameBuffer> &sceneFrame, const Ref<FrameBuffer>& screenFrame)
+        RenderSystem(const core::Ref<FrameBuffer> &sceneFrame, const core::Ref<FrameBuffer>& screenFrame)
         : sceneFrame(sceneFrame), screenFrame(screenFrame) {
             create();
         }
@@ -26,7 +26,7 @@ namespace engine {
         void onUpdate();
 
     public:
-        inline void setActiveScene(const Ref<Scene> &activeScene) {
+        inline void setActiveScene(const core::Ref<Scene> &activeScene) {
             this->activeScene = activeScene;
         }
 
@@ -43,35 +43,35 @@ namespace engine {
         void createPointRenderer();
 
     private:
-        Ref<Scene> activeScene = nullptr;
+        core::Ref<Scene> activeScene = nullptr;
 
-        Ref<FrameBuffer> sceneFrame;
-        Ref<FrameBuffer> screenFrame;
+        core::Ref<FrameBuffer> sceneFrame;
+        core::Ref<FrameBuffer> screenFrame;
         // screen
-        Ref<VRenderer> screenRenderer;
+        core::Ref<VRenderer> screenRenderer;
         Screen screen;
         // scene
-        Ref<MultiRenderer> sceneRenderer;
+        core::Ref<MultiRenderer> sceneRenderer;
         // line
-        Ref<MultiRenderer> lineRenderer;
-        Ref<MultiRenderer> stripLineRenderer;
-        Ref<MultiRenderer> loopLineRenderer;
+        core::Ref<MultiRenderer> lineRenderer;
+        core::Ref<MultiRenderer> stripLineRenderer;
+        core::Ref<MultiRenderer> loopLineRenderer;
         // quad
-        Ref<MultiRenderer> quadRenderer;
+        core::Ref<MultiRenderer> quadRenderer;
         // circle
-        Ref<MultiRenderer> circleRenderer;
+        core::Ref<MultiRenderer> circleRenderer;
         // outlining everything
         // scene
-        Ref<MultiRenderer> outlineSceneRenderer;
+        core::Ref<MultiRenderer> outlineSceneRenderer;
         // quad
-        Ref<MultiRenderer> outlineQuadRenderer;
+        core::Ref<MultiRenderer> outlineQuadRenderer;
         // skybox
-        Ref<VRenderer> skyboxRenderer;
+        core::Ref<VRenderer> skyboxRenderer;
         // text
-        Ref<TextRenderer> text2dRenderer;
-        Ref<TextRenderer> text3dRenderer;
+        core::Ref<TextRenderer> text2dRenderer;
+        core::Ref<TextRenderer> text3dRenderer;
         // points renderer
-        Ref<VRenderer> pointRenderer;
+        core::Ref<VRenderer> pointRenderer;
     };
 
 }

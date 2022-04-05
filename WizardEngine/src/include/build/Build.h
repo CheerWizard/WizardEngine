@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "Task.h"
+#include <thread/Task.h>
 #include <platform/tools/LibLoader.h>
-#include "unordered_map"
+#include <unordered_map>
 
-namespace engine {
+namespace engine::build {
 
     typedef std::unordered_map<std::string, std::string> StringsMap;
     typedef std::unordered_map<std::string, HMODULE> HModuleMap;

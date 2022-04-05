@@ -2,11 +2,11 @@
 // Created by mecha on 28.03.2022.
 //
 
-#include <core/Fonts.h>
-#include <core/Logger.h>
-#include <core/BitmapFile.h>
+#include <io/Fonts.h>
+#include <io/Logger.h>
+#include <io/BitmapFile.h>
 #include <core/filesystem.h>
-#include <core/Math.h>
+#include <math/Math.h>
 
 namespace engine {
 

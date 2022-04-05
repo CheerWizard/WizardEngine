@@ -14,7 +14,7 @@
 #define DEFAULT_ROTATION_2D 0
 #define DEFAULT_SCALE_2D {1, 1}
 
-namespace engine {
+namespace engine::math {
 
     struct ModelMatrix2d;
     struct ModelMatrix3d;

@@ -9,7 +9,7 @@
 
 #define MIN_VERTEX_COUNT 3
 
-namespace engine {
+namespace engine::graphics {
 
     template<typename V>
     struct BatchVertex {

@@ -10,7 +10,7 @@
 #define ENGINE_PROJECT_PATH "../WizardEngine/WizardEngine.sln"
 #define ENGINE_CMAKE_PATH "../WizardEngine/CMakeLists.txt"
 
-namespace engine {
+namespace engine::build {
 
     enum OperatingSystem {
         WINDOWS,

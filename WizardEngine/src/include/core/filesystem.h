@@ -5,7 +5,7 @@
 #pragma once
 
 #include <core/String.h>
-#include <core/Logger.h>
+#include <io/Logger.h>
 
 #include <filesystem>
 

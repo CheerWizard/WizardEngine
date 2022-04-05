@@ -10,7 +10,7 @@
 #define DEFAULT_Z_NEAR 0.01f
 #define DEFAULT_Z_FAR 1000.0f
 
-namespace engine {
+namespace engine::math {
 
     struct OrthographicMatrix : shader::Mat4fUniform {
         float left = -1;

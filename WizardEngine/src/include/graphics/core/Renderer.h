@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "RenderModel.h"
-#include "shader/BaseShader.h"
+#include <graphics/core/RenderModel.h>
+#include <graphics/core/shader/BaseShader.h>
 #include <ecs/Components.h>
 #include <graphics/transform/TransformComponents.h>
 #include <platform/graphics/RenderCommands.h>
@@ -15,13 +15,13 @@
 
 using namespace engine::shader;
 
-namespace engine {
+namespace engine::graphics {
 
     class Renderer {
 
     public:
         Renderer(
-                const Ref<BaseShaderProgram>& shaderProgram,
+                const core::Ref<BaseShaderProgram>& shaderProgram,
                 const DrawType& drawType = DrawType::TRIANGLE,
                 const AttributeCategory& attributeCategory = VERTEX
         ) : shaderProgram(shaderProgram), drawType(drawType) {
@@ -45,14 +45,14 @@ namespace engine {
     protected:
         std::vector<VRenderModel> vRenderModels;
         std::vector<VIRenderModel> viRenderModels;
-        Ref<BaseShaderProgram> shaderProgram;
+        core::Ref<BaseShaderProgram> shaderProgram;
         DrawType drawType;
     };
 
     class BatchRenderer : public Renderer {
 
     public:
-        BatchRenderer(const Ref<BaseShaderProgram>& shaderProgram, const DrawType& drawType = DrawType::TRIANGLE)
+        BatchRenderer(const core::Ref<BaseShaderProgram>& shaderProgram, const DrawType& drawType = DrawType::TRIANGLE)
         : Renderer(shaderProgram, drawType) {
             init();
         }
@@ -70,7 +70,7 @@ namespace engine {
     class InstanceRenderer : public Renderer {
 
     public:
-        InstanceRenderer(const Ref<BaseShaderProgram>& shaderProgram, const DrawType& drawType = DrawType::TRIANGLE)
+        InstanceRenderer(const core::Ref<BaseShaderProgram>& shaderProgram, const DrawType& drawType = DrawType::TRIANGLE)
         : Renderer(shaderProgram, drawType) {
             init();
         }
@@ -88,16 +88,16 @@ namespace engine {
     class MultiRenderer {
 
     public:
-        MultiRenderer(const Ref<BatchRenderer>& batchRenderer, const Ref<InstanceRenderer>& instanceRenderer)
+        MultiRenderer(const core::Ref<BatchRenderer>& batchRenderer, const core::Ref<InstanceRenderer>& instanceRenderer)
         : batchRenderer(batchRenderer), instanceRenderer(instanceRenderer) {}
 
         MultiRenderer(
-                const Ref<BaseShaderProgram>& batchShader,
-                const Ref<BaseShaderProgram>& instanceShader,
+                const core::Ref<BaseShaderProgram>& batchShader,
+                const core::Ref<BaseShaderProgram>& instanceShader,
                 const DrawType& drawType = DrawType::TRIANGLE
         ) {
-            batchRenderer = createRef<BatchRenderer>(batchShader, drawType);
-            instanceRenderer = createRef<InstanceRenderer>(instanceShader, drawType);
+            batchRenderer = core::createRef<BatchRenderer>(batchShader, drawType);
+            instanceRenderer = core::createRef<InstanceRenderer>(instanceShader, drawType);
         }
 
     public:
@@ -109,15 +109,15 @@ namespace engine {
         void renderVI(entt::registry& registry);
 
     private:
-        Ref<BatchRenderer> batchRenderer;
-        Ref<InstanceRenderer> instanceRenderer;
+        core::Ref<BatchRenderer> batchRenderer;
+        core::Ref<InstanceRenderer> instanceRenderer;
 
     };
 
     class VRenderer {
 
     public:
-        VRenderer(const Ref<BaseShaderProgram>& shaderProgram)
+        VRenderer(const core::Ref<BaseShaderProgram>& shaderProgram)
         : shaderProgram(shaderProgram) {
             create();
         }
@@ -140,14 +140,14 @@ namespace engine {
 
     private:
         VRenderModel vRenderModel = { 0, DEFAULT_VERTEX_COUNT };
-        Ref<BaseShaderProgram> shaderProgram;
+        core::Ref<BaseShaderProgram> shaderProgram;
 
     };
 
     class VIRenderer {
 
     public:
-        VIRenderer(const Ref<BaseShaderProgram>& shaderProgram)
+        VIRenderer(const core::Ref<BaseShaderProgram>& shaderProgram)
         : shaderProgram(shaderProgram) {
             create();
         }
@@ -166,7 +166,7 @@ namespace engine {
 
     private:
         VIRenderModel viRenderModel = { 0, DEFAULT_VERTEX_COUNT, DEFAULT_INDEX_COUNT };
-        Ref<BaseShaderProgram> shaderProgram;
+        core::Ref<BaseShaderProgram> shaderProgram;
     };
 
     template<typename T, typename V>

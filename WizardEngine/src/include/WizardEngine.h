@@ -2,8 +2,8 @@
 #include "ecs/Scene.h"
 #include "ecs/Components.h"
 // Core
-#include "core/Time.h"
-#include "core/Math.h"
+#include "time/Time.h"
+#include "math/Math.h"
 // Graphics
 #include "graphics/transform/TransformComponents.h"
 #include "graphics/core/geometry/Mesh.h"

@@ -12,7 +12,7 @@
 
 using namespace engine::shader;
 
-namespace engine {
+namespace engine::math {
 
     struct ViewMatrix3d : Mat4fUniform {
         Vec3fUniform position = { "viewPosition", DEFAULT_VIEW_POS_3D };

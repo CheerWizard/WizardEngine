@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "core/Logger.h"
+#include "io/Logger.h"
 #include "scripting/ScriptBuilder.h"
 
 // needs to be defined on Client side.

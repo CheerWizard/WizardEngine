@@ -18,7 +18,7 @@
 #define GET_FONT(fontPath) FONTS.getFont(fontPath)
 #define GET_CHARACTER(fontPath, c) FONTS.getCharacter(fontPath, c)
 
-namespace engine {
+namespace engine::io {
 
     struct CharVertex {
         glm::vec2 position = { 0.5, 0.5 };

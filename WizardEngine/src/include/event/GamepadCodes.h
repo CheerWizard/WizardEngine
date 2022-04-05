@@ -6,9 +6,9 @@
 
 #include <core/primitives.h>
 
-namespace engine::core {
+namespace engine::event {
 
-    enum GamepadButtonCode : u8 {
+    enum GamepadButtonCode : core::u8 {
         PAD_BTN_NONE = -1,
 
         PAD_BTN_A = 0,
@@ -39,7 +39,7 @@ namespace engine::core {
         PAD_BTN_TRIANGLE = BTN_Y
     };
 
-    enum GamepadAxisCode : u8 {
+    enum GamepadAxisCode : core::u8 {
         PAD_AXIS_NONE = -1,
 
         PAD_AXIS_LEFT_X = 0,

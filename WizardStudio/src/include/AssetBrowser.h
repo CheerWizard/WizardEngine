@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <core/Time.h>
+#include <time/Time.h>
 #include <core/filesystem.h>
-#include <core/Tools.h>
+#include <tools/Tools.h>
 
 #include <platform/tools/FileDialog.h>
 #include <platform/graphics/TextureBuffer.h>

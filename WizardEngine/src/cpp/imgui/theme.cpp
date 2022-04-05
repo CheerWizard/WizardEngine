@@ -2,7 +2,7 @@
 // Created by mecha on 07.01.2022.
 //
 
-#include <imgui/Colors.h>
+#include <imgui/theme.h>
 #include "cmath"
 
 namespace engine::Colours {

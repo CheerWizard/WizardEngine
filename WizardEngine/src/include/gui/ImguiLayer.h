@@ -9,14 +9,14 @@
 
 struct ImFont;
 
-namespace engine {
+namespace engine::gui {
 
     struct ImGuiLayerProps {
         uint32_t width, height;
         const char* tag = "ImGuiLayer";
     };
 
-    class ImGuiLayer : public Layer {
+    class ImGuiLayer : public core::Layer {
 
     public:
         ImGuiLayer(Application* app, const ImGuiLayerProps &props) :
@@ -67,7 +67,7 @@ namespace engine {
         static void endDockSpace();
 
     protected:
-        Application* app = nullptr;
+        core::Application* app = nullptr;
         ImGuiLayerProps props;
         static bool isFullScreen, isDockSpaceOpened;
         static int windowFlags, dockSpaceFlags;

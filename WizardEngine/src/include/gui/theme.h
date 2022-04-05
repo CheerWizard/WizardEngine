@@ -6,7 +6,7 @@
 
 #include <imgui.h>
 
-namespace engine::Colours {
+namespace engine::gui {
 
     static inline float Convert_sRGB_FromLinear(float theLinearValue);
     static inline float Convert_sRGB_ToLinear(float thesRGBValue);
@@ -15,7 +15,7 @@ namespace engine::Colours {
 
     // To experiment with editor theme live you can change these constexpr into static
     // members of a static "Theme" class and add a quick ImGui window to adjust the colour values
-    namespace Theme {
+    namespace theme {
         constexpr auto accent					= IM_COL32(236, 158, 36, 255);
         constexpr auto highlight				= IM_COL32(39, 185, 242, 255);
         constexpr auto niceBlue					= IM_COL32(83, 232, 254, 255);

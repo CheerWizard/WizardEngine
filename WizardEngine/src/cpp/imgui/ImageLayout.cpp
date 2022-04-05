@@ -3,7 +3,7 @@
 //
 
 #include <imgui/ImageLayout.h>
-#include <core/MouseCodes.h>
+#include <event/MouseCodes.h>
 #include <imgui.h>
 
 namespace engine {

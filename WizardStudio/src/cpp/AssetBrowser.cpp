@@ -5,8 +5,8 @@
 #include <AssetBrowser.h>
 
 #include <core/FileExtensions.h>
-#include <core/MouseCodes.h>
-#include <core/Build.h>
+#include <event/MouseCodes.h>
+#include <build/Build.h>
 #include <graphics/core/sources/ShaderSource.h>
 
 #include <imgui/imgui.h>

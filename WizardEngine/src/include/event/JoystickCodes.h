@@ -6,9 +6,9 @@
 
 #include <core/primitives.h>
 
-namespace engine::core {
+namespace engine::event {
 
-    enum JoystickHat : u8 {
+    enum JoystickHat : core::u8 {
         HAT_CENTERED = 0,
         HAT_UP = 1,
         HAT_RIGHT = 2,

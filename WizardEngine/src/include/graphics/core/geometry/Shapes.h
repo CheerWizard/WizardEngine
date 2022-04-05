@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "Mesh.h"
-#include "string_view"
+#include <graphics/core/geometry/Mesh.h>
+#include <string_view>
 
-namespace engine {
+namespace engine::graphics {
 
     template<typename T>
     class Shapes final {

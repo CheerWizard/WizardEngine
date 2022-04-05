@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 
-namespace engine {
+namespace engine::io {
 
     struct BitMapFileHeader {
         short type;

@@ -1,13 +1,14 @@
 //
 // Created by mecha on 29.08.2021.
 //
+
 #pragma once
 
-#include "KeyCodes.h"
-#include "MouseCodes.h"
+#include <event/KeyCodes.h>
+#include <event/MouseCodes.h>
 #include <functional>
 
-namespace engine::core {
+namespace engine::event {
 
     // just a wrapper of functional object
     template<typename ...T>

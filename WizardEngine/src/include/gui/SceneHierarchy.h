@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include <core/Time.h>
+#include <time/Time.h>
 #include <core/String.h>
 #include <ecs/Scene.h>
 
-namespace engine {
+namespace engine::gui {
 
     struct SceneHierarchyProps {
         const char* name = "Scene Hierarchy";
@@ -26,7 +26,7 @@ namespace engine {
 
     public:
         SceneHierarchy(const SceneHierarchyProps &props = SceneHierarchyProps()) : _props(props) {}
-        SceneHierarchy(const Ref<Scene>& scene, const SceneHierarchyProps &props = SceneHierarchyProps()) :
+        SceneHierarchy(const core::Ref<Scene>& scene, const SceneHierarchyProps &props = SceneHierarchyProps()) :
         _props(props), _scene(scene) {}
 
         ~SceneHierarchy() {
@@ -34,10 +34,10 @@ namespace engine {
         }
 
     public:
-        void onUpdate(Time dt);
+        void onUpdate(time::Time dt);
 
     public:
-        inline void setScene(const Ref<Scene> &scene) {
+        inline void setScene(const core::Ref<Scene> &scene) {
             _scene = scene;
         }
 
@@ -67,7 +67,7 @@ namespace engine {
 
     private:
         SceneHierarchyProps _props;
-        Ref<Scene> _scene;
+        core::Ref<Scene> _scene;
         Entity _selectedEntity;
         SceneHierarchyCallback* _callback = nullptr;
 

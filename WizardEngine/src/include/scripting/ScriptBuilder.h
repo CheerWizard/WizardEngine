@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "ScriptComponents.h"
+#include <scripting/ScriptComponents.h>
 
-#include <core/Tools.h>
-#include <core/Build.h>
+#include <tools/Tools.h>
+#include <build/Build.h>
 #include <core/filesystem.h>
 
 #define ENGINE_LIB_PATH "../WizardEngine/WizardEngine.lib"
@@ -16,11 +16,11 @@
 #ifdef WIN32
 #define SCRIPT_LIB_PATH "../ScriptDLL/Debug/ScriptDLL.dll"
 #define SCRIPT_PROJECT_PATH "../ScriptDLL/ScriptDLL.sln"
-#define SCRIPT_PROJECT_BUILD Tools::msBuild(SCRIPT_PROJECT_PATH)
-#define SCRIPT_PROJECT_GENERATE Tools::cmake(SCRIPT_MAKE_FILE_PATH)
+#define SCRIPT_PROJECT_BUILD engine::tools::msBuild(SCRIPT_PROJECT_PATH)
+#define SCRIPT_PROJECT_GENERATE engine::tools::cmake(SCRIPT_MAKE_FILE_PATH)
 #endif
 
-namespace engine {
+namespace engine::scripting {
 
     struct ScriptBuildProps {
         std::string engineLoggerName;

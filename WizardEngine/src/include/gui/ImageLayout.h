@@ -5,10 +5,10 @@
 #pragma once
 
 #include <ecs/Scene.h>
-#include <core/Time.h>
-#include <core/MouseCodes.h>
+#include <time/Time.h>
+#include <event/MouseCodes.h>
 
-namespace engine {
+namespace engine::gui {
 
     struct ImageLayoutProps {
         const char* title;
@@ -30,10 +30,10 @@ namespace engine {
         }
 
     public:
-        virtual void onUpdate(Time dt);
+        virtual void onUpdate(time::Time dt);
 
     protected:
-        virtual void onRender(const Time &dt);
+        virtual void onRender(const time::Time &dt);
 
     public:
         inline void setCallback(ImageLayoutCallback* imageLayoutCallback) {
@@ -61,8 +61,8 @@ namespace engine {
         }
 
     public:
-        virtual void onMousePressed(MouseCode mouseCode);
-        virtual void onMouseRelease(MouseCode mouseCode);
+        virtual void onMousePressed(event::MouseCode mouseCode);
+        virtual void onMouseRelease(event::MouseCode mouseCode);
         virtual void onMouseScrolled(double xOffset, double yOffset);
 
     protected:

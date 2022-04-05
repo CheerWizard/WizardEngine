@@ -7,7 +7,7 @@
 #include "ViewMatrices.h"
 #include "Projections.h"
 
-namespace engine {
+namespace engine::math {
 
     struct ViewProjection2d;
     struct ViewProjection3d;

@@ -5,9 +5,9 @@
 
 #include <core/primitives.h>
 
-namespace engine::core {
+namespace engine::event {
 
-    enum MouseCode : u8 {
+    enum MouseCode : core::u8 {
         NoneButton             = 16,
 
         Button0                = 0,

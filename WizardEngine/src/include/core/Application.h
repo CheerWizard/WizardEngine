@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "Memory.h"
-#include "Events.h"
-#include "LayerStack.h"
-#include "FpsController.h"
-#include "String.h"
+#include <core/String.h>
+#include <core/LayerStack.h>
+#include <core/Memory.h>
+#include <event/Events.h>
+#include <time/FpsController.h>
 
 #include <platform/core/Window.h>
 #include <platform/core/Input.h>
@@ -49,13 +49,13 @@ namespace engine::core {
         void onWindowClosed();
         void onWindowResized(const uint32_t &width, const uint32_t &height);
         // input keyboard events
-        void onKeyPressed(KeyCode keyCode);
-        void onKeyHold(KeyCode keyCode);
-        void onKeyReleased(KeyCode keyCode);
-        void onKeyTyped(KeyCode keyCode);
+        void onKeyPressed(event::KeyCode keyCode);
+        void onKeyHold(event::KeyCode keyCode);
+        void onKeyReleased(event::KeyCode keyCode);
+        void onKeyTyped(event::KeyCode keyCode);
         // input mouse events
-        void onMousePressed(MouseCode mouseCode);
-        void onMouseRelease(MouseCode mouseCode);
+        void onMousePressed(event::KeyCode mouseCode);
+        void onMouseRelease(event::KeyCode mouseCode);
         void onMouseScrolled(double xOffset, double yOffset);
         // input mouse cursor events
         void onCursorMoved(double xPos, double yPos);
@@ -88,7 +88,7 @@ namespace engine::core {
     private:
         void restart();
         void onUpdate();
-        void updateRuntime(Time dt);
+        void updateRuntime(time::Time dt);
 
         void createGraphics();
         void createScripting();
@@ -99,8 +99,8 @@ namespace engine::core {
         Ref<Scene> activeScene;
         Ref<FrameBuffer> activeSceneFrame;
         Ref<FrameBuffer> screenFrame;
-        FpsController fpsController;
-        EventRegistry eventController;
+        time::FpsController fpsController;
+        event::EventRegistry eventController;
 
     private:
         bool _isRunning = true;

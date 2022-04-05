@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include <core/Events.h>
+#include <event/Events.h>
 #include <core/Memory.h>
 #include <string>
 

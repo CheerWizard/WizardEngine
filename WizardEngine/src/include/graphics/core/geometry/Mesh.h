@@ -10,7 +10,7 @@
 
 #define MIN_MESH_COUNT 1
 
-namespace engine {
+namespace engine::graphics {
 
     struct Vertex3d {
         glm::vec3 position = { 0.5f, 0.5f, 0.5f };

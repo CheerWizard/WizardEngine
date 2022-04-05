@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "Logger.h"
-#include "Thread.h"
+#include <io/Logger.h>
+#include <thread/Thread.h>
 
-namespace engine {
+namespace engine::thread {
 
     template<typename Runnable, typename Callback, typename... Args>
     struct Task {

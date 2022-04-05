@@ -2,7 +2,7 @@
 // Created by mecha on 20.03.2022.
 //
 
-#include <core/Math.h>
+#include <math/Math.h>
 #include "random"
 
 namespace engine::math {

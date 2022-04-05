@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include "Layer.h"
+#include <core/Layer.h>
 
 #include <vector>
 #include <cstdint>
 
-namespace engine {
+namespace engine::core {
 
     class LayerStack {
 
@@ -20,7 +20,7 @@ namespace engine {
         ~LayerStack();
 
     public:
-        void onUpdate(Time deltaTime);
+        void onUpdate(time::Time deltaTime);
         void onPrepare();
 
     public:
@@ -33,13 +33,13 @@ namespace engine {
         void onWindowClosed();
         void onWindowResized(const uint32_t &width, const uint32_t &height);
 
-        void onKeyPressed(KeyCode keyCode);
-        void onKeyHold(KeyCode keyCode);
-        void onKeyReleased(KeyCode keyCode);
-        void onKeyTyped(KeyCode keyCode);
+        void onKeyPressed(event::KeyCode keyCode);
+        void onKeyHold(event::KeyCode keyCode);
+        void onKeyReleased(event::KeyCode keyCode);
+        void onKeyTyped(event::KeyCode keyCode);
 
-        void onMousePressed(MouseCode mouseCode);
-        void onMouseRelease(MouseCode mouseCode);
+        void onMousePressed(event::MouseCode mouseCode);
+        void onMouseRelease(event::MouseCode mouseCode);
         void onMouseScrolled(double xOffset, double yOffset);
 
         void onCursorMoved(double xPos, double yPos);

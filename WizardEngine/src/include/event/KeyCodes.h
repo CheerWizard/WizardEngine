@@ -5,9 +5,9 @@
 
 #include <core/primitives.h>
 
-namespace engine::core {
+namespace engine::event {
 
-    enum KeyCode : u16 {
+    enum KeyCode : core::u16 {
         None                = 0,
         Space               = 32,
         Apostrophe          = 39, /* ' */

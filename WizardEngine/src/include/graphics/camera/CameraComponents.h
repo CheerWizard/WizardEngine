@@ -6,7 +6,7 @@
 
 #include <graphics/core/math/ViewProjections.h>
 
-namespace engine {
+namespace engine::graphics {
 
     struct Camera2dComponent : ViewProjection2d {
         Camera2dComponent() : ViewProjection2d() {

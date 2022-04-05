@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Entity.h"
+#include <ecs/Entity.h>
 
 namespace engine {
 

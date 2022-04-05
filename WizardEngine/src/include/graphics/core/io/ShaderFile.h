@@ -11,7 +11,7 @@
 
 #define DEFAULT_INCLUDE_TOKEN "#include"
 
-namespace engine::shader {
+namespace engine::io {
 
     struct ShaderProps {
         std::string name;

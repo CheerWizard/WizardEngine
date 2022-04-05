@@ -2,11 +2,11 @@
 // Created by mecha on 30.01.2022.
 //
 
-#include <ProjectBuilder.h>
-#include <core/Logger.h>
+#include <build/ProjectBuilder.h>
+#include <io/Logger.h>
 #include <core/filesystem.h>
-#include <core/Build.h>
-#include <core/Tools.h>
+#include <build/Build.h>
+#include <tools/Tools.h>
 #include <sstream>
 
 namespace engine {

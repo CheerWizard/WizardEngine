@@ -5,9 +5,9 @@
 #pragma once
 
 #include <ecs/Scene.h>
-#include "ScriptComponents.h"
+#include <scripting/ScriptComponents.h>
 
-namespace engine {
+namespace engine::scripting {
 
     class ScriptSystem {
 
@@ -16,16 +16,16 @@ namespace engine {
         ~ScriptSystem() = default;
 
     public:
-        void onUpdate(Time dt);
+        void onUpdate(time::Time dt);
         void onDestroy();
 
     public:
-        inline void setActiveScene(const Ref<Scene> &activeScene) {
+        inline void setActiveScene(const core::Ref<Scene> &activeScene) {
             this->activeScene = activeScene;
         }
 
     private:
-        Ref<Scene> activeScene = nullptr;
+        core::Ref<Scene> activeScene = nullptr;
 
     };
 

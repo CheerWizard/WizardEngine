@@ -10,7 +10,7 @@
 #define NANO_UNIT 1.0E-9
 #define MILLI_UNIT 1000.0f
 
-namespace engine {
+namespace engine::time {
 
     typedef std::chrono::milliseconds ms;
     typedef std::chrono::nanoseconds nano;
@@ -53,7 +53,6 @@ namespace engine {
 
     private:
         float _seconds;
-
     };
 
     inline float operator* (const float& t1, const Time &t2) { return t1 * t2.getSeconds(); }

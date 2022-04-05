@@ -2,8 +2,8 @@
 // Created by mecha on 03.10.2021.
 //
 
-#include <core/FpsController.h>
-#include <core/Logger.h>
+#include <time/FpsController.h>
+#include <io/Logger.h>
 
 namespace engine {
 

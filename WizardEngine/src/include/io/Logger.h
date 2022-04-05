@@ -9,10 +9,12 @@
 #include <spdlog/fmt/ostr.h>
 #pragma warning(pop)
 
-#include "Memory.h"
-#include "String.h"
+#include "core/Memory.h"
+#include "core/String.h"
 
-namespace engine {
+namespace engine::io {
+
+    using namespace engine::core;
 
     typedef spdlog::logger Log;
 
@@ -53,31 +55,31 @@ namespace engine {
 }
 
 #ifdef DEBUG
-    #define LOG_PATTERN(...)      ::engine::Logger::setPattern(__VA_ARGS__)
+    #define LOG_PATTERN(...)      ::engine::io::Logger::setPattern(__VA_ARGS__)
 
     // Engine log macros
-    #define INIT_ENGINE_LOG(...)  ::engine::Logger::createEngineLogger(__VA_ARGS__)
-    #define ENGINE_TRACE(...)     ::engine::Logger::getEngineLogger()->trace(__VA_ARGS__)
-    #define ENGINE_INFO(...)      ::engine::Logger::getEngineLogger()->info(__VA_ARGS__)
-    #define ENGINE_WARN(...)      ::engine::Logger::getEngineLogger()->warn(__VA_ARGS__)
-    #define ENGINE_ERR(...)       ::engine::Logger::getEngineLogger()->error(__VA_ARGS__)
-    #define ENGINE_CRIT(...)      ::engine::Logger::getEngineLogger()->critical(__VA_ARGS__)
+    #define INIT_ENGINE_LOG(...)  ::engine::io::Logger::createEngineLogger(__VA_ARGS__)
+    #define ENGINE_TRACE(...)     ::engine::io::Logger::getEngineLogger()->trace(__VA_ARGS__)
+    #define ENGINE_INFO(...)      ::engine::io::Logger::getEngineLogger()->info(__VA_ARGS__)
+    #define ENGINE_WARN(...)      ::engine::io::Logger::getEngineLogger()->warn(__VA_ARGS__)
+    #define ENGINE_ERR(...)       ::engine::io::Logger::getEngineLogger()->error(__VA_ARGS__)
+    #define ENGINE_CRIT(...)      ::engine::io::Logger::getEngineLogger()->critical(__VA_ARGS__)
 
     // Runtime log macros
-    #define INIT_RUNTIME_LOG(...)  ::engine::Logger::createRuntimeLogger(__VA_ARGS__)
-    #define RUNTIME_TRACE(...)     ::engine::Logger::getRuntimeLogger()->trace(__VA_ARGS__)
-    #define RUNTIME_INFO(...)      ::engine::Logger::getRuntimeLogger()->info(__VA_ARGS__)
-    #define RUNTIME_WARN(...)      ::engine::Logger::getRuntimeLogger()->warn(__VA_ARGS__)
-    #define RUNTIME_ERR(...)       ::engine::Logger::getRuntimeLogger()->error(__VA_ARGS__)
-    #define RUNTIME_CRIT(...)      ::engine::Logger::getRuntimeLogger()->critical(__VA_ARGS__)
+    #define INIT_RUNTIME_LOG(...)  ::engine::io::Logger::createRuntimeLogger(__VA_ARGS__)
+    #define RUNTIME_TRACE(...)     ::engine::io::Logger::getRuntimeLogger()->trace(__VA_ARGS__)
+    #define RUNTIME_INFO(...)      ::engine::io::Logger::getRuntimeLogger()->info(__VA_ARGS__)
+    #define RUNTIME_WARN(...)      ::engine::io::Logger::getRuntimeLogger()->warn(__VA_ARGS__)
+    #define RUNTIME_ERR(...)       ::engine::io::Logger::getRuntimeLogger()->error(__VA_ARGS__)
+    #define RUNTIME_CRIT(...)      ::engine::io::Logger::getRuntimeLogger()->critical(__VA_ARGS__)
 
     // Editor log macros
-    #define INIT_EDITOR_LOG(...)  ::engine::Logger::createEditorLogger(__VA_ARGS__)
-    #define EDITOR_TRACE(...)     ::engine::Logger::getEditorLogger()->trace(__VA_ARGS__)
-    #define EDITOR_INFO(...)      ::engine::Logger::getEditorLogger()->info(__VA_ARGS__)
-    #define EDITOR_WARN(...)      ::engine::Logger::getEditorLogger()->warn(__VA_ARGS__)
-    #define EDITOR_ERR(...)       ::engine::Logger::getEditorLogger()->error(__VA_ARGS__)
-    #define EDITOR_CRIT(...)      ::engine::Logger::getEditorLogger()->critical(__VA_ARGS__)
+    #define INIT_EDITOR_LOG(...)  ::engine::io::Logger::createEditorLogger(__VA_ARGS__)
+    #define EDITOR_TRACE(...)     ::engine::io::Logger::getEditorLogger()->trace(__VA_ARGS__)
+    #define EDITOR_INFO(...)      ::engine::io::Logger::getEditorLogger()->info(__VA_ARGS__)
+    #define EDITOR_WARN(...)      ::engine::io::Logger::getEditorLogger()->warn(__VA_ARGS__)
+    #define EDITOR_ERR(...)       ::engine::io::Logger::getEditorLogger()->error(__VA_ARGS__)
+    #define EDITOR_CRIT(...)      ::engine::io::Logger::getEditorLogger()->critical(__VA_ARGS__)
 #else
     #define LOG_PATTERN(...) __VA_ARGS__
 

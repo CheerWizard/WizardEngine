@@ -6,7 +6,7 @@
 
 #include <cstdint>
 
-namespace engine {
+namespace engine::graphics {
 
     class Buffer {
 

@@ -10,7 +10,7 @@
 
 #include <graphics/core/geometry/Mesh.h>
 
-namespace engine {
+namespace engine::graphics {
 
     struct VRenderModel {
         uint32_t id = 0;

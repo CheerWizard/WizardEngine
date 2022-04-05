@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "Logger.h"
+#include <io/Logger.h>
 
 #ifdef DEBUG
 	#ifdef WIN32

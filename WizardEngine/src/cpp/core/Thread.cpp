@@ -2,8 +2,8 @@
 // Created by mecha on 30.09.2021.
 //
 
-#include <core/Thread.h>
-#include <core/Logger.h>
+#include <thread/Thread.h>
+#include <io/Logger.h>
 
 #include <thread>
 

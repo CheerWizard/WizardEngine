@@ -14,7 +14,7 @@ class DLL_API Scriptable {
     // lifecycle functions
     public:
         virtual void onCreate();
-        virtual void onUpdate(Time dt);
+        virtual void onUpdate(time::Time dt);
         virtual void onDestroy();
 
     public:

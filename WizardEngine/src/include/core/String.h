@@ -22,7 +22,7 @@ case engine::str_hash(str, engine::str_len(str))
 #define STR_FROM_WCHAR(v) engine::string::from(v)
 #define SAME(v1, v2) engine::string::equals(v1, v2)
 
-namespace engine {
+namespace engine::string {
 
     typedef unsigned char uchar;
     typedef unsigned long long ullong;
@@ -124,42 +124,39 @@ namespace engine {
         return (str_is_correct(str) && (str_len(str) <= MAX_LENGTH)) ? str_hash(str, str_len(str)) : N_HASH;
     }
 
-    namespace string {
+    static const bool contains(const char* str, const char &ch) {
+        return strchr(str, ch) != nullptr;
+    }
 
-        static const bool contains(const char* str, const char &ch) {
-            return strchr(str, ch) != nullptr;
+    static const bool contains(const std::string &str, const char &ch) {
+        return str.find(ch) != std::string::npos;
+    }
+
+    static const bool equals(const char* str1, const char* str2) {
+        return strcmp(str1, str2) == 0;
+    }
+
+    static std::string from(const wchar_t* w_chars) {
+        std::wstring ws(w_chars);
+        return { ws.begin(), ws.end() };
+    }
+
+    static bool removePrefix(std::string &target, const std::string &prefix) {
+        auto targetPrefix = target.substr(prefix.length());
+        if (targetPrefix == prefix) {
+            target = targetPrefix;
+            return true;
         }
+        return false;
+    }
 
-        static const bool contains(const std::string &str, const char &ch) {
-            return str.find(ch) != std::string::npos;
-        }
-
-        static const bool equals(const char* str1, const char* str2) {
-            return strcmp(str1, str2) == 0;
-        }
-
-        static std::string from(const wchar_t* w_chars) {
-            std::wstring ws(w_chars);
-            return { ws.begin(), ws.end() };
-        }
-
-        static bool removePrefix(std::string &target, const std::string &prefix) {
-            auto targetPrefix = target.substr(prefix.length());
-            if (targetPrefix == prefix) {
-                target = targetPrefix;
+    static bool removePrefix(std::string &target, const std::vector<std::string>& prefixes) {
+        for (const auto& prefix : prefixes) {
+            bool prefixRemoved = removePrefix(target, prefix);
+            if (prefixRemoved) {
                 return true;
             }
-            return false;
         }
-
-        static bool removePrefix(std::string &target, const std::vector<std::string>& prefixes) {
-            for (const auto& prefix : prefixes) {
-                bool prefixRemoved = removePrefix(target, prefix);
-                if (prefixRemoved) {
-                    return true;
-                }
-            }
-            return false;
-        }
+        return false;
     }
 }

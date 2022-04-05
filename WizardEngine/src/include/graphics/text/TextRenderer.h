@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <core/Fonts.h>
+#include <io/Fonts.h>
 #include <graphics/core/Renderer.h>
 #include <graphics/core/sources/TextureSource.h>
 #include <graphics/text/Text.h>

@@ -6,9 +6,9 @@
 
 #include "Camera.h"
 
-#include <core/Time.h>
+#include <time/Time.h>
 #include <core/Memory.h>
-#include <core/KeyCodes.h>
+#include <event/KeyCodes.h>
 
 #include "unordered_map"
 
@@ -17,7 +17,7 @@
 #define DEFAULT_CAMERA_ROTATE_SPEED 0.001f
 #define NONE_TYPE(T) static_cast<T>(0)
 
-namespace engine {
+namespace engine::graphics {
 
     enum ZoomType : unsigned char {
         ZOOM_IN = 1, ZOOM_OUT = 2
@@ -35,9 +35,9 @@ namespace engine {
         RIGHT_X = 4, RIGHT_Y = 5, RIGHT_Z = 6
     };
 
-    typedef std::unordered_map<KeyCode, ZoomType> ZoomKeys;
-    typedef std::unordered_map<KeyCode, RotateType> RotateKeys;
-    typedef std::unordered_map<KeyCode, MoveType> MoveKeys;
+    typedef std::unordered_map<event::KeyCode, ZoomType> ZoomKeys;
+    typedef std::unordered_map<event::KeyCode, RotateType> RotateKeys;
+    typedef std::unordered_map<event::KeyCode, MoveType> MoveKeys;
 
     class CameraController {
 
@@ -65,18 +65,18 @@ namespace engine {
             applyChanges();
         }
 
-        inline void setDeltaTime(const Time &dt) {
+        inline void setDeltaTime(const time::Time &dt) {
             this->dt = dt;
         }
 
     public:
-        void bind(const KeyCode &keyCode, const MoveType &moveType);
-        void bind(const KeyCode &keyCode, const RotateType &rotateType);
-        void bind(const KeyCode &keyCode, const ZoomType &zoomType);
+        void bind(const event::KeyCode &keyCode, const MoveType &moveType);
+        void bind(const event::KeyCode &keyCode, const RotateType &rotateType);
+        void bind(const event::KeyCode &keyCode, const ZoomType &zoomType);
 
-        void unbindMove(const KeyCode &keyCode);
-        void unbindRotate(const KeyCode &keyCode);
-        void unbindZoom(const KeyCode &keyCode);
+        void unbindMove(const event::KeyCode &keyCode);
+        void unbindRotate(const event::KeyCode &keyCode);
+        void unbindZoom(const event::KeyCode &keyCode);
 
         void clearZoomBindings();
         void clearRotateBindings();
@@ -92,10 +92,10 @@ namespace engine {
         virtual void setCamera(const Camera2D &camera) = 0;
         virtual void setCamera(const Camera3D &camera) = 0;
 
-        void onKeyPressed(KeyCode keyCode);
-        void onKeyHold(KeyCode keyCode);
-        void onKeyReleased(KeyCode keyCode);
-        void onKeyTyped(KeyCode keyCode);
+        void onKeyPressed(event::KeyCode keyCode);
+        void onKeyHold(event::KeyCode keyCode);
+        void onKeyReleased(event::KeyCode keyCode);
+        void onKeyTyped(event::KeyCode keyCode);
 
         void onWindowClosed();
         void onWindowResized(const uint32_t &width, const uint32_t &height);
@@ -107,7 +107,7 @@ namespace engine {
         MoveKeys moveKeys = MoveKeys();
         RotateKeys rotateKeys = RotateKeys();
         ZoomKeys zoomKeys = ZoomKeys();
-        Time dt = 1;
+        time::Time dt = 1;
 
     public:
         float zoomSpeed = DEFAULT_CAMERA_ZOOM_SPEED;
