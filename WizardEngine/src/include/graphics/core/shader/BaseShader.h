@@ -78,7 +78,6 @@ namespace engine::shader {
     class BaseShaderProgram final : public ShaderProgram {
 
     public:
-        // with using default constructor, you should call construct() function manually!
         BaseShaderProgram() = default;
 
         BaseShaderProgram(const io::ShaderProps &props) {

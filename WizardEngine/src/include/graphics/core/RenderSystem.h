@@ -20,7 +20,7 @@ namespace engine::graphics {
             create();
         }
 
-        ~RenderSystem() = default;
+        ~RenderSystem();
 
     public:
         void onUpdate();
@@ -43,35 +43,36 @@ namespace engine::graphics {
         void createPointRenderer();
 
     private:
+        // we must share this data with front-end, so that's why they are pointers
         core::Ref<Scene> activeScene = nullptr;
-
         core::Ref<FrameBuffer> sceneFrame;
         core::Ref<FrameBuffer> screenFrame;
+        // these data are mostly for back-end, they are mostly just u32 numbers
         // screen
-        core::Ref<VRenderer> screenRenderer;
+        VRenderer screenRenderer;
         Screen screen;
         // scene
-        core::Ref<MultiRenderer> sceneRenderer;
+        MultiRenderer sceneRenderer;
         // line
-        core::Ref<MultiRenderer> lineRenderer;
-        core::Ref<MultiRenderer> stripLineRenderer;
-        core::Ref<MultiRenderer> loopLineRenderer;
+        MultiRenderer lineRenderer;
+        MultiRenderer stripLineRenderer;
+        MultiRenderer loopLineRenderer;
         // quad
-        core::Ref<MultiRenderer> quadRenderer;
+        MultiRenderer quadRenderer;
         // circle
-        core::Ref<MultiRenderer> circleRenderer;
+        MultiRenderer circleRenderer;
         // outlining everything
         // scene
-        core::Ref<MultiRenderer> outlineSceneRenderer;
+        MultiRenderer outlineSceneRenderer;
         // quad
-        core::Ref<MultiRenderer> outlineQuadRenderer;
+        MultiRenderer outlineQuadRenderer;
         // skybox
-        core::Ref<VRenderer> skyboxRenderer;
+        VRenderer skyboxRenderer;
         // text
-        core::Ref<TextRenderer> text2dRenderer;
-        core::Ref<TextRenderer> text3dRenderer;
+        TextRenderer text2dRenderer;
+        TextRenderer text3dRenderer;
         // points renderer
-        core::Ref<VRenderer> pointRenderer;
+        VRenderer pointRenderer;
     };
 
 }

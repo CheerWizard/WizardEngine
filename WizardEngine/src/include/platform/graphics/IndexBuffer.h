@@ -16,12 +16,8 @@ namespace engine::graphics {
     class IndexBuffer final : public Buffer {
 
     public:
-        IndexBuffer() : Buffer(DEFAULT_INDEX_COUNT) {
-            create();
-        }
-        IndexBuffer(const uint32_t& indexCount) : Buffer(indexCount) {
-            create();
-        }
+        IndexBuffer() : Buffer(DEFAULT_INDEX_COUNT) {}
+        IndexBuffer(const uint32_t& indexCount) : Buffer(indexCount) {}
         ~IndexBuffer() = default;
 
     public:
@@ -30,14 +26,14 @@ namespace engine::graphics {
         void destroy();
         void recreate();
         // bind/unbind
-        void bind();
-        void unbind();
+        void bind() const;
+        static void unbind();
         // GPU allocations
         void alloc();
         void alloc(const uint32_t &indexCount);
-        void malloc(const size_t &memorySize);
+        static void malloc(const size_t &memorySize);
         // GPU data load
-        void load(const IndexData &indexData);
+        static void load(const IndexData &indexData);
 
     private:
         u32 id = 0;

@@ -26,7 +26,7 @@ namespace engine::time {
             _deltaTime = minDeltaTime;
         }
 
-        ENGINE_INFO("FPS: {0}! Delta time: {1} seconds!", 1.0f / _deltaTime, _deltaTime.getSeconds());
+        ENGINE_INFO("FPS: {0}; dt: {1} ms", 1.0f / _deltaTime, _deltaTime.getMilliseconds());
     }
 
 }

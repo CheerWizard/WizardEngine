@@ -25,12 +25,26 @@ namespace engine::graphics {
         createSkyboxRenderer();
         createTextRenderers();
         createPointRenderer();
+        setClearColor({0, 0, 0, 1});
+    }
+
+    RenderSystem::~RenderSystem() {
+        screenRenderer.release();
+        sceneRenderer.release();
+        lineRenderer.release();
+        quadRenderer.release();
+        circleRenderer.release();
+        outlineSceneRenderer.release();
+        outlineQuadRenderer.release();
+        skyboxRenderer.release();
+        text2dRenderer.release();
+        text3dRenderer.release();
+        pointRenderer.release();
     }
 
     void RenderSystem::onUpdate() {
         sceneFrame->bind();
 
-        setClearColor({0, 0, 0, 1});
         clearDepthBuffer();
         setDepthTest(true);
 
@@ -46,43 +60,42 @@ namespace engine::graphics {
 
         auto& registry = activeScene->getRegistry();
         // scene
-        sceneRenderer->renderVI<Transform3dComponent, Vertex3d>(registry);
+        sceneRenderer.renderVI<Transform3dComponent, Vertex3d>(registry);
         // lines
-        lineRenderer->renderV<Transform3dComponent, LineVertex>(registry);
-        stripLineRenderer->renderV<Transform3dComponent, LineVertex>(registry);
-        loopLineRenderer->renderV<Transform3dComponent, LineVertex>(registry);
+        lineRenderer.renderV<Transform3dComponent, LineVertex>(registry);
+        stripLineRenderer.renderV<Transform3dComponent, LineVertex>(registry);
+        loopLineRenderer.renderV<Transform3dComponent, LineVertex>(registry);
         // quads
-        quadRenderer->renderV<Transform3dComponent, QuadVertex>(registry);
+        quadRenderer.renderV<Transform3dComponent, QuadVertex>(registry);
         // circles
-        circleRenderer->renderV<Transform3dComponent, CircleVertex>(registry);
+        circleRenderer.renderV<Transform3dComponent, CircleVertex>(registry);
         // text
-        text2dRenderer->render<Text2d>(registry);
-        text3dRenderer->render<Text3d>(registry);
+        text2dRenderer.render<Text2d>(registry);
+        text3dRenderer.render<Text3d>(registry);
         // points
         registry.view<Points>().each([=](auto entity, auto& points) {
-            pointRenderer->render(points);
+            pointRenderer.render(points);
         });
         // outlining
         // stop write to stencil buffer
         setStencilTestOperator(NOT_EQUAL, 1, false);
         stencilMask(true);
         setDepthTest(false);
-        outlineSceneRenderer->render<Transform3dComponent, OutlineVertex>(registry);
+        outlineSceneRenderer.render<Transform3dComponent, OutlineVertex>(registry);
         // write to stencil buffer
         stencilMask(false);
         setStencilTestOperator(ALWAYS, 0, false);
         setDepthTest(true);
         // skybox
         setDepthTestOperator(LESS_EQUAL); // we need to pass depth test for some skybox pixels
-        skyboxRenderer->render<Transform3dComponent, SkyboxVertex>(activeScene->getSkybox());
+        skyboxRenderer.render<Transform3dComponent, SkyboxVertex>(activeScene->getSkybox());
         setDepthTestOperator(LESS);
         // read/write from scene frame into screen frame
         FrameBuffer::readWriteFrameBuffers(*sceneFrame.get(), *screenFrame.get());
         // bind to window frame buffer and draw screen
-        FrameBuffer::bindDefault();
         setDepthTest(false);
-        screenRenderer->render<ScreenVertex>(screen, screenFrame->getColorAttachment(0).id);
-        clearColorBuffer();
+        FrameBuffer::bindDefault();
+        screenRenderer.render<ScreenVertex>(screen, screenFrame->getColorAttachment(0).id);
 
         activeScene->updateComponents<Transform3dComponent>([](Transform3dComponent& transform) {
             transform.isUpdated = false;
@@ -92,7 +105,7 @@ namespace engine::graphics {
     void RenderSystem::createSceneRenderer() {
         auto vBatchShader = shader::BaseShader({ camera3dUboScript() });
         auto fBatchShader = shader::BaseShader({ materialScript(), phongLightScript(), materialMapScript(), pointLightArrayScript() });
-        auto batchShader = createRef<shader::BaseShaderProgram>(
+        auto batchShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "batch",
                         "v_batch.glsl",
@@ -104,7 +117,7 @@ namespace engine::graphics {
         );
         auto vInstanceShader = shader::BaseShader({ camera3dUboScript() });
         auto fInstanceShader = shader::BaseShader({ materialScript(), phongLightScript(), materialMapScript(), pointLightArrayScript() });
-        auto instanceShader = createRef<shader::BaseShaderProgram>(
+        auto instanceShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "instance",
                         "v_instance.glsl",
@@ -114,13 +127,13 @@ namespace engine::graphics {
                 vInstanceShader,
                 fInstanceShader
         );
-        sceneRenderer = createRef<MultiRenderer>(batchShader, instanceShader);
+        sceneRenderer = MultiRenderer(batchShader, instanceShader);
     }
 
     void RenderSystem::createLineRenderers() {
         auto vBatchShader = shader::BaseShader({ camera3dUboScript() });
         auto fBatchShader = shader::BaseShader();
-        auto batchShader = createRef<shader::BaseShaderProgram>(
+        auto batchShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "line_batch",
                         "v_line_batch.glsl",
@@ -132,7 +145,7 @@ namespace engine::graphics {
         );
         auto vInstanceShader = shader::BaseShader({ camera3dUboScript() });
         auto fInstanceShader = shader::BaseShader();
-        auto instanceShader = createRef<shader::BaseShaderProgram>(
+        auto instanceShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "line_instance",
                         "v_line_instance.glsl",
@@ -143,15 +156,15 @@ namespace engine::graphics {
                 fInstanceShader
         );
 
-        lineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, DrawType::LINE);
-        stripLineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, DrawType::LINE_STRIP);
-        loopLineRenderer = createRef<MultiRenderer>(batchShader, instanceShader, DrawType::LINE_LOOP);
+        lineRenderer = MultiRenderer(batchShader, instanceShader, DrawType::LINE);
+        stripLineRenderer = MultiRenderer(batchShader, instanceShader, DrawType::LINE_STRIP);
+        loopLineRenderer = MultiRenderer(batchShader, instanceShader, DrawType::LINE_LOOP);
     }
 
     void RenderSystem::createQuadRenderer() {
         auto vBatchShader = shader::BaseShader({ camera3dUboScript() });
         auto fBatchShader = shader::BaseShader();
-        auto batchShader = createRef<shader::BaseShaderProgram>(
+        auto batchShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "quad_batch",
                         "v_quad_batch.glsl",
@@ -163,7 +176,7 @@ namespace engine::graphics {
         );
         auto vInstanceShader = shader::BaseShader({ camera3dUboScript() });
         auto fInstanceShader = shader::BaseShader();
-        auto instanceShader = createRef<shader::BaseShaderProgram>(
+        auto instanceShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "quad_instance",
                         "v_quad_instance.glsl",
@@ -174,7 +187,7 @@ namespace engine::graphics {
                 fInstanceShader
         );
 
-        quadRenderer = createRef<MultiRenderer>(batchShader, instanceShader, DrawType::QUAD);
+        quadRenderer = MultiRenderer(batchShader, instanceShader, DrawType::QUAD);
     }
 
     void RenderSystem::createCircleRenderer() {
@@ -199,7 +212,7 @@ namespace engine::graphics {
 
         auto vBatchShader = shader::BaseShader();
         auto fBatchShader = shader::BaseShader({ circleArrayScript });
-        auto batchShader = createRef<shader::BaseShaderProgram>(
+        auto batchShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "circle_batch",
                         "v_circle_batch.glsl",
@@ -211,7 +224,7 @@ namespace engine::graphics {
         );
         auto vInstanceShader = shader::BaseShader();
         auto fInstanceShader = shader::BaseShader({ circleArrayScript });
-        auto instanceShader = createRef<shader::BaseShaderProgram>(
+        auto instanceShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "circle_instance",
                         "v_circle_instance.glsl",
@@ -222,7 +235,7 @@ namespace engine::graphics {
                 fInstanceShader
         );
 
-        circleRenderer = createRef<MultiRenderer>(batchShader, instanceShader, DrawType::QUAD);
+        circleRenderer = MultiRenderer(batchShader, instanceShader, DrawType::QUAD);
     }
 
     void RenderSystem::createOutlineRenderer() {
@@ -247,7 +260,7 @@ namespace engine::graphics {
 
         auto vBatchShader = shader::BaseShader({ outlineScript });
         auto fBatchShader = shader::BaseShader();
-        auto batchShader = createRef<shader::BaseShaderProgram>(
+        auto batchShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "outline_batch",
                         "v_outline_batch.glsl",
@@ -259,7 +272,7 @@ namespace engine::graphics {
         );
         auto vInstanceShader = shader::BaseShader({ outlineScript });
         auto fInstanceShader = shader::BaseShader();
-        auto instanceShader = createRef<shader::BaseShaderProgram>(
+        auto instanceShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "outline_instance",
                         "v_outline_instance.glsl",
@@ -270,8 +283,8 @@ namespace engine::graphics {
                 fInstanceShader
         );
 
-        outlineSceneRenderer = createRef<MultiRenderer>(batchShader, instanceShader, DrawType::TRIANGLE);
-        outlineQuadRenderer = createRef<MultiRenderer>(batchShader, instanceShader, DrawType::TRIANGLE_STRIP);
+        outlineSceneRenderer = MultiRenderer(batchShader, instanceShader, DrawType::TRIANGLE);
+        outlineQuadRenderer = MultiRenderer(batchShader, instanceShader, DrawType::TRIANGLE_STRIP);
     }
 
     void RenderSystem::createSkyboxRenderer() {
@@ -290,7 +303,7 @@ namespace engine::graphics {
 
         auto vShader = shader::BaseShader({ camera3dUboScript(), skyboxRotation });
         auto fShader = shader::BaseShader({ cubeMapTextureScript() });
-        auto shader = createRef<shader::BaseShaderProgram>(
+        auto shader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "cubemap",
                         "v_cubemap.glsl",
@@ -301,14 +314,14 @@ namespace engine::graphics {
                 fShader
         );
 
-        skyboxRenderer = createRef<VRenderer>(shader);
+        skyboxRenderer = VRenderer(shader);
     }
 
     void RenderSystem::createTextRenderers() {
         auto fTextShader = shader::BaseShader();
 
         auto vText2dShader = shader::BaseShader({ textProjectionScript() });
-        auto text2dShader = createRef<shader::BaseShaderProgram>(
+        auto text2dShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "text2d",
                         "text/v_text_2d.glsl",
@@ -318,10 +331,10 @@ namespace engine::graphics {
                 vText2dShader,
                 fTextShader
         );
-        text2dRenderer = createRef<TextRenderer>(text2dShader);
+        text2dRenderer = TextRenderer(text2dShader);
 
         auto vText3dShader = shader::BaseShader();
-        auto text3dShader = createRef<shader::BaseShaderProgram>(
+        auto text3dShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "text3d",
                         "text/v_text_3d.glsl",
@@ -331,13 +344,13 @@ namespace engine::graphics {
                 vText3dShader,
                 fTextShader
         );
-        text3dRenderer = createRef<TextRenderer>(text3dShader);
+        text3dRenderer = TextRenderer(text3dShader);
     }
 
     void RenderSystem::createScreenRenderer() {
         auto vShader = shader::BaseShader();
         auto fShader = shader::BaseShader();
-        auto shader = createRef<shader::BaseShaderProgram>(
+        auto shader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "screen",
                         "v_screen.glsl",
@@ -348,11 +361,11 @@ namespace engine::graphics {
                 fShader
         );
 
-        screenRenderer = createRef<VRenderer>(shader);
+        screenRenderer = VRenderer(shader);
     }
 
     void RenderSystem::createPointRenderer() {
-        auto shader = createRef<shader::BaseShaderProgram>(
+        auto shader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "point",
                         "geometry/v_point.glsl",
@@ -362,6 +375,6 @@ namespace engine::graphics {
                 }
         );
 
-        pointRenderer = createRef<VRenderer>(shader);
+        pointRenderer = VRenderer(shader);
     }
 }

@@ -15,7 +15,8 @@ namespace engine::graphics {
     class TextRenderer : public Renderer {
 
     public:
-        TextRenderer(const core::Ref<BaseShaderProgram>& shaderProgram)
+        TextRenderer() : Renderer() {}
+        TextRenderer(const BaseShaderProgram& shaderProgram)
         : Renderer(shaderProgram, DrawType::QUAD, VERTEX) {
             init();
         }
@@ -30,15 +31,15 @@ namespace engine::graphics {
 
     template<typename Text>
     void TextRenderer::render(entt::registry &registry) {
-        if (!shaderProgram->isReady()) return;
+        if (!shaderProgram.isReady()) return;
 
         auto entities = registry.view<Text>();
         if (entities.empty()) return; // nothing to render
 
-        shaderProgram->start();
-        shaderProgram->update(registry);
-        const auto& vShader = shaderProgram->getVShader();
-        const auto& fShader = shaderProgram->getFShader();
+        shaderProgram.start();
+        shaderProgram.update(registry);
+        const auto& vShader = shaderProgram.getVShader();
+        const auto& fShader = shaderProgram.getFShader();
 
         uint32_t nextRenderModelId = 0;
         for (auto [entity, text] : entities.each()) {
@@ -145,7 +146,7 @@ namespace engine::graphics {
             resetCounts(renderModel);
         }
 
-        shaderProgram->stop();
+        shaderProgram.stop();
     }
 
 }

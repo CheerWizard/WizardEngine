@@ -24,7 +24,7 @@ namespace engine::graphics {
         glBindVertexArray(id);
     }
 
-    void VertexArray::unbind() const {
+    void VertexArray::unbind() {
         glBindVertexArray(0);
     }
 
