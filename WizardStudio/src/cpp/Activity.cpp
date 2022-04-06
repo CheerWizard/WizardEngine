@@ -111,7 +111,7 @@ namespace studio {
 
     void Activity::createTest() {
         auto scene1 = createRef<Scene>();
-        app->scenes.emplace_back(scene1);
+        app->setActiveScene(scene1);
 
         activeSceneCamera = Camera3D {
                 "SceneCamera",
