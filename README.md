@@ -14,8 +14,11 @@ You can download it here https://cmake.org/
 ### Get the source
 Make sure you have a working git-installation. Open a command prompt and clone the WizardEngine project via:
 ```bash
-git clone https://github.com/CheerWizard/WizardEngine
+git clone --recursive https://github.com/CheerWizard/WizardEngine
 ```
+**IMPORTANT**: Make sure you are cloning repo recursively with "--recursive" keyword. 
+Otherwise, it won't fetch all dependencies and as a result - build process will fail!
+
 ### Build from source:
 ```bash
 cd WizardEngine
@@ -46,4 +49,19 @@ Build project with **CLion IDEA** is much easier. If you already cloned Git repo
 4. Press on build hammer (Ctrl+F9) to build configuration you want to 
 
 ## WizardEngine website and support
-Project website link: https://cheerwizard.github.io/WizardEngine/
+Project website link : https://cheerwizard.github.io/WizardEngine/
+
+## Resources and references
+Thanks to all these resources for giving a lot of knowledge for creating this project.
+Below will be the list of channels and websites where I am getting my knowledge.
+### YouTube channels
+- https://www.youtube.com/c/TheChernoProject
+- https://www.youtube.com/c/GameEngineSeries
+- https://www.youtube.com/user/thebennybox
+- https://www.youtube.com/user/CppCon
+- https://www.youtube.com/c/VictorGordan
+### Websites and Wiki
+- https://learnopengl.com/
+- https://vulkan-tutorial.com/
+- https://www.gamedev.net/
+- https://www.khronos.org/opengl/wiki/
