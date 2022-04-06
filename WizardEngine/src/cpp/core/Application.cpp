@@ -134,6 +134,13 @@ namespace engine::core {
         _scriptSystem->setActiveScene(scene);
     }
 
+    void Application::setActiveScene(const u32 &sceneIndex) {
+        activeScene = scenes[sceneIndex];
+        _scriptSystem->setActiveScene(activeScene);
+        _renderSystem->setActiveScene(activeScene);
+        _renderSystem->onUpdate();
+    }
+
     void Application::restart() {
         onDestroy();
         onCreate();
@@ -214,11 +221,6 @@ namespace engine::core {
 
     void Application::createScripting() {
         _scriptSystem = createScope<scripting::ScriptSystem>();
-    }
-
-    void Application::setActiveScene(const uint32_t& activeSceneId) {
-        setActiveScene(scenes[activeSceneId]);
-        _renderSystem->onUpdate();
     }
 
     void Application::onGamepadConnected(s32 joystickId) const {
