@@ -14,9 +14,7 @@ namespace engine::graphics {
     class VertexArray final {
 
     public:
-        VertexArray() {
-            create();
-        }
+        VertexArray() = default;
         ~VertexArray() = default;
 
     public:
@@ -25,7 +23,7 @@ namespace engine::graphics {
         void recreate();
         // bind/unbind
         void bind() const;
-        void unbind() const;
+        static void unbind();
 
     private:
         u32 id = 0;

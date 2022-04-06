@@ -16,12 +16,8 @@ namespace engine::graphics {
     class VertexBuffer final : public Buffer {
 
     public:
-        VertexBuffer() : Buffer(DEFAULT_VERTEX_COUNT) {
-            create();
-        }
-        VertexBuffer(const uint32_t& vertexCount) : Buffer(vertexCount) {
-            create();
-        }
+        VertexBuffer() : Buffer(DEFAULT_VERTEX_COUNT) {}
+        VertexBuffer(const uint32_t& vertexCount) : Buffer(vertexCount) {}
         ~VertexBuffer() = default;
 
     public:
@@ -31,7 +27,7 @@ namespace engine::graphics {
         void recreate();
         // bind/unbind
         void bind() const;
-        static void unbind() ;
+        static void unbind();
         // GPU allocations
         void alloc();
         void alloc(const uint32_t &vertexCount);

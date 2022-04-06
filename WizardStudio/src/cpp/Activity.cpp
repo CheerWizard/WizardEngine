@@ -148,12 +148,12 @@ namespace studio {
                 { { -0.5, -0.5 }, { 1, 1, 0 }}
         }, 4);
 
-        Object3d(
-                scene1.get(),
-                "Sponza",
-                transform3d(),
-                GET_MESH_COMPONENT(BatchVertex<Vertex3d>, "assets/obj/sponza.obj")
-        );
+//        Object3d(
+//                scene1.get(),
+//                "Sponza",
+//                transform3d(),
+//                GET_MESH_COMPONENT(BatchVertex<Vertex3d>, "assets/obj/sponza.obj")
+//        );
 
         Object3d(
                 scene1.get(),

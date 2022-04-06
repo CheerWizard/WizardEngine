@@ -299,7 +299,7 @@ namespace engine::graphics {
         glBlitFramebuffer(
                 0, 0, srcFormat.width, srcFormat.height,
                 0, 0, targetFormat.width, targetFormat.height,
-                GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST
+                GL_COLOR_BUFFER_BIT, GL_NEAREST
         );
     }
 

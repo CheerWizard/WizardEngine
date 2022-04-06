@@ -16,10 +16,16 @@ namespace engine::graphics {
         u8 id = 0;
         VertexArray vao;
         VertexBuffer vbo;
+
+        VRenderModel() = default;
+
         VRenderModel(
                 const u8 &id,
                 const u32& vertexCount
-        ): id(id), vbo(vertexCount) {}
+        ): id(id), vbo(vertexCount) {
+            vao.create();
+            vbo.create();
+        }
     };
 
     struct VIRenderModel {
@@ -27,11 +33,18 @@ namespace engine::graphics {
         VertexArray vao;
         VertexBuffer vbo;
         IndexBuffer ibo;
+
+        VIRenderModel() = default;
+
         VIRenderModel(
                 const u8 &id,
                 const u32& vertexCount,
                 const u32& indexCount
-        ): id(id), vbo(vertexCount), ibo(indexCount) {}
+        ): id(id), vbo(vertexCount), ibo(indexCount) {
+            vao.create();
+            vbo.create();
+            ibo.create();
+        }
     };
 
     void release(VRenderModel& renderModel);
