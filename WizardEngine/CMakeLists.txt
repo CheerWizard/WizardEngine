@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(WizardEngine)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake_tools/CMakeLists.txt)
+
+project(WizardEngine)
 
 #/ creating a library from sources.
 file(GLOB_RECURSE ENGINE_SRC

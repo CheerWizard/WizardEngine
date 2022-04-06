@@ -1,22 +1,49 @@
-Temporary project website : https://cheerwizard.github.io/WizardEngine/
-
-![WizardGE_post](https://user-images.githubusercontent.com/37471793/159553487-0ee2a6bb-04d0-4c68-b0bb-bab22804a3ca.png)
+![WizardGE_post](https://user-images.githubusercontent.com/37471793/159553487-0ee2a6bb-04d0-4c68-b0bb-bab22804a3ca.png) 
 # Wizard Engine
-A game engine library, responsible to provide an easy and flexible toolchain with all necessary technical solutions for a game.
 
-This library could also be used for developing a software, which need to support only few tools from actual library. 
-For example, maybe you just want to build your own 3D modelling software and you don't really care about game stuff? 
-Well, in this case, WizardEngine can also feet your needs, as it can provide you lightweigth functions to include ot exclude any kind of systems that you want.
+## Manual build instructions
 
-Right now, this library is aimed only for "single player" games. It means, that network systems are not super priority at least right now.
+### Install CMake
+Project can be build for **Windows** platform.
+For **Linux** and **macOS** it's **NOT** well-developed yet and some features and systems may not be stable.  
+Project uses **CMake** to generate solution file for **Visual Studio** environment. 
+You can also use **CLion IDE** environment for generating and building this project.
+You have to make sure that you have a working cmake-installation on your system. 
+You can download it here https://cmake.org/
 
-![wizard_logo](https://user-images.githubusercontent.com/37471793/161589647-e2595cf1-a08c-48a9-81d2-424b89c9c55b.png)
-# Wizard Studio
-A GUI desktop application. Provides toolchain to manipulate with WizardEngine components, systems, etc. The actual application is going to include :
-1. LevelEditor - creating and editing objects in the Scene or World. World may include muktiple Scenes.
-2. CharacterEditor - not decided yet.
-3. MaterialEditor - creating and editing material component.
-4. MeshEditor - editing geometry, shapes, meshes.
-5. ShaderEditor - creating and editing Shader.
-6. Entity and Component panels - creating and editing Entity and Component.
-7. Assets browser - manipulation with Asset files. Loading, saving, etc. It may be texture, shader, .obj and so on.
+### Get the source
+Make sure you have a working git-installation. Open a command prompt and clone the WizardEngine project via:
+```bash
+git clone https://github.com/CheerWizard/WizardEngine
+```
+### Build from source:
+```bash
+cd WizardEngine
+cmake CMakeLists.txt 
+cmake --build .
+```
+
+### Build instructions for Windows with Visual Studio
+
+First you have to install **Visual Studio** on your Windows system. You can get the **Community Version** 
+for free here: https://visualstudio.microsoft.com/de/downloads/
+
+To generate the build environment for your IDE open a command prompt, navigate to your repo and type:
+```bash
+cmake CMakeLists.txt
+```
+This will generate the project files for the visual studio. 
+All dependencies used to build **WizardEngine** shall be part of the repo.
+
+### Build instructions for Windows with CLion IDEA
+Build project with **CLion IDEA** is much easier. If you already cloned Git repository, then just follow these steps:
+1. Open **WizardEngine** package with **CLion IDEA** 
+2. Wait until CMake commands will be executed
+3. Select build configuration :
+- **WizardEngine|Debug** or **WizardEngine|Release** for building game engine library .lib
+- **WizardStudio|Debug** or **WizardStudio|Release** for building game development editor .exe program
+- **WizardTest|Debug** or **WizardTest|Release** for building game test .exe program
+4. Press on build hammer (Ctrl+F9) to build configuration you want to 
+
+## WizardEngine website and support
+Project website link: https://cheerwizard.github.io/WizardEngine/
