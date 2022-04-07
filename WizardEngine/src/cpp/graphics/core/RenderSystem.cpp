@@ -95,7 +95,7 @@ namespace engine::graphics {
         // bind to window frame buffer and draw screen
         setDepthTest(false);
         FrameBuffer::bindDefault();
-        screenRenderer.render<ScreenVertex>(screen, screenFrame->getColorAttachment(0).id);
+        screenRenderer.renderQuad(screenFrame->getColorAttachment(0).id);
 
         activeScene->updateComponents<Transform3dComponent>([](Transform3dComponent& transform) {
             transform.isUpdated = false;
@@ -360,8 +360,12 @@ namespace engine::graphics {
                 vShader,
                 fShader
         );
-
         screenRenderer = VRenderer(shader);
+
+        // upload screen geometry to GPU memory and delete from heap memory
+        auto screen = Screen();
+        screenRenderer.uploadStatic(screen);
+        delete screen.vertexData.vertices;
     }
 
     void RenderSystem::createPointRenderer() {

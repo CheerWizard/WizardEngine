@@ -157,4 +157,12 @@ namespace engine::graphics {
             ibo.load(indexData);
         }
     }
+
+    template<typename T>
+    void uploadStatic(const VertexDataComponent<T> &vertexDataComponent, VRenderModel& renderModel) {
+        renderModel.vao.bind();
+        renderModel.vbo.bind();
+        renderModel.vbo.loadStatic(vertexDataComponent.vertexData);
+        VertexArray::unbind();
+    }
 }

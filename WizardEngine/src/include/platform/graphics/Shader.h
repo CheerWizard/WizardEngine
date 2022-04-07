@@ -131,7 +131,7 @@ namespace engine::shader {
         void destroy() const;
         bool link();
         void start() const;
-        void stop();
+        static void stop() ;
         u32 bindAttribute(const char* attrName) const;
 
     protected:

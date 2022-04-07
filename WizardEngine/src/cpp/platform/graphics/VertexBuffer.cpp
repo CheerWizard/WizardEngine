@@ -23,7 +23,7 @@ namespace engine::graphics {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    void VertexBuffer::malloc(const size_t &memorySize) {
+    void VertexBuffer::mallocDynamic(const size_t &memorySize) {
         glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr) memorySize, nullptr, GL_DYNAMIC_DRAW);
     }
 
@@ -58,6 +58,10 @@ namespace engine::graphics {
 
     void VertexBuffer::load(const void* vertices, const size_t& subDataOffset, const size_t& memorySize) {
         glBufferSubData(GL_ARRAY_BUFFER, (GLsizeiptr)subDataOffset, memorySize, vertices);
+    }
+
+    void VertexBuffer::loadStatic(const void* vertices, const size_t& memorySize) {
+        glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr) memorySize, vertices, GL_STATIC_DRAW);
     }
 
 }
