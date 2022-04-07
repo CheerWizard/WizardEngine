@@ -33,7 +33,7 @@ namespace engine::graphics {
     void VertexBuffer::setFormat(const shader::VertexFormat &vertexFormat, const u32 &vertexCount) {
         this->vertexFormat = vertexFormat;
         bind();
-        alloc(vertexCount);
+        allocDynamic(vertexCount);
         bindAttributes();
     }
 
@@ -42,13 +42,13 @@ namespace engine::graphics {
         create();
     }
 
-    void VertexBuffer::alloc(const u32 &vertexCount) {
+    void VertexBuffer::allocDynamic(const u32 &vertexCount) {
         totalCount = vertexCount;
         size_t size = vertexFormat.getSize() * vertexCount;
-        malloc(size);
+        mallocDynamic(size);
     }
 
-    void VertexBuffer::alloc() {
-        alloc(totalCount);
+    void VertexBuffer::allocDynamic() {
+        allocDynamic(totalCount);
     }
 }

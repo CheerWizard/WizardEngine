@@ -29,15 +29,18 @@ namespace engine::graphics {
         void bind() const;
         static void unbind();
         // GPU allocations
-        void alloc();
-        void alloc(const uint32_t &vertexCount);
-        static void malloc(const size_t &memorySize);
+        void allocDynamic();
+        void allocDynamic(const uint32_t &vertexCount);
+        static void mallocDynamic(const size_t &memorySize);
         void setFormat(const shader::VertexFormat &vertexFormat);
         void setFormat(const shader::VertexFormat &vertexFormat, const uint32_t& vertexCount);
         // GPU data load
         template<typename T>
         void load(const VertexData<T> &vertexData);
         static void load(const void* vertices, const size_t& subDataOffset, const size_t& memorySize);
+        template<typename T>
+        void loadStatic(const VertexData<T>& vertexData);
+        static void loadStatic(const void* vertices, const size_t& memorySize);
 
     public:
         void enableAttributes();
@@ -59,4 +62,10 @@ namespace engine::graphics {
         load(vertexData.vertices, subDataOffset, memorySize);
     }
 
+    template<typename T>
+    void VertexBuffer::loadStatic(const VertexData<T> &vertexData) {
+        auto vertexSize = vertexFormat.getSize();
+        auto memorySize = vertexData.vertexCount * vertexSize;
+        loadStatic(vertexData.vertices, memorySize);
+    }
 }

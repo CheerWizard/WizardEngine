@@ -3,12 +3,12 @@
 //
 
 #include <graphics/core/buffer_data/VertexData.h>
-#include <glm/glm.hpp>
+#include <graphics/core/shader/Uniform.h>
 
 namespace engine::graphics {
 
     struct ScreenVertex {
-        glm::vec2 position = { -0.5, -0.5 };
+        glm::vec2 position = { -1, -1 };
         glm::vec2 uv = { 0, 0 };
     };
 

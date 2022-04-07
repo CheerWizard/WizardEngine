@@ -8,10 +8,10 @@ namespace engine::graphics {
 
     Screen::Screen() {
         auto vertices = new ScreenVertex[4] {
-                ScreenVertex { { -0.5, -0.5 }, { 0, 0 } },
-                ScreenVertex { { 0.5, -0.5 }, { 1, 0 } },
-                ScreenVertex { { 0.5, 0.5 }, { 1, 1 } },
-                ScreenVertex { { -0.5, 0.5 }, { 0, 1 } }
+                ScreenVertex { { -1, -1 }, { 0, 0 } },
+                ScreenVertex { { 1, -1 }, { 1, 0 } },
+                ScreenVertex { { 1, 1 }, { 1, 1 } },
+                ScreenVertex { { -1, 1 }, { 0, 1 } }
         };
         vertexData = VertexData<ScreenVertex> { vertices, 0, 4 };
         drawType = DrawType::QUAD;

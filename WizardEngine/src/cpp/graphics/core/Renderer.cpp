@@ -83,4 +83,18 @@ namespace engine::graphics {
         batchRenderer.release();
         instanceRenderer.release();
     }
+
+    void VRenderer::renderQuad(const u32& textureId) {
+        if (!shaderProgram.isReady()) return;
+
+        shaderProgram.start();
+
+        TextureBuffer::activate(0);
+        TextureBuffer::bind(textureId);
+
+        vRenderModel.vao.bind();
+        drawV(DrawType::QUAD, 4);
+
+        shaderProgram.stop();
+    }
 }

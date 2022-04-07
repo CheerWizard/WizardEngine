@@ -133,15 +133,24 @@ namespace engine::graphics {
         ~VRenderer() = default;
 
     public:
+        [[nodiscard]] inline const BaseShaderProgram& getShaderProgram() {
+            return shaderProgram;
+        }
+
+    public:
         template<typename T, typename V>
         void render(const Entity& entity);
         template<typename V>
         void render(VertexDataComponent<V>& vertexDataComponent);
         template<typename V>
         void render(VertexDataComponent<V>& vertexDataComponent, const uint32_t& textureId);
+        void renderQuad(const u32& textureId);
 
     public:
         void release();
+        // uploads vertex data to vertex buffer, as data that shouldn't change
+        template<typename T>
+        void uploadStatic(const VertexDataComponent<T>& vertexDataComponent);
 
     private:
         void create();
@@ -225,7 +234,7 @@ namespace engine::graphics {
             resetCounts(renderModel);
         }
 
-        shaderProgram.stop();
+        ShaderProgram::stop();
     }
 
     template<typename T, typename V>
@@ -277,7 +286,7 @@ namespace engine::graphics {
             resetCounts(renderModel);
         }
 
-        shaderProgram.stop();
+        ShaderProgram::stop();
     }
 
     template<typename T, typename V>
@@ -328,7 +337,7 @@ namespace engine::graphics {
             drawV(drawType, totalVertexCount, i);
         }
 
-        shaderProgram.stop();
+        ShaderProgram::stop();
     }
 
     template<typename T, typename V>
@@ -380,7 +389,7 @@ namespace engine::graphics {
             drawVI(drawType, totalIndexCount, i);
         }
 
-        shaderProgram.stop();
+        ShaderProgram::stop();
     }
 
     template<typename T, typename V>
@@ -422,7 +431,7 @@ namespace engine::graphics {
         vRenderModel.vao.bind();
         drawV(vertexDataComponent->drawType, totalVertexCount);
 
-        shaderProgram.stop();
+        ShaderProgram::stop();
     }
 
     template<typename V>
@@ -436,7 +445,7 @@ namespace engine::graphics {
         vRenderModel.vao.bind();
         drawV(vertexDataComponent.drawType, totalVertexCount);
 
-        shaderProgram.stop();
+        ShaderProgram::stop();
     }
 
     template<typename V>
@@ -453,7 +462,12 @@ namespace engine::graphics {
         vRenderModel.vao.bind();
         drawV(vertexDataComponent.drawType, totalVertexCount);
 
-        shaderProgram.stop();
+        ShaderProgram::stop();
+    }
+
+    template<typename T>
+    void VRenderer::uploadStatic(const VertexDataComponent<T>& vertexDataComponent) {
+        graphics::uploadStatic(vertexDataComponent, vRenderModel);
     }
 
     template<typename T, typename V>
@@ -478,7 +492,7 @@ namespace engine::graphics {
         viRenderModel.vao.bind();
         drawVI(mesh->drawType, totalIndexCount);
 
-        shaderProgram.stop();
+        ShaderProgram::stop();
     }
 
     template<typename T>

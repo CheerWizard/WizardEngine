@@ -74,7 +74,7 @@ namespace engine::core {
         shutdown();
     }
 
-    void Application::onWindowResized(const uint32_t &width , const uint32_t &height) {
+    void Application::onWindowResized(const u32 &width , const u32 &height) {
         if (width == 0 || height == 0 || input->isMousePressed(event::MouseCode::ButtonLeft)) return;
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
 

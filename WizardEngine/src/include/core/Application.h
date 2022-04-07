@@ -47,7 +47,7 @@ namespace engine::core {
     public:
         // window events
         void onWindowClosed();
-        void onWindowResized(const uint32_t &width, const uint32_t &height);
+        void onWindowResized(const u32 &width, const u32 &height);
         // input keyboard events
         void onKeyPressed(event::KeyCode keyCode);
         void onKeyHold(event::KeyCode keyCode);

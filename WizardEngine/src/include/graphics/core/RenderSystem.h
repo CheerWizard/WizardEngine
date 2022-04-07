@@ -50,7 +50,6 @@ namespace engine::graphics {
         // these data are mostly for back-end, they are mostly just u32 numbers
         // screen
         VRenderer screenRenderer;
-        Screen screen;
         // scene
         MultiRenderer sceneRenderer;
         // line
