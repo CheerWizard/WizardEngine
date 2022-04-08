@@ -7,16 +7,17 @@
 #include <io/BitmapFile.h>
 #include <core/filesystem.h>
 #include <math/Math.h>
+#include <platform/graphics/TextureBuffer.h>
 
 namespace engine::io {
 
     using namespace graphics;
 
-    bool Fonts::create(
-            const std::string &fontPath,
-            const uint32_t &fontSize,
-            const std::string &bitmapPath,
-            const std::string &widthsPath
+    u32 Fonts::create(
+            const char* fontPath,
+            const u32 &fontSize,
+            const char* bitmapPath,
+            const char* widthsPath
     ) {
         FT_Library lib;
         FT_Error error;
@@ -31,7 +32,7 @@ namespace engine::io {
         }
 
         // load font
-        error = FT_New_Face(lib, fontPath.c_str(), 0, &face);
+        error = FT_New_Face(lib, fontPath, 0, &face);
         if (error == FT_Err_Unknown_File_Format) {
             ENGINE_ERR("Fonts : failed to open a file {0} , unknown file format!", fontPath);
             return false;
@@ -162,13 +163,13 @@ namespace engine::io {
                 }
             }
         }
-        // map font file path with characters map
-        fonts.insert(std::pair<std::string, Characters>(fontPath, characters));
-
         // write into .bmp file
         int paddedSize = 0;
         BitmapFile::write(bitmapPath, { imageWidth, imageHeight, buffer, &paddedSize });
         delete[] buffer;
+        // map font file path with characters map
+        u32 fontTextureId = TextureBuffer::load(bitmapPath);
+        fonts.insert(std::pair<u32, Characters>(fontTextureId, characters));
         // write into widths .txt file
         filesystem::write(widthsPath, widths, 128);
         delete[] widths;
@@ -176,25 +177,26 @@ namespace engine::io {
         error = FT_Done_FreeType(lib);
         if (error != FT_Err_Ok) {
             ENGINE_ERR("Fonts : failed to close FreeType library, error : {0}", error);
-            return false;
+            return fontTextureId;
         }
 
-        return true;
+        return fontTextureId;
     }
 
-    Characters &Fonts::getFont(const std::string& fontPath) {
-        return fonts[fontPath];
+    Characters &Fonts::getFont(const u32& id) {
+        return fonts[id];
     }
 
-    Character &Fonts::getCharacter(const std::string &fontPath, const char &c) {
-        return fonts[fontPath][c];
+    Character &Fonts::getCharacter(const u32& id, const char &c) {
+        return fonts[id][c];
     }
 
     void Fonts::clear() {
         fonts.clear();
     }
 
-    bool Fonts::exists(const std::string& fontPath) {
-        return fonts.find(fontPath) != fonts.end();
+    bool Fonts::exists(const u32& id) {
+        return fonts.find(id) != fonts.end();
     }
+
 }

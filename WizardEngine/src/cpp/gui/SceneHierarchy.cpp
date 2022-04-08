@@ -421,14 +421,11 @@ namespace engine::gui {
     void drawTextComponent(graphics::TextComponent& textComponent) {
         drawTransform3dController(textComponent.transform);
         bool textUpdated = drawTextField("##Text", textComponent.text, textComponent.text);
-        bool fontUpdated = drawTextField("##Font", textComponent.font, textComponent.font);
-        bool bmpUpdated = drawTextField("##Bitmap", textComponent.bitmap.fileName, textComponent.bitmap.fileName);
         bool paddingXUpdated = drawFloatSlider("Padding X", textComponent.paddingX, textComponent.paddingX);
         bool paddingYUpdated = drawFloatSlider("Padding Y", textComponent.paddingY, textComponent.paddingY);
         bool wwUpdated = drawFloatSlider("WhitespaceWidth", textComponent.whiteSpaceWidth, textComponent.whiteSpaceWidth);
         drawFloatSlider(textComponent.transparency);
         textComponent.isUpdated = textUpdated
-                || fontUpdated || bmpUpdated
                 || paddingXUpdated || paddingYUpdated
                 || wwUpdated
                 || textComponent.transparency.isUpdated;

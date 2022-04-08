@@ -22,10 +22,8 @@ namespace engine::io {
         ~TextureFile() = default;
 
     public:
-        // read functions will return NULL value, if the read process failed!
-        static TextureData read(const std::string_view &fileName);
-        static TextureData read(const std::string_view &fileName, const std::string_view &texturesPath);
-
+        // returns NULL if read from file - failed
+        static TextureData read(const char* filePath);
         static void free(void* data);
     };
 

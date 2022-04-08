@@ -124,7 +124,6 @@ namespace studio {
 
         Ref<Scene> editorScene = createRef<Scene>(); // store entities in scope of Editor and not Runtime!
 
-        Camera3D activeSceneCamera;
         Ref<Camera3dController> activeSceneCameraController;
 
         bool windowClosePressed = false;

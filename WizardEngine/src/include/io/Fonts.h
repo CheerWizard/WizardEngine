@@ -10,13 +10,13 @@
 #include FT_FREETYPE_H
 #include <glm/glm.hpp>
 
-#include <unordered_map>
+#include <core/map.h>
 
 #define FONTS engine::io::Fonts::get()
-#define FONT_EXISTS(fontPath) FONTS.exists(fontPath)
-#define FONT_ABSENT(fontPath) !FONT_EXISTS(fontPath)
-#define GET_FONT(fontPath) FONTS.getFont(fontPath)
-#define GET_CHARACTER(fontPath, c) FONTS.getCharacter(fontPath, c)
+#define FONT_EXISTS(fontId) FONTS.exists(fontId)
+#define FONT_ABSENT(fontId) !FONT_EXISTS(fontId)
+#define GET_FONT(fontId) FONTS.getFont(fontId)
+#define GET_CHARACTER(fontId, c) FONTS.getCharacter(fontPath, c)
 
 namespace engine::graphics {
 
@@ -39,6 +39,8 @@ namespace engine::graphics {
 
 namespace engine::io {
 
+    using namespace core;
+
     class Fonts {
 
     private:
@@ -57,22 +59,21 @@ namespace engine::io {
         }
 
     public:
-        bool create(
-                const std::string& fontPath,
-                const uint32_t& fontSize,
-                const std::string& bitmapPath,
-                const std::string& widthsPath
+        u32 create(
+                const char* fontPath,
+                const u32& fontSize,
+                const char* bitmapPath,
+                const char* widthsPath
         );
-        graphics::Characters& getFont(const std::string& fontPath);
-        graphics::Character& getCharacter(const std::string& fontPath, const char& c);
+        graphics::Characters& getFont(const u32& id);
+        graphics::Character& getCharacter(const u32& id, const char& c);
         void clear();
-        bool exists(const std::string& fontPath);
+        bool exists(const u32& id);
 
     private:
-        // key - font file path
-        // value - characters map
-        // todo we don't really need to store file path as key, instead we can generate a hash id or something similar!
-        std::unordered_map<std::string, graphics::Characters> fonts;
+        // key - font texture buffer id
+        // value - font characters map
+        std::unordered_map<u32, graphics::Characters> fonts;
     };
 
 }

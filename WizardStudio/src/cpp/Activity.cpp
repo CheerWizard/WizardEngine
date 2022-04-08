@@ -35,7 +35,7 @@ namespace studio {
                                              materialScript(),
                                              phongLightScript()
                                      });
-        auto objShader = createRef<BaseShaderProgram>(
+        auto objShader = BaseShaderProgram(
                 ShaderProps {
                         "obj",
                         "v_obj.glsl",
@@ -113,7 +113,7 @@ namespace studio {
         auto scene1 = createRef<Scene>();
         app->setActiveScene(scene1);
 
-        activeSceneCamera = Camera3D {
+        auto activeSceneCamera = Camera3D {
                 "SceneCamera",
                 app->getAspectRatio(),
                 scene1.get()
@@ -180,8 +180,6 @@ namespace studio {
         activeSceneCameraController->bind(KeyCode::E, RotateType::RIGHT_Z);
         activeSceneCameraController->bind(KeyCode::Z, ZoomType::ZOOM_IN);
         activeSceneCameraController->bind(KeyCode::X, ZoomType::ZOOM_OUT);
-        activeSceneCameraController->setPosition({0, 0, -1});
-        activeSceneCameraController->applyChanges();
 
         _texturePreview.hide();
         _objPreview->hide();
@@ -195,8 +193,6 @@ namespace studio {
         objCameraController->bind(KeyCode::E, RotateType::RIGHT_Z);
         objCameraController->bind(KeyCode::Z, ZoomType::ZOOM_IN);
         objCameraController->bind(KeyCode::X, ZoomType::ZOOM_OUT);
-        objCameraController->setPosition({0, 0, -1});
-        objCameraController->applyChanges();
 
         _sceneHierarchy.setCallback(this);
 

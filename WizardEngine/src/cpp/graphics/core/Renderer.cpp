@@ -90,11 +90,11 @@ namespace engine::graphics {
         shaderProgram.start();
 
         TextureBuffer::activate(0);
-        TextureBuffer::bind(textureId);
+        TextureBuffer::bind(textureId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
 
         vRenderModel.vao.bind();
         drawV(DrawType::QUAD, 4);
 
-        shaderProgram.stop();
+        BaseShaderProgram::stop();
     }
 }

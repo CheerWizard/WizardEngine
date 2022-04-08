@@ -18,3 +18,5 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 include_engine(../WizardEngine)
 link_to_engine(${PROJECT_NAME})
+
+replace_dirs(WizardTest/assets WizardTest/assets)

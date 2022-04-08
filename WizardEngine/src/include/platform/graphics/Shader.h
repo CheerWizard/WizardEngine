@@ -16,9 +16,6 @@ namespace engine::shader {
 
     using namespace core;
 
-    typedef s32 GLint;
-    typedef u32 GLenum;
-
     enum ShaderState : u8 {
         READY = 0,
         FAILED_READ_FILE = 1,
@@ -109,9 +106,9 @@ namespace engine::shader {
         ) const;
 
     private:
-        GLint getUniformArrayElementLocation(const char* name, const u32 &index) const;
-        GLint getUniformArrayStructLocation(const char* structName, const char* fieldName, const u32 &index) const;
-        GLint getUniformStructLocation(const char* structName, const char* fieldName) const;
+        s32 getUniformArrayElementLocation(const char* name, const u32 &index) const;
+        s32 getUniformArrayStructLocation(const char* structName, const char* fieldName, const u32 &index) const;
+        s32 getUniformStructLocation(const char* structName, const char* fieldName) const;
 
     protected:
         u32 id = 0;
@@ -135,7 +132,7 @@ namespace engine::shader {
         u32 bindAttribute(const char* attrName) const;
 
     protected:
-        std::string toStringShaderType(GLenum type);
+        std::string toStringShaderType(const u32& type);
 
     protected:
         u32 id = 0;

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <graphics/core/texture/Texture.h>
+#include <platform/graphics/TextureBuffer.h>
 
 #include "string"
 
@@ -25,11 +26,20 @@ namespace engine::graphics {
 
     struct MaterialMapsComponent {
         const char* name = "materialMaps";
-        TextureComponent diffuse = { IntUniform { "diffuse", 0 } };
-        TextureComponent specular = { IntUniform { "specular", 1 } };
+        TextureComponent diffuse = {
+                0,
+                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
+                IntUniform { "diffuse", 0 }
+        };
+        TextureComponent specular = {
+                0,
+                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
+                IntUniform { "specular", 1 }
+        };
 
-        MaterialMapsComponent(const std::string& diffuseFileName, const std::string& specularFileName)
-        : diffuse(diffuseFileName, { "diffuse", 0 }), specular(specularFileName, { "specular", 1 }) {}
+        MaterialMapsComponent(const u32& diffuseId, const u32& specularId)
+        : diffuse(diffuseId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D), { "diffuse", 0 }),
+        specular(specularId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D), { "specular", 1 }) {}
     };
 
 }
