@@ -455,7 +455,7 @@ namespace engine::graphics {
         shaderProgram.start();
 
         TextureBuffer::activate(0);
-        TextureBuffer::bind(textureId);
+        TextureBuffer::bind(textureId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
 
         uint32_t totalVertexCount = 0;
         tryUpload(vertexDataComponent, totalVertexCount, vRenderModel);

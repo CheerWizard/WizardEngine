@@ -9,12 +9,12 @@
 #include <graphics/transform/TransformComponents.h>
 #include <graphics/core/texture/Texture.h>
 #include <graphics/camera/CameraComponents.h>
+#include <platform/graphics/TextureBuffer.h>
 
 namespace engine::graphics {
 
     struct TextComponent {
         std::string text;
-        std::string font;
         shader::Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
         Transform3dComponent transform;
         TextureComponent bitmap;
@@ -25,17 +25,15 @@ namespace engine::graphics {
         bool isUpdated = true; // flag should be updated, once this text has been changed
 
         TextComponent(
+                const u32& textureId,
                 const std::string& text,
-                const std::string& font,
-                const std::string& bitmap,
                 const Transform3dComponent& transform,
                 const glm::vec4& color,
                 const float& paddingX = 0,
                 const float& paddingY = 0,
                 const float& whiteSpaceWidth = 0.02f,
                 const float& transparency = 0.5f
-        ) : text(text), font(font),
-        bitmap({ bitmap, TextureType::TEXTURE_2D, { "bitmap", 1 } }),
+        ) : text(text), bitmap({ textureId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D), { "bitmap", 0 } }),
         transform(transform), color({ "color", color }),
         paddingX(paddingX), paddingY(paddingY),
         whiteSpaceWidth(whiteSpaceWidth), transparency({ "transparency", 0.5f }) {}
@@ -44,26 +42,28 @@ namespace engine::graphics {
     // just separate types for ecs as we want to process text 2D/3D separately
     struct Text2d : TextComponent {
         Text2d(
+                const u32& textureId,
                 const std::string& text,
-                const std::string& font,
-                const std::string& bitmap,
                 const Transform3dComponent& transform,
                 const glm::vec4& color,
-                const float& padding = 0,
-                const float& whiteSpaceWidth = 0.02f
-        ) : TextComponent(text, font, bitmap, transform, color, padding, whiteSpaceWidth) {}
+                const float& paddingX = 0,
+                const float& paddingY = 0,
+                const float& whiteSpaceWidth = 0.02f,
+                const float& transparency = 0.5f
+        ) : TextComponent(textureId, text, transform, color, paddingX, paddingY, whiteSpaceWidth, transparency) {}
     };
 
     struct Text3d : TextComponent {
         Text3d(
+                const u32& textureId,
                 const std::string& text,
-                const std::string& font,
-                const std::string& bitmap,
                 const Transform3dComponent& transform,
                 const glm::vec4& color,
-                const float& padding = 0,
-                const float& whiteSpaceWidth = 0.02f
-        ) : TextComponent(text, font, bitmap, transform, color, padding, whiteSpaceWidth) {}
+                const float& paddingX = 0,
+                const float& paddingY = 0,
+                const float& whiteSpaceWidth = 0.02f,
+                const float& transparency = 0.5f
+        ) : TextComponent(textureId, text, transform, color, paddingX, paddingY, whiteSpaceWidth, transparency) {}
     };
 
     struct TextProjection : Camera3dComponent {

@@ -5,8 +5,7 @@
 #pragma once
 
 #include <graphics/core/shader/BaseShader.h>
-#include <graphics/core/sources/TextureSource.h>
-#include "MaterialComponents.h"
+#include <graphics/material/MaterialComponents.h>
 
 namespace engine::shader {
     using namespace graphics;

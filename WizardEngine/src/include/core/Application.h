@@ -17,7 +17,6 @@
 
 #include <graphics/core/RenderSystem.h>
 #include <graphics/core/sources/MeshSource.h>
-#include <graphics/core/sources/TextureSource.h>
 #include <graphics/core/sources/ShaderSource.h>
 
 #include <scripting/ScriptSystem.h>

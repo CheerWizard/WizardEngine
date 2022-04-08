@@ -288,20 +288,7 @@ namespace engine::graphics {
     }
 
     void RenderSystem::createSkyboxRenderer() {
-        auto skyboxRotation = ShaderScript();
-
-        skyboxRotation.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            // do nothing
-        };
-        skyboxRotation.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto transform = entity.getPtr<Transform3dComponent>();
-            if (transform) {
-                transform->rotation.y += 0.0001f;
-                updateModel3d(*transform);
-            }
-        };
-
-        auto vShader = shader::BaseShader({ camera3dUboScript(), skyboxRotation });
+        auto vShader = shader::BaseShader({ camera3dUboScript() });
         auto fShader = shader::BaseShader({ cubeMapTextureScript() });
         auto shader = shader::BaseShaderProgram(
                 io::ShaderProps {

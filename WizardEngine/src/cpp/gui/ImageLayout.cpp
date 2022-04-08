@@ -32,7 +32,7 @@ namespace engine::gui {
             }
         }
 
-        ImGui::Image((void*)id, imageSize);
+        ImGui::Image((void*)id, imageSize, { 1, 1 }, { 0, 0 });
         onRender(dt);
         end();
     }

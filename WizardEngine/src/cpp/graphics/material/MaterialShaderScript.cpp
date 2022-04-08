@@ -3,10 +3,9 @@
 //
 
 #include <graphics/material/MaterialShaderScript.h>
+#include <platform/graphics/TextureBuffer.h>
 
 namespace engine::shader {
-
-    using namespace graphics;
 
     ShaderScript materialScript() {
         auto script = ShaderScript();
@@ -135,16 +134,22 @@ namespace engine::shader {
 
     void updateMaterialMaps(const BaseShader& shader, MaterialMapsComponent& materialMaps) {
         shader.setUniformStructField(materialMaps.name, materialMaps.diffuse.sampler);
-        ACTIVATE_TEXTURE(materialMaps.diffuse);
+        TextureBuffer::bind(materialMaps.diffuse.textureId, materialMaps.diffuse.typeId);
+        TextureBuffer::activate(materialMaps.diffuse.sampler.value);
+
         shader.setUniformStructField(materialMaps.name, materialMaps.specular.sampler);
-        ACTIVATE_TEXTURE(materialMaps.specular);
+        TextureBuffer::bind(materialMaps.specular.textureId, materialMaps.specular.typeId);
+        TextureBuffer::activate(materialMaps.specular.sampler.value);
     }
 
     void updateMaterialMaps(const BaseShader& shader, MaterialMapsComponent& materialMaps, const uint32_t& index) {
         shader.setUniformArrayStructField(index, materialMaps.name, materialMaps.diffuse.sampler);
-        ACTIVATE_TEXTURE(materialMaps.diffuse);
+        TextureBuffer::bind(materialMaps.diffuse.textureId, materialMaps.diffuse.typeId);
+        TextureBuffer::activate(materialMaps.diffuse.sampler.value);
+
         shader.setUniformArrayStructField(index, materialMaps.name, materialMaps.specular.sampler);
-        ACTIVATE_TEXTURE(materialMaps.specular);
+        TextureBuffer::bind(materialMaps.specular.textureId, materialMaps.specular.typeId);
+        TextureBuffer::activate(materialMaps.specular.sampler.value);
     }
 
     void updateMaterialUbo(const BaseShader& shader, MaterialComponent& material, const uint32_t& index) {
@@ -160,10 +165,14 @@ namespace engine::shader {
 
     void updateMaterialMapsUbo(const BaseShader& shader, MaterialMapsComponent& materialMaps) {
         uint32_t i = 0;
+
         shader.updateUniformBuffer(materialMaps.diffuse.sampler, i++);
-        ACTIVATE_TEXTURE(materialMaps.diffuse);
+        TextureBuffer::bind(materialMaps.diffuse.textureId, materialMaps.diffuse.typeId);
+        TextureBuffer::activate(materialMaps.diffuse.sampler.value);
+
         shader.updateUniformBuffer(materialMaps.specular.sampler, i++);
-        ACTIVATE_TEXTURE(materialMaps.specular);
+        TextureBuffer::bind(materialMaps.specular.textureId, materialMaps.specular.typeId);
+        TextureBuffer::activate(materialMaps.specular.sampler.value);
     }
 
 }

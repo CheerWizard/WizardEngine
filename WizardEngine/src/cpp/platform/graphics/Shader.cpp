@@ -239,7 +239,7 @@ namespace engine::shader {
         glUseProgram(0);
     }
 
-    std::string ShaderProgram::toStringShaderType(GLenum type) {
+    std::string ShaderProgram::toStringShaderType(const u32& type) {
         switch (type) {
             case GL_VERTEX_SHADER:
                 return "Vertex";

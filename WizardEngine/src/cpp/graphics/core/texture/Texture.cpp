@@ -3,7 +3,7 @@
 //
 
 #include <graphics/core/texture/Texture.h>
-#include <graphics/core/sources/TextureSource.h>
+#include <platform/graphics/TextureBuffer.h>
 
 namespace engine::graphics {
 
@@ -14,14 +14,16 @@ namespace engine::graphics {
             for (auto [entity, texture] : textures.each()) {
                 shader.setUniformArrayElement(texture.sampler.value, texture.sampler);
                 texture.sampler.isUpdated = false;
-                ACTIVATE_TEXTURE(texture);
+                TextureBuffer::bind(texture.textureId, texture.typeId);
+                TextureBuffer::activate(texture.sampler.value);
             }
         };
         script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
             auto texture = entity.getPtr<TextureComponent>();
             if (texture) {
                 shader.setUniformArrayElement(texture->sampler.value, texture->sampler);
-                ACTIVATE_TEXTURE(*texture);
+                TextureBuffer::bind(texture->textureId, texture->typeId);
+                TextureBuffer::activate(texture->sampler.value);
             }
         };
         return script;
@@ -33,14 +35,16 @@ namespace engine::graphics {
             auto textures = registry.view<TextureComponent>();
             for (auto [entity, texture] : textures.each()) {
                 shader.updateUniformBuffer(texture.sampler, 0);
-                ACTIVATE_TEXTURE(texture);
+                TextureBuffer::bind(texture.textureId, texture.typeId);
+                TextureBuffer::activate(texture.sampler.value);
             }
         };
         script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
             auto texture = entity.getPtr<TextureComponent>();
             if (texture) {
                 shader.updateUniformBuffer(texture->sampler, 0);
-                ACTIVATE_TEXTURE(*texture);
+                TextureBuffer::bind(texture->textureId, texture->typeId);
+                TextureBuffer::activate(texture->sampler.value);
             }
         };
         return script;
@@ -57,7 +61,8 @@ namespace engine::graphics {
             auto texture = entity.getPtr<CubeMapTextureComponent>();
             if (texture) {
                 shader.setUniform(texture->sampler);
-                ACTIVATE_TEXTURE(*texture);
+                TextureBuffer::activate(texture->sampler.value);
+                TextureBuffer::bind(texture->textureId, texture->typeId);
             }
         };
 

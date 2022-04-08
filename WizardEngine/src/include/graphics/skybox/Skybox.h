@@ -30,7 +30,7 @@ namespace engine::graphics {
         void init(const CubeMapTextureComponent& cubeMapTextures) {
             add<Transform3dComponent>(transform3d(
                     { 0, 0, 0 },
-                    { 3.15, 0, 0 },
+                    { 0, 0, 0 },
                     { 100, 100, 100 }
             ));
             add<VertexDataComponent<SkyboxVertex>>(Cube<SkyboxVertex>());

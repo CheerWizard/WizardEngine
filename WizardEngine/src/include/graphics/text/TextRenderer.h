@@ -6,7 +6,6 @@
 
 #include <io/Fonts.h>
 #include <graphics/core/Renderer.h>
-#include <graphics/core/sources/TextureSource.h>
 #include <graphics/text/Text.h>
 #include <graphics/camera/CameraComponents.h>
 
@@ -43,9 +42,7 @@ namespace engine::graphics {
 
         uint32_t nextRenderModelId = 0;
         for (auto [entity, text] : entities.each()) {
-            if (FONT_ABSENT(text.font)) continue;
-
-            auto& font = GET_FONT(text.font);
+            auto& font = GET_FONT(text.bitmap.textureId);
             for (auto& c : text.text) {
                 auto& character = font[c];
                 auto& vertexDataComponent = character.vertexDataComponent;
@@ -62,18 +59,12 @@ namespace engine::graphics {
             uint32_t totalVertexCount = 0;
             uint32_t i = 0;
             for (auto [entity, text] : entities.each()) {
-                // skip full text rendering, if font is absent in memory for this text
-                if (FONT_ABSENT(text.font)) {
-                    i++;
-                    continue;
-                }
-
                 vShader.setUniformArrayElement(i, text.transform);
                 fShader.setUniformArrayElement(i, text.color);
                 fShader.setUniformArrayElement(i, text.transparency);
                 fShader.setUniform(text.bitmap.sampler);
-                ACTIVATE_TEXTURE_PATH(text.bitmap, "assets/bitmaps");
-
+                TextureBuffer::bind(text.bitmap.textureId, text.bitmap.typeId);
+                TextureBuffer::activate(text.bitmap.sampler.value);
                 // no needs to update each character again, if the text didn't change!
                 if (!text.isUpdated) {
                     i++;
@@ -82,7 +73,7 @@ namespace engine::graphics {
                 }
                 text.isUpdated = false;
 
-                auto& font = GET_FONT(text.font);
+                auto& font = GET_FONT(text.bitmap.textureId);
                 float textX = 0;
                 float textY = 0;
                 char previousChar = 0;
