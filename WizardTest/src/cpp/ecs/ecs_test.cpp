@@ -105,7 +105,7 @@ namespace test::ecs {
         Registry registry;
 
         for (u32 i = 0 ; i < 10 ; i++) {
-            registry.createEntity<Polygon>(Polygon {
+            entity_id entityId = registry.createEntity<Polygon>(Polygon {
                     new Vertex[4] {
                             Vertex { { 0, 0 }, { 0, 0, 1, 1 } },
                             Vertex { { 0, 1 }, { 0, 1, 0, 1 } },
@@ -113,6 +113,33 @@ namespace test::ecs {
                             Vertex { { 1, 0 }, { 1, 1, 1, 1 } }
                     },
                     4
+            });
+            registry.addComponent<Mesh>(entityId, Mesh {
+                    Polygon {
+                            new Vertex[8]{
+                                    Vertex{{0, 0},
+                                           {0, 0, 1, 1}},
+                                    Vertex{{0, 1},
+                                           {0, 1, 0, 1}},
+                                    Vertex{{1, 1},
+                                           {1, 0, 0, 1}},
+                                    Vertex{{1, 0},
+                                           {1, 1, 1, 1}},
+                                    Vertex{{0, 0},
+                                           {0, 0, 1, 1}},
+                                    Vertex{{0, 1},
+                                           {0, 1, 0, 1}},
+                                    Vertex{{1, 1},
+                                           {1, 0, 0, 1}},
+                                    Vertex{{1, 0},
+                                           {1, 1, 1, 1}}
+                            },
+                            8
+                    },
+                    new u32[8] {
+                            0, 1, 2, 3, 4, 5, 6, 7
+                    },
+                    8
             });
         }
 
@@ -150,11 +177,27 @@ namespace test::ecs {
         assert_equals("test_component_count<Polygon>()", registry.component_count<Polygon>(), 10)
         assert_equals("test_component_count<Mesh>()", registry.component_count<Polygon>(), 10)
 
-        registry.each<Polygon>([](Polygon* polygon) {
+        u32 i = 0;
+        registry.each<Polygon>([&i](Polygon* polygon) {
+            i++;
+            assert_not_null("each<Polygon>()", (void*) polygon);
         });
+        assert_equals("registry.each<Polygon>() elements count", i, 10);
 
-        registry.each<Mesh>([](Mesh* mesh){
+        i = 0;
+        registry.each<Mesh>([&i](Mesh* mesh) {
+            i++;
+            assert_not_null("each<Mesh>()", (void*) mesh);
         });
+        assert_equals("registry.each<Mesh>() elements count", i, 20);
+
+        i = 0;
+        registry.each<Polygon, Mesh>([&i](Polygon* polygon, Mesh* mesh) {
+            i++;
+            assert_not_null("each<Polygon, Mesh>()", (void*) polygon);
+            assert_not_null("each<Polygon, Mesh>()", (void*) mesh);
+        });
+        assert_equals("registry.each<Polygon, Mesh>() elements count", i, 10);
     }
 
     void test_suite() {

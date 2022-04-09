@@ -151,9 +151,9 @@ namespace engine::ecs {
         Component* getComponent(entity_id entityId);
         // entity/component iterations
         template<class Component, typename Function>
-        void each(Function function);
+        void each(const Function& function);
         template<class Component1, class Component2, typename Function>
-        void each(Function function);
+        void each(const Function& function);
 
         template<class Component>
         size_t component_count();
@@ -251,25 +251,33 @@ namespace engine::ecs {
     }
 
     template<class Component, typename Function>
-    void Registry::each(Function function) {
+    void Registry::each(const Function& function) {
         validate_component("each()", Component, );
 
         component_data& componentData = components[Component::ID];
         component_size componentSize = BaseComponent::getSize(Component::ID);
         for (u32 i = 0 ; i < componentData.size() ; i += componentSize) {
-            function((Component*) &componentData[i]);
+            Component* component = (Component*) &componentData[i];
+            function(component);
         }
     }
 
     template<class Component1, class Component2, typename Function>
-    void Registry::each(Function function) {
+    void Registry::each(const Function& function) {
         validate_component("each()", Component1, );
         validate_component("each()", Component2, );
 
         component_data& componentData1 = components[Component1::ID];
-        component_data& componentData2 = components[Component2::ID];
         component_size componentSize1 = BaseComponent::getSize(Component1::ID);
-        component_size componentSize2 = BaseComponent::getSize(Component2::ID);
+
+        for (u32 i = 0 ; i < componentData1.size() ; i += componentSize1) {
+            Component1* component1 = (Component1*) &componentData1[i];
+            entity_id entityId1 = component1->entityId;
+            Component2* component2 = getComponent<Component2>(entityId1);
+            if (component2) {
+                function(component1, component2);
+            }
+        }
     }
 
     template<class Component>
