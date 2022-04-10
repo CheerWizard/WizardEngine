@@ -8,9 +8,9 @@
 
 using namespace engine::shader;
 
-namespace engine {
+namespace engine::graphics {
 
-    struct PhongLightComponent {
+    component(PhongLightComponent) {
         const char* name = "phongLight";
         Vec4fUniform position = { "position", { 0.5f, 0.5f, 0.5f, 0 } };
         Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
@@ -18,7 +18,7 @@ namespace engine {
         Vec4fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f, 0 } };
     };
 
-    struct DirectLightComponent {
+    component(DirectLightComponent) {
         const char* name = "directLight";
         Vec4fUniform direction = { "direction", { 0.5f, 0.5f, 0.5f, 0 } };
         Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
@@ -26,7 +26,7 @@ namespace engine {
         Vec4fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f, 0 } };
     };
 
-    struct PointLightComponent {
+    component(PointLightComponent) {
         const char* name = "pointLight";
         Vec4fUniform position = { "position", { 0.5f, 0.5f, 0.5f, 0 } };
         Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
@@ -37,7 +37,7 @@ namespace engine {
         FloatUniform quadratic = { "quadratic", 0.0075f};
     };
 
-    struct FlashLightComponent {
+    component(FlashLightComponent) {
         const char* name = "flashLight";
         Vec4fUniform position = { "position", { 0.5f, 0.5f, 0.5f, 0 } };
         Vec4fUniform direction = { "direction", { 0.5f, 0.5f, 0.5f, 0 } };

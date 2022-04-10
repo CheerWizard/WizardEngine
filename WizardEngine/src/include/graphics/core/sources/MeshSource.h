@@ -10,9 +10,9 @@
 
 #include "unordered_map"
 
-#define GET_MESH_COMPONENT(T, name) engine::MeshSource<T>::get().getMesh(name)
+#define GET_MESH_COMPONENT(T, name) engine::graphics::MeshSource<T>::get().getMesh(name)
 
-namespace engine {
+namespace engine::graphics {
 
     template<typename T>
     class MeshSource final {

@@ -4,9 +4,11 @@
 
 #pragma once
 
-#include <imgui/ImageLayout.h>
+#include <gui/ImageLayout.h>
 
 namespace studio {
+
+    using namespace engine::gui;
 
     class DragDropCallback {
     public:
@@ -14,10 +16,10 @@ namespace studio {
         virtual void onImageDragged(const std::string &fileName) = 0;
     };
 
-    class SceneViewport : public engine::ImageLayout {
+    class SceneViewport : public ImageLayout {
 
     public:
-        SceneViewport(const engine::ImageLayoutProps& props) : engine::ImageLayout(props) {}
+        SceneViewport(const ImageLayoutProps& props) : ImageLayout(props) {}
         ~SceneViewport() override {
             destroy();
             removeDragDropCallback();
@@ -33,7 +35,7 @@ namespace studio {
         }
 
     public:
-        void onRender(const engine::Time &dt) override;
+        void onRender(const engine::time::Time &dt) override;
 
     private:
         DragDropCallback* dragDropCallback = nullptr;

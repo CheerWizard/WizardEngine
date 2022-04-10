@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(WizardEngine)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake_tools/CMakeLists.txt)
+
+project(WizardEngine)
 
 #/ creating a library from sources.
 file(GLOB_RECURSE ENGINE_SRC
@@ -38,9 +39,6 @@ add_subdirectory(vendor/glm)
 add_subdirectory(vendor/stb)
 include_directories(vendor/stb/stb)
 
-#/ ECS lib.
-add_subdirectory(vendor/entt)
-
 #/ FreeType for text font rendering
 add_subdirectory(vendor/freetype)
 include_directories(vendor/freetype)
@@ -58,14 +56,13 @@ target_link_libraries(
         imgui
         glm::glm
         stb
-        EnTT
         freetype
         ../WizardEngine/vendor/dlls/assimp-vc143-mtd
 )
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
 replace_dirs(WizardEngine/vendor/dlls WizardEngine/vendor/dlls)
-replace_file(vendor/dlls/assimp-vc143-mtd.dll assimp-vc143-mtd.dll)
+replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardStudio/assimp-vc143-mtd.dll)
 #replace_dirs(WizardEngine/cpp_scripting WizardEngine/cpp_scripting)
 #replace_dirs(WizardEngine/runtime WizardEngine/runtime)
 #replace_dirs(WizardEngine/src/include WizardEngine/src/include)

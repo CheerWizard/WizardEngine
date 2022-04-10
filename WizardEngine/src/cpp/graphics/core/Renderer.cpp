@@ -4,30 +4,30 @@
 
 #include <graphics/core/Renderer.h>
 
-namespace engine {
+namespace engine::graphics {
 
     void Renderer::create(const AttributeCategory& attributeCategory) {
-        shaderProgram->bindVertexFormat();
-        shaderProgram->getVertexFormat().setAttrCategory(attributeCategory);
+        shaderProgram.bindVertexFormat();
+        shaderProgram.getVertexFormat().setAttrCategory(attributeCategory);
     }
 
     void Renderer::release() {
         for (auto& vRenderModel : vRenderModels) {
-            engine::release(vRenderModel);
+            graphics::release(vRenderModel);
         }
         for (auto& viRenderModel : viRenderModels) {
-            engine::release(viRenderModel);
+            graphics::release(viRenderModel);
         }
         vRenderModels.clear();
         viRenderModels.clear();
-        shaderProgram->release();
+        shaderProgram.release();
     }
 
     VRenderModel& Renderer::createRenderModel(const uint32_t& vertexCount) {
         VRenderModel renderModel(vRenderModels.size(), vertexCount);
         renderModel.vao.bind();
-        renderModel.vbo.setFormat(shaderProgram->getVertexFormat());
-        renderModel.vao.unbind();
+        renderModel.vbo.setFormat(shaderProgram.getVertexFormat());
+        VertexArray::unbind();
         vRenderModels.emplace_back(renderModel);
         return vRenderModels[renderModel.id];
     }
@@ -35,10 +35,10 @@ namespace engine {
     VIRenderModel& Renderer::createRenderModel(const uint32_t& vertexCount, const uint32_t& indexCount) {
         VIRenderModel renderModel(viRenderModels.size(), vertexCount, indexCount);
         renderModel.vao.bind();
-        renderModel.vbo.setFormat(shaderProgram->getVertexFormat());
+        renderModel.vbo.setFormat(shaderProgram.getVertexFormat());
         renderModel.ibo.bind();
         renderModel.ibo.alloc();
-        renderModel.vao.unbind();
+        VertexArray::unbind();
         viRenderModels.emplace_back(renderModel);
         return viRenderModels[renderModel.id];
     }
@@ -54,26 +54,47 @@ namespace engine {
     }
 
     void VRenderer::create() {
-        shaderProgram->bindVertexFormat();
+        vRenderModel = { 0, DEFAULT_VERTEX_COUNT };
+        shaderProgram.bindVertexFormat();
         vRenderModel.vao.bind();
-        vRenderModel.vbo.setFormat(shaderProgram->getVertexFormat());
-        vRenderModel.vao.unbind();
+        vRenderModel.vbo.setFormat(shaderProgram.getVertexFormat());
+        VertexArray::unbind();
     }
 
-    void VRenderer::destroy() {
-        shaderProgram->release();
+    void VRenderer::release() {
+        shaderProgram.release();
     }
 
     void VIRenderer::create() {
-        shaderProgram->bindVertexFormat();
+        viRenderModel = { 0, DEFAULT_VERTEX_COUNT, DEFAULT_INDEX_COUNT };
+        shaderProgram.bindVertexFormat();
         viRenderModel.vao.bind();
-        viRenderModel.vbo.setFormat(shaderProgram->getVertexFormat());
+        viRenderModel.vbo.setFormat(shaderProgram.getVertexFormat());
         viRenderModel.ibo.bind();
         viRenderModel.ibo.alloc();
-        viRenderModel.vao.unbind();
+        VertexArray::unbind();
     }
 
-    void VIRenderer::destroy() {
-        shaderProgram->release();
+    void VIRenderer::release() {
+        shaderProgram.release();
+    }
+
+    void MultiRenderer::release() {
+        batchRenderer.release();
+        instanceRenderer.release();
+    }
+
+    void VRenderer::renderQuad(const u32& textureId) {
+        if (!shaderProgram.isReady()) return;
+
+        shaderProgram.start();
+
+        TextureBuffer::activate(0);
+        TextureBuffer::bind(textureId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
+
+        vRenderModel.vao.bind();
+        drawV(DrawType::QUAD, 4);
+
+        BaseShaderProgram::stop();
     }
 }

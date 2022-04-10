@@ -8,16 +8,15 @@
 #include <graphics/core/shader/VertexFormat.h>
 #include <graphics/core/shader/UniformBlockFormat.h>
 
-#include <cstdint>
-#include <unordered_map>
-#include <vector>
+#include <core/primitives.h>
+#include <core/vector.h>
+#include <core/map.h>
 
 namespace engine::shader {
 
-    typedef int GLint;
-    typedef unsigned int GLenum;
+    using namespace core;
 
-    enum ShaderState : uint8_t {
+    enum ShaderState : u8 {
         READY = 0,
         FAILED_READ_FILE = 1,
         FAILED_COMPILE = 2,
@@ -35,7 +34,7 @@ namespace engine::shader {
         ~Shader() = default;
 
     public:
-        inline void setProgramId(const uint32_t &programId) {
+        inline void setProgramId(const u32 &programId) {
             this->programId = programId;
         }
 
@@ -56,7 +55,7 @@ namespace engine::shader {
         void destroy() const;
         [[nodiscard]] bool compile() const;
 
-        void bindUbf(const char* blockName, const uint32_t& blockIndex) const;
+        void bindUbf(const char* blockName, const u32& blockIndex) const;
 
         void setUniform(FloatUniform &uniform) const;
         void setUniform(BoolUniform &uniform) const;
@@ -69,10 +68,10 @@ namespace engine::shader {
         void setUniform(Mat3fUniform &uniform) const;
         void setUniform(Mat4fUniform &uniform) const;
 
-        void setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) const;
-        void setUniformArrayElement(const uint32_t &index, IntUniform &uniform) const;
-        void setUniformArrayElement(const uint32_t &index, FloatUniform &uniform) const;
-        void setUniformArrayElement(const uint32_t &index, Vec4fUniform &uniform) const;
+        void setUniformArrayElement(const u32 &index, Mat4fUniform &uniform) const;
+        void setUniformArrayElement(const u32 &index, IntUniform &uniform) const;
+        void setUniformArrayElement(const u32 &index, FloatUniform &uniform) const;
+        void setUniformArrayElement(const u32 &index, Vec4fUniform &uniform) const;
 
         void setUniformStructField(const char *structName, BoolUniform &structField) const;
         void setUniformStructField(const char *structName, IntUniform &structField) const;
@@ -81,39 +80,39 @@ namespace engine::shader {
         void setUniformStructField(const char *structName, Vec4fUniform &structField) const;
 
         void setUniformArrayStructField(
-                const uint32_t &index,
+                const u32 &index,
                 const char *structName,
                 BoolUniform &structField
         ) const;
         void setUniformArrayStructField(
-                const uint32_t &index,
+                const u32 &index,
                 const char *structName,
                 IntUniform &structField
         ) const;
         void setUniformArrayStructField(
-                const uint32_t &index,
+                const u32 &index,
                 const char *structName,
                 FloatUniform &structField
         ) const;
         void setUniformArrayStructField(
-                const uint32_t &index,
+                const u32 &index,
                 const char *structName,
                 Vec3fUniform &structField
         ) const;
         void setUniformArrayStructField(
-                const uint32_t &index,
+                const u32 &index,
                 const char *structName,
                 Vec4fUniform &structField
         ) const;
 
     private:
-        GLint getUniformArrayElementLocation(const char* name, const uint32_t &index) const;
-        GLint getUniformArrayStructLocation(const char* structName, const char* fieldName, const uint32_t &index) const;
-        GLint getUniformStructLocation(const char* structName, const char* fieldName) const;
+        s32 getUniformArrayElementLocation(const char* name, const u32 &index) const;
+        s32 getUniformArrayStructLocation(const char* structName, const char* fieldName, const u32 &index) const;
+        s32 getUniformStructLocation(const char* structName, const char* fieldName) const;
 
     protected:
-        uint32_t id = 0;
-        uint32_t programId = 0;
+        u32 id = 0;
+        u32 programId = 0;
         std::string src;
 
     };
@@ -129,14 +128,14 @@ namespace engine::shader {
         void destroy() const;
         bool link();
         void start() const;
-        void stop();
-        uint32_t bindAttribute(const char* attrName) const;
+        static void stop() ;
+        u32 bindAttribute(const char* attrName) const;
 
     protected:
-        std::string toStringShaderType(GLenum type);
+        std::string toStringShaderType(const u32& type);
 
     protected:
-        uint32_t id = 0;
+        u32 id = 0;
         ShaderState state = ShaderState::FAILED_READ_FILE;
 
     };

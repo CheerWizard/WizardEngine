@@ -4,9 +4,9 @@
 
 #include <platform/graphics/IndexBuffer.h>
 
-#include "glad/glad.h"
+#include <glad/glad.h>
 
-namespace engine {
+namespace engine::graphics {
 
     void IndexBuffer::create() {
         glGenBuffers(1, &id);
@@ -21,7 +21,7 @@ namespace engine {
         create();
     }
 
-    void IndexBuffer::bind() {
+    void IndexBuffer::bind() const {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
     }
 
@@ -43,11 +43,11 @@ namespace engine {
     }
 
     void IndexBuffer::load(const IndexData &indexData) {
-        auto subDataOffset = indexData.indexStart * sizeof(uint32_t);
+        auto subDataOffset = indexData.indexStart * sizeof(u32);
         glBufferSubData(
                 GL_ELEMENT_ARRAY_BUFFER,
                 (GLintptr)subDataOffset,
-                indexData.indexCount * sizeof(uint32_t),
+                indexData.indexCount * sizeof(u32),
                 indexData.indices
         );
     }

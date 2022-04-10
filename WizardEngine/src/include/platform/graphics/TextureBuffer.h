@@ -7,51 +7,57 @@
 #include <graphics/core/io/TextureFile.h>
 #include <graphics/core/texture/Texture.h>
 
-#include "string"
+#include <string>
 
-namespace engine {
+namespace engine::graphics {
 
     class TextureBuffer final {
 
     public:
         TextureBuffer() = default;
         TextureBuffer(const TextureType& type) {
-            create(type);
+            init(type);
         }
         ~TextureBuffer() = default;
 
     public:
-        [[nodiscard]] inline uint32_t getId() const {
+        [[nodiscard]] inline u32 getId() const {
             return id;
         }
 
-    public:
-        static void disableByteAlignment();
+        [[nodiscard]] inline u32 getType() const {
+            return type;
+        }
 
     public:
-        // lifetime functions
-        void create(const TextureType& textureType);
-        void destroy();
-        void recreate();
-        // bind/unbind tbo
+        void init(const TextureType& textureType);
         void bind() const;
         void unbind() const;
-        // read from file and load to tbo
-        void loadFrom(const std::string_view &fileName);
-        void loadFrom(const std::string_view &fileName, const std::string_view &texturesPath);
-        void loadTexture2d(const std::string_view& filename, const std::string_view& texturesPath);
-        void loadCubeMap(const std::vector<TextureFace>& faces, const std::string_view& texturesPath);
-        // loading texture data into tbo
-        void load(const TextureData &textureData);
-        void load(const TextureFaceType& faceType, const TextureData& textureData);
-        void setParams(const std::vector<TextureParam>& params) const;
+        void setParams(const vector<TextureParam>& params) const;
 
     public:
-        static void bind(const uint32_t& id);
-        static void activate(const uint32_t& slot);
+        static u32 create(const TextureType& textureType);
+        static u32 recreate(const u32& id, const u32& typeId);
+        static void destroy(const u32& id);
+
+        static void bind(const u32& id, const u32& typeId);
+        static void unbind(const TextureType& type);
+
+        static void activate(const u32& slot);
+        static void setParams(const u32& id, const vector<TextureParam>& params);
+        static void setDefaultParamsCubeMap(const u32& id);
+        static void disableByteAlignment();
+        // read from file and load into texture buffer
+        static u32 load(const char* filePath);
+        static u32 load(const vector<TextureFace>& faces);
+        // load texture data into texture buffer
+        static void load(const u32& id, const io::TextureData &textureData);
+        static void load(const u32& id, const TextureFaceType& faceType, const io::TextureData& textureData);
+
+        static u32 getTypeId(const TextureType& textureType);
 
     private:
-        uint32_t id;
-        uint32_t type;
+        u32 id;
+        u32 type;
     };
 }

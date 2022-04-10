@@ -4,17 +4,17 @@
 
 #pragma once
 
-#include <cstdint>
+#include <core/primitives.h>
 
-namespace engine {
+namespace engine::graphics {
 
-    // VAO - Vertex Array Object in GPU pipeline
+    using namespace core;
+
+    // VAO - Vertex Array Object in Graphics pipeline
     class VertexArray final {
 
     public:
-        VertexArray() {
-            create();
-        }
+        VertexArray() = default;
         ~VertexArray() = default;
 
     public:
@@ -23,11 +23,10 @@ namespace engine {
         void recreate();
         // bind/unbind
         void bind() const;
-        void unbind() const;
+        static void unbind();
 
     private:
-        uint32_t id = 0;
-
+        u32 id = 0;
     };
 
 }

@@ -9,14 +9,14 @@
 #include <graphics/core/geometry/Mesh.h>
 #include <glm/glm.hpp>
 
-namespace engine {
+namespace engine::graphics {
 
     struct OutlineVertex {
         glm::vec3 position = { 0.5, 0.5, 0.5 };
         glm::vec3 normal = { 0.5, 0.5, 0.5 };
     };
 
-    struct OutlineComponent {
+    component(OutlineComponent) {
         const char* name = "outline";
         shader::Vec4fUniform color = { "color", { 0, 1, 0, 1 } };
         FloatUniform thickness = { "thickness", 0.05 };

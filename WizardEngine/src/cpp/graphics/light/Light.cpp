@@ -4,7 +4,7 @@
 
 #include <graphics/light/Light.h>
 
-namespace engine {
+namespace engine::graphics {
 
     void PhongLight::create() {
         add<PhongLightComponent>(PhongLightComponent());

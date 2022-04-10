@@ -8,7 +8,7 @@
 #include <graphics/core/shader/BaseShader.h>
 #include <glm/glm.hpp>
 
-namespace engine {
+namespace engine::graphics {
 
     struct CircleVertex {
         glm::vec3 position = { 0.5, 0.5, 0.5 };
@@ -16,20 +16,32 @@ namespace engine {
     };
 
     struct InstanceCircle : VertexDataComponent<InstanceVertex<CircleVertex>> {
-        InstanceCircle(const std::array<CircleVertex, 4>& circleVertices) : VertexDataComponent<InstanceVertex<CircleVertex>>() {
-            vertexData = toVertexData<CircleVertex, InstanceVertex<CircleVertex>>(circleVertices);
+        InstanceCircle() : VertexDataComponent<InstanceVertex<CircleVertex>>() {
+            auto vertices = new InstanceVertex<CircleVertex>[4] {
+                    InstanceVertex<CircleVertex> { CircleVertex { { -0.5, -0.5, 0.5 } } },
+                    InstanceVertex<CircleVertex> { CircleVertex { { 0.5, -0.5, 0.5 } } },
+                    InstanceVertex<CircleVertex> { CircleVertex { { 0.5, 0.5, 0.5 } } },
+                    InstanceVertex<CircleVertex> { CircleVertex { { -0.5, 0.5, 0.5 } } },
+            };
+            vertexData = VertexData<InstanceVertex<CircleVertex>> { vertices, 0, 4 };
             this->drawType = DrawType::QUAD;
         }
     };
 
     struct BatchCircle : VertexDataComponent<BatchVertex<CircleVertex>> {
-        BatchCircle(const std::array<CircleVertex, 4>& circleVertices) : VertexDataComponent<BatchVertex<CircleVertex>>() {
-            vertexData = toVertexData<CircleVertex, BatchVertex<CircleVertex>>(circleVertices);
+        BatchCircle() : VertexDataComponent<BatchVertex<CircleVertex>>() {
+            auto vertices = new BatchVertex<CircleVertex>[4] {
+                    BatchVertex<CircleVertex> { CircleVertex { { -0.5, -0.5, 0.5 } } },
+                    BatchVertex<CircleVertex> { CircleVertex { { 0.5, -0.5, 0.5 } } },
+                    BatchVertex<CircleVertex> { CircleVertex { { 0.5, 0.5, 0.5 } } },
+                    BatchVertex<CircleVertex> { CircleVertex { { -0.5, 0.5, 0.5 } } },
+            };
+            vertexData = VertexData<BatchVertex<CircleVertex>> { vertices, 0, 4 };
             this->drawType = DrawType::QUAD;
         }
     };
 
-    struct CircleComponent {
+    component(CircleComponent) {
         const char* name = "circle";
         Vec4fUniform color = { "color", { 0.5, 0, 0.5, 1 } };
         FloatUniform thickness = { "thickness", 0.5 };

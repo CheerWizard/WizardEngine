@@ -10,30 +10,41 @@
 
 #include <graphics/core/geometry/Mesh.h>
 
-namespace engine {
+namespace engine::graphics {
 
     struct VRenderModel {
-        uint32_t id = 0;
+        u8 id = 0;
         VertexArray vao;
         VertexBuffer vbo;
 
+        VRenderModel() = default;
+
         VRenderModel(
-                const uint32_t &id,
-                const uint32_t& vertexCount
-        ): id(id), vbo(vertexCount) {}
+                const u8 &id,
+                const u32& vertexCount
+        ): id(id), vbo(vertexCount) {
+            vao.create();
+            vbo.create();
+        }
     };
 
     struct VIRenderModel {
-        uint32_t id = 0;
+        u8 id = 0;
         VertexArray vao;
         VertexBuffer vbo;
         IndexBuffer ibo;
 
+        VIRenderModel() = default;
+
         VIRenderModel(
-                const uint32_t &id,
-                const uint32_t& vertexCount,
-                const uint32_t& indexCount
-        ): id(id), vbo(vertexCount), ibo(indexCount) {}
+                const u8 &id,
+                const u32& vertexCount,
+                const u32& indexCount
+        ): id(id), vbo(vertexCount), ibo(indexCount) {
+            vao.create();
+            vbo.create();
+            ibo.create();
+        }
     };
 
     void release(VRenderModel& renderModel);
@@ -145,5 +156,13 @@ namespace engine {
             const auto& indexData = meshes[i].indexData;
             ibo.load(indexData);
         }
+    }
+
+    template<typename T>
+    void uploadStatic(const VertexDataComponent<T> &vertexDataComponent, VRenderModel& renderModel) {
+        renderModel.vao.bind();
+        renderModel.vbo.bind();
+        renderModel.vbo.loadStatic(vertexDataComponent.vertexData);
+        VertexArray::unbind();
     }
 }

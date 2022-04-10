@@ -5,7 +5,7 @@
 #include <platform/graphics/VertexArray.h>
 #include <glad/glad.h>
 
-namespace engine {
+namespace engine::graphics {
 
     void VertexArray::create() {
         glGenVertexArrays(1, &id);
@@ -24,7 +24,7 @@ namespace engine {
         glBindVertexArray(id);
     }
 
-    void VertexArray::unbind() const {
+    void VertexArray::unbind() {
         glBindVertexArray(0);
     }
 

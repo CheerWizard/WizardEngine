@@ -10,17 +10,17 @@
 #include <graphics/core/texture/Texture.h>
 #include <glm/glm.hpp>
 
-namespace engine {
+namespace engine::graphics {
 
     struct SkyboxVertex {
         glm::vec3 position = { 0.5, 0.5 , 0.5 };
     };
 
-    class SkyboxCube : public Entity {
+    class SkyboxCube : public ecs::Entity {
 
     public:
-        SkyboxCube(const std::string& tag, EntityContainer* container, const CubeMapTextureComponent& cubeMapTextures)
-        : Entity(tag, container) {
+        SkyboxCube(const std::string& tag, ecs::EntityContainer* container, const CubeMapTextureComponent& cubeMapTextures)
+        : ecs::Entity(tag, container) {
             init(cubeMapTextures);
         }
 
@@ -28,11 +28,11 @@ namespace engine {
 
     private:
         void init(const CubeMapTextureComponent& cubeMapTextures) {
-            add<Transform3dComponent>(transform3d(
-                    { 0, 0, 0 },
-                    { 3.15, 0, 0 },
-                    { 100, 100, 100 }
-            ));
+            add<Transform3dComponent>(Transform3dComponent{
+                    {0,   0,   0},
+                    {0,   0,   0},
+                    {100, 100, 100}
+            });
             add<VertexDataComponent<SkyboxVertex>>(Cube<SkyboxVertex>());
             add<CubeMapTextureComponent>(cubeMapTextures);
         }

@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "core/Logger.h"
-#include "scripting/ScriptBuilder.h"
+#include <io/Logger.h>
+#include <scripting/ScriptBuilder.h>
 
 // needs to be defined on Client side.
-extern engine::Application* engine::createApplication();
+extern engine::core::Application* engine::core::createApplication();
 extern const char* engineLogName();
 extern const char* editorLogName();
 extern const char* runtimeLogName();
@@ -20,10 +20,10 @@ int main() {
     INIT_ENGINE_LOG(engineLog);
     INIT_EDITOR_LOG(editorLog);
     INIT_RUNTIME_LOG(runtimeLog);
-//    ScriptBuilder::init({engineLog, runtimeLog});
+//  scripting::ScriptBuilder::init({engineLog, runtimeLog});
 
     ENGINE_INFO("Running Application...");
-    auto* app = engine::createApplication();
+    auto* app = engine::core::createApplication();
     app->run();
 
     ENGINE_INFO("Application terminated!");

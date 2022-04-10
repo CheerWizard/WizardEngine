@@ -1,0 +1,31 @@
+[submodule "WizardEngine/vendor/assimp"]
+	path = WizardEngine/vendor/assimp
+	url = https://github.com/assimp/assimp
+
+[submodule "WizardEngine/vendor/freetype"]
+	path = WizardEngine/vendor/freetype
+	url = https://github.com/freetype/freetype
+
+[submodule "WizardEngine/vendor/glad"]
+    path = WizardEngine/vendor/glad
+    url = https://github.com/freetype/freetype
+
+[submodule "WizardEngine/vendor/glfw"]
+    path = WizardEngine/vendor/glfw
+    url = https://github.com/glfw/glfw
+
+[submodule "WizardEngine/vendor/glm"]
+    path = WizardEngine/vendor/glm
+    url = https://github.com/g-truc/glm
+
+[submodule "WizardEngine/vendor/imgui"]
+    path = WizardEngine/vendor/imgui
+    url = https://github.com/ocornut/imgui
+
+[submodule "WizardEngine/vendor/spdlog"]
+    path = WizardEngine/vendor/spdlog
+    url = https://github.com/gabime/spdlog
+
+[submodule "WizardEngine/vendor/stb/stb"]
+    path = WizardEngine/vendor/stb/stb
+    url = https://github.com/nothings/stb

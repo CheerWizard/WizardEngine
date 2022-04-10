@@ -4,7 +4,8 @@
 
 #include <platform/graphics/tools/ShaderPath.h>
 
-namespace engine {
+namespace engine::io {
+
     std::string getRuntimeShadersPath() {
         return "assets/shaders/glsl/4.0";
     }
@@ -16,4 +17,5 @@ namespace engine {
     const char* getGraphicsCoreVersion() {
         return "#version 400";
     }
+
 }

@@ -4,14 +4,14 @@
 
 #pragma once
 
-#include <core/FileSystem.h>
+#include <core/filesystem.h>
 #include <platform/graphics/tools/ShaderPath.h>
 
 #include "string"
 
 #define DEFAULT_INCLUDE_TOKEN "#include"
 
-namespace engine::shader {
+namespace engine::io {
 
     struct ShaderProps {
         std::string name;

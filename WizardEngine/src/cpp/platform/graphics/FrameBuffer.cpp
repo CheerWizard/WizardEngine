@@ -4,9 +4,9 @@
 
 #include <platform/graphics/FrameBuffer.h>
 #include <sstream>
-#include "glad/glad.h"
+#include <glad/glad.h>
 
-namespace engine {
+namespace engine::graphics {
 
     uint32_t toGLColorFormat(const ColorFormat &format) {
         switch (format) {
@@ -103,18 +103,10 @@ namespace engine {
             toGLInternalAndDataFormat(colorAttachment.format, colorInternalFormat, colorDataFormat);
 
             if (format.samples > 1) {
-//                glTexImage2DMultisample(
-//                        GL_TEXTURE_2D_MULTISAMPLE,
-//                        (GLsizei) format.samples,
-//                        colorInternalFormat,
-//                        (GLsizei) format.width,
-//                        (GLsizei) format.height,
-//                        format.useIdenticalSampleLocations ? GL_TRUE : GL_FALSE
-//                );
                 glTexImage2DMultisample(
                         GL_TEXTURE_2D_MULTISAMPLE,
                         format.samples,
-                        GL_RGB,
+                        colorInternalFormat,
                         format.width,
                         format.height,
                         GL_TRUE
@@ -167,7 +159,7 @@ namespace engine {
                     depthFormat,
                     (GLsizei) format.width,
                     (GLsizei) format.height,
-                    format.useIdenticalSampleLocations ? GL_TRUE : GL_FALSE
+                    GL_TRUE
             );
             glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -307,7 +299,7 @@ namespace engine {
         glBlitFramebuffer(
                 0, 0, srcFormat.width, srcFormat.height,
                 0, 0, targetFormat.width, targetFormat.height,
-                GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST
+                GL_COLOR_BUFFER_BIT, GL_NEAREST
         );
     }
 

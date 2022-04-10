@@ -4,159 +4,177 @@
 
 #include <graphics/light/LightShaderScript.h>
 
-namespace engine::shader {
+namespace engine::graphics {
 
     ShaderScript phongLightScript() {
         auto script = ShaderScript();
-        script.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto phongLights = registry.view<PhongLightComponent>();
-            for (auto [entity, phongLight] : phongLights.each()) {
-                updateLight(shader, phongLight);
-            }
+
+        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+            registry.each<PhongLightComponent>([&shader](PhongLightComponent* phongLight) {
+                updateLight(shader, *phongLight);
+            });
         };
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto phongLight = entity.getPtr<PhongLightComponent>();
+
+        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto phongLight = entity.get<PhongLightComponent>();
             if (phongLight) {
                 updateLight(shader, *phongLight);
             }
         };
+
         return script;
     }
 
     ShaderScript phongLightUboScript() {
         auto script = ShaderScript();
-        script.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto phongLights = registry.view<PhongLightComponent>();
-            for (auto [entity, phongLight] : phongLights.each()) {
-                updateUboLight(shader, phongLight);
-            }
+
+        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+            registry.each<PhongLightComponent>([&shader](PhongLightComponent* phongLight) {
+                updateUboLight(shader, *phongLight);
+            });
         };
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto phongLight = entity.getPtr<PhongLightComponent>();
+
+        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto phongLight = entity.get<PhongLightComponent>();
             if (phongLight) {
                 updateUboLight(shader, *phongLight);
             }
         };
+
         return script;
     }
 
     ShaderScript pointLightScript() {
         auto script = ShaderScript();
-        script.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto pointLights = registry.view<PointLightComponent>();
-            for (auto [entity, pointLight] : pointLights.each()) {
-                updateLight(shader, pointLight);
-            }
+
+        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+            registry.each<PointLightComponent>([&shader](PointLightComponent* pointLight) {
+                updateLight(shader, *pointLight);
+            });
         };
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto pointLight = entity.getPtr<PointLightComponent>();
+
+        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto pointLight = entity.get<PointLightComponent>();
             if (pointLight) {
                 updateLight(shader, *pointLight);
             }
         };
+
         return script;
     }
 
     ShaderScript pointLightArrayScript() {
         auto script = ShaderScript();
-        script.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto pointLights = registry.view<PointLightComponent>();
+
+        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
             auto i = 0;
-            for (auto [entity, pointLight] : pointLights.each()) {
-                updateLight(shader, pointLight, i++);
-            }
+            registry.each<PointLightComponent>([&shader, &i](PointLightComponent* pointLight) {
+                updateLight(shader, *pointLight, i++);
+            });
         };
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto pointLight = entity.getPtr<PointLightComponent>();
+
+        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto pointLight = entity.get<PointLightComponent>();
             if (pointLight) {
                 updateLight(shader, *pointLight, 0);
             }
         };
+
         return script;
     }
 
     ShaderScript pointLightUboScript() {
         auto script = ShaderScript();
-        script.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto pointLights = registry.view<PointLightComponent>();
-            for (auto [entity, pointLight] : pointLights.each()) {
-                updateUboLight(shader, pointLight);
-            }
+
+        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+            registry.each<PointLightComponent>([&shader](PointLightComponent* pointLight) {
+                updateUboLight(shader, *pointLight);
+            });
         };
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto pointLight = entity.getPtr<PointLightComponent>();
+
+        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto pointLight = entity.get<PointLightComponent>();
             if (pointLight) {
                 updateUboLight(shader, *pointLight);
             }
         };
+
         return script;
     }
 
     ShaderScript directLightScript() {
         auto script = ShaderScript();
-        script.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto directLights = registry.view<DirectLightComponent>();
-            for (auto [entity, directLight] : directLights.each()) {
-                updateLight(shader, directLight);
-            }
+
+        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+            registry.each<DirectLightComponent>([&shader](DirectLightComponent* directLight) {
+                updateLight(shader, *directLight);
+            });
         };
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto directLight = entity.getPtr<DirectLightComponent>();
+
+        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto directLight = entity.get<DirectLightComponent>();
             if (directLight) {
                 updateLight(shader, *directLight);
             }
         };
+
         return script;
     }
 
     ShaderScript directLightUboScript() {
         auto script = ShaderScript();
-        script.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto directLights = registry.view<DirectLightComponent>();
-            for (auto [entity, directLight] : directLights.each()) {
-                updateUboLight(shader, directLight);
-            }
+
+        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+            registry.each<DirectLightComponent>([&shader](DirectLightComponent* directLight) {
+                updateUboLight(shader, *directLight);
+            });
         };
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto directLight = entity.getPtr<DirectLightComponent>();
+
+        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto directLight = entity.get<DirectLightComponent>();
             if (directLight) {
                 updateUboLight(shader, *directLight);
             }
         };
+
         return script;
     }
 
     ShaderScript flashLightScript() {
         auto script = ShaderScript();
-        script.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto flashLights = registry.view<FlashLightComponent>();
-            for (auto [entity, flashLight] : flashLights.each()) {
-                updateLight(shader, flashLight);
-            }
+
+        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+            registry.each<FlashLightComponent>([&shader](FlashLightComponent* flashLight) {
+                updateLight(shader, *flashLight);
+            });
         };
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto flashLight = entity.getPtr<FlashLightComponent>();
+
+        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto flashLight = entity.get<FlashLightComponent>();
             if (flashLight) {
                 updateLight(shader, *flashLight);
             }
         };
+
         return script;
     }
 
     ShaderScript flashLightUboScript() {
         auto script = ShaderScript();
-        script.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto flashLights = registry.view<FlashLightComponent>();
-            for (auto [entity, flashLight] : flashLights.each()) {
-                updateUboLight(shader, flashLight);
-            }
+
+        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+            registry.each<FlashLightComponent>([&shader](FlashLightComponent* flashLight) {
+                updateUboLight(shader, *flashLight);
+            });
         };
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto flashLight = entity.getPtr<FlashLightComponent>();
+
+        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto flashLight = entity.get<FlashLightComponent>();
             if (flashLight) {
                 updateUboLight(shader, *flashLight);
             }
         };
+
         return script;
     }
 

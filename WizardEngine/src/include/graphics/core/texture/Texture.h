@@ -10,7 +10,9 @@
 #define CHANNEL_RGB 3
 #define CHANNEL_RGBA 4
 
-namespace engine {
+namespace engine::graphics {
+
+    using namespace core;
 
     // texture format for color buffer
     enum class ColorFormat {
@@ -42,7 +44,7 @@ namespace engine {
         TextureParamValue value;
     };
 
-    enum class TextureType : unsigned int {
+    enum class TextureType : u32 {
         TEXTURE_2D = 0, CUBE_MAP = 1, TEXTURE_2D_MULTISAMPLE = 2
     };
 
@@ -53,46 +55,42 @@ namespace engine {
     };
 
     struct TextureFace {
-        std::string fileName;
+        const char* filePath;
         TextureFaceType type;
 
-        TextureFace(const std::string& fileName, const TextureFaceType& type)
-        : fileName(fileName), type(type) {}
+        TextureFace(const char* filePath, const TextureFaceType& type)
+        : filePath(filePath), type(type) {}
     };
 
-    struct TextureComponent {
-        std::string fileName;
-        TextureType type = TextureType::TEXTURE_2D;
-        shader::IntUniform sampler;
+    component(TextureComponent) {
+        u32 textureId = 0;
+        u32 typeId = 0;
+        shader::IntUniform sampler = { "texture", 0 };
 
-        TextureComponent(const std::string& fileName, const shader::IntUniform& sampler)
-        : fileName(fileName), sampler(sampler) {}
+        TextureComponent() = default;
 
-        TextureComponent(const std::string& fileName, const TextureType& type) : fileName(fileName), type(type) {}
+        TextureComponent(const u32& textureId, const u32& typeId, const shader::IntUniform& sampler)
+        : textureId(textureId), sampler(sampler) {}
 
-        TextureComponent(const std::string& fileName, const TextureType& type, const shader::IntUniform& sampler)
-        : fileName(fileName), type(type), sampler(sampler) {}
-
-        TextureComponent(const shader::IntUniform& sampler) : sampler(sampler) {}
-
-        TextureComponent(const TextureType& type, const shader::IntUniform& sampler) : type(type), sampler(sampler) {}
+        TextureComponent(const u32& textureId, const u32& typeId, const s32& samplerSlot)
+        : textureId(textureId), sampler({ "texture", samplerSlot }) {}
     };
 
-    struct CubeMapTextureComponent {
-        std::string name;
-        std::vector<TextureFace> faces {};
-        shader::IntUniform sampler = { "cubeMap", 5 };
+    component(CubeMapTextureComponent) {
+        u32 textureId = 0;
+        u32 typeId = 0;
+        shader::IntUniform sampler = { "cubeMap", 0 };
 
-        CubeMapTextureComponent(
-                const std::string_view& name,
-                const std::vector<TextureFace>& faces,
-                const shader::IntUniform& sampler
-        ) : name(name), faces(faces), sampler(sampler) {}
+        CubeMapTextureComponent() = default;
 
-        CubeMapTextureComponent(
-            const std::string_view& name,
-            const std::vector<TextureFace>& faces
-        ) : name(name), faces(faces) {}
+        CubeMapTextureComponent(const u32& textureId, const u32& typeId)
+        : textureId(textureId), typeId(typeId) {}
+
+        CubeMapTextureComponent(const u32& textureId, const u32& typeId, const shader::IntUniform& sampler)
+        : textureId(textureId), typeId(typeId), sampler(sampler) {}
+
+        CubeMapTextureComponent(const u32& textureId, const u32& typeId, const s32& samplerSlot)
+        : textureId(textureId), typeId(typeId), sampler({ "cubeMap", samplerSlot }) {}
     };
 
     using namespace shader;

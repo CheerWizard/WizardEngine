@@ -4,29 +4,29 @@
 
 #pragma once
 
-#include "Renderer.h"
+#include <graphics/core/Renderer.h>
 #include <ecs/Scene.h>
 #include <platform/graphics/FrameBuffer.h>
 #include <graphics/text/TextRenderer.h>
 #include <graphics/core/geometry/Screen.h>
 
-namespace engine {
+namespace engine::graphics {
 
     class RenderSystem {
 
     public:
-        RenderSystem(const Ref<FrameBuffer> &sceneFrame, const Ref<FrameBuffer>& screenFrame)
+        RenderSystem(const core::Ref<FrameBuffer> &sceneFrame, const core::Ref<FrameBuffer>& screenFrame)
         : sceneFrame(sceneFrame), screenFrame(screenFrame) {
             create();
         }
 
-        ~RenderSystem() = default;
+        ~RenderSystem();
 
     public:
         void onUpdate();
 
     public:
-        inline void setActiveScene(const Ref<Scene> &activeScene) {
+        inline void setActiveScene(const core::Ref<ecs::Scene> &activeScene) {
             this->activeScene = activeScene;
         }
 
@@ -43,35 +43,35 @@ namespace engine {
         void createPointRenderer();
 
     private:
-        Ref<Scene> activeScene = nullptr;
-
-        Ref<FrameBuffer> sceneFrame;
-        Ref<FrameBuffer> screenFrame;
+        // we must share this data with front-end, so that's why they are pointers
+        core::Ref<ecs::Scene> activeScene = nullptr;
+        core::Ref<FrameBuffer> sceneFrame;
+        core::Ref<FrameBuffer> screenFrame;
+        // these data are mostly for back-end, they are mostly just u32 numbers
         // screen
-        Ref<VRenderer> screenRenderer;
-        Screen screen;
+        VRenderer screenRenderer;
         // scene
-        Ref<MultiRenderer> sceneRenderer;
+        MultiRenderer sceneRenderer;
         // line
-        Ref<MultiRenderer> lineRenderer;
-        Ref<MultiRenderer> stripLineRenderer;
-        Ref<MultiRenderer> loopLineRenderer;
+        MultiRenderer lineRenderer;
+        MultiRenderer stripLineRenderer;
+        MultiRenderer loopLineRenderer;
         // quad
-        Ref<MultiRenderer> quadRenderer;
+        MultiRenderer quadRenderer;
         // circle
-        Ref<MultiRenderer> circleRenderer;
+        MultiRenderer circleRenderer;
         // outlining everything
         // scene
-        Ref<MultiRenderer> outlineSceneRenderer;
+        MultiRenderer outlineSceneRenderer;
         // quad
-        Ref<MultiRenderer> outlineQuadRenderer;
+        MultiRenderer outlineQuadRenderer;
         // skybox
-        Ref<VRenderer> skyboxRenderer;
+        VRenderer skyboxRenderer;
         // text
-        Ref<TextRenderer> text2dRenderer;
-        Ref<TextRenderer> text3dRenderer;
+        TextRenderer text2dRenderer;
+        TextRenderer text3dRenderer;
         // points renderer
-        Ref<VRenderer> pointRenderer;
+        VRenderer pointRenderer;
     };
 
 }

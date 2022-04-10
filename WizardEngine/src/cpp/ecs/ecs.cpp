@@ -22,17 +22,7 @@ namespace engine::ecs {
     }
 
     Registry::~Registry() {
-        for (auto& component : components) {
-            auto typeSize = BaseComponent::getSize(component.first);
-            auto destroyFunction = BaseComponent::getDestroyFunction(component.first);
-            for (u32 i = 0 ; i < component.second.size() ; i += typeSize) {
-                destroyFunction((BaseComponent*) &component.second[i]);
-            }
-        }
-
-        for (auto* entity : entities) {
-            delete entity;
-        }
+        clear();
     }
 
     entity_id Registry::createEntity() {
@@ -44,8 +34,8 @@ namespace engine::ecs {
         return newEntity;
     }
 
-    entity_id Registry::deleteEntity(entity_id entityId) {
-        validate_entity("deleteEntity()", entityId, invalid_entity_id)
+    void Registry::deleteEntity(entity_id& entityId) {
+        validate_entity("deleteEntity()", entityId,)
         // remove component ids and indexes
         auto& entityData = toEntityData(entityId);
         for (const auto& componentIdAndIndex : entityData) {
@@ -58,8 +48,7 @@ namespace engine::ecs {
         entities[destIndex] = entities[srcIndex];
         entities[destIndex]->first = destIndex;
         entities.pop_back();
-
-        return invalid_entity_id;
+        entityId = invalid_entity_id;
     }
 
     void Registry::removeComponentInternal(component_id componentId, u32 componentIndex) {
@@ -92,5 +81,23 @@ namespace engine::ecs {
 
     size_t Registry::entity_count() {
         return entities.size();
+    }
+
+    bool Registry::isEmpty() {
+        return entities.empty();
+    }
+
+    void Registry::clear() {
+        for (auto &component: components) {
+            auto typeSize = BaseComponent::getSize(component.first);
+            auto destroyFunction = BaseComponent::getDestroyFunction(component.first);
+            for (u32 i = 0; i < component.second.size(); i += typeSize) {
+                destroyFunction((BaseComponent *) &component.second[i]);
+            }
+        }
+
+        for (auto *entity: entities) {
+            delete entity;
+        }
     }
 }

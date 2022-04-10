@@ -5,7 +5,7 @@
 #include <platform/graphics/VertexBuffer.h>
 #include <glad/glad.h>
 
-namespace engine {
+namespace engine::graphics {
 
     void VertexBuffer::create() {
         glGenBuffers(1, &id);
@@ -19,11 +19,11 @@ namespace engine {
         glBindBuffer(GL_ARRAY_BUFFER, id);
     }
 
-    void VertexBuffer::unbind() const {
+    void VertexBuffer::unbind() {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    void VertexBuffer::malloc(const size_t &memorySize) {
+    void VertexBuffer::mallocDynamic(const size_t &memorySize) {
         glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr) memorySize, nullptr, GL_DYNAMIC_DRAW);
     }
 
@@ -58,6 +58,10 @@ namespace engine {
 
     void VertexBuffer::load(const void* vertices, const size_t& subDataOffset, const size_t& memorySize) {
         glBufferSubData(GL_ARRAY_BUFFER, (GLsizeiptr)subDataOffset, memorySize, vertices);
+    }
+
+    void VertexBuffer::loadStatic(const void* vertices, const size_t& memorySize) {
+        glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr) memorySize, vertices, GL_STATIC_DRAW);
     }
 
 }

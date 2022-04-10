@@ -4,33 +4,33 @@
 
 #include <graphics/camera/CameraController.h>
 
-namespace engine {
+namespace engine::graphics {
 
     CameraController::~CameraController() {
         clearAllBindings();
     }
 
-    void CameraController::bind(const KeyCode &keyCode, const MoveType &moveType) {
+    void CameraController::bind(const event::KeyCode &keyCode, const MoveType &moveType) {
         moveKeys[keyCode] = moveType;
     }
 
-    void CameraController::bind(const KeyCode &keyCode, const RotateType &rotateType) {
+    void CameraController::bind(const event::KeyCode &keyCode, const RotateType &rotateType) {
         rotateKeys[keyCode] = rotateType;
     }
 
-    void CameraController::bind(const KeyCode &keyCode, const ZoomType &zoomType) {
+    void CameraController::bind(const event::KeyCode &keyCode, const ZoomType &zoomType) {
         zoomKeys[keyCode] = zoomType;
     }
 
-    void CameraController::unbindMove(const KeyCode &keyCode) {
+    void CameraController::unbindMove(const event::KeyCode &keyCode) {
         moveKeys[keyCode] = NONE_TYPE(MoveType);
     }
 
-    void CameraController::unbindRotate(const KeyCode &keyCode) {
+    void CameraController::unbindRotate(const event::KeyCode &keyCode) {
         rotateKeys[keyCode] = NONE_TYPE(RotateType);
     }
 
-    void CameraController::unbindZoom(const KeyCode &keyCode) {
+    void CameraController::unbindZoom(const event::KeyCode &keyCode) {
         zoomKeys[keyCode] = NONE_TYPE(ZoomType);
     }
 
@@ -52,7 +52,7 @@ namespace engine {
         clearRotateBindings();
     }
 
-    void CameraController::onKeyPressed(KeyCode keyCode) {
+    void CameraController::onKeyPressed(event::KeyCode keyCode) {
         auto moveKey = moveKeys[keyCode];
         if (moveKey != NONE_TYPE(MoveType)) {
             move(moveKey);
@@ -75,15 +75,15 @@ namespace engine {
         }
     }
 
-    void CameraController::onKeyHold(KeyCode keyCode) {
+    void CameraController::onKeyHold(event::KeyCode keyCode) {
         onKeyPressed(keyCode);
     }
 
-    void CameraController::onKeyReleased(KeyCode keyCode) {
+    void CameraController::onKeyReleased(event::KeyCode keyCode) {
         // no needs to support it for now!
     }
 
-    void CameraController::onKeyTyped(KeyCode keyCode) {
+    void CameraController::onKeyTyped(event::KeyCode keyCode) {
         // no needs to support it for now!
     }
 
@@ -91,16 +91,16 @@ namespace engine {
     }
 
     void CameraController::onWindowResized(const uint32_t &width, const uint32_t &height) {
-        auto& component = getCamera().get<Camera3dComponent>();
-        component.perspectiveMatrix.aspectRatio = (float) width / (float) height;
-        ViewProjections::update(component);
+        auto component = getCamera().get<Camera3dComponent>();
+        component->viewProjection.perspectiveMatrix.aspectRatio = (float) width / (float) height;
+        math::ViewProjections::update(component->viewProjection);
     }
 
-    Entity Camera2dController::getCamera() {
+    ecs::Entity Camera2dController::getCamera() {
         return camera;
     }
 
-    Entity Camera3dController::getCamera() {
+    ecs::Entity Camera3dController::getCamera() {
         return camera;
     }
 
@@ -109,7 +109,7 @@ namespace engine {
 
     void Camera3dController::zoom(const ZoomType &zoomType) {
         ENGINE_INFO("{0}: zoom()", tag);
-        auto &viewPosition = camera.get<Camera3dComponent>().viewMatrix.position.value;
+        auto &viewPosition = camera.get<Camera3dComponent>()->viewProjection.viewMatrix.position.value;
         switch (zoomType) {
             case ZoomType::ZOOM_IN:
                 viewPosition.z -= zoomSpeed / dt;
@@ -122,7 +122,7 @@ namespace engine {
 
     void Camera3dController::move(const MoveType &moveType) {
         ENGINE_INFO("{0}: move()", tag);
-        auto &viewPosition = camera.get<Camera3dComponent>().viewMatrix.position.value;
+        auto &viewPosition = camera.get<Camera3dComponent>()->viewProjection.viewMatrix.position.value;
         switch (moveType) {
             case MoveType::DOWN:
                 ENGINE_INFO("Camera moved: DOWN");
@@ -165,44 +165,44 @@ namespace engine {
 
     void Camera3dController::rotate(const RotateType &rotateType) {
         ENGINE_INFO("{0}: rotate()", tag);
-        auto &component = camera.get<Camera3dComponent>();
+        auto component = camera.get<Camera3dComponent>();
         switch (rotateType) {
             case RotateType::LEFT_X:
                 ENGINE_INFO("Camera rotate: LEFT_X");
-                component.viewMatrix.rotation.x -= rotateSpeed / dt;
+                component->viewProjection.viewMatrix.rotation.x -= rotateSpeed / dt;
                 break;
             case RotateType::LEFT_Y:
                 ENGINE_INFO("Camera rotate: LEFT_Y");
-                component.viewMatrix.rotation.y -= rotateSpeed / dt;
+                component->viewProjection.viewMatrix.rotation.y -= rotateSpeed / dt;
                 break;
             case RotateType::LEFT_Z:
                 ENGINE_INFO("Camera rotate: LEFT_Z");
-                component.viewMatrix.rotation.z -= rotateSpeed / dt;
+                component->viewProjection.viewMatrix.rotation.z -= rotateSpeed / dt;
                 break;
             case RotateType::RIGHT_X:
                 ENGINE_INFO("Camera rotate: RIGHT_X");
-                component.viewMatrix.rotation.x += rotateSpeed / dt;
+                component->viewProjection.viewMatrix.rotation.x += rotateSpeed / dt;
                 break;
             case RotateType::RIGHT_Y:
                 ENGINE_INFO("Camera rotate: RIGHT_Y");
-                component.viewMatrix.rotation.y += rotateSpeed / dt;
+                component->viewProjection.viewMatrix.rotation.y += rotateSpeed / dt;
                 break;
             case RotateType::RIGHT_Z:
                 ENGINE_INFO("Camera rotate: RIGHT_Z");
-                component.viewMatrix.rotation.z += rotateSpeed / dt;
+                component->viewProjection.viewMatrix.rotation.z += rotateSpeed / dt;
                 break;
         }
     }
 
     void Camera3dController::applyChanges() {
-        auto &component = camera.get<Camera3dComponent>();
+        auto component = camera.get<Camera3dComponent>();
         ENGINE_INFO("{0}: applyChanges()", tag);
-        ENGINE_INFO("{0}: position({1},{2},{3})", tag, component.viewMatrix.position.value.x,
-                    component.viewMatrix.position.value.y, component.viewMatrix.position.value.z);
-        ENGINE_INFO("{0}: rotation({1},{2},{3})", tag, component.viewMatrix.rotation.x, component.viewMatrix.rotation.y,
-                    component.viewMatrix.rotation.z);
-        ENGINE_INFO("{0}: scale({1})", tag, component.viewMatrix.scale);
-        ViewProjections::update(component);
+        ENGINE_INFO("{0}: position({1},{2},{3})", tag, component->viewProjection.viewMatrix.position.value.x,
+                    component->viewProjection.viewMatrix.position.value.y, component->viewProjection.viewMatrix.position.value.z);
+        ENGINE_INFO("{0}: rotation({1},{2},{3})", tag, component->viewProjection.viewMatrix.rotation.x, component->viewProjection.viewMatrix.rotation.y,
+                    component->viewProjection.viewMatrix.rotation.z);
+        ENGINE_INFO("{0}: scale({1})", tag, component->viewProjection.viewMatrix.scale);
+        math::ViewProjections::update(component->viewProjection);
     }
 
     void Camera3dController::setCamera(const Camera2D &camera) {
@@ -218,73 +218,73 @@ namespace engine {
 
     void Camera2dController::zoom(const ZoomType &zoomType) {
         ENGINE_INFO("{0}: zoom()", tag);
-        auto &component = camera.get<Camera2dComponent>();
+        auto component = camera.get<Camera2dComponent>();
         switch (zoomType) {
             case ZoomType::ZOOM_IN:
-                component.viewMatrix.position.z += zoomSpeed / dt;
+                component->viewProjection.viewMatrix.position.z += zoomSpeed / dt;
                 break;
             case ZoomType::ZOOM_OUT:
-                component.viewMatrix.position.z -= zoomSpeed / dt;
+                component->viewProjection.viewMatrix.position.z -= zoomSpeed / dt;
                 break;
         }
     }
 
     void Camera2dController::move(const MoveType &moveType) {
         ENGINE_INFO("{0}: move()", tag);
-        auto &component = camera.get<Camera2dComponent>();
+        auto component = camera.get<Camera2dComponent>();
         switch (moveType) {
             case MoveType::DOWN:
-                component.viewMatrix.position.y -= moveSpeed / dt;
+                component->viewProjection.viewMatrix.position.y -= moveSpeed / dt;
                 break;
             case MoveType::UP:
-                component.viewMatrix.position.y += moveSpeed / dt;
+                component->viewProjection.viewMatrix.position.y += moveSpeed / dt;
                 break;
             case MoveType::LEFT:
-                component.viewMatrix.position.x += moveSpeed / dt;
+                component->viewProjection.viewMatrix.position.x += moveSpeed / dt;
                 break;
             case MoveType::RIGHT:
-                component.viewMatrix.position.x -= moveSpeed / dt;
+                component->viewProjection.viewMatrix.position.x -= moveSpeed / dt;
                 break;
             case MoveType::RIGHT_DOWN:
-                component.viewMatrix.position.x -= moveSpeed / dt;
-                component.viewMatrix.position.y -= moveSpeed / dt;
+                component->viewProjection.viewMatrix.position.x -= moveSpeed / dt;
+                component->viewProjection.viewMatrix.position.y -= moveSpeed / dt;
                 break;
             case MoveType::RIGHT_UP:
-                component.viewMatrix.position.x -= moveSpeed / dt;
-                component.viewMatrix.position.y += moveSpeed / dt;
+                component->viewProjection.viewMatrix.position.x -= moveSpeed / dt;
+                component->viewProjection.viewMatrix.position.y += moveSpeed / dt;
                 break;
             case MoveType::LEFT_DOWN:
-                component.viewMatrix.position.x += moveSpeed / dt;
-                component.viewMatrix.position.y -= moveSpeed / dt;
+                component->viewProjection.viewMatrix.position.x += moveSpeed / dt;
+                component->viewProjection.viewMatrix.position.y -= moveSpeed / dt;
                 break;
             case MoveType::LEFT_UP:
-                component.viewMatrix.position.x += moveSpeed / dt;
-                component.viewMatrix.position.y += moveSpeed / dt;
+                component->viewProjection.viewMatrix.position.x += moveSpeed / dt;
+                component->viewProjection.viewMatrix.position.y += moveSpeed / dt;
                 break;
         }
     }
 
     void Camera2dController::rotate(const RotateType &rotateType) {
         ENGINE_INFO("{0}: rotate()", tag);
-        auto &component = camera.get<Camera2dComponent>();
+        auto component = camera.get<Camera2dComponent>();
 
         if (rotateType == RotateType::LEFT_X ||
             rotateType == RotateType::LEFT_Y ||
             rotateType == RotateType::LEFT_Z) {
-            component.viewMatrix.rotation -= rotateSpeed;
+            component->viewProjection.viewMatrix.rotation -= rotateSpeed;
             return;
         }
 
         if (rotateType == RotateType::RIGHT_X ||
             rotateType == RotateType::RIGHT_Y ||
             rotateType == RotateType::RIGHT_Z) {
-            component.viewMatrix.rotation += rotateSpeed;
+            component->viewProjection.viewMatrix.rotation += rotateSpeed;
             return;
         }
     }
 
     void Camera2dController::applyChanges() {
-        ViewProjections::update(camera.get<Camera2dComponent>());
+        math::ViewProjections::update(camera.get<Camera2dComponent>()->viewProjection);
     }
 
     void Camera2dController::setCamera(const Camera2D &camera) {
@@ -296,14 +296,14 @@ namespace engine {
     }
 
     void Camera2dController::setPosition(const glm::vec3 &position) {
-        auto &component = camera.get<Camera2dComponent>();
-        component.viewMatrix.position = position;
-        ViewProjections::update(component);
+        auto component = camera.get<Camera2dComponent>();
+        component->viewProjection.viewMatrix.position = position;
+        math::ViewProjections::update(component->viewProjection);
     }
 
     void Camera3dController::setPosition(const glm::vec3 &position) {
-        auto &component = camera.get<Camera3dComponent>();
-        component.viewMatrix.position.value = position;
-        ViewProjections::update(component);
+        auto component = camera.get<Camera3dComponent>();
+        component->viewProjection.viewMatrix.position.value = position;
+        math::ViewProjections::update(component->viewProjection);
     }
 }

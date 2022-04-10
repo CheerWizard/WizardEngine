@@ -4,47 +4,41 @@
 
 #pragma once
 
-#include <core/Fonts.h>
+#include <io/Fonts.h>
 #include <graphics/core/Renderer.h>
-#include <graphics/core/sources/TextureSource.h>
 #include <graphics/text/Text.h>
 #include <graphics/camera/CameraComponents.h>
 
-namespace engine {
+namespace engine::graphics {
 
     class TextRenderer : public Renderer {
 
     public:
-        TextRenderer(const Ref<BaseShaderProgram>& shaderProgram)
+        TextRenderer() : Renderer() {}
+        TextRenderer(const BaseShaderProgram& shaderProgram)
         : Renderer(shaderProgram, DrawType::QUAD, VERTEX) {
             init();
         }
 
     public:
         template<typename Text>
-        void render(entt::registry& registry);
+        void render(ecs::Registry& registry);
 
     private:
         void init();
     };
 
     template<typename Text>
-    void TextRenderer::render(entt::registry &registry) {
-        if (!shaderProgram->isReady()) return;
+    void TextRenderer::render(ecs::Registry &registry) {
+        if (!shaderProgram.isReady() || registry.isEmpty()) return;
 
-        auto entities = registry.view<Text>();
-        if (entities.empty()) return; // nothing to render
-
-        shaderProgram->start();
-        shaderProgram->update(registry);
-        const auto& vShader = shaderProgram->getVShader();
-        const auto& fShader = shaderProgram->getFShader();
+        shaderProgram.start();
+        shaderProgram.update(registry);
 
         uint32_t nextRenderModelId = 0;
-        for (auto [entity, text] : entities.each()) {
-            if (FONT_ABSENT(text.font)) continue;
-
-            auto& font = GET_FONT(text.font);
+        registry.each<Text>([this, &nextRenderModelId](Text* textComponent) {
+            auto& text = *textComponent;
+            auto& font = GET_FONT(text.bitmap.textureId);
             for (auto& c : text.text) {
                 auto& character = font[c];
                 auto& vertexDataComponent = character.vertexDataComponent;
@@ -55,33 +49,31 @@ namespace engine {
                     nextRenderModelId++;
                 }
             }
-        }
+        });
 
         for (auto& renderModel : vRenderModels) {
             uint32_t totalVertexCount = 0;
             uint32_t i = 0;
-            for (auto [entity, text] : entities.each()) {
-                // skip full text rendering, if font is absent in memory for this text
-                if (FONT_ABSENT(text.font)) {
-                    i++;
-                    continue;
-                }
+            registry.each<Text>([this, &totalVertexCount, &i, &renderModel](Text* textComponent) {
+                auto& text = *textComponent;
+                const auto& vShader = shaderProgram.getVShader();
+                const auto& fShader = shaderProgram.getFShader();
 
-                vShader.setUniformArrayElement(i, text.transform);
+                vShader.setUniformArrayElement(i, text.transform.modelMatrix);
                 fShader.setUniformArrayElement(i, text.color);
                 fShader.setUniformArrayElement(i, text.transparency);
                 fShader.setUniform(text.bitmap.sampler);
-                ACTIVATE_TEXTURE_PATH(text.bitmap, "assets/bitmaps");
-
+                TextureBuffer::bind(text.bitmap.textureId, text.bitmap.typeId);
+                TextureBuffer::activate(text.bitmap.sampler.value);
                 // no needs to update each character again, if the text didn't change!
                 if (!text.isUpdated) {
                     i++;
-                    totalVertexCount += text.text.length() * 4; // need this to redraw same text, without changes
-                    continue;
+                    totalVertexCount += text.text.length() * 4; // still need to update total vertex count to draw
+                    return;
                 }
                 text.isUpdated = false;
 
-                auto& font = GET_FONT(text.font);
+                auto& font = GET_FONT(text.bitmap.textureId);
                 float textX = 0;
                 float textY = 0;
                 char previousChar = 0;
@@ -136,7 +128,7 @@ namespace engine {
                     i = 0;
                     totalVertexCount = 0;
                 }
-            }
+            });
 
             if (i > 0 && totalVertexCount > 0) {
                 renderModel.vao.bind();
@@ -145,7 +137,7 @@ namespace engine {
             resetCounts(renderModel);
         }
 
-        shaderProgram->stop();
+        shaderProgram.stop();
     }
 
 }

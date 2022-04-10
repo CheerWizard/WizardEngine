@@ -4,9 +4,8 @@
 
 #include <platform/graphics/TextureBuffer.h>
 #include "glad/glad.h"
-#include <array>
 
-namespace engine {
+namespace engine::graphics {
 
     void toGLTextureType(const TextureType& textureType, GLenum& glTextureType) {
         switch (textureType) {
@@ -51,86 +50,96 @@ namespace engine {
         }
     }
 
-    void TextureBuffer::create(const TextureType& textureType) {
+    void TextureBuffer::init(const TextureType& textureType) {
         toGLTextureType(textureType, type);
         glCreateTextures(type, 1, &id);
     }
 
-    void TextureBuffer::destroy() {
+    u32 TextureBuffer::create(const TextureType& textureType) {
+        GLenum type;
+        GLuint id;
+        toGLTextureType(textureType, type);
+        glCreateTextures(type, 1, &id);
+        return id;
+    }
+
+    void TextureBuffer::destroy(const u32& id) {
         glDeleteTextures(1, &id);
     }
 
-    void TextureBuffer::recreate() {
-        destroy();
-        glCreateTextures(type, 1, &id);
+    u32 TextureBuffer::recreate(const u32& id, const u32& typeId) {
+        destroy(id);
+        u32 newId;
+        glCreateTextures(typeId, 1, &newId);
+        return newId;
     }
 
     void TextureBuffer::bind() const {
         glBindTexture(type, id);
     }
 
-    void TextureBuffer::bind(const uint32_t& id) {
-        glBindTexture(GL_TEXTURE_2D, id);
-    }
-
     void TextureBuffer::unbind() const {
         glBindTexture(type, 0);
     }
 
-    void TextureBuffer::activate(const uint32_t &slot) {
+    void TextureBuffer::setParams(const std::vector<TextureParam>& params) const {
+        for (auto& param : params) {
+            glTextureParameteri(id, toGLTextureParamName(param.name), toGLTextureParamValue(param.value));
+        }
+    }
+
+    void TextureBuffer::bind(const u32& id, const u32& typeId) {
+        glBindTexture(typeId, id);
+    }
+
+    void TextureBuffer::unbind(const TextureType& type) {
+        GLenum textureType;
+        toGLTextureType(type, textureType);
+        glBindTexture(textureType, 0);
+    }
+
+    void TextureBuffer::activate(const u32 &slot) {
         glActiveTexture(GL_TEXTURE0 + slot);
     }
 
-    void TextureBuffer::loadFrom(const std::string_view &fileName) {
-        loadFrom(fileName, RUNTIME_TEXTURES_PATH);
-    }
+    u32 TextureBuffer::load(const char* filePath) {
+        auto textureData = io::TextureFile::read(filePath);
 
-    void TextureBuffer::loadFrom(const std::string_view &fileName, const std::string_view &texturesPath) {
-        switch (type) {
-            case GL_TEXTURE_2D:
-                loadTexture2d(fileName, texturesPath);
-                break;
-        }
-    }
-
-    void TextureBuffer::loadTexture2d(const std::string_view& filename, const std::string_view &texturesPath) {
-        auto textureData = TextureFile::read(filename, texturesPath);
-
+        TextureBuffer textureBuffer {};
         if (textureData.data == nullptr) {
-            ENGINE_WARN("Can't stream texture {0} from NULL data!", filename);
+            ENGINE_WARN("Can't stream texture {0} from NULL data!", filePath);
         } else {
-            load(textureData);
+            textureBuffer.create(TextureType::TEXTURE_2D);
+            textureBuffer.bind();
+            load(textureBuffer.id, textureData);
+            textureBuffer.unbind();
         }
+        io::TextureFile::free(textureData.data);
 
-        TextureFile::free(textureData.data);
+        return textureBuffer.id;
     }
 
-    void TextureBuffer::loadCubeMap(
-            const std::vector<TextureFace>& faces,
-            const std::string_view &texturesPath
-    ) {
+    u32 TextureBuffer::load(const std::vector<TextureFace>& faces) {
+        TextureBuffer textureBuffer(TextureType::CUBE_MAP);
+        textureBuffer.bind();
+
         for (auto& face : faces) {
-            auto textureData = TextureFile::read(face.fileName, texturesPath);
+            auto textureData = io::TextureFile::read(face.filePath);
 
             if (textureData.data == nullptr) {
-                ENGINE_WARN("Can't stream texture {0} from NULL data!", face.fileName);
+                ENGINE_WARN("Can't stream texture {0} from NULL data!", face.filePath);
             } else {
-                load(face.type, textureData);
+                load(textureBuffer.id, face.type, textureData);
             }
 
-            TextureFile::free(textureData.data);
+            io::TextureFile::free(textureData.data);
         }
 
-        setParams({
-            { TextureParamName::MAG_FILTER, TextureParamValue::LINEAR },
-            { TextureParamName::MIN_FILTER, TextureParamValue::LINEAR },
-            { TextureParamName::WRAP_S, TextureParamValue::CLAMP_TO_EDGE },
-            { TextureParamName::WRAP_T, TextureParamValue::CLAMP_TO_EDGE },
-            { TextureParamName::WRAP_R, TextureParamValue::CLAMP_TO_EDGE },
-        });
+        textureBuffer.unbind();
+        return textureBuffer.id;
     }
 
-    void TextureBuffer::load(const TextureData &textureData) {
+    void TextureBuffer::load(const u32& id, const io::TextureData &textureData) {
         GLenum internalFormat = 0, dataFormat = 0;
         int channels = textureData.channels, width = textureData.width, height = textureData.height;
 
@@ -164,7 +173,7 @@ namespace engine {
         glTextureSubImage2D(id, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
     }
 
-    void TextureBuffer::load(const TextureFaceType &faceType, const TextureData &textureData) {
+    void TextureBuffer::load(const u32& id, const TextureFaceType &faceType, const io::TextureData &textureData) {
         GLint internalFormat = 0, dataFormat = 0;
         int channels = textureData.channels, width = textureData.width, height = textureData.height;
 
@@ -201,9 +210,25 @@ namespace engine {
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     }
 
-    void TextureBuffer::setParams(const std::vector<TextureParam>& params) const {
+    void TextureBuffer::setParams(const u32& id, const std::vector<TextureParam>& params) {
         for (auto& param : params) {
             glTextureParameteri(id, toGLTextureParamName(param.name), toGLTextureParamValue(param.value));
         }
+    }
+
+    void TextureBuffer::setDefaultParamsCubeMap(const u32& id) {
+        setParams(id, {
+            { TextureParamName::MAG_FILTER, TextureParamValue::LINEAR },
+            { TextureParamName::MIN_FILTER, TextureParamValue::LINEAR },
+            { TextureParamName::WRAP_S, TextureParamValue::CLAMP_TO_EDGE },
+            { TextureParamName::WRAP_T, TextureParamValue::CLAMP_TO_EDGE },
+            { TextureParamName::WRAP_R, TextureParamValue::CLAMP_TO_EDGE },
+        });
+    }
+
+    u32 TextureBuffer::getTypeId(const TextureType &textureType) {
+        u32 typeId;
+        toGLTextureType(textureType, typeId);
+        return typeId;
     }
 }

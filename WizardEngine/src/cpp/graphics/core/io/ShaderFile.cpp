@@ -4,9 +4,9 @@
 
 #include <graphics/core/io/ShaderFile.h>
 
-#include "sstream"
+#include <sstream>
 
-namespace engine::shader {
+namespace engine::io {
 
     ShaderPropsMap ShaderFile::shaderPropsMap = {};
 
@@ -28,7 +28,7 @@ namespace engine::shader {
         std::stringstream ss;
         ss << assetPath << "/" << fileName;
         auto fullPath = ss.str();
-        return FileSystem::readWithIncludes(fullPath, includeToken);
+        return filesystem::readWithIncludes(fullPath, includeToken);
     }
 
     void ShaderFile::clear() {

@@ -10,13 +10,13 @@
 
 #define MIN_MESH_COUNT 1
 
-namespace engine {
+namespace engine::graphics {
 
     struct Vertex3d {
         glm::vec3 position = { 0.5f, 0.5f, 0.5f };
         glm::vec2 textureCoords = { 0.25f, -0.25f };
         glm::vec3 normal = { 0, 0, 0 };
-        float textureSlot = 0;
+        f32 textureSlot = 0;
     };
 
     template<typename T>
@@ -30,16 +30,15 @@ namespace engine {
         return BaseMesh<T>{ copy<T>(mesh.vertexData), copy(mesh.indexData) };
     }
 
-    template<typename T>
-    struct BaseMeshComponent {
+    template_component(BaseMeshComponent, T) {
         BaseMesh<T> *meshes = nullptr;
-        uint32_t meshCount = MIN_MESH_COUNT;
-        uint32_t totalVertexCount = 0;
-        uint32_t totalIndexCount = 0;
-        uint32_t vertexStart = 0;
-        uint32_t indexStart = 0;
+        u32 meshCount = MIN_MESH_COUNT;
+        u32 totalVertexCount = 0;
+        u32 totalIndexCount = 0;
+        u32 vertexStart = 0;
+        u32 indexStart = 0;
         bool isUpdated = true;
-        uint32_t renderModelId = 0;
+        u8 renderModelId = 0;
         DrawType drawType = DrawType::TRIANGLE;
     };
 
@@ -168,8 +167,8 @@ namespace engine {
 
     template<typename T>
     void invalidate(BaseMeshComponent<T> &meshComponent) {
-        uint32_t totalVertexCount = 0;
-        uint32_t totalIndexCount = 0;
+        u32 totalVertexCount = 0;
+        u32 totalIndexCount = 0;
         for (auto i = 0 ; i < meshComponent.meshCount ; i++) {
             auto& vertexData = meshComponent.meshes[i].vertexData;
             auto& indexData = meshComponent.meshes[i].indexData;

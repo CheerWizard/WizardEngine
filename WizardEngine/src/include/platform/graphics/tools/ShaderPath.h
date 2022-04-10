@@ -6,11 +6,11 @@
 
 #include <string>
 
-#define ENGINE_SHADERS_PATH getEngineShadersPath()
-#define RUNTIME_SHADERS_PATH getRuntimeShadersPath()
-#define GRAPHICS_CORE_VERSION getGraphicsCoreVersion()
+#define ENGINE_SHADERS_PATH engine::io::getEngineShadersPath()
+#define RUNTIME_SHADERS_PATH engine::io::getRuntimeShadersPath()
+#define GRAPHICS_CORE_VERSION engine::io::getGraphicsCoreVersion()
 
-namespace engine {
+namespace engine::io {
     std::string getRuntimeShadersPath();
     std::string getEngineShadersPath();
     const char* getGraphicsCoreVersion();

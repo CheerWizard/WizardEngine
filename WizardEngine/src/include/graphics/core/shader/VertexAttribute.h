@@ -4,13 +4,16 @@
 
 #pragma once
 
+#include <core/primitives.h>
 #include <core/String.h>
 
 #include <glm/glm.hpp>
 
 namespace engine::shader {
 
-    enum ElementCount : uint8_t {
+    using namespace core;
+
+    enum ElementCount : u8 {
         NONE = 0,
         SINGLE = 1,
         DOUBLE_ = 2,
@@ -25,20 +28,20 @@ namespace engine::shader {
         MAT4 = 16
     };
 
-    enum AttributeCategory : uint8_t {
+    enum AttributeCategory : u8 {
         VERTEX = 0,
         INSTANCE = 1
     };
 
-    enum AttributeBool : uint8_t {
+    enum AttributeBool : u8 {
         A_FALSE = 0,
         A_TRUE = 1
     };
 
     struct VertexAttribute {
         std::string name;
-        uint32_t location;
-        uint32_t offset = 0;
+        u32 location;
+        u32 offset = 0;
         ElementCount elementCount = SINGLE;
         AttributeBool normalized = A_FALSE;
         AttributeCategory category = VERTEX;

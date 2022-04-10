@@ -5,20 +5,20 @@
 #pragma once
 
 #include <ecs/Entity.h>
-#include "CameraComponents.h"
+#include <graphics/camera/CameraComponents.h>
 
-namespace engine {
+namespace engine::graphics {
 
-    class Camera2D : public Entity {
+    class Camera2D : public ecs::Entity {
 
     public:
         Camera2D() = default;
 
-        Camera2D(const std::string &tag, EntityContainer* container) : Entity(tag, container) {
+        Camera2D(const std::string &tag, ecs::EntityContainer* container) : ecs::Entity(tag, container) {
             create();
         }
 
-        Camera2D(EntityContainer* container) : Entity("Camera", container) {
+        Camera2D(ecs::EntityContainer* container) : ecs::Entity("Camera", container) {
             create();
         }
 
@@ -29,16 +29,16 @@ namespace engine {
 
     };
 
-    class Camera3D : public Entity {
+    class Camera3D : public ecs::Entity {
 
     public:
         Camera3D() = default;
 
-        Camera3D(const std::string &tag, const float& aspectRatio, EntityContainer* container) : Entity(tag, container) {
+        Camera3D(const std::string &tag, const float& aspectRatio, ecs::EntityContainer* container) : ecs::Entity(tag, container) {
             create(aspectRatio);
         }
 
-        Camera3D(const float& aspectRatio, EntityContainer* container) : Entity("Camera", container) {
+        Camera3D(const float& aspectRatio, ecs::EntityContainer* container) : ecs::Entity("Camera", container) {
             create(aspectRatio);
         }
 

@@ -5,10 +5,10 @@
 #pragma once
 
 #include <ecs/Entity.h>
-#include "core/geometry/Mesh.h"
-#include "transform/TransformComponents.h"
+#include <graphics/core/geometry/Mesh.h>
+#include <graphics/transform/TransformComponents.h>
 
-namespace engine {
+namespace engine::graphics {
 
     template<typename T>
     class Object3d : public Entity {

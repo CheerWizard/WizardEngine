@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "Logger.h"
+#include <io/Logger.h>
 
 #ifdef DEBUG
 	#ifdef WIN32
@@ -20,10 +20,16 @@
 
 #ifdef DEBUG
     #define ASSERT(x, msg) static_assert(x, msg);
-    #define RUNTIME_ASSERT(x, ...) { if (!(x)) { RUNTIME_ERR("Assertion failed : {0}", __VA_ARGS__); DEBUGBREAK(); } }
-    #define ENGINE_ASSERT(x, ...) { if (!(x)) { ENGINE_ERR("Assertion failed : {0}", __VA_ARGS__); DEBUGBREAK(); } }
+    #define RUNTIME_ASSERT(x, ...) if (!(x)) { \
+    RUNTIME_ERR("Assertion failed : {0}", __VA_ARGS__); \
+    DEBUGBREAK();                              \
+    }
+    #define ENGINE_ASSERT(x, ...) if (!(x)) { \
+    ENGINE_ERR("Assertion failed : {0}", __VA_ARGS__); \
+    DEBUGBREAK();                             \
+    }
 #else
     #define ASSERT(x, msg) x
-    #define CLIENT_ASSERT(x, ...) x
+    #define RUNTIME_ASSERT(x, ...) x
     #define ENGINE_ASSERT(x, ...) x
 #endif

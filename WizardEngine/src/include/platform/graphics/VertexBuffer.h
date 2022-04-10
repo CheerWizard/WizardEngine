@@ -10,18 +10,14 @@
 
 #define DEFAULT_VERTEX_COUNT 1000
 
-namespace engine {
+namespace engine::graphics {
 
     // VBO - Vertex Buffer Object allocated for GPU pipeline
     class VertexBuffer final : public Buffer {
 
     public:
-        VertexBuffer() : Buffer(DEFAULT_VERTEX_COUNT) {
-            create();
-        }
-        VertexBuffer(const uint32_t& vertexCount) : Buffer(vertexCount) {
-            create();
-        }
+        VertexBuffer() : Buffer(DEFAULT_VERTEX_COUNT) {}
+        VertexBuffer(const uint32_t& vertexCount) : Buffer(vertexCount) {}
         ~VertexBuffer() = default;
 
     public:
@@ -31,17 +27,20 @@ namespace engine {
         void recreate();
         // bind/unbind
         void bind() const;
-        void unbind() const;
+        static void unbind();
         // GPU allocations
-        void alloc();
-        void alloc(const uint32_t &vertexCount);
-        void malloc(const size_t &memorySize);
+        void allocDynamic();
+        void allocDynamic(const uint32_t &vertexCount);
+        static void mallocDynamic(const size_t &memorySize);
         void setFormat(const shader::VertexFormat &vertexFormat);
         void setFormat(const shader::VertexFormat &vertexFormat, const uint32_t& vertexCount);
         // GPU data load
         template<typename T>
         void load(const VertexData<T> &vertexData);
-        void load(const void* vertices, const size_t& subDataOffset, const size_t& memorySize);
+        static void load(const void* vertices, const size_t& subDataOffset, const size_t& memorySize);
+        template<typename T>
+        void loadStatic(const VertexData<T>& vertexData);
+        static void loadStatic(const void* vertices, const size_t& memorySize);
 
     public:
         void enableAttributes();
@@ -51,7 +50,7 @@ namespace engine {
         void bindAttributes();
 
     private:
-        uint32_t id = 0;
+        u32 id = 0;
         shader::VertexFormat vertexFormat;
     };
 
@@ -63,4 +62,10 @@ namespace engine {
         load(vertexData.vertices, subDataOffset, memorySize);
     }
 
+    template<typename T>
+    void VertexBuffer::loadStatic(const VertexData<T> &vertexData) {
+        auto vertexSize = vertexFormat.getSize();
+        auto memorySize = vertexData.vertexCount * vertexSize;
+        loadStatic(vertexData.vertices, memorySize);
+    }
 }

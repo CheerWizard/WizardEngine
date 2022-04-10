@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "Time.h"
-#include "Events.h"
+#include <time/Time.h>
+#include <event/Events.h>
 
-namespace engine {
+namespace engine::core {
 
     class Layer {
 
@@ -16,20 +16,20 @@ namespace engine {
         virtual ~Layer() = default;
 
     public:
-        virtual void onUpdate(Time deltaTime) = 0;
+        virtual void onUpdate(time::Time deltaTime) = 0;
         virtual void onPrepare() = 0;
 
     public:
         virtual void onWindowClosed();
         virtual void onWindowResized(const uint32_t &width, const uint32_t &height);
 
-        virtual void onKeyPressed(KeyCode keyCode);
-        virtual void onKeyHold(KeyCode keyCode);
-        virtual void onKeyReleased(KeyCode keyCode);
-        virtual void onKeyTyped(KeyCode keyCode);
+        virtual void onKeyPressed(event::KeyCode keyCode);
+        virtual void onKeyHold(event::KeyCode keyCode);
+        virtual void onKeyReleased(event::KeyCode keyCode);
+        virtual void onKeyTyped(event::KeyCode keyCode);
 
-        virtual void onMousePressed(MouseCode mouseCode);
-        virtual void onMouseRelease(MouseCode mouseCode);
+        virtual void onMousePressed(event::MouseCode mouseCode);
+        virtual void onMouseRelease(event::MouseCode mouseCode);
         virtual void onMouseScrolled(double xOffset, double yOffset);
 
         virtual void onCursorMoved(double xPos, double yPos);

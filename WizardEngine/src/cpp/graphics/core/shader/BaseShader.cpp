@@ -6,10 +6,10 @@
 
 namespace engine::shader {
 
-    uint16_t ShaderScript::IDS = 0;
+    u16 ShaderScript::IDS = 0;
 
-    void BaseShaderProgram::construct(const ShaderProps &props) {
-        auto sources = ShaderFile::readAssetWithIncludes(props);
+    void BaseShaderProgram::construct(const io::ShaderProps &props) {
+        auto sources = io::ShaderFile::readAssetWithIncludes(props);
         // required shader, if failed - skip construction!
         if (sources.vSrc.empty()) {
             state = FAILED_READ_FILE;
@@ -45,13 +45,13 @@ namespace engine::shader {
         }
     }
 
-    void BaseShader::updateScripts(entt::registry &registry) const {
+    void BaseShader::updateScripts(ecs::Registry &registry) const {
         for (const auto& script : scripts) {
             script.updateRegistry(*this, registry);
         }
     }
 
-    void BaseShader::updateScripts(const Entity &entity) const {
+    void BaseShader::updateScripts(const ecs::Entity &entity) const {
         for (const auto& script : scripts) {
             script.updateEntity(*this, entity);
         }
@@ -241,7 +241,7 @@ namespace engine::shader {
     void BaseShaderProgram::parseVertexFormat() {
         ENGINE_INFO("Shader is trying to find attributes...");
         std::string copy = _vShader.getSrc();
-        auto vShaderTokens = split(copy, " ");
+        auto vShaderTokens = string::split(copy, " ");
 
         vertexFormat = VertexFormat();
         for (auto i = 0 ; i < vShaderTokens.size() ; i++) {
@@ -249,7 +249,7 @@ namespace engine::shader {
                 auto attrCategory = VERTEX;
                 // find attr category token, if exists.
                 if (vShaderTokens[i + 3] == "//") {
-                    auto subToken = split(vShaderTokens[i + 4], "!");
+                    auto subToken = string::split(vShaderTokens[i + 4], "!");
                     if (!subToken.empty() && subToken[0] == "instance") {
                         attrCategory = INSTANCE;
                     }
@@ -284,7 +284,7 @@ namespace engine::shader {
 //        auto shaderTypeStr = toStringShaderType(shaderType);
 //        ENGINE_INFO("{0} shader is trying to find uniform structs and blocks...", shaderTypeStr);
         std::string copy = shader.getSrc();
-        auto shaderTokens = split(copy, "\r\n; ");
+        auto shaderTokens = string::split(copy, "\r\n; ");
 
         auto uniformBlockFormat = UniformBlockFormat(uniformBlockSlots++);
 
@@ -317,7 +317,7 @@ namespace engine::shader {
                     auto attrName = shaderTokens[j + 2];
                     uint16_t attrCount = 1;
                     // check if this attr is attr array.
-                    auto attrNameTokens = split(attrName, "[]");
+                    auto attrNameTokens = string::split(attrName, "[]");
                     if (attrNameTokens.size() > 1) {
                         attrName = attrNameTokens[0];
                         attrCount = TO_UINT16(attrNameTokens[1]);
@@ -369,7 +369,7 @@ namespace engine::shader {
                     auto attrName = shaderTokens[j + 2];
                     uint16_t attrCount = 1;
                     // check if this attr is attr array.
-                    auto attrNameTokens = split(attrName, "[]");
+                    auto attrNameTokens = string::split(attrName, "[]");
                     if (attrNameTokens.size() > 1) {
                         attrName = attrNameTokens[0];
                         attrCount = TO_UINT16(attrNameTokens[1]);
@@ -405,12 +405,12 @@ namespace engine::shader {
 //        ENGINE_INFO("{0} shader has found uniform blocks!", shaderTypeStr);
     }
 
-    void BaseShaderProgram::update(entt::registry& registry) {
+    void BaseShaderProgram::update(ecs::Registry& registry) {
         _vShader.updateScripts(registry);
         _fShader.updateScripts(registry);
     }
 
-    void BaseShaderProgram::update(const Entity &entity) {
+    void BaseShaderProgram::update(const ecs::Entity &entity) {
         _vShader.updateScripts(entity);
         _fShader.updateScripts(entity);
     }
@@ -425,11 +425,10 @@ namespace engine::shader {
     void BaseShaderProgram::recompile(const std::string& name) {
         state = ShaderState::NOT_READY;
         release();
-        construct(ShaderFile::getShaderProps(name));
+        construct(io::ShaderFile::getShaderProps(name));
     }
 
     bool BaseShaderProgram::isReady() {
         return state == ShaderState::READY;
     }
-
 }

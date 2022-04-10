@@ -5,22 +5,22 @@
 #include <ecs/Entity.h>
 #include <ecs/Components.h>
 
-namespace engine {
+namespace engine::ecs {
 
-    void Entity::remove() const {
-        container->getRegistry().destroy(*this);
+    void Entity::destroy() {
+        container->getRegistry().deleteEntity(id);
     }
 
     bool EntityContainer::isEmpty() {
-        return registry.empty<>();
+        return registry.isEmpty();
     }
 
     size_t EntityContainer::size() {
-        return registry.size();
+        return registry.entity_count();
     }
 
     void EntityContainer::clear() {
-        registry.clear<>();
+        registry.clear();
     }
 
     void Entity::create() {
@@ -28,7 +28,6 @@ namespace engine {
     }
 
     void Entity::create(const std::string &tag) {
-        id = container->getRegistry().create();
-        add<TagComponent>(tag);
+        id = container->getRegistry().createEntity<TagComponent>(TagComponent { tag });
     }
 }

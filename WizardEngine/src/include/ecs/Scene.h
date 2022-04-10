@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "Entity.h"
+#include <ecs/Entity.h>
 
-namespace engine {
+namespace engine::ecs {
 
     class Scene : public EntityContainer {
 
@@ -17,14 +17,12 @@ namespace engine {
             clear();
         }
 
-        Scene(const Scene& scene) = default;
-
     public:
         inline void setSkybox(const Entity& skybox) {
             this->skybox = skybox;
         }
 
-        inline const Entity& getSkybox() const {
+        [[nodiscard]] inline const Entity& getSkybox() const {
             return skybox;
         }
 

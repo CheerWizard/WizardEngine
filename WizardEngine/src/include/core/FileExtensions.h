@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "String.h"
+#include <core/String.h>
 
 #define OBJ_EXT ".obj"
 #define PNG_EXT ".png"

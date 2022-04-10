@@ -7,18 +7,18 @@
 #include <ecs/Entity.h>
 #include "LightComponents.h"
 
-namespace engine {
+namespace engine::graphics {
 
-    class PhongLight : public Entity {
+    class PhongLight : public ecs::Entity {
 
     public:
         PhongLight() = default;
 
-        PhongLight(const std::string &tag, EntityContainer* container) : Entity(tag, container) {
+        PhongLight(const std::string &tag, ecs::EntityContainer* container) : Entity(tag, container) {
             create();
         }
 
-        PhongLight(EntityContainer* container) : Entity("PhongLight", container) {
+        PhongLight(ecs::EntityContainer* container) : Entity("PhongLight", container) {
             create();
         }
 
@@ -29,16 +29,16 @@ namespace engine {
 
     };
 
-    class DirectLight : public Entity {
+    class DirectLight : public ecs::Entity {
 
     public:
         DirectLight() = default;
 
-        DirectLight(const std::string &tag, EntityContainer* container) : Entity(tag, container) {
+        DirectLight(const std::string &tag, ecs::EntityContainer* container) : Entity(tag, container) {
             create();
         }
 
-        DirectLight(EntityContainer* container) : Entity("DirectLight", container) {
+        DirectLight(ecs::EntityContainer* container) : Entity("DirectLight", container) {
             create();
         }
 
@@ -49,16 +49,16 @@ namespace engine {
 
     };
 
-    class PointLight : public Entity {
+    class PointLight : public ecs::Entity {
 
     public:
         PointLight() = default;
 
-        PointLight(const std::string &tag, EntityContainer* container) : Entity(tag, container) {
+        PointLight(const std::string &tag, ecs::EntityContainer* container) : Entity(tag, container) {
             create();
         }
 
-        PointLight(EntityContainer* container) : Entity("PointLight", container) {
+        PointLight(ecs::EntityContainer* container) : Entity("PointLight", container) {
             create();
         }
 
@@ -69,16 +69,16 @@ namespace engine {
 
     };
 
-    class FlashLight : public Entity {
+    class FlashLight : public ecs::Entity {
 
     public:
         FlashLight() = default;
 
-        FlashLight(const std::string &tag, EntityContainer* container) : Entity(tag, container) {
+        FlashLight(const std::string &tag, ecs::EntityContainer* container) : Entity(tag, container) {
             create();
         }
 
-        FlashLight(EntityContainer* container) : Entity("FlashLight", container) {
+        FlashLight(ecs::EntityContainer* container) : Entity("FlashLight", container) {
             create();
         }
 

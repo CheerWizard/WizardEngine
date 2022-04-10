@@ -6,7 +6,7 @@
 
 #include <glm/glm.hpp>
 
-namespace engine {
+namespace engine::graphics {
 
     struct PointVertex {
         glm::vec2 position = { 0.5f, 0.5f };

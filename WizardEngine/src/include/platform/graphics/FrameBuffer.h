@@ -7,28 +7,25 @@
 #include <core/Assert.h>
 #include <graphics/core/texture/Texture.h>
 
-namespace engine {
+namespace engine::graphics {
 
     struct ColorAttachment {
         ColorFormat format = ColorFormat::NONE;
-        uint32_t id = 0;
+        u32 id = 0;
     };
 
     struct DepthStencilAttachment {
         DepthStencilFormat format = DepthStencilFormat::NONE;
-        uint32_t id = 0;
+        u32 id = 0;
     };
 
     struct RenderBufferAttachment {
         DepthStencilFormat format = DepthStencilFormat::NONE;
-        uint32_t id = 0;
+        u32 id = 0;
     };
 
     struct FrameBufferFormat {
-        uint32_t width = 0, height = 0;
-        uint32_t samples = 1;
-        bool useIdenticalSampleLocations = true;
-        bool swapChainTarget = false;
+        u32 width = 0, height = 0, samples = 1;
         std::vector<ColorAttachment> colorAttachments;
         DepthStencilAttachment depthStencilAttachment;
         RenderBufferAttachment renderBufferAttachment;
@@ -53,7 +50,7 @@ namespace engine {
             return format;
         }
 
-        [[nodiscard]] ColorAttachment getColorAttachment(uint32_t index = 0) const {
+        [[nodiscard]] ColorAttachment getColorAttachment(u32 index = 0) const {
             const auto& size = format.colorAttachments.size();
             if (index >= size) {
                 ENGINE_ERR("getColorAttachment() failed with index out of bounds : [index: {0}, size: {1}]", index, size);
@@ -84,9 +81,9 @@ namespace engine {
         void loadAttachments();
         const std::vector<ColorAttachment>& updateFormat(const FrameBufferFormat &format);
         void setViewPort() const;
-        void resize(uint32_t width, uint32_t height);
-        int readPixel(uint32_t attachmentIndex, int x, int y) const;
-        void removeAttachment(uint32_t attachmentIndex, int value);
+        void resize(u32 width, u32 height);
+        int readPixel(u32 attachmentIndex, s32 x, s32 y) const;
+        void removeAttachment(u32 attachmentIndex, s32 value);
 
     private:
         bool isCompleted();
@@ -94,11 +91,11 @@ namespace engine {
         void attachDepthStencil();
         void attachRbo();
         void createDrawBuffers() const;
-        void bindTexture(const uint32_t &attachmentId);
-        uint32_t getTextureTarget() const;
+        void bindTexture(const u32 &attachmentId);
+        u32 getTextureTarget() const;
 
     private:
-        uint32_t id = 0;
+        u32 id = 0;
         FrameBufferFormat format;
 
     public:

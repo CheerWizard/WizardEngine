@@ -14,7 +14,7 @@
 
 namespace engine::shader {
 
-    typedef std::unordered_map<std::string, Ref<BaseShaderProgram>> ShaderPrograms;
+    typedef std::unordered_map<std::string, core::Ref<BaseShaderProgram>> ShaderPrograms;
     typedef ShaderPrograms::iterator ShaderIterator;
 
     // Singleton class. Stores and provides ShaderProgram instances from memory.
@@ -48,15 +48,15 @@ namespace engine::shader {
         }
 
     public:
-        void add(const std::string& name, const Ref<BaseShaderProgram>& shaderProgram);
-        const Ref<BaseShaderProgram>& get(const std::string& name);
+        void add(const std::string& name, const core::Ref<BaseShaderProgram>& shaderProgram);
+        const core::Ref<BaseShaderProgram>& get(const std::string& name);
         [[nodiscard]] bool exists(const std::string& name) const;
         void remove(const std::string& name);
         void clear();
         void recompile(const std::string& name);
 
     public:
-        const Ref<BaseShaderProgram>& operator[](const std::string &name) {
+        const core::Ref<BaseShaderProgram>& operator[](const std::string &name) {
             return get(name);
         }
 

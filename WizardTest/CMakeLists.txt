@@ -13,8 +13,10 @@ file(GLOB_RECURSE TEST_SRC
 )
 include_directories(src/include)
 
-add_executable(${PROJECT_NAME} ${TEST_SRC} src/include/core.h)
+add_executable(${PROJECT_NAME} ${TEST_SRC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 include_engine(../WizardEngine)
 link_to_engine(${PROJECT_NAME})
+
+replace_dirs(WizardTest/assets WizardTest/assets)

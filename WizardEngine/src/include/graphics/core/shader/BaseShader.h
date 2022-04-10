@@ -17,8 +17,8 @@ namespace engine::shader {
     struct ShaderScript {
         static uint16_t IDS;
         uint16_t id = IDS++;
-        std::function<void(const BaseShader&, entt::registry&)> updateRegistry;
-        std::function<void(const BaseShader&, const Entity&)> updateEntity;
+        std::function<void(const BaseShader&, ecs::Registry&)> updateRegistry;
+        std::function<void(const BaseShader&, const ecs::Entity&)> updateEntity;
 
         ShaderScript() = default;
         ShaderScript(const ShaderScript&) = default;
@@ -62,8 +62,8 @@ namespace engine::shader {
         void updateUniformBuffer(Vec4fUniform &uniform, const uint32_t &index = 0) const;
         void updateUniformBuffer(Mat4fUniform &uniform, const uint32_t &index = 0) const;
 
-        void updateScripts(const Entity &entity) const;
-        void updateScripts(entt::registry &registry) const;
+        void updateScripts(const ecs::Entity &entity) const;
+        void updateScripts(ecs::Registry &registry) const;
         void addScript(const ShaderScript& script);
         void removeScript(const ShaderScript& script);
         void clearScripts();
@@ -78,22 +78,21 @@ namespace engine::shader {
     class BaseShaderProgram final : public ShaderProgram {
 
     public:
-        // with using default constructor, you should call construct() function manually!
         BaseShaderProgram() = default;
 
-        BaseShaderProgram(const ShaderProps &props) {
+        BaseShaderProgram(const io::ShaderProps &props) {
             construct(props);
         }
 
         BaseShaderProgram(
-                const ShaderProps &props,
+                const io::ShaderProps &props,
                 const BaseShader &vShader
         ) : _vShader(vShader) {
             construct(props);
         }
 
         BaseShaderProgram(
-                const ShaderProps &props,
+                const io::ShaderProps &props,
                 const BaseShader &vShader,
                 const BaseShader &fShader
         ) : _vShader(vShader), _fShader(fShader) {
@@ -101,7 +100,7 @@ namespace engine::shader {
         }
 
         BaseShaderProgram(
-                const ShaderProps &props,
+                const io::ShaderProps &props,
                 const BaseShader &vShader,
                 const BaseShader &fShader,
                 const BaseShader &gShader
@@ -129,15 +128,15 @@ namespace engine::shader {
         }
 
     public:
-        void construct(const ShaderProps& props);
+        void construct(const io::ShaderProps& props);
         void detachShaders();
         void releaseShaders();
         bool invalidate();
         void bindVertexFormat();
         void parseVertexFormat();
         void parseUniformBlockFormat(BaseShader& shader);
-        void update(entt::registry& registry);
-        void update(const Entity& entity);
+        void update(ecs::Registry& registry);
+        void update(const ecs::Entity& entity);
         void release();
         void recompile(const std::string& name);
         bool isReady();
