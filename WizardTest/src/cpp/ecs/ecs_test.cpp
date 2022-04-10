@@ -26,7 +26,7 @@ namespace test::ecs {
     }
 
     void test_componentTypesRegistration() {
-        component_empty(Test1)
+        empty_component(Test1)
         component(Test2) {
             float a;
             f32 b;
@@ -41,8 +41,8 @@ namespace test::ecs {
     }
 
     void test_entity() {
-        component_empty(Test)
-        component_empty(Test2);
+        empty_component(Test)
+        empty_component(Test2);
         Registry registry;
 
         auto entity1 = registry.createEntity();
@@ -57,9 +57,9 @@ namespace test::ecs {
         void* test2 = registry.getComponent<Test2>(entity2);
         assert_not_null("addComponent<Test2>(entity2)\ngetComponent<Test2>(entity2)", test2);
 
-        entity1 = registry.deleteEntity(entity1);
+        registry.deleteEntity(entity1);
         assert_null("deleteEntity(entity1)", entity1);
-        entity2 = registry.deleteEntity(entity2);
+        registry.deleteEntity(entity2);
         assert_null("deleteEntity(entity2)", entity2);
     }
 

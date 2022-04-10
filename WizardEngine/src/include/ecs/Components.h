@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include <string>
+#include <ecs/ecs.h>
 
-namespace engine {
+namespace engine::ecs {
 
-    struct TagComponent {
+    component(TagComponent) {
         std::string tag;
         TagComponent() = default;
         TagComponent(const std::string &tag) : tag(tag) {}

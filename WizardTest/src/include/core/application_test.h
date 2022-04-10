@@ -5,7 +5,7 @@
 #pragma once
 
 #include <core/Application.h>
-//#include <Launcher.h>
+#include <Launcher.h>
 
 namespace test {
 

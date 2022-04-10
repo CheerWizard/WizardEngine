@@ -44,15 +44,4 @@ class DLL_API Scriptable {
     [[nodiscard]] inline bool remove() const {
         return entity.template remove<T>();
     }
-
-    template<typename T, typename... Args>
-    inline void set(Args &&... args) const {
-        entity.template set<T>(std::forward<Args>(args)...);
-    }
-
-    template<typename T>
-    inline T* getPtr() const {
-        return entity.template getPtr<T>();
-    }
-
 };

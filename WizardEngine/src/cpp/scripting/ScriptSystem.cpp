@@ -11,17 +11,17 @@ namespace engine::scripting {
     void ScriptSystem::onUpdate(Time dt) {
         auto& registry = activeScene->getRegistry();
 
-        registry.view<NativeScript>().each([=](auto entity, auto& sc) {
-            if (!sc.script) {
-                sc.script = { entity, activeScene.get() };
-                sc.onCreateFunction(sc.script);
+        registry.eachEntityComponent<NativeScript>([&dt, this](entity_id entityId, NativeScript* sc) {
+            if (!sc->script) {
+                sc->script = { activeScene.get(), entityId };
+                sc->onCreateFunction(sc->script);
             }
-            sc.onUpdateFunction(sc.script, dt);
+            sc->onUpdateFunction(sc->script, dt);
         });
 
-        registry.view<DLLScript>().each([=](auto entity, auto& sc) {
-            if (sc.scriptable) {
-                sc.scriptable->onUpdate(dt);
+        registry.each<DLLScript>([&dt](DLLScript* sc) {
+            if (sc->scriptable) {
+                sc->scriptable->onUpdate(dt);
             }
         });
     }
@@ -29,17 +29,17 @@ namespace engine::scripting {
     void ScriptSystem::onDestroy() {
         auto& registry = activeScene->getRegistry();
 
-        registry.view<NativeScript>().each([=](auto entity, auto& sc) {
-            if (sc.script) {
-                sc.onDestroyFunction(sc.script);
+        registry.each<NativeScript>([](NativeScript* sc) {
+            if (sc->script) {
+                sc->onDestroyFunction(sc->script);
             }
         });
 
-        registry.view<DLLScript>().each([=](auto entity, auto& sc) {
-            if (sc.scriptable) {
-                sc.scriptable->onDestroy();
-                delete sc.scriptable;
-                sc.scriptable = nullptr;
+        registry.each<DLLScript>([](DLLScript* sc) {
+            if (sc->scriptable) {
+                sc->scriptable->onDestroy();
+                delete sc->scriptable;
+                sc->scriptable = nullptr;
             }
         });
     }

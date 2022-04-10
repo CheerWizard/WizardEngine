@@ -3,7 +3,6 @@ macro(include_engine path)
     include_directories(
             ${path}/src/include
             ${path}/vendor/spdlog/include
-            ${path}/vendor/entt/src
             ${path}/vendor/glm
             ${path}/vendor/glad/include
             ${path}/vendor/glfw/include
@@ -24,7 +23,6 @@ macro(link_to_engine project)
             imgui
             glm::glm
             stb
-            EnTT
             freetype
     )
 endmacro()

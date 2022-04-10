@@ -70,14 +70,14 @@ namespace test {
                 CubeMapTextureComponent(skyboxId, TextureBuffer::getTypeId(TextureType::CUBE_MAP))
         ));
 
-        auto points = Entity("Points", scene.get());
-        points.add<Points>(new PointVertex[4] {
+        auto pointsEntity = Entity("Points", scene.get());
+        pointsEntity.add<Points>(Points { new PointVertex[4] {
                 { { -0.5, 0.5 }, { 1, 0, 0 } },
                 { { 0.5, 0.5 }, { 0, 1, 0 } },
                 { { 0.5, -0.5 }, { 0, 0, 1 }},
                 { { -0.5, -0.5 }, { 1, 1, 0 }}
-        }, 4);
+        }, 4 });
 
-        Object3d(scene.get(), "Quad", transform3d(), BatchQuad());
+        Object3d(scene.get(), "Quad", Transform3dComponent(), BatchQuad());
     }
 }

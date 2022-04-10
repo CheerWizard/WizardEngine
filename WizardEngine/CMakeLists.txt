@@ -39,9 +39,6 @@ add_subdirectory(vendor/glm)
 add_subdirectory(vendor/stb)
 include_directories(vendor/stb/stb)
 
-#/ ECS lib.
-add_subdirectory(vendor/entt)
-
 #/ FreeType for text font rendering
 add_subdirectory(vendor/freetype)
 include_directories(vendor/freetype)
@@ -59,7 +56,6 @@ target_link_libraries(
         imgui
         glm::glm
         stb
-        EnTT
         freetype
         ../WizardEngine/vendor/dlls/assimp-vc143-mtd
 )

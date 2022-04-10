@@ -11,85 +11,84 @@ namespace engine::shader {
 
     ShaderScript camera2dUboScript() {
         auto script = ShaderScript();
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto camera = entity.getPtr<Camera2dComponent>();
+        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto camera = entity.get<Camera2dComponent>();
             if (camera) {
-                shader.updateUniformBuffer(*camera, 0);
+                shader.updateUniformBuffer(camera->viewProjection, 0);
             }
         };
-        script.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto cameras = registry.view<Camera2dComponent>();
-            for (auto [entity, camera] : cameras.each()) {
-                shader.updateUniformBuffer(camera, 0);
-            }
+        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+            registry.each<Camera2dComponent>([&shader](Camera2dComponent* camera) {
+                shader.updateUniformBuffer(camera->viewProjection, 0);
+            });
         };
         return script;
     }
 
     ShaderScript camera3dUboScript() {
         auto script = ShaderScript();
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto camera = entity.getPtr<Camera3dComponent>();
+        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto camera = entity.get<Camera3dComponent>();
             if (camera) {
-                auto& viewPosition = camera->viewMatrix.position;
+                auto& viewPosition = camera->viewProjection.viewMatrix.position;
                 shader.setUniform(viewPosition);
                 viewPosition.isUpdated = false;
-                shader.updateUniformBuffer(*camera, 0);
+                shader.updateUniformBuffer(camera->viewProjection, 0);
             }
         };
-        script.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto cameras = registry.view<Camera3dComponent>();
-            for (auto [entity, camera] : cameras.each()) {
-                auto& viewPosition = camera.viewMatrix.position;
+        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+            registry.each<Camera3dComponent>([&shader](Camera3dComponent* camera) {
+                auto& viewPosition = camera->viewProjection.viewMatrix.position;
                 shader.setUniform(viewPosition);
                 viewPosition.isUpdated = false;
-                shader.updateUniformBuffer(camera, 0);
-            }
+                shader.updateUniformBuffer(camera->viewProjection, 0);
+            });
         };
         return script;
     }
 
     ShaderScript camera2dScript() {
         auto script = ShaderScript();
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto camera = entity.getPtr<Camera2dComponent>();
+        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto camera = entity.get<Camera2dComponent>();
             if (camera) {
-                shader.setUniform(*camera);
-                camera->isUpdated = false;
+                shader.setUniform(camera->viewProjection);
+                camera->viewProjection.isUpdated = false;
             }
         };
-        script.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto cameras = registry.view<Camera2dComponent>();
-            for (auto [entity, camera] : cameras.each()) {
-                shader.setUniform(camera);
-                camera.isUpdated = false;
-            }
+        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+            registry.each<Camera2dComponent>([&shader](Camera2dComponent* camera) {
+                shader.setUniform(camera->viewProjection);
+                camera->viewProjection.isUpdated = false;
+            });
         };
         return script;
     }
 
     ShaderScript camera3dScript() {
         auto script = ShaderScript();
-        script.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto camera = entity.getPtr<Camera3dComponent>();
+
+        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto camera = entity.get<Camera3dComponent>();
             if (camera) {
-                auto& viewPosition = camera->viewMatrix.position;
+                auto& viewPosition = camera->viewProjection.viewMatrix.position;
                 shader.setUniform(viewPosition);
-                shader.setUniform(*camera);
+                shader.setUniform(camera->viewProjection);
                 viewPosition.isUpdated = false;
-                camera->isUpdated = false;
+                camera->viewProjection.isUpdated = false;
             }
         };
-        script.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto cameras = registry.view<Camera3dComponent>();
-            for (auto [entity, camera] : cameras.each()) {
-                auto& viewPosition = camera.viewMatrix.position;
+
+        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+            registry.each<Camera3dComponent>([&shader](Camera3dComponent* camera) {
+                auto& viewPosition = camera->viewProjection.viewMatrix.position;
                 shader.setUniform(viewPosition);
-                shader.setUniform(camera);
+                shader.setUniform(camera->viewProjection);
                 viewPosition.isUpdated = false;
-                camera.isUpdated = false;
-            }
+                camera->viewProjection.isUpdated = false;
+            });
         };
+
         return script;
     }
 

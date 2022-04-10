@@ -16,7 +16,7 @@ namespace engine::graphics {
         glm::vec3 normal = { 0.5, 0.5, 0.5 };
     };
 
-    struct OutlineComponent {
+    component(OutlineComponent) {
         const char* name = "outline";
         shader::Vec4fUniform color = { "color", { 0, 1, 0, 1 } };
         FloatUniform thickness = { "thickness", 0.05 };
