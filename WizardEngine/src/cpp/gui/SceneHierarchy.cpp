@@ -6,7 +6,6 @@
 #include <ecs/Components.h>
 #include <graphics/transform/TransformComponents.h>
 #include <graphics/light/LightComponents.h>
-#include <graphics/material/MaterialComponents.h>
 #include <graphics/outline/Outline.h>
 #include <graphics/text/Text.h>
 #include <imgui.h>
@@ -18,12 +17,12 @@
 
 namespace engine::gui {
 
-    void SceneHierarchy::drawEntityNode(Entity &entity) {
-        auto& tag = entity.get<TagComponent>().tag;
+    void SceneHierarchy::drawEntityNode(ecs::Entity &entity) {
+        auto& tag = entity.get<ecs::TagComponent>()->tag;
 
         ImGuiTreeNodeFlags headerTreeFlags = ((_selectedEntity == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
         headerTreeFlags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-        bool headerOpened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, headerTreeFlags, "%s", tag.c_str());
+        bool headerOpened = ImGui::TreeNodeEx(entity.getId(), headerTreeFlags, "%s", tag.c_str());
         if (ImGui::IsItemClicked()) {
             _selectedEntity = entity;
         }
@@ -31,7 +30,7 @@ namespace engine::gui {
         if (ImGui::BeginPopupContextItem()) {
 
             if (ImGui::MenuItem("Delete Entity")) {
-                entity.remove();
+                entity.destroy();
 
                 if (_selectedEntity == entity) {
                     _selectedEntity = {};
@@ -314,7 +313,7 @@ namespace engine::gui {
     }
 
     template<typename T, typename UIFunction>
-    static void drawComponent(const std::string& name, const Entity &entity, UIFunction uiFunction) {
+    static void drawComponent(const std::string& name, const ecs::Entity &entity, UIFunction uiFunction) {
         if (!entity.template has<T>()) return;
 
         const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen
@@ -323,7 +322,7 @@ namespace engine::gui {
                 | ImGuiTreeNodeFlags_AllowItemOverlap
                 | ImGuiTreeNodeFlags_FramePadding;
 
-        auto& component = entity.template get<T>();
+        auto& component = *entity.template get<T>();
         ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
 
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
@@ -368,21 +367,23 @@ namespace engine::gui {
         uniform.isUpdated = ImGui::Checkbox(uniform.name, &uniform.value);
     }
 
-    void drawTransformComponent(const Entity& entity) {
+    void drawTransformComponent(const ecs::Entity& entity) {
         drawComponent<graphics::Transform3dComponent>("Transform", entity, [](graphics::Transform3dComponent& transform) {
+            auto& model = transform.modelMatrix;
+
             bool isPosUpdated = false;
             bool isRotUpdated = false;
             bool isScaleUpdated = false;
 
-            drawVec3Controller("Translation", transform.position, isPosUpdated);
-            drawVec3Controller("Rotation", transform.rotation, isRotUpdated);
-            drawVec3Controller("Scale", transform.scale, isScaleUpdated, 1.0f);
+            drawVec3Controller("Translation", model.position, isPosUpdated);
+            drawVec3Controller("Rotation", model.rotation, isRotUpdated);
+            drawVec3Controller("Scale", model.scale, isScaleUpdated, 1.0f);
 
-            transform.isUpdated = isPosUpdated || isRotUpdated || isScaleUpdated;
-            if (transform.isUpdated) {
-                updateModel3d(transform);
+            model.isUpdated = isPosUpdated || isRotUpdated || isScaleUpdated;
+            if (model.isUpdated) {
+                updateModel3d(model);
             }
-            EDITOR_INFO("Transform is updated : {0}", transform.isUpdated);
+            EDITOR_INFO("Transform is updated : {0}", model.isUpdated);
         });
     }
 
@@ -403,39 +404,27 @@ namespace engine::gui {
     }
 
     void drawTransform3dController(graphics::Transform3dComponent& transform) {
+        auto& model = transform.modelMatrix;
+
         bool isPosUpdated = false;
         bool isRotUpdated = false;
         bool isScaleUpdated = false;
 
-        drawVec3Controller("Translation", transform.position, isPosUpdated);
-        drawVec3Controller("Rotation", transform.rotation, isRotUpdated);
-        drawVec3Controller("Scale", transform.scale, isScaleUpdated, 1.0f);
+        drawVec3Controller("Translation", model.position, isPosUpdated);
+        drawVec3Controller("Rotation", model.rotation, isRotUpdated);
+        drawVec3Controller("Scale", model.scale, isScaleUpdated, 1.0f);
 
-        transform.isUpdated = isPosUpdated || isRotUpdated || isScaleUpdated;
-        if (transform.isUpdated) {
-            updateModel3d(transform);
+        model.isUpdated = isPosUpdated || isRotUpdated || isScaleUpdated;
+        if (model.isUpdated) {
+            updateModel3d(model);
         }
-        EDITOR_INFO("Transform is updated : {0}", transform.isUpdated);
+        EDITOR_INFO("Transform is updated : {0}", model.isUpdated);
     }
 
-    void drawTextComponent(graphics::TextComponent& textComponent) {
-        drawTransform3dController(textComponent.transform);
-        bool textUpdated = drawTextField("##Text", textComponent.text, textComponent.text);
-        bool paddingXUpdated = drawFloatSlider("Padding X", textComponent.paddingX, textComponent.paddingX);
-        bool paddingYUpdated = drawFloatSlider("Padding Y", textComponent.paddingY, textComponent.paddingY);
-        bool wwUpdated = drawFloatSlider("WhitespaceWidth", textComponent.whiteSpaceWidth, textComponent.whiteSpaceWidth);
-        drawFloatSlider(textComponent.transparency);
-        textComponent.isUpdated = textUpdated
-                || paddingXUpdated || paddingYUpdated
-                || wwUpdated
-                || textComponent.transparency.isUpdated;
-        drawColorPicker(textComponent.color);
-    }
-
-    void SceneHierarchy::drawComponents(Entity &entity) {
+    void SceneHierarchy::drawComponents(ecs::Entity &entity) {
         // draw tag component
-        if (entity.has<TagComponent>()) {
-            auto& tag = entity.get<TagComponent>().tag;
+        if (entity.has<ecs::TagComponent>()) {
+            auto& tag = entity.get<ecs::TagComponent>()->tag;
             gui::drawTextField("##Tag", tag, tag);
 
             ImGui::SameLine();
@@ -483,16 +472,6 @@ namespace engine::gui {
             drawFloatSlider(flashLight.linear, {0, 1});
             drawFloatSlider(flashLight.quadratic, {0, 2});
         });
-        // draw material components
-        drawComponent<graphics::MaterialComponent>("Material", entity, [](graphics::MaterialComponent& material) {
-            drawFloatSlider(material.ambient);
-            drawFloatSlider(material.diffuse);
-            drawCheckBox(material.diffuseMapEnabled);
-            drawFloatSlider(material.specular);
-            drawCheckBox(material.specularMapEnabled);
-            drawFloatSlider(material.shiny, { 0, 32 });
-            material.color.isUpdated = ImGui::ColorPicker4(material.color.name, toFloatPtr(material.color));
-        });
         // draw outline component
         drawComponent<graphics::OutlineComponent>("Outlining", entity, [](graphics::OutlineComponent& outline) {
             drawFloatSlider(outline.thickness, { 0, 0.1 });
@@ -519,7 +498,7 @@ namespace engine::gui {
         // Right-click on blank space
         if (ImGui::BeginPopupContextWindow(nullptr, 1, false)) {
             if (ImGui::MenuItem("Create Empty Entity")) {
-                Entity {_scene.get() };
+                ecs::Entity {_scene.get() };
             }
             ImGui::EndPopup();
         }
@@ -534,11 +513,11 @@ namespace engine::gui {
         ImGui::End();
     }
 
-    void SceneHierarchy::draw(entt::registry& registry) {
-        if (registry.empty<>()) return;
+    void SceneHierarchy::draw(ecs::Registry& registry) {
+        if (registry.isEmpty()) return;
 
-        registry.each([&](auto entityID) {
-            Entity entity { entityID , _scene.get() };
+        registry.eachEntity([&](ecs::entity_id entityID) {
+            ecs::Entity entity { _scene.get(), entityID };
             drawEntityNode(entity);
         });
     }

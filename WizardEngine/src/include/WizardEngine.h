@@ -16,3 +16,4 @@ using namespace engine::core;
 using namespace engine::time;
 using namespace engine::math;
 using namespace engine::graphics;
+using namespace engine::ecs;

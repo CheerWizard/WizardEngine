@@ -8,19 +8,25 @@
 
 namespace engine::graphics {
 
-    struct Camera2dComponent : math::ViewProjection2d {
-        Camera2dComponent() : ViewProjection2d() {
-            name = "camera";
+    component(Camera2dComponent) {
+        math::ViewProjection2d viewProjection;
+        Camera2dComponent() {
+            viewProjection = math::ViewProjection2d();
+            viewProjection.name = "camera";
         }
     };
 
-    struct Camera3dComponent : math::ViewProjection3d {
-        Camera3dComponent() : ViewProjection3d() {
-            name = "camera";
+    component(Camera3dComponent) {
+        math::ViewProjection3d viewProjection;
+
+        Camera3dComponent() {
+            viewProjection = math::ViewProjection3d();
+            viewProjection.name = "camera";
         }
 
-        Camera3dComponent(const float& aspectRatio) : ViewProjection3d(aspectRatio) {
-            name = "camera";
+        Camera3dComponent(float aspectRatio) {
+            viewProjection = math::ViewProjection3d(aspectRatio);
+            viewProjection.name = "camera";
         }
     };
 

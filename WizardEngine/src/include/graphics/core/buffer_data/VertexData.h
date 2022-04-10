@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <core/primitives.h>
+#include <ecs/ecs.h>
 #include <algorithm>
 #include <functional>
 
@@ -41,8 +41,7 @@ namespace engine::graphics {
         POINTS
     };
 
-    template<typename T>
-    struct VertexDataComponent {
+    template_component(VertexDataComponent, T) {
         VertexData<T> vertexData;
         bool isUpdated = true;
         u8 renderModelId = 0;
@@ -100,18 +99,18 @@ namespace engine::graphics {
         };
     }
 
-    template<typename IN, typename OUT, size_t Size>
-    VertexData<OUT> toVertexData(const std::array<IN, Size>& inVertices) {
-        auto* outVertices = new OUT[Size];
-        for (auto i = 0; i < Size; i++) {
-            outVertices[i] = { inVertices[i] };
-        }
-        return VertexData<OUT> {
-                outVertices,
-                0,
-                static_cast<uint32_t>(Size)
-        };
-    }
+//    template<typename IN, typename OUT, size_t Size>
+//    VertexData<OUT> toVertexData(const std::array<IN, Size>& inVertices) {
+//        auto* outVertices = new OUT[Size];
+//        for (auto i = 0; i < Size; i++) {
+//            outVertices[i] = OUT { inVertices[i] };
+//        }
+//        return VertexData<OUT> {
+//                outVertices,
+//                0,
+//                static_cast<uint32_t>(Size)
+//        };
+//    }
 
     template<typename FROM, typename TO>
     VertexData<TO> toVertexData(const VertexData<FROM>& fromVertexData, const std::function<TO(const FROM&)> vertexMapper) {

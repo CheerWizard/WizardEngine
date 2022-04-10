@@ -8,7 +8,7 @@
 
 namespace engine::scripting {
 
-    struct NativeScript {
+    component(NativeScript) {
         Entity script;
         // lifecycle functions
         std::function<void(Entity&)> onCreateFunction;
@@ -23,7 +23,7 @@ namespace engine::scripting {
         }
     };
 
-    struct DLLScript {
+    component(DLLScript) {
         Scriptable* scriptable = nullptr;
     };
 

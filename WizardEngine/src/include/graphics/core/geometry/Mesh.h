@@ -30,8 +30,7 @@ namespace engine::graphics {
         return BaseMesh<T>{ copy<T>(mesh.vertexData), copy(mesh.indexData) };
     }
 
-    template<typename T>
-    struct BaseMeshComponent {
+    template_component(BaseMeshComponent, T) {
         BaseMesh<T> *meshes = nullptr;
         u32 meshCount = MIN_MESH_COUNT;
         u32 totalVertexCount = 0;

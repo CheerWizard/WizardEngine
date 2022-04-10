@@ -7,6 +7,7 @@
 #include <time/Time.h>
 #include <core/String.h>
 #include <ecs/Scene.h>
+#include <graphics/text/Text.h>
 
 namespace engine::gui {
 
@@ -19,14 +20,14 @@ namespace engine::gui {
         virtual ~SceneHierarchyCallback() = default;
 
     public:
-        virtual void onEntityRemoved(const Entity &entity) = 0;
+        virtual void onEntityRemoved(const ecs::Entity &entity) = 0;
     };
 
     class SceneHierarchy {
 
     public:
         SceneHierarchy(const SceneHierarchyProps &props = SceneHierarchyProps()) : _props(props) {}
-        SceneHierarchy(const core::Ref<Scene>& scene, const SceneHierarchyProps &props = SceneHierarchyProps()) :
+        SceneHierarchy(const core::Ref<ecs::Scene>& scene, const SceneHierarchyProps &props = SceneHierarchyProps()) :
         _props(props), _scene(scene) {}
 
         ~SceneHierarchy() {
@@ -37,15 +38,15 @@ namespace engine::gui {
         void onUpdate(time::Time dt);
 
     public:
-        inline void setScene(const core::Ref<Scene> &scene) {
+        inline void setScene(const core::Ref<ecs::Scene> &scene) {
             _scene = scene;
         }
 
-        inline const Entity& getSelectedEntity() const {
+        inline const ecs::Entity& getSelectedEntity() const {
             return _selectedEntity;
         }
 
-        inline void setSelectedEntity(const Entity& selectedEntity) {
+        inline void setSelectedEntity(const ecs::Entity& selectedEntity) {
             _selectedEntity = selectedEntity;
         }
 
@@ -58,19 +59,36 @@ namespace engine::gui {
         }
 
     private:
-        void draw(entt::registry& registry);
-        void drawEntityNode(Entity &entity);
-        static void drawComponents(Entity &entity);
+        void draw(ecs::Registry& registry);
+        void drawEntityNode(ecs::Entity &entity);
+        static void drawComponents(ecs::Entity &entity);
+        template<typename T>
+        static void drawTextComponent(graphics::TextComponent<T>& textComponent);
 
     private:
         void destroy();
 
     private:
         SceneHierarchyProps _props;
-        core::Ref<Scene> _scene;
-        Entity _selectedEntity;
+        core::Ref<ecs::Scene> _scene;
+        ecs::Entity _selectedEntity;
         SceneHierarchyCallback* _callback = nullptr;
 
     };
+
+    template<typename T>
+    void SceneHierarchy::drawTextComponent(graphics::TextComponent<T>& textComponent) {
+        drawTransform3dController(textComponent.transform);
+        bool textUpdated = drawTextField("##Text", textComponent.text, textComponent.text);
+        bool paddingXUpdated = drawFloatSlider("Padding X", textComponent.paddingX, textComponent.paddingX);
+        bool paddingYUpdated = drawFloatSlider("Padding Y", textComponent.paddingY, textComponent.paddingY);
+        bool wwUpdated = drawFloatSlider("WhitespaceWidth", textComponent.whiteSpaceWidth, textComponent.whiteSpaceWidth);
+        drawFloatSlider(textComponent.transparency);
+        textComponent.isUpdated = textUpdated
+                                  || paddingXUpdated || paddingYUpdated
+                                  || wwUpdated
+                                  || textComponent.transparency.isUpdated;
+        drawColorPicker(textComponent.color);
+    }
 
 }

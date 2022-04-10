@@ -13,7 +13,7 @@
 
 namespace engine::graphics {
 
-    struct TextComponent {
+    template_component(TextComponent, T) {
         std::string text;
         shader::Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
         Transform3dComponent transform;
@@ -23,6 +23,8 @@ namespace engine::graphics {
         float whiteSpaceWidth = 0.02f;
         FloatUniform transparency = { "transparency", 0.5f };
         bool isUpdated = true; // flag should be updated, once this text has been changed
+
+        TextComponent() = default;
 
         TextComponent(
                 const u32& textureId,
@@ -39,8 +41,7 @@ namespace engine::graphics {
         whiteSpaceWidth(whiteSpaceWidth), transparency({ "transparency", 0.5f }) {}
     };
 
-    // just separate types for ecs as we want to process text 2D/3D separately
-    struct Text2d : TextComponent {
+    struct Text2d : TextComponent<Text2d> {
         Text2d(
                 const u32& textureId,
                 const std::string& text,
@@ -50,10 +51,10 @@ namespace engine::graphics {
                 const float& paddingY = 0,
                 const float& whiteSpaceWidth = 0.02f,
                 const float& transparency = 0.5f
-        ) : TextComponent(textureId, text, transform, color, paddingX, paddingY, whiteSpaceWidth, transparency) {}
+        ) : TextComponent<Text2d>(textureId, text, transform, color, paddingX, paddingY, whiteSpaceWidth, transparency) {}
     };
 
-    struct Text3d : TextComponent {
+    struct Text3d : TextComponent<Text3d> {
         Text3d(
                 const u32& textureId,
                 const std::string& text,
@@ -63,36 +64,39 @@ namespace engine::graphics {
                 const float& paddingY = 0,
                 const float& whiteSpaceWidth = 0.02f,
                 const float& transparency = 0.5f
-        ) : TextComponent(textureId, text, transform, color, paddingX, paddingY, whiteSpaceWidth, transparency) {}
+        ) : TextComponent<Text3d>(textureId, text, transform, color, paddingX, paddingY, whiteSpaceWidth, transparency) {}
     };
 
-    struct TextProjection : Camera3dComponent {
-        TextProjection(const float& aspectRatio) : Camera3dComponent(aspectRatio) {}
+    component(TextProjection) {
+        math::ViewProjection3d viewProjection;
+        TextProjection(float aspectRatio) {
+            viewProjection = math::ViewProjection3d(aspectRatio);
+        }
     };
 
-    class Text2dView : public Entity {
+    class Text2dView : public ecs::Entity {
 
     public:
         Text2dView(
                 const std::string& tag,
-                EntityContainer* container,
+                ecs::EntityContainer* container,
                 const Text2d& text,
                 const float& aspectRatio
         ) : Entity(tag, container) {
             add<Text2d>(text);
             auto textProjection = TextProjection(aspectRatio);
-            textProjection.viewMatrix.position.value = {0, 0, -1};
-            math::ViewProjections::update(textProjection);
+            textProjection.viewProjection.viewMatrix.position.value = {0, 0, -1};
+            math::ViewProjections::update(textProjection.viewProjection);
             add<TextProjection>(textProjection);
         }
     };
 
-    class Text3dView : public Entity {
+    class Text3dView : public ecs::Entity {
 
     public:
         Text3dView(
                 const std::string& tag,
-                EntityContainer* container,
+                ecs::EntityContainer* container,
                 const Text3d& text
         ) : Entity(tag, container) {
             add<Text3d>(text);

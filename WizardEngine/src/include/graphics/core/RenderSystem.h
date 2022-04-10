@@ -26,7 +26,7 @@ namespace engine::graphics {
         void onUpdate();
 
     public:
-        inline void setActiveScene(const core::Ref<Scene> &activeScene) {
+        inline void setActiveScene(const core::Ref<ecs::Scene> &activeScene) {
             this->activeScene = activeScene;
         }
 
@@ -44,7 +44,7 @@ namespace engine::graphics {
 
     private:
         // we must share this data with front-end, so that's why they are pointers
-        core::Ref<Scene> activeScene = nullptr;
+        core::Ref<ecs::Scene> activeScene = nullptr;
         core::Ref<FrameBuffer> sceneFrame;
         core::Ref<FrameBuffer> screenFrame;
         // these data are mostly for back-end, they are mostly just u32 numbers

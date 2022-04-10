@@ -45,13 +45,13 @@ namespace engine::shader {
         }
     }
 
-    void BaseShader::updateScripts(entt::registry &registry) const {
+    void BaseShader::updateScripts(ecs::Registry &registry) const {
         for (const auto& script : scripts) {
             script.updateRegistry(*this, registry);
         }
     }
 
-    void BaseShader::updateScripts(const Entity &entity) const {
+    void BaseShader::updateScripts(const ecs::Entity &entity) const {
         for (const auto& script : scripts) {
             script.updateEntity(*this, entity);
         }
@@ -405,12 +405,12 @@ namespace engine::shader {
 //        ENGINE_INFO("{0} shader has found uniform blocks!", shaderTypeStr);
     }
 
-    void BaseShaderProgram::update(entt::registry& registry) {
+    void BaseShaderProgram::update(ecs::Registry& registry) {
         _vShader.updateScripts(registry);
         _fShader.updateScripts(registry);
     }
 
-    void BaseShaderProgram::update(const Entity &entity) {
+    void BaseShaderProgram::update(const ecs::Entity &entity) {
         _vShader.updateScripts(entity);
         _fShader.updateScripts(entity);
     }
@@ -431,5 +431,4 @@ namespace engine::shader {
     bool BaseShaderProgram::isReady() {
         return state == ShaderState::READY;
     }
-
 }

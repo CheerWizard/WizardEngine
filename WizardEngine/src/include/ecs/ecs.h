@@ -6,7 +6,7 @@
 
 #include <core/identifier.h>
 #include <core/vector.h>
-#include <core/map.h>
+#include <map>
 #include <time/Time.h>
 #include <core/immutable.h>
 #include <tuple>
@@ -94,8 +94,11 @@ namespace engine::ecs {
     And the compiler and runtime will not catch this issue!
 
     This macro prevents you from doing such mistakes. */
-#define component(type) struct type : Component<type>
-#define component_empty(type) component(type) {};
+#define component(type) struct type : engine::ecs::Component<type>
+#define empty_component(type) component(type) {};
+#define template_component(component_type, template_type) \
+template<typename template_type>                          \
+struct component_type : engine::ecs::Component<component_type<template_type>>
 
     template<class Component>
     u32 createComponent(component_data& data, entity_id entityId, BaseComponent* component) {
@@ -129,6 +132,7 @@ namespace engine::ecs {
 
     typedef vector<std::pair<component_id, u32>> entity_data; // array of [componentId, componentIndex]
     typedef std::pair<u32, entity_data> entity; // entity index -> entity data
+    typedef void (*EntityFunction)(entity_id);
     // Registry of Components, Systems, Entities
     class Registry {
         IMMUTABLE(Registry)
@@ -141,23 +145,29 @@ namespace engine::ecs {
         entity_id createEntity();
         template<class Component, typename... Args>
         entity_id createEntity(Args&&... componentArgs);
-        entity_id deleteEntity(entity_id entityId);
+        void deleteEntity(entity_id& entityId);
         // components
         template<class Component, typename... Args>
-        void addComponent(entity_id entityId, Args&&... componentArgs);
+        bool addComponent(entity_id entityId, Args&&... componentArgs);
         template<class Component>
         bool removeComponent(entity_id entityId);
         template<class Component>
         Component* getComponent(entity_id entityId);
         // entity/component iterations
         template<class Component, typename Function>
-        void each(Function function);
+        void each(const Function& function);
         template<class Component1, class Component2, typename Function>
-        void each(Function function);
+        void each(const Function& function);
+        template<typename Function>
+        void eachEntity(const Function& function);
+        template<class Component, typename Function>
+        void eachEntityComponent(const Function& function);
 
         template<class Component>
         size_t component_count();
         size_t entity_count();
+        bool isEmpty();
+        void clear();
 
     private:
         static inline entity* toEntity(entity_id entityId) {
@@ -176,7 +186,7 @@ namespace engine::ecs {
         void removeComponentInternal(component_id componentId, u32 componentIndex);
 
     private:
-        map<component_id, component_data> components;
+        std::map<component_id, component_data> components;
         vector<entity*> entities;
     };
 
@@ -190,9 +200,9 @@ namespace engine::ecs {
     }
 
     template<class Component, typename... Args>
-    void Registry::addComponent(entity_id entityId, Args&&... componentArgs) {
-        validate_entity("addComponent()", entityId, );
-        validate_component("addComponent", Component, );
+    bool Registry::addComponent(entity_id entityId, Args&&... componentArgs) {
+        validate_entity("addComponent()", entityId, false);
+        validate_component("addComponent", Component, false);
 
         auto component = Component { std::forward<Args>(componentArgs)... };
         component_id componentId = Component::ID;
@@ -208,6 +218,7 @@ namespace engine::ecs {
 
         auto& entityData = toEntityData(entityId);
         entityData.emplace_back(componentIdAndIndex);
+        return true;
     }
 
     template<class Component>
@@ -226,11 +237,11 @@ namespace engine::ecs {
                 u32 destIndex = i;
                 entityData[destIndex] = entityData[srcIndex];
                 entityData.pop_back();
-                return false;
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     template<class Component>
@@ -251,25 +262,53 @@ namespace engine::ecs {
     }
 
     template<class Component, typename Function>
-    void Registry::each(Function function) {
+    void Registry::each(const Function& function) {
         validate_component("each()", Component, );
 
         component_data& componentData = components[Component::ID];
         component_size componentSize = BaseComponent::getSize(Component::ID);
         for (u32 i = 0 ; i < componentData.size() ; i += componentSize) {
-            function((Component*) &componentData[i]);
+            Component* component = (Component*) &componentData[i];
+            function(component);
         }
     }
 
     template<class Component1, class Component2, typename Function>
-    void Registry::each(Function function) {
+    void Registry::each(const Function& function) {
         validate_component("each()", Component1, );
         validate_component("each()", Component2, );
 
         component_data& componentData1 = components[Component1::ID];
-        component_data& componentData2 = components[Component2::ID];
         component_size componentSize1 = BaseComponent::getSize(Component1::ID);
-        component_size componentSize2 = BaseComponent::getSize(Component2::ID);
+
+        for (u32 i = 0 ; i < componentData1.size() ; i += componentSize1) {
+            Component1* component1 = (Component1*) &componentData1[i];
+            entity_id entityId1 = component1->entityId;
+            Component2* component2 = getComponent<Component2>(entityId1);
+            if (component2) {
+                function(component1, component2);
+            }
+        }
+    }
+
+    template<typename Function>
+    void Registry::eachEntity(const Function& function) {
+        for (entity* entity : entities) {
+            function((entity_id) entity);
+        }
+    }
+
+    template<class Component, typename Function>
+    void Registry::eachEntityComponent(const Function& function) {
+        validate_component("each()", Component, );
+
+        component_data& componentData = components[Component::ID];
+        component_size componentSize = BaseComponent::getSize(Component::ID);
+        for (u32 i = 0 ; i < componentData.size() ; i += componentSize) {
+            Component* component = (Component*) &componentData[i];
+            entity_id entityId = component->entityId;
+            function(entityId, component);
+        }
     }
 
     template<class Component>

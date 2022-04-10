@@ -62,10 +62,12 @@ namespace engine::graphics {
         : filePath(filePath), type(type) {}
     };
 
-    struct TextureComponent {
-        u32 textureId;
-        u32 typeId;
+    component(TextureComponent) {
+        u32 textureId = 0;
+        u32 typeId = 0;
         shader::IntUniform sampler = { "texture", 0 };
+
+        TextureComponent() = default;
 
         TextureComponent(const u32& textureId, const u32& typeId, const shader::IntUniform& sampler)
         : textureId(textureId), sampler(sampler) {}
@@ -74,10 +76,12 @@ namespace engine::graphics {
         : textureId(textureId), sampler({ "texture", samplerSlot }) {}
     };
 
-    struct CubeMapTextureComponent {
-        u32 textureId;
-        u32 typeId;
+    component(CubeMapTextureComponent) {
+        u32 textureId = 0;
+        u32 typeId = 0;
         shader::IntUniform sampler = { "cubeMap", 0 };
+
+        CubeMapTextureComponent() = default;
 
         CubeMapTextureComponent(const u32& textureId, const u32& typeId)
         : textureId(textureId), typeId(typeId) {}
