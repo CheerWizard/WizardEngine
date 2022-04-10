@@ -6,14 +6,34 @@
 
 #include <math/ModelMatrices.h>
 
-#define DEFAULT_TRANSFORM_NAME "transform"
-
 namespace engine::graphics {
-    typedef math::ModelMatrix2d Transform2dComponent;
-    typedef math::ModelMatrix3d Transform3dComponent;
 
-    Transform2dComponent transform2d();
-    Transform3dComponent transform3d();
-    Transform3dComponent transform3d(const glm::vec3 &pos, const glm::vec3 &rot, const glm::vec3 &scale);
-    Transform3dComponent transform3dScale(const glm::vec3 &scale);
+    component(Transform2dComponent) {
+        math::ModelMatrix2d modelMatrix;
+
+        Transform2dComponent() {
+            modelMatrix = math::ModelMatrix2d();
+            modelMatrix.name = "transform";
+        }
+    };
+
+    component(Transform3dComponent) {
+        math::ModelMatrix3d modelMatrix;
+
+        Transform3dComponent() {
+            modelMatrix = math::ModelMatrix3d();
+            modelMatrix.name = "transform";
+        }
+
+        Transform3dComponent(const glm::vec3 &pos, const glm::vec3 &rot, const glm::vec3 &scale) {
+            modelMatrix = math::ModelMatrix3d { pos, rot, scale };
+            modelMatrix.name = "transform";
+        }
+
+        Transform3dComponent(const glm::vec3 &scale) {
+            modelMatrix = math::ModelMatrix3d();
+            modelMatrix.scale = scale;
+            modelMatrix.name = "transform";
+        }
+    };
 }

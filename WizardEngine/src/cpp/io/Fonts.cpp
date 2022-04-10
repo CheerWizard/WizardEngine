@@ -132,9 +132,8 @@ namespace engine::io {
                     } }
             };
             auto charVertexData = VertexData<BatchCharVertex> { charVertices, 0, 4 };
-            auto charVertexDataComponent = VertexDataComponent<BatchCharVertex> {
-                    charVertexData, true, 0, DrawType::QUAD
-            };
+            auto charVertexDataComponent = VertexDataComponent<BatchCharVertex>();
+            charVertexDataComponent.vertexData = charVertexData;
             auto character = Character {
                 charVertexDataComponent,
                 glm::vec2 { w, h } / imageSize,

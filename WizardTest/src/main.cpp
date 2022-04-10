@@ -5,8 +5,8 @@
 #include <ecs/ecs_test.h>
 
 //int main() {
-//    // Setup loggers for testing
-//    // Engine is under testing, so we need to track Engine logs as well!
+//     Setup loggers for testing
+//     Engine is under testing, so we need to track Engine logs as well!
 //    INIT_ENGINE_LOG("Engine");
 //    INIT_RUNTIME_LOG("Test");
 //

@@ -41,12 +41,12 @@ namespace engine::gui {
             return _cameraController;
         }
 
-        inline void setEntity(const Entity& entity) {
+        inline void setEntity(const ecs::Entity& entity) {
             _entity = entity;
         }
 
         inline void setMesh(const io::ModelMeshComponent &meshComponent) {
-            _entity.set<BaseMeshComponent<io::ModelVertex>>(meshComponent);
+            _entity.update<BaseMeshComponent<io::ModelVertex>>(meshComponent);
         }
 
         inline void setRotateEntity(const bool &enabled) {
@@ -70,7 +70,7 @@ namespace engine::gui {
         Ref<VIRenderer> _renderer;
         Ref<FrameBuffer> _frame;
         Ref<CameraController> _cameraController;
-        Entity _entity;
+        ecs::Entity _entity;
         bool _shouldRotateEntity = true;
 
     };

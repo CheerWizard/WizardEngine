@@ -22,11 +22,9 @@ namespace engine::io {
         std::vector<ModelMesh> meshes;
         std::vector<ModelMaterial> materials;
         extractNodes(scene->mRootNode, scene, meshes, materials);
-
-        ModelMeshComponent meshComponent = {
-                engine::core::map(meshes),
-                static_cast<uint32_t>(meshes.size())
-        };
+        graphics::BaseMesh<ModelVertex>* modelMeshes = engine::core::map(meshes);
+        ModelMeshComponent meshComponent = { modelMeshes };
+        meshComponent.meshCount = meshes.size();
 
         return { meshComponent, materials };
     }

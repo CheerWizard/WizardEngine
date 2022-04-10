@@ -4,7 +4,6 @@
 
 #include <graphics/core/RenderSystem.h>
 #include <graphics/camera/CameraShaderScript.h>
-#include <graphics/material/MaterialShaderScript.h>
 #include <graphics/light/LightShaderScript.h>
 #include <graphics/core/geometry/Line.h>
 #include <graphics/core/geometry/Quad.h>
@@ -73,8 +72,8 @@ namespace engine::graphics {
         text2dRenderer.render<Text2d>(registry);
         text3dRenderer.render<Text3d>(registry);
         // points
-        registry.view<Points>().each([=](auto entity, auto& points) {
-            pointRenderer.render(points);
+        registry.each<Points>([this](Points* points) {
+            pointRenderer.render(*points);
         });
         // outlining
         // stop write to stencil buffer
@@ -97,14 +96,14 @@ namespace engine::graphics {
         FrameBuffer::bindDefault();
         screenRenderer.renderQuad(screenFrame->getColorAttachment(0).id);
 
-        activeScene->updateComponents<Transform3dComponent>([](Transform3dComponent& transform) {
-            transform.isUpdated = false;
+        activeScene->getRegistry().each<Transform3dComponent>([](Transform3dComponent* transform) {
+            transform->modelMatrix.isUpdated = false;
         });
     }
 
     void RenderSystem::createSceneRenderer() {
         auto vBatchShader = shader::BaseShader({ camera3dUboScript() });
-        auto fBatchShader = shader::BaseShader({ materialScript(), phongLightScript(), materialMapScript(), pointLightArrayScript() });
+        auto fBatchShader = shader::BaseShader({ phongLightScript(), pointLightArrayScript() });
         auto batchShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "batch",
@@ -116,7 +115,7 @@ namespace engine::graphics {
                 fBatchShader
         );
         auto vInstanceShader = shader::BaseShader({ camera3dUboScript() });
-        auto fInstanceShader = shader::BaseShader({ materialScript(), phongLightScript(), materialMapScript(), pointLightArrayScript() });
+        auto fInstanceShader = shader::BaseShader({ phongLightScript(), pointLightArrayScript() });
         auto instanceShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "instance",
@@ -192,17 +191,18 @@ namespace engine::graphics {
 
     void RenderSystem::createCircleRenderer() {
         auto circleArrayScript = ShaderScript();
-        circleArrayScript.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto circles = registry.view<CircleComponent>();
+
+        circleArrayScript.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
             auto i = 0;
-            for (auto [entity, circle] : circles.each()) {
-                shader.setUniformArrayStructField(i, circle.name, circle.color);
-                shader.setUniformArrayStructField(i, circle.name, circle.thickness);
-                shader.setUniformArrayStructField(i++, circle.name, circle.fade);
-            }
+            registry.each<CircleComponent>([&shader, &i](CircleComponent* circle) {
+                shader.setUniformArrayStructField(i, circle->name, circle->color);
+                shader.setUniformArrayStructField(i, circle->name, circle->thickness);
+                shader.setUniformArrayStructField(i++, circle->name, circle->fade);
+            });
         };
-        circleArrayScript.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto circle = entity.getPtr<CircleComponent>();
+
+        circleArrayScript.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto circle = entity.get<CircleComponent>();
             if (circle) {
                 shader.setUniformStructField(circle->name, circle->color);
                 shader.setUniformStructField(circle->name, circle->thickness);
@@ -241,17 +241,17 @@ namespace engine::graphics {
     void RenderSystem::createOutlineRenderer() {
         auto outlineScript = ShaderScript();
 
-        outlineScript.updateRegistry = [](const BaseShader& shader, entt::registry& registry) {
-            auto outlines = registry.view<OutlineComponent>();
+        outlineScript.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
             auto i = 0;
-            for (auto [entity, outline] : outlines.each()) {
+            registry.each<OutlineComponent>([&shader, &i](OutlineComponent* outlineComponent) {
+                auto& outline = *outlineComponent;
                 shader.setUniformArrayStructField(i, outline.name, outline.color);
                 shader.setUniformArrayStructField(i++, outline.name, outline.thickness);
-            }
+            });
         };
 
-        outlineScript.updateEntity = [](const BaseShader& shader, const Entity& entity) {
-            auto outline = entity.getPtr<OutlineComponent>();
+        outlineScript.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto outline = entity.get<OutlineComponent>();
             if (outline) {
                 shader.setUniformStructField(outline->name, outline->color);
                 shader.setUniformStructField(outline->name, outline->thickness);
