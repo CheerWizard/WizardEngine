@@ -37,6 +37,7 @@ namespace engine::core {
         _window->setInCenter();
         setSampleSize(1);
         _layerStack.onPrepare();
+        loadGamepadMappings("../WizardEngine/assets/db/game_controller_db.txt");
     }
 
     void Application::onDestroy() {
@@ -47,13 +48,12 @@ namespace engine::core {
     void Application::onUpdate() {
         auto dt = fpsController.getDeltaTime();
         fpsController.begin();
-        // draw runtime systems
+        updateEventRegistry();
         updateRuntime(dt);
         // draw editor/tools
         _layerStack.onUpdate(dt);
         // poll events + swap chain
         _window->onUpdate();
-
         fpsController.end();
     }
 
@@ -70,7 +70,7 @@ namespace engine::core {
     void Application::onWindowClosed() {
         ENGINE_INFO("Application : onWindowClosed()");
         _layerStack.onWindowClosed();
-        eventController.onWindowClosed.function();
+        eventRegistry.onWindowClosed.function();
         shutdown();
     }
 
@@ -81,42 +81,42 @@ namespace engine::core {
         _layerStack.onWindowResized(width, height);
         activeSceneFrame->resize(width, height);
         screenFrame->resize(width, height);
-        eventController.onWindowResized.function(width, height);
+        eventRegistry.onWindowResized.function(width, height);
     }
 
     void Application::onKeyPressed(event::KeyCode keyCode) {
         _layerStack.onKeyPressed(keyCode);
-        eventController.onKeyPressedMap[keyCode].function(keyCode);
+        eventRegistry.onKeyPressedMap[keyCode].function(keyCode);
     }
 
     void Application::onKeyHold(event::KeyCode keyCode) {
         _layerStack.onKeyHold(keyCode);
-        eventController.onKeyHoldMap[keyCode].function(keyCode);
+        eventRegistry.onKeyHoldMap[keyCode].function(keyCode);
     }
 
     void Application::onKeyReleased(event::KeyCode keyCode) {
         _layerStack.onKeyReleased(keyCode);
-        eventController.onKeyReleasedMap[keyCode].function(keyCode);
+        eventRegistry.onKeyReleasedMap[keyCode].function(keyCode);
     }
 
     void Application::onMousePressed(event::MouseCode mouseCode) {
         _layerStack.onMousePressed(mouseCode);
-        eventController.onMousePressedMap[mouseCode].function(mouseCode);
+        eventRegistry.onMousePressedMap[mouseCode].function(mouseCode);
     }
 
     void Application::onMouseRelease(event::MouseCode mouseCode) {
         _layerStack.onMouseRelease(mouseCode);
-        eventController.onMouseReleasedMap[mouseCode].function(mouseCode);
+        eventRegistry.onMouseReleasedMap[mouseCode].function(mouseCode);
     }
 
     void Application::onMouseScrolled(double xOffset, double yOffset) {
         _layerStack.onMouseScrolled(xOffset, yOffset);
-        eventController.onMouseScrolled.function(xOffset, yOffset);
+        eventRegistry.onMouseScrolled.function(xOffset, yOffset);
     }
 
     void Application::onCursorMoved(double xPos, double yPos) {
         _layerStack.onCursorMoved(xPos, yPos);
-        eventController.onCursorMoved.function(xPos, yPos);
+        eventRegistry.onCursorMoved.function(xPos, yPos);
     }
 
     void Application::onKeyTyped(event::KeyCode keyCode) {
@@ -223,12 +223,16 @@ namespace engine::core {
         _scriptSystem = createScope<scripting::ScriptSystem>();
     }
 
-    void Application::onGamepadConnected(s32 joystickId) const {
+    void Application::onGamepadConnected(s32 joystickId) {
+        ENGINE_INFO("onGamepadConnected(id: {0})", joystickId);
         input->setJoystickId(joystickId);
+        isJoystickConnected = true;
     }
 
-    void Application::onGamepadDisconnected(s32 joystickId) const {
+    void Application::onGamepadDisconnected(s32 joystickId) {
+        ENGINE_INFO("onGamepadDisconnected(id: {0})", joystickId);
         input->setJoystickId(joystickId);
+        isJoystickConnected = false;
     }
 
     Application* Application::instance = nullptr;
@@ -239,5 +243,37 @@ namespace engine::core {
 
     Application::~Application() {
         instance = nullptr;
+    }
+
+    void Application::loadGamepadMappings(const char *mappingsFilePath) {
+        _window->loadGamepadMappings(mappingsFilePath);
+    }
+
+    void Application::updateEventRegistry() {
+        if (isJoystickConnected) {
+            ENGINE_INFO("Joystick is connected!");
+            auto gamepadState = input->getGamepadState();
+            auto& buttons = gamepadState.buttons;
+            auto& axis = gamepadState.axes;
+
+            for (auto& gamepadButtonPressed : eventRegistry.onGamepadButtonPressedMap) {
+                if (buttons[gamepadButtonPressed.first] == event::PRESS) {
+                    gamepadButtonPressed.second.function(gamepadButtonPressed.first);
+                }
+            }
+
+            for (auto& gamepadButtonReleased : eventRegistry.onGamepadButtonReleasedMap) {
+                if (buttons[gamepadButtonReleased.first] == event::RELEASE) {
+                    gamepadButtonReleased.second.function(gamepadButtonReleased.first);
+                }
+            }
+
+            for (auto& gamepadAxis : eventRegistry.gamepadAxisMap) {
+                gamepadAxis.second.function(axis[gamepadAxis.first]);
+            }
+        } else {
+            ENGINE_INFO("Joystick is disconnected!");
+            isJoystickConnected = input->isJoystickConnected();
+        }
     }
 }

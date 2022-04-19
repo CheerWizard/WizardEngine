@@ -17,6 +17,7 @@ namespace engine::filesystem {
     }
 
     std::string read(const std::string &filePath) {
+        ENGINE_INFO("filesystem: reading file from {0}", filePath);
         std::string result;
         std::ifstream input(filePath, std::ios::in | std::ios::binary);
 

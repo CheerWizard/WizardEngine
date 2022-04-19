@@ -27,23 +27,23 @@ namespace engine::event {
         nativeWindow = nullptr;
     }
 
-    bool Input::isJoystickPresent() {
+    bool Input::isJoystickConnected() const {
         return glfwJoystickPresent(joystickId) == 1;
     }
 
-    JoystickAxisStates Input::getJoystickAxisStates() {
+    JoystickAxisStates Input::getJoystickAxisStates() const {
         s32 count;
         const f32* axes = glfwGetJoystickAxes(joystickId, &count);
         return { axes, count };
     }
 
-    JoystickButtonStates Input::getJoystickButtonStates() {
+    JoystickButtonStates Input::getJoystickButtonStates() const {
         s32 count;
         const u8* buttons = glfwGetJoystickButtons(joystickId, &count);\
         return { buttons, count };
     }
 
-    JoystickHatStates Input::getJoystickHatStates() {
+    JoystickHatStates Input::getJoystickHatStates() const {
         s32 count;
         const u8* hats = glfwGetJoystickHats(joystickId, &count);
         return { hats, count };
@@ -66,5 +66,9 @@ namespace engine::event {
         glfwGetGamepadState(joystickId, &state);
         GamepadState gamepadState = { state.buttons, state.axes };
         return gamepadState;
+    }
+
+    bool Input::isJoystickDisconnected() const {
+        return glfwJoystickPresent(joystickId) != 1;
     }
 }

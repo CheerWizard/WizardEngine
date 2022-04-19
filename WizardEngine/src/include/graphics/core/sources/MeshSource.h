@@ -10,8 +10,6 @@
 
 #include "unordered_map"
 
-#define GET_MESH_COMPONENT(T, name) engine::graphics::MeshSource<T>::get().getMesh(name)
-
 namespace engine::graphics {
 
     template<typename T>
@@ -64,15 +62,7 @@ namespace engine::graphics {
 
     template<typename T>
     const BaseMeshComponent<T>& MeshSource<T>::getMesh(const std::string &fileName) {
-        if (!exists(fileName)) {
-            ENGINE_INFO("Obj file {0} data does not exists in cache! Reading data from .obj file!", fileName);
-            auto model = io::ModelFile::read(fileName);
-            std::function<T(const io::ModelVertex&)> vertexMapper = [](const io::ModelVertex& modelVertex) {
-                    return io::map<T>(modelVertex);
-            };
-            _meshes[fileName] = toMeshComponent(model.meshComponent, vertexMapper);
-        }
-        return _meshes[fileName];
+        auto model = io::ModelFile::read(fileName);
     }
 
     template<typename T>
