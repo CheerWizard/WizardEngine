@@ -210,15 +210,13 @@ namespace engine::graphics {
         for (auto& renderModel : vRenderModels) {
             uint32_t totalVertexCount = 0;
             uint32_t i = 0;
-            registry.each<T, VertexDataComponent<BatchVertex<V>>>([this, &totalVertexCount, &renderModel, &i](
-                    T* transform,
-                    VertexDataComponent<BatchVertex<V>>* vertexDataComponent) {
-                if (renderModel.id != vertexDataComponent->renderModelId || drawType != vertexDataComponent->drawType) {
+            registry.each<T, Geometry>([this, &totalVertexCount, &renderModel, &i](T* transform, Geometry* geometry) {
+                if (renderModel.id != geometry->renderModelId || drawType != geometry->drawType) {
                     i++; // shift instance id
                     return;
                 }
 
-                tryUploadBatch(i, *vertexDataComponent, totalVertexCount, renderModel);
+                tryUploadBatch(i, *geometry, totalVertexCount, renderModel);
                 shaderProgram.getVShader().setUniformArrayElement(i++, transform->modelMatrix);
                 if (i > INSTANCE_COUNT_LIMIT) {
                     renderModel.vao.bind();
@@ -475,7 +473,8 @@ namespace engine::graphics {
     void VIRenderer::render(const ecs::Entity &entity) {
         if (!entity.isValid()) return;
 
-        auto mesh = entity.get<BaseMeshComponent<V>>();
+        typedef BaseMeshComponent<V> Geometry;
+        auto mesh = entity.get<Geometry>();
         if (!shaderProgram.isReady() || !mesh) return;
 
         shaderProgram.start();

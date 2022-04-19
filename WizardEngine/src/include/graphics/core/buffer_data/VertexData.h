@@ -75,9 +75,7 @@ namespace engine::graphics {
 
     template<typename T>
     void updateStart(VertexDataComponent<T> &vertexDataComponent, const uint32_t &prevVertexCount) {
-        if (vertexDataComponent.vertexData.vertexStart != prevVertexCount) {
-            vertexDataComponent.vertexData.vertexStart = prevVertexCount;
-        }
+        vertexDataComponent.vertexData.vertexStart = prevVertexCount;
     }
 
     template<typename T>

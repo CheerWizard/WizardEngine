@@ -50,14 +50,15 @@ namespace engine::event {
         bool isKeyPressed(KeyCode keyCode);
         bool isMousePressed(MouseCode mouseCode);
         MousePosition getMousePosition();
-        bool isJoystickPresent();
-        JoystickAxisStates getJoystickAxisStates();
-        JoystickButtonStates getJoystickButtonStates();
-        JoystickHatStates getJoystickHatStates();
+        [[nodiscard]] bool isJoystickConnected() const;
+        [[nodiscard]] bool isJoystickDisconnected() const;
+        [[nodiscard]] JoystickAxisStates getJoystickAxisStates() const;
+        [[nodiscard]] JoystickButtonStates getJoystickButtonStates() const;
+        [[nodiscard]] JoystickHatStates getJoystickHatStates() const;
         [[nodiscard]] const char* getJoystickName() const;
         [[nodiscard]] bool isGamepadPresent() const;
         [[nodiscard]] const char* getGamepadName() const;
-        GamepadState getGamepadState() const;
+        [[nodiscard]] GamepadState getGamepadState() const;
 
     public:
         inline f32 getMousePosX() {
@@ -77,6 +78,6 @@ namespace engine::event {
 
     private:
         void* nativeWindow;
-        s32 joystickId;
+        s32 joystickId = 0;
     };
 }

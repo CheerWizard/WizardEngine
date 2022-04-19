@@ -18,7 +18,7 @@
 
 #include <imgui/imgui.h>
 
-#define BIND_KEY_PRESS(keycode, action) app->eventController.onKeyPressedMap[keycode] = { [this](KeyCode keyCode) { action }}
+#define BIND_KEY_PRESS(keycode, action) engine::core::Application::get().eventRegistry.onKeyPressedMap[keycode] = { [this](KeyCode keyCode) { action }}
 
 namespace studio {
 
@@ -214,7 +214,6 @@ namespace studio {
         BIND_KEY_PRESS(KeyCode::N, app->setSampleSize(1););
 
         setMSAA(true);
-        app->getWindow()->loadGamepadMappings("assets/db/game_controller_db.txt");
     }
 
     void Activity::onRender(engine::time::Time dt) {

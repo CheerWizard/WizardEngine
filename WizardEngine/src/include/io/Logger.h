@@ -10,7 +10,7 @@
 #pragma warning(pop)
 
 #include "core/Memory.h"
-#include "core/String.h"
+#include <core/exception.h>
 
 namespace engine::io {
 
@@ -24,9 +24,8 @@ namespace engine::io {
         static void createEngineLogger(const std::string& name);
         static void createEditorLogger(const std::string& name);
         static void createRuntimeLogger(const std::string& name);
-
-    public:
         static void setPattern(const std::string& pattern);
+        static void printException(const Ref<Log>& logger, const exception& exception);
 
     public:
         static Ref<spdlog::logger>& getEngineLogger() {
@@ -42,14 +41,12 @@ namespace engine::io {
         }
 
     private:
-        // logger is nullable value!
         static void createLogger(Ref<Log> &logger, const std::string &name);
 
     private:
         static Ref<Log> _engineLogger;
         static Ref<Log> _editorLogger;
         static Ref<Log> _runtimeLogger;
-
     };
 
 }
@@ -64,6 +61,8 @@ namespace engine::io {
     #define ENGINE_WARN(...)      ::engine::io::Logger::getEngineLogger()->warn(__VA_ARGS__)
     #define ENGINE_ERR(...)       ::engine::io::Logger::getEngineLogger()->error(__VA_ARGS__)
     #define ENGINE_CRIT(...)      ::engine::io::Logger::getEngineLogger()->critical(__VA_ARGS__)
+    #define ENGINE_EXCEPT(ex)     ::engine::io::Logger::printException(::engine::io::Logger::getEngineLogger(), ex)
+    #define ENGINE_THROW(ex)      ENGINE_EXCEPT(ex); throw (ex)
 
     // Runtime log macros
     #define INIT_RUNTIME_LOG(...)  ::engine::io::Logger::createRuntimeLogger(__VA_ARGS__)
@@ -72,6 +71,8 @@ namespace engine::io {
     #define RUNTIME_WARN(...)      ::engine::io::Logger::getRuntimeLogger()->warn(__VA_ARGS__)
     #define RUNTIME_ERR(...)       ::engine::io::Logger::getRuntimeLogger()->error(__VA_ARGS__)
     #define RUNTIME_CRIT(...)      ::engine::io::Logger::getRuntimeLogger()->critical(__VA_ARGS__)
+    #define RUNTIME_EXCEPT(ex)     ::engine::io::Logger::printException(::engine::io::Logger::getRuntimeLogger(), ex)
+    #define RUNTIME_THROW(ex)      RUNTIME_EXCEPT(ex); throw (ex)
 
     // Editor log macros
     #define INIT_EDITOR_LOG(...)  ::engine::io::Logger::createEditorLogger(__VA_ARGS__)
@@ -80,6 +81,9 @@ namespace engine::io {
     #define EDITOR_WARN(...)      ::engine::io::Logger::getEditorLogger()->warn(__VA_ARGS__)
     #define EDITOR_ERR(...)       ::engine::io::Logger::getEditorLogger()->error(__VA_ARGS__)
     #define EDITOR_CRIT(...)      ::engine::io::Logger::getEditorLogger()->critical(__VA_ARGS__)
+    #define EDITOR_EXCEPT(ex)     ::engine::io::Logger::printException(::engine::io::Logger::getEditorLogger(), ex)
+    #define EDITOR_THROW(ex)      EDITOR_EXCEPT(ex); throw (ex)
+
 #else
     #define LOG_PATTERN(...) __VA_ARGS__
 
@@ -90,6 +94,8 @@ namespace engine::io {
     #define ENGINE_WARN(...)        __VA_ARGS__
     #define ENGINE_ERR(...)         __VA_ARGS__
     #define ENGINE_CRIT(...)        __VA_ARGS__
+    #define ENGINE_EXCEPT(ex)       ex
+    #define ENGINE_THROW(ex)        throw (ex)
 
     // Runtime log macros
     #define INIT_RUNTIME_LOG(...)  __VA_ARGS__
@@ -98,6 +104,8 @@ namespace engine::io {
     #define RUNTIME_WARN(...)      __VA_ARGS__
     #define RUNTIME_ERR(...)       __VA_ARGS__
     #define RUNTIME_CRIT(...)      __VA_ARGS__
+    #define RUNTIME_EXCEPT(ex)     ex
+    #define RUNTIME_THROW(ex)      throw (ex)
 
     // Editor log macros
     #define INIT_EDITOR_LOG(...)  __VA_ARGS__
@@ -106,4 +114,6 @@ namespace engine::io {
     #define EDITOR_WARN(...)      __VA_ARGS__
     #define EDITOR_ERR(...)       __VA_ARGS__
     #define EDITOR_CRIT(...)      __VA_ARGS__
+    #define EDITOR_EXCEPT(ex)     ex
+    #define EDITOR_THROW(ex)      throw (ex)
 #endif

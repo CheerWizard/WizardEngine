@@ -8,6 +8,7 @@
 #include <core/LayerStack.h>
 #include <core/Memory.h>
 #include <event/Events.h>
+#include <event/GamepadCodes.h>
 #include <time/FpsController.h>
 
 #include <platform/core/Window.h>
@@ -20,6 +21,10 @@
 #include <graphics/core/sources/ShaderSource.h>
 
 #include <scripting/ScriptSystem.h>
+
+#define BIND_GAMEPAD_BUTTON_PRESSED(gamepadBtn, action) engine::core::Application::get().eventRegistry.onGamepadButtonPressedMap[gamepadBtn] = { \
+[](GamepadButtonCode gamepadBtnCode) { action }                                                                                 \
+}
 
 namespace engine::core {
 
@@ -59,8 +64,8 @@ namespace engine::core {
         // input mouse cursor events
         void onCursorMoved(double xPos, double yPos);
         // input gamepad events
-        void onGamepadConnected(s32 joystickId) const;
-        void onGamepadDisconnected(s32 joystickId) const;
+        void onGamepadConnected(s32 joystickId);
+        void onGamepadDisconnected(s32 joystickId);
 
     protected:
         virtual void onCreate();
@@ -79,6 +84,7 @@ namespace engine::core {
         void setSampleSize(const uint32_t& samples);
         void setActiveScene(const Ref<Scene>& activeScene);
         void setActiveScene(const uint32_t& activeSceneId);
+        void loadGamepadMappings(const char* mappingsFilePath);
 
     protected:
         void pushFront(Layer* layer);
@@ -89,7 +95,7 @@ namespace engine::core {
         void restart();
         void onUpdate();
         void updateRuntime(time::Time dt);
-
+        void updateEventRegistry();
         void createGraphics();
         void createScripting();
 
@@ -100,7 +106,8 @@ namespace engine::core {
         Ref<FrameBuffer> activeSceneFrame;
         Ref<FrameBuffer> screenFrame;
         time::FpsController fpsController;
-        event::EventRegistry eventController;
+        event::EventRegistry eventRegistry;
+        bool isJoystickConnected = false;
 
     private:
         static Application* instance;

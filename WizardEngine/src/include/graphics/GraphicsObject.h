@@ -18,17 +18,14 @@ namespace engine::graphics {
                 const std::string &tag,
                 EntityContainer* container
         ) : Entity(tag, container) {
-            add<Transform3dComponent>(transform3d());
-            add<BaseMeshComponent<T>>();
-            add<MaterialComponent>();
+            add<Transform3dComponent>(Transform3dComponent());
         }
 
         Object3d(
                 EntityContainer* container
         ) : Entity("GraphicsObject", container) {
-            add<Transform3dComponent>(transform3d());
+            add<Transform3dComponent>(Transform3dComponent());
             add<BaseMeshComponent<T>>();
-            add<MaterialComponent>();
         }
 
         Object3d(
@@ -37,18 +34,6 @@ namespace engine::graphics {
                 const Transform3dComponent& transform
         ) : Entity(tag, container) {
             add<Transform3dComponent>(transform);
-            add<BaseMeshComponent<T>>();
-            add<MaterialComponent>();
-        }
-
-        Object3d(
-                EntityContainer* container,
-                const std::string &tag,
-                const BaseMeshComponent<T> &mesh
-        ) : Entity(tag, container) {
-            add<Transform3dComponent>(transform3d());
-            add<BaseMeshComponent<T>>(mesh);
-            add<MaterialComponent>();
         }
 
         Object3d(
@@ -59,7 +44,6 @@ namespace engine::graphics {
         ) : Entity(tag, container) {
             add<Transform3dComponent>(transform);
             add<BaseMeshComponent<T>>(mesh);
-            add<MaterialComponent>();
         }
 
         Object3d(
