@@ -14,9 +14,8 @@ namespace engine::graphics {
 
     struct Vertex3d {
         glm::vec3 position = { 0.5f, 0.5f, 0.5f };
-        glm::vec2 textureCoords = { 0.25f, -0.25f };
+        glm::vec2 uv = {0.25f, -0.25f };
         glm::vec3 normal = { 0, 0, 0 };
-        f32 textureSlot = 0;
     };
 
     template<typename T>
@@ -42,11 +41,8 @@ namespace engine::graphics {
         DrawType drawType = DrawType::TRIANGLE;
     };
 
-    template<typename FROM, typename TO>
-    BaseMesh<TO> toMesh(
-            const BaseMesh<FROM>& fromBaseMesh,
-            const std::function<TO(const FROM&)> vertexMapper
-    ) {
+    template<typename FROM, typename TO, typename VertexMapper>
+    BaseMesh<TO> toMesh(const BaseMesh<FROM>& fromBaseMesh, const VertexMapper& vertexMapper) {
         auto& fromVertexData = fromBaseMesh.vertexData;
         auto toVertexData = VertexData<TO> {
                 new TO[fromVertexData.vertexCount],
@@ -59,26 +55,25 @@ namespace engine::graphics {
         return { toVertexData, fromBaseMesh.indexData };
     }
 
-    template<typename FROM, typename TO>
-    BaseMeshComponent<TO> toMeshComponent(
-            const BaseMeshComponent<FROM>& fromBaseMeshComponent,
-            const std::function<TO(const FROM&)> vertexMapper
-    ) {
+    template<typename FROM, typename TO, typename VertexMapper>
+    BaseMeshComponent<TO> toMeshComponent(const BaseMeshComponent<FROM>& fromBaseMeshComponent, const VertexMapper& vertexMapper) {
         auto& fromMeshes = fromBaseMeshComponent.meshes;
         auto toMeshes = new BaseMesh<TO>[fromBaseMeshComponent.meshCount];
+
         for (auto j = 0; j < fromBaseMeshComponent.meshCount; j++) {
-            toMeshes[j] = toMesh(fromMeshes[j], vertexMapper);
+            toMeshes[j] = toMesh<FROM, TO>(fromMeshes[j], vertexMapper);
         }
-        return {
-                toMeshes,
-                fromBaseMeshComponent.meshCount,
-                fromBaseMeshComponent.totalVertexCount,
-                fromBaseMeshComponent.totalIndexCount,
-                fromBaseMeshComponent.vertexStart,
-                fromBaseMeshComponent.indexStart,
-                fromBaseMeshComponent.isUpdated,
-                fromBaseMeshComponent.renderModelId
-        };
+
+        auto meshComponent = BaseMeshComponent<TO>();
+        meshComponent.meshes = toMeshes;
+        meshComponent.meshCount = fromBaseMeshComponent.meshCount;
+        meshComponent.totalVertexCount = fromBaseMeshComponent.totalVertexCount;
+        meshComponent.totalIndexCount = fromBaseMeshComponent.totalIndexCount;
+        meshComponent.vertexStart = fromBaseMeshComponent.vertexStart;
+        meshComponent.indexStart = fromBaseMeshComponent.indexStart;
+        meshComponent.isUpdated = fromBaseMeshComponent.isUpdated;
+        meshComponent.renderModelId = fromBaseMeshComponent.renderModelId;
+        return meshComponent;
     }
 
     template<typename T>
@@ -98,10 +93,7 @@ namespace engine::graphics {
         return toMeshComponent<T, BatchVertex<Vertex3d>>(
                 fromBaseMeshComponent,
                 [](const T& vertex) {
-                    return BatchVertex<Vertex3d> {
-                        Vertex3d { vertex.position, vertex.uv, vertex.normal },
-                        0
-                    };
+                    return BatchVertex<Vertex3d> { { vertex.position, vertex.uv, vertex.normal } };
                 }
         );
     }
@@ -148,42 +140,24 @@ namespace engine::graphics {
 
     template<typename T>
     void updateStart(BaseMeshComponent<T> &meshComponent, const uint32_t &prevVertexCount, const uint32_t &prevIndexCount) {
-        if (meshComponent.vertexStart != prevVertexCount || meshComponent.indexStart != prevIndexCount) {
-            meshComponent.vertexStart = prevVertexCount;
-            meshComponent.indexStart = prevIndexCount;
-            for (auto i = 0; i < meshComponent.meshCount ; i++) {
-                auto& vertexData = meshComponent.meshes[i].vertexData;
-                auto& indexData = meshComponent.meshes[i].indexData;
-
-                vertexData.vertexStart += meshComponent.vertexStart;
-                indexData.indexStart += meshComponent.indexStart;
-                for (auto j = 0 ; j < indexData.indexCount ; j++) {
-                    auto& index = indexData.indices[j];
-                    index += meshComponent.vertexStart;
-                }
-            }
-        }
-    }
-
-    template<typename T>
-    void invalidate(BaseMeshComponent<T> &meshComponent) {
-        u32 totalVertexCount = 0;
-        u32 totalIndexCount = 0;
-        for (auto i = 0 ; i < meshComponent.meshCount ; i++) {
+        meshComponent.vertexStart = prevVertexCount;
+        meshComponent.indexStart = prevIndexCount;
+        u32 meshVertexStart = 0;
+        u32 meshIndexStart = 0;
+        for (auto i = 0; i < meshComponent.meshCount ; i++) {
             auto& vertexData = meshComponent.meshes[i].vertexData;
             auto& indexData = meshComponent.meshes[i].indexData;
 
-            if (vertexData.vertexStart != totalVertexCount || indexData.indexStart != totalIndexCount) {
-                vertexData.vertexStart = totalVertexCount;
-                indexData.indexStart = totalIndexCount;
-                for (auto j = 0 ; j < indexData.indexCount ; j++) {
-                    auto& index = indexData.indices[j];
-                    index += vertexData.vertexStart;
-                }
+            vertexData.vertexStart = meshComponent.vertexStart + meshVertexStart;
+            indexData.indexStart = meshComponent.indexStart + meshIndexStart;
+
+            for (auto j = 0 ; j < indexData.indexCount ; j++) {
+                auto& index = indexData.indices[j];
+                index += meshComponent.vertexStart + meshVertexStart;
             }
 
-            totalVertexCount += vertexData.vertexCount;
-            totalIndexCount += indexData.indexCount;
+            meshVertexStart += vertexData.vertexCount;
+            meshIndexStart += indexData.indexCount;
         }
     }
 }

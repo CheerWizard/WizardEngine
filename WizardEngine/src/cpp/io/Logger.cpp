@@ -55,4 +55,25 @@ namespace engine::io {
         logger->set_level(spdlog::level::trace);
         logger->flush_on(spdlog::level::trace);
     }
+
+    void Logger::printException(const Ref<Log> &logger, const exception &exception) {
+        switch (exception.priority) {
+            case exception_priority::TRACE:
+                logger->trace(exception.message);
+                break;
+            case exception_priority::INFO:
+                logger->info(exception.message);
+                break;
+            case exception_priority::WARN:
+                logger->warn(exception.message);
+                break;
+            case exception_priority::ERROR:
+                logger->error(exception.message);
+                break;
+            case exception_priority::FATAL:
+                logger->critical(exception.message);
+                break;
+        }
+    }
+
 }

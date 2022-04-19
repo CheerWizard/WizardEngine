@@ -15,16 +15,19 @@ namespace engine::io {
         const aiScene *scene = import.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs);
 
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-            ENGINE_ERR("Assimp: failed to import file '{0}'; error: {1}", filePath, import.GetErrorString());
-            return {};
+            std::string message = "Assimp: failed to import file '" + filePath + "'; error: " + import.GetErrorString();
+            ENGINE_THROW(file_not_found(exception_priority::ERROR, message));
         }
 
         std::vector<ModelMesh> meshes;
         std::vector<ModelMaterial> materials;
         extractNodes(scene->mRootNode, scene, meshes, materials);
-        graphics::BaseMesh<ModelVertex>* modelMeshes = engine::core::map(meshes);
-        ModelMeshComponent meshComponent = { modelMeshes };
+
+        ModelMeshComponent meshComponent;
+        meshComponent.meshes = engine::core::map(meshes);
         meshComponent.meshCount = meshes.size();
+
+        graphics::updateCounts(meshComponent);
 
         return { meshComponent, materials };
     }

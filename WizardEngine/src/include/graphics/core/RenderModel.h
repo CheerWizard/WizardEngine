@@ -77,16 +77,27 @@ namespace engine::graphics {
     }
 
     template<typename T>
-    void tryUploadBatch(
-            const uint32_t &id,
-            VertexDataComponent<BatchVertex<T>> &vertexDataComponent,
-            uint32_t &previousVertexCount,
-            VRenderModel& renderModel
-    ) {
-        if (vertexDataComponent.isUpdated) {
-            setBatchId(vertexDataComponent, id);
+    void upload(VertexDataComponent<T> &vertexDataComponent, VRenderModel& renderModel) {
+        renderModel.vao.bind();
+        renderModel.vbo.bind();
+        renderModel.vbo.load(vertexDataComponent.vertexData);
+    }
+
+    template<typename T>
+    void upload(BaseMeshComponent<T> &meshComponent, VIRenderModel& renderModel) {
+        auto& vbo = renderModel.vbo;
+        auto& ibo = renderModel.ibo;
+
+        renderModel.vao.bind();
+        vbo.bind();
+        ibo.bind();
+        const auto& meshes = meshComponent.meshes;
+        for (auto i = 0; i < meshComponent.meshCount ; i++) {
+            const auto& vertexData = meshes[i].vertexData;
+            vbo.load(vertexData);
+            const auto& indexData = meshes[i].indexData;
+            ibo.load(indexData);
         }
-        tryUpload<BatchVertex<T>>(vertexDataComponent, previousVertexCount, renderModel);
     }
 
     template<typename T>
@@ -104,24 +115,16 @@ namespace engine::graphics {
     }
 
     template<typename T>
-    void upload(VertexDataComponent<T> &vertexDataComponent, VRenderModel& renderModel) {
-        renderModel.vao.bind();
-        renderModel.vbo.bind();
-        renderModel.vbo.load(vertexDataComponent.vertexData);
-    }
-
-    template<typename T>
-    void tryUploadBatchMesh(
+    void tryUploadBatch(
             const uint32_t &id,
-            BaseMeshComponent<BatchVertex<T>> &baseMeshComponent,
+            VertexDataComponent<BatchVertex<T>> &vertexDataComponent,
             uint32_t &previousVertexCount,
-            uint32_t &previousIndexCount,
-            VIRenderModel& renderModel
+            VRenderModel& renderModel
     ) {
-        if (baseMeshComponent.isUpdated) {
-            setBatchId(baseMeshComponent, id);
+        if (vertexDataComponent.isUpdated) {
+            setBatchId(vertexDataComponent, id);
         }
-        tryUpload<BatchVertex<T>>(baseMeshComponent, previousVertexCount, previousIndexCount, renderModel);
+        tryUpload<BatchVertex<T>>(vertexDataComponent, previousVertexCount, renderModel);
     }
 
     template<typename T>
@@ -142,20 +145,17 @@ namespace engine::graphics {
     }
 
     template<typename T>
-    void upload(BaseMeshComponent<T> &meshComponent, VIRenderModel& renderModel) {
-        auto& vbo = renderModel.vbo;
-        auto& ibo = renderModel.ibo;
-
-        renderModel.vao.bind();
-        vbo.bind();
-        ibo.bind();
-        const auto& meshes = meshComponent.meshes;
-        for (auto i = 0; i < meshComponent.meshCount ; i++) {
-            const auto& vertexData = meshes[i].vertexData;
-            vbo.load(vertexData);
-            const auto& indexData = meshes[i].indexData;
-            ibo.load(indexData);
+    void tryUploadBatchMesh(
+            const uint32_t &id,
+            BaseMeshComponent<BatchVertex<T>> &baseMeshComponent,
+            uint32_t &previousVertexCount,
+            uint32_t &previousIndexCount,
+            VIRenderModel& renderModel
+    ) {
+        if (baseMeshComponent.isUpdated) {
+            setBatchId(baseMeshComponent, id);
         }
+        tryUpload<BatchVertex<T>>(baseMeshComponent, previousVertexCount, previousIndexCount, renderModel);
     }
 
     template<typename T>

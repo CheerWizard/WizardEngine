@@ -126,11 +126,11 @@ namespace engine::graphics {
         switch (moveType) {
             case MoveType::DOWN:
                 ENGINE_INFO("Camera moved: DOWN");
-                viewPosition.y += moveSpeed / dt;
+                viewPosition.y -= moveSpeed / dt;
                 break;
             case MoveType::UP:
                 ENGINE_INFO("Camera moved: UP");
-                viewPosition.y -= moveSpeed / dt;
+                viewPosition.y += moveSpeed / dt;
                 break;
             case MoveType::LEFT:
                 ENGINE_INFO("Camera moved: LEFT");

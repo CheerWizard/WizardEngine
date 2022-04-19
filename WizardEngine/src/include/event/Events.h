@@ -6,6 +6,8 @@
 
 #include <event/KeyCodes.h>
 #include <event/MouseCodes.h>
+#include <event/GamepadCodes.h>
+#include <core/map.h>
 #include <functional>
 
 namespace engine::event {
@@ -30,18 +32,25 @@ namespace engine::event {
         Action<> onWindowClosed;
         Action<const uint32_t&, const uint32_t&> onWindowResized;
 
-        typedef std::unordered_map<KeyCode, Action<KeyCode>> KeyCodeMap;
+        typedef core::unordered_map<KeyCode, Action<KeyCode>> KeyCodeMap;
         KeyCodeMap onKeyPressedMap;
         KeyCodeMap onKeyHoldMap;
         KeyCodeMap onKeyReleasedMap;
         KeyCodeMap onKeyTypedMap;
 
-        typedef std::unordered_map<MouseCode, Action<MouseCode>> MouseCodeMap;
+        typedef core::unordered_map<MouseCode, Action<MouseCode>> MouseCodeMap;
         MouseCodeMap onMousePressedMap;
         MouseCodeMap onMouseReleasedMap;
 
         Action<double, double> onMouseScrolled;
         Action<double, double> onCursorMoved;
+
+        typedef core::unordered_map<GamepadButtonCode, Action<GamepadButtonCode>> GamepadButtonMap;
+        GamepadButtonMap onGamepadButtonPressedMap;
+        GamepadButtonMap onGamepadButtonReleasedMap;
+
+        typedef core::unordered_map<GamepadAxisCode, Action<float>> GamepadAxisMap;
+        GamepadAxisMap gamepadAxisMap;
     };
 
 }

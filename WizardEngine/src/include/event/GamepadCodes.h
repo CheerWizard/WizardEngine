@@ -8,9 +8,13 @@
 
 namespace engine::event {
 
-    enum GamepadButtonCode : core::u8 {
-        PAD_BTN_NONE = -1,
+    enum ButtonState : core::u8 {
+        PRESS = 1,
+        RELEASE = 0,
+        REPEAT = 2
+    };
 
+    enum GamepadButtonCode : core::u8 {
         PAD_BTN_A = 0,
         PAD_BTN_B = 1,
         PAD_BTN_X = 2,
@@ -31,17 +35,15 @@ namespace engine::event {
         PAD_BTN_D_PAD_DOWN = 13,
         PAD_BTN_D_PAD_LEFT = 14,
 
-        PAD_BTN_LAST = BTN_D_PAD_LEFT,
+        PAD_BTN_LAST = PAD_BTN_D_PAD_LEFT,
 
-        PAD_BTN_CROSS = BTN_A,
-        PAD_BTN_CIRCLE = BTN_B,
-        PAD_BTN_SQUARE = BTN_X,
-        PAD_BTN_TRIANGLE = BTN_Y
+        PAD_BTN_CROSS = PAD_BTN_A,
+        PAD_BTN_CIRCLE = PAD_BTN_B,
+        PAD_BTN_SQUARE = PAD_BTN_X,
+        PAD_BTN_TRIANGLE = PAD_BTN_Y
     };
 
     enum GamepadAxisCode : core::u8 {
-        PAD_AXIS_NONE = -1,
-
         PAD_AXIS_LEFT_X = 0,
         PAD_AXIS_LEFT_Y = 1,
         PAD_AXIS_RIGHT_X = 2,
