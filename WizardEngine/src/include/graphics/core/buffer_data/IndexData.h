@@ -4,17 +4,16 @@
 
 #pragma once
 
-#include <cstdint>
-#include <algorithm>
+#include <core/primitives.h>
 
 #define MIN_INDEX_COUNT 3
 
 namespace engine::graphics {
 
     struct IndexData {
-        uint32_t* indices = nullptr;
-        uint32_t indexStart = 0;
-        uint32_t indexCount = MIN_INDEX_COUNT;
+        u32* indices = nullptr;
+        u32 indexStart = 0;
+        u32 indexCount = MIN_INDEX_COUNT;
     };
 
     IndexData copy(const IndexData &indexData);

@@ -6,6 +6,8 @@
 
 #include <core/vector.h>
 #include <core/Memory.h>
+#include <core/primitives.h>
+
 #include <AL/al.h>
 
 namespace engine::audio {
@@ -26,24 +28,10 @@ namespace engine::audio {
         void bind() const;
         static void unbind();
 
-        static void load(const char* filePath);
+        void load(const AudioData &audioData) const;
 
     private:
-        ALuint id;
-    };
-
-    class Buffers {
-
-    private:
-        Buffers();
-        ~Buffers();
-
-    public:
-        static Ref<Buffers>& get();
-
-    private:
-        vector<Buffer> buffers;
-
+        u32 id = 0;
     };
 
 }

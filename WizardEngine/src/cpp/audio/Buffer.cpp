@@ -27,6 +27,10 @@ namespace engine::audio {
 
     }
 
+    void Buffer::load(const AudioData &audioData) const {
+        alBufferData(id, audioData.format, audioData.data, audioData.size, audioData.frequency);
+    }
+
     void Buffer::load(const char *filePath) {
         ALenum err, format;
         ALuint buffer;
