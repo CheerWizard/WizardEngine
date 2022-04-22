@@ -43,7 +43,7 @@ namespace test {
         );
 
         try {
-            auto model = io::ModelFile::read("assets/model/survival_pack.fbx");
+            auto model = io::ModelFile::read("assets/model/DesertEagle.fbx");
             auto mesh = toMesh3dBatch(model.meshComponent);
             survivalBackPack.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(mesh);
         } catch (const file_not_found& ex) {

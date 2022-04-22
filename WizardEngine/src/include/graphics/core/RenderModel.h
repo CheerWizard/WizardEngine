@@ -166,7 +166,6 @@ namespace engine::graphics {
     ) {
         if (meshComponent.isUpdated) {
             meshComponent.isUpdated = false;
-            updateStartAndCounts(meshComponent, previousVertexCount, previousIndexCount);
             upload(meshComponent, renderModel);
         }
         previousIndexCount += meshComponent.totalIndexCount;
