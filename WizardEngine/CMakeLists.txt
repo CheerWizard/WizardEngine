@@ -16,6 +16,7 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 #/ adding dependencies.
 include_directories(src/include)
+
 #/ Logger.
 add_subdirectory(vendor/spdlog)
 include_directories(vendor/spdlog/include)
@@ -35,17 +36,20 @@ include_directories(vendor/imgui/imgui/misc/cpp)
 #/ Math.
 add_subdirectory(vendor/glm)
 
-#/ Picture API
+#/ Image file processing
 add_subdirectory(vendor/stb)
 include_directories(vendor/stb/stb)
 
-#/ FreeType for text font rendering
+#/ Freetype text font rendering
 add_subdirectory(vendor/freetype)
 include_directories(vendor/freetype)
 
-#/ Assimp for importing/exporting assets
-#/ Must build as DLL!
+#/ Assets importer/exporter. Builds as DLL
 include_directories(vendor/assimp/include)
+
+#/ Audio core
+add_subdirectory(vendor/openal-soft)
+include_directories(vendor/openal-soft/include)
 
 #/ linking dependencies.
 target_link_libraries(
@@ -58,6 +62,7 @@ target_link_libraries(
         stb
         freetype
         ../WizardEngine/vendor/dlls/assimp-vc143-mtd
+        OpenAL
 )
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
