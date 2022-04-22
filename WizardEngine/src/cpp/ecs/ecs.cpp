@@ -83,7 +83,7 @@ namespace engine::ecs {
         return entities.size();
     }
 
-    bool Registry::isEmpty() {
+    bool Registry::empty_entity() {
         return entities.empty();
     }
 

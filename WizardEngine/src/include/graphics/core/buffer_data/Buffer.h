@@ -13,6 +13,7 @@ namespace engine::graphics {
     class Buffer {
 
     public:
+        Buffer() = default;
         Buffer(const u32& totalCount) : totalCount(totalCount) {}
         ~Buffer() = default;
 
@@ -22,7 +23,7 @@ namespace engine::graphics {
         [[nodiscard]] bool hasCapacity(const u32& count) const;
 
     protected:
-        u32 totalCount;
+        u32 totalCount = 0;
         u32 count = 0;
 
     };

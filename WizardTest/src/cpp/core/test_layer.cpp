@@ -43,7 +43,7 @@ namespace test {
         );
 
         try {
-            auto model = io::ModelFile::read("assets/model/porsche_911_gt2.obj");
+            auto model = io::ModelFile::read("assets/model/survival_pack.fbx");
             auto mesh = toMesh3dBatch(model.meshComponent);
             survivalBackPack.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(mesh);
         } catch (const file_not_found& ex) {
@@ -64,10 +64,15 @@ namespace test {
 
     void TestLayer::onPrepare() {
         bindCamera();
+
         BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_A, ENGINE_INFO("Button A pressed!"););
         BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_B, ENGINE_INFO("Button B pressed!"););
         BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_X, ENGINE_INFO("Button X pressed!"););
         BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_Y, ENGINE_INFO("Button Y pressed!"););
+
+        BIND_KEY_PRESSED(KeyCode::D1, survivalBackPack.update<CullingComponent>(true););
+        BIND_KEY_PRESSED(KeyCode::D2, survivalBackPack.update<CullingComponent>(true););
+        BIND_KEY_PRESSED(KeyCode::D3, survivalBackPack.update<CullingComponent>(false););
     }
 
     void TestLayer::onUpdate(time::Time deltaTime) {

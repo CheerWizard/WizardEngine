@@ -31,19 +31,10 @@ namespace engine::graphics {
         TestAction stencilPassDepthPass;
     };
 
-    enum PolygonMode {
-        DOT, LINES, FILL
-    };
-
     void drawV(const DrawType& drawType, const uint32_t& vertexCount);
     void drawV(const DrawType& drawType, const uint32_t& vertexCount, const uint32_t& instanceCount);
     void drawVI(const DrawType& drawType, const uint32_t& indexCount);
     void drawVI(const DrawType& drawType, const uint32_t& indexCount, const uint32_t& instanceCount);
-
-    void enableCulling();
-    void disableCulling();
-
-    void setPolygonMode(const PolygonMode &polygonMode);
 
     const unsigned char* getAPIName();
     const unsigned char* getVendorName();
@@ -92,6 +83,10 @@ namespace engine::graphics {
     );
     void setBlendEquation(const BlendOperator& srcDestOperator);
 
+    enum PolygonMode {
+        DOT, LINES, FILL
+    };
+
     enum FaceType {
         BACK, FRONT, FRONT_AND_BACK
     };
@@ -100,32 +95,52 @@ namespace engine::graphics {
         CLOCK_WISE, COUNTER_CLOCK_WISE
     };
 
-    struct CullingComponent {
-        bool enabled = false;
-        FaceType faceType = BACK;
-        FrontFaceType frontFaceType = CLOCK_WISE;
-    };
-
+    void setPolygonMode(const FaceType& faceType, const PolygonMode &polygonMode);
     void setCullFaceMode(bool isEnabled);
     void setCullFace(const FaceType& faceType);
     void setFrontFace(const FrontFaceType& frontFaceType);
 
-    class RenderCommands final {
+    void logApiInfo();
 
-    private:
-        RenderCommands() = default;
-        ~RenderCommands() = default;
-
-    public:
-        static void toggleCulling();
-        static void setCulling(const CullingComponent &culling);
-        static void trySetPolygonMode(const PolygonMode &polygonMode);
-        static void logApiInfo();
-
-    private:
-        static PolygonMode activePolygonMode;
-        static bool isCullingEnabled;
-
+    component(CullingComponent) {
+        bool enabled = false;
+        FaceType faceType = BACK;
+        FrontFaceType frontFaceType = CLOCK_WISE;
+        CullingComponent() = default;
+        CullingComponent(bool enabled) : enabled(enabled) {}
     };
 
+    class Culling final {
+
+    private:
+        Culling() = default;
+        ~Culling() = default;
+
+    public:
+        static void setCulling(const CullingComponent &culling);
+
+    private:
+        static bool isCullingEnabled;
+    };
+
+    component(PolygonModeComponent) {
+        FaceType face = FRONT_AND_BACK;
+        PolygonMode mode = FILL;
+        PolygonModeComponent() = default;
+        PolygonModeComponent(const FaceType& face, const PolygonMode& mode) : face(face), mode(mode) {}
+    };
+
+    class PolygonModes final {
+
+    private:
+        PolygonModes() = default;
+        ~PolygonModes() = default;
+
+    public:
+        static void setPolygonMode(const PolygonModeComponent& polygonModeComponent);
+
+    private:
+        static PolygonMode polygonMode;
+        static FaceType faceType;
+    };
 }

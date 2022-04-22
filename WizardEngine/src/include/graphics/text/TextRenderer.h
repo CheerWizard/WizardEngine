@@ -30,7 +30,7 @@ namespace engine::graphics {
 
     template<typename Text>
     void TextRenderer::render(ecs::Registry &registry) {
-        if (!shaderProgram.isReady() || registry.isEmpty()) return;
+        if (!shaderProgram.isReady() || registry.empty_entity() || registry.empty_components<Text>()) return;
 
         shaderProgram.start();
         shaderProgram.update(registry);
@@ -44,8 +44,7 @@ namespace engine::graphics {
                 auto& vertexDataComponent = character.vertexDataComponent;
 
                 vertexDataComponent.renderModelId += nextRenderModelId;
-                auto& renderModel = vRenderModels[vertexDataComponent.renderModelId];
-                if (!validate<BatchVertex<CharVertex>>(renderModel, vertexDataComponent)) {
+                if (!validate<BatchVertex<CharVertex>>(vertexDataComponent)) {
                     nextRenderModelId++;
                 }
             }
