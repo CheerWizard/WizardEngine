@@ -11,7 +11,6 @@ macro(include_engine path)
             ${path}/vendor/freetype
             ${path}/vendor/assimp/include
             ${path}/vendor/openal-soft/include
-            ${path}/vendor/libsndfile
     )
 endmacro()
 # use this macro to link WizardEngine and all it's dependencies!
@@ -27,6 +26,5 @@ macro(link_to_engine project)
             stb
             freetype
             OpenAL
-            libsndfile
     )
 endmacro()

@@ -8,6 +8,8 @@
 #include <core/Memory.h>
 #include <core/primitives.h>
 
+#include <io/AudioFile.h>
+
 #include <AL/al.h>
 
 namespace engine::audio {
@@ -25,10 +27,12 @@ namespace engine::audio {
         void destroy();
         void recreate();
 
-        void bind() const;
-        static void unbind();
+        void load(const io::AudioData &audioData) const;
 
-        void load(const AudioData &audioData) const;
+    public:
+        [[nodiscard]] inline const u32& get() const {
+            return id;
+        }
 
     private:
         u32 id = 0;

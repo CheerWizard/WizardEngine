@@ -3,6 +3,7 @@
 //
 
 #include <core/test_layer.h>
+#include <audio/audio_player.h>
 
 namespace test {
 
@@ -49,6 +50,9 @@ namespace test {
         } catch (const file_not_found& ex) {
             RUNTIME_ERR("Could not load model file!");
         }
+
+        auto source = audio::MediaPlayer::load("assets/audio/test.wav");
+        audio::MediaPlayer::play(source);
     }
 
     void TestLayer::bindCamera() {

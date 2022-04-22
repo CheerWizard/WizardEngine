@@ -158,9 +158,25 @@ namespace engine::io {
             ENGINE_THROW(file_not_found(filePath));
         }
 
-        if(!readWavFileHeader(in, channels, sampleRate, bitsPerSample, size)) {
+        if (!readWavFileHeader(in, channels, sampleRate, bitsPerSample, size)) {
             ENGINE_ERR("Unable to load wav header of file {0}", filePath);
             ENGINE_THROW(file_not_found(filePath));
+        }
+
+        AudioFormat format;
+
+        if (channels == 1 && bitsPerSample == 8) {
+            format = MONO_8;
+        } else if (channels == 1 && bitsPerSample == 16) {
+            format = MONO_16;
+        } else if (channels == 2 && bitsPerSample == 8) {
+            format = STEREO_8;
+        } else if (channels == 2 && bitsPerSample == 16) {
+            format = STEREO_16;
+        } else {
+            std::stringstream ss;
+            ss << "Unsupported format exception : channels=" << channels << ", bps=" << bitsPerSample;
+            ENGINE_THROW(audio_format_exception(ss.str()));
         }
 
         char* data = new char[size];
@@ -168,7 +184,7 @@ namespace engine::io {
 
         in.close();
 
-        return { data, 0, size, sampleRate, 0 };
+        return AudioData { data, 0, size, sampleRate, format };
     }
 
 }

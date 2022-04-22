@@ -10,6 +10,8 @@
 
 namespace engine::graphics {
 
+    using namespace core;
+
     struct IndexData {
         u32* indices = nullptr;
         u32 indexStart = 0;
