@@ -28,7 +28,6 @@ namespace engine::io {
         meshComponent.meshCount = meshes.size();
 
         graphics::updateStartAndCounts(meshComponent, 0, 0);
-
         return { meshComponent, materials };
     }
 
