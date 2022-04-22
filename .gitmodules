@@ -29,3 +29,7 @@
 [submodule "WizardEngine/vendor/stb/stb"]
     path = WizardEngine/vendor/stb/stb
     url = https://github.com/nothings/stb
+
+[submodule "WizardEngine/vendor/openal-soft"]
+    path = WizardEngine/vendor/openal-soft
+    url = https://github.com/kcat/openal-soft
