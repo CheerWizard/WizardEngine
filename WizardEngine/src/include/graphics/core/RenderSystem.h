@@ -23,6 +23,7 @@ namespace engine::graphics {
         ~RenderSystem();
 
     public:
+        void onPrepare();
         void onUpdate();
 
     public:
@@ -51,20 +52,20 @@ namespace engine::graphics {
         // screen
         VRenderer screenRenderer;
         // scene
-        MultiRenderer sceneRenderer;
+        DefaultRenderer sceneRenderer;
         // line
-        MultiRenderer lineRenderer;
-        MultiRenderer stripLineRenderer;
-        MultiRenderer loopLineRenderer;
+        DefaultRenderer lineRenderer;
+        DefaultRenderer stripLineRenderer;
+        DefaultRenderer loopLineRenderer;
         // quad
-        MultiRenderer quadRenderer;
+        DefaultRenderer quadRenderer;
         // circle
-        MultiRenderer circleRenderer;
+        DefaultRenderer circleRenderer;
         // outlining everything
         // scene
-        MultiRenderer outlineSceneRenderer;
+        DefaultRenderer outlineSceneRenderer;
         // quad
-        MultiRenderer outlineQuadRenderer;
+        DefaultRenderer outlineQuadRenderer;
         // skybox
         VRenderer skyboxRenderer;
         // text

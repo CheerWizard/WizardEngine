@@ -514,7 +514,7 @@ namespace engine::gui {
     }
 
     void SceneHierarchy::draw(ecs::Registry& registry) {
-        if (registry.isEmpty()) return;
+        if (registry.empty_entity()) return;
 
         registry.eachEntity([&](ecs::entity_id entityID) {
             ecs::Entity entity { _scene.get(), entityID };

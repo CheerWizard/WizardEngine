@@ -23,8 +23,9 @@
 #include <scripting/ScriptSystem.h>
 
 #define BIND_GAMEPAD_BUTTON_PRESSED(gamepadBtn, action) engine::core::Application::get().eventRegistry.onGamepadButtonPressedMap[gamepadBtn] = { \
-[](GamepadButtonCode gamepadBtnCode) { action }                                                                                 \
+[this](GamepadButtonCode gamepadBtnCode) { action }                                                                                 \
 }
+#define BIND_KEY_PRESSED(key, action) engine::core::Application::get().eventRegistry.onKeyPressedMap[key] = { [this](KeyCode keyCode) { action } }
 
 namespace engine::core {
 

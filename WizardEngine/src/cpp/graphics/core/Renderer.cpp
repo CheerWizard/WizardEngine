@@ -21,6 +21,7 @@ namespace engine::graphics {
         vRenderModels.clear();
         viRenderModels.clear();
         shaderProgram.release();
+        entityHandlers.clear();
     }
 
     VRenderModel& Renderer::createRenderModel(const uint32_t& vertexCount) {
@@ -43,58 +44,70 @@ namespace engine::graphics {
         return viRenderModels[renderModel.id];
     }
 
-    void BatchRenderer::init() {
-        createRenderModel(DEFAULT_VERTEX_COUNT);
-        createRenderModel(DEFAULT_VERTEX_COUNT, DEFAULT_INDEX_COUNT);
-    }
-
-    void InstanceRenderer::init() {
-        createRenderModel(DEFAULT_VERTEX_COUNT);
-        createRenderModel(DEFAULT_VERTEX_COUNT, DEFAULT_INDEX_COUNT);
-    }
-
-    void VRenderer::create() {
-        vRenderModel = { 0, DEFAULT_VERTEX_COUNT };
+    void VRenderer::init() {
         shaderProgram.bindVertexFormat();
-        vRenderModel.vao.bind();
-        vRenderModel.vbo.setFormat(shaderProgram.getVertexFormat());
-        VertexArray::unbind();
     }
 
     void VRenderer::release() {
         shaderProgram.release();
     }
 
-    void VIRenderer::create() {
-        viRenderModel = { 0, DEFAULT_VERTEX_COUNT, DEFAULT_INDEX_COUNT };
+    void VIRenderer::init() {
         shaderProgram.bindVertexFormat();
-        viRenderModel.vao.bind();
-        viRenderModel.vbo.setFormat(shaderProgram.getVertexFormat());
-        viRenderModel.ibo.bind();
-        viRenderModel.ibo.alloc();
-        VertexArray::unbind();
     }
 
     void VIRenderer::release() {
         shaderProgram.release();
     }
 
-    void MultiRenderer::release() {
-        batchRenderer.release();
-        instanceRenderer.release();
-    }
-
     void VRenderer::renderQuad(const u32& textureId) {
         if (!shaderProgram.isReady()) return;
 
-        shaderProgram.start();
+        begin();
 
         TextureBuffer::activate(0);
         TextureBuffer::bind(textureId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
 
-        vRenderModel.vao.bind();
-        drawV(DrawType::QUAD, 4);
+        end(DrawType::QUAD, 4);
+    }
 
-        BaseShaderProgram::stop();
+    void VRenderer::begin() {
+        shaderProgram.start();
+    }
+
+    void VRenderer::begin(const ecs::Entity &entity) {
+        shaderProgram.start();
+        shaderProgram.update(entity);
+    }
+
+    void VRenderer::end(const DrawType& drawType, const u32& vertexCount) const {
+        vRenderModel.vao.bind();
+        drawV(drawType, vertexCount);
+        ShaderProgram::stop();
+    }
+
+    void Renderer::handleEntity(ecs::Registry &registry, ecs::entity_id entityId) {
+        for (const auto& entityHandler : entityHandlers) {
+            entityHandler.handle(registry, entityId);
+        }
+    }
+
+    void Renderer::addEntityHandler(const EntityHandler &entityHandler) {
+        entityHandlers.emplace_back(entityHandler);
+    }
+
+    void Renderer::addEntityHandler(const Handle &handle) {
+        entityHandlers.emplace_back(handle);
+    }
+
+    void VIRenderer::begin(const ecs::Entity &entity) {
+        shaderProgram.start();
+        shaderProgram.update(entity);
+    }
+
+    void VIRenderer::end(const DrawType& drawType, const u32& indexCount) const {
+        viRenderModel.vao.bind();
+        drawVI(drawType, indexCount);
+        ShaderProgram::stop();
     }
 }

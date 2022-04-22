@@ -127,37 +127,30 @@ namespace engine::graphics {
     }
 
     template<typename T>
-    void updateCounts(BaseMeshComponent<T> &meshComponent) {
-        meshComponent.totalVertexCount = 0;
-        meshComponent.totalIndexCount = 0;
-        for (auto i = 0 ; i < meshComponent.meshCount ; i++) {
-            const auto& vertexCount = meshComponent.meshes[i].vertexData.vertexCount;
-            const auto& indexCount = meshComponent.meshes[i].indexData.indexCount;
-            meshComponent.totalVertexCount += vertexCount;
-            meshComponent.totalIndexCount += indexCount;
-        }
-    }
-
-    template<typename T>
-    void updateStart(BaseMeshComponent<T> &meshComponent, const uint32_t &prevVertexCount, const uint32_t &prevIndexCount) {
+    void updateStartAndCounts(
+            BaseMeshComponent<T> &meshComponent,
+            const u32 &prevVertexCount,
+            const u32 &prevIndexCount
+    ) {
         meshComponent.vertexStart = prevVertexCount;
         meshComponent.indexStart = prevIndexCount;
-        u32 meshVertexStart = 0;
-        u32 meshIndexStart = 0;
+        meshComponent.totalVertexCount = 0;
+        meshComponent.totalIndexCount = 0;
+
         for (auto i = 0; i < meshComponent.meshCount ; i++) {
             auto& vertexData = meshComponent.meshes[i].vertexData;
             auto& indexData = meshComponent.meshes[i].indexData;
 
-            vertexData.vertexStart = meshComponent.vertexStart + meshVertexStart;
-            indexData.indexStart = meshComponent.indexStart + meshIndexStart;
+            vertexData.vertexStart = meshComponent.vertexStart + meshComponent.totalVertexCount;
+            indexData.indexStart = meshComponent.indexStart + meshComponent.totalIndexCount;
 
             for (auto j = 0 ; j < indexData.indexCount ; j++) {
                 auto& index = indexData.indices[j];
-                index += meshComponent.vertexStart + meshVertexStart;
+                index += meshComponent.vertexStart + meshComponent.totalVertexCount;
             }
 
-            meshVertexStart += vertexData.vertexCount;
-            meshIndexStart += indexData.indexCount;
+            meshComponent.totalVertexCount += vertexData.vertexCount;
+            meshComponent.totalIndexCount += indexData.indexCount;
         }
     }
 }

@@ -26,6 +26,21 @@ namespace engine::graphics {
             vao.create();
             vbo.create();
         }
+
+        template<typename T>
+        void upload(VertexDataComponent<T> &vertexDataComponent) {
+            vao.bind();
+            vbo.bind();
+            vbo.load(vertexDataComponent.vertexData);
+        }
+
+        template<typename T>
+        void uploadStatic(const VertexDataComponent<T> &vertexDataComponent) {
+            vao.bind();
+            vbo.bind();
+            vbo.loadStatic(vertexDataComponent.vertexData);
+            VertexArray::unbind();
+        }
     };
 
     struct VIRenderModel {
@@ -44,6 +59,21 @@ namespace engine::graphics {
             vao.create();
             vbo.create();
             ibo.create();
+        }
+
+        template<typename T>
+        void upload(BaseMeshComponent<T> &meshComponent) {
+            vao.bind();
+            vbo.bind();
+            ibo.bind();
+
+            const auto& meshes = meshComponent.meshes;
+            for (auto i = 0; i < meshComponent.meshCount ; i++) {
+                const auto& vertexData = meshes[i].vertexData;
+                vbo.load(vertexData);
+                const auto& indexData = meshes[i].indexData;
+                ibo.load(indexData);
+            }
         }
     };
 
@@ -136,8 +166,7 @@ namespace engine::graphics {
     ) {
         if (meshComponent.isUpdated) {
             meshComponent.isUpdated = false;
-            updateStart(meshComponent, previousVertexCount, previousIndexCount);
-            updateCounts(meshComponent);
+            updateStartAndCounts(meshComponent, previousVertexCount, previousIndexCount);
             upload(meshComponent, renderModel);
         }
         previousIndexCount += meshComponent.totalIndexCount;

@@ -87,7 +87,7 @@ namespace engine::graphics {
         setDepthTest(true);
         // skybox
         setDepthTestOperator(LESS_EQUAL); // we need to pass depth test for some skybox pixels
-        skyboxRenderer.render<Transform3dComponent, SkyboxVertex>(activeScene->getSkybox());
+        skyboxRenderer.renderStatic<Transform3dComponent, SkyboxVertex>(activeScene->getSkybox());
         setDepthTestOperator(LESS);
         // read/write from scene frame into screen frame
         FrameBuffer::readWriteFrameBuffers(*sceneFrame.get(), *screenFrame.get());
@@ -126,7 +126,16 @@ namespace engine::graphics {
                 vInstanceShader,
                 fInstanceShader
         );
-        sceneRenderer = MultiRenderer(batchShader, instanceShader);
+
+        sceneRenderer = DefaultRenderer(batchShader, instanceShader);
+        sceneRenderer.addEntityHandler([](ecs::Registry& registry, ecs::entity_id entityId) {
+            // update polygon mode
+            auto* pmc = registry.getComponent<PolygonModeComponent>(entityId);
+            PolygonModes::setPolygonMode(pmc ? *pmc : PolygonModeComponent());
+            // update culling mode
+            auto* culling = registry.getComponent<CullingComponent>(entityId);
+            Culling::setCulling(culling ? *culling : CullingComponent());
+        });
     }
 
     void RenderSystem::createLineRenderers() {
@@ -155,9 +164,9 @@ namespace engine::graphics {
                 fInstanceShader
         );
 
-        lineRenderer = MultiRenderer(batchShader, instanceShader, DrawType::LINE);
-        stripLineRenderer = MultiRenderer(batchShader, instanceShader, DrawType::LINE_STRIP);
-        loopLineRenderer = MultiRenderer(batchShader, instanceShader, DrawType::LINE_LOOP);
+        lineRenderer = DefaultRenderer(batchShader, instanceShader, DrawType::LINE);
+        stripLineRenderer = DefaultRenderer(batchShader, instanceShader, DrawType::LINE_STRIP);
+        loopLineRenderer = DefaultRenderer(batchShader, instanceShader, DrawType::LINE_LOOP);
     }
 
     void RenderSystem::createQuadRenderer() {
@@ -186,7 +195,7 @@ namespace engine::graphics {
                 fInstanceShader
         );
 
-        quadRenderer = MultiRenderer(batchShader, instanceShader, DrawType::QUAD);
+        quadRenderer = DefaultRenderer(batchShader, instanceShader, DrawType::QUAD);
     }
 
     void RenderSystem::createCircleRenderer() {
@@ -235,7 +244,7 @@ namespace engine::graphics {
                 fInstanceShader
         );
 
-        circleRenderer = MultiRenderer(batchShader, instanceShader, DrawType::QUAD);
+        circleRenderer = DefaultRenderer(batchShader, instanceShader, DrawType::QUAD);
     }
 
     void RenderSystem::createOutlineRenderer() {
@@ -283,8 +292,8 @@ namespace engine::graphics {
                 fInstanceShader
         );
 
-        outlineSceneRenderer = MultiRenderer(batchShader, instanceShader, DrawType::TRIANGLE);
-        outlineQuadRenderer = MultiRenderer(batchShader, instanceShader, DrawType::TRIANGLE_STRIP);
+        outlineSceneRenderer = DefaultRenderer(batchShader, instanceShader, DrawType::TRIANGLE);
+        outlineQuadRenderer = DefaultRenderer(batchShader, instanceShader, DrawType::TRIANGLE_STRIP);
     }
 
     void RenderSystem::createSkyboxRenderer() {
@@ -335,6 +344,7 @@ namespace engine::graphics {
     }
 
     void RenderSystem::createScreenRenderer() {
+        auto screen = Screen();
         auto vShader = shader::BaseShader();
         auto fShader = shader::BaseShader();
         auto shader = shader::BaseShaderProgram(
@@ -347,10 +357,8 @@ namespace engine::graphics {
                 vShader,
                 fShader
         );
-        screenRenderer = VRenderer(shader);
-
         // upload screen geometry to GPU memory and delete from heap memory
-        auto screen = Screen();
+        screenRenderer = VRenderer(shader);
         screenRenderer.uploadStatic(screen);
         delete screen.vertexData.vertices;
     }
@@ -367,5 +375,11 @@ namespace engine::graphics {
         );
 
         pointRenderer = VRenderer(shader);
+    }
+
+    void RenderSystem::onPrepare() {
+        auto skybox = activeScene->getSkybox().get<VertexDataComponent<SkyboxVertex>>();
+        skyboxRenderer.uploadStatic(*skybox);
+        delete skybox->vertexData.vertices;
     }
 }

@@ -16,7 +16,7 @@ namespace engine::graphics {
     class VertexBuffer final : public Buffer {
 
     public:
-        VertexBuffer() : Buffer(DEFAULT_VERTEX_COUNT) {}
+        VertexBuffer() : Buffer() {}
         VertexBuffer(const uint32_t& vertexCount) : Buffer(vertexCount) {}
         ~VertexBuffer() = default;
 
