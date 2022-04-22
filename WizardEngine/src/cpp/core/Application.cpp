@@ -19,25 +19,21 @@ namespace engine::core {
         ENGINE_INFO("onCreate()");
 
         _window = createScope<Window>(createWindowProps());
-
         fpsController.setMaxFps(getRefreshRate());
-
         createGraphics();
-
         input = createScope<event::Input>(_window->getNativeWindow());
-
         createScripting();
-
         setActiveScene(createRef<Scene>());
     }
 
     void Application::onPrepare() {
-        RenderCommands::logApiInfo();
+        graphics::logApiInfo();
         _window->onPrepare();
         _window->setInCenter();
         setSampleSize(1);
         _layerStack.onPrepare();
         loadGamepadMappings("../WizardEngine/assets/db/game_controller_db.txt");
+        _renderSystem->onPrepare();
     }
 
     void Application::onDestroy() {

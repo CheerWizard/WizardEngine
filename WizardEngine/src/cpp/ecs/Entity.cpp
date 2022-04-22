@@ -12,7 +12,7 @@ namespace engine::ecs {
     }
 
     bool EntityContainer::isEmpty() {
-        return registry.isEmpty();
+        return registry.empty_entity();
     }
 
     size_t EntityContainer::size() {

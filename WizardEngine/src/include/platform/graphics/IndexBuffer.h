@@ -11,12 +11,11 @@
 
 namespace engine::graphics {
 
-    // Single IBO - Index Buffer Object.
-    // Can be used as graphics API interface
+    // IBO - Index Buffer Object, component of graphics pipeline
     class IndexBuffer final : public Buffer {
 
     public:
-        IndexBuffer() : Buffer(DEFAULT_INDEX_COUNT) {}
+        IndexBuffer() : Buffer() {}
         IndexBuffer(const uint32_t& indexCount) : Buffer(indexCount) {}
         ~IndexBuffer() = default;
 

@@ -154,19 +154,24 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
         template<class Component>
         Component* getComponent(entity_id entityId);
         // entity/component iterations
+        template<typename Function>
+        void eachEntity(const Function& function);
+
         template<class Component, typename Function>
         void each(const Function& function);
         template<class Component1, class Component2, typename Function>
         void each(const Function& function);
-        template<typename Function>
-        void eachEntity(const Function& function);
-        template<class Component, typename Function>
-        void eachEntityComponent(const Function& function);
+        template<class Component1, class Component2, class Component3, typename Function>
+        void each(const Function& function);
 
+        size_t entity_count();
         template<class Component>
         size_t component_count();
-        size_t entity_count();
-        bool isEmpty();
+
+        bool empty_entity();
+        template<class Component>
+        bool empty_components();
+
         void clear();
 
     private:
@@ -261,13 +266,19 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
         return nullptr;
     }
 
+    template<typename Function>
+    void Registry::eachEntity(const Function& function) {
+        for (entity* entity : entities) {
+            function((entity_id) entity);
+        }
+    }
+
     template<class Component, typename Function>
     void Registry::each(const Function& function) {
         validate_component("each()", Component, );
 
         component_data& componentData = components[Component::ID];
-        component_size componentSize = BaseComponent::getSize(Component::ID);
-        for (u32 i = 0 ; i < componentData.size() ; i += componentSize) {
+        for (u32 i = 0 ; i < componentData.size() ; i += Component::TYPE_SIZE) {
             Component* component = (Component*) &componentData[i];
             function(component);
         }
@@ -279,9 +290,7 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
         validate_component("each()", Component2, );
 
         component_data& componentData1 = components[Component1::ID];
-        component_size componentSize1 = BaseComponent::getSize(Component1::ID);
-
-        for (u32 i = 0 ; i < componentData1.size() ; i += componentSize1) {
+        for (u32 i = 0 ; i < componentData1.size() ; i += Component1::TYPE_SIZE) {
             Component1* component1 = (Component1*) &componentData1[i];
             entity_id entityId1 = component1->entityId;
             Component2* component2 = getComponent<Component2>(entityId1);
@@ -291,28 +300,31 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
         }
     }
 
-    template<typename Function>
-    void Registry::eachEntity(const Function& function) {
-        for (entity* entity : entities) {
-            function((entity_id) entity);
-        }
-    }
+    template<class Component1, class Component2, class Component3, typename Function>
+    void Registry::each(const Function& function) {
+        validate_component("each()", Component1, );
+        validate_component("each()", Component2, );
+        validate_component("each()", Component3, );
 
-    template<class Component, typename Function>
-    void Registry::eachEntityComponent(const Function& function) {
-        validate_component("each()", Component, );
-
-        component_data& componentData = components[Component::ID];
-        component_size componentSize = BaseComponent::getSize(Component::ID);
-        for (u32 i = 0 ; i < componentData.size() ; i += componentSize) {
-            Component* component = (Component*) &componentData[i];
-            entity_id entityId = component->entityId;
-            function(entityId, component);
+        component_data& componentData1 = components[Component1::ID];
+        for (u32 i = 0 ; i < componentData1.size() ; i += Component1::TYPE_SIZE) {
+            Component1* component1 = (Component1*) &componentData1[i];
+            entity_id entityId1 = component1->entityId;
+            Component2* component2 = getComponent<Component2>(entityId1);
+            Component3* component3 = getComponent<Component3>(entityId1);
+            if (component2 && component3) {
+                function(component1, component2, component3);
+            }
         }
     }
 
     template<class Component>
     size_t Registry::component_count() {
-        return components[Component::ID].size() / BaseComponent::getSize(Component::ID);
+        return components[Component::ID].size() / Component::TYPE_SIZE;
+    }
+
+    template<class Component>
+    bool Registry::empty_components() {
+        return component_count<Component>() == 0;
     }
 }

@@ -42,27 +42,6 @@ namespace engine::graphics {
         glDrawElementsInstanced(toGLDrawType(drawType), (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
     }
 
-    void enableCulling() {
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT);
-    }
-
-    void disableCulling() {
-        glDisable(GL_CULL_FACE);
-    }
-
-    GLenum toGLPolygonMode(const PolygonMode& polygonMode) {
-        switch (polygonMode) {
-            case DOT: return GL_POINT;
-            case LINES: return GL_LINE;
-            default: return GL_FILL;
-        }
-    }
-
-    void setPolygonMode(const PolygonMode& polygonMode) {
-        glPolygonMode(GL_FRONT_AND_BACK, toGLPolygonMode(polygonMode));
-    }
-
     const unsigned char* getAPIName() {
         return 0;
     }
@@ -255,35 +234,44 @@ namespace engine::graphics {
         glFrontFace(toGLFrontFaceType(frontFaceType));
     }
 
-    PolygonMode RenderCommands::activePolygonMode = FILL;
-    bool RenderCommands::isCullingEnabled = false;
-
-    void RenderCommands::toggleCulling() {
-        isCullingEnabled = !isCullingEnabled;
-        if (isCullingEnabled) {
-            enableCulling();
-        } else {
-            disableCulling();
+    GLenum toGLPolygonMode(const PolygonMode& polygonMode) {
+        switch (polygonMode) {
+            case DOT: return GL_POINT;
+            case LINES: return GL_LINE;
+            default: return GL_FILL;
         }
     }
 
-    void RenderCommands::setCulling(const CullingComponent &culling) {
-        if (culling.enabled != isCullingEnabled) {
-            toggleCulling();
-        }
+    void setPolygonMode(const FaceType& faceType, const PolygonMode& polygonMode) {
+        glPolygonMode(toGLFaceType(faceType), toGLPolygonMode(polygonMode));
     }
 
-    void RenderCommands::trySetPolygonMode(const PolygonMode &polygonMode) {
-        if (polygonMode != activePolygonMode) {
-            activePolygonMode = polygonMode;
-            setPolygonMode(polygonMode);
-        }
-    }
-
-    void RenderCommands::logApiInfo() {
+    void logApiInfo() {
         ENGINE_INFO("Graphics API : {0}", getAPIName());
         ENGINE_INFO("Version : {0}", getVersion());
         ENGINE_INFO("Vendor : {0}", getVendorName());
         ENGINE_INFO("Renderer : {0}", getRendererName());
+    }
+
+    bool Culling::isCullingEnabled = false;
+
+    void Culling::setCulling(const CullingComponent &culling) {
+        if (culling.enabled != isCullingEnabled) {
+            isCullingEnabled = culling.enabled;
+            setCullFaceMode(culling.enabled);
+            setCullFace(culling.faceType);
+            setFrontFace(culling.frontFaceType);
+        }
+    }
+
+    PolygonMode PolygonModes::polygonMode = FILL;
+    FaceType PolygonModes::faceType = FRONT_AND_BACK;
+
+    void PolygonModes::setPolygonMode(const PolygonModeComponent& polygonModeComponent) {
+        if (polygonModeComponent.mode != polygonMode || polygonModeComponent.face != faceType) {
+            polygonMode = polygonModeComponent.mode;
+            faceType = polygonModeComponent.face;
+            graphics::setPolygonMode(polygonModeComponent.face, polygonModeComponent.mode);
+        }
     }
 }

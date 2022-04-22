@@ -11,9 +11,9 @@ namespace engine::scripting {
     void ScriptSystem::onUpdate(Time dt) {
         auto& registry = activeScene->getRegistry();
 
-        registry.eachEntityComponent<NativeScript>([&dt, this](entity_id entityId, NativeScript* sc) {
+        registry.each<NativeScript>([&dt, this](NativeScript* sc) {
             if (!sc->script) {
-                sc->script = { activeScene.get(), entityId };
+                sc->script = { activeScene.get(), sc->entityId };
                 sc->onCreateFunction(sc->script);
             }
             sc->onUpdateFunction(sc->script, dt);
