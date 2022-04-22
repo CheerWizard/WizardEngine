@@ -138,15 +138,15 @@ namespace engine::graphics {
         meshComponent.totalIndexCount = 0;
 
         for (auto i = 0; i < meshComponent.meshCount ; i++) {
-            auto& vertexData = meshComponent.meshes[i].vertexData;
-            auto& indexData = meshComponent.meshes[i].indexData;
+            VertexData<T>& vertexData = meshComponent.meshes[i].vertexData;
+            IndexData& indexData = meshComponent.meshes[i].indexData;
 
             vertexData.vertexStart = meshComponent.vertexStart + meshComponent.totalVertexCount;
             indexData.indexStart = meshComponent.indexStart + meshComponent.totalIndexCount;
 
             for (auto j = 0 ; j < indexData.indexCount ; j++) {
                 auto& index = indexData.indices[j];
-                index += meshComponent.vertexStart + meshComponent.totalVertexCount;
+                index += vertexData.vertexStart;
             }
 
             meshComponent.totalVertexCount += vertexData.vertexCount;

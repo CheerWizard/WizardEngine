@@ -589,10 +589,6 @@ namespace engine::graphics {
 
     template<typename T>
     bool Renderer::validate(BaseMeshComponent<T>& meshComponent) {
-        if ((meshComponent.totalIndexCount == 0 || meshComponent.totalVertexCount == 0) && meshComponent.meshCount > 0) {
-            updateStartAndCounts(meshComponent, 0, 0);
-        }
-
         if (viRenderModels.empty() || !hasCapacity(viRenderModels[meshComponent.renderModelId], meshComponent)) {
             auto vertexCount = meshComponent.totalVertexCount > DEFAULT_VERTEX_COUNT ? meshComponent.totalVertexCount * 3 : DEFAULT_VERTEX_COUNT;
             auto indexCount = meshComponent.totalIndexCount > DEFAULT_INDEX_COUNT ? meshComponent.totalIndexCount * 3 : DEFAULT_INDEX_COUNT;
