@@ -13,12 +13,12 @@ namespace engine::audio {
     class Context final {
 
     public:
-        Context(Device* device);
+        Context(const Ref<Device>& device);
         ~Context();
 
     private:
         void* handle;
-        Device* device;
+        Ref<Device> device;
     };
 
 }

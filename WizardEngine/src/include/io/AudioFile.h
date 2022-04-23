@@ -16,7 +16,8 @@ namespace engine::io {
     decl_exception(audio_format_exception)
 
     enum AudioFormat {
-        MONO_8, MONO_16, STEREO_8, STEREO_16,
+        MONO_8, MONO_16,
+        STEREO_8, STEREO_16,
         DEFAULT = MONO_8
     };
 

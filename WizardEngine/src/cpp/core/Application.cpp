@@ -24,6 +24,7 @@ namespace engine::core {
         input = createScope<event::Input>(_window->getNativeWindow());
         createScripting();
         setActiveScene(createRef<Scene>());
+        audio::Devices::createContext();
     }
 
     void Application::onPrepare() {
@@ -39,6 +40,7 @@ namespace engine::core {
     void Application::onDestroy() {
         ENGINE_INFO("onDestroy()");
         _scriptSystem->onDestroy();
+        audio::Devices::clear();
     }
 
     void Application::onUpdate() {

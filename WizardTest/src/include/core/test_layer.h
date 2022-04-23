@@ -12,6 +12,7 @@
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/GraphicsObject.h>
 #include <graphics/camera/CameraController.h>
+#include <audio/audio_source.h>
 
 using namespace engine::core;
 using namespace engine::graphics;
@@ -45,6 +46,7 @@ namespace test {
     private:
         Ref<Camera3dController> cameraController;
         Entity survivalBackPack;
+        audio::Source music;
     };
 
 }
