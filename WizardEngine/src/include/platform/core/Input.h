@@ -33,8 +33,8 @@ namespace engine::event {
     };
 
     struct GamepadState {
-        u8* buttons;
-        f32* axes;
+        u8 buttons[15];
+        f32 axes[6];
     };
 
     class Input {

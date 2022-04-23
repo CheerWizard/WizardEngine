@@ -46,7 +46,6 @@ namespace test {
     private:
         Ref<Camera3dController> cameraController;
         Entity survivalBackPack;
-        audio::Source music;
     };
 
 }

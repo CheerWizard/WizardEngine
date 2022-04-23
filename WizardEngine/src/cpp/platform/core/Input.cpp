@@ -64,7 +64,16 @@ namespace engine::event {
     GamepadState Input::getGamepadState() const {
         GLFWgamepadstate state;
         glfwGetGamepadState(joystickId, &state);
-        GamepadState gamepadState = { state.buttons, state.axes };
+        GamepadState gamepadState {};
+
+        for (u32 i = 0 ; i < 6 ; i++) {
+            gamepadState.buttons[i] = state.buttons[i];
+            gamepadState.axes[i] = state.axes[i];
+        }
+        for (u32 i = 6 ; i < 15 ; i++) {
+            gamepadState.buttons[i] = state.buttons[i];
+        }
+
         return gamepadState;
     }
 
