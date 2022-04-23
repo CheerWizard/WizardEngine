@@ -3,6 +3,7 @@
 //
 
 #include <graphics/core/buffer_data/IndexData.h>
+#include <algorithm>
 
 namespace engine::graphics {
 

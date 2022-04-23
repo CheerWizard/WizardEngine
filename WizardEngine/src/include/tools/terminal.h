@@ -15,6 +15,7 @@ namespace engine::terminal {
     void openZBrush(const std::string &filePath);
     void msBuild(const std::string& slnPath);
     void cmake(const std::string& cmakePath);
+    void cmakeD(const std::string& cmakePath, const std::vector<const char*>& definitions);
     void openNotepadTask(const std::string &filePath);
     void openVSCodeTask(const std::string &filePath);
     void openVisualStudioTask(const std::string &filePath);
@@ -23,5 +24,4 @@ namespace engine::terminal {
     void openZBrushTask(const std::string &filePath);
     void msBuildTask(const std::string &slnPath);
     void cmakeTask(const std::string& cmakePath);
-    void cmake(const std::string& cmakePath, const std::vector<const char*>& definitions);
 }

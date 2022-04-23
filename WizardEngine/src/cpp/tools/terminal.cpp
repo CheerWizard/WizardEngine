@@ -12,7 +12,7 @@ namespace engine::terminal {
         thread::VoidTask<const std::string&> task = {
                 "VSCode_Task",
                 "VSCode_Thread",
-                openVSCodeTask
+                openVSCode
         };
         task.run(filePath);
     }
@@ -28,7 +28,7 @@ namespace engine::terminal {
         thread::VoidTask<const std::string&> task = {
                 "VSCode_Task",
                 "VSCode_Thread",
-                openVSCodeTask
+                openNotepad
         };
         task.run(filePath);
     }
@@ -44,7 +44,7 @@ namespace engine::terminal {
         thread::VoidTask<const std::string&> task = {
                 "VSCode_Task",
                 "VSCode_Thread",
-                openVSCodeTask
+                openVisualStudio
         };
         task.run(filePath);
     }
@@ -60,7 +60,7 @@ namespace engine::terminal {
         thread::VoidTask<const std::string&> task = {
                 "Photoshop_Task",
                 "Photoshop_Thread",
-                openPhotoshopTask
+                openPhotoshop
         };
         task.run(filePath);
     }
@@ -70,7 +70,7 @@ namespace engine::terminal {
         thread::VoidTask<const std::string&> task = {
                 "Blender_Task",
                 "Blender_Thread",
-                openBlenderTask
+                openBlender
         };
         task.run(filePath);
     }
@@ -80,7 +80,7 @@ namespace engine::terminal {
         thread::VoidTask<const std::string&> task = {
                 "ZBrush_Task",
                 "ZBrush_Thread",
-                openZBrushTask
+                openZBrush
         };
         task.run(filePath);
     }
@@ -90,7 +90,7 @@ namespace engine::terminal {
         thread::VoidTask<const std::string&> task = {
                 "MSBuild_Task",
                 "MSBuild_Thread",
-                msBuildTask
+                msBuild
         };
         task.run(slnPath);
     }
@@ -100,7 +100,7 @@ namespace engine::terminal {
         thread::VoidTask<const std::string&> task = {
                 "CMake_Task",
                 "CMake_Thread",
-                cmakeTask
+                cmake
         };
         task.run(cmakePath);
     }
@@ -135,7 +135,7 @@ namespace engine::terminal {
         system(cmd.c_str());
     }
 
-    void cmake(const std::string &cmakePath, const std::vector<const char *>& definitions) {
+    void cmakeD(const std::string &cmakePath, const std::vector<const char *>& definitions) {
         EDITOR_INFO("cmakeTask({0})", cmakePath);
         std::stringstream ss;
         ss << "cmake ";

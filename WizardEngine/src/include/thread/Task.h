@@ -9,42 +9,43 @@
 
 namespace engine::thread {
 
-    template<typename Runnable, typename Callback, typename... Args>
+    template<typename Runnable, typename Done, typename... Args>
     struct Task {
         const char* name = "Default_Task";
         const char* threadName = "Default_Thread";
         bool isRunning = false;
         std::function<Runnable> runnable;
-        std::function<Callback> callback = nullptr;
+        std::function<Done> done = [](){};
+        std::function<void(Args&&...)> runImpl = [this](Args&&... args) {
+            isRunning = true;
+            runnable(args...);
+            done();
+            isRunning = false;
+        };
+
+        Task() = default;
 
         Task(const char* name,
              const char* threadName,
              const std::function<Runnable>& runnable,
-             const std::function<Callback>& callback = nullptr
-        ) : name(name), threadName(threadName), runnable(runnable), callback(callback) {}
+             const std::function<Done>& done = nullptr
+        ) : name(name), threadName(threadName), runnable(runnable), done(done) {}
 
-        void run(Args&&... args) {
+        void run(Args &&... args) {
             if (isRunning) return;
-            isRunning = true;
-
             ENGINE_INFO("Running Task: {0}; Thread: {1}", name, threadName);
-            std::thread thread(runnable, std::forward<Args>(args)...);
-            thread.join();
-            isRunning = false;
-            ENGINE_INFO("Finished Task: {0}; Joined Thread: {1}", name, threadName);
-            if (callback != nullptr) {
-                callback();
-            }
+            std::thread(runImpl, args...).detach();
         }
     };
 
     template<typename... Args>
     struct VoidTask : public Task<void(Args...), void(), Args...> {
+        VoidTask() : Task<void(Args...), void(), Args...>() {}
         VoidTask(const char* name,
                  const char* threadName,
                  const std::function<void(Args...)>& runnable,
-                 const std::function<void()>& callback = nullptr
-        ) : Task<void(Args...), void(), Args...>(name, threadName, runnable, callback) {}
+                 const std::function<void()>& done = [](){}
+        ) : Task<void(Args...), void(), Args...>(name, threadName, runnable, done) {}
     };
 
 }

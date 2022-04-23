@@ -3,6 +3,7 @@
 //
 
 #include <core/test_layer.h>
+#include <audio/audio_player.h>
 
 namespace test {
 
@@ -49,6 +50,16 @@ namespace test {
         } catch (const file_not_found& ex) {
             RUNTIME_ERR("Could not load model file!");
         }
+
+        audio::MediaPlayer::load(
+                "assets/audio/forest.wav",
+                [this](const audio::Source &source) {
+                    music = source;
+                },
+                [this]() {
+                    audio::MediaPlayer::play(music);
+                }
+        );
     }
 
     void TestLayer::bindCamera() {
@@ -70,9 +81,9 @@ namespace test {
         BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_X, ENGINE_INFO("Button X pressed!"););
         BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_Y, ENGINE_INFO("Button Y pressed!"););
 
-        BIND_KEY_PRESSED(KeyCode::D1, survivalBackPack.update<CullingComponent>(true););
-        BIND_KEY_PRESSED(KeyCode::D2, survivalBackPack.update<CullingComponent>(true););
-        BIND_KEY_PRESSED(KeyCode::D3, survivalBackPack.update<CullingComponent>(false););
+        BIND_KEY_PRESSED(KeyCode::D1, audio::MediaPlayer::pause(music););
+        BIND_KEY_PRESSED(KeyCode::D2, audio::MediaPlayer::stop(music););
+        BIND_KEY_PRESSED(KeyCode::D3, audio::MediaPlayer::play(music););
     }
 
     void TestLayer::onUpdate(time::Time deltaTime) {

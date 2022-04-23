@@ -10,6 +10,7 @@ macro(include_engine path)
             ${path}/vendor/stb
             ${path}/vendor/freetype
             ${path}/vendor/assimp/include
+            ${path}/vendor/openal-soft/include
     )
 endmacro()
 # use this macro to link WizardEngine and all it's dependencies!
