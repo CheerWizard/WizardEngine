@@ -53,11 +53,11 @@ namespace test {
 
         audio::MediaPlayer::load(
                 "assets/audio/forest.wav",
-                [this](const audio::Source &source) {
-                    music = source;
+                [](const audio::Source &source) {
+                    audio::MediaPlayer::setPlayedSource(source);
                 },
-                [this]() {
-                    audio::MediaPlayer::play(music);
+                []() {
+                    audio::MediaPlayer::play();
                 }
         );
     }
@@ -81,9 +81,9 @@ namespace test {
         BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_X, ENGINE_INFO("Button X pressed!"););
         BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_Y, ENGINE_INFO("Button Y pressed!"););
 
-        BIND_KEY_PRESSED(KeyCode::D1, audio::MediaPlayer::pause(music););
-        BIND_KEY_PRESSED(KeyCode::D2, audio::MediaPlayer::stop(music););
-        BIND_KEY_PRESSED(KeyCode::D3, audio::MediaPlayer::play(music););
+        BIND_KEY_PRESSED(KeyCode::D1, audio::MediaPlayer::pause(););
+        BIND_KEY_PRESSED(KeyCode::D2, audio::MediaPlayer::stop(););
+        BIND_KEY_PRESSED(KeyCode::D3, audio::MediaPlayer::play(););
     }
 
     void TestLayer::onUpdate(time::Time deltaTime) {

@@ -46,6 +46,8 @@ namespace engine::audio {
                 const std::function<void()>& done
         );
 
+        static void setPlayedSource(const Source& source);
+
     private:
         static void loadImpl(const std::string& filepath, const SourceLoaded& sourceLoaded);
         static void playImpl(const u32& sourceId);

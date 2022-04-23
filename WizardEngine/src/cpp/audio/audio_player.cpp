@@ -123,4 +123,8 @@ namespace engine::audio {
         manageTask.runnable = stopImpl;
         manageTask.run(playedSourceId);
     }
+
+    void MediaPlayer::setPlayedSource(const Source &source) {
+        playedSourceId = source.get();
+    }
 }
