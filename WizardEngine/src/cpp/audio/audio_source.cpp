@@ -9,13 +9,16 @@ namespace engine::audio {
 
     void Source::create() {
         alCall(alGenSources, 1, &id);
+        buffer.create();
     }
 
     void Source::destroy() {
         alCall(alDeleteSources, 1, &id);
+        buffer.destroy();
     }
 
     void Source::recreate() {
+        buffer.recreate();
         destroy();
         create();
     }
@@ -40,7 +43,11 @@ namespace engine::audio {
         alCall(alSourcei, id, AL_LOOPING, enabled);
     }
 
-    void Source::setBuffer(u32 bufferId) const {
-        alCall(alSourcei, id, AL_BUFFER, bufferId);
+    void Source::load(const io::AudioData &audioData) {
+        buffer.load(audioData);
+    }
+
+    void Source::setBuffer() const {
+        alCall(alSourcei, id, AL_BUFFER, buffer.get());
     }
 }
