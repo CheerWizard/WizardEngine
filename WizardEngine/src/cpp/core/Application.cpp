@@ -252,11 +252,12 @@ namespace engine::core {
         if (isJoystickConnected) {
             ENGINE_INFO("Joystick is connected!");
             auto gamepadState = input->getGamepadState();
-            auto& buttons = gamepadState.buttons;
-            auto& axis = gamepadState.axes;
+            auto buttons = gamepadState.buttons;
+            auto axis = gamepadState.axes;
 
             for (auto& gamepadButtonPressed : eventRegistry.onGamepadButtonPressedMap) {
-                if (buttons[gamepadButtonPressed.first] == event::PRESS) {
+                auto btn = buttons[gamepadButtonPressed.first];
+                if (btn == event::PRESS) {
                     gamepadButtonPressed.second.function(gamepadButtonPressed.first);
                 }
             }
