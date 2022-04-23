@@ -40,6 +40,7 @@ namespace engine::core {
     void Application::onDestroy() {
         ENGINE_INFO("onDestroy()");
         _scriptSystem->onDestroy();
+        audio::MediaPlayer::clear();
         audio::Devices::clear();
     }
 

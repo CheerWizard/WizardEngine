@@ -22,6 +22,8 @@ namespace engine::audio {
         void destroy();
         void recreate();
 
+        void load(const io::AudioData& audioData);
+
         void setPitch(f32 pitch) const;
         void setGain(f32 gain) const;
 
@@ -29,7 +31,7 @@ namespace engine::audio {
         void setVelocity(const glm::vec3& velocity) const;
 
         void setLooping(bool enabled) const;
-        void setBuffer(u32 bufferId) const;
+        void setBuffer() const;
 
     public:
         [[nodiscard]] inline const u32& get() const {
@@ -38,6 +40,8 @@ namespace engine::audio {
 
     private:
         u32 id = 0;
+        Buffer buffer;
+        vector<Buffer> streamBuffers;
     };
 
 }
