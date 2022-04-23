@@ -22,6 +22,8 @@
 
 #include <scripting/ScriptSystem.h>
 
+#include <audio/devices.h>
+
 #define BIND_GAMEPAD_BUTTON_PRESSED(gamepadBtn, action) engine::core::Application::get().eventRegistry.onGamepadButtonPressedMap[gamepadBtn] = { \
 [this](GamepadButtonCode gamepadBtnCode) { action }                                                                                 \
 }

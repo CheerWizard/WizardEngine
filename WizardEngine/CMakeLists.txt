@@ -11,7 +11,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(${PROJECT_NAME} ${ENGINE_SRC})
+add_library(${PROJECT_NAME} ${ENGINE_SRC} src/cpp/audio/devices.cpp src/include/audio/devices.h)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 #/ adding dependencies.
@@ -47,8 +47,7 @@ include_directories(vendor/freetype)
 #/ Assets importer/exporter. Builds as DLL
 include_directories(vendor/assimp/include)
 
-#/ Audio core
-add_subdirectory(vendor/openal-soft)
+#/ Audio core. Builds as DLL
 include_directories(vendor/openal-soft/include)
 
 #/ linking dependencies.
@@ -62,13 +61,15 @@ target_link_libraries(
         stb
         freetype
         ../WizardEngine/vendor/dlls/assimp-vc143-mtd
-        OpenAL
+        ../WizardEngine/vendor/dlls/OpenAL32
 )
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
 replace_dirs(WizardEngine/vendor/dlls WizardEngine/vendor/dlls)
 replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardStudio/assimp-vc143-mtd.dll)
 replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardTest/assimp-vc143-mtd.dll)
+replace_file(vendor/dlls/OpenAL32.dll ../WizardStudio/OpenAL32.dll)
+replace_file(vendor/dlls/OpenAL32.dll ../WizardTest/OpenAL32.dll)
 #replace_dirs(WizardEngine/cpp_scripting WizardEngine/cpp_scripting)
 #replace_dirs(WizardEngine/runtime WizardEngine/runtime)
 #replace_dirs(WizardEngine/src/include WizardEngine/src/include)

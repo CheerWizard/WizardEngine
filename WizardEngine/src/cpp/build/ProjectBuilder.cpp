@@ -56,7 +56,7 @@ namespace engine::build {
 
     void ProjectBuilder::build(const std::string &cmakePath, const std::string& projectPath) {
         if (!filesystem::exists(projectPath)) {
-            terminal::cmake(cmakePath, { "DEBUG" });
+            terminal::cmakeD(cmakePath, { "DEBUG" });
         }
         terminal::msBuild(projectPath);
     }

@@ -3,42 +3,41 @@
 //
 
 #include <audio/audio_player.h>
-#include <audio/audio_core.h>
+#include <audio/devices.h>
 
 namespace engine::audio {
 
-    Device* MediaPlayer::device = nullptr;
-    Context* MediaPlayer::context = nullptr;
+    LoadTask MediaPlayer::loadTask = {
+            "MediaPlayer_LoadTask",
+            "MediaPlayer_LoadThread",
+            loadImpl
+    };
 
-    void MediaPlayer::initContext() {
-        if (!context) {
-            if (!device) {
-                device = new Device();
-            }
-            context = new Context(device);
-        }
+    SourceTask MediaPlayer::playTask = {
+            "MediaPlayer_PlayTask",
+            "MediaPlayer_PlayThread",
+            playImpl
+    };
+
+    SourceTask MediaPlayer::manageTask = {
+            "MediaPlayer_ManageTask",
+            "MediaPlayer_ManageThread",
+            stopImpl
+    };
+
+    unordered_map<u32, Source> MediaPlayer::sources;
+
+    void MediaPlayer::load(
+            const std::string& filepath,
+            const SourceLoaded& sourceLoaded,
+            const std::function<void()> done
+    ) {
+        loadTask.done = done;
+        loadTask.run(filepath, sourceLoaded);
     }
 
-    void MediaPlayer::play(const Source &source) {
-        alCall(alSourcePlay, source.get());
-        ALint state = AL_PLAYING;
-        while (state == AL_PLAYING) {
-            alCall(alGetSourcei, source.get(), AL_SOURCE_STATE, &state);
-        }
-    }
-
-    void MediaPlayer::pause(const Source &source) {
-        alCall(alSourcePause, source.get());
-    }
-
-    void MediaPlayer::stop(const Source &source) {
-        alCall(alSourceStop, source.get());
-    }
-
-    Source MediaPlayer::load(const char *filepath) {
-        initContext();
-
-        io::AudioData audioData = io::AudioFile::readWav(filepath);
+    void MediaPlayer::loadImpl(const std::string& filepath, const SourceLoaded& sourceLoaded) {
+        io::AudioData audioData = io::AudioFile::readWav(filepath.c_str());
 
         Buffer buffer;
         buffer.create();
@@ -53,12 +52,36 @@ namespace engine::audio {
         source.setLooping(false);
         source.setBuffer(buffer.get());
 
-        return source;
+        sourceLoaded(source);
     }
 
-    void MediaPlayer::destroy() {
-        delete context;
-        delete device;
+    void MediaPlayer::play(const Source &source) {
+        playTask.run(source);
     }
 
+    void MediaPlayer::playImpl(const Source &source) {
+        alCall(alSourcePlay, source.get());
+        ALint state = AL_PLAYING;
+        while (state == AL_PLAYING) {
+            alCall(alGetSourcei, source.get(), AL_SOURCE_STATE, &state);
+        }
+    }
+
+    void MediaPlayer::pause(const Source &source) {
+        manageTask.runnable = pauseImpl;
+        manageTask.run(source);
+    }
+
+    void MediaPlayer::pauseImpl(const Source &source) {
+        alCall(alSourcePause, source.get());
+    }
+
+    void MediaPlayer::stop(const Source &source) {
+        manageTask.runnable = stopImpl;
+        manageTask.run(source);
+    }
+
+    void MediaPlayer::stopImpl(const Source &source) {
+        alCall(alSourceStop, source.get());
+    }
 }

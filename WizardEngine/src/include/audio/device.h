@@ -20,14 +20,17 @@ namespace engine::audio {
         ~Device();
 
     public:
-        vector<std::string> getAvailableDevices();
-
         inline void* get() {
             return handle;
         }
 
+        [[nodiscard]] inline u8 getId() const {
+            return id;
+        }
+
     private:
+        static u8 IDS;
+        u8 id = IDS++;
         void* handle;
     };
-
 }

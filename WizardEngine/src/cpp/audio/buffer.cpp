@@ -20,8 +20,18 @@ namespace engine::audio {
         create();
     }
 
+    u32 convertAudioFormat(const io::AudioFormat& audioFormat) {
+        switch (audioFormat) {
+            case io::AudioFormat::MONO_8: return AL_FORMAT_MONO8;
+            case io::AudioFormat::MONO_16: return AL_FORMAT_MONO16;
+            case io::AudioFormat::STEREO_8: return AL_FORMAT_STEREO8;
+            case io::AudioFormat::STEREO_16: return AL_FORMAT_STEREO16;
+        }
+    }
+
     void Buffer::load(const io::AudioData &audioData) const {
-        alCall(alBufferData, id, audioData.format, audioData.data, audioData.size, audioData.frequency);
+        ENGINE_INFO("Audio buffer[id={0}] load()", id);
+        alCall(alBufferData, id, convertAudioFormat(audioData.format), audioData.data, audioData.size, audioData.frequency);
     }
 
 }
