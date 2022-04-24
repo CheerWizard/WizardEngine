@@ -53,8 +53,9 @@ namespace engine::audio {
         void recreate();
 
         void load(const io::AudioData& audioData);
-        void loadStream(const io::AudioData& audioData, const Cursor& cursor);
-        void updateStream() const;
+        void load(const u32& bufferIndex, const io::AudioData& audioData);
+        void loadStream(const std::string& filepath);
+        void updateStream();
 
         void setPosition(const glm::vec3& position) const;
         void setVelocity(const glm::vec3& velocity) const;
@@ -70,6 +71,7 @@ namespace engine::audio {
 
         void setBuffer(const u32& bufferIndex) const;
         void queueBuffers() const;
+        void queueBuffer(const u32& bufferIndex) const;
         void unQueueBuffers() const;
         void clearBuffers();
 
@@ -77,7 +79,7 @@ namespace engine::audio {
         void pause() const;
         void stop() const;
 
-        void playStream() const;
+        void playStream();
 
     public:
         [[nodiscard]] inline const u32& get() const {
@@ -93,6 +95,7 @@ namespace engine::audio {
         vector<Buffer> buffers;
         Cursor cursor;
         io::AudioData audioData;
+        u8 currentBufferIndex = 0;
     };
 
 }

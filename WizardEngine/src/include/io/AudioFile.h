@@ -35,17 +35,27 @@ namespace engine::io {
         ~AudioFile() = default;
 
     public:
+        static AudioData readWav(const char* filepath);
+        static char* streamWav(const s64& dataOffset, const s64& dataSize);
+        static AudioData readWavHeaders(const char* filepath);
+
+        static void open(const char* filepath);
+        static bool isOpen();
+        static void close();
+
+    private:
         static bool readWavFileHeader(
-                std::ifstream& file,
                 u8& channels,
                 s32& sampleRate,
                 u8& bitsPerSample,
                 s32& size
         );
-        static AudioData readWav(const char* filePath);
 
     private:
         static s32 toInt(char* buffer, size_t length);
+
+    private:
+        static std::ifstream filestream;
     };
 
 }
