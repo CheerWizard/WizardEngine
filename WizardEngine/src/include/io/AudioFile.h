@@ -15,17 +15,21 @@ namespace engine::io {
 
     decl_exception(audio_format_exception)
 
-    enum AudioFormat {
+    enum Channels {
         MONO_8, MONO_16,
         STEREO_8, STEREO_16,
         DEFAULT = MONO_8
     };
 
-    struct AudioData {
-        char* data = nullptr;
+    struct AudioFormat {
         s32 size = 0;
         s32 frequency = 0;
-        AudioFormat format = DEFAULT;
+        Channels channels = DEFAULT;
+    };
+
+    struct AudioData {
+        AudioFormat format;
+        char* data = nullptr;
     };
 
     class AudioFile final {
@@ -37,7 +41,7 @@ namespace engine::io {
     public:
         static AudioData readWav(const char* filepath);
         static char* streamWav(const s64& dataOffset, const s64& dataSize);
-        static AudioData readWavHeaders(const char* filepath);
+        static AudioFormat readWavHeaders(const char* filepath);
 
         static void open(const char* filepath);
         static bool isOpen();

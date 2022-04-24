@@ -28,7 +28,6 @@ namespace engine::audio {
     void Source::destroy() {
         alCall(alDeleteSources, 1, &id);
         clearBuffers();
-        delete audioData.data;
     }
 
     void Source::recreate() {
@@ -79,21 +78,20 @@ namespace engine::audio {
         if (io::AudioFile::isOpen()) io::AudioFile::close();
 
         io::AudioFile::open(filepath.c_str());
-        audioData = io::AudioFile::readWavHeaders(filepath.c_str());
-        cursor = { static_cast<u8>(audioData.size / kb_512), kb_512 };
+        format = io::AudioFile::readWavHeaders(filepath.c_str());
+        cursor = { static_cast<u8>(format.size / kb_512), kb_512 };
 
         create(cursor.bufferCount - buffers.size());
 
         for (u32 i = 0 ; i < buffers.size() ; i++) {
             char* data = io::AudioFile::streamWav((s64) (i * cursor.bufferSize), (s64) cursor.bufferSize);
             io::AudioData subData {
+                {static_cast<s32>(cursor.bufferSize), format.frequency, format.channels },
                 data,
-                static_cast<s32>(cursor.bufferSize),
-                audioData.frequency,
-                audioData.format
             };
 
             buffers[i].load(subData);
+            delete[] data;
         }
     }
 
@@ -123,7 +121,7 @@ namespace engine::audio {
 
         size_t cursorValue = cursor.size();
         s32 bufferSize = (s32) cursor.bufferSize;
-        s32 dataSize = audioData.size;
+        s32 dataSize = format.size;
 
         while (buffersProcessed--) {
             ALuint buffer;
@@ -141,8 +139,10 @@ namespace engine::audio {
             }
 
             char* data = io::AudioFile::streamWav((s64) (currentBufferIndex * bufferSize), (s64) bufferSize);
-            io::AudioData audioSubData { data, bufferSize, audioData.frequency, audioData.format };
+            io::AudioData audioSubData { { bufferSize, format.frequency, format.channels }, data };
             Buffer::load(buffer, audioSubData);
+            delete[] data;
+
             alCall(alSourceQueueBuffers, id, 1, &buffer);
 
             currentBufferIndex++;
