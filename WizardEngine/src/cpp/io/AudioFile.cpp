@@ -141,49 +141,48 @@ namespace engine::io {
     AudioData AudioFile::readWav(const char *filepath) {
         open(filepath);
 
-        AudioData audioData = readWavHeaders(filepath);
-        char* data = new char[audioData.size];
-        filestream.read(data, audioData.size);
-        audioData.data = data;
+        AudioFormat format = readWavHeaders(filepath);
+        char* data = new char[format.size];
+        filestream.read(data, format.size);
 
         close();
 
-        return audioData;
+        return { format, data };
     }
 
-    AudioData AudioFile::readWavHeaders(const char *filepath) {
+    AudioFormat AudioFile::readWavHeaders(const char *filepath) {
         if (!isOpen()) {
             ENGINE_ERR("Unable to read file {0}. File is not opened!", filepath);
             ENGINE_THROW(file_not_found(filepath));
         }
 
-        u8 channels;
+        u8 channelCount;
         s32 sampleRate;
         u8 bitsPerSample;
         s32 size;
 
-        if (!readWavFileHeader(channels, sampleRate, bitsPerSample, size)) {
+        if (!readWavFileHeader(channelCount, sampleRate, bitsPerSample, size)) {
             ENGINE_ERR("Unable to load wav header of file {0}", filepath);
             ENGINE_THROW(file_not_found(filepath));
         }
 
-        AudioFormat format;
+        Channels channels;
 
-        if (channels == 1 && bitsPerSample == 8) {
-            format = MONO_8;
-        } else if (channels == 1 && bitsPerSample == 16) {
-            format = MONO_16;
-        } else if (channels == 2 && bitsPerSample == 8) {
-            format = STEREO_8;
-        } else if (channels == 2 && bitsPerSample == 16) {
-            format = STEREO_16;
+        if (channelCount == 1 && bitsPerSample == 8) {
+            channels = MONO_8;
+        } else if (channelCount == 1 && bitsPerSample == 16) {
+            channels = MONO_16;
+        } else if (channelCount == 2 && bitsPerSample == 8) {
+            channels = STEREO_8;
+        } else if (channelCount == 2 && bitsPerSample == 16) {
+            channels = STEREO_16;
         } else {
             std::stringstream ss;
-            ss << "Unsupported format exception : channels=" << channels << ", bps=" << bitsPerSample;
+            ss << "Unsupported format exception : channels=" << channelCount << ", bps=" << bitsPerSample;
             ENGINE_THROW(audio_format_exception(ss.str()));
         }
 
-        return AudioData { nullptr, size, sampleRate, format };
+        return AudioFormat { size, sampleRate, channels };
     }
 
     void AudioFile::open(const char *filepath) {

@@ -28,24 +28,24 @@ namespace engine::audio {
         create();
     }
 
-    u32 convertAudioFormat(const io::AudioFormat& audioFormat) {
-        switch (audioFormat) {
-            case io::AudioFormat::MONO_8: return AL_FORMAT_MONO8;
-            case io::AudioFormat::MONO_16: return AL_FORMAT_MONO16;
-            case io::AudioFormat::STEREO_8: return AL_FORMAT_STEREO8;
-            case io::AudioFormat::STEREO_16: return AL_FORMAT_STEREO16;
+    u32 convertChannels(const io::Channels& channels) {
+        switch (channels) {
+            case io::Channels::MONO_8: return AL_FORMAT_MONO8;
+            case io::Channels::MONO_16: return AL_FORMAT_MONO16;
+            case io::Channels::STEREO_8: return AL_FORMAT_STEREO8;
+            case io::Channels::STEREO_16: return AL_FORMAT_STEREO16;
         }
     }
 
     void Buffer::load(const io::AudioData &audioData) const {
         ENGINE_INFO("Audio buffer[id={0}] load()", id);
-        alCall(alBufferData, id, convertAudioFormat(audioData.format),
-               audioData.data, audioData.size, audioData.frequency);
+        alCall(alBufferData, id, convertChannels(audioData.format.channels),
+               audioData.data, audioData.format.size, audioData.format.frequency);
     }
 
     void Buffer::load(const u32 &id, const io::AudioData &audioData) {
         ENGINE_INFO("Audio buffer[id={0}] load()", id);
-        alCall(alBufferData, id, convertAudioFormat(audioData.format),
-               audioData.data, audioData.size, audioData.frequency);
+        alCall(alBufferData, id, convertChannels(audioData.format.channels),
+               audioData.data, audioData.format.size, audioData.format.frequency);
     }
 }
