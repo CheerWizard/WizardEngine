@@ -68,16 +68,26 @@ namespace engine::audio {
     }
 
     void Source::queueBuffers() const {
-        alCall(alSourceQueueBuffers, id, cursor.bufferCount, &buffers[0].get());
+        alCall(alSourceQueueBuffers, id, buffers.size(), &buffers[0].get());
     }
 
-    void Source::loadStream(const io::AudioData &audioData, const Cursor& cursor) {
-        this->cursor = cursor;
-        this->audioData = audioData;
+    void Source::load(const u32 &bufferIndex, const io::AudioData &audioData) {
+        buffers[bufferIndex].load(audioData);
+    }
+
+    void Source::loadStream(const std::string& filepath) {
+        if (io::AudioFile::isOpen()) io::AudioFile::close();
+
+        io::AudioFile::open(filepath.c_str());
+        audioData = io::AudioFile::readWavHeaders(filepath.c_str());
+        cursor = { static_cast<u8>(audioData.size / kb_512), kb_512 };
+
+        create(cursor.bufferCount - buffers.size());
 
         for (u32 i = 0 ; i < buffers.size() ; i++) {
+            char* data = io::AudioFile::streamWav((s64) (i * cursor.bufferSize), (s64) cursor.bufferSize);
             io::AudioData subData {
-                &audioData.data[i * cursor.bufferSize],
+                data,
                 static_cast<s32>(cursor.bufferSize),
                 audioData.frequency,
                 audioData.format
@@ -103,7 +113,7 @@ namespace engine::audio {
         alCall(alSourceStop, id);
     }
 
-    void Source::updateStream() const {
+    void Source::updateStream() {
         ALint buffersProcessed = 0;
         alCall(alGetSourcei, id, AL_BUFFERS_PROCESSED, &buffersProcessed);
 
@@ -130,13 +140,19 @@ namespace engine::audio {
                 cursorValue = bufferSize - dataSizeToCopy;
             }
 
-            io::AudioData audioSubData { &audioData.data[cursorValue], bufferSize, audioData.frequency, audioData.format };
+            char* data = io::AudioFile::streamWav((s64) (currentBufferIndex * bufferSize), (s64) bufferSize);
+            io::AudioData audioSubData { data, bufferSize, audioData.frequency, audioData.format };
             Buffer::load(buffer, audioSubData);
             alCall(alSourceQueueBuffers, id, 1, &buffer);
+
+            currentBufferIndex++;
+            if (currentBufferIndex >= cursor.bufferCount) {
+                currentBufferIndex = 0;
+            }
         }
     }
 
-    void Source::playStream() const {
+    void Source::playStream() {
         queueBuffers();
         alCall(alSourcePlay, id);
 
@@ -202,5 +218,9 @@ namespace engine::audio {
 
     void Source::setRolloffFactor(f32 rolloffFactor) const {
         alCall(alSourcef, id, AL_ROLLOFF_FACTOR, rolloffFactor);
+    }
+
+    void Source::queueBuffer(const u32 &bufferIndex) const {
+        alCall(alSourceQueueBuffers, id, 1, &buffers[bufferIndex].get());
     }
 }
