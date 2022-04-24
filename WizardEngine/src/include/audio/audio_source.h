@@ -94,7 +94,7 @@ namespace engine::audio {
         u32 id = 0;
         vector<Buffer> buffers;
         Cursor cursor;
-        io::AudioData audioData;
+        io::AudioFormat format;
         u8 currentBufferIndex = 0;
     };
 
