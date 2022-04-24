@@ -11,6 +11,10 @@ namespace engine::audio {
         alCall(alGenBuffers, 1, &id);
     }
 
+    void Buffer::create(u32 *ids, u8 count) {
+        alCall(alGenBuffers, count, &ids[0]);
+    }
+
     void Buffer::destroy() {
         alCall(alDeleteBuffers, 1, &id);
     }
@@ -31,7 +35,14 @@ namespace engine::audio {
 
     void Buffer::load(const io::AudioData &audioData) const {
         ENGINE_INFO("Audio buffer[id={0}] load()", id);
-        alCall(alBufferData, id, convertAudioFormat(audioData.format), audioData.data, audioData.size, audioData.frequency);
+        alCall(alBufferData, id, convertAudioFormat(audioData.format),
+               audioData.data, audioData.size, audioData.frequency);
+    }
+
+    void Buffer::load(const u32 &id, const io::AudioData &audioData) {
+        ENGINE_INFO("Audio buffer[id={0}] load()", id);
+        alCall(alBufferData, id, convertAudioFormat(audioData.format),
+               audioData.data, audioData.size, audioData.frequency);
     }
 
 }

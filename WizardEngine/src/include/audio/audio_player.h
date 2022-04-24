@@ -17,9 +17,6 @@ namespace engine::audio {
 
     class MediaPlayer final {
 
-        static const std::size_t NUM_BUFFERS = 4;
-        static const std::size_t BUFFER_SIZE = 65536;
-
     private:
         MediaPlayer() = default;
         ~MediaPlayer() = default;
@@ -38,9 +35,12 @@ namespace engine::audio {
         static void pause();
         static void stop();
 
+        static void playStream(const Source& source);
+        static void playStream();
+
         static void clear();
 
-        static void updateStream(
+        static void loadStream(
                 const std::string& filepath,
                 const SourceLoaded& sourceLoaded,
                 const std::function<void()>& done
@@ -53,7 +53,10 @@ namespace engine::audio {
         static void playImpl(const u32& sourceId);
         static void pauseImpl(const u32& sourceId);
         static void stopImpl(const u32& sourceId);
-        static void updateStreamImpl(const std::string& filepath, const SourceLoaded& sourceLoaded);
+
+        static void playStreamImpl(const u32& sourceId);
+
+        static void loadStreamImpl(const std::string& filepath, const SourceLoaded& sourceLoaded);
 
     private:
         static LoadTask loadTask;

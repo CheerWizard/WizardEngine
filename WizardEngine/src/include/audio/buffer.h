@@ -20,14 +20,17 @@ namespace engine::audio {
 
     public:
         Buffer() = default;
+        Buffer(const u32& id) : id(id) {}
         ~Buffer() = default;
 
     public:
         void create();
+        static void create(u32* ids, u8 count);
         void destroy();
         void recreate();
 
         void load(const io::AudioData &audioData) const;
+        static void load(const u32& id, const io::AudioData &audioData);
 
     public:
         [[nodiscard]] inline const u32& get() const {

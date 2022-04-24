@@ -23,7 +23,6 @@ namespace engine::io {
 
     struct AudioData {
         char* data = nullptr;
-        u32 start = 0;
         s32 size = 0;
         s32 frequency = 0;
         AudioFormat format = DEFAULT;
