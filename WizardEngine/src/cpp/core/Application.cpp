@@ -24,7 +24,7 @@ namespace engine::core {
         input = createScope<event::Input>(_window->getNativeWindow());
         createScripting();
         setActiveScene(createRef<Scene>());
-        audio::Devices::createContext();
+        audio::DeviceManager::createContext();
     }
 
     void Application::onPrepare() {
@@ -41,7 +41,7 @@ namespace engine::core {
         ENGINE_INFO("onDestroy()");
         _scriptSystem->onDestroy();
         audio::MediaPlayer::clear();
-        audio::Devices::clear();
+        audio::DeviceManager::clear();
     }
 
     void Application::onUpdate() {
@@ -250,14 +250,13 @@ namespace engine::core {
 
     void Application::updateEventRegistry() {
         if (isJoystickConnected) {
-            ENGINE_INFO("Joystick is connected!");
-            auto gamepadState = input->getGamepadState();
-            auto buttons = gamepadState.buttons;
-            auto axis = gamepadState.axes;
+            ENGINE_INFO("Joystick CONNECTED! Polling buttons and axes...");
+            const auto& gamepadState = input->getGamepadState();
+            const auto& buttons = gamepadState.buttons;
+            const auto& axis = gamepadState.axes;
 
             for (auto& gamepadButtonPressed : eventRegistry.onGamepadButtonPressedMap) {
-                auto btn = buttons[gamepadButtonPressed.first];
-                if (btn == event::PRESS) {
+                if (buttons[gamepadButtonPressed.first] == event::PRESS) {
                     gamepadButtonPressed.second.function(gamepadButtonPressed.first);
                 }
             }
@@ -272,7 +271,7 @@ namespace engine::core {
                 gamepadAxis.second.function(axis[gamepadAxis.first]);
             }
         } else {
-            ENGINE_INFO("Joystick is disconnected!");
+            ENGINE_WARN("Joystick DISCONNECTED! Polling joystick state...");
             isJoystickConnected = input->isJoystickConnected();
         }
     }

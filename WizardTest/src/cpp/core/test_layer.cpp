@@ -51,13 +51,14 @@ namespace test {
             RUNTIME_ERR("Could not load model file!");
         }
 
-        audio::MediaPlayer::load(
+        audio::MediaPlayer::loadStream(
                 "assets/audio/forest.wav",
+                {},
                 [](const audio::Source &source) {
                     audio::MediaPlayer::setPlayedSource(source);
                 },
                 []() {
-                    audio::MediaPlayer::play();
+                    audio::MediaPlayer::playStream();
                 }
         );
     }
@@ -76,14 +77,14 @@ namespace test {
     void TestLayer::onPrepare() {
         bindCamera();
 
-        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_A, ENGINE_INFO("Button A pressed!"););
-        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_B, ENGINE_INFO("Button B pressed!"););
-        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_X, ENGINE_INFO("Button X pressed!"););
-        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_Y, ENGINE_INFO("Button Y pressed!"););
+        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_A, onPadA(););
+        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_B, onPadB(););
+        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_X, onPadX(););
+        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_Y, onPadY(););
 
         BIND_KEY_PRESSED(KeyCode::D1, audio::MediaPlayer::pause(););
         BIND_KEY_PRESSED(KeyCode::D2, audio::MediaPlayer::stop(););
-        BIND_KEY_PRESSED(KeyCode::D3, audio::MediaPlayer::play(););
+        BIND_KEY_PRESSED(KeyCode::D3, audio::MediaPlayer::playStream(););
     }
 
     void TestLayer::onUpdate(time::Time deltaTime) {
@@ -117,5 +118,25 @@ namespace test {
     void TestLayer::onKeyTyped(event::KeyCode keyCode) {
         Layer::onKeyTyped(keyCode);
         cameraController->onKeyTyped(keyCode);
+    }
+
+    void TestLayer::onPadA() {
+        ENGINE_INFO("Gamepad button A pressed!");
+        cameraController->applyMove(MoveType::DOWN);
+    }
+
+    void TestLayer::onPadB() {
+        ENGINE_INFO("Gamepad button B pressed!");
+        cameraController->applyMove(MoveType::RIGHT);
+    }
+
+    void TestLayer::onPadX() {
+        ENGINE_INFO("Gamepad button X pressed!");
+        cameraController->applyMove(MoveType::LEFT);
+    }
+
+    void TestLayer::onPadY() {
+        ENGINE_INFO("Gamepad button Y pressed!");
+        cameraController->applyMove(MoveType::UP);
     }
 }

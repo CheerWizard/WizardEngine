@@ -20,6 +20,23 @@ namespace engine::core {
 
     using f32 = float;
 
+    // constants
+    constexpr f32 max_f32 = 340282340000000000000000000000000000000.0;
+
+    constexpr u32 kb_32 = 65536;
+
+    constexpr u16 kb_16 = kb_32 / 2;
+    constexpr u16 kb_8 = kb_16 / 2;
+    constexpr u16 kb_4 = kb_8 / 2;
+    constexpr u16 kb_2 = kb_4 / 2;
+    constexpr u16 kb_1 = kb_2 / 2;
+
+    constexpr u32 kb_64 = kb_32 * 2;
+    constexpr u32 kb_128 = kb_64 * 2;
+    constexpr u32 kb_256 = kb_128 * 2;
+    constexpr u32 kb_512 = kb_256 * 2;
+    constexpr u32 mb_1 = kb_512 * 2;
+
     enum class endian {
 #ifdef _WIN32
         little = 0,
@@ -27,8 +44,8 @@ namespace engine::core {
         native = little
 #else
         little = __ORDER_LITTLE_ENDIAN__,
-    big    = __ORDER_BIG_ENDIAN__,
-    native = __BYTE_ORDER__
+        big    = __ORDER_BIG_ENDIAN__,
+        native = __BYTE_ORDER__
 #endif
     };
 }

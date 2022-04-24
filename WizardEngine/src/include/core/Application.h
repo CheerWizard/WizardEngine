@@ -14,7 +14,7 @@
 #include <platform/core/Window.h>
 #include <platform/core/Input.h>
 #include <platform/tools/FileDialog.h>
-#include <platform/graphics/Context.h>
+#include <platform/graphics/graphics_context.h>
 
 #include <graphics/core/RenderSystem.h>
 #include <graphics/core/sources/MeshSource.h>
@@ -22,7 +22,7 @@
 
 #include <scripting/ScriptSystem.h>
 
-#include <audio/devices.h>
+#include <audio/audio_device_manager.h>
 #include <audio/audio_player.h>
 
 #define BIND_GAMEPAD_BUTTON_PRESSED(btn, action) engine::core::Application::get().eventRegistry.onGamepadButtonPressedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }

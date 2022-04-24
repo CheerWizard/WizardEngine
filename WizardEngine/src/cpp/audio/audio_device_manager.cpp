@@ -2,14 +2,14 @@
 // Created by mecha on 23.04.2022.
 //
 
-#include <audio/devices.h>
+#include <audio/audio_device_manager.h>
 
 namespace engine::audio {
 
-    Ref<Context> Devices::context;
-    unordered_map<u8, Ref<Device>> Devices::devices;
+    Ref<Context> DeviceManager::context;
+    unordered_map<u8, Ref<Device>> DeviceManager::devices;
 
-    vector<std::string> Devices::getAvailableDevices(void* deviceHandle) {
+    vector<std::string> DeviceManager::getAvailableDevices(void* deviceHandle) {
         const ALCchar* names;
         if (!alcCall(alcGetString, names, (ALCdevice*) deviceHandle, nullptr, ALC_DEVICE_SPECIFIER)) {
             ENGINE_THROW(audio_device_exception("No available devices!"));
@@ -26,43 +26,43 @@ namespace engine::audio {
         return devicesVec;
     }
 
-    u8 Devices::create(const char *name) {
+    u8 DeviceManager::create(const char *name) {
         auto device = createRef<Device>(name);
         devices.insert(std::pair<u8, Ref<Device>>(device->getId(), device));
         return device->getId();
     }
 
-    vector<std::string> Devices::getAvailableDevices(u8 id) {
+    vector<std::string> DeviceManager::getAvailableDevices(u8 id) {
         return getAvailableDevices(devices[id]->get());
     }
 
-    void Devices::destroy(u8 id) {
+    void DeviceManager::destroy(u8 id) {
         devices.erase(id);
     }
 
-    bool Devices::exists(u8 id) {
+    bool DeviceManager::exists(u8 id) {
         return devices.find(id) != devices.end();
     }
 
-    void Devices::clear() {
+    void DeviceManager::clear() {
         devices.clear();
         context.reset();
     }
 
-    void Devices::createContext(const char *deviceName) {
+    void DeviceManager::createContext(const char *deviceName) {
         u8 deviceId = create(deviceName);
         createContext(deviceId);
     }
 
-    void Devices::createContext(u8 deviceId) {
+    void DeviceManager::createContext(u8 deviceId) {
         context = createRef<Context>(devices[deviceId]);
     }
 
-    const Ref<Device> &Devices::getDevice(u8 id) {
+    const Ref<Device> &DeviceManager::getDevice(u8 id) {
         return devices.at(id);
     }
 
-    const Ref<Context> &Devices::getContext() {
+    const Ref<Context> &DeviceManager::getContext() {
         return context;
     }
 

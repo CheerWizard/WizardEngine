@@ -42,6 +42,10 @@ namespace test {
     private:
         void bindCamera();
         void init();
+        void onPadA();
+        void onPadB();
+        void onPadX();
+        void onPadY();
 
     private:
         Ref<Camera3dController> cameraController;

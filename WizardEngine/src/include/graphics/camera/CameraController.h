@@ -60,6 +60,10 @@ namespace engine::graphics {
             rotate(rotateType);
         }
 
+        void applyMove(const MoveType& moveType);
+        void applyRotate(const RotateType& rotateType);
+        void applyZoom(const ZoomType& zoomType);
+
         void updatePosition(const glm::vec3 &position) {
             setPosition(position);
             applyChanges();

@@ -4,16 +4,16 @@
 
 #pragma once
 
-#include <audio/context.h>
+#include <audio/audio_context.h>
 #include <core/map.h>
 
 namespace engine::audio {
 
-    class Devices final {
+    class DeviceManager final {
 
     private:
-        Devices() = default;
-        ~Devices() = default;
+        DeviceManager() = default;
+        ~DeviceManager() = default;
 
     public:
         static vector<std::string> getAvailableDevices(void* deviceHandle = nullptr);
