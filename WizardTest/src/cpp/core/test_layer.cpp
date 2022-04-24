@@ -53,6 +53,7 @@ namespace test {
 
         audio::MediaPlayer::loadStream(
                 "assets/audio/forest.wav",
+                {},
                 [](const audio::Source &source) {
                     audio::MediaPlayer::setPlayedSource(source);
                 },
@@ -76,10 +77,10 @@ namespace test {
     void TestLayer::onPrepare() {
         bindCamera();
 
-        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_A, cameraController->applyMove(MoveType::DOWN););
-        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_B, cameraController->applyMove(MoveType::RIGHT););
-        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_X, cameraController->applyMove(MoveType::LEFT););
-        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_Y, cameraController->applyMove(MoveType::UP););
+        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_A, onPadA(););
+        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_B, onPadB(););
+        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_X, onPadX(););
+        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_Y, onPadY(););
 
         BIND_KEY_PRESSED(KeyCode::D1, audio::MediaPlayer::pause(););
         BIND_KEY_PRESSED(KeyCode::D2, audio::MediaPlayer::stop(););
@@ -117,5 +118,25 @@ namespace test {
     void TestLayer::onKeyTyped(event::KeyCode keyCode) {
         Layer::onKeyTyped(keyCode);
         cameraController->onKeyTyped(keyCode);
+    }
+
+    void TestLayer::onPadA() {
+        ENGINE_INFO("Gamepad button A pressed!");
+        cameraController->applyMove(MoveType::DOWN);
+    }
+
+    void TestLayer::onPadB() {
+        ENGINE_INFO("Gamepad button B pressed!");
+        cameraController->applyMove(MoveType::RIGHT);
+    }
+
+    void TestLayer::onPadX() {
+        ENGINE_INFO("Gamepad button X pressed!");
+        cameraController->applyMove(MoveType::LEFT);
+    }
+
+    void TestLayer::onPadY() {
+        ENGINE_INFO("Gamepad button Y pressed!");
+        cameraController->applyMove(MoveType::UP);
     }
 }

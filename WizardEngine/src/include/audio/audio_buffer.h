@@ -10,8 +10,6 @@
 
 #include <io/AudioFile.h>
 
-#include <AL/al.h>
-
 namespace engine::audio {
 
     using namespace core;
@@ -27,6 +25,7 @@ namespace engine::audio {
         void create();
         static void create(u32* ids, u8 count);
         void destroy();
+        static void destroy(u32* ids, u8 count);
         void recreate();
 
         void load(const io::AudioData &audioData) const;
@@ -34,6 +33,10 @@ namespace engine::audio {
 
     public:
         [[nodiscard]] inline const u32& get() const {
+            return id;
+        }
+
+        [[nodiscard]] inline u32& getRef() {
             return id;
         }
 

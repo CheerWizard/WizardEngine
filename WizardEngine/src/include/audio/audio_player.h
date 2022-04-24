@@ -12,7 +12,7 @@
 namespace engine::audio {
 
     typedef std::function<void(const Source&)> SourceLoaded;
-    typedef thread::VoidTask<const std::string&, const SourceLoaded&> LoadTask;
+    typedef thread::VoidTask<const std::string&, const AudioSourceComponent&, const SourceLoaded&> LoadTask;
     typedef thread::VoidTask<const u32&> SourceTask;
 
     class MediaPlayer final {
@@ -24,6 +24,7 @@ namespace engine::audio {
     public:
         static void load(
                 const std::string& filepath,
+                const AudioSourceComponent& audioSourceComponent,
                 const SourceLoaded& sourceLoaded,
                 const std::function<void()>& done
         );
@@ -42,6 +43,7 @@ namespace engine::audio {
 
         static void loadStream(
                 const std::string& filepath,
+                const AudioSourceComponent& audioSourceComponent,
                 const SourceLoaded& sourceLoaded,
                 const std::function<void()>& done
         );
@@ -49,14 +51,22 @@ namespace engine::audio {
         static void setPlayedSource(const Source& source);
 
     private:
-        static void loadImpl(const std::string& filepath, const SourceLoaded& sourceLoaded);
+        static void loadImpl(
+                const std::string& filepath,
+                const AudioSourceComponent& audioSourceComponent,
+                const SourceLoaded& sourceLoaded
+        );
         static void playImpl(const u32& sourceId);
         static void pauseImpl(const u32& sourceId);
         static void stopImpl(const u32& sourceId);
 
         static void playStreamImpl(const u32& sourceId);
 
-        static void loadStreamImpl(const std::string& filepath, const SourceLoaded& sourceLoaded);
+        static void loadStreamImpl(
+                const std::string& filepath,
+                const AudioSourceComponent& audioSourceComponent,
+                const SourceLoaded& sourceLoaded
+        );
 
     private:
         static LoadTask loadTask;

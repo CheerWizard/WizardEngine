@@ -3,7 +3,6 @@
 //
 
 #include <audio/audio_player.h>
-#include <audio/devices.h>
 
 namespace engine::audio {
 
@@ -30,24 +29,25 @@ namespace engine::audio {
 
     void MediaPlayer::load(
             const std::string& filepath,
+            const AudioSourceComponent& audioSourceComponent,
             const SourceLoaded& sourceLoaded,
             const std::function<void()>& done
     ) {
         loadTask.done = done;
-        loadTask.run(filepath, sourceLoaded);
+        loadTask.run(filepath, audioSourceComponent, sourceLoaded);
     }
 
-    void MediaPlayer::loadImpl(const std::string& filepath, const SourceLoaded& sourceLoaded) {
+    void MediaPlayer::loadImpl(
+            const std::string& filepath,
+            const AudioSourceComponent& audioSourceComponent,
+            const SourceLoaded& sourceLoaded
+    ) {
         io::AudioData audioData = io::AudioFile::readWav(filepath.c_str());
 
         Source source;
         source.create(1);
         source.load(audioData);
-        source.setPitch(1);
-        source.setGain(1);
-        source.setPosition({0, 0, 0});
-        source.setVelocity({0, 0, 0});
-        source.setLooping(false);
+        source.setComponent(audioSourceComponent);
         source.setBuffer(0);
 
         sources.insert(std::pair<u32, Source>(source.get(), source));
@@ -56,12 +56,16 @@ namespace engine::audio {
     }
 
     void MediaPlayer::play(const Source &source) {
+        playTask.isRunning = false;
+        playTask.runnable = playImpl;
         playTask.run(source.get());
     }
 
     void MediaPlayer::playImpl(const u32& sourceId) {
         playedSourceId = sourceId;
-        sources.at(sourceId).play();
+        const auto& source = sources.at(sourceId);
+        source.stop();
+        source.play();
     }
 
     void MediaPlayer::pause(const Source &source) {
@@ -84,16 +88,18 @@ namespace engine::audio {
 
     void MediaPlayer::loadStream(
             const std::string &filepath,
+            const AudioSourceComponent& audioSourceComponent,
             const SourceLoaded &sourceLoaded,
             const std::function<void()> &done
     ) {
         loadTask.runnable = loadStreamImpl;
         loadTask.done = done;
-        loadTask.run(filepath, sourceLoaded);
+        loadTask.run(filepath, audioSourceComponent, sourceLoaded);
     }
 
     void MediaPlayer::loadStreamImpl(
             const std::string &filepath,
+            const AudioSourceComponent& audioSourceComponent,
             const SourceLoaded &sourceLoaded
     ) {
         io::AudioData audioData = io::AudioFile::readWav(filepath.c_str());
@@ -105,11 +111,7 @@ namespace engine::audio {
         Source source;
         source.create(cursor.bufferCount);
         source.loadStream(audioData, cursor);
-        source.setPitch(1);
-        source.setGain(1);
-        source.setPosition({0, 0, 0});
-        source.setVelocity({0, 0, 0});
-        source.setLooping(false);
+        source.setComponent(audioSourceComponent);
 
         sources.insert(std::pair<u32, Source>(source.get(), source));
 
@@ -125,6 +127,8 @@ namespace engine::audio {
     }
 
     void MediaPlayer::play() {
+        playTask.isRunning = false;
+        playTask.runnable = playImpl;
         playTask.run(playedSourceId);
     }
 
@@ -149,7 +153,10 @@ namespace engine::audio {
     }
 
     void MediaPlayer::playStreamImpl(const u32 &sourceId) {
-        sources.at(sourceId).playStream();
+        playedSourceId = sourceId;
+        const auto& source = sources.at(sourceId);
+        source.stop();
+        source.playStream();
     }
 
     void MediaPlayer::playStream() {

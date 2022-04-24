@@ -10,12 +10,12 @@ namespace engine::graphics {
 
     using namespace core;
 
-    class buffer {
+    class Buffer {
 
     public:
-        buffer() = default;
-        buffer(const u32& totalCount) : totalCount(totalCount) {}
-        ~buffer() = default;
+        Buffer() = default;
+        Buffer(const u32& totalCount) : totalCount(totalCount) {}
+        ~Buffer() = default;
 
     public:
         void setCount(const u32& count);

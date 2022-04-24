@@ -27,12 +27,7 @@ namespace engine::audio {
 
     void Source::destroy() {
         alCall(alDeleteSources, 1, &id);
-
-        for (auto buffer : buffers) {
-            buffer.destroy();
-        }
-        buffers.clear();
-
+        clearBuffers();
         delete audioData.data;
     }
 
@@ -150,5 +145,62 @@ namespace engine::audio {
             updateStream();
             alCall(alGetSourcei, id, AL_SOURCE_STATE, &state);
         }
+    }
+
+    void Source::unQueueBuffers() const {
+        Buffer buffer = buffers[0];
+        alCall(alSourceUnqueueBuffers, id, buffers.size(), &buffer.getRef());
+    }
+
+    void Source::clearBuffers() {
+        unQueueBuffers();
+
+        size_t bufferCount = buffers.size();
+        u32* bufferIds = new u32[bufferCount];
+        for (u32 i = 0; i < bufferCount; i++) {
+            bufferIds[i] = buffers[i].get();
+        }
+
+        Buffer::destroy(bufferIds, bufferCount);
+        buffers.clear();
+    }
+
+    void Source::setComponent(const AudioSourceComponent &component) const {
+        setPosition(component.position);
+        setVelocity(component.velocity);
+        setGain(component.gain);
+        setPitch(component.pitch);
+        setLooping(component.looping);
+        setRefDistance(component.refDistance);
+        setMaxDistance(component.maxDistance);
+        setRolloffFactor(component.rollOffFactor);
+    }
+
+    ALenum convertAttenuation(const Attenuation &attenuation) {
+        switch (attenuation) {
+            case Attenuation::NONE: return AL_NONE;
+            case Attenuation::INVERSE_DISTANCE: return AL_INVERSE_DISTANCE;
+            case Attenuation::INVERSE_DISTANCE_CLAMPED: return AL_INVERSE_DISTANCE_CLAMPED;
+            case Attenuation::LINEAR_DISTANCE: return AL_LINEAR_DISTANCE;
+            case Attenuation::LINEAR_DISTANCE_CLAMPED: return AL_LINEAR_DISTANCE_CLAMPED;
+            case Attenuation::EXPONENT_DISTANCE: return AL_EXPONENT_DISTANCE;
+            case Attenuation::EXPONENT_DISTANCE_CLAMPED: return AL_EXPONENT_DISTANCE_CLAMPED;
+        }
+    }
+
+    void Source::setAttenuation(const Attenuation &attenuation) {
+        alCall(alDistanceModel, convertAttenuation(attenuation));
+    }
+
+    void Source::setRefDistance(f32 refDistance) const {
+        alCall(alSourcef, id, AL_REFERENCE_DISTANCE, refDistance);
+    }
+
+    void Source::setMaxDistance(f32 maxDistance) const {
+        alCall(alSourcef, id, AL_MAX_DISTANCE, maxDistance);
+    }
+
+    void Source::setRolloffFactor(f32 rolloffFactor) const {
+        alCall(alSourcef, id, AL_ROLLOFF_FACTOR, rolloffFactor);
     }
 }

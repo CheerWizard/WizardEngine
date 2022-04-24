@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <audio/device.h>
+#include <audio/audio_device.h>
 
 namespace engine::audio {
 

@@ -20,6 +20,9 @@ namespace engine::core {
 
     using f32 = float;
 
+    // constants
+    constexpr f32 max_f32 = 340282340000000000000000000000000000000.0;
+
     constexpr u32 kb_32 = 65536;
 
     constexpr u16 kb_16 = kb_32 / 2;
@@ -41,8 +44,8 @@ namespace engine::core {
         native = little
 #else
         little = __ORDER_LITTLE_ENDIAN__,
-    big    = __ORDER_BIG_ENDIAN__,
-    native = __BYTE_ORDER__
+        big    = __ORDER_BIG_ENDIAN__,
+        native = __BYTE_ORDER__
 #endif
     };
 }

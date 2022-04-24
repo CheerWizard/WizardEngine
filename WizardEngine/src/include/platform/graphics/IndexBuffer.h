@@ -5,18 +5,18 @@
 #pragma once
 
 #include <graphics/core/buffer_data/IndexData.h>
-#include <graphics/core/buffer_data/buffer.h>
+#include <graphics/core/buffer_data/graphics_buffer.h>
 
 #define DEFAULT_INDEX_COUNT 5000
 
 namespace engine::graphics {
 
     // IBO - Index buffer Object, component of graphics pipeline
-    class IndexBuffer final : public buffer {
+    class IndexBuffer final : public Buffer {
 
     public:
-        IndexBuffer() : buffer() {}
-        IndexBuffer(const uint32_t& indexCount) : buffer(indexCount) {}
+        IndexBuffer() : Buffer() {}
+        IndexBuffer(const uint32_t& indexCount) : Buffer(indexCount) {}
         ~IndexBuffer() = default;
 
     public:
