@@ -3,7 +3,6 @@
 //
 
 #include <core/test_layer.h>
-#include <audio/audio_player.h>
 
 namespace test {
 

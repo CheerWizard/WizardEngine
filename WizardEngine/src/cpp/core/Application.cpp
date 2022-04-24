@@ -19,12 +19,18 @@ namespace engine::core {
         ENGINE_INFO("onCreate()");
 
         _window = createScope<Window>(createWindowProps());
-        fpsController.setMaxFps(getRefreshRate());
         createGraphics();
         input = createScope<event::Input>(_window->getNativeWindow());
+
         createScripting();
+
+        fpsController.setMaxFps(getRefreshRate());
+
         setActiveScene(createRef<Scene>());
+
         audio::DeviceManager::createContext();
+
+        network::Server::run();
     }
 
     void Application::onPrepare() {
@@ -42,6 +48,7 @@ namespace engine::core {
         _scriptSystem->onDestroy();
         audio::MediaPlayer::clear();
         audio::DeviceManager::clear();
+        network::Server::stop();
     }
 
     void Application::onUpdate() {
