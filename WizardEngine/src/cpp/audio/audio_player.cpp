@@ -102,15 +102,8 @@ namespace engine::audio {
             const AudioSourceComponent& audioSourceComponent,
             const SourceLoaded &sourceLoaded
     ) {
-        io::AudioData audioData = io::AudioFile::readWav(filepath.c_str());
-        Cursor cursor {
-            static_cast<u8>(audioData.size / kb_512),
-            kb_512
-        };
-
         Source source;
-        source.create(cursor.bufferCount);
-        source.loadStream(audioData, cursor);
+        source.loadStream(filepath);
         source.setComponent(audioSourceComponent);
 
         sources.insert(std::pair<u32, Source>(source.get(), source));
@@ -154,7 +147,7 @@ namespace engine::audio {
 
     void MediaPlayer::playStreamImpl(const u32 &sourceId) {
         playedSourceId = sourceId;
-        const auto& source = sources.at(sourceId);
+        auto& source = sources.at(sourceId);
         source.stop();
         source.playStream();
     }
