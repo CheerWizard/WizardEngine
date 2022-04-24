@@ -6,18 +6,18 @@
 
 #include <graphics/core/shader/VertexFormat.h>
 #include <graphics/core/buffer_data/VertexData.h>
-#include <graphics/core/buffer_data/buffer.h>
+#include <graphics/core/buffer_data/graphics_buffer.h>
 
 #define DEFAULT_VERTEX_COUNT 1000
 
 namespace engine::graphics {
 
     // VBO - Vertex buffer Object allocated for GPU pipeline
-    class VertexBuffer final : public buffer {
+    class VertexBuffer final : public Buffer {
 
     public:
-        VertexBuffer() : buffer() {}
-        VertexBuffer(const uint32_t& vertexCount) : buffer(vertexCount) {}
+        VertexBuffer() : Buffer() {}
+        VertexBuffer(const uint32_t& vertexCount) : Buffer(vertexCount) {}
         ~VertexBuffer() = default;
 
     public:

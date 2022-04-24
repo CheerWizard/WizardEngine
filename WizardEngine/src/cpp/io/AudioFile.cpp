@@ -184,7 +184,7 @@ namespace engine::io {
 
         in.close();
 
-        return AudioData { data, 0, size, sampleRate, format };
+        return AudioData { data, size, sampleRate, format };
     }
 
 }

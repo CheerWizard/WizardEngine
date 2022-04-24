@@ -96,6 +96,21 @@ namespace engine::graphics {
         math::ViewProjections::update(component->viewProjection);
     }
 
+    void CameraController::applyMove(const MoveType &moveType) {
+        move(moveType);
+        applyChanges();
+    }
+
+    void CameraController::applyRotate(const RotateType &rotateType) {
+        rotate(rotateType);
+        applyChanges();
+    }
+
+    void CameraController::applyZoom(const ZoomType &zoomType) {
+        zoom(zoomType);
+        applyChanges();
+    }
+
     ecs::Entity Camera2dController::getCamera() {
         return camera;
     }

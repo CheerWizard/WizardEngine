@@ -5,6 +5,7 @@
 #pragma once
 
 #include <AL/alc.h>
+#include <AL/al.h>
 #include <type_traits>
 
 #define alCall(function, ...) alCallImpl(function, __VA_ARGS__)
