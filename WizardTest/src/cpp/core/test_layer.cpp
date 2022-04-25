@@ -60,6 +60,17 @@ namespace test {
                     audio::MediaPlayer::playStream();
                 }
         );
+
+        TCP_CLIENT_INIT();
+        TCP_CLIENT_CONNECT_RUN(localhost, 54000);
+
+        UDP_CLIENT_INIT();
+        UDP_CLIENT_BIND(localhost, 54000);
+    }
+
+    TestLayer::~TestLayer() {
+        TCP_CLIENT_CLOSE();
+        UDP_CLIENT_CLOSE();
     }
 
     void TestLayer::bindCamera() {
@@ -92,6 +103,8 @@ namespace test {
         auto& modelMatrix = survivalBackPack.get<Transform3dComponent>()->modelMatrix;
         modelMatrix.rotation.y += 0.005f;
         updateModel3d(modelMatrix);
+
+        UDP_CLIENT_SEND("Hello from UDP!");
     }
 
     void TestLayer::onWindowResized(const uint32_t &width, const uint32_t &height) {

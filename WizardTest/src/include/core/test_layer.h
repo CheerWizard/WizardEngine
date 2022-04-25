@@ -27,7 +27,7 @@ namespace test {
         TestLayer() : Layer() {
             init();
         }
-        ~TestLayer() override = default;
+        ~TestLayer() override;
 
     public:
         void onUpdate(Time deltaTime) override;
