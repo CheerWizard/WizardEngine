@@ -25,11 +25,11 @@ namespace engine::core {
 
     // helps declare new exception type
     #define decl_exception(name) \
-    struct name : exception {    \
-    explicit name(const char* message) : exception(message) {} \
-    explicit name(const std::string& message) : exception(message) {} \
-    name(exception_priority priority, const char* message) : exception(priority, message) {} \
-    name(exception_priority priority, const std::string& message) : exception(priority, message) {} \
+    struct name : engine::core::exception {    \
+    explicit name(const char* message) : engine::core::exception(message) {} \
+    explicit name(const std::string& message) : engine::core::exception(message) {} \
+    name(engine::core::exception_priority priority, const char* message) : engine::core::exception(priority, message) {} \
+    name(engine::core::exception_priority priority, const std::string& message) : engine::core::exception(priority, message) {} \
     };
 
     decl_exception(file_not_found)

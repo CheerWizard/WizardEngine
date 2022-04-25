@@ -11,7 +11,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(${PROJECT_NAME} ${ENGINE_SRC} src/include/audio/audio_listener.h src/cpp/audio/audio_listener.cpp)
+add_library(${PROJECT_NAME} ${ENGINE_SRC} src/include/network/socket.h)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 #/ adding dependencies.

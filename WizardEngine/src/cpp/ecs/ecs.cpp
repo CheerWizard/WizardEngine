@@ -95,9 +95,7 @@ namespace engine::ecs {
                 destroyFunction((BaseComponent *) &component.second[i]);
             }
         }
-
-        for (auto *entity: entities) {
-            delete entity;
-        }
+        components.clear();
+        entities.clear();
     }
 }
