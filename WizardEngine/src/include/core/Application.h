@@ -26,6 +26,8 @@
 #include <audio/audio_player.h>
 
 #include <network/tcp_server.h>
+#include <network/tcp_client.h>
+#include <network/network_core.h>
 
 #define BIND_GAMEPAD_BUTTON_PRESSED(btn, action) engine::core::Application::get().eventRegistry.onGamepadButtonPressedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
 #define BIND_KEY_PRESSED(key, action) engine::core::Application::get().eventRegistry.onKeyPressedMap[key] = { [this](KeyCode keyCode) { action } }

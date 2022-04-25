@@ -29,8 +29,10 @@ namespace engine::core {
         setActiveScene(createRef<Scene>());
 
         audio::DeviceManager::createContext();
-
-        network::Server::run();
+        // init network system
+        network::core::init();
+        network::tcp::Server::init();
+        network::tcp::Client::init();
     }
 
     void Application::onPrepare() {
@@ -41,6 +43,9 @@ namespace engine::core {
         _layerStack.onPrepare();
         loadGamepadMappings("../WizardEngine/assets/db/game_controller_db.txt");
         _renderSystem->onPrepare();
+        // connect network client/server
+        network::tcp::Server::listenRun(54000);
+        network::tcp::Client::connectRun(localhost, 54000);
     }
 
     void Application::onDestroy() {
@@ -48,7 +53,10 @@ namespace engine::core {
         _scriptSystem->onDestroy();
         audio::MediaPlayer::clear();
         audio::DeviceManager::clear();
-        network::Server::stop();
+        // close network system
+        network::tcp::Client::close();
+        network::tcp::Server::close();
+        network::core::cleanup();
     }
 
     void Application::onUpdate() {
