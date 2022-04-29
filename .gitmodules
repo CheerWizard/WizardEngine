@@ -20,7 +20,7 @@
 
 [submodule "WizardEngine/vendor/imgui"]
     path = WizardEngine/vendor/imgui
-    url = https://github.com/ocornut/imgui/tree/docking
+    url = https://github.com/ocornut/imgui
 
 [submodule "WizardEngine/vendor/spdlog"]
     path = WizardEngine/vendor/spdlog
