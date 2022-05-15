@@ -27,16 +27,22 @@ namespace engine::network {
                 runImpl
         };
 
-        void Server::init() {
+        ServerListener* Server::listener = nullptr;
+
+        void Server::init(ServerListener* serverListener) {
+            listener = serverListener;
             listeningSocket = socket(AF_INET, SOCK_STREAM, 0);
             if (listeningSocket == INVALID_SOCKET) {
-                ENGINE_THROW(tcp_server_exception("Unable to create TCP listening socket!"));
+                u32 errorCode = WSAGetLastError();
+                ENGINE_ERR("TCP_Server: Unable to create listening socket. Unknown error = {0}", errorCode);
+                listener->tcp_socketNotCreated();
             }
         }
 
         void Server::close() {
             running = false;
             closesocket(clientProfile.socket);
+            listener->tcp_socketClosed();
             delete clientProfile.host;
             delete clientProfile.service;
         }
@@ -65,7 +71,9 @@ namespace engine::network {
             s32 clientSize = sizeof(client);
             SOCKET clientSocket = accept(listeningSocket, (sockaddr*)&client, &clientSize);
             if (clientSocket == INVALID_SOCKET) {
-                ENGINE_THROW(tcp_server_exception("Unable to create TCP client socket!"));
+                u32 errorCode = WSAGetLastError();
+                ENGINE_ERR("TCP_Server: Unable to create a client socket. Unknown error = {0}", errorCode);
+                listener->tcp_clientSocketNotAccepted();
             }
             // setup client profile
             char* host = new char[NI_MAXHOST];
@@ -98,19 +106,21 @@ namespace engine::network {
                 ZeroMemory(buffer, kb_4);
                 // receive data from client
                 s32 receivedBytes = recv(clientProfile.socket, buffer, kb_4, 0);
-                ENGINE_INFO("Server: Response from client {0}", buffer);
+                ENGINE_INFO("TCP_Server: Response from client {0}", buffer);
                 // check socket error
                 if (receivedBytes == SOCKET_ERROR) {
-                    ENGINE_ERR("Server: error during receiving data size: {0}", kb_4);
+                    ENGINE_ERR("TCP_Server: error during receiving data size: {0}", kb_4);
+                    listener->tcp_receiveDataFailed(buffer, kb_4);
                     break;
                 }
                 // check client connection
                 if (receivedBytes == 0) {
-                    ENGINE_WARN("Client [host:{0}, service:{1}] disconnected!", clientProfile.host, clientProfile.service);
+                    ENGINE_WARN("TCP_Server: Client [host:{0}, service:{1}] disconnected!", clientProfile.host, clientProfile.service);
+                    listener->tcp_clientDisconnected();
                     break;
                 }
                 // send data to client
-                ENGINE_INFO("Server: Request to client {0}", buffer);
+                ENGINE_INFO("TCP_Server: Request to client {0}", buffer);
                 send(clientProfile.socket, buffer, receivedBytes + 1, 0);
             }
         }
@@ -118,7 +128,6 @@ namespace engine::network {
         void Server::stop() {
             running = false;
         }
-
     }
 
     namespace udp {
@@ -138,16 +147,22 @@ namespace engine::network {
                 runImpl
         };
 
-        void Server::init() {
+        ServerListener* Server::listener = nullptr;
+
+        void Server::init(ServerListener* serverListener) {
+            listener = serverListener;
             clientSocket = socket(AF_INET, SOCK_DGRAM, 0);
             if (clientSocket == SOCKET_ERROR) {
-                ENGINE_THROW(udp_server_exception("UDP_Server: Unable to create socket!"));
+                u32 errorCode = WSAGetLastError();
+                ENGINE_ERR("UDP_Server: Unable to create client socket. Unknown error = {0}", errorCode);
+                listener->udp_socketNotCreated();
             }
         }
 
         void Server::close() {
             running = false;
             closesocket(clientSocket);
+            listener->udp_socketClosed();
         }
 
         void Server::bind(const s32 &port, const std::function<void()> &done) {
@@ -167,8 +182,9 @@ namespace engine::network {
             hint.sin_addr.S_un.S_addr = INADDR_ANY;
             s32 bindResult = ::bind(clientSocket, (sockaddr*)&hint, sizeof(hint));
             if (bindResult == SOCKET_ERROR) {
-                ENGINE_ERR("Error: {0}", WSAGetLastError());
-                ENGINE_THROW(udp_server_exception("Unable to bind to UDP socket!"));
+                u32 errorCode = WSAGetLastError();
+                ENGINE_ERR("UDP_Server: Unable to bind to a client socket. Unknown error = {0}", errorCode);
+                listener->udp_socketBindFailed();
             }
         }
 
@@ -188,7 +204,9 @@ namespace engine::network {
                 ZeroMemory(buffer, kb_1);
                 s32 bytesReceived = recvfrom(clientSocket, buffer, kb_1, 0, (sockaddr*)&client, &clientLength);
                 if (bytesReceived == SOCKET_ERROR) {
-                    ENGINE_ERR("UDP_Server: Error receiving data from UDP client: {0}", WSAGetLastError());
+                    u32 errorCode = WSAGetLastError();
+                    ENGINE_ERR("UDP_Server: Error receiving data from a client. Error = ", errorCode);
+                    listener->udp_receiveDataFailed(buffer, kb_1);
                     continue;
                 }
                 // get client IP
@@ -196,7 +214,7 @@ namespace engine::network {
                 ZeroMemory(clientIp, 256);
                 inet_ntop(AF_INET, &client.sin_addr, clientIp, 256);
                 // display client IP and message
-                ENGINE_INFO("UDP_Server: Message received from client[IP:{0}], message: {1}", clientIp, buffer);
+                ENGINE_INFO("UDP_Server: Message received from a client[IP:{0}], message: {1}", clientIp, buffer);
             }
         }
 

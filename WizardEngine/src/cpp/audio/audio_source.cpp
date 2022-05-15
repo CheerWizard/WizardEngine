@@ -26,8 +26,8 @@ namespace engine::audio {
     }
 
     void Source::destroy() {
-        alCall(alDeleteSources, 1, &id);
         clearBuffers();
+        alCall(alDeleteSources, 1, &id);
     }
 
     void Source::recreate() {
@@ -123,7 +123,8 @@ namespace engine::audio {
         s32 bufferSize = (s32) cursor.bufferSize;
         s32 dataSize = format.size;
 
-        while (buffersProcessed--) {
+        ALint state = alCall(alGetSourcei, id, AL_SOURCE_STATE, &state);
+        while (buffersProcessed-- && state == AL_PLAYING) {
             ALuint buffer;
             alCall(alSourceUnqueueBuffers, id, 1, &buffer);
 
@@ -149,6 +150,8 @@ namespace engine::audio {
             if (currentBufferIndex >= cursor.bufferCount) {
                 currentBufferIndex = 0;
             }
+
+            state = alCall(alGetSourcei, id, AL_SOURCE_STATE, &state);
         }
     }
 
@@ -169,8 +172,6 @@ namespace engine::audio {
     }
 
     void Source::clearBuffers() {
-        unQueueBuffers();
-
         size_t bufferCount = buffers.size();
         u32* bufferIds = new u32[bufferCount];
         for (u32 i = 0; i < bufferCount; i++) {

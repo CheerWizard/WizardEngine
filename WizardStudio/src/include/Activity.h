@@ -92,7 +92,7 @@ namespace studio {
 
         void onImageDragged(const std::string &fileName) override;
 
-        void onEntityRemoved(const engine::Entity &entity) override;
+        void onEntityRemoved(const Entity &entity) override;
 
     private:
         SceneViewport sceneViewport = SceneViewport({
