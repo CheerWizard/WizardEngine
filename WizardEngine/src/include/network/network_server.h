@@ -7,11 +7,11 @@
 #include <thread/Task.h>
 #include <network/socket.h>
 
-#define TCP_SERVER_INIT() engine::network::tcp::Server::init()
+#define TCP_SERVER_INIT(listener) engine::network::tcp::Server::init(listener)
 #define TCP_SERVER_LISTEN_RUN(port) engine::network::tcp::Server::listenRun(port)
 #define TCP_SERVER_CLOSE() engine::network::tcp::Server::close()
 
-#define UDP_SERVER_INIT() engine::network::udp::Server::init()
+#define UDP_SERVER_INIT(listener) engine::network::udp::Server::init(listener)
 #define UDP_SERVER_BIND_RUN(port) engine::network::udp::Server::bindRun(port)
 #define UDP_SERVER_CLOSE() engine::network::udp::Server::close()
 
@@ -29,6 +29,15 @@ namespace engine::network {
 
         decl_exception(tcp_server_exception)
 
+        class ServerListener {
+        public:
+            virtual void tcp_socketNotCreated() = 0;
+            virtual void tcp_clientSocketNotAccepted() = 0;
+            virtual void tcp_socketClosed() = 0;
+            virtual void tcp_clientDisconnected() = 0;
+            virtual void tcp_receiveDataFailed(char* data, u16 size) = 0;
+        };
+
         class Server final {
 
         private:
@@ -36,7 +45,7 @@ namespace engine::network {
             ~Server() = default;
 
         public:
-            static void init();
+            static void init(ServerListener* serverListener);
             static void close();
 
             static void listen(const s32& port, const std::function<void()>& done);
@@ -56,6 +65,7 @@ namespace engine::network {
             static bool running;
             static thread::VoidTask<const s32&> listenTask;
             static thread::VoidTask<> runTask;
+            static ServerListener* listener;
         };
 
     }
@@ -64,6 +74,14 @@ namespace engine::network {
 
         decl_exception(udp_server_exception)
 
+        class ServerListener {
+        public:
+            virtual void udp_socketNotCreated() = 0;
+            virtual void udp_socketClosed() = 0;
+            virtual void udp_socketBindFailed() = 0;
+            virtual void udp_receiveDataFailed(char* data, u16 size) = 0;
+        };
+
         class Server final {
 
         private:
@@ -71,7 +89,7 @@ namespace engine::network {
             ~Server() = default;
 
         public:
-            static void init();
+            static void init(ServerListener* serverListener);
             static void close();
 
             static void bind(const s32& port, const std::function<void()>& done);
@@ -90,6 +108,7 @@ namespace engine::network {
             static bool running;
             static thread::VoidTask<const s32&> bindTask;
             static thread::VoidTask<> runTask;
+            static ServerListener* listener;
         };
 
     }
