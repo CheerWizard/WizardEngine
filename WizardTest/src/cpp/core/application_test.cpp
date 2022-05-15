@@ -5,7 +5,7 @@
 #include <core/application_test.h>
 #include <core/test_layer.h>
 
-Application* core::createApplication() {
+Application* engine::core::createApplication() {
     RUNTIME_INFO("Creating Test Application...");
     return new test::Application();
 }
@@ -25,8 +25,8 @@ extern const char* runtimeLogName() {
 namespace test {
 
     void Application::onCreate() {
-        core::Application::onCreate();
-        core::Application::pushFront(new TestLayer());
+        engine::core::Application::onCreate();
+        engine::core::Application::pushFront(new TestLayer());
     }
 
     WindowProps Application::createWindowProps() {

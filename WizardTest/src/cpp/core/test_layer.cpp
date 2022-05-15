@@ -61,10 +61,10 @@ namespace test {
                 }
         );
 
-        TCP_CLIENT_INIT();
+        TCP_CLIENT_INIT(this);
         TCP_CLIENT_CONNECT_RUN(localhost, 54000);
 
-        UDP_CLIENT_INIT();
+        UDP_CLIENT_INIT(this);
         UDP_CLIENT_BIND(localhost, 54000);
     }
 
@@ -108,27 +108,22 @@ namespace test {
     }
 
     void TestLayer::onWindowResized(const uint32_t &width, const uint32_t &height) {
-        Layer::onWindowResized(width, height);
         cameraController->onWindowResized(width, height);
     }
 
     void TestLayer::onKeyPressed(event::KeyCode keyCode) {
-        Layer::onKeyPressed(keyCode);
         cameraController->onKeyPressed(keyCode);
     }
 
     void TestLayer::onKeyHold(event::KeyCode keyCode) {
-        Layer::onKeyHold(keyCode);
         cameraController->onKeyHold(keyCode);
     }
 
     void TestLayer::onKeyReleased(event::KeyCode keyCode) {
-        Layer::onKeyReleased(keyCode);
         cameraController->onKeyReleased(keyCode);
     }
 
     void TestLayer::onKeyTyped(event::KeyCode keyCode) {
-        Layer::onKeyTyped(keyCode);
         cameraController->onKeyTyped(keyCode);
     }
 
@@ -150,5 +145,49 @@ namespace test {
     void TestLayer::onPadY() {
         ENGINE_INFO("Gamepad button Y pressed!");
         cameraController->applyMove(MoveType::UP);
+    }
+
+    void TestLayer::onWindowClosed() {
+
+    }
+
+    void TestLayer::onMousePressed(event::MouseCode mouseCode) {
+
+    }
+
+    void TestLayer::onMouseRelease(event::MouseCode mouseCode) {
+
+    }
+
+    void TestLayer::onMouseScrolled(double xOffset, double yOffset) {
+
+    }
+
+    void TestLayer::onCursorMoved(double xPos, double yPos) {
+
+    }
+
+    void TestLayer::tcp_socketNotCreated() {
+
+    }
+
+    void TestLayer::tcp_connectionFailed() {
+
+    }
+
+    void TestLayer::tcp_socketClosed() {
+
+    }
+
+    void TestLayer::udp_socketNotCreated() {
+
+    }
+
+    void TestLayer::udp_sendDataFailed(const std::string &data) {
+
+    }
+
+    void TestLayer::udp_socketClosed() {
+
     }
 }

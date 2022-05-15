@@ -20,19 +20,19 @@ namespace engine::core {
         virtual void onPrepare() = 0;
 
     public:
-        virtual void onWindowClosed();
-        virtual void onWindowResized(const uint32_t &width, const uint32_t &height);
+        virtual void onWindowClosed() = 0;
+        virtual void onWindowResized(const uint32_t &width, const uint32_t &height) = 0;
 
-        virtual void onKeyPressed(event::KeyCode keyCode);
-        virtual void onKeyHold(event::KeyCode keyCode);
-        virtual void onKeyReleased(event::KeyCode keyCode);
-        virtual void onKeyTyped(event::KeyCode keyCode);
+        virtual void onKeyPressed(event::KeyCode keyCode) = 0;
+        virtual void onKeyHold(event::KeyCode keyCode) = 0;
+        virtual void onKeyReleased(event::KeyCode keyCode) = 0;
+        virtual void onKeyTyped(event::KeyCode keyCode) = 0;
 
-        virtual void onMousePressed(event::MouseCode mouseCode);
-        virtual void onMouseRelease(event::MouseCode mouseCode);
-        virtual void onMouseScrolled(double xOffset, double yOffset);
+        virtual void onMousePressed(event::MouseCode mouseCode) = 0;
+        virtual void onMouseRelease(event::MouseCode mouseCode) = 0;
+        virtual void onMouseScrolled(double xOffset, double yOffset) = 0;
 
-        virtual void onCursorMoved(double xPos, double yPos);
+        virtual void onCursorMoved(double xPos, double yPos) = 0;
 
     public:
         [[nodiscard]] inline const char* getTag() const { return tag; }

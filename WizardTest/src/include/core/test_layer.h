@@ -18,10 +18,12 @@ using namespace engine::core;
 using namespace engine::graphics;
 using namespace engine::event;
 using namespace engine::time;
+using namespace engine::network;
 
 namespace test {
 
-    class TestLayer : public Layer {
+    class TestLayer : public Layer,
+            tcp::ClientListener, udp::ClientListener {
 
     public:
         TestLayer() : Layer() {
@@ -46,6 +48,25 @@ namespace test {
         void onPadB();
         void onPadX();
         void onPadY();
+
+    public:
+        void tcp_socketNotCreated() override;
+        void tcp_connectionFailed() override;
+        void tcp_socketClosed() override;
+
+        void udp_socketNotCreated() override;
+        void udp_sendDataFailed(const std::string &data) override;
+        void udp_socketClosed() override;
+
+        void onWindowClosed() override;
+
+        void onMousePressed(event::MouseCode mouseCode) override;
+
+        void onMouseRelease(event::MouseCode mouseCode) override;
+
+        void onMouseScrolled(double xOffset, double yOffset) override;
+
+        void onCursorMoved(double xPos, double yPos) override;
 
     private:
         Ref<Camera3dController> cameraController;

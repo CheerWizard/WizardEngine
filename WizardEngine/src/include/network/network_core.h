@@ -16,6 +16,7 @@
 #define localhost "127.0.0.1"
 
 namespace engine::network::core {
+    using namespace engine::core;
     decl_exception(core_exception)
     void init();
     void cleanup();
