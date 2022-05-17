@@ -50,6 +50,10 @@ include_directories(vendor/assimp/include)
 #/ Audio core. Builds as DLL
 include_directories(vendor/openal-soft/include)
 
+#/ YAML parser
+add_subdirectory(vendor/yaml-cpp)
+include_directories(vendor/yaml-cpp/include)
+
 #/ linking dependencies.
 target_link_libraries(
         WizardEngine PUBLIC
@@ -62,6 +66,7 @@ target_link_libraries(
         freetype
         ../WizardEngine/vendor/dlls/assimp-vc143-mtd
         ../WizardEngine/vendor/dlls/OpenAL32
+        yaml-cpp
 )
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)

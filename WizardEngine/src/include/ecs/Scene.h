@@ -11,7 +11,7 @@ namespace engine::ecs {
     class Scene : public EntityContainer {
 
     public:
-        Scene() = default;
+        Scene(const char* name = "Untitled") : name(name) {}
 
         ~Scene() {
             clear();
@@ -26,7 +26,12 @@ namespace engine::ecs {
             return skybox;
         }
 
+        inline const char* getName() {
+            return name;
+        }
+
     private:
+        const char* name;
         Entity skybox;
     };
 
