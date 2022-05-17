@@ -33,3 +33,7 @@
 [submodule "WizardEngine/vendor/openal-soft"]
     path = WizardEngine/vendor/openal-soft
     url = https://github.com/kcat/openal-soft
+
+[submodule "WizardEngine/vendor/yaml-cpp"]
+    path = WizardEngine/vendor/yaml-cpp
+    url = https://github.com/jbeder/yaml-cpp

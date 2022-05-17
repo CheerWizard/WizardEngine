@@ -35,5 +35,6 @@ namespace engine::filesystem {
     void newFile(const fpath& currentDir, const std::string& newFileName);
     void newDirectory(const fpath& path);
     bool exists(const fpath& path);
+    bool write(const char* filepath, const char* data);
 
 }

@@ -11,6 +11,7 @@ macro(include_engine path)
             ${path}/vendor/freetype
             ${path}/vendor/assimp/include
             ${path}/vendor/openal-soft/include
+            ${path}/vendor/yaml-cpp/include
     )
 endmacro()
 # use this macro to link WizardEngine and all it's dependencies!
@@ -25,5 +26,6 @@ macro(link_to_engine project)
             glm::glm
             stb
             freetype
+            yaml-cpp
     )
 endmacro()
