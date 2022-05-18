@@ -62,6 +62,11 @@ namespace engine::io {
         };
     };
 
+    struct ModelFileListener {
+        std::function<void(const Model&)> success;
+        std::function<void(const exception&)> failure;
+    };
+
     class ModelFile final {
 
     private:
@@ -70,6 +75,7 @@ namespace engine::io {
 
     public:
         static Model read(const std::string &filePath);
+        static void read(const std::string &filepath, const ModelFileListener& listener);
 
     private:
         static void extractNodes(

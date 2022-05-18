@@ -6,7 +6,7 @@
 #include <AssetBrowser.h>
 #include <core/FileExtensions.h>
 
-#include <imgui/imgui.h>
+#include <imgui.h>
 
 namespace studio {
 

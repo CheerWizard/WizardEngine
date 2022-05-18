@@ -9,7 +9,7 @@
 #include <build/Build.h>
 #include <graphics/core/sources/ShaderSource.h>
 
-#include <imgui/imgui.h>
+#include <imgui.h>
 
 namespace studio {
 

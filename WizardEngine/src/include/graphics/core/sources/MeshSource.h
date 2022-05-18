@@ -13,6 +13,13 @@
 namespace engine::graphics {
 
     template<typename T>
+    struct MeshSourceListener {
+        std::function<void(const BaseMeshComponent<T>)> success;
+        std::function<void(const exception& exception)> failure;
+        std::function<T(const io::ModelVertex&)> vertexMapper;
+    };
+
+    template<typename T>
     class MeshSource final {
 
         typedef std::unordered_map<std::string, BaseMeshComponent<T>> Meshes;
@@ -21,39 +28,21 @@ namespace engine::graphics {
         MeshSource() = default;
 
     public:
-        static MeshSource& get() {
-            static MeshSource<T> instance;
-            return instance;
-        }
-
-    public:
-        void clear();
+        static void clear();
         /**
          * @return MeshComponent from either cache or .obj file.
          */
-        const BaseMeshComponent<T>& getMesh(const std::string &fileName);
-
-        /**
-         * @return cached MeshComponent that represents triangle shape.
-         */
-         const BaseMeshComponent<T>& getTriangle(const std::string &name);
-
-         /**
-          * @return cached MeshComponent that represents square shape.
-          */
-         const BaseMeshComponent<T>& getSquare(const std::string &name);
-
-         /**
-          * @return cached MeshComponent that represents cube shape.
-          */
-         const BaseMeshComponent<T>& getCube(const std::string &name);
+        static void getMesh(const std::string &filepath, const MeshSourceListener<T> listener);
 
     private:
-        bool exists(const std::string &name);
+        static bool exists(const std::string &name);
 
     private:
-        Meshes _meshes;
+        static Meshes _meshes;
     };
+
+    template<typename T>
+    std::unordered_map<std::string, BaseMeshComponent<T>> MeshSource<T>::_meshes;
 
     template<typename T>
     bool MeshSource<T>::exists(const std::string &name) {
@@ -61,35 +50,16 @@ namespace engine::graphics {
     }
 
     template<typename T>
-    const BaseMeshComponent<T>& MeshSource<T>::getMesh(const std::string &fileName) {
-        auto model = io::ModelFile::read(fileName);
-    }
-
-    template<typename T>
-    const BaseMeshComponent<T>& MeshSource<T>::getTriangle(const std::string &name) {
-        if (!exists(name)) {
-            ENGINE_INFO("Triangle {0} does not exists in cache! Creating new triangle!", name);
-            _meshes[name] = Shapes<T>::newTriangle();
-        }
-        return _meshes[name];
-    }
-
-    template<typename T>
-    const BaseMeshComponent<T>& MeshSource<T>::getSquare(const std::string &name) {
-        if (!exists(name)) {
-            ENGINE_INFO("Square {0} does not exists in cache! Creating new square!", name);
-            _meshes[name] = Shapes<T>::newSquare();
-        }
-        return _meshes[name];
-    }
-
-    template<typename T>
-    const BaseMeshComponent<T>& MeshSource<T>::getCube(const std::string &name) {
-        if (!exists(name)) {
-            ENGINE_INFO("Cube {0} does not exists in cache! Creating new cube!", name);
-            _meshes[name] = Shapes<T>::newCube();
-        }
-        return _meshes[name];
+    void MeshSource<T>::getMesh(const std::string &filepath, const MeshSourceListener<T> listener) {
+        io::ModelFile::read(filepath, {
+            [&listener](const io::Model& model) {
+                auto mesh = toMeshComponent<T>(model.meshComponent, listener.vertexMapper);
+                listener.success(mesh);
+            },
+            [&listener](const exception& exception) {
+                listener.failure(exception);
+            }
+        });
     }
 
     template<typename T>

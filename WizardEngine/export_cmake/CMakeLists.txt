@@ -6,7 +6,7 @@ macro(include_engine path)
             ${path}/vendor/glm
             ${path}/vendor/glad/include
             ${path}/vendor/glfw/include
-            ${path}/vendor/imgui
+            ${path}/vendor/imgui/imgui
             ${path}/vendor/stb
             ${path}/vendor/freetype
             ${path}/vendor/assimp/include

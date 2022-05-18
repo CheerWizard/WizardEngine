@@ -41,8 +41,8 @@ namespace engine::graphics {
         DrawType drawType = DrawType::TRIANGLE;
     };
 
-    template<typename FROM, typename TO, typename VertexMapper>
-    BaseMesh<TO> toMesh(const BaseMesh<FROM>& fromBaseMesh, const VertexMapper& vertexMapper) {
+    template<typename TO, typename FROM>
+    BaseMesh<TO> toMesh(const BaseMesh<FROM>& fromBaseMesh, const std::function<TO(const FROM&)>& vertexMapper) {
         auto& fromVertexData = fromBaseMesh.vertexData;
         auto toVertexData = VertexData<TO> {
                 new TO[fromVertexData.vertexCount],
@@ -55,13 +55,13 @@ namespace engine::graphics {
         return { toVertexData, fromBaseMesh.indexData };
     }
 
-    template<typename FROM, typename TO, typename VertexMapper>
-    BaseMeshComponent<TO> toMeshComponent(const BaseMeshComponent<FROM>& fromBaseMeshComponent, const VertexMapper& vertexMapper) {
+    template<typename TO, typename FROM>
+    BaseMeshComponent<TO> toMeshComponent(const BaseMeshComponent<FROM>& fromBaseMeshComponent, const std::function<TO(const FROM&)>& vertexMapper) {
         auto& fromMeshes = fromBaseMeshComponent.meshes;
         auto toMeshes = new BaseMesh<TO>[fromBaseMeshComponent.meshCount];
 
         for (auto j = 0; j < fromBaseMeshComponent.meshCount; j++) {
-            toMeshes[j] = toMesh<FROM, TO>(fromMeshes[j], vertexMapper);
+            toMeshes[j] = toMesh<TO, FROM>(fromMeshes[j], vertexMapper);
         }
 
         auto meshComponent = BaseMeshComponent<TO>();
