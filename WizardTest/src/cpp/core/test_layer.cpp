@@ -42,13 +42,22 @@ namespace test {
                 scene.get()
         );
 
-        try {
-            auto model = io::ModelFile::read("assets/model/DesertEagle.fbx");
-            auto mesh = toMesh3dBatch(model.meshComponent);
-            survivalBackPack.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(mesh);
-        } catch (const file_not_found& ex) {
-            RUNTIME_ERR("Could not load model file!");
-        }
+        graphics::MeshSource<BatchVertex<Vertex3d>>::getMesh("assets/model/DesertEagle.fbx", {
+            [this](const BaseMeshComponent<BatchVertex<Vertex3d>>& mesh) {
+                survivalBackPack.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(mesh);
+            },
+            [](const exception& exception) {
+                RUNTIME_EXCEPT(exception);
+            },
+            [](const io::ModelVertex& modelVertex) {
+                return BatchVertex<Vertex3d> {
+                    modelVertex.position,
+                    modelVertex.uv,
+                    modelVertex.normal,
+                    0
+                };
+            }
+        });
 
         audio::MediaPlayer::loadStream(
                 "assets/audio/forest.wav",
@@ -128,22 +137,22 @@ namespace test {
     }
 
     void TestLayer::onPadA() {
-        ENGINE_INFO("Gamepad button A pressed!");
+        RUNTIME_INFO("Gamepad button A pressed!");
         cameraController->applyMove(MoveType::DOWN);
     }
 
     void TestLayer::onPadB() {
-        ENGINE_INFO("Gamepad button B pressed!");
+        RUNTIME_INFO("Gamepad button B pressed!");
         cameraController->applyMove(MoveType::RIGHT);
     }
 
     void TestLayer::onPadX() {
-        ENGINE_INFO("Gamepad button X pressed!");
+        RUNTIME_INFO("Gamepad button X pressed!");
         cameraController->applyMove(MoveType::LEFT);
     }
 
     void TestLayer::onPadY() {
-        ENGINE_INFO("Gamepad button Y pressed!");
+        RUNTIME_INFO("Gamepad button Y pressed!");
         cameraController->applyMove(MoveType::UP);
     }
 

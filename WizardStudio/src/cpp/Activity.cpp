@@ -7,7 +7,6 @@
 #include <core/FileExtensions.h>
 #include <graphics/light/Light.h>
 #include <graphics/camera/CameraShaderScript.h>
-#include <graphics/material/MaterialShaderScript.h>
 #include <graphics/light/LightShaderScript.h>
 #include <graphics/GraphicsObject.h>
 #include <scripting/ScriptBuilder.h>
@@ -16,7 +15,7 @@
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/core/geometry/Point.h>
 
-#include <imgui/imgui.h>
+#include <imgui.h>
 
 #define BIND_KEY_PRESS(keycode, action) engine::core::Application::get().eventRegistry.onKeyPressedMap[keycode] = { [this](KeyCode keyCode) { action }}
 
@@ -28,13 +27,8 @@ namespace studio {
     void Activity::create() {
         createAssetBrowser();
 
-        auto vObjShader = BaseShader({
-                                             camera3dScript()
-                                     });
-        auto fObjShader = BaseShader({
-                                             materialScript(),
-                                             phongLightScript()
-                                     });
+        auto vObjShader = BaseShader({ camera3dScript() });
+        auto fObjShader = BaseShader({ phongLightScript() });
         auto objShader = BaseShaderProgram(
                 ShaderProps {
                         "obj",
@@ -57,16 +51,12 @@ namespace studio {
                 objCamera
         );
 
-        auto objTransform = graphics::transform3d(
+        auto objTransform = Transform3dComponent(
                 { 2.5, 0, 12 },
-                {135, 0, 0},
-                {0.5, 0.5, 0.5}
+                { 135, 0, 0 },
+                { 0.5, 0.5, 0.5 }
         );
         objCamera.add<Transform3dComponent>(objTransform);
-
-        auto objMaterial = MaterialComponent();
-        objMaterial.color.value = { 0.25, 0, 0, 1 };
-        objCamera.add<MaterialComponent>(objMaterial);
 
         auto objPhongLight = PhongLightComponent();
         objPhongLight.position.value = { 25, 25, -25, 0 };
@@ -124,29 +114,34 @@ namespace studio {
                 activeSceneCamera
         );
 
+        u32 skyboxId = TextureBuffer::load(
+                {
+                        { "skybox/front.jpg", TextureFaceType::FRONT },
+                        { "skybox/back.jpg", TextureFaceType::BACK },
+                        { "skybox/left.jpg", TextureFaceType::LEFT },
+                        { "skybox/right.jpg", TextureFaceType::RIGHT },
+                        { "skybox/top.jpg", TextureFaceType::TOP },
+                        { "skybox/bottom.jpg", TextureFaceType::BOTTOM },
+                }
+        );
+
         scene1->setSkybox(SkyboxCube(
                 "Skybox",
                 scene1.get(),
-                CubeMapTextureComponent {
-                        "skybox",
-                        {
-                                { "skybox/front.jpg", TextureFaceType::FRONT },
-                                { "skybox/back.jpg", TextureFaceType::BACK },
-                                { "skybox/left.jpg", TextureFaceType::LEFT },
-                                { "skybox/right.jpg", TextureFaceType::RIGHT },
-                                { "skybox/top.jpg", TextureFaceType::TOP },
-                                { "skybox/bottom.jpg", TextureFaceType::BOTTOM },
-                        }
-                }
+                CubeMapTextureComponent(skyboxId, TextureBuffer::getTypeId(TextureType::CUBE_MAP))
         ));
 
         auto points = Entity("Points", scene1.get());
-        points.add<Points>(new PointVertex[4] {
+        auto pointsComponent = Points {
+            new PointVertex[4] {
                 { { -0.5, 0.5 }, { 1, 0, 0 } },
                 { { 0.5, 0.5 }, { 0, 1, 0 } },
                 { { 0.5, -0.5 }, { 0, 0, 1 }},
                 { { -0.5, -0.5 }, { 1, 1, 0 }}
-        }, 4);
+            },
+            4
+        };
+        points.add<Points>(pointsComponent);
 
 //        Object3d(
 //                scene1.get(),
@@ -158,7 +153,7 @@ namespace studio {
         Object3d(
                 scene1.get(),
                 "Quad",
-                transform3d(),
+                Transform3dComponent(),
                 BatchQuad()
         );
     }
@@ -278,17 +273,24 @@ namespace studio {
 
     void Activity::onImageOpen(const std::string &fileName) {
         EDITOR_INFO("onImageOpen({0})", fileName);
-        auto texture = TextureComponent { fileName, TextureType::TEXTURE_2D };
-        const uint32_t &textureId = GET_TEXTURE_ID(texture, RUNTIME_TEXTURES_PATH);
-        _texturePreview.setId(textureId);
+        _texturePreview.setId(TextureBuffer::load(("assets/textures/" + fileName).c_str()));
         _texturePreview.show();
     }
 
     void Activity::onObjOpen(const std::string &fileName) {
         EDITOR_INFO("onObjOpen({0})", fileName);
-        const auto& objMesh = GET_MESH_COMPONENT(io::ModelVertex, fileName);
-        _objPreview->setMesh(objMesh);
-        _objPreview->show();
+        MeshSource<ModelVertex>::getMesh("assets/obj/" + fileName, {
+            [this](const io::ModelMeshComponent& mesh) {
+                _objPreview->setMesh(mesh);
+                _objPreview->show();
+            },
+            [](const exception& exception) {
+                EDITOR_EXCEPT(exception);
+            },
+            [](const ModelVertex& vertex) {
+                return vertex;
+            }
+        });
     }
 
     void Activity::ImagePreviewCallback::onImageResized(const uint32_t &width, const uint32_t &height) {
@@ -315,8 +317,8 @@ namespace studio {
         EDITOR_INFO("onAssetRemoved() - {0}", assetPath);
     }
 
-    void Activity::onEntityRemoved(const engine::Entity &entity) {
-        EDITOR_INFO("onEntityRemoved({0})", entity.operator unsigned int());
+    void Activity::onEntityRemoved(const Entity &entity) {
+        EDITOR_INFO("onEntityRemoved({0})", entity.getId());
         app->activeSceneFrame->bind();
         setDepthTest(true);
         setClearColor({0.2, 0.2, 0.2, 1});
@@ -335,37 +337,37 @@ namespace studio {
 
         auto dirItem = AssetBrowserItem {
                 "",
-                LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "dir_icon.png", EDITOR_TEXTURES_PATH)
+                TextureBuffer::load("editor/textures/dir_icon.png")
         };
 
         auto pngItem = AssetBrowserItem {
                 PNG_EXT,
-                LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "png_icon.png", EDITOR_TEXTURES_PATH)
+                TextureBuffer::load("editor/textures/png_icon.png")
         };
 
         auto jpgItem = AssetBrowserItem {
                 JPG_EXT,
-                LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "jpg_icon.png", EDITOR_TEXTURES_PATH)
+                TextureBuffer::load("editor/textures/jpg_icon.png")
         };
 
         auto glslItem = AssetBrowserItem {
                 GLSL_EXT,
-                LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "glsl_icon.png", EDITOR_TEXTURES_PATH)
+                TextureBuffer::load("editor/textures/glsl_icon.png")
         };
 
         auto objItem = AssetBrowserItem {
                 OBJ_EXT,
-                LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "obj_icon.png", EDITOR_TEXTURES_PATH)
+                TextureBuffer::load("editor/textures/obj_icon.png")
         };
 
         auto ttfItem = AssetBrowserItem {
                 TTF_EXT,
-                LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "ttf_icon.png", EDITOR_TEXTURES_PATH)
+                TextureBuffer::load("editor/textures/ttf_icon.png")
         };
 
         auto cppItem = AssetBrowserItem {
                 CPP_EXT,
-                LOAD_TEXTURE_PARAMS(TextureType::TEXTURE_2D, "cpp_icon.png", EDITOR_TEXTURES_PATH)
+                TextureBuffer::load("editor/textures/cpp_icon.png")
         };
 
         auto items = AssetBrowserItems<6> {
@@ -379,16 +381,28 @@ namespace studio {
     }
 
     void Activity::onWindowClosed() {
-        Layer::onWindowClosed();
+        ImGuiLayer::onWindowClosed();
     }
 
     void Activity::onObjDragged(const std::string &fileName) {
         EDITOR_INFO("onObjDragged({0})", fileName);
-        Object3d {
-                app->activeScene.get(),
-                engine::filesystem::getFileName(fileName),
-                GET_MESH_COMPONENT(BatchVertex<Vertex3d>, fileName)
-        };
+        MeshSource<BatchVertex<Vertex3d>>::getMesh("assets/obj/" + fileName, {
+                [this, &fileName](const BaseMeshComponent<BatchVertex<Vertex3d>>& mesh) {
+                    Object3d {
+                            app->activeScene.get(),
+                            engine::filesystem::getFileName(fileName),
+                            Transform3dComponent(),
+                            mesh
+                    };
+                },
+                [](const exception& exception) {
+                    EDITOR_EXCEPT(exception);
+                },
+                [](const ModelVertex& vertex) {
+                    return BatchVertex<Vertex3d> { vertex.position, vertex.uv, vertex.normal, 0 };
+                }
+        });
+
     }
 
     void Activity::onImageDragged(const std::string &fileName) {

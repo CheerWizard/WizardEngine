@@ -30,8 +30,8 @@ include_directories(vendor/glad/include)
 
 # Immediate UI API.
 add_subdirectory(vendor/imgui)
-include_directories(vendor/imgui)
-include_directories(vendor/imgui/misc/cpp)
+include_directories(vendor/imgui/imgui)
+include_directories(vendor/imgui/imgui/misc/cpp)
 
 #/ Math.
 add_subdirectory(vendor/glm)
