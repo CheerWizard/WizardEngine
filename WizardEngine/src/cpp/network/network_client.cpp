@@ -3,7 +3,6 @@
 //
 
 #include <network/network_client.h>
-#include <network/network_core.h>
 
 namespace engine::network {
 
@@ -34,9 +33,9 @@ namespace engine::network {
 
         void Client::init(ClientListener* clientListener) {
             listener = clientListener;
-            clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+            clientSocket = socket::open(AF_INET, SOCK_STREAM, 0);
             if (clientSocket == INVALID_SOCKET) {
-                u32 errorCode = WSAGetLastError();
+                u32 errorCode = socket::getLastError();
                 ENGINE_ERR("TCP_Client: Unable to create a client socket! Unknown error={0}", errorCode);
                 listener->tcp_socketNotCreated();
             }
@@ -44,7 +43,7 @@ namespace engine::network {
 
         void Client::close() {
             running = false;
-            closesocket(clientSocket);
+            socket::close_socket(clientSocket);
             listener->tcp_socketClosed();
         }
 
@@ -54,19 +53,17 @@ namespace engine::network {
         }
 
         void Client::connectImpl(const std::string &ip, const s32 &port) {
-            sockaddr_in hint;
-            hint.sin_family = AF_INET;
-            hint.sin_port = htons(port);
-            inet_pton(AF_INET, ip.c_str(), &hint.sin_addr);
-            // connect to a server
             ENGINE_INFO("TCP_Client: connecting to a server[ip:{0}, port:{1}]", ip, port);
-            s32 connection = ::connect(clientSocket, (sockaddr*)&hint, sizeof(hint));
+            s32 connection = socket::connect(clientSocket, AF_INET, ip.c_str(), port);
             if (connection == SOCKET_ERROR) {
+                ENGINE_ERR("Client error: {0}", socket::getLastError());
+                socket::close_socket(clientSocket);
+                ENGINE_THROW(tcp_client_exception("Unable to connect to a server!"));
                 ENGINE_WARN("TCP_Client: Connection error. Closing client socket!");
-                closesocket(clientSocket);
+                socket::close_socket(clientSocket);
                 listener->tcp_socketClosed();
 
-                u32 errorCode = WSAGetLastError();
+                u32 errorCode = socket::getLastError();
                 switch (errorCode) {
                     case 10031 :
                         ENGINE_ERR("TCP_Client: Unable to connect to server");
@@ -92,7 +89,7 @@ namespace engine::network {
                 s32 sendResult = send(clientSocket, data.c_str(), data.size() + 1, 0);
                 if (sendResult != SOCKET_ERROR) {
                     // wait for response
-                    ZeroMemory(buffer, kb_4);
+                    memset(buffer, 0, kb_4);
                     s32 bytesReceived = recv(clientSocket, buffer, kb_4, 0);
                     if (bytesReceived > 0) {
                         // server response
@@ -133,16 +130,16 @@ namespace engine::network {
 
         void Client::init(ClientListener* clientListener) {
             listener = clientListener;
-            clientSocket = socket(AF_INET, SOCK_DGRAM, 0);
+            clientSocket = socket::open(AF_INET, SOCK_DGRAM, 0);
             if (clientSocket == SOCKET_ERROR) {
-                u32 errorCode = WSAGetLastError();
+                u32 errorCode = socket::getLastError();
                 ENGINE_ERR("UDP_Client: Unable to create a client socket! Unknown error={0}", errorCode);
                 listener->udp_socketNotCreated();
             }
         }
 
         void Client::close() {
-            closesocket(clientSocket);
+            socket::close_socket(clientSocket);
             listener->udp_socketClosed();
         }
 
@@ -173,7 +170,7 @@ namespace engine::network {
             );
 
             if (okStatus == SOCKET_ERROR) {
-                u32 errorCode = WSAGetLastError();
+                u32 errorCode = socket::getLastError();
                 ENGINE_ERR("UDP_Client: Unable to send data, error: {0}", errorCode);
                 listener->udp_sendDataFailed(data);
             }
