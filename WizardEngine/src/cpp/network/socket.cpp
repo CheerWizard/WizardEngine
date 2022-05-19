@@ -9,16 +9,13 @@ namespace engine::network::socket {
 
 #ifdef WINDOWS
 
-    #include <WS2tcpip.h>
-    #pragma comment (lib, "ws2_32.lib")
-
     void init() {
         WSAData wsaData;
         WORD version = MAKEWORD(2, 2);
         s32 wsInit = WSAStartup(version, &wsaData);
         if (wsInit != 0) {
             ENGINE_ERR("Unable to initialize win socket version: {0}", version);
-            ENGINE_THROW(core_exception("Unable to initialize network core!"));
+            ENGINE_THROW(socket_exception("Unable to initialize network core!"));
         }
     }
 
@@ -26,40 +23,38 @@ namespace engine::network::socket {
         WSACleanup();
     }
 
-    s32 open(const s32& domain, const s32& type, const s32& protocol) {
-        socket(domain, type, protocol);
+    SOCKET open(const s32& domain, const s32& type, const s32& protocol) {
+        return ::socket(domain, type, protocol);
     }
 
-    void close_socket(const s32& socket) {
+    void close_socket(const SOCKET& socket) {
         closesocket(socket);
     }
 
-    const char* getLastError() {
+    s32 getLastError() {
         return WSAGetLastError();
     }
 
-    s32 connect(const s32& socket, const s32& domain, const char* ip, const s32& port) {
+    s32 connect(const SOCKET& socket, const s32& domain, const char* ip, const s32& port) {
         sockaddr_in hint;
         hint.sin_family = domain;
         hint.sin_port = htons(port);
         inet_pton(domain, ip, &hint.sin_addr);
         // connect to a server
-        return connect(socket, (sockaddr*)&hint, sizeof(hint));
+        return ::connect(socket, (sockaddr*)&hint, sizeof(hint));
     }
 
-    void bind(sockaddr_in& address, const s32& domain, const char* ip, const s32& port) {
-        address.sin_family = AF_INET;
-        address.sin_port = htons(port);
-        inet_pton(AF_INET, ip, &address.sin_addr);
-    }
-
-    void listen(const SOCKET& socket, const s32& domain, const s32& port, const s32& inAddressType, const s32& connectionsCount) {
+    s32 bind(const SOCKET& socket, const s32& domain, const s32& port, const s32& inAddressType) {
         sockaddr_in hint;
         hint.sin_family = domain;
         hint.sin_port = htons(port);
         hint.sin_addr.s_addr = inAddressType;
-        bind(socket, (sockaddr*)&hint, sizeof(hint));
-        ::listen(socket, connectionsCount);
+        return ::bind(socket, (sockaddr*)&hint, sizeof(hint));
+    }
+
+    s32 listen(const SOCKET& socket, const s32& domain, const s32& port, const s32& inAddressType, const s32& connectionsCount) {
+        bind(socket, domain, port, inAddressType);
+        return ::listen(socket, connectionsCount);
     }
 
     SOCKET accept(const SOCKET& socket, sockaddr_in& address) {
@@ -86,9 +81,15 @@ namespace engine::network::socket {
 
     s32 receiveFrom(const SOCKET& socket, char* buffer, size_t size, s32 flags, const sockaddr_in& address) {
         size_t addressSize = sizeof(address);
-        recvfrom(socket, buffer, size,
+        return recvfrom(
+                socket, buffer, size,
                 flags, (sockaddr*)&address,
-                reinterpret_cast<socklen_t *>(&addressSize));
+                reinterpret_cast<socklen_t *>(&addressSize)
+        );
+    }
+
+    s32 sendTo(const SOCKET& socket, char* buffer, size_t size) {
+
     }
 
 #endif
@@ -103,16 +104,16 @@ namespace engine::network::socket {
         ENGINE_INFO("Linux socket cleaned up!");
     }
 
-    s32 open(const s32& domain, const s32& type, const s32& protocol) {
-        ::socket(domain, type, protocol);
+    SOCKET open(const s32& domain, const s32& type, const s32& protocol) {
+        return ::socket(domain, type, protocol);
     }
 
     void close_socket(const SOCKET& socket) {
         close(socket);
     }
 
-    const char* getLastError() {
-        return "Unknown";
+    s32 getLastError() {
+        return 0;
     }
 
     s32 connect(const SOCKET& socket, const s32& domain, const char* ip, const s32& port) {
@@ -121,7 +122,7 @@ namespace engine::network::socket {
         hint.sin_port = htons(port);
         inet_pton(domain, ip, &hint.sin_addr);
         // connect to a server
-        return connect(socket, (sockaddr*)&hint, sizeof(hint));
+        return ::connect(socket, (sockaddr*)&hint, sizeof(hint));
     }
 
     s32 bind(const SOCKET& socket, const s32& domain, const s32& port, const s32& inAddressType) {
@@ -132,13 +133,9 @@ namespace engine::network::socket {
         return ::bind(socket, (sockaddr*)&hint, sizeof(hint));
     }
 
-    void listen(const SOCKET& socket, const s32& domain, const s32& port, const s32& inAddressType, const s32& connectionsCount) {
-        sockaddr_in hint;
-        hint.sin_family = domain;
-        hint.sin_port = htons(port);
-        hint.sin_addr.s_addr = inAddressType;
-        bind(socket, (sockaddr*)&hint, sizeof(hint));
-        ::listen(socket, connectionsCount);
+    s32 listen(const SOCKET& socket, const s32& domain, const s32& port, const s32& inAddressType, const s32& connectionsCount) {
+        bind(socket, domain, port, inAddressType);
+        return ::listen(socket, connectionsCount);
     }
 
     SOCKET accept(const SOCKET& socket, sockaddr_in& address) {
@@ -165,9 +162,15 @@ namespace engine::network::socket {
 
     s32 receiveFrom(const SOCKET& socket, char* buffer, size_t size, s32 flags, const sockaddr_in& address) {
         size_t addressSize = sizeof(address);
-        recvfrom(socket, buffer, size,
+        return recvfrom(
+                socket, buffer, size,
                 flags, (sockaddr*)&address,
-                reinterpret_cast<socklen_t *>(&addressSize));
+                reinterpret_cast<socklen_t *>(&addressSize)
+        );
+    }
+
+    s32 sendTo(const SOCKET& socket, char* buffer, size_t size) {
+
     }
 
 #endif

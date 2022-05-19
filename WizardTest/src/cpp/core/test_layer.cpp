@@ -42,13 +42,22 @@ namespace test {
                 scene.get()
         );
 
-        try {
-            auto model = io::ModelFile::read("assets/model/DesertEagle.fbx");
-            auto mesh = toMesh3dBatch(model.meshComponent);
-            survivalBackPack.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(mesh);
-        } catch (const file_not_found& ex) {
-            RUNTIME_ERR("Could not load model file!");
-        }
+        graphics::MeshSource<BatchVertex<Vertex3d>>::getMesh("assets/model/DesertEagle.fbx", {
+            [this](const BaseMeshComponent<BatchVertex<Vertex3d>>& mesh) {
+                survivalBackPack.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(mesh);
+            },
+            [](const exception& exception) {
+                RUNTIME_EXCEPT(exception);
+            },
+            [](const io::ModelVertex& modelVertex) {
+                return BatchVertex<Vertex3d> {
+                    modelVertex.position,
+                    modelVertex.uv,
+                    modelVertex.normal,
+                    0
+                };
+            }
+        });
 
         audio::MediaPlayer::loadStream(
                 "assets/audio/forest.wav",
@@ -61,10 +70,10 @@ namespace test {
                 }
         );
 
-        TCP_CLIENT_INIT();
+        TCP_CLIENT_INIT(this);
         TCP_CLIENT_CONNECT_RUN(localhost, 54000);
 
-        UDP_CLIENT_INIT();
+        UDP_CLIENT_INIT(this);
         UDP_CLIENT_BIND(localhost, 54000);
     }
 
@@ -108,47 +117,86 @@ namespace test {
     }
 
     void TestLayer::onWindowResized(const uint32_t &width, const uint32_t &height) {
-        Layer::onWindowResized(width, height);
         cameraController->onWindowResized(width, height);
     }
 
     void TestLayer::onKeyPressed(event::KeyCode keyCode) {
-        Layer::onKeyPressed(keyCode);
         cameraController->onKeyPressed(keyCode);
     }
 
     void TestLayer::onKeyHold(event::KeyCode keyCode) {
-        Layer::onKeyHold(keyCode);
         cameraController->onKeyHold(keyCode);
     }
 
     void TestLayer::onKeyReleased(event::KeyCode keyCode) {
-        Layer::onKeyReleased(keyCode);
         cameraController->onKeyReleased(keyCode);
     }
 
     void TestLayer::onKeyTyped(event::KeyCode keyCode) {
-        Layer::onKeyTyped(keyCode);
         cameraController->onKeyTyped(keyCode);
     }
 
     void TestLayer::onPadA() {
-        ENGINE_INFO("Gamepad button A pressed!");
+        RUNTIME_INFO("Gamepad button A pressed!");
         cameraController->applyMove(MoveType::DOWN);
     }
 
     void TestLayer::onPadB() {
-        ENGINE_INFO("Gamepad button B pressed!");
+        RUNTIME_INFO("Gamepad button B pressed!");
         cameraController->applyMove(MoveType::RIGHT);
     }
 
     void TestLayer::onPadX() {
-        ENGINE_INFO("Gamepad button X pressed!");
+        RUNTIME_INFO("Gamepad button X pressed!");
         cameraController->applyMove(MoveType::LEFT);
     }
 
     void TestLayer::onPadY() {
-        ENGINE_INFO("Gamepad button Y pressed!");
+        RUNTIME_INFO("Gamepad button Y pressed!");
         cameraController->applyMove(MoveType::UP);
+    }
+
+    void TestLayer::onWindowClosed() {
+
+    }
+
+    void TestLayer::onMousePressed(event::MouseCode mouseCode) {
+
+    }
+
+    void TestLayer::onMouseRelease(event::MouseCode mouseCode) {
+
+    }
+
+    void TestLayer::onMouseScrolled(double xOffset, double yOffset) {
+
+    }
+
+    void TestLayer::onCursorMoved(double xPos, double yPos) {
+
+    }
+
+    void TestLayer::tcp_socketNotCreated() {
+
+    }
+
+    void TestLayer::tcp_connectionFailed() {
+
+    }
+
+    void TestLayer::tcp_socketClosed() {
+
+    }
+
+    void TestLayer::udp_socketNotCreated() {
+
+    }
+
+    void TestLayer::udp_sendDataFailed(const std::string &data) {
+
+    }
+
+    void TestLayer::udp_socketClosed() {
+
     }
 }

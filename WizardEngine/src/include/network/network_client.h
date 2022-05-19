@@ -7,11 +7,11 @@
 #include <thread/Task.h>
 #include <network/socket.h>
 
-#define TCP_CLIENT_INIT() engine::network::tcp::Client::init()
+#define TCP_CLIENT_INIT(listener) engine::network::tcp::Client::init(listener)
 #define TCP_CLIENT_CONNECT_RUN(ip, port) engine::network::tcp::Client::connectRun(ip, port)
 #define TCP_CLIENT_CLOSE() engine::network::tcp::Client::close()
 
-#define UDP_CLIENT_INIT() engine::network::udp::Client::init()
+#define UDP_CLIENT_INIT(listener) engine::network::udp::Client::init(listener)
 #define UDP_CLIENT_BIND(ip, port) engine::network::udp::Client::bind(ip, port)
 #define UDP_CLIENT_BIND_CALLBACK(ip, port, callback) engine::network::udp::Client::bind(ip, port, callback)
 #define UDP_CLIENT_SEND(data) engine::network::udp::Client::send(data)
@@ -25,6 +25,13 @@ namespace engine::network {
 
         decl_exception(tcp_client_exception)
 
+        class ClientListener {
+        public:
+            virtual void tcp_socketNotCreated() = 0;
+            virtual void tcp_connectionFailed() = 0;
+            virtual void tcp_socketClosed() = 0;
+        };
+
         class Client final {
 
         private:
@@ -32,7 +39,7 @@ namespace engine::network {
             ~Client() = default;
 
         public:
-            static void init();
+            static void init(ClientListener* clientListener);
             static void close();
 
             static void connectRun(const std::string& ip, const s32& port);
@@ -51,12 +58,20 @@ namespace engine::network {
             static bool running;
             static thread::VoidTask<const std::string&, const s32&> connectionTask;
             static thread::VoidTask<> runTask;
+            static ClientListener* listener;
         };
     }
 
     namespace udp {
 
         decl_exception(udp_client_exception)
+
+        class ClientListener {
+        public:
+            virtual void udp_socketNotCreated() = 0;
+            virtual void udp_sendDataFailed(const std::string& data) = 0;
+            virtual void udp_socketClosed() = 0;
+        };
 
         class Client final {
 
@@ -65,7 +80,7 @@ namespace engine::network {
             ~Client() = default;
 
         public:
-            static void init();
+            static void init(ClientListener* clientListener);
             static void close();
 
             static void bind(const std::string& ip, const s32& port);
@@ -82,6 +97,7 @@ namespace engine::network {
             static SOCKET clientSocket;
             static thread::VoidTask<const std::string&, const s32&> bindTask;
             static thread::VoidTask<const std::string&> sendTask;
+            static ClientListener* listener;
         };
     }
 

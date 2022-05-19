@@ -286,44 +286,43 @@ namespace engine::gui {
     }
 
     void ImGuiLayer::onKeyPressed(event::KeyCode keyCode) {
-        Layer::onKeyPressed(keyCode);
         IO.KeysDown[keyCode] = true;
     }
 
     void ImGuiLayer::onKeyHold(event::KeyCode keyCode) {
-        Layer::onKeyHold(keyCode);
         IO.KeysDown[keyCode] = true;
     }
 
     void ImGuiLayer::onKeyReleased(event::KeyCode keyCode) {
-        Layer::onKeyReleased(keyCode);
         IO.KeysDown[keyCode] = false;
     }
 
     void ImGuiLayer::onKeyTyped(event::KeyCode keyCode) {
-        Layer::onKeyTyped(keyCode);
         IO.AddInputCharacter(keyCode);
     }
 
     void ImGuiLayer::onMouseScrolled(double xOffset, double yOffset) {
-        Layer::onMouseScrolled(xOffset, yOffset);
         IO.MouseWheelH += xOffset;
         IO.MouseWheel += yOffset;
     }
 
     void ImGuiLayer::onMousePressed(event::MouseCode mouseCode) {
-        Layer::onMousePressed(mouseCode);
         IO.MouseDown[mouseCode] = true;
     }
 
     void ImGuiLayer::onMouseRelease(event::MouseCode mouseCode) {
-        Layer::onMouseRelease(mouseCode);
         IO.MouseDown[mouseCode] = false;
     }
 
     void ImGuiLayer::onCursorMoved(double xPos, double yPos) {
-        Layer::onCursorMoved(xPos, yPos);
         IO.MousePos = {(float) xPos, (float) yPos};
     }
 
+    void ImGuiLayer::onWindowClosed() {
+        ENGINE_INFO("onWindowsClosed()");
+    }
+
+    void ImGuiLayer::onWindowResized(const uint32_t &width, const uint32_t &height) {
+        ENGINE_INFO("onWindowResized(width = {0}, height = {1})", width, height);
+    }
 }

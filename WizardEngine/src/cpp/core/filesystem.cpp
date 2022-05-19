@@ -191,4 +191,10 @@ namespace engine::filesystem {
         return true;
     }
 
+    bool write(const char* filepath, const char* data) {
+        std::ofstream file(filepath);
+        file << data;
+        return true;
+    }
+
 }

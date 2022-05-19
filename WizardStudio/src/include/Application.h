@@ -13,9 +13,6 @@ namespace studio {
     protected:
         void onCreate() override;
         engine::core::WindowProps createWindowProps() override;
-
-    private:
-        void createTest();
     };
 
 }

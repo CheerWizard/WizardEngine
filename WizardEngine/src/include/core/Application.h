@@ -121,7 +121,7 @@ namespace engine::core {
     private:
         bool _isRunning = true;
         // core systems
-        LayerStack _layerStack; // todo consider remove LayerStack. Instead replace with Activity class.
+        LayerStack _layerStack;
         Scope<Window> _window;
         // graphics system
         Scope<RenderSystem> _renderSystem;

@@ -118,4 +118,14 @@ namespace engine::io {
             textures.push_back(texture);
         }
     }
+
+    void ModelFile::read(const std::string &filepath, const ModelFileListener &listener) {
+        try {
+            auto model = read(filepath);
+            listener.success(model);
+        } catch (const file_not_found& ex) {
+            ENGINE_ERR("Failed to read model file '{0}'", filepath);
+            listener.failure(ex);
+        }
+    }
 }

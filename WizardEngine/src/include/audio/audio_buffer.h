@@ -40,6 +40,10 @@ namespace engine::audio {
             return id;
         }
 
+        [[nodiscard]] inline u32 getValue() const {
+            return id;
+        }
+
     private:
         u32 id = 0;
     };

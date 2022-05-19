@@ -6,11 +6,12 @@
 
 #include <platform/platform_detection.h>
 #include <core/primitives.h>
+#include <core/exception.h>
 
 #ifdef WINDOWS
+#include <WS2tcpip.h>
+#pragma comment (lib, "ws2_32.lib")
 typedef unsigned __int64 SOCKET;
-#elseif defined(_WIN32)
-typedef _W64 unsigned int SOCKET;
 #endif
 
 #ifdef LINUX
@@ -42,19 +43,19 @@ namespace engine::network::socket {
     void init();
     void cleanup();
 
-    s32 open(const s32& domain, const s32& type, const s32& protocol);
+    SOCKET open(const s32& domain, const s32& type, const s32& protocol);
     void close_socket(const SOCKET& socket);
 
-    const char* getLastError();
+    s32 getLastError();
 
     s32 connect(const SOCKET& socket, const s32& domain, const char* ip, const s32& port);
     s32 bind(const SOCKET& socket, const s32& domain, const s32& port, const s32& inAddressType);
 
-    void listen(const SOCKET& socket, const s32& domain, const s32& port, const s32& inAddressType, const s32& connectionsCount);
+    s32 listen(const SOCKET& socket, const s32& domain, const s32& port, const s32& inAddressType, const s32& connectionsCount);
     SOCKET accept(const SOCKET& socket, sockaddr_in& address);
 
     SocketProfile getSocketProfile(const SOCKET& socket, sockaddr_in& address);
 
     s32 receiveFrom(const SOCKET& socket, char* buffer, size_t size, s32 flags, const sockaddr_in& address);
-    s32 sendTo(const SOCKET& socket, char* buffer, size_t size, );
+    s32 sendTo(const SOCKET& socket, char* buffer, size_t size);
 }

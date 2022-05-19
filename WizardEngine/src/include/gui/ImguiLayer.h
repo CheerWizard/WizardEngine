@@ -55,6 +55,10 @@ namespace engine::gui {
         void onMouseRelease(event::MouseCode mouseCode) override;
         void onCursorMoved(double xPos, double yPos) override;
 
+        void onWindowClosed() override;
+
+        void onWindowResized(const uint32_t &width, const uint32_t &height) override;
+
     private:
         void create();
         void destroy();
