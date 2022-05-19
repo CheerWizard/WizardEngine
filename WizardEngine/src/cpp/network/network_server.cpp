@@ -3,7 +3,6 @@
 //
 
 #include <network/network_server.h>
-#include <network/network_core.h>
 
 namespace engine::network {
 
@@ -28,7 +27,7 @@ namespace engine::network {
         };
 
         void Server::init() {
-            listeningSocket = socket(AF_INET, SOCK_STREAM, 0);
+            listeningSocket = socket::open(AF_INET, SOCK_STREAM, 0);
             if (listeningSocket == INVALID_SOCKET) {
                 ENGINE_THROW(tcp_server_exception("Unable to create TCP listening socket!"));
             }
@@ -36,7 +35,7 @@ namespace engine::network {
 
         void Server::close() {
             running = false;
-            closesocket(clientProfile.socket);
+            socket::close_socket(clientProfile.socket);
             delete clientProfile.host;
             delete clientProfile.service;
         }
@@ -53,36 +52,17 @@ namespace engine::network {
 
         void Server::listenImpl(const s32 &port) {
             // bind IP address amd port to socket
-            sockaddr_in hint;
-            hint.sin_family = AF_INET;
-            hint.sin_port = htons(port);
-            hint.sin_addr.S_un.S_addr = INADDR_ANY;
-            bind(listeningSocket, (sockaddr*)&hint, sizeof(hint));
-            // set the socket for listening
-            ::listen(listeningSocket, SOMAXCONN);
+            socket::listen(listeningSocket, AF_INET, port, INADDR_ANY, SOMAXCONN);
             // wait for connection
             sockaddr_in client;
-            s32 clientSize = sizeof(client);
-            SOCKET clientSocket = accept(listeningSocket, (sockaddr*)&client, &clientSize);
+            SOCKET clientSocket = socket::accept(listeningSocket, client);
             if (clientSocket == INVALID_SOCKET) {
                 ENGINE_THROW(tcp_server_exception("Unable to create TCP client socket!"));
             }
-            // setup client profile
-            char* host = new char[NI_MAXHOST];
-            char* service = new char[NI_MAXSERV];
-
-            ZeroMemory(host, NI_MAXHOST);
-            ZeroMemory(service, NI_MAXSERV);
-            // log client's info
-            if (getnameinfo((sockaddr*)&client, sizeof(client), host, NI_MAXHOST, service, NI_MAXSERV, 0) == 0) {
-                ENGINE_INFO("Client host connected on port: {0}", service);
-            } else {
-                inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST);
-                ENGINE_INFO("Client host connected on port: {0}", ntohs(client.sin_port));
-            }
-            clientProfile = { clientSocket, host, service };
+            socket::SocketProfile socketProfile = socket::getSocketProfile(clientSocket, client);
+            clientProfile = { clientSocket, socketProfile.host, socketProfile.service };
             // close listening socket
-            closesocket(listeningSocket);
+            socket::close_socket(listeningSocket);
         }
 
         void Server::run() {
@@ -95,7 +75,7 @@ namespace engine::network {
             running = true;
             while (running) {
                 thread::current_sleep(1000);
-                ZeroMemory(buffer, kb_4);
+                memset(buffer, 0, kb_4);
                 // receive data from client
                 s32 receivedBytes = recv(clientProfile.socket, buffer, kb_4, 0);
                 ENGINE_INFO("Server: Response from client {0}", buffer);
@@ -139,7 +119,7 @@ namespace engine::network {
         };
 
         void Server::init() {
-            clientSocket = socket(AF_INET, SOCK_DGRAM, 0);
+            clientSocket = socket::open(AF_INET, SOCK_DGRAM, 0);
             if (clientSocket == SOCKET_ERROR) {
                 ENGINE_THROW(udp_server_exception("UDP_Server: Unable to create socket!"));
             }
@@ -147,7 +127,7 @@ namespace engine::network {
 
         void Server::close() {
             running = false;
-            closesocket(clientSocket);
+            socket::close_socket(clientSocket);
         }
 
         void Server::bind(const s32 &port, const std::function<void()> &done) {
@@ -161,13 +141,9 @@ namespace engine::network {
         }
 
         void Server::bindImpl(const s32 &port) {
-            sockaddr_in hint;
-            hint.sin_family = AF_INET;
-            hint.sin_port = htons(port);
-            hint.sin_addr.S_un.S_addr = INADDR_ANY;
-            s32 bindResult = ::bind(clientSocket, (sockaddr*)&hint, sizeof(hint));
+            s32 bindResult = socket::bind(clientSocket, AF_INET, port, INADDR_ANY);
             if (bindResult == SOCKET_ERROR) {
-                ENGINE_ERR("Error: {0}", WSAGetLastError());
+                ENGINE_ERR("Error: {0}", socket::getLastError());
                 ENGINE_THROW(udp_server_exception("Unable to bind to UDP socket!"));
             }
         }
@@ -179,21 +155,21 @@ namespace engine::network {
         void Server::runImpl() {
             sockaddr_in client;
             s32 clientLength = sizeof(client);
-            ZeroMemory(&client, clientLength);
+            memset(&client, 0, clientLength);
             char buffer[kb_1];
             running = true;
 
             while (running) {
                 thread::current_sleep(1000);
-                ZeroMemory(buffer, kb_1);
-                s32 bytesReceived = recvfrom(clientSocket, buffer, kb_1, 0, (sockaddr*)&client, &clientLength);
+                memset(buffer, 0, kb_1);
+                s32 bytesReceived = socket::receiveFrom(clientSocket, buffer, kb_1,0, client);
                 if (bytesReceived == SOCKET_ERROR) {
-                    ENGINE_ERR("UDP_Server: Error receiving data from UDP client: {0}", WSAGetLastError());
+                    ENGINE_ERR("UDP_Server: Error receiving data from UDP client: {0}", socket::getLastError());
                     continue;
                 }
                 // get client IP
                 char clientIp[256];
-                ZeroMemory(clientIp, 256);
+                memset(clientIp, 0, 256);
                 inet_ntop(AF_INET, &client.sin_addr, clientIp, 256);
                 // display client IP and message
                 ENGINE_INFO("UDP_Server: Message received from client[IP:{0}], message: {1}", clientIp, buffer);

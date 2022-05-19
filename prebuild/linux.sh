@@ -6,4 +6,8 @@ sudo apt install libxcursor-dev
 sudo apt install libxi-dev
 sudo apt install libxext-dev
 # replace CMake file for ImGui
-cp imgui/CMakeLists.txt ../WizardEngine/vendor/imgui/CMakeLists.txt
+cd ../WizardEngine/vendor/imgui
+git checkout docking
+cd ..
+git add imgui
+cp ../../prebuild/imgui/CMakeLists.txt imgui/CMakeLists.txt
