@@ -89,7 +89,7 @@ namespace engine::network::socket {
     }
 
     s32 sendTo(const SOCKET& socket, char* buffer, size_t size) {
-
+        return 0;
     }
 
 #endif
@@ -170,7 +170,7 @@ namespace engine::network::socket {
     }
 
     s32 sendTo(const SOCKET& socket, char* buffer, size_t size) {
-
+        return 0;
     }
 
 #endif
