@@ -9,7 +9,7 @@ int main() {
     INIT_RUNTIME_LOG("WizardServer");
 
     ENGINE_INFO("Running WizardServer...");
-    network::core::init();
+    network::socket::init();
     auto* serverApp = new server::ServerApp();
 
     while (true) {
@@ -18,7 +18,7 @@ int main() {
 
     ENGINE_INFO("Shutting down WizardServer...");
     delete serverApp;
-    network::core::cleanup();
+    network::socket::cleanup();
 }
 
 namespace server {

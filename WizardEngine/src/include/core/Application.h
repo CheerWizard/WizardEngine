@@ -25,7 +25,6 @@
 #include <audio/audio_device_manager.h>
 #include <audio/audio_player.h>
 
-#include <network/network_core.h>
 #include <network/network_server.h>
 #include <network/network_client.h>
 

@@ -56,9 +56,6 @@ namespace engine::network {
             ENGINE_INFO("TCP_Client: connecting to a server[ip:{0}, port:{1}]", ip, port);
             s32 connection = socket::connect(clientSocket, AF_INET, ip.c_str(), port);
             if (connection == SOCKET_ERROR) {
-                ENGINE_ERR("Client error: {0}", socket::getLastError());
-                socket::close_socket(clientSocket);
-                ENGINE_THROW(tcp_client_exception("Unable to connect to a server!"));
                 ENGINE_WARN("TCP_Client: Connection error. Closing client socket!");
                 socket::close_socket(clientSocket);
                 listener->tcp_socketClosed();

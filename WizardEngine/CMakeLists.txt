@@ -14,7 +14,7 @@ file(GLOB_RECURSE ENGINE_SRC
 add_library(${PROJECT_NAME} ${ENGINE_SRC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
-#/ adding dependencies.
+#/ Add WizardEngine headers
 include_directories(src/include)
 
 #/ Logger.
@@ -30,8 +30,8 @@ include_directories(vendor/glad/include)
 
 # Immediate UI API.
 add_subdirectory(vendor/imgui)
-include_directories(vendor/imgui/imgui)
-include_directories(vendor/imgui/imgui/misc/cpp)
+include_directories(vendor/imgui)
+include_directories(vendor/imgui/misc/cpp)
 
 #/ Math.
 add_subdirectory(vendor/glm)
