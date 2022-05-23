@@ -274,8 +274,12 @@ namespace engine::core {
                 }
             }
 
-            for (auto& gamepadAxis : eventRegistry.gamepadAxisMap) {
-                gamepadAxis.second.function(axis[gamepadAxis.first]);
+            for (auto& gamepadRollCode : eventRegistry.gamepadRollCodeMap) {
+                gamepadRollCode.second.function(event::GamepadRoll {
+                    axis[gamepadRollCode.first.x],
+                    axis[gamepadRollCode.first.y],
+                    axis[gamepadRollCode.first.trigger] == 1
+                });
             }
         } else {
             ENGINE_WARN("Joystick DISCONNECTED! Polling joystick state...");

@@ -71,7 +71,7 @@ namespace test {
         );
 
         TCP_CLIENT_INIT(this);
-        TCP_CLIENT_CONNECT_RUN(localhost, 54000);
+        TCP_CLIENT_CONNECT(localhost, 54000);
 
         UDP_CLIENT_INIT(this);
         UDP_CLIENT_BIND(localhost, 54000);
@@ -96,14 +96,17 @@ namespace test {
     void TestLayer::onPrepare() {
         bindCamera();
 
-        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_A, onPadA(););
-        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_B, onPadB(););
-        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_X, onPadX(););
-        BIND_GAMEPAD_BUTTON_PRESSED(GamepadButtonCode::PAD_BTN_Y, onPadY(););
+        GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_A, onPadA(););
+        GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_B, onPadB(););
+        GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_X, onPadX(););
+        GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_Y, onPadY(););
 
-        BIND_KEY_PRESSED(KeyCode::D1, audio::MediaPlayer::pause(););
-        BIND_KEY_PRESSED(KeyCode::D2, audio::MediaPlayer::stop(););
-        BIND_KEY_PRESSED(KeyCode::D3, audio::MediaPlayer::playStream(););
+        GAMEPAD_ROLL(PAD_LEFT_ROLL, onPadX(););
+        GAMEPAD_ROLL(PAD_RIGHT_ROLL, onPadX(););
+
+        KEY_PRESSED(KeyCode::D1, audio::MediaPlayer::pause(););
+        KEY_PRESSED(KeyCode::D2, audio::MediaPlayer::stop(););
+        KEY_PRESSED(KeyCode::D3, audio::MediaPlayer::playStream(););
     }
 
     void TestLayer::onUpdate(time::Time deltaTime) {
