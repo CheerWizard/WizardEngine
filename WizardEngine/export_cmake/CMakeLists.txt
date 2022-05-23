@@ -26,6 +26,5 @@ macro(link_to_engine project)
             glm::glm
             stb
             freetype
-            yaml-cpp
     )
 endmacro()

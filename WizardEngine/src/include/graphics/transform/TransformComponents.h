@@ -5,19 +5,25 @@
 #pragma once
 
 #include <math/ModelMatrices.h>
+#include <ecs/ecs.h>
 
 namespace engine::graphics {
 
-    component(Transform2dComponent) {
+    using namespace core;
+
+    serialize_component(Transform2dComponent) {
         math::ModelMatrix2d modelMatrix;
 
         Transform2dComponent() {
             modelMatrix = math::ModelMatrix2d();
             modelMatrix.name = "transform";
         }
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
 
-    component(Transform3dComponent) {
+    serialize_component(Transform3dComponent) {
         math::ModelMatrix3d modelMatrix;
 
         Transform3dComponent() {
@@ -35,5 +41,8 @@ namespace engine::graphics {
             modelMatrix.scale = scale;
             modelMatrix.name = "transform";
         }
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
 }

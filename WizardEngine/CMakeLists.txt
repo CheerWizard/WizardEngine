@@ -50,8 +50,7 @@ include_directories(vendor/assimp/include)
 #/ Audio core. Builds as DLL
 include_directories(vendor/openal-soft/include)
 
-#/ YAML parser
-add_subdirectory(vendor/yaml-cpp)
+#/ YAML parser. Builds as DLL
 include_directories(vendor/yaml-cpp/include)
 
 #/ linking dependencies.
@@ -66,7 +65,7 @@ target_link_libraries(
         freetype
         ../WizardEngine/vendor/dlls/assimp-vc143-mtd
         ../WizardEngine/vendor/dlls/OpenAL32
-        yaml-cpp
+        ../WizardEngine/vendor/dlls/yaml-cppd
 )
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
@@ -80,14 +79,6 @@ replace_file(vendor/dlls/OpenAL32.dll ../WizardStudio/OpenAL32.dll)
 replace_file(vendor/dlls/OpenAL32.dll ../WizardTest/OpenAL32.dll)
 replace_file(vendor/dlls/OpenAL32.dll ../WizardServer/OpenAL32.dll)
 
-
-#replace_dirs(WizardEngine/cpp_scripting WizardEngine/cpp_scripting)
-#replace_dirs(WizardEngine/runtime WizardEngine/runtime)
-#replace_dirs(WizardEngine/src/include WizardEngine/src/include)
-#replace_dirs(WizardEngine/vendor/entt/src WizardEngine/vendor/entt/src)
-#replace_dirs(WizardEngine/vendor/glad/include WizardEngine/vendor/glad/include)
-#replace_dirs(WizardEngine/vendor/glfw/include WizardEngine/vendor/glfw/include)
-#replace_dirs(WizardEngine/vendor/glm/glm WizardEngine/vendor/glm/glm)
-#replace_dirs(WizardEngine/vendor/spdlog/include WizardEngine/vendor/spdlog/include)
-#replace_dirs(WizardEngine/vendor/stb/stb WizardEngine/vendor/stb/stb)
-#replace_dirs(WizardEngine/vendor/freetype/include WizardEngine/vendor/freetype/include)
+replace_file(vendor/dlls/yaml-cppd.dll ../WizardStudio/yaml-cppd.dll)
+replace_file(vendor/dlls/yaml-cppd.dll ../WizardTest/yaml-cppd.dll)
+replace_file(vendor/dlls/yaml-cppd.dll ../WizardServer/yaml-cppd.dll)
