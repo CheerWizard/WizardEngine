@@ -89,6 +89,12 @@ namespace engine::ecs {
         template<typename T, typename... Args>
         inline bool add(Args &&... args);
 
+        template<typename T>
+        inline void deserialize(const YAML::Node& entityNode);
+
+        template<typename T>
+        inline void serialize(YAML::Emitter& out);
+
         template<typename T, typename... Args>
         inline bool update(Args &&... args);
 
@@ -150,5 +156,15 @@ namespace engine::ecs {
     template<typename T>
     inline bool Entity::remove() const {
         return container->removeComponent<T>(id);
+    }
+
+    template<typename T>
+    void Entity::deserialize(const YAML::Node &entityNode) {
+        add<T>(deserialize_from(T, entityNode));
+    }
+
+    template<typename T>
+    void Entity::serialize(YAML::Emitter& out) {
+        get<T>()->serialize(out);
     }
 }

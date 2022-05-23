@@ -9,14 +9,18 @@ namespace engine::network::socket {
 
 #ifdef WINDOWS
 
-    void init() {
+    bool init() {
         WSAData wsaData;
         WORD version = MAKEWORD(2, 2);
         s32 wsInit = WSAStartup(version, &wsaData);
+
         if (wsInit != 0) {
-            ENGINE_ERR("Unable to initialize win socket version: {0}", version);
-            ENGINE_THROW(socket_exception("Unable to initialize network core!"));
+            ENGINE_ERR("Unable to initialize Windows socket version: {0}", version);
+            return false;
         }
+
+        ENGINE_INFO("Windows socket initialized!");
+        return true;
     }
 
     void cleanup() {
@@ -96,8 +100,9 @@ namespace engine::network::socket {
 
 #ifdef LINUX
 
-    void init() {
+    bool init() {
         ENGINE_INFO("Linux socket initialized!");
+        return true;
     }
 
     void cleanup() {

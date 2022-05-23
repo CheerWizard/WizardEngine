@@ -19,6 +19,20 @@ git clone --recursive https://github.com/CheerWizard/WizardEngine
 **IMPORTANT**: Make sure you are cloning repo recursively with "--recursive" keyword. 
 Otherwise, it won't fetch all dependencies and as a result - build process will fail!
 
+### Prebuild
+Make sure you have a **Git Bash** and you can run a prebuild file from **prebuild** folder. 
+#### For Windows 
+```bash
+sh prebuild/windows.sh
+```
+#### For Linux
+```bash
+sh prebuild/linux.sh
+```
+**or**
+```bash
+bash prebuild/linux.sh
+```
 ### Build from source:
 ```bash
 cd WizardEngine
@@ -26,7 +40,7 @@ cmake CMakeLists.txt
 cmake --build .
 ```
 
-### Build instructions for Windows with Visual Studio
+### Build instructions for Windows/Linux with Visual Studio/Visual Code
 
 First you have to install **Visual Studio** on your Windows system. You can get the **Community Version** 
 for free here: https://visualstudio.microsoft.com/de/downloads/
@@ -38,7 +52,7 @@ cmake CMakeLists.txt
 This will generate the project files for the visual studio. 
 All dependencies used to build **WizardEngine** shall be part of the repo.
 
-### Build instructions for Windows with CLion IDEA
+### Build instructions for Windows/Linux with CLion IDEA
 Build project with **CLion IDEA** is much easier. If you already cloned Git repository, then just follow these steps:
 1. Open **WizardEngine** package with **CLion IDEA** 
 2. Wait until CMake commands will be executed

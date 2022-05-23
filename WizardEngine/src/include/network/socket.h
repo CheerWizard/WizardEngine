@@ -40,7 +40,7 @@ namespace engine::network::socket {
         const char* service;
     };
 
-    void init();
+    bool init();
     void cleanup();
 
     SOCKET open(const s32& domain, const s32& type, const s32& protocol);

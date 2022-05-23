@@ -11,7 +11,6 @@ namespace engine::network {
     namespace tcp {
 
         SOCKET Client::clientSocket;
-        bool Client::running = false;
 
         thread::VoidTask<const std::string&, const s32&> Client::connectionTask = {
                 "ClientConnection_Task",
@@ -20,16 +19,14 @@ namespace engine::network {
         };
 
         thread::VoidTask<> Client::runTask = {
-                "ClientRun_Task",
-                "ClientRun_Thread",
+                "TCPClientRun_Task",
+                "TCPClientRun_Thread",
                 runImpl
         };
 
         ClientListener* Client::listener = nullptr;
-
-        void Client::run() {
-            runTask.run();
-        }
+        bool Client::isRunning = false;
+        queue<NetworkData> Client::requests;
 
         void Client::init(ClientListener* clientListener) {
             listener = clientListener;
@@ -42,13 +39,13 @@ namespace engine::network {
         }
 
         void Client::close() {
-            running = false;
+            isRunning = false;
             socket::close_socket(clientSocket);
             listener->tcp_socketClosed();
         }
 
-        void Client::connect(const std::string &ip, const s32 &port, const std::function<void()>& done) {
-            connectionTask.done = done;
+        void Client::connect(const std::string &ip, const s32 &port) {
+            connectionTask.done = []() { listener->tcp_connectionSucceeded(); };
             connectionTask.run(ip, port);
         }
 
@@ -56,9 +53,6 @@ namespace engine::network {
             ENGINE_INFO("TCP_Client: connecting to a server[ip:{0}, port:{1}]", ip, port);
             s32 connection = socket::connect(clientSocket, AF_INET, ip.c_str(), port);
             if (connection == SOCKET_ERROR) {
-                ENGINE_ERR("Client error: {0}", socket::getLastError());
-                socket::close_socket(clientSocket);
-                ENGINE_THROW(tcp_client_exception("Unable to connect to a server!"));
                 ENGINE_WARN("TCP_Client: Connection error. Closing client socket!");
                 socket::close_socket(clientSocket);
                 listener->tcp_socketClosed();
@@ -77,35 +71,40 @@ namespace engine::network {
             }
         }
 
-        void Client::runImpl() {
+        void Client::send(char *data, size_t size) {
+            send(data, size, [](char* data, size_t size) { listener->tcp_dataReceived(data, size); });
+        }
+
+        void Client::send(char *data, size_t size, const std::function<void(char*, size_t)>& receiver) {
             // send and receive data
-            char buffer[kb_4];
-            running = true;
-            while (running) {
-                thread::current_sleep(1000);
-                std::string data = "Hello world!";
-                ENGINE_INFO("Client: Request to server {0}", data);
-                // send the text
-                s32 sendResult = send(clientSocket, data.c_str(), data.size() + 1, 0);
-                if (sendResult != SOCKET_ERROR) {
-                    // wait for response
-                    memset(buffer, 0, kb_4);
-                    s32 bytesReceived = recv(clientSocket, buffer, kb_4, 0);
-                    if (bytesReceived > 0) {
-                        // server response
-                        ENGINE_INFO("Client: Response from server {0}", std::string(buffer, 0, bytesReceived));
-                    }
+            ENGINE_INFO("TCP_Client: Send data to a server {0}", data);
+            s32 sendResult = ::send(clientSocket, data, size + 1, 0);
+            if (sendResult != SOCKET_ERROR) {
+                // wait for response
+                memset(data, 0, size);
+                s32 sizeReceived = recv(clientSocket, data, size, 0);
+                if (sizeReceived > 0) {
+                    // server response
+                    ENGINE_INFO("TCP_Client: Received data from a server {0}", std::string(data, 0, sizeReceived));
+                    listener->tcp_dataReceived(data, sizeReceived);
+                    receiver(data, sizeReceived);
                 }
             }
         }
 
-        void Client::stop() {
-            running = false;
+        void Client::run() {
+            isRunning = true;
+            runTask.run();
         }
 
-        void Client::connectRun(const std::string &ip, const s32 &port) {
-            connectionTask.done = runImpl;
-            connectionTask.run(ip, port);
+        void Client::runImpl() {
+            while (isRunning) {
+                if (requests.empty()) continue;
+
+                auto request = requests.front();
+                send(request.data, request.size);
+                requests.pop();
+            }
         }
     }
 

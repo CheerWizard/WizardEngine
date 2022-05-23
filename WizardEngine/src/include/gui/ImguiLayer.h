@@ -62,8 +62,8 @@ namespace engine::gui {
     private:
         void create();
         void destroy();
-        void onBeginFrame();
-        void onEndFrame();
+        static void onBeginFrame();
+        void onEndFrame() const;
 
     private:
         static void beginDockSpace();

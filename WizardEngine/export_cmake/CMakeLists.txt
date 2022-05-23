@@ -6,7 +6,7 @@ macro(include_engine path)
             ${path}/vendor/glm
             ${path}/vendor/glad/include
             ${path}/vendor/glfw/include
-            ${path}/vendor/imgui/imgui
+            ${path}/vendor/imgui
             ${path}/vendor/stb
             ${path}/vendor/freetype
             ${path}/vendor/assimp/include
@@ -26,6 +26,5 @@ macro(link_to_engine project)
             glm::glm
             stb
             freetype
-            yaml-cpp
     )
 endmacro()

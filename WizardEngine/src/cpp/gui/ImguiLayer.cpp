@@ -62,7 +62,7 @@ namespace engine::gui {
         ImGui::NewFrame();
     }
 
-    void ImGuiLayer::onEndFrame() {
+    void ImGuiLayer::onEndFrame() const {
         IO.DisplaySize = ImVec2((float) props.width, (float) props.height);
 
         ImGui::Render();

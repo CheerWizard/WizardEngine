@@ -53,6 +53,10 @@ namespace test {
         void tcp_socketNotCreated() override;
         void tcp_connectionFailed() override;
         void tcp_socketClosed() override;
+        void tcp_connectionSucceeded() override;
+        void tcp_dataReceived(char *data, size_t size) override;
+
+    public:
 
         void udp_socketNotCreated() override;
         void udp_sendDataFailed(const std::string &data) override;
