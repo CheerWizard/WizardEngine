@@ -74,6 +74,7 @@ Below will be the list of channels and websites where I am getting my knowledge.
 - https://www.youtube.com/user/thebennybox
 - https://www.youtube.com/user/CppCon
 - https://www.youtube.com/c/VictorGordan
+- https://www.youtube.com/c/TravisVroman
 ### Websites and Wiki
 - https://learnopengl.com/
 - https://vulkan-tutorial.com/
