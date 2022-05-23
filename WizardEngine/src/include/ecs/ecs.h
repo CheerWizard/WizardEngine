@@ -10,6 +10,7 @@
 #include <time/Time.h>
 #include <core/immutable.h>
 #include <tuple>
+#include <serialization/serialization.h>
 
 namespace engine::ecs {
 
@@ -99,6 +100,12 @@ namespace engine::ecs {
 #define template_component(component_type, template_type) \
 template<typename template_type>                          \
 struct component_type : engine::ecs::Component<component_type<template_type>>
+    /**
+     * Serializable components
+     * */
+#define serialize_component(type) component(type), io::Serializable
+#define serialize_template_component(component_type, template_type) \
+template_component(component_type, template_type), io::Serializable
 
     template<class Component>
     u32 createComponent(component_data& data, entity_id entityId, BaseComponent* component) {

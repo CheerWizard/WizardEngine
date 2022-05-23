@@ -6,9 +6,11 @@
 
 #include <thread/Task.h>
 #include <network/socket.h>
+#include <network/network_messaging.h>
+#include <core/queue.h>
 
 #define TCP_CLIENT_INIT(listener) engine::network::tcp::Client::init(listener)
-#define TCP_CLIENT_CONNECT_RUN(ip, port) engine::network::tcp::Client::connectRun(ip, port)
+#define TCP_CLIENT_CONNECT(ip, port) engine::network::tcp::Client::connect(ip, port)
 #define TCP_CLIENT_CLOSE() engine::network::tcp::Client::close()
 
 #define UDP_CLIENT_INIT(listener) engine::network::udp::Client::init(listener)
@@ -29,7 +31,9 @@ namespace engine::network {
         public:
             virtual void tcp_socketNotCreated() = 0;
             virtual void tcp_connectionFailed() = 0;
+            virtual void tcp_connectionSucceeded() = 0;
             virtual void tcp_socketClosed() = 0;
+            virtual void tcp_dataReceived(char* data, size_t size) = 0;
         };
 
         class Client final {
@@ -42,23 +46,23 @@ namespace engine::network {
             static void init(ClientListener* clientListener);
             static void close();
 
-            static void connectRun(const std::string& ip, const s32& port);
-            static void connect(const std::string& ip, const s32& port, const std::function<void()>& done);
-
+            static void connect(const std::string& ip, const s32& port);
             static void run();
-            static void stop();
+
+            static void send(char* data, size_t size);
+            static void send(char* data, size_t size, const std::function<void(char*, size_t)>& receiver);
 
         private:
             static void connectImpl(const std::string& ip, const s32& port);
-
             static void runImpl();
 
         private:
             static SOCKET clientSocket;
-            static bool running;
             static thread::VoidTask<const std::string&, const s32&> connectionTask;
             static thread::VoidTask<> runTask;
             static ClientListener* listener;
+            static bool isRunning;
+            static queue<NetworkData> requests;
         };
     }
 

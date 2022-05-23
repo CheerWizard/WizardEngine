@@ -5,15 +5,21 @@
 #pragma once
 
 #include <math/ViewProjections.h>
+#include <ecs/ecs.h>
 
 namespace engine::graphics {
 
-    component(Camera2dComponent) {
+    using namespace core;
+
+    serialize_component(Camera2dComponent) {
         math::ViewProjection2d viewProjection;
         Camera2dComponent() {
             viewProjection = math::ViewProjection2d();
             viewProjection.name = "camera";
         }
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
 
     component(Camera3dComponent) {

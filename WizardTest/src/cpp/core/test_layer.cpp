@@ -180,11 +180,19 @@ namespace test {
 
     }
 
+    void TestLayer::tcp_socketClosed() {
+
+    }
+
     void TestLayer::tcp_connectionFailed() {
 
     }
 
-    void TestLayer::tcp_socketClosed() {
+    void TestLayer::tcp_connectionSucceeded() {
+
+    }
+
+    void TestLayer::tcp_dataReceived(char *data, size_t size) {
 
     }
 
