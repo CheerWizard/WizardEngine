@@ -49,6 +49,9 @@ namespace test {
         void onPadX();
         void onPadY();
 
+        void onGamepadRollLeft(const GamepadRoll& roll);
+        void onGamepadRollRight(const GamepadRoll& roll);
+
     public:
         void tcp_socketNotCreated() override;
         void tcp_connectionFailed() override;
@@ -65,11 +68,8 @@ namespace test {
         void onWindowClosed() override;
 
         void onMousePressed(event::MouseCode mouseCode) override;
-
         void onMouseRelease(event::MouseCode mouseCode) override;
-
         void onMouseScrolled(double xOffset, double yOffset) override;
-
         void onCursorMoved(double xPos, double yPos) override;
 
     private:

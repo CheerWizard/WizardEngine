@@ -274,12 +274,22 @@ namespace engine::core {
                 }
             }
 
-            for (auto& gamepadRollCode : eventRegistry.gamepadRollCodeMap) {
-                gamepadRollCode.second.function(event::GamepadRoll {
-                    axis[gamepadRollCode.first.x],
-                    axis[gamepadRollCode.first.y],
-                    axis[gamepadRollCode.first.trigger] == 1
-                });
+            auto gamepadRollLeft = event::GamepadRoll {
+                    axis[event::PAD_LEFT_ROLL.x],
+                    axis[event::PAD_LEFT_ROLL.y],
+                    axis[event::PAD_LEFT_ROLL.trigger] != -1,
+            };
+            if (gamepadRollLeft != eventRegistry.inactiveGamepadRollLeft) {
+                eventRegistry.onGamepadRollLeft.function(gamepadRollLeft);
+            }
+
+            auto gamepadRollRight = event::GamepadRoll {
+                    axis[event::PAD_RIGHT_ROLL.x],
+                    axis[event::PAD_RIGHT_ROLL.y],
+                    axis[event::PAD_RIGHT_ROLL.trigger] != -1,
+            };
+            if (gamepadRollRight != eventRegistry.inactiveGamepadRollRight) {
+                eventRegistry.onGamepadRollRight.function(gamepadRollRight);
             }
         } else {
             ENGINE_WARN("Joystick DISCONNECTED! Polling joystick state...");

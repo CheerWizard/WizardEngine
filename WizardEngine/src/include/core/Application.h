@@ -35,7 +35,8 @@
 
 #define GAMEPAD_PRESSED(btn, action) engine::core::Application::get().eventRegistry.onGamepadButtonPressedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
 #define GAMEPAD_RELEASED(btn, action) engine::core::Application::get().eventRegistry.onGamepadButtonReleasedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
-#define GAMEPAD_ROLL(rollCode, action) engine::core::Application::get().eventRegistry.gamepadRollCodeMap[rollCode] = { [this](const GamepadRoll& roll) { action } }
+#define GAMEPAD_ROLL_LEFT(action) engine::core::Application::get().eventRegistry.onGamepadRollLeft.function = { [this](const GamepadRoll& roll) { action } }
+#define GAMEPAD_ROLL_RIGHT(action) engine::core::Application::get().eventRegistry.onGamepadRollRight.function = { [this](const GamepadRoll& roll) { action } }
 
 namespace engine::core {
 

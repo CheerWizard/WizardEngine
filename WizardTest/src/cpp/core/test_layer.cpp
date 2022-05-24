@@ -101,8 +101,8 @@ namespace test {
         GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_X, onPadX(););
         GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_Y, onPadY(););
 
-        GAMEPAD_ROLL(PAD_LEFT_ROLL, onPadX(););
-        GAMEPAD_ROLL(PAD_RIGHT_ROLL, onPadX(););
+        GAMEPAD_ROLL_LEFT(onGamepadRollLeft(roll););
+        GAMEPAD_ROLL_RIGHT(onGamepadRollRight(roll););
 
         KEY_PRESSED(KeyCode::D1, audio::MediaPlayer::pause(););
         KEY_PRESSED(KeyCode::D2, audio::MediaPlayer::stop(););
@@ -157,6 +157,16 @@ namespace test {
     void TestLayer::onPadY() {
         RUNTIME_INFO("Gamepad button Y pressed!");
         cameraController->applyMove(MoveType::UP);
+    }
+
+    void TestLayer::onGamepadRollLeft(const GamepadRoll& roll) {
+        RUNTIME_INFO("onGamepadRollLeft: (x: {0}, y: {1}, trigger: {2})", roll.x, roll.y, roll.triggered);
+        cameraController->move({ roll.x, roll.y });
+        cameraController->applyChanges();
+    }
+
+    void TestLayer::onGamepadRollRight(const GamepadRoll& roll) {
+        RUNTIME_INFO("onGamepadRollRight: (x: {0}, y: {1}, trigger: {2})", roll.x, roll.y, roll.triggered);
     }
 
     void TestLayer::onWindowClosed() {

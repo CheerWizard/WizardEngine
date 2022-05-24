@@ -67,6 +67,14 @@ namespace engine::event {
     struct GamepadRoll {
         core::f32 x, y;
         bool triggered;
+
+        bool operator==(const GamepadRoll& other) const {
+            return x == other.x && y == other.y && triggered == other.triggered;
+        }
+
+        bool operator!=(const GamepadRoll& other) const {
+            return !operator==(other);
+        }
     };
 }
 
