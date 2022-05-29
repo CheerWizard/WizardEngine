@@ -4,6 +4,8 @@
 
 #include <core/test_layer.h>
 
+#define ROTATE_SURVIVAL_PACK 123
+
 namespace test {
 
     void TestLayer::init() {
@@ -111,12 +113,12 @@ namespace test {
 
     void TestLayer::onUpdate(time::Time deltaTime) {
         cameraController->setDeltaTime(deltaTime);
-        // rotate survival backpack
-        auto& modelMatrix = survivalBackPack.get<Transform3dComponent>()->modelMatrix;
-        modelMatrix.rotation.y += 0.005f;
-        updateModel3d(modelMatrix);
-
-        UDP_CLIENT_SEND("Hello from UDP!");
+//        UDP_CLIENT_SEND("Hello from UDP!");
+        // rotate SurvivalPack on every machine connected to a TCP server!
+        // todo fix a crash and connection timeout here!
+        GDHeader header(CLIENT_TO_CLIENT, ROTATE_SURVIVAL_PACK);
+        GDPrimitive<f32> rotation(0.005f);
+        TCP_GDP_REQUEST(header, rotation);
     }
 
     void TestLayer::onWindowResized(const uint32_t &width, const uint32_t &height) {
@@ -186,7 +188,6 @@ namespace test {
     }
 
     void TestLayer::onCursorMoved(double xPos, double yPos) {
-
     }
 
     void TestLayer::tcp_socketNotCreated() {
@@ -205,10 +206,6 @@ namespace test {
 
     }
 
-    void TestLayer::tcp_dataReceived(char *data, size_t size) {
-
-    }
-
     void TestLayer::udp_socketNotCreated() {
 
     }
@@ -219,5 +216,24 @@ namespace test {
 
     void TestLayer::udp_socketClosed() {
 
+    }
+
+    void TestLayer::onGameDataReceived(const std::pair<YAML::Node, GDHeader> &gdNodeHeader) {
+        RUNTIME_INFO("onGameDataReceived()");
+        YAML::Node gdNode = gdNodeHeader.first;
+        GDHeader header = gdNodeHeader.second;
+        RUNTIME_INFO("GDHeader[address: {0}, type: {1}]", header.address, header.type);
+        // dispatch header type
+        if (header.type == ROTATE_SURVIVAL_PACK) {
+            // unpack data
+            GDPrimitive<f32> gdPrimitive;
+            gdPrimitive.deserialize(gdNode);
+            auto rotationY = gdPrimitive.value;
+            RUNTIME_INFO("Rotating SurvivalPack with value: {0}", rotationY);
+            // handle data
+            auto& modelMatrix = survivalBackPack.get<Transform3dComponent>()->modelMatrix;
+            modelMatrix.rotation.y += rotationY;
+            updateModel3d(modelMatrix);
+        }
     }
 }
