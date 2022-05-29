@@ -28,8 +28,15 @@
 #include <network/network_server.h>
 #include <network/network_client.h>
 
-#define BIND_GAMEPAD_BUTTON_PRESSED(btn, action) engine::core::Application::get().eventRegistry.onGamepadButtonPressedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
-#define BIND_KEY_PRESSED(key, action) engine::core::Application::get().eventRegistry.onKeyPressedMap[key] = { [this](KeyCode keyCode) { action } }
+#define KEY_PRESSED(key, action) engine::core::Application::get().eventRegistry.onKeyPressedMap[key] = { [this](KeyCode keyCode) { action } }
+#define KEY_RELEASED(key, action) engine::core::Application::get().eventRegistry.onKeyReleasedMap[key] = { [this](KeyCode keyCode) { action } }
+#define KEY_TYPED(key, action) engine::core::Application::get().eventRegistry.onKeyTypedMap[key] = { [this](KeyCode keyCode) { action } }
+#define KEY_HOLD(key, action) engine::core::Application::get().eventRegistry.onKeyHoldMap[key] = { [this](KeyCode keyCode) { a  ction } }
+
+#define GAMEPAD_PRESSED(btn, action) engine::core::Application::get().eventRegistry.onGamepadButtonPressedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
+#define GAMEPAD_RELEASED(btn, action) engine::core::Application::get().eventRegistry.onGamepadButtonReleasedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
+#define GAMEPAD_ROLL_LEFT(action) engine::core::Application::get().eventRegistry.onGamepadRollLeft.function = { [this](const GamepadRoll& roll) { action } }
+#define GAMEPAD_ROLL_RIGHT(action) engine::core::Application::get().eventRegistry.onGamepadRollRight.function = { [this](const GamepadRoll& roll) { action } }
 
 namespace engine::core {
 

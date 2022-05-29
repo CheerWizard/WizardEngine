@@ -86,21 +86,34 @@ namespace engine::network {
                 memset(buffer, 0, kb_4);
                 // receive data from client
                 s32 receivedBytes = recv(clientProfile.socket, buffer, kb_4, 0);
-                ENGINE_INFO("TCP_Server: Response from client {0}", buffer);
+                ENGINE_INFO("TCP_Server: Response from client \n{0}", buffer);
                 // check socket error
                 if (receivedBytes == SOCKET_ERROR) {
                     ENGINE_ERR("TCP_Server: error during receiving data size: {0}", kb_4);
                     listener->tcp_receiveDataFailed(buffer, kb_4);
-                    break;
+                    continue;
                 }
                 // check client connection
                 if (receivedBytes == 0) {
                     ENGINE_WARN("TCP_Server: Client [host:{0}, service:{1}] disconnected!", clientProfile.host, clientProfile.service);
                     listener->tcp_clientDisconnected();
-                    break;
+                    continue;
+                }
+                // unpack received data
+                // todo consider to abstract unpacking as this works specifically for .gdf data
+                // todo for HTTP or other type of data it won't work
+                auto gdNodeHeader = GDSerializer::deserialize(buffer);
+                YAML::Node gdNode = gdNodeHeader.first;
+                GDHeader header = gdNodeHeader.second;
+                // dispatch received data, using header address
+                switch (header.address) {
+                    case CLIENT_TO_SERVER:
+                        // save into db, load world, sync players, etc.
+                        break;
+                    default: break;
                 }
                 // send data to client
-                ENGINE_INFO("TCP_Server: Request to client {0}", buffer);
+                ENGINE_INFO("TCP_Server: Request to client \n{0}", buffer);
                 send(clientProfile.socket, buffer, receivedBytes + 1, 0);
             }
         }
@@ -108,7 +121,6 @@ namespace engine::network {
         void Server::stop() {
             running = false;
         }
-
     }
 
     namespace udp {

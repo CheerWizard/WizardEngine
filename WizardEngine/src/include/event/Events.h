@@ -49,8 +49,10 @@ namespace engine::event {
         GamepadButtonMap onGamepadButtonPressedMap;
         GamepadButtonMap onGamepadButtonReleasedMap;
 
-        typedef core::unordered_map<GamepadAxisCode, Action<float>> GamepadAxisMap;
-        GamepadAxisMap gamepadAxisMap;
+        Action<GamepadRoll> onGamepadRollLeft;
+        Action<GamepadRoll> onGamepadRollRight;
+        GamepadRoll inactiveGamepadRollLeft;
+        GamepadRoll inactiveGamepadRollRight;
     };
 
 }

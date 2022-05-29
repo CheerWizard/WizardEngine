@@ -52,6 +52,7 @@ namespace engine::network {
         void Client::connectImpl(const std::string &ip, const s32 &port) {
             ENGINE_INFO("TCP_Client: connecting to a server[ip:{0}, port:{1}]", ip, port);
             s32 connection = socket::connect(clientSocket, AF_INET, ip.c_str(), port);
+            // handle connection error and retry to connect!
             if (connection == SOCKET_ERROR) {
                 ENGINE_WARN("TCP_Client: Connection error. Closing client socket!");
                 socket::close_socket(clientSocket);
@@ -59,7 +60,7 @@ namespace engine::network {
 
                 u32 errorCode = socket::getLastError();
                 switch (errorCode) {
-                    case 10031 :
+                    case 10038 :
                         ENGINE_ERR("TCP_Client: Unable to connect to server");
                         listener->tcp_connectionFailed();
                         break;
@@ -68,16 +69,21 @@ namespace engine::network {
                         listener->tcp_connectionFailed();
                         break;
                 }
+
+                u32 retrySleepMs = 2000;
+                ENGINE_WARN("TCP_Client: Retry to connect to a server after {0} ms!", retrySleepMs);
+                thread::current_sleep(retrySleepMs);
+                connectImpl(ip, port);
             }
+
+            runImpl();
         }
 
-        void Client::send(char *data, size_t size) {
-            send(data, size, [](char* data, size_t size) { listener->tcp_dataReceived(data, size); });
-        }
-
-        void Client::send(char *data, size_t size, const std::function<void(char*, size_t)>& receiver) {
+        void Client::send(const NetworkData& networkData, const std::function<void(char*)>& receiver) {
             // send and receive data
-            ENGINE_INFO("TCP_Client: Send data to a server {0}", data);
+            char* data = networkData.data;
+            size_t size = networkData.size;
+            ENGINE_INFO("TCP_Client: Send data to a server \n{0}", data);
             s32 sendResult = ::send(clientSocket, data, size + 1, 0);
             if (sendResult != SOCKET_ERROR) {
                 // wait for response
@@ -85,26 +91,46 @@ namespace engine::network {
                 s32 sizeReceived = recv(clientSocket, data, size, 0);
                 if (sizeReceived > 0) {
                     // server response
-                    ENGINE_INFO("TCP_Client: Received data from a server {0}", std::string(data, 0, sizeReceived));
-                    listener->tcp_dataReceived(data, sizeReceived);
-                    receiver(data, sizeReceived);
+                    ENGINE_INFO("TCP_Client: Received data from a server \n{0}", data);
+                    receiver(data);
                 }
             }
         }
 
-        void Client::run() {
-            isRunning = true;
-            runTask.run();
-        }
-
         void Client::runImpl() {
+            isRunning = true;
             while (isRunning) {
                 if (requests.empty()) continue;
 
-                auto request = requests.front();
-                send(request.data, request.size);
+                send(requests.front(), [](char* data) {
+                    // todo make client abstract, as this implementation is specific for .gdf data
+                    // todo it will not suit for HTTP or any other client
+                    listener->onGameDataReceived(GDSerializer::deserialize(data));
+                });
                 requests.pop();
             }
+        }
+
+        void Client::pushRequest(const NetworkData& networkData) {
+            ENGINE_INFO("TCP_Client: Pushing network data \nsize: {0}, \ndata: \n{1}", networkData.size, networkData.data);
+            requests.emplace(networkData);
+        }
+
+        void Client::pushRequest(GDHeader &header, GDBody &body) {
+            pushRequest(GDSerializer::serialize(header, body));
+        }
+
+        void Client::pushRequestTask(GDHeader& header, GDBody& body) {
+            thread::VoidTask<> pushRequestTask = {
+                    "TCPPushRequest_Task",
+                    "TCPPushRequest_Thread",
+                    [&header, &body]() { pushRequest(header, body); }
+            };
+            pushRequestTask.run();
+        }
+
+        void Client::popRequest() {
+            requests.pop();
         }
     }
 

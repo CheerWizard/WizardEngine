@@ -6,7 +6,7 @@
 
 #include <thread/Task.h>
 #include <network/socket.h>
-#include <network/network_messaging.h>
+#include <network/gdp.h>
 
 #define TCP_SERVER_INIT(listener) engine::network::tcp::Server::init(listener)
 #define TCP_SERVER_LISTEN_RUN(port) engine::network::tcp::Server::listenRun(port)

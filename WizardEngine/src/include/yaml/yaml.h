@@ -91,5 +91,4 @@ namespace engine::yaml {
     void serialize(YAML::Emitter& out, const char* key, const glm::vec2& v);
     void serialize(YAML::Emitter& out, const char* key, const glm::vec3& v);
     void serialize(YAML::Emitter& out, const char* key, const glm::vec4& v);
-
 }
