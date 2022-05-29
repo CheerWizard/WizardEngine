@@ -321,4 +321,16 @@ namespace engine::graphics {
         component->viewProjection.viewMatrix.position.value = position;
         math::ViewProjections::update(component->viewProjection);
     }
+
+    void Camera2dController::move(const glm::vec2 &position) {
+        auto &viewPosition = camera.get<Camera2dComponent>()->viewProjection.viewMatrix.position;
+        viewPosition.x -= position.x + moveSpeed / dt;
+        viewPosition.y -= position.y + moveSpeed / dt;
+    }
+
+    void Camera3dController::move(const glm::vec2 &position) {
+        auto &viewPosition = camera.get<Camera3dComponent>()->viewProjection.viewMatrix.position.value;
+        viewPosition.x -= position.x + moveSpeed / dt;
+        viewPosition.y -= position.y + moveSpeed / dt;
+    }
 }

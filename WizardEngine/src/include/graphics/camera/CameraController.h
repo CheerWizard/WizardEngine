@@ -90,6 +90,7 @@ namespace engine::graphics {
     public:
         virtual void zoom(const ZoomType &zoomType) = 0;
         virtual void move(const MoveType &moveType) = 0;
+        virtual void move(const glm::vec2& position) = 0;
         virtual void rotate(const RotateType &rotateType) = 0;
         virtual void applyChanges() = 0;
         virtual void setPosition(const glm::vec3 &position) = 0;
@@ -104,7 +105,6 @@ namespace engine::graphics {
         void onWindowClosed();
         void onWindowResized(const uint32_t &width, const uint32_t &height);
 
-    protected:
         virtual ecs::Entity getCamera() = 0;
 
     protected:
@@ -139,6 +139,8 @@ namespace engine::graphics {
         void setCamera(const Camera2D &camera) override;
         void setCamera(const Camera3D &camera) override;
 
+        void move(const glm::vec2 &position) override;
+
     protected:
         ecs::Entity getCamera() override;
 
@@ -166,6 +168,8 @@ namespace engine::graphics {
     public:
         void setCamera(const Camera2D &camera) override;
         void setCamera(const Camera3D &camera) override;
+
+        void move(const glm::vec2 &position) override;
 
     protected:
         ecs::Entity getCamera() override;

@@ -19,6 +19,7 @@ using namespace engine::graphics;
 using namespace engine::event;
 using namespace engine::time;
 using namespace engine::network;
+using namespace engine::ecs;
 
 namespace test {
 
@@ -49,27 +50,26 @@ namespace test {
         void onPadX();
         void onPadY();
 
+        void onGamepadRollLeft(const GamepadRoll& roll);
+        void onGamepadRollRight(const GamepadRoll& roll);
+
     public:
         void tcp_socketNotCreated() override;
         void tcp_connectionFailed() override;
         void tcp_socketClosed() override;
         void tcp_connectionSucceeded() override;
-        void tcp_dataReceived(char *data, size_t size) override;
+        void onGameDataReceived(const std::pair<YAML::Node, GDHeader> &gdNodeHeader) override;
 
     public:
-
         void udp_socketNotCreated() override;
         void udp_sendDataFailed(const std::string &data) override;
         void udp_socketClosed() override;
 
+    public:
         void onWindowClosed() override;
-
         void onMousePressed(event::MouseCode mouseCode) override;
-
         void onMouseRelease(event::MouseCode mouseCode) override;
-
         void onMouseScrolled(double xOffset, double yOffset) override;
-
         void onCursorMoved(double xPos, double yPos) override;
 
     private:

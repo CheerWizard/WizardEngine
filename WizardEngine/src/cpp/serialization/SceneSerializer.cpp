@@ -12,14 +12,14 @@ namespace engine::io {
     const char* SceneSerializer::serializeText() {
         YAML::Emitter out;
         out << YAML::BeginMap;
+
         out << YAML::Key << "Scene" << YAML::Value << scene->getName();
         out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
-
         scene->getRegistry().eachEntity([&](ecs::entity_id entityId) {
             ENTITY_SERIALIZE_TEXT(ecs::Entity(scene.get(), entityId), out);
         });
-
         out << YAML::EndSeq;
+
         out << YAML::EndMap;
 
         return out.c_str();

@@ -117,7 +117,7 @@ namespace engine::audio {
 
         if (buffersProcessed <= 0) return;
 
-        ENGINE_INFO("Audio buffers processed {0}", buffersProcessed);
+//        ENGINE_INFO("Audio buffers processed {0}", buffersProcessed);
 
         size_t cursorValue = cursor.size();
         s32 bufferSize = (s32) cursor.bufferSize;

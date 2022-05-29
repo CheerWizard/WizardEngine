@@ -4,13 +4,15 @@
 
 #pragma once
 
+#include <core/queue.h>
 #include <thread/Task.h>
 #include <network/socket.h>
-#include <network/network_messaging.h>
-#include <core/queue.h>
+#include <network/gdp.h>
 
 #define TCP_CLIENT_INIT(listener) engine::network::tcp::Client::init(listener)
 #define TCP_CLIENT_CONNECT(ip, port) engine::network::tcp::Client::connect(ip, port)
+#define TCP_GDP_REQUEST(header, body) engine::network::tcp::Client::pushRequest(header, body)
+#define TCP_NETWORK_REQUEST(data) engine::network::tcp::Client::pushRequest(data)
 #define TCP_CLIENT_CLOSE() engine::network::tcp::Client::close()
 
 #define UDP_CLIENT_INIT(listener) engine::network::udp::Client::init(listener)
@@ -33,7 +35,7 @@ namespace engine::network {
             virtual void tcp_connectionFailed() = 0;
             virtual void tcp_connectionSucceeded() = 0;
             virtual void tcp_socketClosed() = 0;
-            virtual void tcp_dataReceived(char* data, size_t size) = 0;
+            virtual void onGameDataReceived(const std::pair<YAML::Node, GDHeader>& gdNodeHeader) = 0;
         };
 
         class Client final {
@@ -47,10 +49,13 @@ namespace engine::network {
             static void close();
 
             static void connect(const std::string& ip, const s32& port);
-            static void run();
 
-            static void send(char* data, size_t size);
-            static void send(char* data, size_t size, const std::function<void(char*, size_t)>& receiver);
+            static void send(const NetworkData& networkData, const std::function<void(char*)>& receiver);
+
+            static void pushRequest(const NetworkData& networkData);
+            static void pushRequestTask(GDHeader& header, GDBody& body);
+            static void pushRequest(GDHeader& header, GDBody& body);
+            static void popRequest();
 
         private:
             static void connectImpl(const std::string& ip, const s32& port);
