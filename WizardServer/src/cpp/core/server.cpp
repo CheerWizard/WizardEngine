@@ -8,7 +8,7 @@ int main() {
     INIT_ENGINE_LOG("WizardEngine");
     INIT_RUNTIME_LOG("WizardServer");
 
-    ENGINE_INFO("Running WizardServer...");
+    RUNTIME_INFO("Running WizardServer...");
     network::socket::init();
     auto* serverApp = new server::ServerApp();
 
@@ -16,7 +16,7 @@ int main() {
         serverApp->update();
     }
 
-    ENGINE_INFO("Shutting down WizardServer...");
+    RUNTIME_INFO("Shutting down WizardServer...");
     delete serverApp;
     network::socket::cleanup();
 }
@@ -24,8 +24,11 @@ int main() {
 namespace server {
 
     ServerApp::ServerApp() {
-        TCP_SERVER_INIT(this);
-        TCP_SERVER_LISTEN_RUN(54000);
+        bool tcpServerCreated = tcp::Server::init(this);
+        if (tcpServerCreated) {
+            tcp::Server::listen(54000);
+        }
+
         bool udpServerCreated = udp::Server::init(this);
         if (udpServerCreated) {
             udp::Server::listen(54000);
@@ -33,7 +36,7 @@ namespace server {
     }
 
     ServerApp::~ServerApp() {
-        TCP_SERVER_CLOSE();
+        tcp::Server::close();
         udp::Server::close();
     }
 
@@ -41,23 +44,23 @@ namespace server {
 
     }
 
-    void ServerApp::tcp_socketNotCreated() {
+    void ServerApp::onTCPSocketCreated() {
 
     }
 
-    void ServerApp::tcp_clientSocketNotAccepted() {
+    void ServerApp::onTCPSocketUnaccepted() {
 
     }
 
-    void ServerApp::tcp_socketClosed() {
+    void ServerApp::onTCPSocketClosed() {
 
     }
 
-    void ServerApp::tcp_clientDisconnected() {
+    void ServerApp::onTCPDisconnected() {
 
     }
 
-    void ServerApp::tcp_receiveDataFailed(char *data, u16 size) {
+    void ServerApp::onTCPReceiverFailed(char *data, size_t size) {
 
     }
 

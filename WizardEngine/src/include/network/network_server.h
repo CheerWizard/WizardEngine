@@ -8,10 +8,6 @@
 #include <network/socket.h>
 #include <network/gdp.h>
 
-#define TCP_SERVER_INIT(listener) engine::network::tcp::Server::init(listener)
-#define TCP_SERVER_LISTEN_RUN(port) engine::network::tcp::Server::listenRun(port)
-#define TCP_SERVER_CLOSE() engine::network::tcp::Server::close()
-
 namespace engine::network {
 
     using namespace engine::core;
@@ -24,47 +20,34 @@ namespace engine::network {
 
     namespace tcp {
 
-        decl_exception(tcp_server_exception)
-
         class ServerListener {
         public:
-            virtual void tcp_socketNotCreated() = 0;
-            virtual void tcp_clientSocketNotAccepted() = 0;
-            virtual void tcp_socketClosed() = 0;
-            virtual void tcp_clientDisconnected() = 0;
-            virtual void tcp_receiveDataFailed(char* data, u16 size) = 0;
+            virtual void onTCPSocketCreated() = 0;
+            virtual void onTCPSocketUnaccepted() = 0;
+            virtual void onTCPSocketClosed() = 0;
+            virtual void onTCPDisconnected() = 0;
+            virtual void onTCPReceiverFailed(char* data, size_t size) = 0;
         };
 
         class Server final {
 
-        private:
-            Server() = default;
-            ~Server() = default;
-
         public:
-            static void init(ServerListener* serverListener);
+            static bool init(ServerListener* serverListener);
             static void close();
 
-            static void listen(const s32& port, const std::function<void()>& done);
-            static void listenRun(const s32& port);
-
-            static void run();
+            static void listen(const s32& port);
             static void stop();
 
         private:
             static void listenImpl(const s32& port);
-
             static void runImpl();
 
         private:
             static SOCKET listeningSocket;
             static ClientProfile clientProfile;
-            static bool running;
             static thread::VoidTask<const s32&> listenTask;
-            static thread::VoidTask<> runTask;
             static ServerListener* listener;
         };
-
     }
 
     namespace udp {

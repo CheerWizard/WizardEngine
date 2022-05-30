@@ -72,17 +72,19 @@ namespace test {
                 }
         );
 
-        TCP_CLIENT_INIT(this);
-        TCP_CLIENT_CONNECT(localhost, 54000);
+        bool tcpClientCreated = tcp::Client::init(this, this, this);
+        if (tcpClientCreated) {
+            tcp::Client::connect("192.168.1.101", 54000);
+        }
 
         bool udpClientCreated = udp::Client::init(this, this, this);
         if (udpClientCreated) {
-            udp::Client::connect(localhost, 54000);
+            udp::Client::connect("192.168.1.101", 54000);
         }
     }
 
     TestLayer::~TestLayer() {
-        TCP_CLIENT_CLOSE();
+        tcp::Client::close();
         udp::Client::close();
     }
 
@@ -127,6 +129,7 @@ namespace test {
         GDHeader header(CLIENT_TO_CLIENT, ROTATE_SURVIVAL_PACK);
         GDPrimitive<f32> rotation(0.005f);
         udp::Client::getRequestQueue().push(header, rotation);
+        tcp::Client::getRequestQueue().push(header, rotation);
     }
 
     void TestLayer::onWindowResized(const uint32_t &width, const uint32_t &height) {
@@ -198,36 +201,36 @@ namespace test {
     void TestLayer::onCursorMoved(double xPos, double yPos) {
     }
 
-    void TestLayer::tcp_socketNotCreated() {
+    void TestLayer::onTCPSocketCreated() {
 
     }
 
-    void TestLayer::tcp_socketClosed() {
+    void TestLayer::onTCPConnectionFailed() {
 
     }
 
-    void TestLayer::tcp_connectionFailed() {
+    void TestLayer::onTCPConnected() {
 
     }
 
-    void TestLayer::tcp_connectionSucceeded() {
+    void TestLayer::onTCPSocketClosed() {
 
     }
 
-    void TestLayer::onSenderFailed(char *data, size_t size) {
+    void TestLayer::onTCPSenderFailed(char *data, size_t size) {
 
     }
 
-    void TestLayer::onSenderSuccess() {
+    void TestLayer::onTCPSenderSuccess() {
 
     }
 
-    void TestLayer::onReceiverFailed(char *data, size_t size) {
+    void TestLayer::onTCPReceiverFailed(char *data, size_t size) {
 
     }
 
-    void TestLayer::onReceiverSuccess(const YAML::Node &gdNode, const GDHeader &header) {
-        RUNTIME_INFO("onReceiverSuccess()");
+    void TestLayer::onTCPReceiverSuccess(const YAML::Node &gdNode, const GDHeader &header) {
+        RUNTIME_INFO("onTCPReceiverSuccess()");
         RUNTIME_INFO("GDHeader[address: {0}, type: {1}]", header.address, header.type);
         // dispatch header type
         if (header.type == ROTATE_SURVIVAL_PACK) {
@@ -251,10 +254,20 @@ namespace test {
 
     }
 
-    void TestLayer::onGameDataReceived(const std::pair<YAML::Node, GDHeader> &gdNodeHeader) {
-        RUNTIME_INFO("onGameDataReceived()");
-        YAML::Node gdNode = gdNodeHeader.first;
-        GDHeader header = gdNodeHeader.second;
+    void TestLayer::onUDPSenderFailed(char *data, size_t size) {
+
+    }
+
+    void TestLayer::onUDPSenderSuccess() {
+
+    }
+
+    void TestLayer::onUDPReceiverFailed(char *data, size_t size) {
+
+    }
+
+    void TestLayer::onUDPReceiverSuccess(const YAML::Node &gdNode, const GDHeader &header) {
+        RUNTIME_INFO("onUDPReceiverSuccess()");
         RUNTIME_INFO("GDHeader[address: {0}, type: {1}]", header.address, header.type);
         // dispatch header type
         if (header.type == ROTATE_SURVIVAL_PACK) {

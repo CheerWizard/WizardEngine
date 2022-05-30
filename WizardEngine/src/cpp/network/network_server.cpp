@@ -10,49 +10,40 @@ namespace engine::network {
 
     namespace tcp {
 
-        bool Server::running = false;
         ClientProfile Server::clientProfile;
         SOCKET Server::listeningSocket;
 
         thread::VoidTask<const s32&> Server::listenTask = {
-                "ServerRun_Task",
-                "ServerRun_Thread",
+                "TCPServerListen_Task",
+                "TCPServerListen_Thread",
                 listenImpl
-        };
-
-        thread::VoidTask<> Server::runTask = {
-                "ServerRun_Task",
-                "ServerRun_Thread",
-                runImpl
         };
 
         ServerListener* Server::listener = nullptr;
 
-        void Server::init(ServerListener* serverListener) {
+        bool Server::init(ServerListener* serverListener) {
             listener = serverListener;
             listeningSocket = socket::open(AF_INET, SOCK_STREAM, 0);
+
             if (listeningSocket == INVALID_SOCKET) {
                 u32 errorCode = socket::getLastError();
                 ENGINE_ERR("TCP_Server: Unable to create listening socket. Unknown error = {0}", errorCode);
-                listener->tcp_socketNotCreated();
+                listener->onTCPSocketClosed();
+                return false;
             }
+
+            return true;
         }
 
         void Server::close() {
-            running = false;
+            listenTask.isRunning = false;
             socket::close_socket(clientProfile.socket);
-            listener->tcp_socketClosed();
+            listener->onTCPSocketClosed();
             delete clientProfile.host;
             delete clientProfile.service;
         }
 
-        void Server::listen(const s32 &port, const std::function<void()>& done) {
-            listenTask.done = done;
-            listenTask.run(port);
-        }
-
-        void Server::listenRun(const s32 &port) {
-            listenTask.done = runImpl;
+        void Server::listen(const s32 &port) {
             listenTask.run(port);
         }
 
@@ -65,45 +56,41 @@ namespace engine::network {
             if (clientSocket == INVALID_SOCKET) {
                 u32 errorCode = socket::getLastError();
                 ENGINE_ERR("TCP_Server: Unable to create a client socket. Unknown error = {0}", errorCode);
-                listener->tcp_clientSocketNotAccepted();
+                listener->onTCPSocketUnaccepted();
             }
             socket::SocketProfile socketProfile = socket::getSocketProfile(clientSocket, client);
             clientProfile = { clientSocket, socketProfile.host, socketProfile.service };
             // close listening socket
             socket::close_socket(listeningSocket);
-        }
-
-        void Server::run() {
-            runTask.run();
+            runImpl();
         }
 
         void Server::runImpl() {
-            // receive message and send back to client
-            char buffer[kb_4];
-            running = true;
-            while (running) {
-                thread::current_sleep(1000);
-                memset(buffer, 0, kb_4);
+            char data[kb_4];
+
+            while (listenTask.isRunning) {
+                memset(data, 0, kb_4);
                 // receive data from client
-                s32 receivedBytes = recv(clientProfile.socket, buffer, kb_4, 0);
-                ENGINE_INFO("TCP_Server: Response from client \n{0}", buffer);
+                s32 receivedSize = recv(clientProfile.socket, data, kb_4, 0);
+                ENGINE_INFO("TCP_Server: Received data \nsize: {0} \ndata: {1}", receivedSize, data);
                 // check socket error
-                if (receivedBytes == SOCKET_ERROR) {
-                    ENGINE_ERR("TCP_Server: error during receiving data size: {0}", kb_4);
-                    listener->tcp_receiveDataFailed(buffer, kb_4);
+                if (receivedSize == SOCKET_ERROR) {
+                    ENGINE_ERR("TCP_Server: Receiver failed. \nsize: {0} \ndata: {1}", receivedSize, data);
+                    listener->onTCPReceiverFailed(data, receivedSize);
                     continue;
                 }
                 // check client connection
-                if (receivedBytes == 0) {
-                    ENGINE_WARN("TCP_Server: Client [host:{0}, service:{1}] disconnected!", clientProfile.host, clientProfile.service);
-                    listener->tcp_clientDisconnected();
+                if (receivedSize == 0) {
+                    ENGINE_WARN("TCP_Server: Client [host:{0}, service:{1}] disconnected!",
+                                clientProfile.host, clientProfile.service);
+                    listener->onTCPDisconnected();
                     continue;
                 }
                 // unpack received data
                 // todo consider to abstract unpacking as this works specifically for .gdf data
                 // todo for HTTP or other type of data it won't work
                 std::pair<YAML::Node, GDHeader> gdNodeHeader;
-                bool success = GDSerializer::deserialize(buffer, gdNodeHeader);
+                bool success = GDSerializer::deserialize(data, gdNodeHeader);
                 if (success) {
                     YAML::Node gdNode = gdNodeHeader.first;
                     GDHeader header = gdNodeHeader.second;
@@ -115,14 +102,14 @@ namespace engine::network {
                         default: break;
                     }
                 }
-                // send data to client
-                ENGINE_INFO("TCP_Server: Request to client \n{0}", buffer);
-                send(clientProfile.socket, buffer, receivedBytes + 1, 0);
+                // send data to a client
+                ENGINE_INFO("TCP_Server: Send data to a client \nsize: {0} \ndata:{1}", receivedSize, data);
+                send(clientProfile.socket, data, receivedSize + 1, 0);
             }
         }
 
         void Server::stop() {
-            running = false;
+            listenTask.isRunning = false;
         }
     }
 
