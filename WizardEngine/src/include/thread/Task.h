@@ -43,7 +43,7 @@ namespace engine::thread {
         VoidTask() : Task<void(Args...), void(), Args...>() {}
         VoidTask(const char* name,
                  const char* threadName,
-                 const std::function<void(Args...)>& runnable,
+                 const std::function<void(Args...)>& runnable = [](Args... args){},
                  const std::function<void()>& done = [](){}
         ) : Task<void(Args...), void(), Args...>(name, threadName, runnable, done) {}
     };
