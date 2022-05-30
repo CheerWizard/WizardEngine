@@ -9,8 +9,7 @@
 
 namespace engine::io {
 
-    const char* SceneSerializer::serializeText() {
-        YAML::Emitter out;
+    void SceneSerializable::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap;
 
         out << YAML::Key << "Scene" << YAML::Value << scene->getName();
@@ -21,8 +20,24 @@ namespace engine::io {
         out << YAML::EndSeq;
 
         out << YAML::EndMap;
+    }
 
-        return out.c_str();
+    void SceneSerializable::deserialize(const YAML::Node &parent) {
+        auto sceneName = parent["Scene"].as<std::string>();
+        ENGINE_TRACE("Scene deserialized '{0}'", sceneName);
+
+        auto entitiesNode = parent["Entities"];
+        if (entitiesNode) {
+            for (auto entityNode : entitiesNode) {
+                ENTITY_DESERIALIZE_TEXT(ecs::Entity(scene.get()), entityNode);
+            }
+        }
+    }
+
+    const char* SceneSerializer::serializeText() {
+        YAML::Emitter emitter;
+        scene.serialize(emitter);
+        return emitter.c_str();
     }
 
     void SceneSerializer::serializeBinary(const char *filepath) {
@@ -59,18 +74,7 @@ namespace engine::io {
     }
 
     bool SceneSerializer::deserialize(const YAML::Node &sceneNode) {
-        if (!sceneNode["Scene"]) return false;
-
-        auto sceneName = sceneNode["Scene"].as<std::string>();
-        ENGINE_TRACE("Deserializing scene '{0}'", sceneName);
-
-        auto entitiesNode = sceneNode["Entities"];
-        if (entitiesNode) {
-            for (auto entityNode : entitiesNode) {
-                ENTITY_DESERIALIZE_TEXT(ecs::Entity(scene.get()), entityNode);
-            }
-        }
-
+        scene.deserialize(sceneNode);
         return true;
     }
 

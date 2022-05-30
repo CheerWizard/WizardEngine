@@ -17,11 +17,24 @@
 
 namespace engine::io {
 
+    class SceneSerializable : Serializable {
+
+    public:
+        SceneSerializable(const Ref<ecs::Scene>& scene) : scene(scene) {}
+        ~SceneSerializable() override = default;
+
+    public:
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
+
+    private:
+        Ref<ecs::Scene> scene;
+    };
+
     class SceneSerializer {
 
     public:
-        SceneSerializer(const Ref<ecs::Scene>& scene) : scene(scene) {}
-        ~SceneSerializer() = default;
+        SceneSerializer(const SceneSerializable scene) : scene(scene) {}
 
     public:
         const char* serializeText();
@@ -36,7 +49,7 @@ namespace engine::io {
         bool deserialize(const YAML::Node& sceneNode);
 
     private:
-        Ref<ecs::Scene> scene;
+        SceneSerializable scene;
     };
 
 }

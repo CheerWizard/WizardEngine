@@ -15,11 +15,41 @@
 
 namespace engine::io {
 
+    class EntitySerializable : public Serializable {
+
+    public:
+        EntitySerializable(const ecs::Entity& entity) : entity(entity) {}
+        ~EntitySerializable() override = default;
+
+    public:
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
+
+    private:
+        void serializeComponents(YAML::Emitter& out);
+        template<typename T>
+        void deserialize(const YAML::Node &entityNode);
+        template<typename T>
+        void serialize(YAML::Emitter& out);
+
+    private:
+        ecs::Entity entity;
+    };
+
+    template<typename T>
+    void EntitySerializable::deserialize(const YAML::Node &entityNode) {
+        entity.add<T>(deserialize_from(T, entityNode));
+    }
+
+    template<typename T>
+    void EntitySerializable::serialize(YAML::Emitter &out) {
+        entity.get<T>()->serialize(out);
+    }
+
     class EntitySerializer final {
 
     public:
-        EntitySerializer(const ecs::Entity& entity) : entity(entity) {}
-        ~EntitySerializer() = default;
+        EntitySerializer(const EntitySerializable& entity) : entity(entity) {}
 
     public:
         void serializeText(YAML::Emitter& out);
@@ -33,10 +63,7 @@ namespace engine::io {
         void deserializeTextFile(const char* filepath);
 
     private:
-        void serializeComponents(YAML::Emitter& out);
-
-    private:
-        ecs::Entity entity;
+        EntitySerializable entity;
     };
 
 }

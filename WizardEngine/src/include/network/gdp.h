@@ -67,4 +67,60 @@ namespace engine::network {
     void GDPrimitive<V>::deserialize(const YAML::Node &parent) {
         value = parent["value"].template as<V>();
     }
+
+    template<class V>
+    struct GDPrimitives : io::Serializable {
+        vector<V> values;
+
+        GDPrimitives(const std::initializer_list<V>& values) : values(values) {}
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
+    };
+
+    template<class V>
+    void GDPrimitives<V>::serialize(YAML::Emitter &out) {
+        out << YAML::Key << "values" << YAML::Value << YAML::Flow;
+        out << YAML::BeginSeq;
+        for (auto value : values) {
+            out << value;
+        }
+        out << YAML::EndSeq;
+    }
+
+    template<class V>
+    void GDPrimitives<V>::deserialize(const YAML::Node &parent) {
+        YAML::Node valuesNode = parent["values"];
+    }
+
+    /**
+     * V - class/struct, which should have implemented Serializable interface. Otherwise it won't compile!
+     * */
+    template<class V>
+    struct GDSerializables : io::Serializable {
+        vector<V> serializables;
+
+        GDSerializables(const std::initializer_list<V>& serializables) : serializables(serializables) {}
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
+    };
+
+    template<class V>
+    void GDSerializables<V>::serialize(YAML::Emitter &out) {
+        out << YAML::Key << "serializables" << YAML::Value << YAML::Flow;
+        out << YAML::BeginSeq;
+        for (auto value : serializables) {
+            value.serialize(out);
+        }
+        out << YAML::EndSeq;
+    }
+
+    template<class V>
+    void GDSerializables<V>::deserialize(const YAML::Node &parent) {
+        YAML::Node valuesNode = parent["serializables"];
+        for (auto value : serializables) {
+            value.deserialize(valuesNode);
+        }
+    }
 }

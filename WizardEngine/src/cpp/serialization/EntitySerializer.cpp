@@ -11,31 +11,40 @@
 
 namespace engine::io {
 
-    void EntitySerializer::serializeText(YAML::Emitter &out) {
+    void EntitySerializable::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap; // Entity
         yaml::serialize(out, "Entity", entity.getId());
         serializeComponents(out);
         out << YAML::EndMap; // Entity
     }
 
+    void EntitySerializable::deserialize(const YAML::Node &parent) {
+        entity = ecs::Entity(parent["Entity"].as<u32>());
+        deserialize<ecs::TagComponent>(parent);
+        deserialize<graphics::Transform2dComponent>(parent);
+        deserialize<graphics::Transform3dComponent>(parent);
+        deserialize<graphics::Camera2dComponent>(parent);
+    }
+
+    void EntitySerializable::serializeComponents(YAML::Emitter &out) {
+        serialize<ecs::TagComponent>(out);
+        serialize<graphics::Transform2dComponent>(out);
+        serialize<graphics::Transform3dComponent>(out);
+        serialize<graphics::Camera2dComponent>(out);
+    }
+
+    void EntitySerializer::serializeText(YAML::Emitter &out) {
+        entity.serialize(out);
+    }
+
     void EntitySerializer::serializeBinary(const char *filepath) {
     }
 
     void EntitySerializer::deserializeText(const YAML::Node &entityNode) {
-        entity.deserialize<ecs::TagComponent>(entityNode);
-        entity.deserialize<graphics::Transform2dComponent>(entityNode);
-        entity.deserialize<graphics::Transform3dComponent>(entityNode);
-        entity.deserialize<graphics::Camera2dComponent>(entityNode);
+        entity.deserialize(entityNode);
     }
 
     void EntitySerializer::deserializeBinary(const char *filepath) {
-    }
-
-    void EntitySerializer::serializeComponents(YAML::Emitter &out) {
-        entity.serialize<ecs::TagComponent>(out);
-        entity.serialize<graphics::Transform2dComponent>(out);
-        entity.serialize<graphics::Transform3dComponent>(out);
-        entity.serialize<graphics::Camera2dComponent>(out);
     }
 
     const char *EntitySerializer::serializeText() {
@@ -71,5 +80,4 @@ namespace engine::io {
             return;
         }
     }
-
 }
