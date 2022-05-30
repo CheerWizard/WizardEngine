@@ -24,7 +24,8 @@ using namespace engine::ecs;
 namespace test {
 
     class TestLayer : public Layer,
-            tcp::ClientListener, udp::ClientListener {
+            tcp::ClientListener,
+            udp::ClientListener, udp::SenderListener, udp::ReceiverListener {
 
     public:
         TestLayer() : Layer() {
@@ -53,17 +54,24 @@ namespace test {
         void onGamepadRollLeft(const GamepadRoll& roll);
         void onGamepadRollRight(const GamepadRoll& roll);
 
+        void onSenderFailed(char *data, size_t size) override;
+
+        void onSenderSuccess() override;
+
+        void onReceiverFailed(char *data, size_t size) override;
+
+        void onReceiverSuccess(const YAML::Node &gdNode, const GDHeader &header) override;
+
+        void onUDPSocketCreated() override;
+
+        void onUDPSocketClosed() override;
+
     public:
         void tcp_socketNotCreated() override;
         void tcp_connectionFailed() override;
         void tcp_socketClosed() override;
         void tcp_connectionSucceeded() override;
         void onGameDataReceived(const std::pair<YAML::Node, GDHeader> &gdNodeHeader) override;
-
-    public:
-        void udp_socketNotCreated() override;
-        void udp_sendDataFailed(const std::string &data) override;
-        void udp_socketClosed() override;
 
     public:
         void onWindowClosed() override;

@@ -102,15 +102,18 @@ namespace engine::network {
                 // unpack received data
                 // todo consider to abstract unpacking as this works specifically for .gdf data
                 // todo for HTTP or other type of data it won't work
-                auto gdNodeHeader = GDSerializer::deserialize(buffer);
-                YAML::Node gdNode = gdNodeHeader.first;
-                GDHeader header = gdNodeHeader.second;
-                // dispatch received data, using header address
-                switch (header.address) {
-                    case CLIENT_TO_SERVER:
-                        // save into db, load world, sync players, etc.
-                        break;
-                    default: break;
+                std::pair<YAML::Node, GDHeader> gdNodeHeader;
+                bool success = GDSerializer::deserialize(buffer, gdNodeHeader);
+                if (success) {
+                    YAML::Node gdNode = gdNodeHeader.first;
+                    GDHeader header = gdNodeHeader.second;
+                    // dispatch received data, using header address
+                    switch (header.address) {
+                        case CLIENT_TO_SERVER:
+                            // save into db, load world, sync players, etc.
+                            break;
+                        default: break;
+                    }
                 }
                 // send data to client
                 ENGINE_INFO("TCP_Server: Request to client \n{0}", buffer);
@@ -126,89 +129,96 @@ namespace engine::network {
     namespace udp {
 
         SOCKET Server::clientSocket;
-        bool Server::running = false;
 
-        thread::VoidTask<const s32&> Server::bindTask = {
-                "UDP_Server_Bind_Task",
-                "UDP_Server_Bind_Thread",
-                bindImpl
-        };
-
-        thread::VoidTask<> Server::runTask = {
-                "UDP_Server_Run_Task",
-                "UDP_Server_Run_Thread",
-                runImpl
+        thread::VoidTask<const s32&> Server::listenTask = {
+                "UDPServerConnection_Task",
+                "UDPServerConnection_Thread",
+                listenImpl
         };
 
         ServerListener* Server::listener = nullptr;
 
-        void Server::init(ServerListener* serverListener) {
+        bool Server::init(ServerListener* serverListener) {
             listener = serverListener;
             clientSocket = socket::open(AF_INET, SOCK_DGRAM, 0);
+
             if (clientSocket == SOCKET_ERROR) {
                 u32 errorCode = socket::getLastError();
                 ENGINE_ERR("UDP_Server: Unable to create client socket. Unknown error = {0}", errorCode);
-                listener->udp_socketNotCreated();
+                listener->onUDPSocketClosed();
+                return false;
             }
+
+            return true;
         }
 
         void Server::close() {
-            running = false;
+            listenTask.isRunning = false;
             socket::close_socket(clientSocket);
-            listener->udp_socketClosed();
+            listener->onUDPSocketClosed();
         }
 
-        void Server::bind(const s32 &port, const std::function<void()> &done) {
-            bindTask.done = done;
-            bindTask.run(port);
+        void Server::listen(const s32 &port) {
+            listenTask.run(port);
         }
 
-        void Server::bindRun(const s32 &port) {
-            bindTask.done = runImpl;
-            bindTask.run(port);
-        }
-
-        void Server::bindImpl(const s32 &port) {
+        void Server::listenImpl(const s32 &port) {
             s32 bindResult = socket::bind(clientSocket, AF_INET, port, INADDR_ANY);
+
             if (bindResult == SOCKET_ERROR) {
                 u32 errorCode = socket::getLastError();
                 ENGINE_ERR("UDP_Server: Unable to bind to a client socket. Unknown error = {0}", errorCode);
-                listener->udp_socketBindFailed();
+                listener->onUDPConnectionFailed();
+                u32 retryMs = 2000;
+                ENGINE_WARN("UDP_Server: Retry to bind to a client socket after {0} ms!", retryMs);
+                thread::current_sleep(retryMs);
+                listenImpl(port);
             }
-        }
 
-        void Server::run() {
-            runTask.run();
+            runImpl();
         }
 
         void Server::runImpl() {
             sockaddr_in client;
             s32 clientLength = sizeof(client);
             memset(&client, 0, clientLength);
-            char buffer[kb_1];
-            running = true;
+            char data[kb_1];
 
-            while (running) {
-                thread::current_sleep(1000);
-                memset(buffer, 0, kb_1);
-                s32 bytesReceived = socket::receiveFrom(clientSocket, buffer, kb_1,0, client);
-                if (bytesReceived == SOCKET_ERROR) {
+            while (listenTask.isRunning) {
+                memset(data, 0, kb_1);
+                s32 receivedSize = socket::receiveFrom(clientSocket, data, kb_1,0, client);
+                if (receivedSize == SOCKET_ERROR) {
                     u32 errorCode = socket::getLastError();
-                    ENGINE_ERR("UDP_Server: Error receiving data from a client. Error = ", errorCode);
-                    listener->udp_receiveDataFailed(buffer, kb_1);
+                    ENGINE_ERR("UDP_Server: Receiver failed. \nError: {0}", errorCode);
+                    listener->onUDPReceiverFailed(data, kb_1);
                     continue;
                 }
                 // get client IP
                 char clientIp[256];
                 memset(clientIp, 0, 256);
                 inet_ntop(AF_INET, &client.sin_addr, clientIp, 256);
-                // display client IP and message
-                ENGINE_INFO("UDP_Server: Message received from a client[IP:{0}], message: {1}", clientIp, buffer);
+                // display client IP and received data
+                ENGINE_INFO("UDP_Server: Received data \nIP:{0} \nsize: {1} \ndata: {2}",
+                            clientIp, receivedSize, data);
+
+                if (receivedSize > 0) {
+                    // send received data to all clients
+                    s32 okStatus = sendto(
+                            clientSocket, data, receivedSize + 1,
+                            0, (sockaddr*) &client, clientLength
+                    );
+
+                    if (okStatus == SOCKET_ERROR) {
+                        u32 errorCode = socket::getLastError();
+                        ENGINE_ERR("UDP_Server: Sender failed. \nError: {0}", errorCode);
+                        listener->onUDPSenderFailed(data, receivedSize);
+                    }
+                }
             }
         }
 
         void Server::stop() {
-            running = false;
+            listenTask.isRunning = false;
         }
     }
 

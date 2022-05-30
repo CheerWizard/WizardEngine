@@ -75,13 +75,15 @@ namespace test {
         TCP_CLIENT_INIT(this);
         TCP_CLIENT_CONNECT(localhost, 54000);
 
-        UDP_CLIENT_INIT(this);
-        UDP_CLIENT_BIND(localhost, 54000);
+        bool udpClientCreated = udp::Client::init(this, this, this);
+        if (udpClientCreated) {
+            udp::Client::connect(localhost, 54000);
+        }
     }
 
     TestLayer::~TestLayer() {
         TCP_CLIENT_CLOSE();
-        UDP_CLIENT_CLOSE();
+        udp::Client::close();
     }
 
     void TestLayer::bindCamera() {
@@ -109,16 +111,22 @@ namespace test {
         KEY_PRESSED(KeyCode::D1, audio::MediaPlayer::pause(););
         KEY_PRESSED(KeyCode::D2, audio::MediaPlayer::stop(););
         KEY_PRESSED(KeyCode::D3, audio::MediaPlayer::playStream(););
+
+        KEY_PRESSED(
+                KeyCode::R,
+                // notify all players to rotate a survival pack
+                GDHeader header(CLIENT_TO_CLIENT, ROTATE_SURVIVAL_PACK);
+                GDPrimitive<f32> rotation(0.5f);
+                udp::Client::getRequestQueue().push(header, rotation);
+        );
     }
 
     void TestLayer::onUpdate(time::Time deltaTime) {
         cameraController->setDeltaTime(deltaTime);
-//        UDP_CLIENT_SEND("Hello from UDP!");
-        // rotate SurvivalPack on every machine connected to a TCP server!
-        // todo fix a crash and connection timeout here!
+        // notify all players to rotate a survival pack
         GDHeader header(CLIENT_TO_CLIENT, ROTATE_SURVIVAL_PACK);
         GDPrimitive<f32> rotation(0.005f);
-        TCP_GDP_REQUEST(header, rotation);
+        udp::Client::getRequestQueue().push(header, rotation);
     }
 
     void TestLayer::onWindowResized(const uint32_t &width, const uint32_t &height) {
@@ -206,15 +214,40 @@ namespace test {
 
     }
 
-    void TestLayer::udp_socketNotCreated() {
+    void TestLayer::onSenderFailed(char *data, size_t size) {
 
     }
 
-    void TestLayer::udp_sendDataFailed(const std::string &data) {
+    void TestLayer::onSenderSuccess() {
 
     }
 
-    void TestLayer::udp_socketClosed() {
+    void TestLayer::onReceiverFailed(char *data, size_t size) {
+
+    }
+
+    void TestLayer::onReceiverSuccess(const YAML::Node &gdNode, const GDHeader &header) {
+        RUNTIME_INFO("onReceiverSuccess()");
+        RUNTIME_INFO("GDHeader[address: {0}, type: {1}]", header.address, header.type);
+        // dispatch header type
+        if (header.type == ROTATE_SURVIVAL_PACK) {
+            // unpack data
+            GDPrimitive<f32> gdPrimitive;
+            gdPrimitive.deserialize(gdNode);
+            auto rotationY = gdPrimitive.value;
+            RUNTIME_INFO("Rotating SurvivalPack with value: {0}", rotationY);
+            // handle data
+            auto& modelMatrix = survivalBackPack.get<Transform3dComponent>()->modelMatrix;
+            modelMatrix.rotation.y += rotationY;
+            updateModel3d(modelMatrix);
+        }
+    }
+
+    void TestLayer::onUDPSocketCreated() {
+
+    }
+
+    void TestLayer::onUDPSocketClosed() {
 
     }
 

@@ -26,13 +26,15 @@ namespace server {
     ServerApp::ServerApp() {
         TCP_SERVER_INIT(this);
         TCP_SERVER_LISTEN_RUN(54000);
-        UDP_SERVER_INIT(this);
-        UDP_SERVER_BIND_RUN(54000);
+        bool udpServerCreated = udp::Server::init(this);
+        if (udpServerCreated) {
+            udp::Server::listen(54000);
+        }
     }
 
     ServerApp::~ServerApp() {
         TCP_SERVER_CLOSE();
-        UDP_SERVER_CLOSE();
+        udp::Server::close();
     }
 
     void ServerApp::update() {
@@ -59,19 +61,23 @@ namespace server {
 
     }
 
-    void ServerApp::udp_socketNotCreated() {
+    void ServerApp::onUDPSocketCreated() {
 
     }
 
-    void ServerApp::udp_socketClosed() {
+    void ServerApp::onUDPSocketClosed() {
 
     }
 
-    void ServerApp::udp_socketBindFailed() {
+    void ServerApp::onUDPConnectionFailed() {
 
     }
 
-    void ServerApp::udp_receiveDataFailed(char *data, u16 size) {
+    void ServerApp::onUDPReceiverFailed(char *data, size_t size) {
+
+    }
+
+    void ServerApp::onUDPSenderFailed(char *data, size_t size) {
 
     }
 }

@@ -15,12 +15,6 @@
 #define TCP_NETWORK_REQUEST(data) engine::network::tcp::Client::pushRequest(data)
 #define TCP_CLIENT_CLOSE() engine::network::tcp::Client::close()
 
-#define UDP_CLIENT_INIT(listener) engine::network::udp::Client::init(listener)
-#define UDP_CLIENT_BIND(ip, port) engine::network::udp::Client::bind(ip, port)
-#define UDP_CLIENT_BIND_CALLBACK(ip, port, callback) engine::network::udp::Client::bind(ip, port, callback)
-#define UDP_CLIENT_SEND(data) engine::network::udp::Client::send(data)
-#define UDP_CLIENT_CLOSE() engine::network::udp::Client::close()
-
 namespace engine::network {
 
     using namespace engine::core;
@@ -55,7 +49,7 @@ namespace engine::network {
             static void pushRequest(const NetworkData& networkData);
             static void pushRequestTask(GDHeader& header, GDBody& body);
             static void pushRequest(GDHeader& header, GDBody& body);
-            static void popRequest();
+            static void clearRequests();
 
         private:
             static void connectImpl(const std::string& ip, const s32& port);
@@ -67,47 +61,108 @@ namespace engine::network {
             static thread::VoidTask<> runTask;
             static ClientListener* listener;
             static bool isRunning;
-            static queue<NetworkData> requests;
+            static vector<NetworkData> requests;
         };
     }
 
     namespace udp {
 
-        decl_exception(udp_client_exception)
+        class SenderListener {
+        public:
+            virtual void onSenderFailed(char* data, size_t size) = 0;
+            virtual void onSenderSuccess() = 0;
+        };
+
+        class RequestQueue {
+
+        public:
+            void push(const NetworkData& networkData);
+            void push(GDHeader& header, GDBody& body);
+            void pop();
+            [[nodiscard]] const NetworkData& front() const;
+            [[nodiscard]] bool empty() const;
+
+        private:
+            queue<NetworkData> _queue;
+        };
+
+        class Sender {
+
+        public:
+            Sender(SenderListener* listener) : listener(listener) {}
+            ~Sender() = default;
+
+        public:
+            void run(const SOCKET& clientSocket, const sockaddr_in& server);
+            void stop();
+            RequestQueue& getRequestQueue();
+
+        private:
+            void runImpl();
+
+        private:
+            SOCKET clientSocket;
+            sockaddr_in server;
+            SenderListener* listener;
+            thread::VoidTask<> senderTask;
+            RequestQueue requestQueue;
+        };
+
+        class ReceiverListener {
+        public:
+            virtual void onReceiverFailed(char* data, size_t size) = 0;
+            virtual void onReceiverSuccess(const YAML::Node& gdNode, const GDHeader& header) = 0;
+        };
+
+        class Receiver {
+
+        public:
+            Receiver(ReceiverListener* listener) : listener(listener) {}
+
+        public:
+            void run(const SOCKET& clientSocket, const sockaddr_in& server);
+            void stop();
+
+        private:
+            void runImpl();
+
+        private:
+            SOCKET clientSocket;
+            sockaddr_in server;
+            ReceiverListener* listener;
+            thread::VoidTask<> receiverTask;
+        };
 
         class ClientListener {
         public:
-            virtual void udp_socketNotCreated() = 0;
-            virtual void udp_sendDataFailed(const std::string& data) = 0;
-            virtual void udp_socketClosed() = 0;
+            virtual void onUDPSocketCreated() = 0;
+            virtual void onUDPSocketClosed() = 0;
         };
 
         class Client final {
 
-        private:
-            Client() = default;
-            ~Client() = default;
-
         public:
-            static void init(ClientListener* clientListener);
+            static bool init(
+                    ClientListener* clientListener,
+                    SenderListener* senderListener,
+                    ReceiverListener* receiverListener
+            );
             static void close();
-
-            static void bind(const std::string& ip, const s32& port);
-            static void bind(const std::string& ip, const s32& port, const std::function<void()>& done);
-
-            static void send(const std::string& data);
+            static void connect(const std::string& ip, const s32& port);
+            static RequestQueue& getRequestQueue();
 
         private:
-            static void bindImpl(const std::string& ip, const s32& port);
-
-            static void sendImpl(const std::string& data);
+            static void connectImpl(const std::string& ip, const s32& port);
 
         private:
             static SOCKET clientSocket;
-            static thread::VoidTask<const std::string&, const s32&> bindTask;
-            static thread::VoidTask<const std::string&> sendTask;
+            static sockaddr_in server;
+            static thread::VoidTask<const std::string&, const s32&> connectionTask;
             static ClientListener* listener;
+            static Ref<Sender> sender;
+            static Ref<Receiver> receiver;
         };
+
     }
 
 }
