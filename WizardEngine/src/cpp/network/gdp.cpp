@@ -21,8 +21,11 @@ namespace engine::network {
         YAML::Emitter emitter;
         emitter << YAML::BeginMap;
 
+        emitter << YAML::Key << "GameData";
+        emitter << YAML::BeginMap;
         header.serialize(emitter);
         body.serialize(emitter);
+        emitter << YAML::EndMap;
 
         emitter << YAML::EndMap;
         // need to duplicate emitter c_str into network data, because emitter lives only in scopes of stack function
@@ -31,16 +34,21 @@ namespace engine::network {
         return networkData;
     }
 
-    std::pair<YAML::Node, GDHeader> GDSerializer::deserialize(char *gameData) {
+    bool GDSerializer::deserialize(char *gameData, std::pair<YAML::Node, GDHeader>& gdNodeHeader) {
         try {
-            YAML::Node root = YAML::Load(gameData);
-            GDHeader header;
-            header.deserialize(root);
-            return { root, header };
+            YAML::Node gdNode = YAML::Load(gameData)["GameData"];
+            if (gdNode) {
+                GDHeader header;
+                header.deserialize(gdNode);
+                gdNodeHeader = { gdNode, header };
+                return true;
+            }
+
+            return false;
         } catch (YAML::ParserException& e) {
             ENGINE_ERR("GDSerializer: Failed to parse YAML text!");
             ENGINE_ERR(e.msg);
-            return {};
+            return false;
         }
     }
 }

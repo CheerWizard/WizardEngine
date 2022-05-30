@@ -44,7 +44,7 @@ namespace engine::network {
     class GDSerializer final {
     public:
         static NetworkData serialize(GDHeader& header, GDBody& body);
-        static std::pair<YAML::Node, GDHeader> deserialize(char* gameData);
+        static bool deserialize(char* gameData, std::pair<YAML::Node, GDHeader>& gdNodeHeader);
     };
 
     template<class V>
