@@ -30,6 +30,10 @@ namespace engine::ecs {
             return name;
         }
 
+        inline void setName(const char* name) {
+            this->name = name;
+        }
+
     private:
         const char* name;
         Entity skybox;

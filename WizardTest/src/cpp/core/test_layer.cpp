@@ -82,8 +82,6 @@ namespace test {
         if (udpClientCreated) {
             udp::Client::connect("192.168.1.101", 54000);
         }
-
-        camera.remove<TagComponent>();
     }
 
     TestLayer::~TestLayer() {
@@ -136,9 +134,11 @@ namespace test {
         KEY_PRESSED(
                 KeyCode::L,
                 std::stringstream sceneFilePath;
-                auto scene = engine::core::Application::get().activeScene;
-                sceneFilePath << "assets/world/" << scene->getName() << ".yaml";
-                SCENE_DESERIALIZE_TEXT_FILE(scene, sceneFilePath.str().c_str());
+                auto& app = engine::core::Application::get();
+                sceneFilePath << "assets/world/" << app.activeScene->getName() << ".yaml";
+                auto newScene = createRef<Scene>();
+                SCENE_DESERIALIZE_TEXT_FILE(newScene, sceneFilePath.str().c_str());
+                app.setActiveScene(newScene);
         );
     }
 

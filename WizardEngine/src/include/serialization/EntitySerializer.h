@@ -28,24 +28,22 @@ namespace engine::io {
     private:
         void serializeComponents(YAML::Emitter& out);
         template<typename T>
-        void deserialize(const YAML::Node &entityNode);
+        void deserializeComponent(const YAML::Node &entityNode);
         template<typename T>
-        void serialize(YAML::Emitter& out);
+        void serializeComponent(YAML::Emitter& out);
 
     private:
         ecs::Entity entity;
     };
 
     template<typename T>
-    void EntitySerializable::deserialize(const YAML::Node &entityNode) {
-        if (entity.has<T>()) {
-            entity.remove<T>();
-        }
+    void EntitySerializable::deserializeComponent(const YAML::Node &entityNode) {
+        // todo works only if entity has no T component yet
         entity.add<T>(deserialize_from(T, entityNode));
     }
 
     template<typename T>
-    void EntitySerializable::serialize(YAML::Emitter &out) {
+    void EntitySerializable::serializeComponent(YAML::Emitter &out) {
         T* component = entity.template get<T>();
         if (component) {
             component->serialize(out);

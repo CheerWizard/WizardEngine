@@ -119,7 +119,7 @@ template_component(component_type, template_type), io::Serializable
 
     template<class Component>
     void destroyComponent(BaseComponent* component) {
-//        ((Component*) component)->~Component();
+        ((Component*) component)->~Component();
     }
 
     template<class T>
@@ -179,6 +179,9 @@ template_component(component_type, template_type), io::Serializable
         bool empty_components();
 
         void clear();
+
+        template<class ByComponent, class ResultComponent>
+        ResultComponent* find(const std::function<bool(const ByComponent &)> &condition);
 
     private:
         static inline entity* toEntity(entity_id entityId) {
@@ -332,5 +335,19 @@ template_component(component_type, template_type), io::Serializable
     template<class Component>
     bool Registry::empty_components() {
         return component_count<Component>() == 0;
+    }
+
+    template<class ByComponent, class ResultComponent>
+    ResultComponent *Registry::find(const std::function<bool(const ByComponent&)> &condition) {
+        validate_component("find()", ByComponent, );
+        validate_component("find()", ResultComponent, );
+
+        component_data& componentData = components[ByComponent::ID];
+        for (u32 i = 0 ; i < componentData.size() ; i += ByComponent::TYPE_SIZE) {
+            ByComponent* actualComponent = (ByComponent*) &componentData[i];
+            if (condition(actualComponent)) {
+                return getComponent<ResultComponent>(actualComponent->entityId);
+            }
+        }
     }
 }

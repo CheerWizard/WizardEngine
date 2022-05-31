@@ -3,7 +3,6 @@
 //
 
 #include <ecs/Entity.h>
-#include <ecs/Components.h>
 
 namespace engine::ecs {
 
@@ -28,6 +27,12 @@ namespace engine::ecs {
     }
 
     void Entity::create(const std::string &tag) {
-        id = container->getRegistry().createEntity<TagComponent>(TagComponent { tag });
+        id = container->getRegistry().createEntity();
+        add<UUIDComponent>();
+        add<TagComponent>(tag);
+    }
+
+    void Entity::setUUID(const uuid &uuid) {
+        add<UUIDComponent>(uuid);
     }
 }

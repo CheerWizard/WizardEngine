@@ -24,12 +24,13 @@ namespace engine::io {
 
     void SceneSerializable::deserialize(const YAML::Node &parent) {
         auto sceneName = parent["Scene"].as<std::string>();
+        scene->setName(sceneName.c_str());
         ENGINE_TRACE("Scene deserialized '{0}'", sceneName);
 
         auto entitiesNode = parent["Entities"];
         if (entitiesNode) {
             for (auto entityNode : entitiesNode) {
-                ENTITY_DESERIALIZE_TEXT(ecs::Entity(scene.get()), entityNode);
+                ENTITY_DESERIALIZE_TEXT(ecs::Entity(scene.get(), scene->createEntity()), entityNode);
             }
         }
     }

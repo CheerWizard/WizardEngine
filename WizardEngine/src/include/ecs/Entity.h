@@ -5,7 +5,7 @@
 #pragma once
 
 #include <io/Logger.h>
-#include <ecs/ecs.h>
+#include <ecs/Components.h>
 
 namespace engine::ecs {
 
@@ -19,6 +19,10 @@ namespace engine::ecs {
         [[nodiscard]] size_t size();
 
     public:
+        inline entity_id createEntity() {
+            return registry.createEntity();
+        }
+
         inline Registry& getRegistry() {
             return registry;
         }
@@ -78,10 +82,6 @@ namespace engine::ecs {
         }
 
     public:
-        inline void setId(u32 id) {
-            this->id = (entity_id) id;
-        }
-
         [[nodiscard]] inline void* getId() const {
             return id;
         }
@@ -89,6 +89,12 @@ namespace engine::ecs {
         [[nodiscard]] inline bool isValid() const {
             return id != invalid_entity_id;
         }
+
+        [[nodiscard]] inline const uuid& getUUID() const {
+            return get<UUIDComponent>()->uuid;
+        }
+
+        void setUUID(const uuid& uuid);
 
         template<typename T, typename... Args>
         inline bool add(Args &&... args);

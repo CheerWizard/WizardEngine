@@ -2,10 +2,9 @@
 // Created by mecha on 21.05.2022.
 //
 
-#include <serialization/EntitySerializer.h>
 #include <core/filesystem.h>
+#include <serialization/EntitySerializer.h>
 
-#include <ecs/Components.h>
 #include <graphics/transform/TransformComponents.h>
 #include <graphics/camera/CameraComponents.h>
 
@@ -13,26 +12,26 @@ namespace engine::io {
 
     void EntitySerializable::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap; // Entity
-        yaml::serialize(out, "Entity", entity.getId());
+        yaml::serialize(out, "Entity", entity.getUUID());
         serializeComponents(out);
         out << YAML::EndMap; // Entity
     }
 
     void EntitySerializable::deserialize(const YAML::Node &parent) {
-//        entity.setId(parent["Entity"].as<u32>());
-        deserialize<ecs::TagComponent>(parent);
-        deserialize<graphics::Transform2dComponent>(parent);
-        deserialize<graphics::Transform3dComponent>(parent);
-        deserialize<graphics::Camera2dComponent>(parent);
-        deserialize<graphics::Camera3dComponent>(parent);
+        entity.setUUID(parent["Entity"].as<u64>());
+        deserializeComponent<ecs::TagComponent>(parent);
+        deserializeComponent<graphics::Transform2dComponent>(parent);
+        deserializeComponent<graphics::Transform3dComponent>(parent);
+        deserializeComponent<graphics::Camera2dComponent>(parent);
+        deserializeComponent<graphics::Camera3dComponent>(parent);
     }
 
     void EntitySerializable::serializeComponents(YAML::Emitter &out) {
-        serialize<ecs::TagComponent>(out);
-        serialize<graphics::Transform2dComponent>(out);
-        serialize<graphics::Transform3dComponent>(out);
-        serialize<graphics::Camera2dComponent>(out);
-        serialize<graphics::Camera3dComponent>(out);
+        serializeComponent<ecs::TagComponent>(out);
+        serializeComponent<graphics::Transform2dComponent>(out);
+        serializeComponent<graphics::Transform3dComponent>(out);
+        serializeComponent<graphics::Camera2dComponent>(out);
+        serializeComponent<graphics::Camera3dComponent>(out);
     }
 
     void EntitySerializer::serializeText(YAML::Emitter &out) {
