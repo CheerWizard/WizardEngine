@@ -25,6 +25,7 @@ namespace engine {
     public:
         operator u64() { return _uuid; }
         operator const u64() const { return _uuid; }
+        bool operator ==(u64 other) const { return _uuid == other; }
 
     private:
         u64 _uuid;

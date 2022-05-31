@@ -55,11 +55,37 @@ namespace engine::ecs {
             return registry.removeComponent<T>(entityId);
         }
 
+        template<typename T>
+        T* findComponent(const uuid& uuid);
+
+        template<typename T>
+        T* findComponent(const UUIDComponent& uuid);
+
+        template<typename T>
+        T* findComponent(u64 uuid);
+
     protected:
         Registry registry;
 
         friend class Entity;
     };
+
+    template<typename T>
+    T* EntityContainer::findComponent(const UUIDComponent &uuid) {
+        return registry.findComponent<UUIDComponent, T>([&uuid](UUIDComponent* found) {
+            return *found == uuid;
+        });
+    }
+
+    template<typename T>
+    T* EntityContainer::findComponent(const uuid &uuid) {
+        return findComponent<T>(UUIDComponent(uuid));
+    }
+
+    template<typename T>
+    T* EntityContainer::findComponent(u64 uuid) {
+        return findComponent<T>(UUIDComponent(engine::uuid(uuid)));
+    }
 
     class Entity {
 

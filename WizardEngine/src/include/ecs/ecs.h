@@ -180,8 +180,10 @@ template_component(component_type, template_type), io::Serializable
 
         void clear();
 
+        template<class ByComponent>
+        entity_id findEntity(const std::function<bool(ByComponent*)> &condition);
         template<class ByComponent, class ResultComponent>
-        ResultComponent* find(const std::function<bool(const ByComponent &)> &condition);
+        ResultComponent* findComponent(const std::function<bool(ByComponent*)> &condition);
 
     private:
         static inline entity* toEntity(entity_id entityId) {
@@ -337,8 +339,23 @@ template_component(component_type, template_type), io::Serializable
         return component_count<Component>() == 0;
     }
 
+    template<class ByComponent>
+    entity_id Registry::findEntity(const std::function<bool(ByComponent*)> &condition) {
+        validate_component("findEntity()", ByComponent, invalid_entity_id);
+
+        component_data& componentData = components[ByComponent::ID];
+        for (u32 i = 0 ; i < componentData.size() ; i += ByComponent::TYPE_SIZE) {
+            ByComponent* actualComponent = (ByComponent*) &componentData[i];
+            if (condition(actualComponent)) {
+                return actualComponent->entityId;
+            }
+        }
+
+        return invalid_entity_id;
+    }
+
     template<class ByComponent, class ResultComponent>
-    ResultComponent *Registry::find(const std::function<bool(const ByComponent&)> &condition) {
+    ResultComponent *Registry::findComponent(const std::function<bool(ByComponent*)> &condition) {
         validate_component("find()", ByComponent, );
         validate_component("find()", ResultComponent, );
 

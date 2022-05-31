@@ -13,6 +13,8 @@ namespace engine::ecs {
         uuid uuid;
         UUIDComponent() = default;
         UUIDComponent(const engine::uuid& uuid) : uuid(uuid) {}
+
+        bool operator ==(const UUIDComponent& other) const { return uuid == other.uuid; }
     };
 
     serialize_component(TagComponent) {

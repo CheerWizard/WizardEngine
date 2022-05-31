@@ -12,10 +12,7 @@ namespace engine::ecs {
 
     public:
         Scene(const char* name = "Untitled") : name(name) {}
-
-        ~Scene() {
-            clear();
-        }
+        ~Scene();
 
     public:
         inline void setSkybox(const Entity& skybox) {
@@ -33,6 +30,11 @@ namespace engine::ecs {
         inline void setName(const char* name) {
             this->name = name;
         }
+
+    public:
+        Entity findEntity(const uuid& uuid);
+        Entity findEntity(const UUIDComponent& uuid);
+        Entity findEntity(u64 uuid);
 
     private:
         const char* name;
