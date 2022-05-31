@@ -34,7 +34,7 @@ namespace engine::io {
     class SceneSerializer {
 
     public:
-        SceneSerializer(const SceneSerializable scene) : scene(scene) {}
+        SceneSerializer(const Ref<ecs::Scene>& scene) : scene(scene) {}
 
     public:
         const char* serializeText();

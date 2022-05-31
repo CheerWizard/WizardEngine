@@ -119,8 +119,7 @@ template_component(component_type, template_type), io::Serializable
 
     template<class Component>
     void destroyComponent(BaseComponent* component) {
-        auto* actualComponent = (Component*) component;
-        actualComponent->~Component();
+//        ((Component*) component)->~Component();
     }
 
     template<class T>

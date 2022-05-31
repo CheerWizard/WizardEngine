@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <core/primitives.h>
+#include <core/vector.h>
 #include <serialization/serialization.h>
 
 /**

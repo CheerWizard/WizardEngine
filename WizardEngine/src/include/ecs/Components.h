@@ -12,6 +12,7 @@ namespace engine::ecs {
         std::string tag;
         TagComponent() = default;
         TagComponent(const std::string &tag) : tag(tag) {}
+        ~TagComponent() override = default;
 
         void serialize(YAML::Emitter &out) override;
         void deserialize(const YAML::Node &parent) override;

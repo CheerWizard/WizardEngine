@@ -3,13 +3,14 @@
 //
 
 #include <core/test_layer.h>
+#include <serialization/SceneSerializer.h>
 
 #define ROTATE_SURVIVAL_PACK 123
 
 namespace test {
 
     void TestLayer::init() {
-        auto scene = createRef<Scene>();
+        auto scene = createRef<Scene>("Scene1");
         auto& app = engine::core::Application::get();
         app.setActiveScene(scene);
 
@@ -81,6 +82,8 @@ namespace test {
         if (udpClientCreated) {
             udp::Client::connect("192.168.1.101", 54000);
         }
+
+        camera.remove<TagComponent>();
     }
 
     TestLayer::~TestLayer() {
@@ -120,6 +123,22 @@ namespace test {
                 GDHeader header(CLIENT_TO_CLIENT, ROTATE_SURVIVAL_PACK);
                 GDPrimitive<f32> rotation(0.5f);
                 udp::Client::getRequestQueue().push(header, rotation);
+        );
+
+        KEY_PRESSED(
+                KeyCode::K,
+                std::stringstream sceneFilePath;
+                auto scene = engine::core::Application::get().activeScene;
+                sceneFilePath << "assets/world/" << scene->getName() << ".yaml";
+                SCENE_SERIALIZE_TEXT_FILE(scene, sceneFilePath.str().c_str());
+        );
+
+        KEY_PRESSED(
+                KeyCode::L,
+                std::stringstream sceneFilePath;
+                auto scene = engine::core::Application::get().activeScene;
+                sceneFilePath << "assets/world/" << scene->getName() << ".yaml";
+                SCENE_DESERIALIZE_TEXT_FILE(scene, sceneFilePath.str().c_str());
         );
     }
 

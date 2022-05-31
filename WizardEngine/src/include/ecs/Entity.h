@@ -62,8 +62,6 @@ namespace engine::ecs {
     public:
         Entity() = default;
 
-        Entity(u32 id) : id((entity_id) id) {}
-
         Entity(EntityContainer* container, entity_id id) : id(id), container(container) {}
 
         Entity(EntityContainer* container) : container(container) {
@@ -80,6 +78,10 @@ namespace engine::ecs {
         }
 
     public:
+        inline void setId(u32 id) {
+            this->id = (entity_id) id;
+        }
+
         [[nodiscard]] inline void* getId() const {
             return id;
         }

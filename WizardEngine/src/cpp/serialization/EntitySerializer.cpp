@@ -19,11 +19,12 @@ namespace engine::io {
     }
 
     void EntitySerializable::deserialize(const YAML::Node &parent) {
-        entity = ecs::Entity(parent["Entity"].as<u32>());
+//        entity.setId(parent["Entity"].as<u32>());
         deserialize<ecs::TagComponent>(parent);
         deserialize<graphics::Transform2dComponent>(parent);
         deserialize<graphics::Transform3dComponent>(parent);
         deserialize<graphics::Camera2dComponent>(parent);
+        deserialize<graphics::Camera3dComponent>(parent);
     }
 
     void EntitySerializable::serializeComponents(YAML::Emitter &out) {
@@ -31,6 +32,7 @@ namespace engine::io {
         serialize<graphics::Transform2dComponent>(out);
         serialize<graphics::Transform3dComponent>(out);
         serialize<graphics::Camera2dComponent>(out);
+        serialize<graphics::Camera3dComponent>(out);
     }
 
     void EntitySerializer::serializeText(YAML::Emitter &out) {
@@ -50,7 +52,7 @@ namespace engine::io {
     const char *EntitySerializer::serializeText() {
         YAML::Emitter out;
         serializeText(out);
-        return out.c_str();
+        return strdup(out.c_str());
     }
 
     void EntitySerializer::serializeTextFile(const char *filepath) {

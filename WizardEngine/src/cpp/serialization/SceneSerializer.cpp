@@ -37,7 +37,7 @@ namespace engine::io {
     const char* SceneSerializer::serializeText() {
         YAML::Emitter emitter;
         scene.serialize(emitter);
-        return emitter.c_str();
+        return strdup(emitter.c_str());
     }
 
     void SceneSerializer::serializeBinary(const char *filepath) {
