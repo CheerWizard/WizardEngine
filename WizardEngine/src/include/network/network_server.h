@@ -77,11 +77,17 @@ namespace engine::network {
         private:
             static void listenImpl(const s32& port);
             static void runImpl();
+            static void dispatch(char* data, u32 type);
+
+            static void saveWorld(char* data);
+            static void loadWorld();
+            static void send(char* data, size_t size);
 
         private:
             static SOCKET clientSocket;
             static thread::VoidTask<const s32&> listenTask;
             static ServerListener* listener;
+            static sockaddr_in client;
         };
 
     }

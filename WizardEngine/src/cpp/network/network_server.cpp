@@ -3,6 +3,7 @@
 //
 
 #include <network/network_server.h>
+#include <core/filesystem.h>
 
 namespace engine::network {
 
@@ -116,6 +117,7 @@ namespace engine::network {
     namespace udp {
 
         SOCKET Server::clientSocket;
+        sockaddr_in Server::client;
 
         thread::VoidTask<const s32&> Server::listenTask = {
                 "UDPServerConnection_Task",
@@ -166,7 +168,6 @@ namespace engine::network {
         }
 
         void Server::runImpl() {
-            sockaddr_in client;
             s32 clientLength = sizeof(client);
             memset(&client, 0, clientLength);
             char data[kb_1];
@@ -189,16 +190,18 @@ namespace engine::network {
                             clientIp, receivedSize, data);
 
                 if (receivedSize > 0) {
-                    // send received data to all clients
-                    s32 okStatus = sendto(
-                            clientSocket, data, receivedSize + 1,
-                            0, (sockaddr*) &client, clientLength
-                    );
-
-                    if (okStatus == SOCKET_ERROR) {
-                        u32 errorCode = socket::getLastError();
-                        ENGINE_ERR("UDP_Server: Sender failed. \nError: {0}", errorCode);
-                        listener->onUDPSenderFailed(data, receivedSize);
+                    // unpack data and dispatch it
+                    std::pair<YAML::Node, GDHeader> gdNodeHeader;
+                    GDSerializer::deserialize(data, gdNodeHeader);
+                    switch (gdNodeHeader.second.address) {
+                        // dispatch as data for server
+                        case CLIENT_TO_SERVER:
+                            dispatch(data, gdNodeHeader.second.type);
+                            break;
+                        // send received data to all clients
+                        case CLIENT_TO_CLIENT:
+                            send(data, receivedSize);
+                            break;
                     }
                 }
             }
@@ -206,6 +209,40 @@ namespace engine::network {
 
         void Server::stop() {
             listenTask.isRunning = false;
+        }
+
+        void Server::dispatch(char* data, u32 type) {
+            switch (type) {
+                case SERVER_SAVE_WORLD:
+                    saveWorld(data);
+                    break;
+                case SERVER_LOAD_WORLD:
+                    loadWorld();
+                    break;
+                default: break;
+            }
+        }
+
+        void Server::saveWorld(char* data) {
+            engine::filesystem::write("assets/world/client.yaml", data);
+        }
+
+        void Server::loadWorld() {
+            auto worldStr = engine::filesystem::read("assets/world/client.yaml");
+            send(worldStr.data(), worldStr.length());
+        }
+
+        void Server::send(char *data, size_t size) {
+            s32 okStatus = sendto(
+                    clientSocket, data, size + 1,
+                    0, (sockaddr*) &client, sizeof(client)
+            );
+
+            if (okStatus == SOCKET_ERROR) {
+                u32 errorCode = socket::getLastError();
+                ENGINE_ERR("UDP_Server: Sender failed. \nError: {0}", errorCode);
+                listener->onUDPSenderFailed(data, size);
+            }
         }
     }
 

@@ -24,9 +24,14 @@ namespace engine::network {
         NetworkData(char* data, size_t size) : data(data), size(size) {}
     };
 
+    // addresses
     constexpr u32 CLIENT_TO_CLIENT = 0;
     constexpr u32 CLIENT_TO_SERVER = 1;
     constexpr u32 SERVER_TO_CLIENT = 2;
+
+    // types
+    constexpr u32 SERVER_SAVE_WORLD = 1;
+    constexpr u32 SERVER_LOAD_WORLD = 2;
 
     struct GDHeader : io::Serializable {
         u32 address;
