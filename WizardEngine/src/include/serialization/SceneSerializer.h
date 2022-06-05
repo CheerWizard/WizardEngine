@@ -6,7 +6,7 @@
 
 #include <ecs/Scene.h>
 
-#define SCENE_SERIALIZE_TEXT(scene, filepath) engine::io::SceneSerializer(scene).serializeText(filepath)
+#define SCENE_SERIALIZE_TEXT(scene) engine::io::SceneSerializer(scene).serializeText()
 #define SCENE_SERIALIZE_BINARY(scene, filepath) engine::io::SceneSerializer(scene).serializeBinary(filepath)
 
 #define SCENE_DESERIALIZE_TEXT(scene, data) engine::io::SceneSerializer(scene).deserializeText(data)
@@ -17,11 +17,23 @@
 
 namespace engine::io {
 
+    class SceneSerializable : public Serializable {
+
+    public:
+        SceneSerializable(const Ref<ecs::Scene>& scene) : scene(scene) {}
+
+    public:
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
+
+    private:
+        Ref<ecs::Scene> scene;
+    };
+
     class SceneSerializer {
 
     public:
         SceneSerializer(const Ref<ecs::Scene>& scene) : scene(scene) {}
-        ~SceneSerializer() = default;
 
     public:
         const char* serializeText();
@@ -36,7 +48,7 @@ namespace engine::io {
         bool deserialize(const YAML::Node& sceneNode);
 
     private:
-        Ref<ecs::Scene> scene;
+        SceneSerializable scene;
     };
 
 }

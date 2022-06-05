@@ -71,14 +71,17 @@ target_link_libraries(
 replace_dirs(WizardEngine/assets WizardEngine/assets)
 replace_dirs(WizardEngine/vendor/dlls WizardEngine/vendor/dlls)
 
+replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardSamples/assimp-vc143-mtd.dll)
 replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardStudio/assimp-vc143-mtd.dll)
 replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardTest/assimp-vc143-mtd.dll)
 replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardServer/assimp-vc143-mtd.dll)
 
+replace_file(vendor/dlls/OpenAL32.dll ../WizardSamples/OpenAL32.dll)
 replace_file(vendor/dlls/OpenAL32.dll ../WizardStudio/OpenAL32.dll)
 replace_file(vendor/dlls/OpenAL32.dll ../WizardTest/OpenAL32.dll)
 replace_file(vendor/dlls/OpenAL32.dll ../WizardServer/OpenAL32.dll)
 
+replace_file(vendor/dlls/yaml-cppd.dll ../WizardSamples/yaml-cppd.dll)
 replace_file(vendor/dlls/yaml-cppd.dll ../WizardStudio/yaml-cppd.dll)
 replace_file(vendor/dlls/yaml-cppd.dll ../WizardTest/yaml-cppd.dll)
 replace_file(vendor/dlls/yaml-cppd.dll ../WizardServer/yaml-cppd.dll)

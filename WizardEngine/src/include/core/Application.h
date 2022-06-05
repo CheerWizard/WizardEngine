@@ -4,11 +4,13 @@
 
 #pragma once
 
-#include <core/String.h>
 #include <core/LayerStack.h>
+#include <core/String.h>
 #include <core/Memory.h>
+
 #include <event/Events.h>
 #include <event/GamepadCodes.h>
+
 #include <time/FpsController.h>
 
 #include <platform/core/Window.h>
@@ -17,16 +19,32 @@
 #include <platform/graphics/graphics_context.h>
 
 #include <graphics/core/RenderSystem.h>
-#include <graphics/core/sources/MeshSource.h>
 #include <graphics/core/sources/ShaderSource.h>
+#include <graphics/core/io/ModelFile.h>
+#include <graphics/core/geometry/Point.h>
+#include <graphics/camera/Camera.h>
+#include <graphics/skybox/Skybox.h>
+#include <graphics/core/geometry/Quad.h>
+#include <graphics/GraphicsObject.h>
+#include <graphics/camera/CameraController.h>
 
 #include <scripting/ScriptSystem.h>
 
 #include <audio/audio_device_manager.h>
 #include <audio/audio_player.h>
+#include <audio/audio_source.h>
 
 #include <network/network_server.h>
 #include <network/network_client.h>
+
+#include <serialization/AssetManager.h>
+
+using namespace engine::core;
+using namespace engine::graphics;
+using namespace engine::event;
+using namespace engine::time;
+using namespace engine::network;
+using namespace engine::ecs;
 
 #define KEY_PRESSED(key, action) engine::core::Application::get().eventRegistry.onKeyPressedMap[key] = { [this](KeyCode keyCode) { action } }
 #define KEY_RELEASED(key, action) engine::core::Application::get().eventRegistry.onKeyReleasedMap[key] = { [this](KeyCode keyCode) { action } }

@@ -35,10 +35,10 @@ namespace engine::graphics {
         : vertices(vertices), vertexStart(vertexStart), vertexCount(vertexCount) {}
     };
 
-    enum class DrawType {
-        QUAD, TRIANGLE, TRIANGLE_STRIP,
-        LINE, LINE_STRIP, LINE_LOOP,
-        POINTS
+    enum class DrawType : u8 {
+        QUAD = 0, TRIANGLE = 1, TRIANGLE_STRIP = 2,
+        LINE = 3, LINE_STRIP = 4, LINE_LOOP = 5,
+        POINTS = 6
     };
 
     template_component(VertexDataComponent, T) {

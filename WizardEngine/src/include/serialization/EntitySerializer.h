@@ -15,11 +15,44 @@
 
 namespace engine::io {
 
+    class EntitySerializable : public Serializable {
+
+    public:
+        EntitySerializable(const ecs::Entity& entity) : entity(entity) {}
+
+    public:
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
+
+    private:
+        void serializeComponents(YAML::Emitter& out);
+        template<typename T>
+        void deserializeComponent(const YAML::Node &entityNode);
+        template<typename T>
+        void serializeComponent(YAML::Emitter& out);
+
+    private:
+        ecs::Entity entity;
+    };
+
+    template<typename T>
+    void EntitySerializable::deserializeComponent(const YAML::Node &entityNode) {
+        // todo works only if entity has no T component yet
+        entity.add<T>(deserialize_from(T, entityNode));
+    }
+
+    template<typename T>
+    void EntitySerializable::serializeComponent(YAML::Emitter &out) {
+        T* component = entity.template get<T>();
+        if (component) {
+            component->serialize(out);
+        }
+    }
+
     class EntitySerializer final {
 
     public:
         EntitySerializer(const ecs::Entity& entity) : entity(entity) {}
-        ~EntitySerializer() = default;
 
     public:
         void serializeText(YAML::Emitter& out);
@@ -30,13 +63,10 @@ namespace engine::io {
         void deserializeText(const YAML::Node& entityNode);
         void deserializeBinary(const char* filepath);
         void deserializeText(const char* entityText);
-        void deserializeTextFile(const char* filepath);
+        bool deserializeTextFile(const char* filepath);
 
     private:
-        void serializeComponents(YAML::Emitter& out);
-
-    private:
-        ecs::Entity entity;
+        EntitySerializable entity;
     };
 
 }

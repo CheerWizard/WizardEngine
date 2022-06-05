@@ -5,7 +5,7 @@
 #pragma once
 
 #include <io/Logger.h>
-#include <ecs/ecs.h>
+#include <ecs/Components.h>
 
 namespace engine::ecs {
 
@@ -19,6 +19,10 @@ namespace engine::ecs {
         [[nodiscard]] size_t size();
 
     public:
+        inline entity_id createEntity() {
+            return registry.createEntity();
+        }
+
         inline Registry& getRegistry() {
             return registry;
         }
@@ -51,11 +55,37 @@ namespace engine::ecs {
             return registry.removeComponent<T>(entityId);
         }
 
+        template<typename T>
+        T* findComponent(const uuid& uuid);
+
+        template<typename T>
+        T* findComponent(const UUIDComponent& uuid);
+
+        template<typename T>
+        T* findComponent(u64 uuid);
+
     protected:
         Registry registry;
 
         friend class Entity;
     };
+
+    template<typename T>
+    T* EntityContainer::findComponent(const UUIDComponent &uuid) {
+        return registry.findComponent<UUIDComponent, T>([&uuid](UUIDComponent* found) {
+            return *found == uuid;
+        });
+    }
+
+    template<typename T>
+    T* EntityContainer::findComponent(const uuid &uuid) {
+        return findComponent<T>(UUIDComponent(uuid));
+    }
+
+    template<typename T>
+    T* EntityContainer::findComponent(u64 uuid) {
+        return findComponent<T>(UUIDComponent(engine::uuid(uuid)));
+    }
 
     class Entity {
 
@@ -86,14 +116,14 @@ namespace engine::ecs {
             return id != invalid_entity_id;
         }
 
+        [[nodiscard]] inline const uuid& getUUID() const {
+            return get<UUIDComponent>()->uuid;
+        }
+
+        void setUUID(const uuid& uuid);
+
         template<typename T, typename... Args>
         inline bool add(Args &&... args);
-
-        template<typename T>
-        inline void deserialize(const YAML::Node& entityNode);
-
-        template<typename T>
-        inline void serialize(YAML::Emitter& out);
 
         template<typename T, typename... Args>
         inline bool update(Args &&... args);
@@ -156,15 +186,5 @@ namespace engine::ecs {
     template<typename T>
     inline bool Entity::remove() const {
         return container->removeComponent<T>(id);
-    }
-
-    template<typename T>
-    void Entity::deserialize(const YAML::Node &entityNode) {
-        add<T>(deserialize_from(T, entityNode));
-    }
-
-    template<typename T>
-    void Entity::serialize(YAML::Emitter& out) {
-        get<T>()->serialize(out);
     }
 }

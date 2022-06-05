@@ -7,9 +7,11 @@
       <file path="$PROJECT_DIR$/ScriptDLL" />
       <file path="$PROJECT_DIR$/WizardEngine" />
       <file path="$PROJECT_DIR$/WizardEngine/vendor/spdlog" />
+      <file path="$PROJECT_DIR$/WizardSamples" />
       <file path="$PROJECT_DIR$/WizardServer" />
       <file path="$PROJECT_DIR$/WizardStudio" />
       <file path="$PROJECT_DIR$/WizardTest" />
+      <file path="$PROJECT_DIR$/wentt" />
     </sourceRoots>
   </component>
 </project>

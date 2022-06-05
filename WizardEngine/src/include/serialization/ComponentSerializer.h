@@ -21,7 +21,7 @@ namespace engine::io {
         void serializeTextFile(const char* filepath);
 
         void deserializeText(const char* componentText);
-        void deserializeTextFile(const char* filepath);
+        bool deserializeTextFile(const char* filepath);
 
     private:
         Component component;
@@ -54,16 +54,23 @@ namespace engine::io {
     }
 
     template<class Component>
-    void ComponentSerializer<Component>::deserializeTextFile(const char *filepath) {
+    bool ComponentSerializer<Component>::deserializeTextFile(const char *filepath) {
         YAML::Node componentNode;
+
         try {
             componentNode = YAML::LoadFile(filepath);
             component.deserialize(componentNode);
         } catch (YAML::ParserException& e) {
-            ENGINE_ERR("ComponentSerializer: Failed to parse YAML text file!");
+            ENGINE_ERR("ComponentSerializer: Failed to parse YAML text from '{0}' file!", filepath);
             ENGINE_ERR(e.msg);
-            return;
+            return false;
+        } catch (YAML::BadFile& e) {
+            ENGINE_ERR("ComponentSerializer: Failed to open '{0}' file", filepath);
+            ENGINE_ERR(e.msg);
+            return false;
         }
+
+        return true;
     }
 
 }

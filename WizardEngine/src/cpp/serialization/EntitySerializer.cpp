@@ -2,46 +2,56 @@
 // Created by mecha on 21.05.2022.
 //
 
-#include <serialization/EntitySerializer.h>
 #include <core/filesystem.h>
+#include <serialization/EntitySerializer.h>
 
-#include <ecs/Components.h>
 #include <graphics/transform/TransformComponents.h>
 #include <graphics/camera/CameraComponents.h>
 
 namespace engine::io {
 
-    void EntitySerializer::serializeText(YAML::Emitter &out) {
+    void EntitySerializable::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap; // Entity
-        yaml::serialize(out, "Entity", entity.getId());
+        yaml::serialize(out, "Entity", entity.getUUID());
         serializeComponents(out);
         out << YAML::EndMap; // Entity
+    }
+
+    void EntitySerializable::deserialize(const YAML::Node &parent) {
+        entity.setUUID(parent["Entity"].as<u64>());
+        deserializeComponent<ecs::TagComponent>(parent);
+        deserializeComponent<graphics::Transform2dComponent>(parent);
+        deserializeComponent<graphics::Transform3dComponent>(parent);
+        deserializeComponent<graphics::Camera2dComponent>(parent);
+        deserializeComponent<graphics::Camera3dComponent>(parent);
+    }
+
+    void EntitySerializable::serializeComponents(YAML::Emitter &out) {
+        serializeComponent<ecs::TagComponent>(out);
+        serializeComponent<graphics::Transform2dComponent>(out);
+        serializeComponent<graphics::Transform3dComponent>(out);
+        serializeComponent<graphics::Camera2dComponent>(out);
+        serializeComponent<graphics::Camera3dComponent>(out);
+    }
+
+    void EntitySerializer::serializeText(YAML::Emitter &out) {
+        entity.serialize(out);
     }
 
     void EntitySerializer::serializeBinary(const char *filepath) {
     }
 
     void EntitySerializer::deserializeText(const YAML::Node &entityNode) {
-        entity.deserialize<ecs::TagComponent>(entityNode);
-        entity.deserialize<graphics::Transform2dComponent>(entityNode);
-        entity.deserialize<graphics::Transform3dComponent>(entityNode);
-        entity.deserialize<graphics::Camera2dComponent>(entityNode);
+        entity.deserialize(entityNode);
     }
 
     void EntitySerializer::deserializeBinary(const char *filepath) {
     }
 
-    void EntitySerializer::serializeComponents(YAML::Emitter &out) {
-        entity.serialize<ecs::TagComponent>(out);
-        entity.serialize<graphics::Transform2dComponent>(out);
-        entity.serialize<graphics::Transform3dComponent>(out);
-        entity.serialize<graphics::Camera2dComponent>(out);
-    }
-
     const char *EntitySerializer::serializeText() {
         YAML::Emitter out;
         serializeText(out);
-        return out.c_str();
+        return strdup(out.c_str());
     }
 
     void EntitySerializer::serializeTextFile(const char *filepath) {
@@ -60,16 +70,22 @@ namespace engine::io {
         }
     }
 
-    void EntitySerializer::deserializeTextFile(const char *filepath) {
+    bool EntitySerializer::deserializeTextFile(const char *filepath) {
         YAML::Node entityNode;
+
         try {
             entityNode = YAML::LoadFile(filepath);
             deserializeText(entityNode);
         } catch (YAML::ParserException& e) {
-            ENGINE_ERR("EntitySerializer: Failed to parse YAML text file!");
+            ENGINE_ERR("EntitySerializer: Failed to parse YAML text from '{0}' file!", filepath);
             ENGINE_ERR(e.msg);
-            return;
+            return false;
+        } catch (YAML::BadFile& e) {
+            ENGINE_ERR("EntitySerializer: Failed to open '{0}' file", filepath);
+            ENGINE_ERR(e.msg);
+            return false;
         }
-    }
 
+        return true;
+    }
 }
