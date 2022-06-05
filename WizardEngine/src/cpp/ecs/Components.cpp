@@ -9,17 +9,17 @@ namespace engine::ecs {
     void TagComponent::serialize(YAML::Emitter &out) {
         out << YAML::Key << "TagComponent";
         out << YAML::BeginMap; // TagComponent
-        out << YAML::Key << "Tag" << YAML::Value << tag;
-        yaml::serialize(out, "Tag", tag);
+        yaml::serialize(out, "tag", tag.c_str());
         out << YAML::EndMap; // TagComponent
     }
 
     void TagComponent::deserialize(const YAML::Node &parent) {
         auto tagComponent = parent["TagComponent"];
         if (tagComponent) {
-            tag = tagComponent["Tag"].as<std::string>();
+            tag = tagComponent["tag"].as<std::string>();
         }
         ENGINE_TRACE("Deserialized TAG = {0}", tag);
     }
+
 
 }

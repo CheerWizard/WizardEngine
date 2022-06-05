@@ -12,10 +12,6 @@ namespace engine::io {
         class Serializable {
 
         public:
-            Serializable() = default;
-            virtual ~Serializable() = default;
-
-        public:
             virtual void serialize(YAML::Emitter& out) = 0;
             virtual void deserialize(const YAML::Node& parent) = 0;
 

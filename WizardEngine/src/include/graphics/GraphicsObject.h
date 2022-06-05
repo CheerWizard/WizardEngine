@@ -11,25 +11,25 @@
 namespace engine::graphics {
 
     template<typename T>
-    class Object3d : public Entity {
+    class Object3d : public ecs::Entity {
 
     public:
         Object3d(
                 const std::string &tag,
-                EntityContainer* container
+                ecs::EntityContainer* container
         ) : Entity(tag, container) {
             add<Transform3dComponent>(Transform3dComponent());
         }
 
         Object3d(
-                EntityContainer* container
+                ecs::EntityContainer* container
         ) : Entity("GraphicsObject", container) {
             add<Transform3dComponent>(Transform3dComponent());
             add<BaseMeshComponent<T>>();
         }
 
         Object3d(
-                EntityContainer* container,
+                ecs::EntityContainer* container,
                 const std::string &tag,
                 const Transform3dComponent& transform
         ) : Entity(tag, container) {
@@ -37,7 +37,7 @@ namespace engine::graphics {
         }
 
         Object3d(
-                EntityContainer* container,
+                ecs::EntityContainer* container,
                 const std::string &tag,
                 const Transform3dComponent &transform,
                 const BaseMeshComponent<T>& mesh
@@ -47,17 +47,17 @@ namespace engine::graphics {
         }
 
         Object3d(
-            EntityContainer* container,
-            const std::string& tag,
-            const Transform3dComponent &transform,
-            const VertexDataComponent<InstanceVertex<T>> vertexDataComponent
+                ecs::EntityContainer* container,
+                const std::string& tag,
+                const Transform3dComponent &transform,
+                const VertexDataComponent<InstanceVertex<T>> vertexDataComponent
         ) : Entity(tag, container) {
             add<Transform3dComponent>(transform);
             add<VertexDataComponent<InstanceVertex<T>>>(vertexDataComponent);
         }
 
         Object3d(
-                EntityContainer* container,
+                ecs::EntityContainer* container,
                 const std::string& tag,
                 const Transform3dComponent &transform,
                 const VertexDataComponent<BatchVertex<T>> vertexDataComponent

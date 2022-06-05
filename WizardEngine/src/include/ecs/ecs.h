@@ -103,9 +103,9 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
     /**
      * Serializable components
      * */
-#define serialize_component(type) component(type), io::Serializable
+#define serialize_component(type) component(type), engine::io::Serializable
 #define serialize_template_component(component_type, template_type) \
-template_component(component_type, template_type), io::Serializable
+template_component(component_type, template_type), engine::io::Serializable
 
     template<class Component>
     u32 createComponent(component_data& data, entity_id entityId, BaseComponent* component) {
@@ -119,8 +119,7 @@ template_component(component_type, template_type), io::Serializable
 
     template<class Component>
     void destroyComponent(BaseComponent* component) {
-        auto* actualComponent = (Component*) component;
-        actualComponent->~Component();
+        ((Component*) component)->~Component();
     }
 
     template<class T>
@@ -180,6 +179,11 @@ template_component(component_type, template_type), io::Serializable
         bool empty_components();
 
         void clear();
+
+        template<class ByComponent>
+        entity_id findEntity(const std::function<bool(ByComponent*)> &condition);
+        template<class ByComponent, class ResultComponent>
+        ResultComponent* findComponent(const std::function<bool(ByComponent*)> &condition);
 
     private:
         static inline entity* toEntity(entity_id entityId) {
@@ -333,5 +337,34 @@ template_component(component_type, template_type), io::Serializable
     template<class Component>
     bool Registry::empty_components() {
         return component_count<Component>() == 0;
+    }
+
+    template<class ByComponent>
+    entity_id Registry::findEntity(const std::function<bool(ByComponent*)> &condition) {
+        validate_component("findEntity()", ByComponent, invalid_entity_id);
+
+        component_data& componentData = components[ByComponent::ID];
+        for (u32 i = 0 ; i < componentData.size() ; i += ByComponent::TYPE_SIZE) {
+            ByComponent* actualComponent = (ByComponent*) &componentData[i];
+            if (condition(actualComponent)) {
+                return actualComponent->entityId;
+            }
+        }
+
+        return invalid_entity_id;
+    }
+
+    template<class ByComponent, class ResultComponent>
+    ResultComponent *Registry::findComponent(const std::function<bool(ByComponent*)> &condition) {
+        validate_component("find()", ByComponent, );
+        validate_component("find()", ResultComponent, );
+
+        component_data& componentData = components[ByComponent::ID];
+        for (u32 i = 0 ; i < componentData.size() ; i += ByComponent::TYPE_SIZE) {
+            ByComponent* actualComponent = (ByComponent*) &componentData[i];
+            if (condition(actualComponent)) {
+                return getComponent<ResultComponent>(actualComponent->entityId);
+            }
+        }
     }
 }

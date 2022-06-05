@@ -54,16 +54,26 @@ namespace engine::network {
                 if (okStatus == SOCKET_ERROR) {
                     u32 errorCode = socket::getLastError();
                     ENGINE_ERR("TCP_Sender: Send failed, error: {0}", errorCode);
-                    listener->onTCPSenderFailed(request.data, request.size);
+                    if (listener) {
+                        listener->onTCPSenderFailed(request.data, request.size);
+                    }
                 }
 
-                listener->onTCPSenderSuccess();
+                if (listener) {
+                    listener->onTCPSenderSuccess();
+                }
+
                 requestQueue.pop();
             }
         }
 
         RequestQueue& Sender::getRequestQueue() {
             return requestQueue;
+        }
+
+        void Sender::close() {
+            listener = nullptr;
+            stop();
         }
 
         void Receiver::run(const SOCKET& clientSocket) {
@@ -78,6 +88,11 @@ namespace engine::network {
             receiverTask.isRunning = false;
         }
 
+        void Receiver::close() {
+            listener = nullptr;
+            stop();
+        }
+
         void Receiver::runImpl() {
             char data[kb_1];
 
@@ -88,7 +103,9 @@ namespace engine::network {
                 if (receivedSize == SOCKET_ERROR) {
                     u32 errorCode = socket::getLastError();
                     ENGINE_ERR("TCP_Receiver: Receiver Failed. \nError = {0}", errorCode);
-                    listener->onTCPReceiverFailed(data, kb_1);
+                    if (listener) {
+                        listener->onTCPReceiverFailed(data, kb_1);
+                    }
                     continue;
                 }
 
@@ -99,7 +116,9 @@ namespace engine::network {
                     // todo in future we should also support HTTP or other data type
                     std::pair<YAML::Node, GDHeader> gdNodeHeader;
                     GDSerializer::deserialize(data, gdNodeHeader);
-                    listener->onTCPReceiverSuccess(gdNodeHeader.first, gdNodeHeader.second);
+                    if (listener) {
+                        listener->onTCPReceiverSuccess(gdNodeHeader.first, gdNodeHeader.second);
+                    }
                 }
             }
         }
@@ -139,8 +158,11 @@ namespace engine::network {
 
         void Client::close() {
             connectionTask.isRunning = false;
+            sender->close();
+            receiver->close();
             socket::close_socket(clientSocket);
             listener->onTCPSocketClosed();
+            listener = nullptr;
         }
 
         void Client::connect(const std::string &ip, const s32 &port) {
@@ -194,6 +216,11 @@ namespace engine::network {
             senderTask.isRunning = false;
         }
 
+        void Sender::close() {
+            listener = nullptr;
+            stop();
+        }
+
         void Sender::runImpl() {
             while (senderTask.isRunning) {
                 if (requestQueue.empty()) {
@@ -209,10 +236,15 @@ namespace engine::network {
                 if (okStatus == SOCKET_ERROR) {
                     u32 errorCode = socket::getLastError();
                     ENGINE_ERR("UDP_Sender: Unable to send data, error: {0}", errorCode);
-                    listener->onUDPSenderFailed(request.data, request.size);
+                    if (listener) {
+                        listener->onUDPSenderFailed(request.data, request.size);
+                    }
                 }
 
-                listener->onUDPSenderSuccess();
+                if (listener) {
+                    listener->onUDPSenderSuccess();
+                }
+
                 requestQueue.pop();
             }
         }
@@ -246,7 +278,9 @@ namespace engine::network {
                 if (receivedSize == SOCKET_ERROR) {
                     u32 errorCode = socket::getLastError();
                     ENGINE_ERR("UDP_Receiver: Receiver Failed. \nError = {0}", errorCode);
-                    listener->onUDPReceiverFailed(data, kb_1);
+                    if (listener) {
+                        listener->onUDPReceiverFailed(data, kb_1);
+                    }
                     continue;
                 }
 
@@ -257,9 +291,16 @@ namespace engine::network {
                     // todo in future we should also support HTTP or other data type
                     std::pair<YAML::Node, GDHeader> gdNodeHeader;
                     GDSerializer::deserialize(data, gdNodeHeader);
-                    listener->onUDPReceiverSuccess(gdNodeHeader.first, gdNodeHeader.second);
+                    if (listener) {
+                        listener->onUDPReceiverSuccess(gdNodeHeader.first, gdNodeHeader.second);
+                    }
                 }
             }
+        }
+
+        void Receiver::close() {
+            listener = nullptr;
+            stop();
         }
 
         SOCKET Client::clientSocket;
@@ -296,10 +337,11 @@ namespace engine::network {
         }
 
         void Client::close() {
-            sender->stop();
-            receiver->stop();
+            sender->close();
+            receiver->close();
             socket::close_socket(clientSocket);
             listener->onUDPSocketClosed();
+            listener = nullptr;
         }
 
         void Client::connect(const std::string &ip, const s32 &port) {

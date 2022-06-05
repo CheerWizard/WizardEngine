@@ -18,6 +18,19 @@ namespace engine::network {
         const char* service;
     };
 
+    class SceneService {
+
+    public:
+        void dispatch(const YAML::Node& gdNode, const GDHeader& header);
+
+    protected:
+        virtual void send(char* data, size_t size) = 0;
+
+    private:
+        void saveScene(const YAML::Node &gdNode);
+        void loadScene(const YAML::Node &gdNode);
+    };
+
     namespace tcp {
 
         class ServerListener {
@@ -27,6 +40,18 @@ namespace engine::network {
             virtual void onTCPSocketClosed() = 0;
             virtual void onTCPDisconnected() = 0;
             virtual void onTCPReceiverFailed(char* data, size_t size) = 0;
+        };
+
+        class TCPSceneService : public SceneService {
+
+        public:
+            void init(SOCKET socket);
+
+        protected:
+            void send(char *data, size_t size) override;
+
+        private:
+            SOCKET socket{};
         };
 
         class Server final {
@@ -47,6 +72,7 @@ namespace engine::network {
             static ClientProfile clientProfile;
             static thread::VoidTask<const s32&> listenTask;
             static ServerListener* listener;
+            static TCPSceneService sceneService;
         };
     }
 
@@ -59,6 +85,19 @@ namespace engine::network {
             virtual void onUDPConnectionFailed() = 0;
             virtual void onUDPReceiverFailed(char* data, size_t size) = 0;
             virtual void onUDPSenderFailed(char* data, size_t size) = 0;
+        };
+
+        class UDPSceneService : public SceneService {
+
+        public:
+            void init(SOCKET socket, const sockaddr_in& hint);
+
+        protected:
+            void send(char *data, size_t size) override;
+
+        private:
+            SOCKET socket{};
+            sockaddr_in hint;
         };
 
         class Server final {
@@ -78,10 +117,14 @@ namespace engine::network {
             static void listenImpl(const s32& port);
             static void runImpl();
 
+            static void send(char* data, size_t size);
+
         private:
             static SOCKET clientSocket;
             static thread::VoidTask<const s32&> listenTask;
             static ServerListener* listener;
+            static sockaddr_in client;
+            static UDPSceneService sceneService;
         };
 
     }

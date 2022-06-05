@@ -7,6 +7,7 @@
 #include <yaml-cpp/yaml.h>
 #include <glm/glm.hpp>
 #include <core/primitives.h>
+#include <core/uuid.h>
 
 namespace YAML {
 
@@ -74,6 +75,21 @@ namespace YAML {
             rhs.y = node[1].as<float>();
             rhs.z = node[2].as<float>();
             rhs.w = node[3].as<float>();
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<engine::uuid> {
+
+        static Node encode(const engine::uuid& uuid) {
+            Node node;
+            node.push_back(uuid);
+            return node;
+        }
+
+        static bool decode(const Node& node, engine::uuid& uuid) {
+            uuid = node[0].as<engine::uuid>();
             return true;
         }
     };

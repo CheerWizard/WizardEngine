@@ -3,10 +3,51 @@
 //
 
 #include <network/network_server.h>
+#include <serialization/AssetManager.h>
 
 namespace engine::network {
 
     using namespace core;
+
+    void SceneService::dispatch(const YAML::Node& gdNode, const GDHeader& header) {
+        switch (header.type) {
+            case SERVER_SAVE_SCENE:
+                saveScene(gdNode);
+                break;
+            case SERVER_LOAD_SCENE:
+                loadScene(gdNode);
+                break;
+            default: break;
+        }
+    }
+
+    void SceneService::saveScene(const YAML::Node &gdNode) {
+        ENGINE_INFO("SceneService: saveScene");
+        // deserialize into empty scene and save into asset file
+        auto scene = createRef<ecs::Scene>();
+        io::SceneSerializable body(scene);
+        body.deserialize(gdNode);
+        io::LocalAssetManager::saveScene(scene);
+        // send response back to client
+        GDHeader header(SERVER_TO_CLIENT, SERVER_SAVE_SCENE);
+        GDResponse responseBody;
+        auto response = GDSerializer::serialize(header, responseBody);
+        send(response.data, response.size);
+    }
+
+    void SceneService::loadScene(const YAML::Node &gdNode) {
+        ENGINE_INFO("SceneService: loadScene");
+        // extract scene name
+        GDString sceneName;
+        sceneName.deserialize(gdNode);
+        // load scene from asset manager
+        auto scene = io::LocalAssetManager::loadScene(sceneName.value.c_str());
+        // send scene back to client
+        GDHeader header(SERVER_TO_CLIENT, SERVER_LOAD_SCENE);
+        io::SceneSerializable body(scene);
+        auto response = GDSerializer::serialize(header, body);
+        send(response.data, response.size);
+    }
 
     namespace tcp {
 
@@ -20,6 +61,8 @@ namespace engine::network {
         };
 
         ServerListener* Server::listener = nullptr;
+
+        TCPSceneService Server::sceneService;
 
         bool Server::init(ServerListener* serverListener) {
             listener = serverListener;
@@ -63,6 +106,7 @@ namespace engine::network {
             // close listening socket
             socket::close_socket(listeningSocket);
             runImpl();
+            sceneService.init(clientProfile.socket);
         }
 
         void Server::runImpl() {
@@ -94,12 +138,8 @@ namespace engine::network {
                 if (success) {
                     YAML::Node gdNode = gdNodeHeader.first;
                     GDHeader header = gdNodeHeader.second;
-                    // dispatch received data, using header address
-                    switch (header.address) {
-                        case CLIENT_TO_SERVER:
-                            // save into db, load world, sync players, etc.
-                            break;
-                        default: break;
+                    if (header.address == CLIENT_TO_SERVER) {
+                        sceneService.dispatch(gdNode, header);
                     }
                 }
                 // send data to a client
@@ -111,11 +151,21 @@ namespace engine::network {
         void Server::stop() {
             listenTask.isRunning = false;
         }
+
+        void TCPSceneService::init(SOCKET socket) {
+            this->socket = socket;
+        }
+
+        void TCPSceneService::send(char *data, size_t size) {
+            ENGINE_INFO("TCP_Server: Send data to a client \nsize: {0} \ndata:{1}", size, data);
+            ::send(socket, data, size + 1, 0);
+        }
     }
 
     namespace udp {
 
         SOCKET Server::clientSocket;
+        sockaddr_in Server::client;
 
         thread::VoidTask<const s32&> Server::listenTask = {
                 "UDPServerConnection_Task",
@@ -124,6 +174,8 @@ namespace engine::network {
         };
 
         ServerListener* Server::listener = nullptr;
+
+        UDPSceneService Server::sceneService;
 
         bool Server::init(ServerListener* serverListener) {
             listener = serverListener;
@@ -166,10 +218,10 @@ namespace engine::network {
         }
 
         void Server::runImpl() {
-            sockaddr_in client;
             s32 clientLength = sizeof(client);
             memset(&client, 0, clientLength);
             char data[kb_1];
+            sceneService.init(clientSocket, client);
 
             while (listenTask.isRunning) {
                 memset(data, 0, kb_1);
@@ -189,16 +241,18 @@ namespace engine::network {
                             clientIp, receivedSize, data);
 
                 if (receivedSize > 0) {
-                    // send received data to all clients
-                    s32 okStatus = sendto(
-                            clientSocket, data, receivedSize + 1,
-                            0, (sockaddr*) &client, clientLength
-                    );
-
-                    if (okStatus == SOCKET_ERROR) {
-                        u32 errorCode = socket::getLastError();
-                        ENGINE_ERR("UDP_Server: Sender failed. \nError: {0}", errorCode);
-                        listener->onUDPSenderFailed(data, receivedSize);
+                    // unpack data and dispatch it
+                    std::pair<YAML::Node, GDHeader> gdNodeHeader;
+                    GDSerializer::deserialize(data, gdNodeHeader);
+                    switch (gdNodeHeader.second.address) {
+                        // dispatch as data for server
+                        case CLIENT_TO_SERVER:
+                            sceneService.dispatch(gdNodeHeader.first, gdNodeHeader.second);
+                            break;
+                        // send received data to all clients
+                        case CLIENT_TO_CLIENT:
+                            send(data, receivedSize);
+                            break;
                     }
                 }
             }
@@ -206,6 +260,36 @@ namespace engine::network {
 
         void Server::stop() {
             listenTask.isRunning = false;
+        }
+
+        void Server::send(char *data, size_t size) {
+            s32 okStatus = sendto(
+                    clientSocket, data, size + 1,
+                    0, (sockaddr*) &client, sizeof(client)
+            );
+
+            if (okStatus == SOCKET_ERROR) {
+                u32 errorCode = socket::getLastError();
+                ENGINE_ERR("UDP_Server: Sender failed. \nError: {0}", errorCode);
+                listener->onUDPSenderFailed(data, size);
+            }
+        }
+
+        void UDPSceneService::init(SOCKET socket, const sockaddr_in& hint) {
+            this->socket = socket;
+            this->hint = hint;
+        }
+
+        void UDPSceneService::send(char *data, size_t size) {
+            s32 okStatus = sendto(
+                    socket, data, size + 1,
+                    0, (sockaddr*) &hint, sizeof(hint)
+            );
+
+            if (okStatus == SOCKET_ERROR) {
+                u32 errorCode = socket::getLastError();
+                ENGINE_ERR("UDPSceneService: Sender failed. \nError: {0}", errorCode);
+            }
         }
     }
 

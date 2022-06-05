@@ -39,6 +39,9 @@ namespace engine::graphics {
         bool isUpdated = true;
         u8 renderModelId = 0;
         DrawType drawType = DrawType::TRIANGLE;
+
+        BaseMeshComponent() = default;
+        BaseMeshComponent(BaseMesh<T>* meshes, u32 meshCount) : meshes(meshes), meshCount(meshCount) {}
     };
 
     template<typename TO, typename FROM>
@@ -120,10 +123,7 @@ namespace engine::graphics {
             copyMeshes[i] = copy<T>(mesh);
         }
 
-        return {
-                copyMeshes,
-                meshComponent.meshCount
-        };
+        return BaseMeshComponent<T> { copyMeshes, meshComponent.meshCount };
     }
 
     template<typename T>

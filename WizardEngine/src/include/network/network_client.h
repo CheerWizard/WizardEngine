@@ -43,6 +43,7 @@ namespace engine::network {
         public:
             void run(const SOCKET& clientSocket);
             void stop();
+            void close();
             RequestQueue& getRequestQueue();
 
         private:
@@ -69,6 +70,7 @@ namespace engine::network {
         public:
             void run(const SOCKET& clientSocket);
             void stop();
+            void close();
 
         private:
             void runImpl();
@@ -129,6 +131,7 @@ namespace engine::network {
         public:
             void run(const SOCKET& clientSocket, const sockaddr_in& server);
             void stop();
+            void close();
             RequestQueue& getRequestQueue();
 
         private:
@@ -156,6 +159,7 @@ namespace engine::network {
         public:
             void run(const SOCKET& clientSocket, const sockaddr_in& server);
             void stop();
+            void close();
 
         private:
             void runImpl();
