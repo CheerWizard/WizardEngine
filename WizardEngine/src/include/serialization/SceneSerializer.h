@@ -6,7 +6,7 @@
 
 #include <ecs/Scene.h>
 
-#define SCENE_SERIALIZE_TEXT(scene, filepath) engine::io::SceneSerializer(scene).serializeText(filepath)
+#define SCENE_SERIALIZE_TEXT(scene) engine::io::SceneSerializer(scene).serializeText()
 #define SCENE_SERIALIZE_BINARY(scene, filepath) engine::io::SceneSerializer(scene).serializeBinary(filepath)
 
 #define SCENE_DESERIALIZE_TEXT(scene, data) engine::io::SceneSerializer(scene).deserializeText(data)
@@ -17,7 +17,7 @@
 
 namespace engine::io {
 
-    class SceneSerializable : Serializable {
+    class SceneSerializable : public Serializable {
 
     public:
         SceneSerializable(const Ref<ecs::Scene>& scene) : scene(scene) {}

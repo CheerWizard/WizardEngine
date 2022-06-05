@@ -29,4 +29,17 @@ namespace engine::graphics {
             this->drawType = DrawType::LINE;
         }
     };
+
+    serialize_component(BatchLineSerializable) {
+        BatchLine line;
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
+    };
+
+    serialize_component(InstanceLineSerializable) {
+        InstanceLine line;
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
+    };
+
 }

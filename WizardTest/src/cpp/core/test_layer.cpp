@@ -3,7 +3,6 @@
 //
 
 #include <core/test_layer.h>
-#include <serialization/SceneSerializer.h>
 
 #define ROTATE_SURVIVAL_PACK 123
 
@@ -24,12 +23,12 @@ namespace test {
 
         u32 skyboxId = TextureBuffer::load(
                 {
-                        { "assets/textures/skybox/front.jpg", TextureFaceType::FRONT },
-                        { "assets/textures/skybox/back.jpg", TextureFaceType::BACK },
-                        { "assets/textures/skybox/left.jpg", TextureFaceType::LEFT },
-                        { "assets/textures/skybox/right.jpg", TextureFaceType::RIGHT },
-                        { "assets/textures/skybox/top.jpg", TextureFaceType::TOP },
-                        { "assets/textures/skybox/bottom.jpg", TextureFaceType::BOTTOM },
+                        { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
+                        { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
+                        { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
+                        { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
+                        { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
+                        { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM },
                 }
         );
         TextureBuffer::setDefaultParamsCubeMap(skyboxId);
@@ -45,7 +44,7 @@ namespace test {
                 scene.get()
         );
 
-        graphics::MeshSource<BatchVertex<Vertex3d>>::getMesh("assets/model/DesertEagle.fbx", {
+        io::ModelFile<BatchVertex<Vertex3d>>::read("assets/model/DesertEagle.fbx", {
             [this](const BaseMeshComponent<BatchVertex<Vertex3d>>& mesh) {
                 survivalBackPack.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(mesh);
             },
@@ -119,26 +118,18 @@ namespace test {
                 KeyCode::R,
                 // notify all players to rotate a survival pack
                 GDHeader header(CLIENT_TO_CLIENT, ROTATE_SURVIVAL_PACK);
-                GDPrimitive<f32> rotation(0.5f);
+                GDFloat rotation(0.5f);
                 udp::Client::getRequestQueue().push(header, rotation);
         );
 
         KEY_PRESSED(
                 KeyCode::K,
-                std::stringstream sceneFilePath;
-                auto scene = engine::core::Application::get().activeScene;
-                sceneFilePath << "assets/world/" << scene->getName() << ".yaml";
-                SCENE_SERIALIZE_TEXT_FILE(scene, sceneFilePath.str().c_str());
+                io::RemoteAssetManager::saveScene(Application::get().activeScene);
         );
 
         KEY_PRESSED(
                 KeyCode::L,
-                std::stringstream sceneFilePath;
-                auto& app = engine::core::Application::get();
-                sceneFilePath << "assets/world/" << app.activeScene->getName() << ".yaml";
-                auto newScene = createRef<Scene>();
-                SCENE_DESERIALIZE_TEXT_FILE(newScene, sceneFilePath.str().c_str());
-                app.setActiveScene(newScene);
+                io::RemoteAssetManager::loadScene(Application::get().activeScene->getName().c_str());
         );
     }
 
@@ -146,7 +137,7 @@ namespace test {
         cameraController->setDeltaTime(deltaTime);
         // notify all players to rotate a survival pack
         GDHeader header(CLIENT_TO_CLIENT, ROTATE_SURVIVAL_PACK);
-        GDPrimitive<f32> rotation(0.005f);
+        GDFloat rotation(0.005f);
         udp::Client::getRequestQueue().push(header, rotation);
         tcp::Client::getRequestQueue().push(header, rotation);
     }
@@ -251,6 +242,7 @@ namespace test {
     void TestLayer::onTCPReceiverSuccess(const YAML::Node &gdNode, const GDHeader &header) {
         RUNTIME_INFO("onTCPReceiverSuccess()");
         RUNTIME_INFO("GDHeader[address: {0}, type: {1}]", header.address, header.type);
+        io::RemoteAssetManager::dispatchScene(Application::get().activeScene, gdNode, header.type);
         // dispatch header type
         if (header.type == ROTATE_SURVIVAL_PACK) {
             // unpack data
@@ -288,12 +280,13 @@ namespace test {
     void TestLayer::onUDPReceiverSuccess(const YAML::Node &gdNode, const GDHeader &header) {
         RUNTIME_INFO("onUDPReceiverSuccess()");
         RUNTIME_INFO("GDHeader[address: {0}, type: {1}]", header.address, header.type);
+        io::RemoteAssetManager::dispatchScene(Application::get().activeScene, gdNode, header.type);
         // dispatch header type
         if (header.type == ROTATE_SURVIVAL_PACK) {
             // unpack data
-            GDPrimitive<f32> gdPrimitive;
-            gdPrimitive.deserialize(gdNode);
-            auto rotationY = gdPrimitive.value;
+            GDFloat rotation;
+            rotation.deserialize(gdNode);
+            auto rotationY = rotation.value;
             RUNTIME_INFO("Rotating SurvivalPack with value: {0}", rotationY);
             // handle data
             auto& modelMatrix = survivalBackPack.get<Transform3dComponent>()->modelMatrix;

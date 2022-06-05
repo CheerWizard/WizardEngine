@@ -70,15 +70,22 @@ namespace engine::io {
         }
     }
 
-    void EntitySerializer::deserializeTextFile(const char *filepath) {
+    bool EntitySerializer::deserializeTextFile(const char *filepath) {
         YAML::Node entityNode;
+
         try {
             entityNode = YAML::LoadFile(filepath);
             deserializeText(entityNode);
         } catch (YAML::ParserException& e) {
-            ENGINE_ERR("EntitySerializer: Failed to parse YAML text file!");
+            ENGINE_ERR("EntitySerializer: Failed to parse YAML text from '{0}' file!", filepath);
             ENGINE_ERR(e.msg);
-            return;
+            return false;
+        } catch (YAML::BadFile& e) {
+            ENGINE_ERR("EntitySerializer: Failed to open '{0}' file", filepath);
+            ENGINE_ERR(e.msg);
+            return false;
         }
+
+        return true;
     }
 }

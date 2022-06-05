@@ -64,7 +64,7 @@ namespace engine::io {
         void deserializeText(const YAML::Node& entityNode);
         void deserializeBinary(const char* filepath);
         void deserializeText(const char* entityText);
-        void deserializeTextFile(const char* filepath);
+        bool deserializeTextFile(const char* filepath);
 
     private:
         EntitySerializable entity;

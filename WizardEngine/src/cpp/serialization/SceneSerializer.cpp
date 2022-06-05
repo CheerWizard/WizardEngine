@@ -24,7 +24,7 @@ namespace engine::io {
 
     void SceneSerializable::deserialize(const YAML::Node &parent) {
         auto sceneName = parent["Scene"].as<std::string>();
-        scene->setName(sceneName.c_str());
+        scene->setName(sceneName);
         ENGINE_TRACE("Scene deserialized '{0}'", sceneName);
 
         auto entitiesNode = parent["Entities"];
@@ -66,7 +66,11 @@ namespace engine::io {
         try {
             sceneNode = YAML::LoadFile(filepath);
         } catch (YAML::ParserException& e) {
-            ENGINE_ERR("SceneSerializer: Failed to parse YAML text file!");
+            ENGINE_ERR("SceneSerializer: Failed to parse YAML text from '{0}' file!", filepath);
+            ENGINE_ERR(e.msg);
+            return false;
+        } catch (YAML::BadFile& e) {
+            ENGINE_ERR("SceneSerializer: Failed to open '{0}' file", filepath);
             ENGINE_ERR(e.msg);
             return false;
         }

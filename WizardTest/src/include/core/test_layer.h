@@ -5,21 +5,6 @@
 #pragma once
 
 #include <core/Application.h>
-#include <core/Layer.h>
-#include <graphics/core/geometry/Point.h>
-#include <graphics/camera/Camera.h>
-#include <graphics/skybox/Skybox.h>
-#include <graphics/core/geometry/Quad.h>
-#include <graphics/GraphicsObject.h>
-#include <graphics/camera/CameraController.h>
-#include <audio/audio_source.h>
-
-using namespace engine::core;
-using namespace engine::graphics;
-using namespace engine::event;
-using namespace engine::time;
-using namespace engine::network;
-using namespace engine::ecs;
 
 namespace test {
 

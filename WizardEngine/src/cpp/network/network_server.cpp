@@ -4,6 +4,7 @@
 
 #include <network/network_server.h>
 #include <core/filesystem.h>
+#include <serialization/AssetManager.h>
 
 namespace engine::network {
 
@@ -196,7 +197,7 @@ namespace engine::network {
                     switch (gdNodeHeader.second.address) {
                         // dispatch as data for server
                         case CLIENT_TO_SERVER:
-                            dispatch(data, gdNodeHeader.second.type);
+                            dispatch(gdNodeHeader.first, gdNodeHeader.second);
                             break;
                         // send received data to all clients
                         case CLIENT_TO_CLIENT:
@@ -211,27 +212,6 @@ namespace engine::network {
             listenTask.isRunning = false;
         }
 
-        void Server::dispatch(char* data, u32 type) {
-            switch (type) {
-                case SERVER_SAVE_WORLD:
-                    saveWorld(data);
-                    break;
-                case SERVER_LOAD_WORLD:
-                    loadWorld();
-                    break;
-                default: break;
-            }
-        }
-
-        void Server::saveWorld(char* data) {
-            engine::filesystem::write("assets/world/client.yaml", data);
-        }
-
-        void Server::loadWorld() {
-            auto worldStr = engine::filesystem::read("assets/world/client.yaml");
-            send(worldStr.data(), worldStr.length());
-        }
-
         void Server::send(char *data, size_t size) {
             s32 okStatus = sendto(
                     clientSocket, data, size + 1,
@@ -243,6 +223,46 @@ namespace engine::network {
                 ENGINE_ERR("UDP_Server: Sender failed. \nError: {0}", errorCode);
                 listener->onUDPSenderFailed(data, size);
             }
+        }
+
+        void Server::dispatch(const YAML::Node& gdNode, const GDHeader& header) {
+            switch (header.type) {
+                case SERVER_SAVE_SCENE:
+                    saveScene(gdNode);
+                    break;
+                case SERVER_LOAD_SCENE:
+                    loadScene(gdNode);
+                    break;
+                default: break;
+            }
+        }
+
+        void Server::saveScene(const YAML::Node &gdNode) {
+            ENGINE_INFO("UDP_Server: saveScene");
+            // deserialize into empty scene and save into asset file
+            auto scene = createRef<ecs::Scene>();
+            io::SceneSerializable body(scene);
+            body.deserialize(gdNode);
+            io::LocalAssetManager::saveScene(scene);
+            // send response back to client
+            GDHeader header(SERVER_TO_CLIENT, SERVER_SAVE_SCENE);
+            GDResponse responseBody;
+            auto response = GDSerializer::serialize(header, responseBody);
+            send(response.data, response.size);
+        }
+
+        void Server::loadScene(const YAML::Node &gdNode) {
+            ENGINE_INFO("UDP_Server: loadScene");
+            // extract scene name
+            GDString sceneName;
+            sceneName.deserialize(gdNode);
+            // load scene from asset manager
+            auto scene = io::LocalAssetManager::loadScene(sceneName.value.c_str());
+            // send scene back to client
+            GDHeader header(SERVER_TO_CLIENT, SERVER_LOAD_SCENE);
+            io::SceneSerializable body(scene);
+            auto response = GDSerializer::serialize(header, body);
+            send(response.data, response.size);
         }
     }
 

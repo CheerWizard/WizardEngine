@@ -23,11 +23,11 @@ namespace engine::ecs {
             return skybox;
         }
 
-        inline const char* getName() {
+        inline const std::string& getName() {
             return name;
         }
 
-        inline void setName(const char* name) {
+        inline void setName(const std::string& name) {
             this->name = name;
         }
 
@@ -37,7 +37,7 @@ namespace engine::ecs {
         Entity findEntity(u64 uuid);
 
     private:
-        const char* name;
+        std::string name;
         Entity skybox;
     };
 

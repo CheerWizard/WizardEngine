@@ -77,11 +77,13 @@ namespace engine::network {
         private:
             static void listenImpl(const s32& port);
             static void runImpl();
-            static void dispatch(char* data, u32 type);
 
-            static void saveWorld(char* data);
-            static void loadWorld();
             static void send(char* data, size_t size);
+
+            static void dispatch(const YAML::Node& gdNode, const GDHeader& header);
+
+            static void saveScene(const YAML::Node &gdNode);
+            static void loadScene(const YAML::Node &gdNode);
 
         private:
             static SOCKET clientSocket;

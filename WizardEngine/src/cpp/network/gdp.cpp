@@ -8,8 +8,10 @@
 namespace engine::network {
 
     void GDHeader::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
         yaml::serialize(out, "address", address);
         yaml::serialize(out, "type", type);
+        out << YAML::EndMap;
     }
 
     void GDHeader::deserialize(const YAML::Node &parent) {
@@ -23,7 +25,9 @@ namespace engine::network {
 
         emitter << YAML::Key << "GameData";
         emitter << YAML::BeginMap;
+        emitter << YAML::Key << "header";
         header.serialize(emitter);
+        emitter << YAML::Key << "body";
         body.serialize(emitter);
         emitter << YAML::EndMap;
 
@@ -38,10 +42,19 @@ namespace engine::network {
         try {
             YAML::Node gdNode = YAML::Load(gameData)["GameData"];
             if (gdNode) {
+                auto headerNode = gdNode["header"];
                 GDHeader header;
-                header.deserialize(gdNode);
-                gdNodeHeader = { gdNode, header };
-                return true;
+                if (headerNode) {
+                    header.deserialize(headerNode);
+                }
+
+                auto bodyNode = gdNode["body"];
+                if (bodyNode) {
+                    gdNodeHeader = { bodyNode, header };
+                    return true;
+                }
+
+                return false;
             }
 
             return false;
@@ -50,5 +63,17 @@ namespace engine::network {
             ENGINE_ERR(e.msg);
             return false;
         }
+    }
+
+    void GDResponse::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
+        yaml::serialize(out, "statusCode", statusCode);
+        yaml::serialize(out, "message", message);
+        out << YAML::EndMap;
+    }
+
+    void GDResponse::deserialize(const YAML::Node &parent) {
+        statusCode = parent["statusCode"].as<u16>();
+        message = parent["message"].as<std::string>().c_str();
     }
 }

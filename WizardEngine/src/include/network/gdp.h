@@ -5,6 +5,7 @@
 #pragma once
 
 #include <core/vector.h>
+#include <core/exception.h>
 #include <serialization/serialization.h>
 
 /**
@@ -30,15 +31,19 @@ namespace engine::network {
     constexpr u32 SERVER_TO_CLIENT = 2;
 
     // types
-    constexpr u32 SERVER_SAVE_WORLD = 1;
-    constexpr u32 SERVER_LOAD_WORLD = 2;
+    constexpr u32 SERVER_SAVE_SCENE = 1;
+    constexpr u32 SERVER_LOAD_SCENE = 2;
+
+    // states
+    constexpr u32 SERVER_SUCCESS = 1;
+    constexpr u32 SERVER_ERROR = 2;
 
     struct GDHeader : io::Serializable {
         u32 address;
         u32 type;
 
         GDHeader() = default;
-        GDHeader(u8 address, u32 type) : address(address), type(type) {}
+        GDHeader(u32 address, u32 type) : address(address), type(type) {}
 
         void serialize(YAML::Emitter &out) override;
         void deserialize(const YAML::Node &parent) override;
@@ -53,7 +58,7 @@ namespace engine::network {
     };
 
     template<class V>
-    struct GDPrimitive : io::Serializable {
+    struct GDPrimitive : GDBody {
         V value;
 
         GDPrimitive() = default;
@@ -65,7 +70,9 @@ namespace engine::network {
 
     template<class V>
     void GDPrimitive<V>::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
         yaml::serialize(out, "value", value);
+        out << YAML::EndMap;
     }
 
     template<class V>
@@ -73,8 +80,26 @@ namespace engine::network {
         value = parent["value"].template as<V>();
     }
 
+    typedef GDPrimitive<u8> GDByte;
+    typedef GDPrimitive<s8> GDChar;
+
+    typedef GDPrimitive<u16> GDUShort;
+    typedef GDPrimitive<s16> GDShort;
+
+    typedef GDPrimitive<u32> GDUInt;
+    typedef GDPrimitive<s32> GDInt;
+
+    typedef GDPrimitive<f32> GDFloat;
+
+    typedef GDPrimitive<u64> GDULong;
+    typedef GDPrimitive<s64> GDLong;
+
+    typedef GDPrimitive<double> GDDouble;
+
+    typedef GDPrimitive<std::string> GDString;
+
     template<class V>
-    struct GDPrimitives : io::Serializable {
+    struct GDPrimitives : GDBody {
         vector<V> values;
 
         GDPrimitives(const std::initializer_list<V>& values) : values(values) {}
@@ -85,12 +110,14 @@ namespace engine::network {
 
     template<class V>
     void GDPrimitives<V>::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
         out << YAML::Key << "values" << YAML::Value << YAML::Flow;
         out << YAML::BeginSeq;
         for (auto value : values) {
             out << value;
         }
         out << YAML::EndSeq;
+        out << YAML::EndMap;
     }
 
     template<class V>
@@ -102,7 +129,7 @@ namespace engine::network {
      * V - class/struct, which should have implemented Serializable interface. Otherwise it won't compile!
      * */
     template<class V>
-    struct GDSerializables : io::Serializable {
+    struct GDSerializables : GDBody {
         vector<V> serializables;
 
         GDSerializables(const std::initializer_list<V>& serializables) : serializables(serializables) {}
@@ -113,12 +140,14 @@ namespace engine::network {
 
     template<class V>
     void GDSerializables<V>::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
         out << YAML::Key << "serializables" << YAML::Value << YAML::Flow;
         out << YAML::BeginSeq;
         for (auto value : serializables) {
             value.serialize(out);
         }
         out << YAML::EndSeq;
+        out << YAML::EndMap;
     }
 
     template<class V>
@@ -128,4 +157,21 @@ namespace engine::network {
             value.deserialize(valuesNode);
         }
     }
+
+    constexpr u16 GD_CODE_200 = 200;
+    constexpr u16 GD_CODE_404 = 404;
+
+    struct GDResponse : GDBody {
+        u16 statusCode = GD_CODE_200;
+        const char* message = "";
+
+        GDResponse() = default;
+        GDResponse(const char* message) : message(message) {}
+        GDResponse(u32 statusCode, const char* message) : statusCode(statusCode), message(message) {}
+
+        ~GDResponse() override = default;
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
+    };
 }
