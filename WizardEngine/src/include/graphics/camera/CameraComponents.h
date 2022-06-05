@@ -13,6 +13,7 @@ namespace engine::graphics {
 
     serialize_component(Camera2dComponent) {
         math::ViewProjection2d viewProjection;
+
         Camera2dComponent() {
             viewProjection = math::ViewProjection2d();
             viewProjection.name = "camera";
@@ -34,8 +35,6 @@ namespace engine::graphics {
             viewProjection = math::ViewProjection3d(aspectRatio);
             viewProjection.name = "camera";
         }
-
-        ~Camera3dComponent() override = default;
 
         void serialize(YAML::Emitter &out) override;
         void deserialize(const YAML::Node &parent) override;

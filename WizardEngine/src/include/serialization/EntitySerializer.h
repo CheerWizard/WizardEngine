@@ -19,7 +19,6 @@ namespace engine::io {
 
     public:
         EntitySerializable(const ecs::Entity& entity) : entity(entity) {}
-        ~EntitySerializable() override = default;
 
     public:
         void serialize(YAML::Emitter &out) override;

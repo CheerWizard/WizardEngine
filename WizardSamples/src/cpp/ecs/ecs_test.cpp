@@ -198,12 +198,210 @@ namespace test::ecs {
             assert_not_null("each<Polygon, Mesh>()", (void*) mesh);
         });
         assert_equals("registry.each<Polygon, Mesh>() elements count", i, 10);
+
+        registry.clear();
+        assert_equals("registry.clear()", registry.entity_count(), 0);
+    }
+
+    void test_scene() {
+        auto scene = createRef<Scene>("Test");
+
+    }
+
+    void test_serializeComponents() {
+        serialize_component(Position) {
+            f32 x = 0;
+            f32 y = 0;
+
+            Position(const f32& x, const f32& y)
+            : x(x), y(y) {}
+
+            void serialize(YAML::Emitter &out) override {
+            }
+
+            void deserialize(const YAML::Node &parent) override {
+            }
+        };
+
+        serialize_component(Color) {
+            f32 r = 0;
+            f32 g = 0;
+            f32 b = 0;
+            f32 a = 0;
+
+            Color(const f32& r, const f32& g, const f32& b, const f32& a)
+            : r(r), g(g), b(b), a(a) {}
+
+            void serialize(YAML::Emitter &out) override {
+            }
+
+            void deserialize(const YAML::Node &parent) override {
+            }
+        };
+
+        serialize_component(Vertex) {
+            Position position;
+            Color color;
+
+            Vertex(const Position& position, const Color& color)
+            : position(position), color(color) {}
+
+            void serialize(YAML::Emitter &out) override {
+            }
+
+            void deserialize(const YAML::Node &parent) override {
+            }
+        };
+
+        serialize_component(Polygon) {
+            Vertex* vertices = nullptr;
+            size_t vertexCount = 0;
+
+            Polygon(Vertex* vertices, const size_t& vertexCount)
+            : vertices(vertices), vertexCount(vertexCount) {}
+
+            void serialize(YAML::Emitter &out) override {
+            }
+
+            void deserialize(const YAML::Node &parent) override {
+            }
+        };
+
+        serialize_component(Mesh) {
+            Polygon polygon;
+            u32* indices = nullptr;
+            size_t indexCount = 0;
+
+            Mesh(const Polygon& polygon, u32* indices, const size_t& indexCount)
+            : polygon(polygon), indices(indices), indexCount(indexCount) {}
+
+            void serialize(YAML::Emitter &out) override {
+            }
+
+            void deserialize(const YAML::Node &parent) override {
+            }
+        };
+
+        Registry registry;
+
+        for (u32 i = 0 ; i < 10 ; i++) {
+            entity_id entityId = registry.createEntity<Polygon>(Polygon {
+                    new Vertex[4] {
+                            Vertex { { 0, 0 }, { 0, 0, 1, 1 } },
+                            Vertex { { 0, 1 }, { 0, 1, 0, 1 } },
+                            Vertex { { 1, 1 }, { 1, 0, 0, 1 } },
+                            Vertex { { 1, 0 }, { 1, 1, 1, 1 } }
+                    },
+                    4
+            });
+            registry.addComponent<Mesh>(entityId, Mesh {
+                    Polygon {
+                            new Vertex[8]{
+                                    Vertex{{0, 0},
+                                           {0, 0, 1, 1}},
+                                    Vertex{{0, 1},
+                                           {0, 1, 0, 1}},
+                                    Vertex{{1, 1},
+                                           {1, 0, 0, 1}},
+                                    Vertex{{1, 0},
+                                           {1, 1, 1, 1}},
+                                    Vertex{{0, 0},
+                                           {0, 0, 1, 1}},
+                                    Vertex{{0, 1},
+                                           {0, 1, 0, 1}},
+                                    Vertex{{1, 1},
+                                           {1, 0, 0, 1}},
+                                    Vertex{{1, 0},
+                                           {1, 1, 1, 1}}
+                            },
+                            8
+                    },
+                    new u32[8] {
+                            0, 1, 2, 3, 4, 5, 6, 7
+                    },
+                    8
+            });
+        }
+
+        for (u32 i = 0 ; i < 10 ; i++) {
+            registry.createEntity<Mesh>(Mesh {
+                    Polygon {
+                            new Vertex[8]{
+                                    Vertex{{0, 0},
+                                           {0, 0, 1, 1}},
+                                    Vertex{{0, 1},
+                                           {0, 1, 0, 1}},
+                                    Vertex{{1, 1},
+                                           {1, 0, 0, 1}},
+                                    Vertex{{1, 0},
+                                           {1, 1, 1, 1}},
+                                    Vertex{{0, 0},
+                                           {0, 0, 1, 1}},
+                                    Vertex{{0, 1},
+                                           {0, 1, 0, 1}},
+                                    Vertex{{1, 1},
+                                           {1, 0, 0, 1}},
+                                    Vertex{{1, 0},
+                                           {1, 1, 1, 1}}
+                            },
+                            8
+                    },
+                    new u32[8] {
+                            0, 1, 2, 3, 4, 5, 6, 7
+                    },
+                    8
+            });
+        }
+
+        assert_equals("test_entity_count()", registry.entity_count(), 20)
+        assert_equals("test_component_count<Polygon>()", registry.component_count<Polygon>(), 10)
+        assert_equals("test_component_count<Mesh>()", registry.component_count<Polygon>(), 10)
+
+        u32 i = 0;
+        registry.each<Polygon>([&i](Polygon* polygon) {
+            i++;
+            assert_not_null("each<Polygon>()", (void*) polygon);
+        });
+        assert_equals("registry.each<Polygon>() elements count", i, 10);
+
+        i = 0;
+        registry.each<Mesh>([&i](Mesh* mesh) {
+            i++;
+            assert_not_null("each<Mesh>()", (void*) mesh);
+        });
+        assert_equals("registry.each<Mesh>() elements count", i, 20);
+
+        i = 0;
+        registry.each<Polygon, Mesh>([&i](Polygon* polygon, Mesh* mesh) {
+            i++;
+            assert_not_null("each<Polygon, Mesh>()", (void*) polygon);
+            assert_not_null("each<Polygon, Mesh>()", (void*) mesh);
+        });
+        assert_equals("registry.each<Polygon, Mesh>() elements count", i, 10);
+
+        registry.clear();
+        assert_equals("registry.clear()", registry.entity_count(), 0);
     }
 
     void test_suite() {
-        test_registry_size(100);
+        RUNTIME_WARN("test_suite() started!");
+
+        size_t registrySize = 100;
+        RUNTIME_WARN("Running test_registry_size({0})", registrySize);
+        test_registry_size(registrySize);
+
+        RUNTIME_WARN("Running test_componentTypesRegistration()");
         test_componentTypesRegistration();
+
+        RUNTIME_WARN("Running test_entity()");
         test_entity();
+
+        RUNTIME_WARN("Running test_components()");
         test_components();
+
+        RUNTIME_WARN("Running test_serializeComponents()");
+        test_serializeComponents();
+
+        RUNTIME_WARN("test_suite() ended!");
     }
 }

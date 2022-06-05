@@ -169,8 +169,6 @@ namespace engine::network {
         GDResponse(const char* message) : message(message) {}
         GDResponse(u32 statusCode, const char* message) : statusCode(statusCode), message(message) {}
 
-        ~GDResponse() override = default;
-
         void serialize(YAML::Emitter &out) override;
         void deserialize(const YAML::Node &parent) override;
     };

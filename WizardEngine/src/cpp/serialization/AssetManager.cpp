@@ -33,14 +33,14 @@ namespace engine::io {
         ENGINE_INFO("RemoteAssetManager: saveScene '{0}'", scene->getName());
         GDHeader header(CLIENT_TO_SERVER, SERVER_SAVE_SCENE);
         SceneSerializable body(scene);
-        udp::Client::getRequestQueue().push(header, body);
+        tcp::Client::getRequestQueue().push(header, body);
     }
 
     void RemoteAssetManager::loadScene(const char* sceneName) {
         ENGINE_INFO("RemoteAssetManager: loadScene '{0}'", sceneName);
         GDHeader header(CLIENT_TO_SERVER, SERVER_LOAD_SCENE);
         GDString body(sceneName);
-        udp::Client::getRequestQueue().push(header, body);
+        tcp::Client::getRequestQueue().push(header, body);
     }
 
     void RemoteAssetManager::dispatchScene(Ref<Scene> &scene, const YAML::Node &gdNode, u32 headerType) {

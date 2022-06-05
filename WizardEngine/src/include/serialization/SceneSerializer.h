@@ -21,7 +21,6 @@ namespace engine::io {
 
     public:
         SceneSerializable(const Ref<ecs::Scene>& scene) : scene(scene) {}
-        ~SceneSerializable() override = default;
 
     public:
         void serialize(YAML::Emitter &out) override;
