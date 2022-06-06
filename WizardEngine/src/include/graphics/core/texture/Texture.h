@@ -13,6 +13,7 @@
 namespace engine::graphics {
 
     using namespace core;
+    using namespace shader;
 
     // texture format for color buffer
     enum class ColorFormat {
@@ -62,10 +63,10 @@ namespace engine::graphics {
         : filePath(filePath), type(type) {}
     };
 
-    component(TextureComponent) {
+    serialize_component(TextureComponent) {
         u32 textureId = 0;
         u32 typeId = 0;
-        shader::IntUniform sampler = { "texture", 0 };
+        IntUniform sampler = { "texture", 0 };
 
         TextureComponent() = default;
 
@@ -74,12 +75,15 @@ namespace engine::graphics {
 
         TextureComponent(const u32& textureId, const u32& typeId, const s32& samplerSlot)
         : textureId(textureId), sampler({ "texture", samplerSlot }) {}
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
 
-    component(CubeMapTextureComponent) {
+    serialize_component(CubeMapTextureComponent) {
         u32 textureId = 0;
         u32 typeId = 0;
-        shader::IntUniform sampler = { "cubeMap", 0 };
+        IntUniform sampler = { "cubeMap", 0 };
 
         CubeMapTextureComponent() = default;
 
@@ -91,6 +95,9 @@ namespace engine::graphics {
 
         CubeMapTextureComponent(const u32& textureId, const u32& typeId, const s32& samplerSlot)
         : textureId(textureId), typeId(typeId), sampler({ "cubeMap", samplerSlot }) {}
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
 
     using namespace shader;

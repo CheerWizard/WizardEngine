@@ -108,7 +108,7 @@ namespace engine::graphics {
                     float h = character.size.y;
 
                     if (vertexDataComponent.isUpdated) {
-                        auto& vertices = vertexDataComponent.vertexData.vertices;
+                        auto& vertices = vertexDataComponent.vertexData.values;
                         vertices[3].vertex.position = { x, y };
                         vertices[2].vertex.position = { x + w, y };
                         vertices[1].vertex.position = { x + w, y + h };

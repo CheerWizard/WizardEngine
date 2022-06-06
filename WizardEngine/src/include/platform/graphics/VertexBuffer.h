@@ -36,10 +36,10 @@ namespace engine::graphics {
         void setFormat(const shader::VertexFormat &vertexFormat, const uint32_t& vertexCount);
         // GPU data load
         template<typename T>
-        void load(const VertexData<T> &vertexData);
+        void load(const array<T> &vertexData);
         static void load(const void* vertices, const size_t& subDataOffset, const size_t& memorySize);
         template<typename T>
-        void loadStatic(const VertexData<T>& vertexData);
+        void loadStatic(const array<T>& vertexData);
         static void loadStatic(const void* vertices, const size_t& memorySize);
 
     public:
@@ -55,17 +55,17 @@ namespace engine::graphics {
     };
 
     template<typename T>
-    void VertexBuffer::load(const VertexData<T> &vertexData) {
+    void VertexBuffer::load(const array<T> &vertexData) {
         auto vertexSize = vertexFormat.getSize();
-        auto subDataOffset = vertexData.vertexStart * vertexSize;
-        auto memorySize = vertexData.vertexCount * vertexSize;
-        load(vertexData.vertices, subDataOffset, memorySize);
+        auto subDataOffset = vertexData.offset * vertexSize;
+        auto memorySize = vertexData.size * vertexSize;
+        load(vertexData.values, subDataOffset, memorySize);
     }
 
     template<typename T>
-    void VertexBuffer::loadStatic(const VertexData<T> &vertexData) {
+    void VertexBuffer::loadStatic(const array<T> &vertexData) {
         auto vertexSize = vertexFormat.getSize();
-        auto memorySize = vertexData.vertexCount * vertexSize;
-        loadStatic(vertexData.vertices, memorySize);
+        auto memorySize = vertexData.size * vertexSize;
+        loadStatic(vertexData.values, memorySize);
     }
 }

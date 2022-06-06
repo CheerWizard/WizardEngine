@@ -43,12 +43,12 @@ namespace engine::graphics {
     }
 
     void IndexBuffer::load(const IndexData &indexData) {
-        auto subDataOffset = indexData.indexStart * sizeof(u32);
+        auto subDataOffset = indexData.offset * sizeof(u32);
         glBufferSubData(
                 GL_ELEMENT_ARRAY_BUFFER,
                 (GLintptr)subDataOffset,
-                indexData.indexCount * sizeof(u32),
-                indexData.indices
+                indexData.size * sizeof(u32),
+                indexData.values
         );
     }
 

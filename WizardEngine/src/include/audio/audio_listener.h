@@ -12,15 +12,22 @@ namespace engine::audio {
 
     using namespace core;
 
-    struct Orientation {
+    struct Orientation : io::Serializable {
+        void serialize(YAML::Emitter &out) override;
+
+        void deserialize(const YAML::Node &parent) override;
+
         glm::vec3 lookVec = { 0, 0, -1 };
         glm::vec3 upVec = { 0, 1, 0 };
     };
 
-    component(AudioListenerComponent) {
+    serialize_component(AudioListenerComponent) {
         glm::vec3 position;
         glm::vec3 velocity;
         Orientation orientation;
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
 
     class Listener final {

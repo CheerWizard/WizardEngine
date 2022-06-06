@@ -82,12 +82,12 @@ namespace engine::graphics {
 
     template<typename T>
     bool hasCapacity(const VRenderModel& renderModel, const VertexDataComponent<T> &vertexDataComponent) {
-        return renderModel.vbo.hasCapacity(vertexDataComponent.vertexData.vertexCount);
+        return renderModel.vbo.hasCapacity(vertexDataComponent.vertexData.size);
     }
 
     template<typename T>
     void increaseCounts(VRenderModel& renderModel, const VertexDataComponent<T> &vertexDataComponent) {
-        renderModel.vbo.increaseCount(vertexDataComponent.vertexData.vertexCount);
+        renderModel.vbo.increaseCount(vertexDataComponent.vertexData.size);
     }
 
     void release(VIRenderModel& renderModel);
@@ -141,7 +141,7 @@ namespace engine::graphics {
             updateStart(vertexDataComponent, previousVertexCount);
             upload(vertexDataComponent, renderModel);
         }
-        previousVertexCount += vertexDataComponent.vertexData.vertexCount;
+        previousVertexCount += vertexDataComponent.vertexData.size;
     }
 
     template<typename T>

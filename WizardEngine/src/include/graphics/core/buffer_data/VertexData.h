@@ -25,38 +25,28 @@ namespace engine::graphics {
         V vertex;
     };
 
-    template<typename V>
-    struct VertexData {
-        V* vertices = nullptr;
-        u32 vertexStart = 0;
-        u32 vertexCount = MIN_VERTEX_COUNT;
-        VertexData() = default;
-        VertexData(V* vertices, const u32& vertexStart, const u32& vertexCount)
-        : vertices(vertices), vertexStart(vertexStart), vertexCount(vertexCount) {}
-    };
-
-    enum class DrawType : u8 {
+    enum class DrawType : u16 {
         QUAD = 0, TRIANGLE = 1, TRIANGLE_STRIP = 2,
         LINE = 3, LINE_STRIP = 4, LINE_LOOP = 5,
         POINTS = 6
     };
 
     template_component(VertexDataComponent, T) {
-        VertexData<T> vertexData;
+        array<T> vertexData;
         bool isUpdated = true;
         u8 renderModelId = 0;
         DrawType drawType = DrawType::QUAD;
     };
 
     template<typename T>
-    VertexData<T> copy(const VertexData<T> &vertexData) {
+    array<T> copy(const array<T> &vertexData) {
         auto* copyVertices = new T[vertexData.vertexCount];
-        std::copy(vertexData.vertices, vertexData.vertices + vertexData.vertexCount, copyVertices);
+        std::copy(vertexData.values, vertexData.values + vertexData.size, copyVertices);
 
-        return VertexData<T> {
+        return array<T> {
                 copyVertices,
-                vertexData.vertexStart,
-                vertexData.vertexCount
+                vertexData.offset,
+                vertexData.size
         };
     }
 
@@ -68,59 +58,46 @@ namespace engine::graphics {
     template<typename T>
     void setBatchId(VertexDataComponent<BatchVertex<T>>& vertexDataComponent, const uint32_t& batchId) {
         auto& vertexData = vertexDataComponent.vertexData;
-        for (auto i = 0; i < vertexData.vertexCount; i++) {
-            vertexData.vertices[i].id = (float) batchId;
+        for (auto i = 0; i < vertexData.size; i++) {
+            vertexData.values[i].id = (float) batchId;
         }
     }
 
     template<typename T>
     void updateStart(VertexDataComponent<T> &vertexDataComponent, const uint32_t &prevVertexCount) {
-        vertexDataComponent.vertexData.vertexStart = prevVertexCount;
+        vertexDataComponent.vertexData.offset = prevVertexCount;
     }
 
     template<typename T>
     void invalidate(VertexDataComponent<T> &vertexDataComponent) {
-        vertexDataComponent.vertexData.vertexStart = 0;
+        vertexDataComponent.vertexData.offset = 0;
     }
 
     template<typename IN, typename OUT>
-    VertexData<OUT> toVertexData(const std::vector<IN>& inVertices) {
+    array<OUT> toVertexData(const std::vector<IN>& inVertices) {
         size_t size = inVertices.size();
         auto* outVertices = new OUT[size];
         for (auto i = 0; i < size; i++) {
             outVertices[i] = { inVertices[i] };
         }
-        return VertexData<OUT> {
+        return array<OUT> {
                 outVertices,
                 0,
                 static_cast<uint32_t>(size)
         };
     }
 
-//    template<typename IN, typename OUT, size_t Size>
-//    VertexData<OUT> toVertexData(const std::array<IN, Size>& inVertices) {
-//        auto* outVertices = new OUT[Size];
-//        for (auto i = 0; i < Size; i++) {
-//            outVertices[i] = OUT { inVertices[i] };
-//        }
-//        return VertexData<OUT> {
-//                outVertices,
-//                0,
-//                static_cast<uint32_t>(Size)
-//        };
-//    }
-
     template<typename FROM, typename TO>
-    VertexData<TO> toVertexData(const VertexData<FROM>& fromVertexData, const std::function<TO(const FROM&)> vertexMapper) {
-        auto* fromVertices = fromVertexData.vertices;
-        auto* toVertices = new TO[fromVertexData.vertexCount];
-        for (auto i = 0; i < fromVertexData.vertexCount; i++) {
+    array<TO> toVertexData(const array<FROM>& fromVertexData, const std::function<TO(const FROM&)> vertexMapper) {
+        auto* fromVertices = fromVertexData.values;
+        auto* toVertices = new TO[fromVertexData.size];
+        for (auto i = 0; i < fromVertexData.size; i++) {
             toVertices[i] = vertexMapper(fromVertices[i]);
         }
-        return VertexData<TO> {
+        return array<TO> {
                 toVertices,
-                fromVertexData.vertexStart,
-                fromVertexData.vertexCount
+                fromVertexData.offset,
+                fromVertexData.size
         };
     }
 

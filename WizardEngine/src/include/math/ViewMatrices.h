@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <graphics/core/shader/Uniform.h>
+#include <yaml/yaml.h>
 
 #define DEFAULT_VIEW_POS_3D {0, 0, -1}
 #define DEFAULT_VIEW_ROT_3D {0, 0, 0}
@@ -36,4 +36,9 @@ namespace engine::math {
     void update(ViewMatrix2d &viewMatrix2D);
     void update(ViewMatrix3d &viewMatrix3D);
 
+    void serialize(YAML::Emitter& out, const char* key, const ViewMatrix2d& vm);
+    void deserialize(const YAML::Node& parent, const char* key, ViewMatrix2d& vm);
+
+    void serialize(YAML::Emitter& out, const char* key, const ViewMatrix3d& vm);
+    void deserialize(const YAML::Node& parent, const char* key, ViewMatrix3d& vm);
 }

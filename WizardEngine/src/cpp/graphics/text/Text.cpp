@@ -6,6 +6,20 @@
 
 namespace engine::graphics {
 
+    void TextProjection::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
+        out << YAML::Key << "TextProjection";
+        math::serialize(out, "viewProjection", viewProjection);
+        out << YAML::EndMap;
+    }
+
+    void TextProjection::deserialize(const YAML::Node &parent) {
+        auto root = parent["TextProjection"];
+        if (root) {
+            math::deserialize(root, "viewProjection", viewProjection);
+        }
+    }
+
     ShaderScript textProjectionScript() {
         auto script = ShaderScript();
 

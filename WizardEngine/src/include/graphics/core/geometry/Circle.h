@@ -6,9 +6,10 @@
 
 #include <graphics/core/buffer_data/VertexData.h>
 #include <graphics/core/shader/BaseShader.h>
-#include <glm/glm.hpp>
 
 namespace engine::graphics {
+
+    using namespace shader;
 
     struct CircleVertex {
         glm::vec3 position = { 0.5, 0.5, 0.5 };
@@ -23,7 +24,7 @@ namespace engine::graphics {
                     InstanceVertex<CircleVertex> { CircleVertex { { 0.5, 0.5, 0.5 } } },
                     InstanceVertex<CircleVertex> { CircleVertex { { -0.5, 0.5, 0.5 } } },
             };
-            vertexData = VertexData<InstanceVertex<CircleVertex>> { vertices, 0, 4 };
+            vertexData = array<InstanceVertex<CircleVertex>> { vertices, 0, 4 };
             this->drawType = DrawType::QUAD;
         }
     };
@@ -36,12 +37,12 @@ namespace engine::graphics {
                     BatchVertex<CircleVertex> { CircleVertex { { 0.5, 0.5, 0.5 } } },
                     BatchVertex<CircleVertex> { CircleVertex { { -0.5, 0.5, 0.5 } } },
             };
-            vertexData = VertexData<BatchVertex<CircleVertex>> { vertices, 0, 4 };
+            vertexData = array<BatchVertex<CircleVertex>> { vertices, 0, 4 };
             this->drawType = DrawType::QUAD;
         }
     };
 
-    component(CircleComponent) {
+    serialize_component(CircleComponent) {
         const char* name = "circle";
         Vec4fUniform color = { "color", { 0.5, 0, 0.5, 1 } };
         FloatUniform thickness = { "thickness", 0.5 };
@@ -52,5 +53,8 @@ namespace engine::graphics {
         : color({ "color", color }), thickness({ "thickness", thickness }), fade({ "fade", fade }) {}
         CircleComponent(const Vec4fUniform& color, const FloatUniform& thickness, const FloatUniform& fade)
         : color(color), thickness(thickness), fade(fade) {}
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
 }

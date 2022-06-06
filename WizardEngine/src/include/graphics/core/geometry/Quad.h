@@ -22,7 +22,7 @@ namespace engine::graphics {
                     InstanceVertex<QuadVertex> { QuadVertex { { 0.5, 0.5, 0.5 } } },
                     InstanceVertex<QuadVertex> { QuadVertex { { -0.5, 0.5, 0.5 } } },
             };
-            vertexData = VertexData<InstanceVertex<QuadVertex>> { vertices, 0, 4 };
+            vertexData = array<InstanceVertex<QuadVertex>> { vertices, 0, 4 };
             this->drawType = DrawType::QUAD;
         }
     };
@@ -35,7 +35,7 @@ namespace engine::graphics {
                     BatchVertex<QuadVertex> { QuadVertex { { 0.5, 0.5, 0.5 } } },
                     BatchVertex<QuadVertex> { QuadVertex { { -0.5, 0.5, 0.5 } } },
             };
-            vertexData = VertexData<BatchVertex<QuadVertex>> { vertices, 0, 4 };
+            vertexData = array<BatchVertex<QuadVertex>> { vertices, 0, 4 };
             this->drawType = DrawType::QUAD;
         }
     };

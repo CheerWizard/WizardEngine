@@ -360,7 +360,7 @@ namespace engine::graphics {
         // upload screen geometry to GPU memory and delete from heap memory
         screenRenderer = VRenderer(shader);
         screenRenderer.uploadStatic(screen);
-        delete screen.vertexData.vertices;
+        delete screen.vertexData.values;
     }
 
     void RenderSystem::createPointRenderer() {
@@ -380,6 +380,6 @@ namespace engine::graphics {
     void RenderSystem::onPrepare() {
         auto skybox = activeScene->getSkybox().get<VertexDataComponent<SkyboxVertex>>();
         skyboxRenderer.uploadStatic(*skybox);
-        delete skybox->vertexData.vertices;
+        delete skybox->vertexData.values;
     }
 }

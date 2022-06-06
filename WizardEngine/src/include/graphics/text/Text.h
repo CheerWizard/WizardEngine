@@ -13,9 +13,9 @@
 
 namespace engine::graphics {
 
-    template_component(TextComponent, T) {
+    serialize_template_component(TextComponent, T) {
         std::string text;
-        shader::Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
+        Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
         Transform3dComponent transform;
         TextureComponent bitmap;
         float paddingX = 0;
@@ -39,7 +39,40 @@ namespace engine::graphics {
         transform(transform), color({ "color", color }),
         paddingX(paddingX), paddingY(paddingY),
         whiteSpaceWidth(whiteSpaceWidth), transparency({ "transparency", 0.5f }) {}
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
+
+    template<typename T>
+    void TextComponent<T>::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
+        out << YAML::Key << "TextComponent";
+        yaml::serialize(out, "text", text);
+        yaml::serialize(out, "color", color);
+        transform.serialize(out);
+        bitmap.serialize(out);
+        yaml::serialize(out, "paddingX", paddingX);
+        yaml::serialize(out, "paddingY", paddingY);
+        yaml::serialize(out, "whiteSpaceWidth", whiteSpaceWidth);
+        yaml::serialize(out, "transparency", transparency);
+        out << YAML::EndMap;
+    }
+
+    template<typename T>
+    void TextComponent<T>::deserialize(const YAML::Node &parent) {
+        auto root = parent["TextComponent"];
+        if (root) {
+            yaml::deserialize(root, "text", text);
+            yaml::deserialize(root, "color", color);
+            transform.deserialize(root);
+            bitmap.deserialize(root);
+            yaml::deserialize(root, "paddingX", paddingX);
+            yaml::deserialize(root, "paddingY", paddingY);
+            yaml::deserialize(root, "whiteSpaceWidth", whiteSpaceWidth);
+            yaml::deserialize(root, "transparency", transparency);
+        }
+    }
 
     struct Text2d : TextComponent<Text2d> {
         Text2d(
@@ -67,11 +100,14 @@ namespace engine::graphics {
         ) : TextComponent<Text3d>(textureId, text, transform, color, paddingX, paddingY, whiteSpaceWidth, transparency) {}
     };
 
-    component(TextProjection) {
+    serialize_component(TextProjection) {
         math::ViewProjection3d viewProjection;
         TextProjection(float aspectRatio) {
             viewProjection = math::ViewProjection3d(aspectRatio);
         }
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
 
     class Text2dView : public ecs::Entity {
