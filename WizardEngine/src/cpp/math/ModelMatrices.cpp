@@ -31,4 +31,40 @@ namespace engine::math {
 
         modelMatrix3D.value = posMat * rotMat * scaleMat;
     }
+
+    void serialize(YAML::Emitter& out, const char* key, const ModelMatrix2d& model) {
+        out << YAML::BeginMap;
+        out << YAML::Key << key;
+        yaml::serialize(out, "position", model.position);
+        yaml::serialize(out, "rotation", model.rotation);
+        yaml::serialize(out, "scale", model.scale);
+        out << YAML::EndMap;
+    }
+
+    void deserialize(const YAML::Node& parent, const char* key, ModelMatrix2d& model) {
+        auto root = parent[key];
+        if (root) {
+            yaml::deserialize(parent, "position", model.position);
+            yaml::deserialize(parent, "rotation", model.rotation);
+            yaml::deserialize(parent, "scale", model.scale);
+        }
+    }
+
+    void serialize(YAML::Emitter& out, const char* key, const ModelMatrix3d& model) {
+        out << YAML::BeginMap;
+        out << YAML::Key << key;
+        yaml::serialize(out, "position", model.position);
+        yaml::serialize(out, "rotation", model.rotation);
+        yaml::serialize(out, "scale", model.scale);
+        out << YAML::EndMap;
+    }
+
+    void deserialize(const YAML::Node& parent, const char* key, ModelMatrix3d& model) {
+        auto root = parent[key];
+        if (root) {
+            yaml::deserialize(parent, "position", model.position);
+            yaml::deserialize(parent, "rotation", model.rotation);
+            yaml::deserialize(parent, "scale", model.scale);
+        }
+    }
 }

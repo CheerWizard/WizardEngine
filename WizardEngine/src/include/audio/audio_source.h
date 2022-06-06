@@ -21,7 +21,7 @@ namespace engine::audio {
         }
     };
 
-    component(AudioSourceComponent) {
+    serialize_component(AudioSourceComponent) {
         u32 sourceId = 0;
         glm::vec3 position = { 0, 0, 0 };
         glm::vec3 velocity = { 0, 0, 0 };
@@ -31,6 +31,9 @@ namespace engine::audio {
         f32 refDistance = 1;
         f32 maxDistance = max_f32;
         f32 rollOffFactor = 1;
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
 
     enum Attenuation {

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <graphics/core/shader/Uniform.h>
+#include <yaml/yaml.h>
 
 #define DEFAULT_FIELD_OF_VIEW 60.0f
 #define DEFAULT_Z_NEAR 0.01f
@@ -52,6 +52,12 @@ namespace engine::math {
             name = "projection";
         }
     };
+
+    void serialize(YAML::Emitter& out, const char* key, const OrthographicMatrix& projection);
+    void deserialize(const YAML::Node& parent, const char* key, OrthographicMatrix& projection);
+
+    void serialize(YAML::Emitter& out, const char* key, const PerspectiveMatrix& projection);
+    void deserialize(const YAML::Node& parent, const char* key, PerspectiveMatrix& projection);
 
     class Projections final {
 

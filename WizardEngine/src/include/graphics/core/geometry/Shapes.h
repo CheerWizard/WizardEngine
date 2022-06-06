@@ -31,7 +31,7 @@ namespace engine::graphics {
     template<typename T>
     BaseMeshComponent<T> Shapes<T>::newTriangle() {
         BaseMesh<T>* meshes = new BaseMesh<T> {
-                VertexData {
+                array<T> {
                         newTriangleVertices(),
                         0,
                         3
@@ -48,7 +48,7 @@ namespace engine::graphics {
     template<typename T>
     BaseMeshComponent<T> Shapes<T>::newSquare() {
         BaseMesh<T>* meshes = new BaseMesh<T> {
-                VertexData {
+                array<T> {
                         newSquareVertices(),
                         0,
                         4
@@ -65,7 +65,7 @@ namespace engine::graphics {
     template<typename T>
     BaseMeshComponent<T> Shapes<T>::newCube() {
         BaseMesh<T>* meshes = new BaseMesh<T> {
-                VertexData {
+                array<T> {
                         newCubeVertices(),
                         0,
                         24

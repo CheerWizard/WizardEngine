@@ -5,20 +5,21 @@
 #pragma once
 
 #include <graphics/core/buffer_data/VertexData.h>
-#include <graphics/core/shader/Uniform.h>
 #include <graphics/core/geometry/Mesh.h>
-#include <glm/glm.hpp>
+#include <ecs/ecs.h>
 
 namespace engine::graphics {
+
+    using namespace shader;
 
     struct OutlineVertex {
         glm::vec3 position = { 0.5, 0.5, 0.5 };
         glm::vec3 normal = { 0.5, 0.5, 0.5 };
     };
 
-    component(OutlineComponent) {
+    serialize_component(OutlineComponent) {
         const char* name = "outline";
-        shader::Vec4fUniform color = { "color", { 0, 1, 0, 1 } };
+        Vec4fUniform color = { "color", { 0, 1, 0, 1 } };
         FloatUniform thickness = { "thickness", 0.05 };
 
         OutlineComponent() = default;
@@ -26,6 +27,9 @@ namespace engine::graphics {
         : color({ "color", color }), thickness({ "thickness", thickness }) {}
         OutlineComponent(const char* name, const Vec4fUniform& color, const FloatUniform& thickness)
         : name(name), color(color), thickness(thickness) {}
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
 
     typedef BaseMeshComponent<InstanceVertex<OutlineVertex>> OutlineInstanceMesh;

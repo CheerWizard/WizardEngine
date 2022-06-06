@@ -8,13 +8,13 @@
 namespace engine::graphics {
 
     IndexData copy(const IndexData &indexData) {
-        auto* copyIndices = new uint32_t[indexData.indexCount];
-        std::copy(indexData.indices, indexData.indices + indexData.indexCount, copyIndices);
+        auto* copyIndices = new uint32_t[indexData.size];
+        std::copy(indexData.values, indexData.values + indexData.size, copyIndices);
 
         return {
             copyIndices,
-            indexData.indexStart,
-            indexData.indexCount
+            indexData.offset,
+            indexData.size
         };
     }
 

@@ -7,6 +7,42 @@
 
 namespace engine::graphics {
 
+    void TextureComponent::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
+        out << YAML::Key << "TextureComponent";
+        yaml::serialize(out, "textureId", textureId);
+        yaml::serialize(out, "typeId", typeId);
+        yaml::serialize(out, "sampler", sampler);
+        out << YAML::EndMap;
+    }
+
+    void TextureComponent::deserialize(const YAML::Node &parent) {
+        auto root = parent["TextureComponent"];
+        if (root) {
+            yaml::deserialize(root, "textureId", textureId);
+            yaml::deserialize(root, "typeId", typeId);
+            yaml::deserialize(root, "sampler", sampler);
+        }
+    }
+
+    void CubeMapTextureComponent::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
+        out << YAML::Key << "CubeMapTextureComponent";
+        yaml::serialize(out, "textureId", textureId);
+        yaml::serialize(out, "typeId", typeId);
+        yaml::serialize(out, "sampler", sampler);
+        out << YAML::EndMap;
+    }
+
+    void CubeMapTextureComponent::deserialize(const YAML::Node &parent) {
+        auto root = parent["CubeMapTextureComponent"];
+        if (root) {
+            yaml::deserialize(root, "textureId", textureId);
+            yaml::deserialize(root, "typeId", typeId);
+            yaml::deserialize(root, "sampler", sampler);
+        }
+    }
+
     ShaderScript textureScript() {
         auto script = ShaderScript();
 

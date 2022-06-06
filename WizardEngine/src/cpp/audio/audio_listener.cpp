@@ -7,6 +7,42 @@
 
 namespace engine::audio {
 
+    void Orientation::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
+        out << YAML::Key << "Orientation";
+        yaml::serialize(out, "look", lookVec);
+        yaml::serialize(out, "up", upVec);
+        out << YAML::EndMap;
+    }
+
+    void Orientation::deserialize(const YAML::Node &parent) {
+        auto root = parent["Orientation"];
+        if (root) {
+            lookVec = root["look"].as<glm::vec3>();
+            upVec = root["up"].as<glm::vec3>();
+        }
+    }
+
+    void AudioListenerComponent::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
+        out << YAML::Key << "AudioListenerComponent";
+
+        orientation.serialize(out);
+        yaml::serialize(out, "position", position);
+        yaml::serialize(out, "velocity", velocity);
+
+        out << YAML::EndMap;
+    }
+
+    void AudioListenerComponent::deserialize(const YAML::Node &parent) {
+        auto root = parent["AudioListenerComponent"];
+        if (root) {
+            orientation.deserialize(parent);
+            position = root["position"].as<glm::vec3>();
+            velocity = root["velocity"].as<glm::vec3>();
+        }
+    }
+
     void Listener::setComponent(const AudioListenerComponent &component) {
         setPosition(component.position);
         setVelocity(component.velocity);

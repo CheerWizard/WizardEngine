@@ -462,7 +462,7 @@ namespace engine::graphics {
         upload(*vertexDataComponent);
         uploadTransform<Transform>(entity);
 
-        end(vertexDataComponent->drawType, vertexDataComponent->vertexData.vertexCount);
+        end(vertexDataComponent->drawType, vertexDataComponent->vertexData.size);
     }
 
     template<typename Transform, typename Vertex>
@@ -474,7 +474,7 @@ namespace engine::graphics {
 
         uploadTransform<Transform>(entity);
 
-        end(vertexDataComponent->drawType, vertexDataComponent->vertexData.vertexCount);
+        end(vertexDataComponent->drawType, vertexDataComponent->vertexData.size);
     }
 
     template<typename Vertex>
@@ -485,7 +485,7 @@ namespace engine::graphics {
 
         upload(vertexDataComponent);
 
-        end(vertexDataComponent.drawType, vertexDataComponent.vertexData.vertexCount);
+        end(vertexDataComponent.drawType, vertexDataComponent.vertexData.size);
     }
 
     template<typename Vertex>
@@ -498,13 +498,13 @@ namespace engine::graphics {
         TextureBuffer::activate(0);
         TextureBuffer::bind(textureId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
 
-        end(vertexDataComponent.drawType, vertexDataComponent.vertexData.vertexCount);
+        end(vertexDataComponent.drawType, vertexDataComponent.vertexData.size);
     }
 
     template<typename Vertex>
     void VRenderer::validate(const VertexDataComponent<Vertex>& vertexDataComponent) {
         if (!hasCapacity(vRenderModel, vertexDataComponent)) {
-            vRenderModel = { 0, vertexDataComponent.vertexData.vertexCount };
+            vRenderModel = { 0, vertexDataComponent.vertexData.size };
             vRenderModel.vao.bind();
             vRenderModel.vbo.setFormat(shaderProgram.getVertexFormat());
             VertexArray::unbind();
@@ -575,8 +575,8 @@ namespace engine::graphics {
     template<typename T>
     bool Renderer::validate(VertexDataComponent<T>& vertexDataComponent) {
         if (vRenderModels.empty() || !hasCapacity(vRenderModels[vertexDataComponent.renderModelId], vertexDataComponent)) {
-            auto vertexCount = vertexDataComponent.vertexData.vertexCount > DEFAULT_VERTEX_COUNT
-                               ? vertexDataComponent.vertexData.vertexCount * 3 : DEFAULT_VERTEX_COUNT;
+            auto vertexCount = vertexDataComponent.vertexData.size > DEFAULT_VERTEX_COUNT
+                               ? vertexDataComponent.vertexData.size * 3 : DEFAULT_VERTEX_COUNT;
             auto& newRenderModel = createRenderModel(vertexCount);
             vertexDataComponent.renderModelId = newRenderModel.id;
             increaseCounts(newRenderModel, vertexDataComponent);

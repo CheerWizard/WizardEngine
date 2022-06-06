@@ -13,7 +13,7 @@ namespace engine::graphics {
                 ScreenVertex { { 1, 1 }, { 1, 1 } },
                 ScreenVertex { { -1, 1 }, { 0, 1 } }
         };
-        vertexData = VertexData<ScreenVertex> { vertices, 0, 4 };
+        vertexData = array<ScreenVertex> { vertices, 0, 4 };
         drawType = DrawType::QUAD;
     }
 
