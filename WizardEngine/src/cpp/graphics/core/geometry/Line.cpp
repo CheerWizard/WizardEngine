@@ -9,36 +9,44 @@ namespace engine::graphics {
     void BatchLineSerializable::serialize(YAML::Emitter &out) {
         out << YAML::Key << "BatchLine";
         out << YAML::BeginMap;
-
-        out << YAML::Key << "VertexData";
-        out << YAML::BeginMap;
-        yaml::serialize(out, "start", line.vertexData.vertexStart);
-        yaml::serialize(out, "count", line.vertexData.vertexCount);
-        out << YAML::EndMap;
-
+        yaml::serialize(out, "vertexData", line.vertexData, [](YAML::Emitter& out, const BatchVertex<LineVertex>& vertex) {
+            yaml::serialize(out, "position", vertex.vertex.position);
+            yaml::serialize(out, "color", vertex.vertex.color);
+            yaml::serialize(out, "id", vertex.id);
+        });
         yaml::serialize(out, "renderModelId", line.renderModelId);
         yaml::serialize(out, "drawType", (u8) line.drawType);
-
         out << YAML::EndMap;
     }
 
     void BatchLineSerializable::deserialize(const YAML::Node &parent) {
-        auto lineNode = parent["BatchLine"];
-        if (lineNode) {
-            auto vertexDataNode = lineNode["VertexData"];
-            line.vertexData.vertexStart = lineNode["start"].as<u32>();
-            line.vertexData.vertexCount = lineNode["count"].as<u32>();
-            line.renderModelId = lineNode["renderModelId"].as<u32>();
-            line.drawType = static_cast<DrawType>(lineNode["drawType"].as<u8>());
+        auto root = parent["BatchLine"];
+        if (root) {
+            yaml::deserialize(root, "vertexData", line.vertexData);
+            yaml::deserialize(root, "renderModelId", line.renderModelId);
+            yaml::deserialize(root, "drawType", line.drawType);
         }
     }
 
     void InstanceLineSerializable::serialize(YAML::Emitter &out) {
-
+        out << YAML::Key << "InstanceLine";
+        out << YAML::BeginMap;
+        yaml::serialize(out, "vertexData", line.vertexData, [](YAML::Emitter& out, const InstanceVertex<LineVertex>& vertex) {
+            yaml::serialize(out, "position", vertex.vertex.position);
+            yaml::serialize(out, "color", vertex.vertex.color);
+        });
+        yaml::serialize(out, "renderModelId", line.renderModelId);
+        yaml::serialize(out, "drawType", (u8) line.drawType);
+        out << YAML::EndMap;
     }
 
     void InstanceLineSerializable::deserialize(const YAML::Node &parent) {
-
+        auto root = parent["InstanceLine"];
+        if (root) {
+            yaml::deserialize(root, "vertexData", line.vertexData);
+            yaml::deserialize(root, "renderModelId", line.renderModelId);
+            yaml::deserialize(root, "drawType", line.drawType);
+        }
     }
 
 }

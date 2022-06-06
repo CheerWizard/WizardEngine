@@ -20,7 +20,7 @@ namespace engine::graphics {
 
     template<typename T>
     struct BaseMesh {
-        VertexData<T> vertexData;
+        array<T> vertexData;
         IndexData indexData;
     };
 
@@ -47,13 +47,13 @@ namespace engine::graphics {
     template<typename TO, typename FROM>
     BaseMesh<TO> toMesh(const BaseMesh<FROM>& fromBaseMesh, const std::function<TO(const FROM&)>& vertexMapper) {
         auto& fromVertexData = fromBaseMesh.vertexData;
-        auto toVertexData = VertexData<TO> {
-                new TO[fromVertexData.vertexCount],
-                fromVertexData.vertexStart,
-                fromVertexData.vertexCount
+        auto toVertexData = array<TO> {
+                new TO[fromVertexData.size],
+                fromVertexData.offset,
+                fromVertexData.size
         };
         for (auto j = 0; j < fromVertexData.vertexCount; j++) {
-            toVertexData.vertices[j] = vertexMapper(fromVertexData.vertices[j]);
+            toVertexData.values[j] = vertexMapper(fromVertexData.values[j]);
         }
         return { toVertexData, fromBaseMesh.indexData };
     }
@@ -103,12 +103,12 @@ namespace engine::graphics {
 
     template<typename T>
     void setBatchId(BaseMeshComponent<BatchVertex<T>> &meshComponent, const uint32_t &batchId) {
-        const auto& meshInstanceId = meshComponent.meshes[0].vertexData.vertices[0].id;
+        const auto& meshInstanceId = meshComponent.meshes[0].vertexData.values[0].id;
         if (meshInstanceId == batchId) return;
         for (auto i = 0 ; i < meshComponent.meshCount ; i++) {
             const auto& vertexData = meshComponent.meshes[i].vertexData;
-            for (auto j = 0; j < vertexData.vertexCount; j++) {
-                auto& vertex = vertexData.vertices[j];
+            for (auto j = 0; j < vertexData.size; j++) {
+                auto& vertex = vertexData.values[j];
                 vertex.id = (float) batchId;
             }
         }
@@ -138,19 +138,19 @@ namespace engine::graphics {
         meshComponent.totalIndexCount = 0;
 
         for (auto i = 0; i < meshComponent.meshCount ; i++) {
-            VertexData<T>& vertexData = meshComponent.meshes[i].vertexData;
+            array<T>& vertexData = meshComponent.meshes[i].vertexData;
             IndexData& indexData = meshComponent.meshes[i].indexData;
 
-            vertexData.vertexStart = meshComponent.vertexStart + meshComponent.totalVertexCount;
-            indexData.indexStart = meshComponent.indexStart + meshComponent.totalIndexCount;
+            vertexData.offset = meshComponent.vertexStart + meshComponent.totalVertexCount;
+            indexData.offset = meshComponent.indexStart + meshComponent.totalIndexCount;
 
-            for (auto j = 0 ; j < indexData.indexCount ; j++) {
-                auto& index = indexData.indices[j];
-                index += vertexData.vertexStart;
+            for (auto j = 0 ; j < indexData.size ; j++) {
+                auto& index = indexData.values[j];
+                index += vertexData.offset;
             }
 
-            meshComponent.totalVertexCount += vertexData.vertexCount;
-            meshComponent.totalIndexCount += indexData.indexCount;
+            meshComponent.totalVertexCount += vertexData.size;
+            meshComponent.totalIndexCount += indexData.size;
         }
     }
 }
