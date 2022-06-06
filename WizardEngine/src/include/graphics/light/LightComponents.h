@@ -4,29 +4,35 @@
 
 #pragma once
 
-#include <graphics/core/shader/Uniform.h>
+#include <ecs/ecs.h>
 
 using namespace engine::shader;
 
 namespace engine::graphics {
 
-    component(PhongLightComponent) {
+    serialize_component(PhongLightComponent) {
         const char* name = "phongLight";
         Vec4fUniform position = { "position", { 0.5f, 0.5f, 0.5f, 0 } };
         Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
         Vec4fUniform diffuse = { "diffuse", { 0.5f, 0.5f, 0.5f, 0 } };
         Vec4fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f, 0 } };
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
 
-    component(DirectLightComponent) {
+    serialize_component(DirectLightComponent) {
         const char* name = "directLight";
         Vec4fUniform direction = { "direction", { 0.5f, 0.5f, 0.5f, 0 } };
         Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
         Vec4fUniform diffuse = { "diffuse", { 0.5f, 0.5f, 0.5f, 0 } };
         Vec4fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f, 0 } };
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
 
-    component(PointLightComponent) {
+    serialize_component(PointLightComponent) {
         const char* name = "pointLight";
         Vec4fUniform position = { "position", { 0.5f, 0.5f, 0.5f, 0 } };
         Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
@@ -35,9 +41,12 @@ namespace engine::graphics {
         FloatUniform constant = { "constant", 1};
         FloatUniform linear = { "linear", 0.045f};
         FloatUniform quadratic = { "quadratic", 0.0075f};
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
 
-    component(FlashLightComponent) {
+    serialize_component(FlashLightComponent) {
         const char* name = "flashLight";
         Vec4fUniform position = { "position", { 0.5f, 0.5f, 0.5f, 0 } };
         Vec4fUniform direction = { "direction", { 0.5f, 0.5f, 0.5f, 0 } };
@@ -49,5 +58,9 @@ namespace engine::graphics {
         FloatUniform constant = { "constant", 1};
         FloatUniform linear = { "linear", 0.045f};
         FloatUniform quadratic = { "quadratic", 0.0075f};
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
     };
+
 }

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <graphics/core/shader/Uniform.h>
+#include <yaml/yaml.h>
 
 #define DEFAULT_TRANSLATION_3D {0.5, 0.5, 0.5}
 #define DEFAULT_ROTATION_3D {0, 0, 0}
@@ -72,4 +72,11 @@ namespace engine::math {
             updateModel2d(*this);
         }
     };
+
+    void serialize(YAML::Emitter& out, const char* key, const ModelMatrix2d& model);
+    void deserialize(const YAML::Node& parent, const char* key, ModelMatrix2d& model);
+
+    void serialize(YAML::Emitter& out, const char* key, const ModelMatrix3d& model);
+    void deserialize(const YAML::Node& parent, const char* key, ModelMatrix3d& model);
+
 }

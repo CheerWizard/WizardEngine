@@ -7,6 +7,39 @@
 
 namespace engine::audio {
 
+    void AudioSourceComponent::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
+        out << YAML::Key << "AudioSourceComponent";
+
+        yaml::serialize(out, "sourceId", sourceId);
+        yaml::serialize(out, "position", position);
+        yaml::serialize(out, "velocity", velocity);
+        yaml::serialize(out, "gain", gain);
+        yaml::serialize(out, "pitch", pitch);
+        yaml::serialize(out, "looping", looping);
+        yaml::serialize(out, "refDistance", refDistance);
+        yaml::serialize(out, "maxDistance", maxDistance);
+        yaml::serialize(out, "rollOffFactor", rollOffFactor);
+
+        out << YAML::EndMap;
+    }
+
+    void AudioSourceComponent::deserialize(const YAML::Node &parent) {
+        auto root = parent["AudioSourceComponent"];
+
+        if (root) {
+            sourceId = root["sourceId"].as<u32>();
+            position = root["position"].as<glm::vec3>();
+            velocity = root["velocity"].as<glm::vec3>();
+            gain = root["gain"].as<f32>();
+            pitch = root["pitch"].as<f32>();
+            looping = root["looping"].as<bool>();
+            refDistance = root["refDistance"].as<f32>();
+            maxDistance = root["maxDistance"].as<f32>();
+            rollOffFactor = root["rollOffFactor"].as<f32>();
+        }
+    }
+
     void Source::create(const u8& bufferCount) {
         alCall(alGenSources, 1, &id);
         if (bufferCount == 1) {

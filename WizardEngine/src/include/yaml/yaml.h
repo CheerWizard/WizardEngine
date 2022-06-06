@@ -5,9 +5,9 @@
 #pragma once
 
 #include <yaml-cpp/yaml.h>
-#include <glm/glm.hpp>
 #include <core/primitives.h>
 #include <core/uuid.h>
+#include <graphics/core/shader/Uniform.h>
 
 namespace YAML {
 
@@ -107,4 +107,33 @@ namespace engine::yaml {
     void serialize(YAML::Emitter& out, const char* key, const glm::vec2& v);
     void serialize(YAML::Emitter& out, const char* key, const glm::vec3& v);
     void serialize(YAML::Emitter& out, const char* key, const glm::vec4& v);
+
+    template<typename T>
+    void serialize(YAML::Emitter& out, const char* key, const shader::Uniform<T>& uniform) {
+        out << YAML::BeginMap;
+        out << YAML::Key << key;
+        serialize(out, "name", uniform.name);
+        serialize(out, "value", uniform.value);
+        serialize(out, "isUpdated", uniform.isUpdated);
+        out << YAML::EndMap;
+    }
+
+    template<typename T>
+    void deserialize(const YAML::Node& parent, const char* key, shader::Uniform<T>& uniform) {
+        auto root = parent[key];
+        if (root) {
+            uniform.name = root["name"].as<std::string>().c_str();
+            uniform.value = root["value"].as<T>();
+            uniform.isUpdated = root["isUpdated"].as<bool>();
+        }
+    }
+
+    void deserialize(const YAML::Node& parent, const char* key, const char* value) {
+        value = parent[key].as<std::string>().c_str();
+    }
+
+    template<typename T>
+    void deserialize(const YAML::Node& parent, const char* key, T& value) {
+        value = parent[key].as<T>();
+    }
 }

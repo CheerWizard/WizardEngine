@@ -22,4 +22,41 @@ namespace engine::math {
         viewMatrix3D.value = glm::lookAt(pos, pos  + zAxis, yAxis);
     }
 
+    void serialize(YAML::Emitter& out, const char* key, const ViewMatrix2d& vm) {
+        out << YAML::BeginMap;
+        out << YAML::Key << key;
+        yaml::serialize(out, "name", vm.name);
+        yaml::serialize(out, "position", vm.position);
+        yaml::serialize(out, "rotation", vm.rotation);
+        out << YAML::EndMap;
+    }
+
+    void deserialize(const YAML::Node& parent, const char* key, ViewMatrix2d& vm) {
+        auto root = parent[key];
+        if (root) {
+            yaml::deserialize(root, "name", vm.name);
+            yaml::deserialize(root, "position", vm.position);
+            yaml::deserialize(root, "rotation", vm.rotation);
+        }
+    }
+
+    void serialize(YAML::Emitter& out, const char* key, const ViewMatrix3d& vm) {
+        out << YAML::BeginMap;
+        out << YAML::Key << key;
+        yaml::serialize(out, "name", vm.name);
+        yaml::serialize(out, "position", vm.position);
+        yaml::serialize(out, "rotation", vm.rotation);
+        yaml::serialize(out, "scale", vm.scale);
+        out << YAML::EndMap;
+    }
+
+    void deserialize(const YAML::Node& parent, const char* key, ViewMatrix3d& vm) {
+        auto root = parent[key];
+        if (root) {
+            yaml::deserialize(root, "name", vm.name);
+            yaml::deserialize(root, "position", vm.position);
+            yaml::deserialize(root, "rotation", vm.rotation);
+            yaml::deserialize(root, "scale", vm.scale);
+        }
+    }
 }
