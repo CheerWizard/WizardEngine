@@ -24,6 +24,7 @@ namespace engine::core {
         inline std::string getFontsPath();
         inline std::string getScenesPath();
         inline std::string getScriptsPath();
+        inline std::string getCMakePath();
 
     private:
         std::string getFullPath(const char* assetPath) const;

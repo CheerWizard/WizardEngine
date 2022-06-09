@@ -12,8 +12,6 @@
 
 #include <imgui.h>
 
-#define BIND_KEY_PRESS(keycode, action) engine::core::Application::get().eventRegistry.onKeyPressedMap[keycode] = { [this](KeyCode keyCode) { action }}
-
 namespace studio {
 
     using namespace engine::shader;
@@ -150,23 +148,28 @@ namespace studio {
         _sceneHierarchy.setCallback(this);
 
         // switch between scenes : Scene0, Scene1
-        BIND_KEY_PRESS(KeyCode::D0,
+        KEY_PRESSED(KeyCode::D0,
                        app->setActiveScene(0);
                         _sceneHierarchy.setScene(app->scenes[0]);
         );
-        BIND_KEY_PRESS(KeyCode::D1,
+        KEY_PRESSED(KeyCode::D1,
                        app->setActiveScene(1);
                         _sceneHierarchy.setScene(app->scenes[1]);
         );
         // switch between fullscreen/windowed modes
-        BIND_KEY_PRESS(KeyCode::F, if (app->input->isKeyPressed(KeyCode::LeftControl)) {
+        KEY_PRESSED(KeyCode::F, if (app->input->isKeyPressed(KeyCode::LeftControl)) {
             app->getWindow()->enableFullScreen();
         });
-        BIND_KEY_PRESS(KeyCode::Escape, app->getWindow()->disableFullScreen(););
-        BIND_KEY_PRESS(KeyCode::M, app->setSampleSize(8););
-        BIND_KEY_PRESS(KeyCode::N, app->setSampleSize(1););
+        KEY_PRESSED(KeyCode::Escape, app->getWindow()->disableFullScreen(););
+        KEY_PRESSED(KeyCode::M, app->setSampleSize(8););
+        KEY_PRESSED(KeyCode::N, app->setSampleSize(1););
+        KEY_PRESSED(KeyCode::P, ProjectManager::create("Untitled", "projects/"););
 
         setMSAA(true);
+
+        ProjectManager::create("Test1", "projects/");
+        ProjectManager::create("Test2", "projects/");
+        ProjectManager::create("Test3", "projects/");
     }
 
     void Activity::onRender(engine::time::Time dt) {

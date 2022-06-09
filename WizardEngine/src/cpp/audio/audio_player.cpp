@@ -25,7 +25,7 @@ namespace engine::audio {
     };
 
     unordered_map<u32, Source> MediaPlayer::sources;
-    u32 MediaPlayer::playedSourceId;
+    u32 MediaPlayer::playedSourceId = -1;
 
     void MediaPlayer::load(
             const std::string& filepath,
@@ -112,7 +112,9 @@ namespace engine::audio {
     }
 
     void MediaPlayer::clear() {
-        stopImpl(playedSourceId);
+        if (playedSourceId != -1) {
+            stopImpl(playedSourceId);
+        }
         for (auto source : sources) {
             source.second.destroy();
         }

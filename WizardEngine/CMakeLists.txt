@@ -71,6 +71,7 @@ target_link_libraries(
 replace_dirs(WizardEngine/assets WizardEngine/assets)
 replace_dirs(WizardEngine/vendor/dlls WizardEngine/vendor/dlls)
 replace_dirs(WizardEngine/project_template WizardEngine/project_template)
+replace_dirs(WizardEngine/export_cmake WizardEngine/export_cmake)
 
 replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardSamples/assimp-vc143-mtd.dll)
 replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardStudio/assimp-vc143-mtd.dll)
