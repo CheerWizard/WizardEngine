@@ -12,6 +12,9 @@ namespace engine::graphics {
     struct LineVertex {
         glm::vec3 position = { 0.5, 0.5, 0.5 };
         glm::vec4 color = { 0, 1, 0, 1 };
+
+        void encode(YAML::Node& node) const;
+        void decode(const YAML::Node& node, u32 index);
     };
 
     struct InstanceLine : VertexDataComponent<InstanceVertex<LineVertex>> {

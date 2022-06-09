@@ -24,4 +24,8 @@ namespace engine::yaml {
         out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
     }
 
+    void deserialize(const YAML::Node& parent, const char* key, const char* value) {
+        value = parent[key].as<std::string>().c_str();
+    }
+
 }

@@ -378,8 +378,16 @@ namespace engine::graphics {
     }
 
     void RenderSystem::onPrepare() {
+        uploadSkybox();
+    }
+
+    void RenderSystem::uploadSkybox() {
         auto skybox = activeScene->getSkybox().get<VertexDataComponent<SkyboxVertex>>();
-        skyboxRenderer.uploadStatic(*skybox);
-        delete skybox->vertexData.values;
+        if (skybox->vertexData.values) {
+            skyboxRenderer.uploadStatic(*skybox);
+            delete skybox->vertexData.values;
+        } else {
+            ENGINE_WARN("RenderSystem: Skybox of '{0}' is already uploaded!", activeScene->getName());
+        }
     }
 }

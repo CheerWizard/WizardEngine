@@ -175,7 +175,7 @@ namespace engine::io {
             }
         }
 
-        graphics::VertexData<ModelVertex> vertexData = { vertices, 0, mesh->mNumVertices };
+        array<ModelVertex> vertexData = { vertices, 0, mesh->mNumVertices };
         graphics::IndexData indexData = {
                 engine::core::mapTo(indicesVector),
                 0,

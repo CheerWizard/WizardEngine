@@ -124,7 +124,6 @@ namespace engine::graphics {
 
     public:
         Camera3dController(const char* tag, const Camera3D &camera) : tag(tag), camera(camera) {}
-
         ~Camera3dController() override;
 
     public:

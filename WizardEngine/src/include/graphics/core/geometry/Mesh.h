@@ -52,7 +52,7 @@ namespace engine::graphics {
                 fromVertexData.offset,
                 fromVertexData.size
         };
-        for (auto j = 0; j < fromVertexData.vertexCount; j++) {
+        for (auto j = 0; j < fromVertexData.size; j++) {
             toVertexData.values[j] = vertexMapper(fromVertexData.values[j]);
         }
         return { toVertexData, fromBaseMesh.indexData };

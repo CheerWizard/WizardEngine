@@ -25,6 +25,7 @@ namespace engine::graphics {
     public:
         void onPrepare();
         void onUpdate();
+        void uploadSkybox();
 
     public:
         inline void setActiveScene(const core::Ref<ecs::Scene> &activeScene) {

@@ -117,7 +117,6 @@ namespace YAML {
             });
             return true;
         }
-
     };
 }
 
@@ -125,14 +124,14 @@ namespace engine::yaml {
 
     using namespace core;
 
+    void serialize(YAML::Emitter& out, const char* key, const glm::vec2& v);
+    void serialize(YAML::Emitter& out, const char* key, const glm::vec3& v);
+    void serialize(YAML::Emitter& out, const char* key, const glm::vec4& v);
+
     template<typename T>
     void serialize(YAML::Emitter& out, const char* key, const T& v) {
         out << YAML::Key << key << YAML::Value << v;
     }
-
-    void serialize(YAML::Emitter& out, const char* key, const glm::vec2& v);
-    void serialize(YAML::Emitter& out, const char* key, const glm::vec3& v);
-    void serialize(YAML::Emitter& out, const char* key, const glm::vec4& v);
 
     template<typename T>
     void serialize(YAML::Emitter& out, const char* key, const shader::Uniform<T>& uniform) {
@@ -144,6 +143,8 @@ namespace engine::yaml {
         out << YAML::EndMap;
     }
 
+    void deserialize(const YAML::Node& parent, const char* key, const char* value);
+
     template<typename T>
     void deserialize(const YAML::Node& parent, const char* key, shader::Uniform<T>& uniform) {
         auto root = parent[key];
@@ -152,10 +153,6 @@ namespace engine::yaml {
             uniform.value = root["value"].as<T>();
             uniform.isUpdated = root["isUpdated"].as<bool>();
         }
-    }
-
-    void deserialize(const YAML::Node& parent, const char* key, const char* value) {
-        value = parent[key].as<std::string>().c_str();
     }
 
     template<typename T>

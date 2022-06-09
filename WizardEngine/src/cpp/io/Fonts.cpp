@@ -131,7 +131,7 @@ namespace engine::io {
                         (2.0f * glm::vec2 { x, y + h } - 1.0f) / (2.0f * imageSize)
                     } }
             };
-            auto charVertexData = VertexData<BatchCharVertex> { charVertices, 0, 4 };
+            auto charVertexData = array<BatchCharVertex> { charVertices, 0, 4 };
             auto charVertexDataComponent = VertexDataComponent<BatchCharVertex>();
             charVertexDataComponent.vertexData = charVertexData;
             auto character = Character {
@@ -143,7 +143,7 @@ namespace engine::io {
             // map char and appropriate Character struct
             characters.insert(std::pair<char, Character>(i, character));
             ENGINE_INFO("Fonts : mapping char '{0}' into Character : ", i);
-            for (int j = 0; j < charVertexData.vertexCount; j++) {
+            for (int j = 0; j < charVertexData.size; j++) {
                 ENGINE_INFO("CharVertex[x : {0}, y : {1}]",
                             charVertices[j].vertex.uv.x,
                             charVertices[j].vertex.uv.y);

@@ -11,7 +11,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(${PROJECT_NAME} ${ENGINE_SRC} src/cpp/graphics/core/geometry/Circle.cpp)
+add_library(${PROJECT_NAME} ${ENGINE_SRC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 #/ Add WizardEngine headers
@@ -70,6 +70,7 @@ target_link_libraries(
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
 replace_dirs(WizardEngine/vendor/dlls WizardEngine/vendor/dlls)
+replace_dirs(WizardEngine/project_template WizardEngine/project_template)
 
 replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardSamples/assimp-vc143-mtd.dll)
 replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardStudio/assimp-vc143-mtd.dll)

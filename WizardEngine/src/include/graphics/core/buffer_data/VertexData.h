@@ -40,7 +40,7 @@ namespace engine::graphics {
 
     template<typename T>
     array<T> copy(const array<T> &vertexData) {
-        auto* copyVertices = new T[vertexData.vertexCount];
+        auto* copyVertices = new T[vertexData.size];
         std::copy(vertexData.values, vertexData.values + vertexData.size, copyVertices);
 
         return array<T> {
@@ -108,4 +108,43 @@ namespace engine::graphics {
     ) {
         return VertexDataComponent<TO>{ toVertexData<FROM, TO>(fromVertexDataComponent.vertexData, vertexMapper) };
     }
+}
+
+namespace YAML {
+
+    using namespace engine::graphics;
+
+    template<typename V>
+    struct convert<InstanceVertex<V>> {
+
+        static Node encode(const InstanceVertex<V>& instanceVertex) {
+            Node node;
+            instanceVertex.vertex.encode(node);
+            return node;
+        }
+
+        static bool decode(const Node& node, InstanceVertex<V>& instanceVertex) {
+            instanceVertex.vertex.decode(node, 0);
+            return true;
+        }
+
+    };
+
+    template<typename V>
+    struct convert<BatchVertex<V>> {
+
+        static Node encode(const BatchVertex<V>& batchVertex) {
+            Node node;
+            node.push_back(batchVertex.id);
+            batchVertex.vertex.encode(node);
+            return node;
+        }
+
+        static bool decode(const Node& node, BatchVertex<V>& batchVertex) {
+            batchVertex.id = node[0].as<f32>();
+            batchVertex.vertex.decode(node, 1);
+            return true;
+        }
+
+    };
 }
