@@ -9,13 +9,14 @@ namespace engine::graphics {
     void BatchLineSerializable::serialize(YAML::Emitter &out) {
         out << YAML::Key << "BatchLine";
         out << YAML::BeginMap;
-        yaml::serialize(out, "vertexData", line.vertexData, [](YAML::Emitter& out, const BatchVertex<LineVertex>& vertex) {
-            yaml::serialize(out, "position", vertex.vertex.position);
-            yaml::serialize(out, "color", vertex.vertex.color);
-            yaml::serialize(out, "id", vertex.id);
-        });
+        // todo fails to compile
+//        yaml::serialize(out, "vertexData", line.vertexData, [](YAML::Emitter& out, const BatchVertex<LineVertex>& vertex) {
+//            yaml::serialize(out, "position", vertex.vertex.position);
+//            yaml::serialize(out, "color", vertex.vertex.color);
+//            yaml::serialize(out, "id", vertex.id);
+//        });
         yaml::serialize(out, "renderModelId", line.renderModelId);
-        yaml::serialize(out, "drawType", (u8) line.drawType);
+        yaml::serialize(out, "drawType", (u16) line.drawType);
         out << YAML::EndMap;
     }
 
@@ -24,17 +25,19 @@ namespace engine::graphics {
         if (root) {
             yaml::deserialize(root, "vertexData", line.vertexData);
             yaml::deserialize(root, "renderModelId", line.renderModelId);
-            yaml::deserialize(root, "drawType", line.drawType);
+            auto drawType = (u16) line.drawType;
+            yaml::deserialize(root, "drawType", drawType);
         }
     }
 
     void InstanceLineSerializable::serialize(YAML::Emitter &out) {
         out << YAML::Key << "InstanceLine";
         out << YAML::BeginMap;
-        yaml::serialize(out, "vertexData", line.vertexData, [](YAML::Emitter& out, const InstanceVertex<LineVertex>& vertex) {
-            yaml::serialize(out, "position", vertex.vertex.position);
-            yaml::serialize(out, "color", vertex.vertex.color);
-        });
+        // todo fails to compile
+//        yaml::serialize(out, "vertexData", line.vertexData, [](YAML::Emitter& out, const InstanceVertex<LineVertex>& vertex) {
+//            yaml::serialize(out, "position", vertex.vertex.position);
+//            yaml::serialize(out, "color", vertex.vertex.color);
+//        });
         yaml::serialize(out, "renderModelId", line.renderModelId);
         yaml::serialize(out, "drawType", (u8) line.drawType);
         out << YAML::EndMap;
@@ -45,8 +48,18 @@ namespace engine::graphics {
         if (root) {
             yaml::deserialize(root, "vertexData", line.vertexData);
             yaml::deserialize(root, "renderModelId", line.renderModelId);
-            yaml::deserialize(root, "drawType", line.drawType);
+            auto drawType = (u16) line.drawType;
+            yaml::deserialize(root, "drawType", drawType);
         }
     }
 
+    void LineVertex::encode(YAML::Node &node) const {
+        node.push_back(position);
+        node.push_back(color);
+    }
+
+    void LineVertex::decode(const YAML::Node &node, u32 index) {
+        position = node[index++].as<vec3f>();
+        color = node[index++].as<vec4f>();
+    }
 }

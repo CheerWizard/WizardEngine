@@ -67,7 +67,7 @@ namespace engine::io {
             case exception_priority::WARN:
                 logger->warn(exception.message);
                 break;
-            case exception_priority::ERROR:
+            case exception_priority::ERR:
                 logger->error(exception.message);
                 break;
             case exception_priority::FATAL:

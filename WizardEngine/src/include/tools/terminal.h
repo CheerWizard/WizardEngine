@@ -16,6 +16,8 @@ namespace engine::terminal {
     void msBuild(const std::string& slnPath);
     void cmake(const std::string& cmakePath);
     void cmakeD(const std::string& cmakePath, const std::vector<const char*>& definitions);
+    void exe(const std::string& exePath);
+
     void openNotepadTask(const std::string &filePath);
     void openVSCodeTask(const std::string &filePath);
     void openVisualStudioTask(const std::string &filePath);

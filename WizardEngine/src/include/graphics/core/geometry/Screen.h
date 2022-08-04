@@ -7,9 +7,11 @@
 
 namespace engine::graphics {
 
+    using namespace math;
+
     struct ScreenVertex {
-        glm::vec2 position = { -1, -1 };
-        glm::vec2 uv = { 0, 0 };
+        vec2f position = { -1, -1 };
+        vec2f uv = { 0, 0 };
     };
 
     struct Screen : VertexDataComponent<ScreenVertex> {

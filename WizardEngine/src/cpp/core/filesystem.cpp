@@ -3,6 +3,7 @@
 //
 
 #include <core/filesystem.h>
+#include <core/exception.h>
 
 #include <direct.h>
 #include <sstream>
@@ -55,6 +56,17 @@ namespace engine::filesystem {
             ENGINE_ERR("filesystem: file has not been copied. Source: {0} , Destination: {1}", src, dest);
         }
         return isCopied;
+    }
+
+    bool copyRecursive(const char* srcPath, const char* targetPath) {
+        try {
+            std::filesystem::copy(srcPath,targetPath,
+                                  copy_options::overwrite_existing | copy_options::recursive);
+            return true;
+        } catch (std::exception& e) {
+            ENGINE_EXCEPT(core::exception(e.what()));
+            return false;
+        }
     }
 
     bool remove(const std::string &target) {

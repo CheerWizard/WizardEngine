@@ -12,11 +12,11 @@ namespace engine::core {
     template<typename T>
     struct array {
         T* values = nullptr;
-        u32 size = 0;
         u32 offset = 0;
+        u32 size = 0;
 
         array() = default;
-        array(T* values, u32 size, u32 offset)
+        array(T* values, u32 offset, u32 size)
         : values(values), size(size), offset(offset) {}
 
         void release();

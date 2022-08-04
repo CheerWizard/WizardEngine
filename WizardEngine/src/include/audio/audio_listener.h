@@ -5,8 +5,8 @@
 #pragma once
 
 #include <ecs/ecs.h>
-#include <glm/glm.hpp>
 #include <core/primitives.h>
+#include <math/Math.h>
 
 namespace engine::audio {
 
@@ -17,13 +17,13 @@ namespace engine::audio {
 
         void deserialize(const YAML::Node &parent) override;
 
-        glm::vec3 lookVec = { 0, 0, -1 };
-        glm::vec3 upVec = { 0, 1, 0 };
+        math::vec3f lookVec = { 0, 0, -1 };
+        math::vec3f upVec = { 0, 1, 0 };
     };
 
     serialize_component(AudioListenerComponent) {
-        glm::vec3 position;
-        glm::vec3 velocity;
+        math::vec3f position;
+        math::vec3f velocity;
         Orientation orientation;
 
         void serialize(YAML::Emitter &out) override;
@@ -37,8 +37,8 @@ namespace engine::audio {
         ~Listener() = default;
 
     public:
-        static void setPosition(const glm::vec3& position);
-        static void setVelocity(const glm::vec3& velocity);
+        static void setPosition(const math::vec3f& position);
+        static void setVelocity(const math::vec3f& velocity);
         static void setOrientation(const Orientation& orientation);
         static void setComponent(const AudioListenerComponent& component);
 

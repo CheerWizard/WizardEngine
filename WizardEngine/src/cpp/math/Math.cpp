@@ -4,6 +4,7 @@
 
 #include <math/Math.h>
 #include <random>
+#include <cmath>
 
 namespace engine::math {
 

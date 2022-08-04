@@ -76,7 +76,6 @@ namespace studio {
 
     private:
         void create();
-        void createTest();
         void destroy();
 
         void createAssetBrowser();

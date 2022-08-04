@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <math/Math.h>
 
 namespace engine::shader {
 
@@ -26,21 +25,21 @@ namespace engine::shader {
     typedef Uniform<bool> BoolUniform;
     typedef Uniform<double> DoubleUniform;
 
-    typedef Uniform<glm::fvec2> Vec2fUniform;
-    typedef Uniform<glm::fvec3> Vec3fUniform;
-    typedef Uniform<glm::fvec4> Vec4fUniform;
+    typedef Uniform<math::vec2f> Vec2fUniform;
+    typedef Uniform<math::vec3f> Vec3fUniform;
+    typedef Uniform<math::vec4f> Vec4fUniform;
 
-    typedef Uniform<glm::fmat2> Mat2fUniform;
-    typedef Uniform<glm::fmat3> Mat3fUniform;
-    typedef Uniform<glm::fmat4> Mat4fUniform;
+    typedef Uniform<math::mat2f> Mat2fUniform;
+    typedef Uniform<math::mat3f> Mat3fUniform;
+    typedef Uniform<math::mat4f> Mat4fUniform;
 
     template<typename V>
     inline float* toFloatPtr(Uniform<V> &uniform) {
-        return glm::value_ptr(uniform.value);
+        return math::values(uniform.value);
     }
 
     template<typename V>
     inline int* toIntPtr(Uniform<V> &uniform) {
-        return glm::value_ptr(uniform.value);
+        return math::values(uniform.value);
     }
 }

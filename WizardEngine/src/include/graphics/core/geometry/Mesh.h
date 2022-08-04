@@ -6,16 +6,17 @@
 
 #include <graphics/core/buffer_data/VertexData.h>
 #include <graphics/core/buffer_data/IndexData.h>
-#include <glm/glm.hpp>
 
 #define MIN_MESH_COUNT 1
 
 namespace engine::graphics {
 
+    using namespace math;
+
     struct Vertex3d {
-        glm::vec3 position = { 0.5f, 0.5f, 0.5f };
-        glm::vec2 uv = {0.25f, -0.25f };
-        glm::vec3 normal = { 0, 0, 0 };
+        vec3f position = { 0.5f, 0.5f, 0.5f };
+        vec2f uv = {0.25f, -0.25f };
+        vec3f normal = { 0, 0, 0 };
     };
 
     template<typename T>
@@ -52,7 +53,7 @@ namespace engine::graphics {
                 fromVertexData.offset,
                 fromVertexData.size
         };
-        for (auto j = 0; j < fromVertexData.vertexCount; j++) {
+        for (auto j = 0; j < fromVertexData.size; j++) {
             toVertexData.values[j] = vertexMapper(fromVertexData.values[j]);
         }
         return { toVertexData, fromBaseMesh.indexData };

@@ -4,13 +4,13 @@
 
 #include <graphics/core/buffer_data/VertexData.h>
 
-#include <glm/glm.hpp>
-
 namespace engine::graphics {
 
+    using namespace math;
+
     struct PointVertex {
-        glm::vec2 position = { 0.5f, 0.5f };
-        glm::vec3 color = { 1, 1, 1 };
+        vec2f position = { 0.5f, 0.5f };
+        vec3f color = { 1, 1, 1 };
     };
 
     struct Points : VertexDataComponent<PointVertex> {

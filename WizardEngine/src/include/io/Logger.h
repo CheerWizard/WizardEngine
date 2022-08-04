@@ -9,7 +9,7 @@
 #include <spdlog/fmt/ostr.h>
 #pragma warning(pop)
 
-#include "core/Memory.h"
+#include <core/Memory.h>
 #include <core/exception.h>
 
 namespace engine::io {

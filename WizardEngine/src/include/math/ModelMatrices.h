@@ -23,18 +23,18 @@ namespace engine::math {
     void updateModel3d(ModelMatrix3d &modelMatrix3D);
 
     struct ModelMatrix3d : shader::Mat4fUniform {
-        glm::fvec3 position = DEFAULT_TRANSLATION_3D;
-        glm::fvec3 rotation = DEFAULT_ROTATION_3D;
-        glm::fvec3 scale = DEFAULT_SCALE_3D;
+        math::vec3f position = DEFAULT_TRANSLATION_3D;
+        math::vec3f rotation = DEFAULT_ROTATION_3D;
+        math::vec3f scale = DEFAULT_SCALE_3D;
 
         ModelMatrix3d() {
             updateModel3d(*this);
         }
 
         ModelMatrix3d(
-                const glm::vec3& pos,
-                const glm::vec3& rot,
-                const glm::vec3& scale
+                const math::vec3f& pos,
+                const math::vec3f& rot,
+                const math::vec3f& scale
         ) : position(pos), rotation(rot), scale(scale) {
             updateModel3d(*this);
         }
@@ -46,9 +46,9 @@ namespace engine::math {
     };
 
     struct ModelMatrix2d : shader::Mat4fUniform {
-        glm::fvec2 position = DEFAULT_TRANSLATION_2D;
+        math::vec2f position = DEFAULT_TRANSLATION_2D;
         float rotation = DEFAULT_ROTATION_2D;
-        glm::fvec2 scale = DEFAULT_SCALE_2D;
+        math::vec2f scale = DEFAULT_SCALE_2D;
 
         ModelMatrix2d() {
             updateModel2d(*this);
@@ -56,18 +56,18 @@ namespace engine::math {
 
         ModelMatrix2d(
                 const char* name,
-                const glm::vec2& pos,
+                const math::vec2f& pos,
                 const float& rot,
-                const glm::vec2& scale
+                const math::vec2f& scale
         ) : position(pos), rotation(rot), scale(scale) {
             this->name = name;
             updateModel2d(*this);
         }
 
         ModelMatrix2d(
-                const glm::vec2& pos,
+                const math::vec2f& pos,
                 const float& rot,
-                const glm::vec2& scale
+                const math::vec2f& scale
         ) : position(pos), rotation(rot), scale(scale) {
             updateModel2d(*this);
         }

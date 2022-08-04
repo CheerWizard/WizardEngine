@@ -7,6 +7,8 @@
 
 namespace engine::audio {
 
+    using namespace math;
+
     void AudioSourceComponent::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap;
         out << YAML::Key << "AudioSourceComponent";
@@ -29,8 +31,8 @@ namespace engine::audio {
 
         if (root) {
             sourceId = root["sourceId"].as<u32>();
-            position = root["position"].as<glm::vec3>();
-            velocity = root["velocity"].as<glm::vec3>();
+            position = root["position"].as<vec3f>();
+            velocity = root["velocity"].as<vec3f>();
             gain = root["gain"].as<f32>();
             pitch = root["pitch"].as<f32>();
             looping = root["looping"].as<bool>();
@@ -77,12 +79,12 @@ namespace engine::audio {
         alCall(alSourcef, id, AL_GAIN, gain);
     }
 
-    void Source::setPosition(const glm::vec3 &position) const {
-        alCall(alSource3f, id, AL_POSITION, position.x, position.y, position.z);
+    void Source::setPosition(const vec3f &position) const {
+        alCall(alSource3f, id, AL_POSITION, position.x(), position.y(), position.z());
     }
 
-    void Source::setVelocity(const glm::vec3 &velocity) const {
-        alCall(alSource3f, id, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+    void Source::setVelocity(const vec3f &velocity) const {
+        alCall(alSource3f, id, AL_VELOCITY, velocity.x(), velocity.y(), velocity.z());
     }
 
     void Source::setLooping(bool enabled) const {

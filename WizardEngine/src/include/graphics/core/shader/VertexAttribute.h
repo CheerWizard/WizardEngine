@@ -7,8 +7,6 @@
 #include <core/primitives.h>
 #include <core/String.h>
 
-#include <glm/glm.hpp>
-
 namespace engine::shader {
 
     using namespace core;

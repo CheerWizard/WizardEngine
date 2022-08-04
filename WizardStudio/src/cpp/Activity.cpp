@@ -8,16 +8,9 @@
 #include <graphics/light/Light.h>
 #include <graphics/camera/CameraShaderScript.h>
 #include <graphics/light/LightShaderScript.h>
-#include <graphics/GraphicsObject.h>
 #include <scripting/ScriptBuilder.h>
 
-#include <graphics/skybox/Skybox.h>
-#include <graphics/core/geometry/Quad.h>
-#include <graphics/core/geometry/Point.h>
-
 #include <imgui.h>
-
-#define BIND_KEY_PRESS(keycode, action) engine::core::Application::get().eventRegistry.onKeyPressedMap[keycode] = { [this](KeyCode keyCode) { action }}
 
 namespace studio {
 
@@ -96,66 +89,29 @@ namespace studio {
         _texturePreview.setCallback(_imagePreviewCallback);
         _assetBrowser->setCallback(this);
 
-        createTest();
-    }
-
-    void Activity::createTest() {
-        auto scene1 = createRef<Scene>();
-        app->setActiveScene(scene1);
-
-        auto activeSceneCamera = Camera3D {
-                "SceneCamera",
-                app->getAspectRatio(),
-                scene1.get()
-        };
-
+        app->setActiveScene(editorScene);
         activeSceneCameraController = createRef<Camera3dController>(
-                "ActiveSceneCameraController",
-                activeSceneCamera
+                "EditorCamera",
+                Camera3D("EditorCamera", app->getAspectRatio(), editorScene.get())
         );
 
         u32 skyboxId = TextureBuffer::load(
                 {
-                        { "skybox/front.jpg", TextureFaceType::FRONT },
-                        { "skybox/back.jpg", TextureFaceType::BACK },
-                        { "skybox/left.jpg", TextureFaceType::LEFT },
-                        { "skybox/right.jpg", TextureFaceType::RIGHT },
-                        { "skybox/top.jpg", TextureFaceType::TOP },
-                        { "skybox/bottom.jpg", TextureFaceType::BOTTOM },
+                        { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
+                        { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
+                        { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
+                        { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
+                        { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
+                        { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM },
                 }
         );
+        TextureBuffer::setDefaultParamsCubeMap(skyboxId);
 
-        scene1->setSkybox(SkyboxCube(
-                "Skybox",
-                scene1.get(),
+        editorScene->setSkybox(SkyboxCube(
+                "SkyboxCube",
+                editorScene.get(),
                 CubeMapTextureComponent(skyboxId, TextureBuffer::getTypeId(TextureType::CUBE_MAP))
         ));
-
-        auto points = Entity("Points", scene1.get());
-        auto pointsComponent = Points {
-            new PointVertex[4] {
-                { { -0.5, 0.5 }, { 1, 0, 0 } },
-                { { 0.5, 0.5 }, { 0, 1, 0 } },
-                { { 0.5, -0.5 }, { 0, 0, 1 }},
-                { { -0.5, -0.5 }, { 1, 1, 0 }}
-            },
-            4
-        };
-        points.add<Points>(pointsComponent);
-
-//        Object3d(
-//                scene1.get(),
-//                "Sponza",
-//                transform3d(),
-//                GET_MESH_COMPONENT(BatchVertex<Vertex3d>, "assets/obj/sponza.obj")
-//        );
-
-        Object3d(
-                scene1.get(),
-                "Quad",
-                Transform3dComponent(),
-                BatchQuad()
-        );
     }
 
     void Activity::destroy() {
@@ -192,23 +148,28 @@ namespace studio {
         _sceneHierarchy.setCallback(this);
 
         // switch between scenes : Scene0, Scene1
-        BIND_KEY_PRESS(KeyCode::D0,
+        KEY_PRESSED(KeyCode::D0,
                        app->setActiveScene(0);
                         _sceneHierarchy.setScene(app->scenes[0]);
         );
-        BIND_KEY_PRESS(KeyCode::D1,
+        KEY_PRESSED(KeyCode::D1,
                        app->setActiveScene(1);
                         _sceneHierarchy.setScene(app->scenes[1]);
         );
         // switch between fullscreen/windowed modes
-        BIND_KEY_PRESS(KeyCode::F, if (app->input->isKeyPressed(KeyCode::LeftControl)) {
+        KEY_PRESSED(KeyCode::F, if (app->input->isKeyPressed(KeyCode::LeftControl)) {
             app->getWindow()->enableFullScreen();
         });
-        BIND_KEY_PRESS(KeyCode::Escape, app->getWindow()->disableFullScreen(););
-        BIND_KEY_PRESS(KeyCode::M, app->setSampleSize(8););
-        BIND_KEY_PRESS(KeyCode::N, app->setSampleSize(1););
+        KEY_PRESSED(KeyCode::Escape, app->getWindow()->disableFullScreen(););
+        KEY_PRESSED(KeyCode::M, app->setSampleSize(8););
+        KEY_PRESSED(KeyCode::N, app->setSampleSize(1););
+        KEY_PRESSED(KeyCode::P, ProjectManager::create("Untitled", "projects/"););
 
         setMSAA(true);
+
+        ProjectManager::create("Untitled", "projects/");
+        ProjectManager::build("Untitled");
+//        ProjectManager::run("Untitled");
     }
 
     void Activity::onRender(engine::time::Time dt) {
@@ -279,7 +240,7 @@ namespace studio {
 
     void Activity::onObjOpen(const std::string &fileName) {
         EDITOR_INFO("onObjOpen({0})", fileName);
-        MeshSource<ModelVertex>::getMesh("assets/obj/" + fileName, {
+        ModelFile<ModelVertex>::read("assets/obj/" + fileName, {
             [this](const io::ModelMeshComponent& mesh) {
                 _objPreview->setMesh(mesh);
                 _objPreview->show();
@@ -386,7 +347,7 @@ namespace studio {
 
     void Activity::onObjDragged(const std::string &fileName) {
         EDITOR_INFO("onObjDragged({0})", fileName);
-        MeshSource<BatchVertex<Vertex3d>>::getMesh("assets/obj/" + fileName, {
+        ModelFile<BatchVertex<Vertex3d>>::read("assets/obj/" + fileName, {
                 [this, &fileName](const BaseMeshComponent<BatchVertex<Vertex3d>>& mesh) {
                     Object3d {
                             app->activeScene.get(),
