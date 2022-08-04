@@ -13,6 +13,8 @@
 
 namespace engine::graphics {
 
+    using namespace math;
+
     serialize_template_component(TextComponent, T) {
         std::string text;
         Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
@@ -30,7 +32,7 @@ namespace engine::graphics {
                 const u32& textureId,
                 const std::string& text,
                 const Transform3dComponent& transform,
-                const glm::vec4& color,
+                const vec4f& color,
                 const float& paddingX = 0,
                 const float& paddingY = 0,
                 const float& whiteSpaceWidth = 0.02f,
@@ -79,7 +81,7 @@ namespace engine::graphics {
                 const u32& textureId,
                 const std::string& text,
                 const Transform3dComponent& transform,
-                const glm::vec4& color,
+                const vec4f& color,
                 const float& paddingX = 0,
                 const float& paddingY = 0,
                 const float& whiteSpaceWidth = 0.02f,
@@ -92,7 +94,7 @@ namespace engine::graphics {
                 const u32& textureId,
                 const std::string& text,
                 const Transform3dComponent& transform,
-                const glm::vec4& color,
+                const vec4f& color,
                 const float& paddingX = 0,
                 const float& paddingY = 0,
                 const float& whiteSpaceWidth = 0.02f,

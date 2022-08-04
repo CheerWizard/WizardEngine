@@ -52,7 +52,7 @@ namespace engine::math {
 
     void Projections::update(OrthographicMatrix &orthographicMatrix) {
         orthographicMatrix.isUpdated = true;
-        orthographicMatrix.value = glm::ortho(
+        orthographicMatrix.value = math::ortho(
                 orthographicMatrix.left,
                 orthographicMatrix.right,
                 orthographicMatrix.bottom,
@@ -64,8 +64,8 @@ namespace engine::math {
 
     void Projections::update(PerspectiveMatrix &perspectiveMatrix) {
         perspectiveMatrix.isUpdated = true;
-        perspectiveMatrix.value = glm::perspective(
-                glm::radians(perspectiveMatrix.fieldOfView),
+        perspectiveMatrix.value = math::perspective(
+                math::radians(perspectiveMatrix.fieldOfView),
                 perspectiveMatrix.aspectRatio,
                 perspectiveMatrix.zNear,
                 perspectiveMatrix.zFar

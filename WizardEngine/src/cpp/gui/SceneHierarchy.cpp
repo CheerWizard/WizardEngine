@@ -17,6 +17,8 @@
 
 namespace engine::gui {
 
+    using namespace math;
+
     void SceneHierarchy::drawEntityNode(ecs::Entity &entity) {
         auto& tag = entity.get<ecs::TagComponent>()->tag;
 
@@ -203,17 +205,17 @@ namespace engine::gui {
 
     static void drawVec3Controller(
             const std::string& label,
-            glm::vec3& value,
+            vec3f& value,
             bool& isUpdated,
             float resetValue = 0.0f,
             float columnWidth = 100.0f
     ) {
-        drawVec3Controller(label, glm::value_ptr(value), isUpdated, resetValue, columnWidth);
+        drawVec3Controller(label, math::values(value), isUpdated, resetValue, columnWidth);
     }
 
     static void drawVec4Controller(
             const std::string& label,
-            glm::vec4& values,
+            vec4f& values,
             bool &isUpdated,
             float resetValue = 0.0f,
             float columnWidth = 100.0f
@@ -241,14 +243,14 @@ namespace engine::gui {
 
         auto xClicked = ImGui::Button("X", buttonSize);
         if (xClicked) {
-            values.x = resetValue;
+            values.v[0] = resetValue;
         }
 
         ImGui::PopFont();
         ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
-        auto xDragged = ImGui::DragFloat("##X", &values.x, 0.05f, 0.0f, 0.0f, "%.2f");
+        auto xDragged = ImGui::DragFloat("##X", &values.v[0], 0.05f, 0.0f, 0.0f, "%.2f");
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -259,14 +261,14 @@ namespace engine::gui {
 
         auto yClicked = ImGui::Button("Y", buttonSize);
         if (yClicked) {
-            values.y = resetValue;
+            values.v[1] = resetValue;
         }
 
         ImGui::PopFont();
         ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
-        auto yDragged = ImGui::DragFloat("##Y", &values.y, 0.05f, 0.0f, 0.0f, "%.2f");
+        auto yDragged = ImGui::DragFloat("##Y", &values.v[1], 0.05f, 0.0f, 0.0f, "%.2f");
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -277,14 +279,14 @@ namespace engine::gui {
 
         auto zClicked = ImGui::Button("Z", buttonSize);
         if (zClicked) {
-            values.z = resetValue;
+            values.v[2] = resetValue;
         }
 
         ImGui::PopFont();
         ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
-        auto zDragged = ImGui::DragFloat("##Z", &values.z, 0.05f, 0.0f, 0.0f, "%.2f");
+        auto zDragged = ImGui::DragFloat("##Z", &values.v[2], 0.05f, 0.0f, 0.0f, "%.2f");
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -295,14 +297,14 @@ namespace engine::gui {
 
         auto wClicked = ImGui::Button("W", buttonSize);
         if (wClicked) {
-            values.w = resetValue;
+            values.v[3] = resetValue;
         }
 
         ImGui::PopFont();
         ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
-        auto wDragged = ImGui::DragFloat("##W", &values.w, 0.05f, 0.0f, 0.0f, "%.2f");
+        auto wDragged = ImGui::DragFloat("##W", &values.v[3], 0.05f, 0.0f, 0.0f, "%.2f");
         ImGui::PopItemWidth();
 
         ImGui::PopStyleVar();

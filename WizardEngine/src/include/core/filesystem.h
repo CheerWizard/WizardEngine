@@ -17,11 +17,13 @@ namespace engine::filesystem {
     typedef std::filesystem::path fpath;
     typedef std::filesystem::file_status fstatus;
     typedef std::error_code error;
+    typedef std::filesystem::copy_options copy_options;
 
     bool write(const fpath &filePath, const std::string &source);
     bool write(const fpath &filePath, const int* data, const uint32_t& dataSize);
     std::string getCurrentWorkingDirectory();
     bool copy(const std::string &src, const std::string &dest);
+    bool copyRecursive(const char* srcPath, const char* destPath);
     bool remove(const std::string &target);
     bool replace(const std::string &src, const std::string &dest);
     std::string getFolderPath(const std::string &fullPath);

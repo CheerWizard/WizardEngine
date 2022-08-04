@@ -15,6 +15,8 @@
 
 namespace engine::io {
 
+    using namespace math;
+
     struct Face {
         int posIndex;
         int uvIndex;
@@ -22,9 +24,9 @@ namespace engine::io {
     };
 
     struct ModelVertex {
-        glm::vec3 position = { 0.5f, 0.5f, 0.5f };
-        glm::vec2 uv = { 0, 0 };
-        glm::vec3 normal = { 0, 0, 0 };
+        vec3f position = { 0.5f, 0.5f, 0.5f };
+        vec2f uv = { 0, 0 };
+        vec3f normal = { 0, 0, 0 };
     };
 
     struct ModelTexture {
@@ -109,7 +111,7 @@ namespace engine::io {
 
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
             std::string message = "Assimp: failed to import file '" + filePath + "'; error: " + import.GetErrorString();
-            ENGINE_THROW(file_not_found(exception_priority::ERROR, message));
+            ENGINE_THROW(file_not_found(exception_priority::ERR, message));
         }
 
         std::vector<ModelMesh> meshes;
@@ -175,7 +177,7 @@ namespace engine::io {
             }
         }
 
-        graphics::VertexData<ModelVertex> vertexData = { vertices, 0, mesh->mNumVertices };
+        array<ModelVertex> vertexData = { vertices, 0, mesh->mNumVertices };
         graphics::IndexData indexData = {
                 engine::core::mapTo(indicesVector),
                 0,

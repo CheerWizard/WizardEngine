@@ -9,11 +9,11 @@
 namespace engine::core {
 
     enum class exception_priority : u16 {
-        TRACE = 0, INFO = 1, WARN = 2, ERROR = 3, FATAL = 4
+        TRACE = 0, INFO = 1, WARN = 2, ERR = 3, FATAL = 4
     };
 
     struct exception {
-        exception_priority priority = exception_priority::ERROR;
+        exception_priority priority = exception_priority::ERR;
         const char* message;
         u16 errorCode = 0;
 

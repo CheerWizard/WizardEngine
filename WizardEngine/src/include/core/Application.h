@@ -7,6 +7,7 @@
 #include <core/LayerStack.h>
 #include <core/String.h>
 #include <core/Memory.h>
+#include <core/ProjectManager.h>
 
 #include <event/Events.h>
 #include <event/GamepadCodes.h>

@@ -8,18 +8,18 @@ namespace engine::math {
 
     void update(ViewMatrix2d &viewMatrix2D) {
         viewMatrix2D.isUpdated = true;
-        auto identity = glm::mat4(1);
-        auto rotMat = glm::rotate(identity, viewMatrix2D.rotation, {0, 0, 1});
-        viewMatrix2D.value = glm::translate(rotMat, -viewMatrix2D.position);
+        math::mat4f identity;
+        auto rotMat = math::rotate(identity, viewMatrix2D.rotation, {0, 0, 1});
+        viewMatrix2D.value = math::translate(rotMat, -viewMatrix2D.position);
     }
 
     void update(ViewMatrix3d &viewMatrix3D) {
         viewMatrix3D.isUpdated = true;
         viewMatrix3D.position.isUpdated = true;
-        auto yAxis = glm::vec3(0, 1, 0);
-        auto zAxis = glm::vec3(0, 0, 1);
+        vec3f yAxis = { 0, 1, 0 };
+        vec3f zAxis = { 0, 0, 1 };
         const auto& pos = viewMatrix3D.position.value;
-        viewMatrix3D.value = glm::lookAt(pos, pos  + zAxis, yAxis);
+        viewMatrix3D.value = math::lookAt(pos, pos + zAxis, yAxis);
     }
 
     void serialize(YAML::Emitter& out, const char* key, const ViewMatrix2d& vm) {

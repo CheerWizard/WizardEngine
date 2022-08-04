@@ -8,7 +8,6 @@
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include <glm/glm.hpp>
 
 #include <core/map.h>
 
@@ -20,17 +19,19 @@
 
 namespace engine::graphics {
 
+    using namespace math;
+
     struct CharVertex {
-        glm::vec2 position = { 0.5, 0.5 };
-        glm::vec2 uv = { 0, 0 };
+        vec2f position = { 0.5, 0.5 };
+        vec2f uv = { 0, 0 };
     };
 
     typedef BatchVertex<CharVertex> BatchCharVertex;
 
     struct Character {
         graphics::VertexDataComponent<BatchCharVertex> vertexDataComponent;
-        glm::vec2 size = { 0, 0 };
-        glm::vec2 bearing = { 0, 0 };
+        vec2f size = { 0, 0 };
+        vec2f bearing = { 0, 0 };
         float advance = 0;
     };
 

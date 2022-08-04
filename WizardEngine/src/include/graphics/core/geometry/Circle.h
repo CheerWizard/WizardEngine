@@ -10,10 +10,11 @@
 namespace engine::graphics {
 
     using namespace shader;
+    using namespace math;
 
     struct CircleVertex {
-        glm::vec3 position = { 0.5, 0.5, 0.5 };
-        glm::vec2 uv = { 0, 0 };
+        vec3f position = { 0.5, 0.5, 0.5 };
+        vec2f uv = { 0, 0 };
     };
 
     struct InstanceCircle : VertexDataComponent<InstanceVertex<CircleVertex>> {
@@ -49,7 +50,7 @@ namespace engine::graphics {
         FloatUniform fade = { "fade", 0.005 };
 
         CircleComponent() = default;
-        CircleComponent(const glm::vec4& color, const float& thickness, const float& fade)
+        CircleComponent(const vec4f& color, const float& thickness, const float& fade)
         : color({ "color", color }), thickness({ "thickness", thickness }), fade({ "fade", fade }) {}
         CircleComponent(const Vec4fUniform& color, const FloatUniform& thickness, const FloatUniform& fade)
         : color(color), thickness(thickness), fade(fade) {}
