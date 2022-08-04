@@ -6,8 +6,8 @@
 #include <game_layer.h>
 
 Application* engine::core::createApplication() {
-    RUNTIME_INFO("Creating Test Application...");
-    return new test::Application();
+    RUNTIME_INFO("Creating Game Application...");
+    return new game::Application();
 }
 
 extern const char* engineLogName() {
@@ -31,7 +31,7 @@ namespace game {
 
     WindowProps Application::createWindowProps() {
         return WindowProps {
-                "Test"
+                "Game"
         };
     }
 }

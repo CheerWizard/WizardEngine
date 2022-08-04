@@ -98,14 +98,14 @@ namespace engine::graphics {
                     // if combination of chars is \n - we should add new line
                     if (previousCode == 92 && currentChar == 'n') {
                         textX = 0;
-                        textY -= character.size.y + text.paddingY;
+                        textY -= character.size.y() + text.paddingY;
                         continue;
                     }
 
-                    float x = textX + character.bearing.x;
-                    float y = textY + character.bearing.y - character.size.y;
-                    float w = character.size.x;
-                    float h = character.size.y;
+                    float x = textX + character.bearing.x();
+                    float y = textY + character.bearing.y() - character.size.y();
+                    float w = character.size.x();
+                    float h = character.size.y();
 
                     if (vertexDataComponent.isUpdated) {
                         auto& vertices = vertexDataComponent.vertexData.values;
@@ -117,7 +117,7 @@ namespace engine::graphics {
 
                     tryUploadBatch(i, vertexDataComponent, totalVertexCount, renderModel);
 
-                    textX += character.size.x + text.paddingX;
+                    textX += character.size.x() + text.paddingX;
                     previousChar = currentChar;
                 }
 

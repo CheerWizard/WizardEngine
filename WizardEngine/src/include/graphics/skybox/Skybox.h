@@ -8,12 +8,11 @@
 #include <graphics/core/geometry/Cube.h>
 #include <graphics/transform/TransformComponents.h>
 #include <graphics/core/texture/Texture.h>
-#include <glm/glm.hpp>
 
 namespace engine::graphics {
 
     struct SkyboxVertex {
-        glm::vec3 position = { 0.5, 0.5 , 0.5 };
+        math::vec3f position = { 0.5, 0.5 , 0.5 };
     };
 
     class SkyboxCube : public ecs::Entity {

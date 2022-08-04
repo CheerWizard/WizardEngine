@@ -73,14 +73,14 @@ namespace engine::graphics {
         vertexDataComponent.vertexData.offset = 0;
     }
 
-    template<typename IN, typename OUT>
-    array<OUT> toVertexData(const std::vector<IN>& inVertices) {
+    template<typename FROM, typename TO>
+    array<TO> toVertexData(const std::vector<FROM>& inVertices) {
         size_t size = inVertices.size();
-        auto* outVertices = new OUT[size];
+        auto* outVertices = new TO[size];
         for (auto i = 0; i < size; i++) {
             outVertices[i] = { inVertices[i] };
         }
-        return array<OUT> {
+        return array<TO> {
                 outVertices,
                 0,
                 static_cast<uint32_t>(size)

@@ -103,7 +103,7 @@ namespace engine::io {
             // save the character width
             auto w = face->glyph->metrics.width / 64;
             auto h = face->glyph->metrics.height / 64;
-            glm::vec2 bearing = { face->glyph->bitmap_left, face->glyph->bitmap_top };
+            vec2f bearing = { static_cast<float>(face->glyph->bitmap_left), static_cast<float>(face->glyph->bitmap_top) };
             int advance = face->glyph->advance.x;
             widths[i] = w;
             // find the tile position where we have to draw the character
@@ -112,23 +112,23 @@ namespace engine::io {
             x += 1; // 1 pixel padding from the left side of the tile
             y += (fontSize + 2) - face->glyph->bitmap_top + maxUnderBaseline - 1;
             // store metrics data into Character struct
-            glm::vec2 imageSize = { imageWidth, imageHeight };
+            vec2f imageSize = { static_cast<float>(imageWidth), static_cast<float>(imageHeight) };
             auto* charVertices = new BatchCharVertex[4] {
                     BatchCharVertex { CharVertex {
                         { 0, 0 },
-                        (2.0f * glm::vec2 { x,  y } - 1.0f) / (2.0f * imageSize)
+                        (vec2f { static_cast<f32>(x), static_cast<f32>(y) } * 2.0f - 1.0f) / (imageSize * 2.0f)
                     } },
                     BatchCharVertex { CharVertex {
                         { 0, 0 },
-                        (2.0f * glm::vec2 { x + w, y } - 1.0f) / (2.0f * imageSize)
+                        (vec2f { static_cast<float>(x + w), static_cast<float>(y) } * 2.0f - 1.0f) / (imageSize * 2.0f)
                     } },
                     BatchCharVertex { CharVertex {
                         { 0, 0 },
-                        (2.0f * glm::vec2 { x + w, y + h } - 1.0f) / (2.0f * imageSize)
+                        (vec2f { static_cast<float>(x + w), static_cast<float>(y + h) } * 2.0f - 1.0f) / (imageSize * 2.0f)
                     } },
                     BatchCharVertex { CharVertex {
                         { 0, 0 },
-                        (2.0f * glm::vec2 { x, y + h } - 1.0f) / (2.0f * imageSize)
+                        (vec2f { static_cast<float>(x), static_cast<float>(y + h) } * 2.0f - 1.0f) / (imageSize * 2.0f)
                     } }
             };
             auto charVertexData = array<BatchCharVertex> { charVertices, 0, 4 };
@@ -136,7 +136,7 @@ namespace engine::io {
             charVertexDataComponent.vertexData = charVertexData;
             auto character = Character {
                 charVertexDataComponent,
-                glm::vec2 { w, h } / imageSize,
+                vec2f { static_cast<float>(w), static_cast<float>(h) } / imageSize,
                 bearing / imageSize,
                 (float)advance / (float)imageWidth
             };
@@ -145,10 +145,10 @@ namespace engine::io {
             ENGINE_INFO("Fonts : mapping char '{0}' into Character : ", i);
             for (int j = 0; j < charVertexData.size; j++) {
                 ENGINE_INFO("CharVertex[x : {0}, y : {1}]",
-                            charVertices[j].vertex.uv.x,
-                            charVertices[j].vertex.uv.y);
+                            charVertices[j].vertex.uv.x(),
+                            charVertices[j].vertex.uv.y());
             }
-            ENGINE_INFO("Character[size : {0} , {1}]", character.size.x, character.size.y);
+            ENGINE_INFO("Character[size : {0} , {1}]", character.size.x(), character.size.y());
             // draw the character
             const FT_Bitmap& bitmap = face->glyph->bitmap;
             for (int xx = 0; xx < bitmap.width; ++xx) {

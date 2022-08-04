@@ -33,9 +33,6 @@ add_subdirectory(vendor/imgui)
 include_directories(vendor/imgui)
 include_directories(vendor/imgui/misc/cpp)
 
-#/ Math.
-add_subdirectory(vendor/glm)
-
 #/ Image file processing
 add_subdirectory(vendor/stb)
 include_directories(vendor/stb/stb)
@@ -60,13 +57,15 @@ target_link_libraries(
         glfw
         glad
         imgui
-        glm::glm
         stb
         freetype
         ../WizardEngine/vendor/dlls/assimp-vc143-mtd
         ../WizardEngine/vendor/dlls/OpenAL32
         ../WizardEngine/vendor/dlls/yaml-cppd
 )
+
+replace_dirs(WizardEngine/src/include WizardEngine/includes/src/include)
+replace_dirs(WizardEngine/vendor WizardEngine/includes/vendor)
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
 replace_dirs(WizardEngine/vendor/dlls WizardEngine/vendor/dlls)

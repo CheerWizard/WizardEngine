@@ -6,17 +6,13 @@
 
 #include <core/Application.h>
 
-namespace test {
+namespace game {
 
-    class GameLayer : public Layer,
-                      tcp::ClientListener, tcp::SenderListener, tcp::ReceiverListener,
-                      udp::ClientListener, udp::SenderListener, udp::ReceiverListener {
+    class GameLayer : public Layer {
 
     public:
-        GameLayer() : Layer() {
-            init();
-        }
-        ~GameLayer() override;
+        GameLayer() : Layer() {}
+        ~GameLayer() override {}
 
     public:
         void onPrepare() override;
@@ -28,28 +24,6 @@ namespace test {
         void onKeyHold(KeyCode keyCode) override;
         void onKeyReleased(KeyCode keyCode) override;
         void onKeyTyped(KeyCode keyCode) override;
-
-    public:
-        void onTCPSocketCreated() override;
-        void onTCPSocketClosed() override;
-
-        void onTCPConnectionFailed() override;
-        void onTCPConnected() override;
-
-        void onTCPSenderFailed(char *data, size_t size) override;
-        void onTCPSenderSuccess() override;
-
-        void onTCPReceiverFailed(char *data, size_t size) override;
-        void onTCPReceiverSuccess(const YAML::Node &gdNode, const GDHeader &header) override;
-
-        void onUDPSocketCreated() override;
-        void onUDPSocketClosed() override;
-
-        void onUDPSenderFailed(char *data, size_t size) override;
-        void onUDPSenderSuccess() override;
-
-        void onUDPReceiverFailed(char *data, size_t size) override;
-        void onUDPReceiverSuccess(const YAML::Node &gdNode, const GDHeader &header) override;
 
     public:
         void onWindowClosed() override;

@@ -19,6 +19,8 @@
 
 namespace engine::graphics {
 
+    using namespace math;
+
     enum ZoomType : unsigned char {
         ZOOM_IN = 1, ZOOM_OUT = 2
     };
@@ -64,7 +66,7 @@ namespace engine::graphics {
         void applyRotate(const RotateType& rotateType);
         void applyZoom(const ZoomType& zoomType);
 
-        void updatePosition(const glm::vec3 &position) {
+        void updatePosition(const vec3f &position) {
             setPosition(position);
             applyChanges();
         }
@@ -90,10 +92,10 @@ namespace engine::graphics {
     public:
         virtual void zoom(const ZoomType &zoomType) = 0;
         virtual void move(const MoveType &moveType) = 0;
-        virtual void move(const glm::vec2& position) = 0;
+        virtual void move(const vec2f& position) = 0;
         virtual void rotate(const RotateType &rotateType) = 0;
         virtual void applyChanges() = 0;
-        virtual void setPosition(const glm::vec3 &position) = 0;
+        virtual void setPosition(const vec3f &position) = 0;
         virtual void setCamera(const Camera2D &camera) = 0;
         virtual void setCamera(const Camera3D &camera) = 0;
 
@@ -132,13 +134,13 @@ namespace engine::graphics {
         void rotate(const RotateType &rotateType) override;
         void applyChanges() override;
 
-        void setPosition(const glm::vec3 &position) override;
+        void setPosition(const vec3f &position) override;
 
     public:
         void setCamera(const Camera2D &camera) override;
         void setCamera(const Camera3D &camera) override;
 
-        void move(const glm::vec2 &position) override;
+        void move(const vec2f &position) override;
 
     protected:
         ecs::Entity getCamera() override;
@@ -162,13 +164,13 @@ namespace engine::graphics {
         void rotate(const RotateType &rotateType) override;
         void applyChanges() override;
 
-        void setPosition(const glm::vec3 &position) override;
+        void setPosition(const vec3f &position) override;
 
     public:
         void setCamera(const Camera2D &camera) override;
         void setCamera(const Camera3D &camera) override;
 
-        void move(const glm::vec2 &position) override;
+        void move(const vec2f &position) override;
 
     protected:
         ecs::Entity getCamera() override;

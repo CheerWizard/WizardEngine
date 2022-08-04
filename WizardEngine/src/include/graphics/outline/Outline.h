@@ -11,10 +11,11 @@
 namespace engine::graphics {
 
     using namespace shader;
+    using namespace math;
 
     struct OutlineVertex {
-        glm::vec3 position = { 0.5, 0.5, 0.5 };
-        glm::vec3 normal = { 0.5, 0.5, 0.5 };
+        vec3f position = { 0.5, 0.5, 0.5 };
+        vec3f normal = { 0.5, 0.5, 0.5 };
     };
 
     serialize_component(OutlineComponent) {
@@ -23,7 +24,7 @@ namespace engine::graphics {
         FloatUniform thickness = { "thickness", 0.05 };
 
         OutlineComponent() = default;
-        OutlineComponent(const glm::vec4& color, const float& thickness)
+        OutlineComponent(const vec4f& color, const float& thickness)
         : color({ "color", color }), thickness({ "thickness", thickness }) {}
         OutlineComponent(const char* name, const Vec4fUniform& color, const FloatUniform& thickness)
         : name(name), color(color), thickness(thickness) {}

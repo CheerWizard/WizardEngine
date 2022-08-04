@@ -7,6 +7,8 @@
 
 namespace engine::audio {
 
+    using namespace math;
+
     void Orientation::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap;
         out << YAML::Key << "Orientation";
@@ -18,8 +20,8 @@ namespace engine::audio {
     void Orientation::deserialize(const YAML::Node &parent) {
         auto root = parent["Orientation"];
         if (root) {
-            lookVec = root["look"].as<glm::vec3>();
-            upVec = root["up"].as<glm::vec3>();
+            lookVec = root["look"].as<vec3f>();
+            upVec = root["up"].as<vec3f>();
         }
     }
 
@@ -38,8 +40,8 @@ namespace engine::audio {
         auto root = parent["AudioListenerComponent"];
         if (root) {
             orientation.deserialize(parent);
-            position = root["position"].as<glm::vec3>();
-            velocity = root["velocity"].as<glm::vec3>();
+            position = root["position"].as<vec3f>();
+            velocity = root["velocity"].as<vec3f>();
         }
     }
 
@@ -49,20 +51,20 @@ namespace engine::audio {
         setOrientation(component.orientation);
     }
 
-    void Listener::setPosition(const glm::vec3 &position) {
-        alCall(alListener3f, AL_POSITION, position.x, position.y, position.z);
+    void Listener::setPosition(const vec3f &position) {
+        alCall(alListener3f, AL_POSITION, position.x(), position.y(), position.z());
     }
 
-    void Listener::setVelocity(const glm::vec3 &velocity) {
-        alCall(alListener3f, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+    void Listener::setVelocity(const vec3f &velocity) {
+        alCall(alListener3f, AL_VELOCITY, velocity.x(), velocity.y(), velocity.z());
     }
 
     void Listener::setOrientation(const Orientation &orientation) {
         const auto& lookVec = orientation.lookVec;
         const auto& upVec = orientation.upVec;
         f32 value[6] = {
-                lookVec.x, lookVec.y, lookVec.z,
-                upVec.x, upVec.y, upVec.z
+                lookVec.x(), lookVec.y(), lookVec.z(),
+                upVec.x(), upVec.y(), upVec.z()
         };
         alCall(alListenerfv, AL_ORIENTATION, value);
     }

@@ -146,4 +146,9 @@ namespace engine::terminal {
         system(ss.str().c_str());
     }
 
+    void exe(const std::string& exePath) {
+        EDITOR_INFO("exe({0})", exePath);
+        system(exePath.c_str());
+    }
+
 }

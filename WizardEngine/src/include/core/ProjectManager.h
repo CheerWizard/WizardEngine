@@ -25,6 +25,9 @@ namespace engine::core {
         inline std::string getScenesPath();
         inline std::string getScriptsPath();
         inline std::string getCMakePath();
+        [[nodiscard]] std::string getFullPath() const;
+        [[nodiscard]] inline std::string getSlnPath() const;
+        [[nodiscard]] inline std::string getExePath() const;
 
     private:
         std::string getFullPath(const char* assetPath) const;
@@ -35,6 +38,10 @@ namespace engine::core {
     public:
         static Project create(const char* projectName, const char* workspacePath);
         inline static const Project& getCurrentProject();
+        static void build(const char* projectName);
+        static void build(const Project& project);
+        static void run(const char* projectName);
+        static void run(const Project& project);
 
     private:
         static vector<Project> projects;

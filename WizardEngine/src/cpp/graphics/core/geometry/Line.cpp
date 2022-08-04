@@ -59,7 +59,7 @@ namespace engine::graphics {
     }
 
     void LineVertex::decode(const YAML::Node &node, u32 index) {
-        position = node[index++].as<glm::vec3>();
-        color = node[index++].as<glm::vec4>();
+        position = node[index++].as<vec3f>();
+        color = node[index++].as<vec4f>();
     }
 }

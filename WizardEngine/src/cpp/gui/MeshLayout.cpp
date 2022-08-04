@@ -49,7 +49,7 @@ namespace engine::gui {
 
     void MeshLayout::rotateEntity(const time::Time &dt) {
         auto& transform = *_entity.get<graphics::Transform3dComponent>();
-        transform.modelMatrix.rotation.y += 0.000025f / dt;
+        transform.modelMatrix.rotation.v[1] += 0.000025f / dt;
         math::updateModel3d(transform.modelMatrix);
     }
 

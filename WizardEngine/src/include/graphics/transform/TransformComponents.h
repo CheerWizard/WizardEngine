@@ -10,6 +10,7 @@
 namespace engine::graphics {
 
     using namespace core;
+    using namespace math;
 
     serialize_component(Transform2dComponent) {
         math::ModelMatrix2d modelMatrix;
@@ -31,12 +32,12 @@ namespace engine::graphics {
             modelMatrix.name = "transform";
         }
 
-        Transform3dComponent(const glm::vec3 &pos, const glm::vec3 &rot, const glm::vec3 &scale) {
+        Transform3dComponent(const vec3f &pos, const vec3f &rot, const vec3f &scale) {
             modelMatrix = math::ModelMatrix3d { pos, rot, scale };
             modelMatrix.name = "transform";
         }
 
-        Transform3dComponent(const glm::vec3 &scale) {
+        Transform3dComponent(const vec3f &scale) {
             modelMatrix = math::ModelMatrix3d();
             modelMatrix.scale = scale;
             modelMatrix.name = "transform";

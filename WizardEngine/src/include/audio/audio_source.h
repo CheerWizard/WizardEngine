@@ -5,7 +5,6 @@
 #pragma once
 
 #include <audio/audio_buffer.h>
-#include <glm/glm.hpp>
 #include <ecs/ecs.h>
 
 namespace engine::audio {
@@ -23,8 +22,8 @@ namespace engine::audio {
 
     serialize_component(AudioSourceComponent) {
         u32 sourceId = 0;
-        glm::vec3 position = { 0, 0, 0 };
-        glm::vec3 velocity = { 0, 0, 0 };
+        math::vec3f position = { 0, 0, 0 };
+        math::vec3f velocity = { 0, 0, 0 };
         f32 gain = 1;
         f32 pitch = 1;
         bool looping = false;
@@ -60,8 +59,8 @@ namespace engine::audio {
         void loadStream(const std::string& filepath);
         void updateStream();
 
-        void setPosition(const glm::vec3& position) const;
-        void setVelocity(const glm::vec3& velocity) const;
+        void setPosition(const math::vec3f& position) const;
+        void setVelocity(const math::vec3f& velocity) const;
         void setPitch(f32 pitch) const;
         void setGain(f32 gain) const;
         void setLooping(bool enabled) const;

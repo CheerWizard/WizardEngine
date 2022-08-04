@@ -167,9 +167,9 @@ namespace studio {
 
         setMSAA(true);
 
-        ProjectManager::create("Test1", "projects/");
-        ProjectManager::create("Test2", "projects/");
-        ProjectManager::create("Test3", "projects/");
+        ProjectManager::create("Untitled", "projects/");
+        ProjectManager::build("Untitled");
+//        ProjectManager::run("Untitled");
     }
 
     void Activity::onRender(engine::time::Time dt) {

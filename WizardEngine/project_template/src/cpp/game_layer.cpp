@@ -6,11 +6,6 @@
 
 namespace game {
 
-    GameLayer::~GameLayer() {
-        tcp::Client::close();
-        udp::Client::close();
-    }
-
     void GameLayer::onPrepare() {
     }
 
@@ -47,45 +42,4 @@ namespace game {
     void GameLayer::onCursorMoved(double xPos, double yPos) {
     }
 
-    void GameLayer::onTCPSocketCreated() {
-    }
-
-    void GameLayer::onTCPConnectionFailed() {
-    }
-
-    void GameLayer::onTCPConnected() {
-    }
-
-    void GameLayer::onTCPSocketClosed() {
-    }
-
-    void GameLayer::onTCPSenderFailed(char *data, size_t size) {
-    }
-
-    void GameLayer::onTCPSenderSuccess() {
-    }
-
-    void GameLayer::onTCPReceiverFailed(char *data, size_t size) {
-    }
-
-    void GameLayer::onTCPReceiverSuccess(const YAML::Node &gdNode, const GDHeader &header) {
-    }
-
-    void GameLayer::onUDPSocketCreated() {
-    }
-
-    void GameLayer::onUDPSocketClosed() {
-    }
-
-    void GameLayer::onUDPSenderFailed(char *data, size_t size) {
-    }
-
-    void GameLayer::onUDPSenderSuccess() {
-    }
-
-    void GameLayer::onUDPReceiverFailed(char *data, size_t size) {
-    }
-
-    void GameLayer::onUDPReceiverSuccess(const YAML::Node &gdNode, const GDHeader &header) {
-    }
 }
