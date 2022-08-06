@@ -9,7 +9,7 @@ namespace engine::math {
     void update(ViewMatrix2d &viewMatrix2D) {
         viewMatrix2D.isUpdated = true;
         math::mat4f identity;
-        auto rotMat = math::rotate(identity, viewMatrix2D.rotation, {0, 0, 1});
+        auto rotMat = math::rotateZ(identity, viewMatrix2D.rotation);
         viewMatrix2D.value = math::translate(rotMat, -viewMatrix2D.position);
     }
 

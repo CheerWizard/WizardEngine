@@ -59,16 +59,7 @@ namespace engine::math {
     void serialize(YAML::Emitter& out, const char* key, const PerspectiveMatrix& projection);
     void deserialize(const YAML::Node& parent, const char* key, PerspectiveMatrix& projection);
 
-    class Projections final {
-
-    private:
-        Projections() = default;
-        ~Projections() = default;
-
-    public:
-        static void update(OrthographicMatrix &orthographicMatrix);
-        static void update(PerspectiveMatrix &perspectiveMatrix);
-
-    };
+    void update(OrthographicMatrix &orthographicMatrix);
+    void update(PerspectiveMatrix &perspectiveMatrix);
 
 }

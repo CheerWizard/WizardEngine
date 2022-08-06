@@ -11,25 +11,22 @@ namespace engine::math {
 
         auto identity = math::mat4f();
         auto translationMatrix = math::translate(identity, math::vec3f(modelMatrix2D.position, 1));
-        auto rotationMatrix = math::rotate(translationMatrix, modelMatrix2D.rotation, math::vec3f(0, 0, 1));
-        modelMatrix2D.value = rotationMatrix * math::vec3f(modelMatrix2D.scale, 1);
+        auto rotationMatrix = math::rotateZ(translationMatrix, modelMatrix2D.rotation);
     }
 
     void updateModel3d(ModelMatrix3d &modelMatrix3D) {
         modelMatrix3D.isUpdated = true;
 
-        auto identity = math::mat4f();
-        auto posMat = math::translate(identity, modelMatrix3D.position);
+        mat4f identity;
+        auto translation = math::translate(identity, modelMatrix3D.position);
 
-        auto& rot = modelMatrix3D.rotation;
-        auto rotMatX = math::rotate(identity, rot.x(), math::vec3f(1, 0, 0));
-        auto rotMatY = math::rotate(identity, rot.y(), math::vec3f(0, 1, 0));
-        auto rotMatZ = math::rotate(identity, rot.z(), math::vec3f(0, 0, 1));
-        auto rotMat = rotMatZ * rotMatY * rotMatX;
+        const auto& rot = modelMatrix3D.rotation;
+        auto rotMatX = math::rotateX(identity, rot.x());
+        auto rotMatY = math::rotateY(identity, rot.y());
+        auto rotMatZ = math::rotateZ(identity, rot.z());
+        auto rotation = rotMatZ * rotMatY * rotMatX;
 
-        auto scaleMat = identity * modelMatrix3D.scale;
-
-        modelMatrix3D.value = posMat * rotMat * scaleMat;
+        auto scale = math::scale(identity, modelMatrix3D.scale);
     }
 
     void serialize(YAML::Emitter& out, const char* key, const ModelMatrix2d& model) {

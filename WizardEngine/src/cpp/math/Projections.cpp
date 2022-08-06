@@ -50,7 +50,7 @@ namespace engine::math {
         }
     }
 
-    void Projections::update(OrthographicMatrix &orthographicMatrix) {
+    void update(OrthographicMatrix &orthographicMatrix) {
         orthographicMatrix.isUpdated = true;
         orthographicMatrix.value = math::ortho(
                 orthographicMatrix.left,
@@ -62,10 +62,10 @@ namespace engine::math {
         );
     }
 
-    void Projections::update(PerspectiveMatrix &perspectiveMatrix) {
+    void update(PerspectiveMatrix &perspectiveMatrix) {
         perspectiveMatrix.isUpdated = true;
         perspectiveMatrix.value = math::perspective(
-                math::radians(perspectiveMatrix.fieldOfView),
+                perspectiveMatrix.fieldOfView,
                 perspectiveMatrix.aspectRatio,
                 perspectiveMatrix.zNear,
                 perspectiveMatrix.zFar

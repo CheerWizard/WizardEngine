@@ -56,6 +56,21 @@ namespace engine::math {
             v[1] *= scalar;
         }
 
+        void operator +=(T scalar) {
+            v[0] += scalar;
+            v[1] += scalar;
+        }
+
+        void operator -=(T scalar) {
+            v[0] -= scalar;
+            v[1] -= scalar;
+        }
+
+        void operator /=(T scalar) {
+            v[0] /= scalar;
+            v[1] /= scalar;
+        }
+
         void operator +=(const vec2<T>& vec) {
             v[0] += vec[0];
             v[1] += vec[1];
@@ -64,6 +79,11 @@ namespace engine::math {
         void operator -=(const vec2<T>& vec) {
             v[0] -= vec[0];
             v[1] -= vec[1];
+        }
+
+        void operator /=(const vec2<T>& vec) {
+            v[0] /= vec[0];
+            v[1] /= vec[1];
         }
 
         vec2<T>& operator =(const vec2<T>& vec) {
@@ -116,7 +136,7 @@ namespace engine::math {
             return { v[0] / vec[0], v[1] / vec[1] };
         }
 
-        T operator *(const vec2<T>& vec) {
+        T dotP(const vec2<T>& vec) {
             return dot(*this, vec, 2);
         }
 
@@ -132,10 +152,6 @@ namespace engine::math {
         vec2<T> normalize() const {
             auto m = length();
             return { v[0] / m, v[1] / m };
-        }
-
-        void dot(const vec2<T>& vec, u32 i) {
-            v[i] = v[0] * vec.x() + v[1] * vec.y();
         }
     };
 
@@ -174,6 +190,24 @@ namespace engine::math {
             v[2] *= scalar;
         }
 
+        void operator +=(T scalar) {
+            v[0] += scalar;
+            v[1] += scalar;
+            v[2] += scalar;
+        }
+
+        void operator -=(T scalar) {
+            v[0] -= scalar;
+            v[1] -= scalar;
+            v[2] -= scalar;
+        }
+
+        void operator /=(T scalar) {
+            v[0] /= scalar;
+            v[1] /= scalar;
+            v[2] /= scalar;
+        }
+
         void operator +=(const vec3<T>& vec) {
             v[0] += vec[0];
             v[1] += vec[1];
@@ -184,6 +218,12 @@ namespace engine::math {
             v[0] -= vec[0];
             v[1] -= vec[1];
             v[2] -= vec[2];
+        }
+
+        void operator /=(const vec3<T>& vec) {
+            v[0] /= vec[0];
+            v[1] /= vec[1];
+            v[2] /= vec[2];
         }
 
         vec3<T>& operator =(const vec3<T>& vec) {
@@ -201,6 +241,30 @@ namespace engine::math {
             return { vec[0] * scalar, vec[1] * scalar, vec[2] * scalar };
         }
 
+        friend vec3<T> operator +(const vec3<T>& vec, T scalar) {
+            return { vec[0] + scalar, vec[1] + scalar, vec[2] + scalar };
+        }
+
+        friend vec3<T> operator +(T scalar, const vec3<T>& vec) {
+            return { vec[0] + scalar, vec[1] + scalar, vec[2] + scalar };
+        }
+
+        friend vec3<T> operator -(const vec3<T>& vec, T scalar) {
+            return { vec[0] - scalar, vec[1] - scalar, vec[2] - scalar };
+        }
+
+        friend vec3<T> operator -(T scalar, const vec3<T>& vec) {
+            return { scalar - vec[0], scalar - vec[1], scalar - vec[2] };
+        }
+
+        friend vec3<T> operator /(const vec3<T>& vec, T scalar) {
+            return { vec[0] / scalar, vec[1] / scalar, vec[2] / scalar };
+        }
+
+        friend vec3<T> operator /(T scalar, const vec3<T>& vec) {
+            return { scalar / vec[0], scalar / vec[1], scalar / vec[2] };
+        }
+
         vec3<T> operator +(const vec3<T>& vec) const {
             return { v[0] + vec[0], v[1] + vec[1], v[2] + vec[2] };
         }
@@ -213,7 +277,7 @@ namespace engine::math {
             return { v[0] / vec[0], v[1] / vec[1], v[2] / vec[2] };
         }
 
-        T operator *(const vec3<T>& vec) {
+        T dotP(const vec3<T>& vec) {
             return dot(*this, vec, 3);
         }
 
@@ -230,10 +294,6 @@ namespace engine::math {
         vec3<T> normalize() const {
             auto m = length();
             return { v[0] / m, v[1] / m, v[2] / m };
-        }
-
-        void dot(const vec3<T>& vec, u32 i) {
-            v[i] = v[0] * vec.x() + v[1] * vec.y() + v[2] * vec.z();
         }
     };
 
@@ -276,6 +336,27 @@ namespace engine::math {
             v[3] *= scalar;
         }
 
+        void operator +=(T scalar) {
+            v[0] += scalar;
+            v[1] += scalar;
+            v[2] += scalar;
+            v[3] += scalar;
+        }
+
+        void operator -=(T scalar) {
+            v[0] -= scalar;
+            v[1] -= scalar;
+            v[2] -= scalar;
+            v[3] -= scalar;
+        }
+
+        void operator /=(T scalar) {
+            v[0] /= scalar;
+            v[1] /= scalar;
+            v[2] /= scalar;
+            v[3] /= scalar;
+        }
+
         void operator +=(const vec4<T>& vec) {
             v[0] += vec[0];
             v[1] += vec[1];
@@ -288,6 +369,13 @@ namespace engine::math {
             v[1] -= vec[1];
             v[2] -= vec[2];
             v[3] -= vec[3];
+        }
+
+        void operator /=(const vec4<T>& vec) {
+            v[0] /= vec[0];
+            v[1] /= vec[1];
+            v[2] /= vec[2];
+            v[3] /= vec[3];
         }
 
         vec4<T>& operator =(const vec4<T>& vec) {
@@ -306,6 +394,30 @@ namespace engine::math {
             return { vec[0] * scalar, vec[1] * scalar, vec[2] * scalar, vec[3] * scalar };
         }
 
+        friend vec4<T> operator +(const vec4<T>& vec, T scalar) {
+            return { vec[0] + scalar, vec[1] + scalar, vec[2] + scalar, vec[3] + scalar };
+        }
+
+        friend vec4<T> operator +(T scalar, const vec4<T>& vec) {
+            return { vec[0] + scalar, vec[1] + scalar, vec[2] + scalar, vec[3] + scalar };
+        }
+
+        friend vec4<T> operator -(const vec4<T>& vec, T scalar) {
+            return { vec[0] - scalar, vec[1] - scalar, vec[2] - scalar, vec[3] - scalar };
+        }
+
+        friend vec4<T> operator -(T scalar, const vec4<T>& vec) {
+            return { scalar - vec[0], scalar - vec[1], scalar - vec[2], scalar - vec[3] };
+        }
+
+        friend vec4<T> operator /(const vec4<T>& vec, T scalar) {
+            return { vec[0] / scalar, vec[1] / scalar, vec[2] / scalar, vec[3] / scalar };
+        }
+
+        friend vec4<T> operator /(T scalar, const vec4<T>& vec) {
+            return { scalar / vec[0], scalar / vec[1], scalar / vec[2], scalar / vec[3] };
+        }
+
         vec4<T> operator +(const vec4<T>& vec) const {
             return { v[0] + vec[0], v[1] + vec[1], v[2] + vec[2], v[3] + vec[3] };
         }
@@ -318,8 +430,12 @@ namespace engine::math {
             return { v[0] / vec[0], v[1] / vec[1], v[2] / vec[2], v[3] / vec[3] };
         }
 
-        T operator *(const vec4<T>& vec) {
-            return dot(*this, vec, 4);
+        T dotP(const vec4<T>& vec) const {
+            return x() * vec.x() + y() * vec.y() + z() * vec.z() + w() * vec.w();
+        }
+
+        T dotP(const vec3<T>& vec) const {
+            return x() * vec.x() + y() * vec.y() + z() * vec.z() + w();
         }
 
         friend vec4<T> operator -(const vec4<T>& vec) {
@@ -336,10 +452,6 @@ namespace engine::math {
         vec4<T> normalize() const {
             auto m = length();
             return { v[0] / m, v[1] / m, v[2] / m, v[3] / m };
-        }
-
-        void dot(const vec4<T>& vec, u32 i) {
-            v[i] = v[0] * vec.x() + v[1] * vec.y() + v[2] * vec.z() + v[3] * vec.w();
         }
     };
 
@@ -377,9 +489,24 @@ namespace engine::math {
 
         mat2() = default;
 
-        void operator *(T scalar) {
-            v0 * scalar;
-            v1 * scalar;
+        void operator *=(T scalar) {
+            v0 *= scalar;
+            v1 *= scalar;
+        }
+
+        void operator +=(T scalar) {
+            v0 += scalar;
+            v1 += scalar;
+        }
+
+        void operator -=(T scalar) {
+            v0 -= scalar;
+            v1 -= scalar;
+        }
+
+        void operator /=(T scalar) {
+            v0 /= scalar;
+            v1 /= scalar;
         }
     };
 
@@ -391,10 +518,28 @@ namespace engine::math {
 
         mat3() = default;
 
-        void operator *(T scalar) {
-            v0 * scalar;
-            v1 * scalar;
-            v2 * scalar;
+        void operator *=(T scalar) {
+            v0 *= scalar;
+            v1 *= scalar;
+            v2 *= scalar;
+        }
+
+        void operator +=(T scalar) {
+            v0 += scalar;
+            v1 += scalar;
+            v2 += scalar;
+        }
+
+        void operator -=(T scalar) {
+            v0 -= scalar;
+            v1 -= scalar;
+            v2 -= scalar;
+        }
+
+        void operator /=(T scalar) {
+            v0 /= scalar;
+            v1 /= scalar;
+            v2 /= scalar;
         }
     };
 
@@ -407,84 +552,98 @@ namespace engine::math {
 
         mat4() = default;
 
-        mat4<T>& operator *(T scalar) {
-            v0 * scalar;
-            v1 * scalar;
-            v2 * scalar;
-            v3 * scalar;
-            return *this;
+        void operator *=(T scalar) {
+            v0 *= scalar;
+            v1 *= scalar;
+            v2 *= scalar;
+            v3 *= scalar;
+        }
+
+        void operator +=(T scalar) {
+            v0 += scalar;
+            v1 += scalar;
+            v2 += scalar;
+            v3 += scalar;
+        }
+
+        void operator -=(T scalar) {
+            v0 -= scalar;
+            v1 -= scalar;
+            v2 -= scalar;
+            v3 -= scalar;
+        }
+
+        void operator /=(T scalar) {
+            v0 /= scalar;
+            v1 /= scalar;
+            v2 /= scalar;
+            v3 /= scalar;
         }
 
         vec4<T> col(u32 i) const {
             return { v0[i], v1[i], v2[i], v3[i] };
         }
 
-        // returns column vector
-        vec4<T> operator [](u32 i) const {
-            return col(i);
+        vec3<T> operator *=(const vec3<T>& vec) {
+            return { v0.dotP(vec), v1.dotP(vec), v2.dotP(vec) };
         }
 
-        mat4<T>& operator *(const vec3<T>& vec) {
-            v0 * vec.v[0];
-            v1 * vec.v[1];
-            v2 * vec.v[2];
-            return *this;
+        vec3<T> operator *(const vec3<T>& vec) {
+            return { v0.dotP(vec), v1.dotP(vec), v2.dotP(vec) };
         }
 
-        mat4<T>& operator *(const vec4<T>& vec) {
-            v0 * vec.v[0];
-            v1 * vec.v[1];
-            v2 * vec.v[2];
-            v3 * vec.v[3];
-            return *this;
+        vec4<T> operator *(const vec4<T>& vec) {
+            return { v0.dotP(vec), v1.dotP(vec), v2.dotP(vec), v3.dotP(vec) };
         }
 
-        mat4<T>& operator *(const mat4<T>& mat) {
-            v0.dot(mat[0], 0);
-            v0.dot(mat[1], 1);
-            v0.dot(mat[2], 2);
-            v0.dot(mat[3], 3);
+        mat4<T>& operator *=(const mat4<T>& mat) {
+            v0[0] = v0.dotP(mat.col(0));
+            v0[1] = v0.dotP(mat.col(1));
+            v0[2] = v0.dotP(mat.col(2));
+            v0[3] = v0.dotP(mat.col(3));
 
-            v1.dot(mat[0], 0);
-            v1.dot(mat[1], 1);
-            v1.dot(mat[2], 2);
-            v1.dot(mat[3], 3);
+            v1[0] = v1.dotP(mat.col(0));
+            v1[1] = v1.dotP(mat.col(1));
+            v1[2] = v1.dotP(mat.col(2));
+            v1[3] = v1.dotP(mat.col(3));
 
-            v2.dot(mat[0], 0);
-            v2.dot(mat[1], 1);
-            v2.dot(mat[2], 2);
-            v2.dot(mat[3], 3);
+            v2[0] = v2.dotP(mat.col(0));
+            v2[1] = v2.dotP(mat.col(1));
+            v2[2] = v2.dotP(mat.col(2));
+            v2[3] = v2.dotP(mat.col(3));
 
-            v3.dot(mat[0], 0);
-            v3.dot(mat[1], 1);
-            v3.dot(mat[2], 2);
-            v3.dot(mat[3], 3);
+            v3[0] = v3.dotP(mat.col(0));
+            v3[1] = v3.dotP(mat.col(1));
+            v3[2] = v3.dotP(mat.col(2));
+            v3[3] = v3.dotP(mat.col(3));
 
             return *this;
         }
 
         mat4<T> operator *(const mat4<T>& mat) const {
-            return {
-                    dot(v0, mat[0]),
-                    dot(v0, mat[1]),
-                    dot(v0, mat[2]),
-                    dot(v0, mat[3]),
+            mat4<T> result;
 
-                    dot(v1, mat[0]),
-                    dot(v1, mat[1]),
-                    dot(v1, mat[2]),
-                    dot(v1, mat[3]),
+            result.v0[0] = v0.dotP(mat.col(0));
+            result.v0[1] = v0.dotP(mat.col(1));
+            result.v0[2] = v0.dotP(mat.col(2));
+            result.v0[3] = v0.dotP(mat.col(3));
 
-                    dot(v2, mat[0]),
-                    dot(v2, mat[1]),
-                    dot(v2, mat[2]),
-                    dot(v2, mat[3]),
+            result.v1[0] = v1.dotP(mat.col(0));
+            result.v1[1] = v1.dotP(mat.col(1));
+            result.v1[2] = v1.dotP(mat.col(2));
+            result.v1[3] = v1.dotP(mat.col(3));
 
-                    dot(v3, mat[0]),
-                    dot(v3, mat[1]),
-                    dot(v3, mat[2]),
-                    dot(v3, mat[3]),
-            };
+            result.v2[0] = v2.dotP(mat.col(0));
+            result.v2[1] = v2.dotP(mat.col(1));
+            result.v2[2] = v2.dotP(mat.col(2));
+            result.v2[3] = v2.dotP(mat.col(3));
+
+            result.v3[0] = v3.dotP(mat.col(0));
+            result.v3[1] = v3.dotP(mat.col(1));
+            result.v3[2] = v3.dotP(mat.col(2));
+            result.v3[3] = v3.dotP(mat.col(3));
+
+            return result;
         }
 
         mat4<T>& operator =(const mat4<T>& mat) {
@@ -541,37 +700,60 @@ namespace engine::math {
     template<typename T>
     mat4<T> translate(const mat4<T>& mat, const vec3<T>& vec) {
         mat4<T> result = mat;
-        result.v3 = mat.v0 * vec.v[0] + mat.v1 * vec[1] + mat.v2 * vec.v[2] + mat.v3;
+        result.v0[3] = vec.x();
+        result.v1[3] = vec.y();
+        result.v2[3] = vec.z();
         return result;
     }
 
     template<typename T>
-    mat4<T> rotate(const mat4<T>& mat, f32 angle, const vec3<T>& v) {
-        const T a = angle;
-        const T c = cos(a);
-        const T s = sin(a);
+    mat4<T> rotateX(const mat4<T>& mat, f32 angle) {
+        mat4<T> result = mat;
+        auto sine = sin(angle);
+        auto cosine = cos(angle);
 
-        vec3<T> axis(v.normalize());
-        vec3<T> temp((T(1) - c) * axis);
+        result.v1[1] = cosine;
+        result.v1[2] = -sine;
+        result.v2[1] = sine;
+        result.v2[2] = cosine;
 
-        mat4<T> rotMat;
-        rotMat.v0[0] = c + temp[0] * axis[0];
-        rotMat.v0[1] = temp[0] * axis[1] + s * axis[2];
-        rotMat.v0[2] = temp[0] * axis[2] - s * axis[1];
+        return result;
+    }
 
-        rotMat.v1[0] = temp[1] * axis[0] - s * axis[2];
-        rotMat.v1[1] = c + temp[1] * axis[1];
-        rotMat.v1[2] = temp[1] * axis[2] + s * axis[0];
+    template<typename T>
+    mat4<T> rotateY(const mat4<T>& mat, f32 angle) {
+        mat4<T> result = mat;
+        auto sine = sin(angle);
+        auto cosine = cos(angle);
 
-        rotMat.v2[0] = temp[2] * axis[0] + s * axis[1];
-        rotMat.v2[1] = temp[2] * axis[1] - s * axis[0];
-        rotMat.v2[2] = c + temp[2] * axis[2];
+        result.v0[0] = cosine;
+        result.v0[2] = sine;
+        result.v2[0] = -sine;
+        result.v2[2] = cosine;
 
-        mat4<T> result;
-        result.v0 = mat.v0 * rotMat.v0[0] + mat.v1 * rotMat.v0[1] + mat.v2 * rotMat.v0[2];
-        result.v1 = mat.v0 * rotMat.v1[0] + mat.v1 * rotMat.v1[1] + mat.v2 * rotMat.v1[2];
-        result.v2 = mat.v0 * rotMat.v2[0] + mat.v1 * rotMat.v2[1] + mat.v2 * rotMat.v2[2];
-        result.v3 = mat.v3;
+        return result;
+    }
+
+    template<typename T>
+    mat4<T> rotateZ(const mat4<T>& mat, f32 angle) {
+        mat4<T> result = mat;
+        auto sine = sin(angle);
+        auto cosine = cos(angle);
+
+        result.v0[0] = cosine;
+        result.v0[1] = -sine;
+        result.v1[0] = sine;
+        result.v1[1] = cosine;
+
+        return result;
+    }
+
+    template<typename T>
+    mat4<T> scale(const mat4<T>& mat, const vec3<T>& scalar) {
+        mat4<T> result = mat;
+        result.v0[0] = scalar.x();
+        result.v1[1] = scalar.y();
+        result.v2[2] = scalar.z();
         return result;
     }
 
@@ -590,44 +772,44 @@ namespace engine::math {
     }
 
     template<typename T>
-    mat4<T> perspective(T fov, T aspect, T zNear, T zFar) {
-        if (abs(aspect - std::numeric_limits<T>::epsilon()) > static_cast<T>(0)) {
-            ENGINE_ERR("perspective(): assertion failed!");
-        }
-
-        T const tanHalfFov = tan(fov / static_cast<T>(2));
+    mat4<T> perspective(T fov, T aspect, T near, T far) {
+        const T theta = fov / static_cast<T>(2);
+        const T f = cos(theta) / sin(theta);
         mat4<T> result;
 
-        result.v0[0] = static_cast<T>(1) / (aspect * tanHalfFov);
-        result.v1[1] = static_cast<T>(1) / (tanHalfFov);
-        result.v2[2] = zFar / (zFar - zNear);
-        result.v2[3] = static_cast<T>(1);
-        result.v3[2] = -(zFar * zNear) / (zFar - zNear);
+        result.v0[0] = f / aspect;
+        result.v1[1] = f;
+        result.v2[2] = (far + near) / (near - far);
+        result.v2[3] = (2 * far * near) / (near - far);
+        result.v3[2] = -1;
+        result.v3[3] = 0;
 
         return result;
     }
 
     template<typename T>
     mat4<T> lookAt(const vec3<T>& eye, const vec3<T>& center, const vec3<T>& up) {
-        const vec3<T> f((center - eye).normalize());
-        const vec3<T> s(cross(f, up).normalize());
-        const vec3<T> u(cross(s, f));
+        vec3<T> z = (eye - center).normalize();
+        vec3<T> x = cross(up, z).normalize();
+        vec3<T> y = cross(z, x);
+        // define orientation matrix
+        mat4<T> orientation;
+        orientation.v0[0] = x.x();
+        orientation.v0[1] = y.x();
+        orientation.v0[2] = z.x();
+        orientation.v1[0] = x.y();
+        orientation.v1[1] = y.y();
+        orientation.v1[2] = z.y();
+        orientation.v2[0] = x.z();
+        orientation.v2[1] = y.z();
+        orientation.v2[2] = z.z();
+        // define translation matrix
+        mat4<T> translation;
+        translation.v3[0] = -eye.x();
+        translation.v3[1] = -eye.y();
+        translation.v3[2] = -eye.z();
 
-        mat4<T> result;
-        result.v0[0] = s[0];
-        result.v1[0] = s[1];
-        result.v2[0] = s[2];
-        result.v0[1] = u[0];
-        result.v1[1] = u[1];
-        result.v2[1] = u[2];
-        result.v0[2] =-f[0];
-        result.v1[2] =-f[1];
-        result.v2[2] =-f[2];
-        result.v3[0] =-dot(s, eye);
-        result.v3[1] =-dot(u, eye);
-        result.v3[2] = dot(f, eye);
-
-        return result;
+        return orientation * translation;
     }
 
 }

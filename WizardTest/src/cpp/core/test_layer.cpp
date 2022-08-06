@@ -252,7 +252,7 @@ namespace test {
             RUNTIME_INFO("Rotating SurvivalPack with value: {0}", rotationY);
             // handle data
             auto& modelMatrix = survivalBackPack.get<Transform3dComponent>()->modelMatrix;
-            modelMatrix.rotation.y += rotationY;
+            modelMatrix.rotation.v[1] += rotationY;
             updateModel3d(modelMatrix);
         }
     }
@@ -290,7 +290,7 @@ namespace test {
             RUNTIME_INFO("Rotating SurvivalPack with value: {0}", rotationY);
             // handle data
             auto& modelMatrix = survivalBackPack.get<Transform3dComponent>()->modelMatrix;
-            modelMatrix.rotation.y += rotationY;
+            modelMatrix.rotation.v[1] += rotationY;
             updateModel3d(modelMatrix);
         }
     }
