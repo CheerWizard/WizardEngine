@@ -27,6 +27,8 @@ namespace engine::math {
         auto rotation = rotMatZ * rotMatY * rotMatX;
 
         auto scale = math::scale(identity, modelMatrix3D.scale);
+
+        modelMatrix3D.value = translation * rotation * scale;
     }
 
     void serialize(YAML::Emitter& out, const char* key, const ModelMatrix2d& model) {

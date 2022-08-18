@@ -5,8 +5,11 @@
 #pragma once
 
 #include <core/Application.h>
+#include <graphics/GraphicsObject.h>
 
 namespace test {
+
+    using namespace engine::graphics;
 
     class TestLayer : public Layer,
             tcp::ClientListener, tcp::SenderListener, tcp::ReceiverListener,
@@ -71,7 +74,7 @@ namespace test {
 
     private:
         Ref<Camera3dController> cameraController;
-        Entity survivalBackPack;
+        Object3d<BatchVertex<Vertex3d>> survivalBackPack;
     };
 
 }

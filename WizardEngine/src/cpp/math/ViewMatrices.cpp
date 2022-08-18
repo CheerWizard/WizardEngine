@@ -44,8 +44,8 @@ namespace engine::math {
         out << YAML::BeginMap;
         out << YAML::Key << key;
         yaml::serialize(out, "name", vm.name);
-        yaml::serialize(out, "position", vm.position);
-        yaml::serialize(out, "rotation", vm.rotation);
+//        yaml::serialize(out, "position", vm.position);
+//        yaml::serialize(out, "rotation", vm.rotation);
         yaml::serialize(out, "scale", vm.scale);
         out << YAML::EndMap;
     }
@@ -54,8 +54,8 @@ namespace engine::math {
         auto root = parent[key];
         if (root) {
             yaml::deserialize(root, "name", vm.name);
-            yaml::deserialize(root, "position", vm.position);
-            yaml::deserialize(root, "rotation", vm.rotation);
+//            yaml::deserialize(root, "position", vm.position);
+//            yaml::deserialize(root, "rotation", vm.rotation);
             yaml::deserialize(root, "scale", vm.scale);
         }
     }

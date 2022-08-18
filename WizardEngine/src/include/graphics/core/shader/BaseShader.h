@@ -61,6 +61,7 @@ namespace engine::shader {
         void updateUniformBuffer(Vec3fUniform &uniform, const uint32_t &index = 0) const;
         void updateUniformBuffer(Vec4fUniform &uniform, const uint32_t &index = 0) const;
         void updateUniformBuffer(Mat4fUniform &uniform, const uint32_t &index = 0) const;
+        void updateUniformBuffer(GLMMat4fUniform &uniform, const uint32_t &index = 0) const;
 
         void updateScripts(const ecs::Entity &entity) const;
         void updateScripts(ecs::Registry &registry) const;

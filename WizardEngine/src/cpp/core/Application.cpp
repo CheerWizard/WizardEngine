@@ -29,8 +29,6 @@ namespace engine::core {
         setActiveScene(createRef<Scene>());
 
         audio::DeviceManager::createContext();
-
-        network::socket::init();
     }
 
     void Application::onPrepare() {
@@ -48,7 +46,6 @@ namespace engine::core {
         _scriptSystem->onDestroy();
         audio::MediaPlayer::clear();
         audio::DeviceManager::clear();
-        network::socket::cleanup();
     }
 
     void Application::onUpdate() {

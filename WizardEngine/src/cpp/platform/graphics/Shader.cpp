@@ -69,6 +69,13 @@ namespace engine::shader {
         glUniform3fv(location, 1, toFloatPtr(uniform));
     }
 
+    void Shader::setUniform(GLMVec3fUniform &uniform) const {
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+        auto location = glGetUniformLocation(programId, uniform.name);
+        glUniform3fv(location, 1, glm_toFloatPtr(uniform));
+    }
+
     void Shader::setUniform(Vec4fUniform &uniform) const {
         if (!uniform.isUpdated) return;
         uniform.isUpdated = false;
@@ -96,9 +103,20 @@ namespace engine::shader {
         glUniformMatrix4fv(location, 1, GL_FALSE, toFloatPtr(uniform));
     }
 
+    void Shader::setUniform(GLMMat4fUniform &uniform) const {
+        if (!uniform.isUpdated) return;
+        auto location = glGetUniformLocation(programId, uniform.name);
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm_toFloatPtr(uniform));
+    }
+
     void Shader::setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) const {
         if (!uniform.isUpdated) return;
         glUniformMatrix4fv(getUniformArrayElementLocation(uniform.name, index), 1, GL_FALSE, toFloatPtr(uniform));
+    }
+
+    void Shader::setUniformArrayElement(const u32 &index, GLMMat4fUniform &uniform) const {
+        if (!uniform.isUpdated) return;
+        glUniformMatrix4fv(getUniformArrayElementLocation(uniform.name, index), 1, GL_FALSE, glm_toFloatPtr(uniform));
     }
 
     void Shader::setUniformArrayElement(const uint32_t &index, IntUniform &uniform) const {

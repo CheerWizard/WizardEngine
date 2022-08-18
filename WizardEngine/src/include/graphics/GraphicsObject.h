@@ -14,6 +14,8 @@ namespace engine::graphics {
     class Object3d : public ecs::Entity {
 
     public:
+        Object3d() = default;
+
         Object3d(
                 const std::string &tag,
                 ecs::EntityContainer* container
@@ -67,5 +69,19 @@ namespace engine::graphics {
         }
 
         ~Object3d() = default;
+
+    public:
+        ModelMatrix3d& getTransform();
+        void applyTransform();
     };
+
+    template<typename T>
+    ModelMatrix3d& Object3d<T>::getTransform() {
+        return get<Transform3dComponent>()->modelMatrix;
+    }
+
+    template<typename T>
+    void Object3d<T>::applyTransform() {
+        math::updateModel3d(getTransform());
+    }
 }

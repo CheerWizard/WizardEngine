@@ -127,10 +127,10 @@ namespace engine::graphics {
         auto &viewPosition = camera.get<Camera3dComponent>()->viewProjection.viewMatrix.position.value;
         switch (zoomType) {
             case ZoomType::ZOOM_IN:
-                viewPosition.v[2] -= zoomSpeed / dt;
+                viewPosition[2] -= zoomSpeed / dt;
                 break;
             case ZoomType::ZOOM_OUT:
-                viewPosition.v[2] += zoomSpeed / dt;
+                viewPosition[2] += zoomSpeed / dt;
                 break;
         }
     }
@@ -141,39 +141,39 @@ namespace engine::graphics {
         switch (moveType) {
             case MoveType::DOWN:
                 ENGINE_INFO("Camera moved: DOWN");
-                viewPosition.v[1] -= moveSpeed / dt;
+                viewPosition[1] -= moveSpeed / dt;
                 break;
             case MoveType::UP:
                 ENGINE_INFO("Camera moved: UP");
-                viewPosition.v[1] += moveSpeed / dt;
+                viewPosition[1] += moveSpeed / dt;
                 break;
             case MoveType::LEFT:
                 ENGINE_INFO("Camera moved: LEFT");
-                viewPosition.v[0] += moveSpeed / dt;
+                viewPosition[0] += moveSpeed / dt;
                 break;
             case MoveType::RIGHT:
                 ENGINE_INFO("Camera moved: RIGHT");
-                viewPosition.v[0] -= moveSpeed / dt;
+                viewPosition[0] -= moveSpeed / dt;
                 break;
             case MoveType::RIGHT_DOWN:
                 ENGINE_INFO("Camera moved: RIGHT_DOWN");
-                viewPosition.v[0] -= moveSpeed / dt;
-                viewPosition.v[1] += moveSpeed / dt;
+                viewPosition[0] -= moveSpeed / dt;
+                viewPosition[1] += moveSpeed / dt;
                 break;
             case MoveType::RIGHT_UP:
                 ENGINE_INFO("Camera moved: RIGHT_UP");
-                viewPosition.v[0] -= moveSpeed / dt;
-                viewPosition.v[1] -= moveSpeed / dt;
+                viewPosition[0] -= moveSpeed / dt;
+                viewPosition[1] -= moveSpeed / dt;
                 break;
             case MoveType::LEFT_DOWN:
                 ENGINE_INFO("Camera moved: LEFT_DOWN");
-                viewPosition.v[0] += moveSpeed / dt;
-                viewPosition.v[1] += moveSpeed / dt;
+                viewPosition[0] += moveSpeed / dt;
+                viewPosition[1] += moveSpeed / dt;
                 break;
             case MoveType::LEFT_UP:
                 ENGINE_INFO("Camera moved: LEFT_UP");
-                viewPosition.v[0] += moveSpeed / dt;
-                viewPosition.v[1] -= moveSpeed / dt;
+                viewPosition[0] += moveSpeed / dt;
+                viewPosition[1] -= moveSpeed / dt;
                 break;
         }
     }
@@ -184,27 +184,27 @@ namespace engine::graphics {
         switch (rotateType) {
             case RotateType::LEFT_X:
                 ENGINE_INFO("Camera rotate: LEFT_X");
-                component->viewProjection.viewMatrix.rotation.v[0] -= rotateSpeed / dt;
+                component->viewProjection.viewMatrix.rotation[0] -= rotateSpeed / dt;
                 break;
             case RotateType::LEFT_Y:
                 ENGINE_INFO("Camera rotate: LEFT_Y");
-                component->viewProjection.viewMatrix.rotation.v[1] -= rotateSpeed / dt;
+                component->viewProjection.viewMatrix.rotation[1] -= rotateSpeed / dt;
                 break;
             case RotateType::LEFT_Z:
                 ENGINE_INFO("Camera rotate: LEFT_Z");
-                component->viewProjection.viewMatrix.rotation.v[2] -= rotateSpeed / dt;
+                component->viewProjection.viewMatrix.rotation[2] -= rotateSpeed / dt;
                 break;
             case RotateType::RIGHT_X:
                 ENGINE_INFO("Camera rotate: RIGHT_X");
-                component->viewProjection.viewMatrix.rotation.v[0] += rotateSpeed / dt;
+                component->viewProjection.viewMatrix.rotation[0] += rotateSpeed / dt;
                 break;
             case RotateType::RIGHT_Y:
                 ENGINE_INFO("Camera rotate: RIGHT_Y");
-                component->viewProjection.viewMatrix.rotation.v[1] += rotateSpeed / dt;
+                component->viewProjection.viewMatrix.rotation[1] += rotateSpeed / dt;
                 break;
             case RotateType::RIGHT_Z:
                 ENGINE_INFO("Camera rotate: RIGHT_Z");
-                component->viewProjection.viewMatrix.rotation.v[2] += rotateSpeed / dt;
+                component->viewProjection.viewMatrix.rotation[2] += rotateSpeed / dt;
                 break;
         }
     }
@@ -212,10 +212,10 @@ namespace engine::graphics {
     void Camera3dController::applyChanges() {
         auto component = camera.get<Camera3dComponent>();
         ENGINE_INFO("{0}: applyChanges()", tag);
-        ENGINE_INFO("{0}: position({1},{2},{3})", tag, component->viewProjection.viewMatrix.position.value.v[0],
-                    component->viewProjection.viewMatrix.position.value.v[1], component->viewProjection.viewMatrix.position.value.v[2]);
-        ENGINE_INFO("{0}: rotation({1},{2},{3})", tag, component->viewProjection.viewMatrix.rotation.v[0], component->viewProjection.viewMatrix.rotation.v[1],
-                    component->viewProjection.viewMatrix.rotation.v[2]);
+        ENGINE_INFO("{0}: position({1},{2},{3})", tag, component->viewProjection.viewMatrix.position.value[0],
+                    component->viewProjection.viewMatrix.position.value[1], component->viewProjection.viewMatrix.position.value[2]);
+        ENGINE_INFO("{0}: rotation({1},{2},{3})", tag, component->viewProjection.viewMatrix.rotation[0], component->viewProjection.viewMatrix.rotation[1],
+                    component->viewProjection.viewMatrix.rotation[2]);
         ENGINE_INFO("{0}: scale({1})", tag, component->viewProjection.viewMatrix.scale);
         math::ViewProjections::update(component->viewProjection);
     }
@@ -318,7 +318,7 @@ namespace engine::graphics {
 
     void Camera3dController::setPosition(const vec3f& position) {
         auto component = camera.get<Camera3dComponent>();
-        component->viewProjection.viewMatrix.position.value = position;
+        component->viewProjection.viewMatrix.position.value = { position[0], position[1], position[2] };
         math::ViewProjections::update(component->viewProjection);
     }
 
@@ -330,7 +330,7 @@ namespace engine::graphics {
 
     void Camera3dController::move(const vec2f &position) {
         auto &viewPosition = camera.get<Camera3dComponent>()->viewProjection.viewMatrix.position.value;
-        viewPosition.v[0] -= position.x() + moveSpeed / dt;
-        viewPosition.v[1] -= position.y() + moveSpeed / dt;
+        viewPosition[0] -= position.x() + moveSpeed / dt;
+        viewPosition[1] -= position.y() + moveSpeed / dt;
     }
 }

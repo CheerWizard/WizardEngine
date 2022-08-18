@@ -6,9 +6,9 @@
 
 #include <yaml/yaml.h>
 
-#define DEFAULT_FIELD_OF_VIEW 60.0f
-#define DEFAULT_Z_NEAR 0.01f
-#define DEFAULT_Z_FAR 1000.0f
+#define DEFAULT_FIELD_OF_VIEW 45.0f
+#define DEFAULT_Z_NEAR 0.1f
+#define DEFAULT_Z_FAR 100.0f
 
 namespace engine::math {
 
@@ -43,7 +43,7 @@ namespace engine::math {
     };
 
     struct PerspectiveMatrix : shader::Mat4fUniform {
-        float aspectRatio = 1;
+        float aspectRatio = 1024.0f / 768.0f;
         float fieldOfView = DEFAULT_FIELD_OF_VIEW;
         float zNear = DEFAULT_Z_NEAR;
         float zFar = DEFAULT_Z_FAR;

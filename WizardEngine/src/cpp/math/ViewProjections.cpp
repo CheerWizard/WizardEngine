@@ -17,7 +17,7 @@ namespace engine::math {
         viewProjection3D.isUpdated = true;
         math::update(viewProjection3D.perspectiveMatrix);
         math::update(viewProjection3D.viewMatrix);
-        viewProjection3D.value = viewProjection3D.perspectiveMatrix.value * viewProjection3D.viewMatrix.value;
+        viewProjection3D.value = viewProjection3D.viewMatrix.value * viewProjection3D.perspectiveMatrix.value;
     }
 
     void serialize(YAML::Emitter& out, const char* key, const ViewProjection2d& vp) {

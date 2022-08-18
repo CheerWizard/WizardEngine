@@ -117,6 +117,12 @@ namespace engine::shader {
         updateUniformBuffer(UniformData { toFloatPtr(uniform), index });
     }
 
+    void BaseShader::updateUniformBuffer(GLMMat4fUniform &uniform, const uint32_t &index) const {
+        if (!uniform.isUpdated) return;
+        uniform.isUpdated = false;
+        updateUniformBuffer(UniformData { glm_toFloatPtr(uniform), index });
+    }
+
     void BaseShader::applyUbf(const UniformBlockFormat &uniformBlockFormat) {
         uniformBuffer.applyFormat(uniformBlockFormat);
     }

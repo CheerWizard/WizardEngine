@@ -16,7 +16,7 @@ namespace engine::math {
 
     struct ViewMatrix3d : Mat4fUniform {
         Vec3fUniform position = { "viewPosition", DEFAULT_VIEW_POS_3D };
-        math::vec3f rotation = DEFAULT_VIEW_ROT_3D;
+        vec3f rotation = DEFAULT_VIEW_ROT_3D;
         float scale = 1;
 
         ViewMatrix3d() {

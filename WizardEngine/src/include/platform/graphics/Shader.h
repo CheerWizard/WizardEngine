@@ -63,15 +63,18 @@ namespace engine::shader {
         void setUniform(DoubleUniform &uniform) const;
         void setUniform(Vec2fUniform &uniform) const;
         void setUniform(Vec3fUniform &uniform) const;
+        void setUniform(GLMVec3fUniform &uniform) const;
         void setUniform(Vec4fUniform &uniform) const;
         void setUniform(Mat2fUniform &uniform) const;
         void setUniform(Mat3fUniform &uniform) const;
         void setUniform(Mat4fUniform &uniform) const;
+        void setUniform(GLMMat4fUniform &uniform) const;
 
         void setUniformArrayElement(const u32 &index, Mat4fUniform &uniform) const;
         void setUniformArrayElement(const u32 &index, IntUniform &uniform) const;
         void setUniformArrayElement(const u32 &index, FloatUniform &uniform) const;
         void setUniformArrayElement(const u32 &index, Vec4fUniform &uniform) const;
+        void setUniformArrayElement(const u32 &index, GLMMat4fUniform &uniform) const;
 
         void setUniformStructField(const char *structName, BoolUniform &structField) const;
         void setUniformStructField(const char *structName, IntUniform &structField) const;

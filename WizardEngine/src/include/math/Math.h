@@ -312,6 +312,13 @@ namespace engine::math {
 
         vec4() = default;
 
+        vec4(T value) {
+            v[0] = value;
+            v[1] = value;
+            v[2] = value;
+            v[3] = value;
+        }
+
         vec4(T x, T y, T z, T w) {
             v[0] = x;
             v[1] = y;
@@ -552,6 +559,13 @@ namespace engine::math {
 
         mat4() = default;
 
+        mat4(T value) {
+            v0 = vec4(value);
+            v1 = vec4(value);
+            v2 = vec4(value);
+            v3 = vec4(value);
+        }
+
         void operator *=(T scalar) {
             v0 *= scalar;
             v1 *= scalar;
@@ -621,29 +635,68 @@ namespace engine::math {
         }
 
         mat4<T> operator *(const mat4<T>& mat) const {
+            auto SrcA0 = col(0);
+            auto SrcA1 = col(1);
+            auto SrcA2 = col(2);
+            auto SrcA3 = col(3);
+
+            auto SrcB0 = mat.col(0);
+            auto SrcB1 = mat.col(1);
+            auto SrcB2 = mat.col(2);
+            auto SrcB3 = mat.col(3);
+
             mat4<T> result;
 
-            result.v0[0] = v0.dotP(mat.col(0));
-            result.v0[1] = v0.dotP(mat.col(1));
-            result.v0[2] = v0.dotP(mat.col(2));
-            result.v0[3] = v0.dotP(mat.col(3));
+            auto col0 = SrcA0 * SrcB0[0] + SrcA1 * SrcB0[1] + SrcA2 * SrcB0[2] + SrcA3 * SrcB0[3];
+            auto col1 = SrcA0 * SrcB1[0] + SrcA1 * SrcB1[1] + SrcA2 * SrcB1[2] + SrcA3 * SrcB1[3];
+            auto col2 = SrcA0 * SrcB2[0] + SrcA1 * SrcB2[1] + SrcA2 * SrcB2[2] + SrcA3 * SrcB2[3];
+            auto col3 = SrcA0 * SrcB3[0] + SrcA1 * SrcB3[1] + SrcA2 * SrcB3[2] + SrcA3 * SrcB3[3];
 
-            result.v1[0] = v1.dotP(mat.col(0));
-            result.v1[1] = v1.dotP(mat.col(1));
-            result.v1[2] = v1.dotP(mat.col(2));
-            result.v1[3] = v1.dotP(mat.col(3));
+            result.v0[0] = col0[0];
+            result.v1[0] = col0[1];
+            result.v2[0] = col0[2];
+            result.v3[0] = col0[3];
 
-            result.v2[0] = v2.dotP(mat.col(0));
-            result.v2[1] = v2.dotP(mat.col(1));
-            result.v2[2] = v2.dotP(mat.col(2));
-            result.v2[3] = v2.dotP(mat.col(3));
+            result.v0[1] = col1[0];
+            result.v1[1] = col1[1];
+            result.v2[1] = col1[2];
+            result.v3[1] = col1[3];
 
-            result.v3[0] = v3.dotP(mat.col(0));
-            result.v3[1] = v3.dotP(mat.col(1));
-            result.v3[2] = v3.dotP(mat.col(2));
-            result.v3[3] = v3.dotP(mat.col(3));
+            result.v0[2] = col2[0];
+            result.v1[2] = col2[1];
+            result.v2[2] = col2[2];
+            result.v3[2] = col2[3];
+
+            result.v0[3] = col3[0];
+            result.v1[3] = col3[1];
+            result.v2[3] = col3[2];
+            result.v3[3] = col3[3];
 
             return result;
+
+//            mat4<T> result;
+//
+//            result.v0[0] = v0.dotP(mat.col(0));
+//            result.v0[1] = v0.dotP(mat.col(1));
+//            result.v0[2] = v0.dotP(mat.col(2));
+//            result.v0[3] = v0.dotP(mat.col(3));
+//
+//            result.v1[0] = v1.dotP(mat.col(0));
+//            result.v1[1] = v1.dotP(mat.col(1));
+//            result.v1[2] = v1.dotP(mat.col(2));
+//            result.v1[3] = v1.dotP(mat.col(3));
+//
+//            result.v2[0] = v2.dotP(mat.col(0));
+//            result.v2[1] = v2.dotP(mat.col(1));
+//            result.v2[2] = v2.dotP(mat.col(2));
+//            result.v2[3] = v2.dotP(mat.col(3));
+//
+//            result.v3[0] = v3.dotP(mat.col(0));
+//            result.v3[1] = v3.dotP(mat.col(1));
+//            result.v3[2] = v3.dotP(mat.col(2));
+//            result.v3[3] = v3.dotP(mat.col(3));
+//
+//            return result;
         }
 
         mat4<T>& operator =(const mat4<T>& mat) {
@@ -709,8 +762,8 @@ namespace engine::math {
     template<typename T>
     mat4<T> rotateX(const mat4<T>& mat, f32 angle) {
         mat4<T> result = mat;
-        auto sine = sin(angle);
-        auto cosine = cos(angle);
+        auto sine = sin(math::radians(angle));
+        auto cosine = cos(math::radians(angle));
 
         result.v1[1] = cosine;
         result.v1[2] = -sine;
@@ -723,8 +776,8 @@ namespace engine::math {
     template<typename T>
     mat4<T> rotateY(const mat4<T>& mat, f32 angle) {
         mat4<T> result = mat;
-        auto sine = sin(angle);
-        auto cosine = cos(angle);
+        auto sine = sin(math::radians(angle));
+        auto cosine = cos(math::radians(angle));
 
         result.v0[0] = cosine;
         result.v0[2] = sine;
@@ -737,8 +790,8 @@ namespace engine::math {
     template<typename T>
     mat4<T> rotateZ(const mat4<T>& mat, f32 angle) {
         mat4<T> result = mat;
-        auto sine = sin(angle);
-        auto cosine = cos(angle);
+        auto sine = sin(math::radians(angle));
+        auto cosine = cos(math::radians(angle));
 
         result.v0[0] = cosine;
         result.v0[1] = -sine;
@@ -773,43 +826,41 @@ namespace engine::math {
 
     template<typename T>
     mat4<T> perspective(T fov, T aspect, T near, T far) {
-        const T theta = fov / static_cast<T>(2);
-        const T f = cos(theta) / sin(theta);
-        mat4<T> result;
+        assert(aspect != static_cast<T>(0));
+        assert(far != near);
 
-        result.v0[0] = f / aspect;
-        result.v1[1] = f;
-        result.v2[2] = (far + near) / (near - far);
-        result.v2[3] = (2 * far * near) / (near - far);
-        result.v3[2] = -1;
-        result.v3[3] = 0;
+        const T s = 1 / (tan(fov * PI / 360));
+
+        mat4<T> result(static_cast<T>(0));
+        result.v0[0] = s;
+        result.v1[1] = s;
+        result.v2[2] = -far / (far - near);
+        result.v2[3] = - static_cast<T>(1);
+        result.v3[2] = -(far * near) / (far - near);
 
         return result;
     }
 
     template<typename T>
     mat4<T> lookAt(const vec3<T>& eye, const vec3<T>& center, const vec3<T>& up) {
-        vec3<T> z = (eye - center).normalize();
-        vec3<T> x = cross(up, z).normalize();
-        vec3<T> y = cross(z, x);
-        // define orientation matrix
-        mat4<T> orientation;
-        orientation.v0[0] = x.x();
-        orientation.v0[1] = y.x();
-        orientation.v0[2] = z.x();
-        orientation.v1[0] = x.y();
-        orientation.v1[1] = y.y();
-        orientation.v1[2] = z.y();
-        orientation.v2[0] = x.z();
-        orientation.v2[1] = y.z();
-        orientation.v2[2] = z.z();
-        // define translation matrix
-        mat4<T> translation;
-        translation.v3[0] = -eye.x();
-        translation.v3[1] = -eye.y();
-        translation.v3[2] = -eye.z();
+        vec3<T> f = (center - eye).normalize();
+        vec3<T> s = cross(f, up).normalize();
+        vec3<T> u = cross(s, f);
+        mat4<T> result;
 
-        return orientation * translation;
+        result.v0[0] = s.x();
+        result.v1[0] = s.y();
+        result.v2[0] = s.z();
+        result.v0[1] = u.x();
+        result.v1[1] = u.y();
+        result.v2[1] = u.z();
+        result.v0[2] =-f.x();
+        result.v1[2] =-f.y();
+        result.v2[2] =-f.z();
+        result.v3[0] =-dot(s, eye);
+        result.v3[1] =-dot(u, eye);
+        result.v3[2] = dot(f, eye);
+
+        return result;
     }
-
 }

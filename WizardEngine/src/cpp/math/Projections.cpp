@@ -3,6 +3,8 @@
 //
 
 #include <math/Projections.h>
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
 
 namespace engine::math {
 

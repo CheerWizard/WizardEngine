@@ -44,7 +44,7 @@ namespace test {
                 scene.get()
         );
 
-        io::ModelFile<BatchVertex<Vertex3d>>::read("assets/model/DesertEagle.fbx", {
+        io::ModelFile<BatchVertex<Vertex3d>>::read("assets/model/deagle.obj", {
             [this](const BaseMeshComponent<BatchVertex<Vertex3d>>& mesh) {
                 survivalBackPack.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(mesh);
             },
@@ -61,16 +61,22 @@ namespace test {
             }
         });
 
-        audio::MediaPlayer::loadStream(
-                "assets/audio/forest.wav",
-                {},
-                [](const audio::Source &source) {
-                    audio::MediaPlayer::setPlayedSource(source);
-                },
-                []() {
-                    audio::MediaPlayer::playStream();
-                }
-        );
+//        Cube<BatchVertex<Vertex3d>> cube;
+//        Object3d<BatchVertex<Vertex3d>> cubeObj {
+//            "Cube", scene.get()
+//        };
+//        cubeObj.add<VertexDataComponent<BatchVertex<Vertex3d>>>(cube);
+
+//        audio::MediaPlayer::loadStream(
+//                "assets/audio/forest.wav",
+//                {},
+//                [](const audio::Source &source) {
+//                    audio::MediaPlayer::setPlayedSource(source);
+//                },
+//                []() {
+//                    audio::MediaPlayer::playStream();
+//                }
+//        );
 
         bool tcpClientCreated = tcp::Client::init(this, this, this);
         if (tcpClientCreated) {
@@ -131,6 +137,10 @@ namespace test {
                 KeyCode::L,
                 io::RemoteAssetManager::loadScene(Application::get().activeScene->getName().c_str());
         );
+
+        auto* skyCubeTransform = Application::get().activeScene->getSkybox().get<Transform3dComponent>();
+        skyCubeTransform->modelMatrix.scale = { 0.2, 0.2, 0.2 };
+        math::updateModel3d(skyCubeTransform->modelMatrix);
     }
 
     void TestLayer::onUpdate(time::Time deltaTime) {
@@ -140,6 +150,12 @@ namespace test {
         GDFloat rotation(0.005f);
         udp::Client::getRequestQueue().push(header, rotation);
         tcp::Client::getRequestQueue().push(header, rotation);
+
+        auto* skyCubeTransform = Application::get().activeScene->getSkybox().get<Transform3dComponent>();
+        skyCubeTransform->modelMatrix.scale.v[0] -= 0.001f;
+        skyCubeTransform->modelMatrix.scale.v[1] -= 0.001f;
+        skyCubeTransform->modelMatrix.scale.v[2] -= 0.001f;
+        math::updateModel3d(skyCubeTransform->modelMatrix);
     }
 
     void TestLayer::onWindowResized(const uint32_t &width, const uint32_t &height) {
@@ -251,9 +267,9 @@ namespace test {
             auto rotationY = gdPrimitive.value;
             RUNTIME_INFO("Rotating SurvivalPack with value: {0}", rotationY);
             // handle data
-            auto& modelMatrix = survivalBackPack.get<Transform3dComponent>()->modelMatrix;
-            modelMatrix.rotation.v[1] += rotationY;
-            updateModel3d(modelMatrix);
+//            auto& modelMatrix = survivalBackPack.get<Transform3dComponent>()->modelMatrix;
+//            modelMatrix.rotation.v[1] += rotationY;
+//            updateModel3d(modelMatrix);
         }
     }
 
@@ -289,9 +305,9 @@ namespace test {
             auto rotationY = rotation.value;
             RUNTIME_INFO("Rotating SurvivalPack with value: {0}", rotationY);
             // handle data
-            auto& modelMatrix = survivalBackPack.get<Transform3dComponent>()->modelMatrix;
-            modelMatrix.rotation.v[1] += rotationY;
-            updateModel3d(modelMatrix);
+//            auto& modelMatrix = survivalBackPack.get<Transform3dComponent>()->modelMatrix;
+//            modelMatrix.rotation.v[1] += rotationY;
+//            updateModel3d(modelMatrix);
         }
     }
 }
