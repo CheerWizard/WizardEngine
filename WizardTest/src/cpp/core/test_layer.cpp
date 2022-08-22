@@ -156,6 +156,7 @@ namespace test {
 //        );
 
         Application::get().enableMouseHovering = true;
+        Application::get().enableMouseCursor = true;
     }
 
     void TestLayer::onUpdate(time::Time dt) {

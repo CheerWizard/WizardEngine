@@ -56,6 +56,9 @@ namespace engine::core {
         // draw editor/tools
         _layerStack.onUpdate(dt);
         // poll events + swap chain
+        if (enableMouseCursor) {
+            Input::updateMousePosition();
+        }
         _window->onUpdate();
         fpsController.end();
     }

@@ -55,6 +55,7 @@ namespace engine::event {
         static bool isMousePressed(MouseCode mouseCode);
         static MousePosition getMousePosition();
         static MousePosition getMouseDelta();
+        static void updateMousePosition();
         [[nodiscard]] static bool isJoystickConnected();
         [[nodiscard]] static bool isJoystickDisconnected();
         [[nodiscard]] static JoystickAxisStates getJoystickAxisStates();

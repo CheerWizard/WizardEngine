@@ -142,6 +142,8 @@ namespace engine::core {
         // hover entity with mouse cursor
         bool enableMouseHovering = false;
         Entity hoveredEntity;
+        // mouse cursor tracker
+        bool enableMouseCursor = false;
 
     private:
         static Application* instance;

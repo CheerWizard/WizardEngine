@@ -99,4 +99,8 @@ namespace engine::event {
     bool Input::isJoystickDisconnected() {
         return glfwJoystickPresent(joystickId) != 1;
     }
+
+    void Input::updateMousePosition() {
+        previousMousePosition = getMousePosition();
+    }
 }
