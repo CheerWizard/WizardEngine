@@ -20,7 +20,7 @@ namespace engine::core {
 
         _window = createScope<Window>(createWindowProps());
         createGraphics();
-        input = createScope<event::Input>(_window->getNativeWindow());
+        Input::create(_window->getNativeWindow());
 
         createScripting();
 
@@ -73,53 +73,55 @@ namespace engine::core {
     void Application::onWindowClosed() {
         ENGINE_INFO("Application : onWindowClosed()");
         _layerStack.onWindowClosed();
-        eventRegistry.onWindowClosed.function();
+        EventRegistry::onWindowClosed.function();
         shutdown();
     }
 
     void Application::onWindowResized(const u32 &width , const u32 &height) {
-        if (width == 0 || height == 0 || input->isMousePressed(event::MouseCode::ButtonLeft)) return;
+        if (width == 0 || height == 0 || Input::isMousePressed(event::MouseCode::ButtonLeft)) return;
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
 
         _layerStack.onWindowResized(width, height);
         activeSceneFrame->resize(width, height);
         screenFrame->resize(width, height);
-        eventRegistry.onWindowResized.function(width, height);
+        EventRegistry::onWindowResized.function(width, height);
     }
 
     void Application::onKeyPressed(event::KeyCode keyCode) {
         _layerStack.onKeyPressed(keyCode);
-        eventRegistry.onKeyPressedMap[keyCode].function(keyCode);
+        EventRegistry::onKeyPressedMap[keyCode].function(keyCode);
     }
 
     void Application::onKeyHold(event::KeyCode keyCode) {
         _layerStack.onKeyHold(keyCode);
-        eventRegistry.onKeyHoldMap[keyCode].function(keyCode);
+        EventRegistry::onKeyHoldMap[keyCode].function(keyCode);
     }
 
     void Application::onKeyReleased(event::KeyCode keyCode) {
         _layerStack.onKeyReleased(keyCode);
-        eventRegistry.onKeyReleasedMap[keyCode].function(keyCode);
+        EventRegistry::onKeyReleasedMap[keyCode].function(keyCode);
     }
 
     void Application::onMousePressed(event::MouseCode mouseCode) {
         _layerStack.onMousePressed(mouseCode);
-        eventRegistry.onMousePressedMap[mouseCode].function(mouseCode);
+        EventRegistry::onMousePressedMap[mouseCode].function(mouseCode);
+        EventRegistry::mouseHoldMap[mouseCode] = true;
     }
 
     void Application::onMouseRelease(event::MouseCode mouseCode) {
         _layerStack.onMouseRelease(mouseCode);
-        eventRegistry.onMouseReleasedMap[mouseCode].function(mouseCode);
+        EventRegistry::onMouseReleasedMap[mouseCode].function(mouseCode);
+        EventRegistry::mouseHoldMap[mouseCode] = false;
     }
 
     void Application::onMouseScrolled(double xOffset, double yOffset) {
         _layerStack.onMouseScrolled(xOffset, yOffset);
-        eventRegistry.onMouseScrolled.function(xOffset, yOffset);
+        EventRegistry::onMouseScrolled.function(xOffset, yOffset);
     }
 
     void Application::onCursorMoved(double xPos, double yPos) {
         _layerStack.onCursorMoved(xPos, yPos);
-        eventRegistry.onCursorMoved.function(xPos, yPos);
+        EventRegistry::onCursorMoved.function(xPos, yPos);
     }
 
     void Application::onKeyTyped(event::KeyCode keyCode) {
@@ -207,6 +209,7 @@ namespace engine::core {
         activeSceneFrame = createRef<FrameBuffer>();
         screenFrame = createRef<FrameBuffer>();
         _renderSystem = createScope<RenderSystem>(activeSceneFrame, screenFrame);
+        _renderSystem->setRenderSystemCallback(this);
     }
 
     void Application::updateRuntime(Time dt) {
@@ -228,13 +231,13 @@ namespace engine::core {
 
     void Application::onGamepadConnected(s32 joystickId) {
         ENGINE_INFO("onGamepadConnected(id: {0})", joystickId);
-        input->setJoystickId(joystickId);
+        Input::setJoystickId(joystickId);
         isJoystickConnected = true;
     }
 
     void Application::onGamepadDisconnected(s32 joystickId) {
         ENGINE_INFO("onGamepadDisconnected(id: {0})", joystickId);
-        input->setJoystickId(joystickId);
+        Input::setJoystickId(joystickId);
         isJoystickConnected = false;
     }
 
@@ -255,17 +258,17 @@ namespace engine::core {
     void Application::updateEventRegistry() {
         if (isJoystickConnected) {
             ENGINE_INFO("Joystick CONNECTED! Polling buttons and axes...");
-            const auto& gamepadState = input->getGamepadState();
+            const auto& gamepadState = Input::getGamepadState();
             const auto& buttons = gamepadState.buttons;
             const auto& axis = gamepadState.axes;
 
-            for (auto& gamepadButtonPressed : eventRegistry.onGamepadButtonPressedMap) {
+            for (auto& gamepadButtonPressed : EventRegistry::onGamepadButtonPressedMap) {
                 if (buttons[gamepadButtonPressed.first] == event::PRESS) {
                     gamepadButtonPressed.second.function(gamepadButtonPressed.first);
                 }
             }
 
-            for (auto& gamepadButtonReleased : eventRegistry.onGamepadButtonReleasedMap) {
+            for (auto& gamepadButtonReleased : EventRegistry::onGamepadButtonReleasedMap) {
                 if (buttons[gamepadButtonReleased.first] == event::RELEASE) {
                     gamepadButtonReleased.second.function(gamepadButtonReleased.first);
                 }
@@ -276,8 +279,8 @@ namespace engine::core {
                     axis[event::PAD_LEFT_ROLL.y],
                     axis[event::PAD_LEFT_ROLL.trigger] != -1,
             };
-            if (gamepadRollLeft != eventRegistry.inactiveGamepadRollLeft) {
-                eventRegistry.onGamepadRollLeft.function(gamepadRollLeft);
+            if (gamepadRollLeft != EventRegistry::inactiveGamepadRollLeft) {
+                EventRegistry::onGamepadRollLeft.function(gamepadRollLeft);
             }
 
             auto gamepadRollRight = event::GamepadRoll {
@@ -285,12 +288,69 @@ namespace engine::core {
                     axis[event::PAD_RIGHT_ROLL.y],
                     axis[event::PAD_RIGHT_ROLL.trigger] != -1,
             };
-            if (gamepadRollRight != eventRegistry.inactiveGamepadRollRight) {
-                eventRegistry.onGamepadRollRight.function(gamepadRollRight);
+            if (gamepadRollRight != EventRegistry::inactiveGamepadRollRight) {
+                EventRegistry::onGamepadRollRight.function(gamepadRollRight);
             }
         } else {
             ENGINE_WARN("Joystick DISCONNECTED! Polling joystick state...");
-            isJoystickConnected = input->isJoystickConnected();
+            isJoystickConnected = Input::isJoystickConnected();
         }
+    }
+
+    void Application::onFrameBegin(const Ref<FrameBuffer> &frameBuffer) {
+        if (!enableMouseHovering) return;
+        frameBuffer->removeAttachment(frameBuffer->getColorAttachmentsSize() - 1, -1);
+    }
+
+    void Application::onFrameEnd(const Ref<FrameBuffer> &frameBuffer) {
+        if (!enableMouseHovering) return;
+
+        auto mousePos = Input::getMousePosition();
+        auto xPos = mousePos.x;
+        auto yPos = mousePos.y;
+
+        if (xPos > 0 && yPos > 0) {
+            s32 pixel = frameBuffer->readPixel(
+                    frameBuffer->getColorAttachmentsSize() - 1,
+                    static_cast<int>(xPos),
+                    static_cast<int>(yPos)
+            );
+            RUNTIME_INFO("readPixel: {0}", pixel);
+            if (pixel != -1) {
+                hoveredEntity = { activeScene.get(), reinterpret_cast<entity_id>(pixel) };
+            }
+        }
+    }
+
+}
+
+namespace engine::event {
+
+    Action<> EventRegistry::onWindowClosed;
+    Action<const uint32_t&, const uint32_t&> EventRegistry::onWindowResized;
+
+    EventRegistry::KeyCodeMap EventRegistry::onKeyPressedMap;
+    EventRegistry::KeyCodeMap EventRegistry::onKeyHoldMap;
+    EventRegistry::KeyCodeMap EventRegistry::onKeyReleasedMap;
+    EventRegistry::KeyCodeMap EventRegistry::onKeyTypedMap;
+
+    EventRegistry::MouseCodeMap EventRegistry::onMousePressedMap;
+    EventRegistry::MouseCodeMap EventRegistry::onMouseReleasedMap;
+
+    EventRegistry::MouseHoldMap EventRegistry::mouseHoldMap;
+
+    Action<double, double> EventRegistry::onMouseScrolled;
+    Action<double, double> EventRegistry::onCursorMoved;
+
+    EventRegistry::GamepadButtonMap EventRegistry::onGamepadButtonPressedMap;
+    EventRegistry::GamepadButtonMap EventRegistry::onGamepadButtonReleasedMap;
+
+    Action<GamepadRoll> EventRegistry::onGamepadRollLeft;
+    Action<GamepadRoll> EventRegistry::onGamepadRollRight;
+    GamepadRoll EventRegistry::inactiveGamepadRollLeft;
+    GamepadRoll EventRegistry::inactiveGamepadRollRight;
+
+    bool EventRegistry::mouseHold(MouseCode mouseCode) {
+        return mouseHoldMap[mouseCode];
     }
 }

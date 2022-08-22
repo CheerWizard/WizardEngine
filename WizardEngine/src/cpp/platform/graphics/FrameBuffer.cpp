@@ -277,9 +277,11 @@ namespace engine::graphics {
     int FrameBuffer::readPixel(uint32_t attachmentIndex, int x, int y) const {
         ENGINE_ASSERT(attachmentIndex < format.colorAttachments.size(), "readPixel()");
 
+        ENGINE_INFO("readPixels: x: {0} y: {1} index: {2}", x, y, attachmentIndex);
         glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
         int pixelData;
-        glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+        auto& colorFormat = format.colorAttachments[attachmentIndex].format;
+        glReadPixels(x, y, 1, 1, toGLColorFormat(colorFormat), GL_INT, &pixelData);
         return pixelData;
     }
 
@@ -288,7 +290,7 @@ namespace engine::graphics {
 
         auto& colorAttachment = format.colorAttachments[attachmentIndex];
         auto textureFormat = toGLColorFormat(colorAttachment.format);
-        glClearTexImage(colorAttachment.id, 0, textureFormat, GL_INT,&value);
+        glClearTexImage(colorAttachment.id, 0, textureFormat, GL_INT, &value);
     }
 
     void FrameBuffer::readWriteFrameBuffers(FrameBuffer& src, FrameBuffer& target) {

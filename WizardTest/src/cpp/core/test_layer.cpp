@@ -13,13 +13,11 @@ namespace test {
         auto& app = engine::core::Application::get();
         app.setActiveScene(scene);
 
-        auto camera = Camera3D {
+        mainCamera = Camera3D {
                 "SceneCamera",
                 app.getAspectRatio(),
                 scene.get()
         };
-
-        cameraController = createRef<Camera3dController>("CameraController", camera);
 
         u32 skyboxId = TextureBuffer::load(
                 {
@@ -39,14 +37,14 @@ namespace test {
                 CubeMapTextureComponent(skyboxId, TextureBuffer::getTypeId(TextureType::CUBE_MAP))
         ));
 
-        survivalBackPack = Object3d<BatchVertex<Vertex3d>>(
+        car = Object3d<BatchVertex<Vertex3d>>(
                 "SurvivalBackPack",
                 scene.get()
         );
 
-        io::ModelFile<BatchVertex<Vertex3d>>::read("assets/model/deagle.obj", {
+        io::ModelFile<BatchVertex<Vertex3d>>::read("assets/model/porsche_911_gt2.obj", {
             [this](const BaseMeshComponent<BatchVertex<Vertex3d>>& mesh) {
-                survivalBackPack.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(mesh);
+                car.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(mesh);
             },
             [](const exception& exception) {
                 RUNTIME_EXCEPT(exception);
@@ -95,14 +93,28 @@ namespace test {
     }
 
     void TestLayer::bindCamera() {
-        cameraController->bind(event::KeyCode::W, MoveType::UP);
-        cameraController->bind(event::KeyCode::A, MoveType::LEFT);
-        cameraController->bind(event::KeyCode::S, MoveType::DOWN);
-        cameraController->bind(event::KeyCode::D, MoveType::RIGHT);
-        cameraController->bind(event::KeyCode::Q, RotateType::LEFT_Z);
-        cameraController->bind(event::KeyCode::E, RotateType::RIGHT_Z);
-        cameraController->bind(event::KeyCode::Z, ZoomType::ZOOM_IN);
-        cameraController->bind(event::KeyCode::X, ZoomType::ZOOM_OUT);
+        KEY_PRESSED(KeyCode::W, mainCamera.applyMove(MoveType::UP););
+        KEY_PRESSED(KeyCode::A, mainCamera.applyMove(MoveType::LEFT););
+        KEY_PRESSED(KeyCode::S, mainCamera.applyMove(MoveType::DOWN););
+        KEY_PRESSED(KeyCode::D, mainCamera.applyMove(MoveType::RIGHT););
+        KEY_PRESSED(KeyCode::Q, mainCamera.applyRotate(RotateType::LEFT_Z););
+        KEY_PRESSED(KeyCode::E, mainCamera.applyRotate(RotateType::RIGHT_Z););
+        KEY_PRESSED(KeyCode::Z, mainCamera.applyZoom(ZoomType::ZOOM_IN););
+        KEY_PRESSED(KeyCode::X, mainCamera.applyZoom(ZoomType::ZOOM_OUT););
+
+        KEY_HOLD(KeyCode::W, mainCamera.applyMove(MoveType::UP););
+        KEY_HOLD(KeyCode::A, mainCamera.applyMove(MoveType::LEFT););
+        KEY_HOLD(KeyCode::S, mainCamera.applyMove(MoveType::DOWN););
+        KEY_HOLD(KeyCode::D, mainCamera.applyMove(MoveType::RIGHT););
+        KEY_HOLD(KeyCode::Q, mainCamera.applyRotate(RotateType::LEFT_Z););
+        KEY_HOLD(KeyCode::E, mainCamera.applyRotate(RotateType::RIGHT_Z););
+        KEY_HOLD(KeyCode::Z, mainCamera.applyZoom(ZoomType::ZOOM_IN););
+        KEY_HOLD(KeyCode::X, mainCamera.applyZoom(ZoomType::ZOOM_OUT););
+
+        mainCamera.zoomSpeed = 10.0f;
+        mainCamera.rotateSpeed = 0.5f;
+        mainCamera.moveSpeed = 0.5f;
+        mainCamera.distance = 10.0f;
     }
 
     void TestLayer::onPrepare() {
@@ -116,92 +128,117 @@ namespace test {
         GAMEPAD_ROLL_LEFT(onGamepadRollLeft(roll););
         GAMEPAD_ROLL_RIGHT(onGamepadRollRight(roll););
 
-        KEY_PRESSED(KeyCode::D1, audio::MediaPlayer::pause(););
-        KEY_PRESSED(KeyCode::D2, audio::MediaPlayer::stop(););
-        KEY_PRESSED(KeyCode::D3, audio::MediaPlayer::playStream(););
-
-        KEY_PRESSED(
-                KeyCode::R,
-                // notify all players to rotate a survival pack
-                GDHeader header(CLIENT_TO_CLIENT, ROTATE_SURVIVAL_PACK);
-                GDFloat rotation(0.5f);
-                udp::Client::getRequestQueue().push(header, rotation);
+        KEY_PRESSED(D1,
+                    msaaEnabled ? Application::get().setSampleSize(1) : Application::get().setSampleSize(8);
+                    msaaEnabled = !msaaEnabled;
         );
 
-        KEY_PRESSED(
-                KeyCode::K,
-                io::RemoteAssetManager::saveScene(Application::get().activeScene);
-        );
+//        KEY_PRESSED(KeyCode::D1, audio::MediaPlayer::pause(););
+//        KEY_PRESSED(KeyCode::D2, audio::MediaPlayer::stop(););
+//        KEY_PRESSED(KeyCode::D3, audio::MediaPlayer::playStream(););
 
-        KEY_PRESSED(
-                KeyCode::L,
-                io::RemoteAssetManager::loadScene(Application::get().activeScene->getName().c_str());
-        );
+//        KEY_PRESSED(
+//                KeyCode::R,
+//                // notify all players to rotate a survival pack
+//                GDHeader header(CLIENT_TO_CLIENT, ROTATE_SURVIVAL_PACK);
+//                GDFloat rotation(0.5f);
+//                udp::Client::getRequestQueue().push(header, rotation);
+//        );
 
-        auto* skyCubeTransform = Application::get().activeScene->getSkybox().get<Transform3dComponent>();
-        skyCubeTransform->modelMatrix.scale = { 0.2, 0.2, 0.2 };
-        math::updateModel3d(skyCubeTransform->modelMatrix);
+//        KEY_PRESSED(
+//                KeyCode::K,
+//                io::RemoteAssetManager::saveScene(Application::get().activeScene);
+//        );
+//
+//        KEY_PRESSED(
+//                KeyCode::L,
+//                io::RemoteAssetManager::loadScene(Application::get().activeScene->getName().c_str());
+//        );
+
+        Application::get().enableMouseHovering = true;
     }
 
-    void TestLayer::onUpdate(time::Time deltaTime) {
-        cameraController->setDeltaTime(deltaTime);
+    void TestLayer::onUpdate(time::Time dt) {
+        mainCamera.onUpdate(dt);
         // notify all players to rotate a survival pack
         GDHeader header(CLIENT_TO_CLIENT, ROTATE_SURVIVAL_PACK);
         GDFloat rotation(0.005f);
         udp::Client::getRequestQueue().push(header, rotation);
         tcp::Client::getRequestQueue().push(header, rotation);
 
-        auto* skyCubeTransform = Application::get().activeScene->getSkybox().get<Transform3dComponent>();
-        skyCubeTransform->modelMatrix.scale.v[0] -= 0.001f;
-        skyCubeTransform->modelMatrix.scale.v[1] -= 0.001f;
-        skyCubeTransform->modelMatrix.scale.v[2] -= 0.001f;
-        math::updateModel3d(skyCubeTransform->modelMatrix);
+        auto& skyboxTransform = Application::get().activeScene->getSkybox().get<Transform3dComponent>()->modelMatrix;
+        skyboxTransform.rotation[1] += 0.001f;
+        skyboxTransform.apply();
+
+        car.getTransform().rotation[1] += 0.01f;
+        car.applyTransform();
+
+        auto hoveredTransform = hoveredEntity.get<Transform3dComponent>();
+        if (hoveredTransform) {
+            hoveredTransform->modelMatrix.rotation[1] += 0.001f;
+            hoveredTransform->modelMatrix.apply();
+        }
+
+        if (EventRegistry::mouseHold(ButtonLeft)) {
+            RUNTIME_INFO("mouseHold: button left");
+            mainCamera.applyMouseRotate();
+        }
+
+        if (EventRegistry::mouseHold(ButtonRight)) {
+            RUNTIME_INFO("mouseHold: button right");
+            mainCamera.applyMouseMove();
+        }
+
+        if (EventRegistry::mouseHold(ButtonMiddle)) {
+            RUNTIME_INFO("mouseHold: button middle");
+            mainCamera.applyMouseZoom();
+        }
     }
 
     void TestLayer::onWindowResized(const uint32_t &width, const uint32_t &height) {
-        cameraController->onWindowResized(width, height);
+        mainCamera.setAspectRatio(width, height);
     }
 
     void TestLayer::onKeyPressed(event::KeyCode keyCode) {
-        cameraController->onKeyPressed(keyCode);
     }
 
     void TestLayer::onKeyHold(event::KeyCode keyCode) {
-        cameraController->onKeyHold(keyCode);
     }
 
     void TestLayer::onKeyReleased(event::KeyCode keyCode) {
-        cameraController->onKeyReleased(keyCode);
     }
 
     void TestLayer::onKeyTyped(event::KeyCode keyCode) {
-        cameraController->onKeyTyped(keyCode);
     }
 
     void TestLayer::onPadA() {
         RUNTIME_INFO("Gamepad button A pressed!");
-        cameraController->applyMove(MoveType::DOWN);
+        mainCamera.move(DOWN);
+        mainCamera.applyView();
     }
 
     void TestLayer::onPadB() {
         RUNTIME_INFO("Gamepad button B pressed!");
-        cameraController->applyMove(MoveType::RIGHT);
+        mainCamera.move(RIGHT);
+        mainCamera.applyView();
     }
 
     void TestLayer::onPadX() {
         RUNTIME_INFO("Gamepad button X pressed!");
-        cameraController->applyMove(MoveType::LEFT);
+        mainCamera.move(LEFT);
+        mainCamera.applyView();
     }
 
     void TestLayer::onPadY() {
         RUNTIME_INFO("Gamepad button Y pressed!");
-        cameraController->applyMove(MoveType::UP);
+        mainCamera.move(UP);
+        mainCamera.applyView();
     }
 
     void TestLayer::onGamepadRollLeft(const GamepadRoll& roll) {
         RUNTIME_INFO("onGamepadRollLeft: (x: {0}, y: {1}, trigger: {2})", roll.x, roll.y, roll.triggered);
-        cameraController->move({ roll.x, roll.y });
-        cameraController->applyChanges();
+        mainCamera.move({ roll.x, roll.y, 1 });
+        mainCamera.applyView();
     }
 
     void TestLayer::onGamepadRollRight(const GamepadRoll& roll) {
@@ -225,6 +262,7 @@ namespace test {
     }
 
     void TestLayer::onCursorMoved(double xPos, double yPos) {
+
     }
 
     void TestLayer::onTCPSocketCreated() {

@@ -47,6 +47,11 @@ namespace engine::graphics {
         clearDepthBuffer();
         setDepthTest(true);
 
+        // notify that scene frame begin drawing
+        if (callback != nullptr) {
+            callback->onFrameBegin(sceneFrame);
+        }
+
         // enables transparency
         setBlendMode(true);
         setBlendFunction(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
@@ -89,10 +94,15 @@ namespace engine::graphics {
         setDepthTestOperator(LESS_EQUAL); // we need to pass depth test for some skybox pixels
         skyboxRenderer.renderStatic<Transform3dComponent, SkyboxVertex>(activeScene->getSkybox());
         setDepthTestOperator(LESS);
+        // notify that scene frame end drawing
+        if (callback != nullptr) {
+            callback->onFrameEnd(sceneFrame);
+        }
         // read/write from scene frame into screen frame
         FrameBuffer::readWriteFrameBuffers(*sceneFrame.get(), *screenFrame.get());
         // bind to window frame buffer and draw screen
         setDepthTest(false);
+
         FrameBuffer::bindDefault();
         screenRenderer.renderQuad(screenFrame->getColorAttachment(0).id);
 
@@ -128,13 +138,19 @@ namespace engine::graphics {
         );
 
         sceneRenderer = DefaultRenderer(batchShader, instanceShader);
-        sceneRenderer.addEntityHandler([](ecs::Registry& registry, ecs::entity_id entityId) {
+        sceneRenderer.addEntityHandler([&batchShader, &instanceShader](ecs::Registry& registry, ecs::entity_id entityId, u32 index) {
+            int entityIdInt = (int) entityId;
+            ENGINE_INFO("entityHandler: entity_id: {0}, index: {1}", entityIdInt, index);
             // update polygon mode
             auto* pmc = registry.getComponent<PolygonModeComponent>(entityId);
             PolygonModes::setPolygonMode(pmc ? *pmc : PolygonModeComponent());
             // update culling mode
             auto* culling = registry.getComponent<CullingComponent>(entityId);
             Culling::setCulling(culling ? *culling : CullingComponent());
+            // pass entity id to shader
+            IntUniform entityIdUniform = { "entityId", entityIdInt };
+            batchShader.getFShader().setUniformArrayElement(index, entityIdUniform);
+            instanceShader.getFShader().setUniformArrayElement(index, entityIdUniform);
         });
     }
 
@@ -389,5 +405,13 @@ namespace engine::graphics {
         } else {
             ENGINE_WARN("RenderSystem: Skybox of '{0}' is already uploaded!", activeScene->getName());
         }
+    }
+
+    void RenderSystem::setRenderSystemCallback(RenderSystemCallback* renderSystemCallback) {
+        callback = renderSystemCallback;
+    }
+
+    void RenderSystem::removeRenderSystemCallback() {
+        callback = nullptr;
     }
 }

@@ -17,7 +17,7 @@ using namespace engine::shader;
 
 namespace engine::graphics {
 
-    typedef std::function<void(ecs::Registry&, ecs::entity_id)> Handle;
+    typedef std::function<void(ecs::Registry&, ecs::entity_id, u32)> Handle;
     struct EntityHandler {
         Handle handle;
 
@@ -57,7 +57,7 @@ namespace engine::graphics {
         template<typename T>
         bool validate(BaseMeshComponent<T>& meshComponent);
 
-        void handleEntity(ecs::Registry& registry, ecs::entity_id entityId);
+        void handleEntity(ecs::Registry& registry, ecs::entity_id entityId, u32 index);
 
     protected:
         vector<VRenderModel> vRenderModels;
@@ -243,8 +243,8 @@ namespace engine::graphics {
                 }
 
                 tryUploadBatch(i, *geometry, totalVertexCount, renderModel);
-                shaderProgram.getVShader().setUniformArrayElement(i++, transform->modelMatrix);
-                handleEntity(registry, transform->entityId);
+                shaderProgram.getVShader().setUniformArrayElement(i, transform->modelMatrix);
+                handleEntity(registry, transform->entityId, i++);
                 if (i > INSTANCE_COUNT_LIMIT) {
                     renderModel.vao.bind();
                     drawV(drawType, totalVertexCount);
@@ -292,8 +292,8 @@ namespace engine::graphics {
                 }
 
                 tryUploadBatchMesh(i, *mesh, totalVertexCount, totalIndexCount, renderModel);
-                shaderProgram.getVShader().setUniformArrayElement(i++, transform->modelMatrix);
-                handleEntity(registry, transform->entityId);
+                shaderProgram.getVShader().setUniformArrayElement(i, transform->modelMatrix);
+                handleEntity(registry, transform->entityId, i++);
                 if (i > INSTANCE_COUNT_LIMIT) {
                     renderModel.vao.bind();
                     drawVI(drawType, totalIndexCount);
@@ -342,8 +342,8 @@ namespace engine::graphics {
                 renderModelReady = true;
             }
 
-            shaderProgram.getVShader().setUniformArrayElement(i++, transform->modelMatrix);
-            handleEntity(registry, transform->entityId);
+            shaderProgram.getVShader().setUniformArrayElement(i, transform->modelMatrix);
+            handleEntity(registry, transform->entityId, i++);
             // if transform count is out of limit, then draw current instances and repeat iteration!
             auto& renderModel = vRenderModels[renderModelId];
             if (i > INSTANCE_COUNT_LIMIT) {
@@ -393,8 +393,8 @@ namespace engine::graphics {
                 renderModelReady = true;
             }
 
-            shaderProgram.getVShader().setUniformArrayElement(i++, transform->modelMatrix);
-            handleEntity(registry, transform->entityId);
+            shaderProgram.getVShader().setUniformArrayElement(i, transform->modelMatrix);
+            handleEntity(registry, transform->entityId, i++);
             // if transform count is out of limit, then draw current instances and continue iteration!
             auto& renderModel = viRenderModels[renderModelId];
             if (i > INSTANCE_COUNT_LIMIT) {

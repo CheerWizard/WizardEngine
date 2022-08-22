@@ -6,6 +6,7 @@
 
 #include <core/Application.h>
 #include <graphics/GraphicsObject.h>
+#include <graphics/camera/Camera.h>
 
 namespace test {
 
@@ -73,8 +74,10 @@ namespace test {
         void onGamepadRollRight(const GamepadRoll& roll);
 
     private:
-        Ref<Camera3dController> cameraController;
-        Object3d<BatchVertex<Vertex3d>> survivalBackPack;
+        Camera3D mainCamera;
+        Object3d<BatchVertex<Vertex3d>> car;
+        bool msaaEnabled = false;
+        Entity hoveredEntity;
     };
 
 }

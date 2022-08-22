@@ -12,6 +12,14 @@
 
 namespace engine::graphics {
 
+    class RenderSystemCallback {
+    public:
+        virtual ~RenderSystemCallback() = default;
+    public:
+        virtual void onFrameBegin(const Ref<FrameBuffer>& frameBuffer) = 0;
+        virtual void onFrameEnd(const Ref<FrameBuffer>& frameBuffer) = 0;
+    };
+
     class RenderSystem {
 
     public:
@@ -32,6 +40,9 @@ namespace engine::graphics {
             this->activeScene = activeScene;
         }
 
+        void setRenderSystemCallback(RenderSystemCallback* renderSystemCallback);
+        void removeRenderSystemCallback();
+
     private:
         void create();
         void createScreenRenderer();
@@ -45,6 +56,7 @@ namespace engine::graphics {
         void createPointRenderer();
 
     private:
+        RenderSystemCallback* callback;
         // we must share this data with front-end, so that's why they are pointers
         core::Ref<ecs::Scene> activeScene = nullptr;
         core::Ref<FrameBuffer> sceneFrame;

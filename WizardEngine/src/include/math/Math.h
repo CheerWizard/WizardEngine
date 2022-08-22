@@ -326,11 +326,18 @@ namespace engine::math {
             v[3] = w;
         }
 
-        vec4(const vec3<T>& vec, T v3) {
+        vec4(const vec2<T>& vec, T z, T w) {
+            v[0] = vec[0];
+            v[1] = vec[1];
+            v[2] = z;
+            v[3] = w;
+        }
+
+        vec4(const vec3<T>& vec, T w) {
             v[0] = vec[0];
             v[1] = vec[1];
             v[2] = vec[2];
-            v[3] = v3;
+            v[3] = w;
         }
 
         inline T& operator [](u32 i) { return v[i]; }
@@ -454,7 +461,7 @@ namespace engine::math {
         inline T z() const { return v[2]; }
         inline T w() const { return v[3]; }
 
-        T length() { return sqrt(x() * x() + y() * y() + z() * z() + w() * w()); }
+        T length() const { return sqrt(x() * x() + y() * y() + z() * z() + w() * w()); }
 
         vec4<T> normalize() const {
             auto m = length();

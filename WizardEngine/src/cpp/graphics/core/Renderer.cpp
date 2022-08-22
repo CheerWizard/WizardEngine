@@ -86,9 +86,9 @@ namespace engine::graphics {
         ShaderProgram::stop();
     }
 
-    void Renderer::handleEntity(ecs::Registry &registry, ecs::entity_id entityId) {
+    void Renderer::handleEntity(ecs::Registry &registry, ecs::entity_id entityId, u32 index) {
         for (const auto& entityHandler : entityHandlers) {
-            entityHandler.handle(registry, entityId);
+            entityHandler.handle(registry, entityId, index);
         }
     }
 

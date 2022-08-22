@@ -27,7 +27,6 @@
 #include <graphics/skybox/Skybox.h>
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/GraphicsObject.h>
-#include <graphics/camera/CameraController.h>
 
 #include <scripting/ScriptSystem.h>
 
@@ -47,21 +46,21 @@ using namespace engine::time;
 using namespace engine::network;
 using namespace engine::ecs;
 
-#define KEY_PRESSED(key, action) engine::core::Application::get().eventRegistry.onKeyPressedMap[key] = { [this](KeyCode keyCode) { action } }
-#define KEY_RELEASED(key, action) engine::core::Application::get().eventRegistry.onKeyReleasedMap[key] = { [this](KeyCode keyCode) { action } }
-#define KEY_TYPED(key, action) engine::core::Application::get().eventRegistry.onKeyTypedMap[key] = { [this](KeyCode keyCode) { action } }
-#define KEY_HOLD(key, action) engine::core::Application::get().eventRegistry.onKeyHoldMap[key] = { [this](KeyCode keyCode) { a  ction } }
+#define KEY_PRESSED(key, action) engine::event::EventRegistry::onKeyPressedMap[key] = { [this](KeyCode keyCode) { action } }
+#define KEY_RELEASED(key, action) engine::event::EventRegistry::onKeyReleasedMap[key] = { [this](KeyCode keyCode) { action } }
+#define KEY_TYPED(key, action) engine::event::EventRegistry::onKeyTypedMap[key] = { [this](KeyCode keyCode) { action } }
+#define KEY_HOLD(key, action) engine::event::EventRegistry::onKeyHoldMap[key] = { [this](KeyCode keyCode) { action } }
 
-#define GAMEPAD_PRESSED(btn, action) engine::core::Application::get().eventRegistry.onGamepadButtonPressedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
-#define GAMEPAD_RELEASED(btn, action) engine::core::Application::get().eventRegistry.onGamepadButtonReleasedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
-#define GAMEPAD_ROLL_LEFT(action) engine::core::Application::get().eventRegistry.onGamepadRollLeft.function = { [this](const GamepadRoll& roll) { action } }
-#define GAMEPAD_ROLL_RIGHT(action) engine::core::Application::get().eventRegistry.onGamepadRollRight.function = { [this](const GamepadRoll& roll) { action } }
+#define GAMEPAD_PRESSED(btn, action) engine::event::EventRegistry::onGamepadButtonPressedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
+#define GAMEPAD_RELEASED(btn, action) engine::event::EventRegistry::onGamepadButtonReleasedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
+#define GAMEPAD_ROLL_LEFT(action) engine::event::EventRegistry::onGamepadRollLeft.function = { [this](const GamepadRoll& roll) { action } }
+#define GAMEPAD_ROLL_RIGHT(action) engine::event::EventRegistry::onGamepadRollRight.function = { [this](const GamepadRoll& roll) { action } }
 
 namespace engine::core {
 
     // The entry point in core hierarchy, behaves as singleton.
     // It's standalone class, which can NOT be created several times and should be created only once!
-    class Application {
+    class Application : RenderSystemCallback {
 
     public:
         Application();
@@ -97,6 +96,9 @@ namespace engine::core {
         // input gamepad events
         void onGamepadConnected(s32 joystickId);
         void onGamepadDisconnected(s32 joystickId);
+        // render system callbacks
+        void onFrameBegin(const Ref<FrameBuffer> &frameBuffer) override;
+        void onFrameEnd(const Ref<FrameBuffer> &frameBuffer) override;
 
     protected:
         virtual void onCreate();
@@ -131,14 +133,15 @@ namespace engine::core {
         void createScripting();
 
     public:
-        Scope<event::Input> input;
         std::vector<Ref<Scene>> scenes;
         Ref<Scene> activeScene;
         Ref<FrameBuffer> activeSceneFrame;
         Ref<FrameBuffer> screenFrame;
         time::FpsController fpsController;
-        event::EventRegistry eventRegistry;
         bool isJoystickConnected = false;
+        // hover entity with mouse cursor
+        bool enableMouseHovering = false;
+        Entity hoveredEntity;
 
     private:
         static Application* instance;

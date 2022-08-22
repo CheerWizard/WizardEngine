@@ -7,7 +7,6 @@
 #include <yaml/yaml.h>
 
 #define DEFAULT_VIEW_POS_3D {0, 0, -1}
-#define DEFAULT_VIEW_ROT_3D {0, 0, 0}
 #define DEFAULT_VIEW_POS_2D {0, 0, 1}
 
 using namespace engine::shader;
@@ -16,16 +15,23 @@ namespace engine::math {
 
     struct ViewMatrix3d : Mat4fUniform {
         Vec3fUniform position = { "viewPosition", DEFAULT_VIEW_POS_3D };
-        vec3f rotation = DEFAULT_VIEW_ROT_3D;
+        float pitch = 0;
+        float yaw = 0;
+        float roll = 0;
         float scale = 1;
 
         ViewMatrix3d() {
             name = "view";
         }
+
+        glm::quat orientation() const;
+        vec3f forwardDirection() const;
+        vec3f upDirection() const;
+        vec3f rightDirection() const;
     };
 
     struct ViewMatrix2d : Mat4fUniform {
-        math::vec3f position = DEFAULT_VIEW_POS_2D;
+        vec3f position = DEFAULT_VIEW_POS_2D;
         float rotation = 0;
 
         ViewMatrix2d() {

@@ -28,31 +28,38 @@ namespace engine::event {
 
     // registry of window and input events.
     // maps window and input event with appropriate action function.
-    struct EventRegistry {
-        Action<> onWindowClosed;
-        Action<const uint32_t&, const uint32_t&> onWindowResized;
+    class EventRegistry final {
 
         typedef core::unordered_map<KeyCode, Action<KeyCode>> KeyCodeMap;
-        KeyCodeMap onKeyPressedMap;
-        KeyCodeMap onKeyHoldMap;
-        KeyCodeMap onKeyReleasedMap;
-        KeyCodeMap onKeyTypedMap;
-
         typedef core::unordered_map<MouseCode, Action<MouseCode>> MouseCodeMap;
-        MouseCodeMap onMousePressedMap;
-        MouseCodeMap onMouseReleasedMap;
-
-        Action<double, double> onMouseScrolled;
-        Action<double, double> onCursorMoved;
-
+        typedef core::unordered_map<MouseCode, bool> MouseHoldMap;
         typedef core::unordered_map<GamepadButtonCode, Action<GamepadButtonCode>> GamepadButtonMap;
-        GamepadButtonMap onGamepadButtonPressedMap;
-        GamepadButtonMap onGamepadButtonReleasedMap;
 
-        Action<GamepadRoll> onGamepadRollLeft;
-        Action<GamepadRoll> onGamepadRollRight;
-        GamepadRoll inactiveGamepadRollLeft;
-        GamepadRoll inactiveGamepadRollRight;
+    public:
+        static Action<> onWindowClosed;
+        static Action<const uint32_t&, const uint32_t&> onWindowResized;
+
+        static KeyCodeMap onKeyPressedMap;
+        static KeyCodeMap onKeyHoldMap;
+        static KeyCodeMap onKeyReleasedMap;
+        static KeyCodeMap onKeyTypedMap;
+
+        static MouseCodeMap onMousePressedMap;
+        static MouseCodeMap onMouseReleasedMap;
+
+        static MouseHoldMap mouseHoldMap;
+
+        static Action<double, double> onMouseScrolled;
+        static Action<double, double> onCursorMoved;
+
+        static GamepadButtonMap onGamepadButtonPressedMap;
+        static GamepadButtonMap onGamepadButtonReleasedMap;
+
+        static Action<GamepadRoll> onGamepadRollLeft;
+        static Action<GamepadRoll> onGamepadRollRight;
+        static GamepadRoll inactiveGamepadRollLeft;
+        static GamepadRoll inactiveGamepadRollRight;
+
+        static bool mouseHold(MouseCode mouseCode);
     };
-
 }

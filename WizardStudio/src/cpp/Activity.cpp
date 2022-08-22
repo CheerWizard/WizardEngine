@@ -39,10 +39,6 @@ namespace studio {
                 app->getAspectRatio(),
                 editorScene.get()
         };
-        auto objCameraController = createRef<Camera3dController>(
-                "ObjCameraController",
-                objCamera
-        );
 
         auto objTransform = Transform3dComponent(
                 { 2.5, 0, 12 },
@@ -73,7 +69,7 @@ namespace studio {
                 ImageLayoutProps {"Object Preview"},
                 objRenderer,
                 objFrame,
-                objCameraController
+                objCamera
         );
 
         _objPreview->setEntity(objCamera);
@@ -90,10 +86,7 @@ namespace studio {
         _assetBrowser->setCallback(this);
 
         app->setActiveScene(editorScene);
-        activeSceneCameraController = createRef<Camera3dController>(
-                "EditorCamera",
-                Camera3D("EditorCamera", app->getAspectRatio(), editorScene.get())
-        );
+        activeCamera = createRef<Camera3D>("EditorCamera", app->getAspectRatio(), editorScene.get());
 
         u32 skyboxId = TextureBuffer::load(
                 {
@@ -123,27 +116,27 @@ namespace studio {
         EDITOR_INFO("onPrepare()");
         ImGuiLayer::onPrepare();
 
-        activeSceneCameraController->bind(KeyCode::W, MoveType::UP);
-        activeSceneCameraController->bind(KeyCode::A, MoveType::LEFT);
-        activeSceneCameraController->bind(KeyCode::S, MoveType::DOWN);
-        activeSceneCameraController->bind(KeyCode::D, MoveType::RIGHT);
-        activeSceneCameraController->bind(KeyCode::Q, RotateType::LEFT_Z);
-        activeSceneCameraController->bind(KeyCode::E, RotateType::RIGHT_Z);
-        activeSceneCameraController->bind(KeyCode::Z, ZoomType::ZOOM_IN);
-        activeSceneCameraController->bind(KeyCode::X, ZoomType::ZOOM_OUT);
+//        activeSceneCameraController->bind(KeyCode::W, MoveType::UP);
+//        activeSceneCameraController->bind(KeyCode::A, MoveType::LEFT);
+//        activeSceneCameraController->bind(KeyCode::S, MoveType::DOWN);
+//        activeSceneCameraController->bind(KeyCode::D, MoveType::RIGHT);
+//        activeSceneCameraController->bind(KeyCode::Q, RotateType::LEFT_Z);
+//        activeSceneCameraController->bind(KeyCode::E, RotateType::RIGHT_Z);
+//        activeSceneCameraController->bind(KeyCode::Z, ZoomType::ZOOM_IN);
+//        activeSceneCameraController->bind(KeyCode::X, ZoomType::ZOOM_OUT);
 
         _texturePreview.hide();
         _objPreview->hide();
 
-        const auto& objCameraController = _objPreview->getCameraController();
-        objCameraController->bind(KeyCode::W, MoveType::UP);
-        objCameraController->bind(KeyCode::A, MoveType::LEFT);
-        objCameraController->bind(KeyCode::S, MoveType::DOWN);
-        objCameraController->bind(KeyCode::D, MoveType::RIGHT);
-        objCameraController->bind(KeyCode::Q, RotateType::LEFT_Z);
-        objCameraController->bind(KeyCode::E, RotateType::RIGHT_Z);
-        objCameraController->bind(KeyCode::Z, ZoomType::ZOOM_IN);
-        objCameraController->bind(KeyCode::X, ZoomType::ZOOM_OUT);
+        const auto& objCameraController = _objPreview->getCamera3D();
+//        objCameraController->bind(KeyCode::W, MoveType::UP);
+//        objCameraController->bind(KeyCode::A, MoveType::LEFT);
+//        objCameraController->bind(KeyCode::S, MoveType::DOWN);
+//        objCameraController->bind(KeyCode::D, MoveType::RIGHT);
+//        objCameraController->bind(KeyCode::Q, RotateType::LEFT_Z);
+//        objCameraController->bind(KeyCode::E, RotateType::RIGHT_Z);
+//        objCameraController->bind(KeyCode::Z, ZoomType::ZOOM_IN);
+//        objCameraController->bind(KeyCode::X, ZoomType::ZOOM_OUT);
 
         _sceneHierarchy.setCallback(this);
 
@@ -183,7 +176,7 @@ namespace studio {
 
     void Activity::onUpdate(engine::time::Time dt) {
         ImGuiLayer::onUpdate(dt);
-        activeSceneCameraController->setDeltaTime(dt);
+        activeCamera->onUpdate(dt);
         sceneViewport.setId(app->screenFrame->getColorAttachment(0).id);
         screenViewport.setId(app->screenFrame->getColorAttachment(0).id);
     }
@@ -192,7 +185,7 @@ namespace studio {
         ImGuiLayer::onKeyPressed(keyCode);
         _objPreview->onKeyPressed(keyCode);
         if (sceneViewport.isFocused() || screenViewport.isFocused()) {
-            activeSceneCameraController->onKeyPressed(keyCode);
+//            activeSceneCameraController->onKeyPressed(keyCode);
         }
     }
 
@@ -200,7 +193,7 @@ namespace studio {
         ImGuiLayer::onKeyHold(keyCode);
         _objPreview->onKeyHold(keyCode);
         if (sceneViewport.isFocused() || screenViewport.isFocused()) {
-            activeSceneCameraController->onKeyHold(keyCode);
+//            activeSceneCameraController->onKeyHold(keyCode);
         }
     }
 
@@ -208,7 +201,7 @@ namespace studio {
         ImGuiLayer::onKeyReleased(keyCode);
         _objPreview->onKeyReleased(keyCode);
         if (sceneViewport.isFocused() || screenViewport.isFocused()) {
-            activeSceneCameraController->onKeyReleased(keyCode);
+//            activeSceneCameraController->onKeyReleased(keyCode);
         }
     }
 
@@ -216,7 +209,7 @@ namespace studio {
         ImGuiLayer::onKeyTyped(keyCode);
         _objPreview->onKeyTyped(keyCode);
         if (sceneViewport.isFocused() || screenViewport.isFocused()) {
-            activeSceneCameraController->onKeyTyped(keyCode);
+//            activeSceneCameraController->onKeyTyped(keyCode);
         }
     }
 
@@ -263,7 +256,7 @@ namespace studio {
 
         _parent.app->activeSceneFrame->resize(width, height);
         _parent.app->screenFrame->resize(width, height);
-        _parent.activeSceneCameraController->onWindowResized(width, height);
+        _parent.activeCamera->setAspectRatio(width, height);
     }
 
     void Activity::onAssetImported(const std::string &assetPath) {

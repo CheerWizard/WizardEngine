@@ -13,8 +13,15 @@ namespace engine::event {
     using namespace core;
 
     struct MousePosition {
-        f32 x;
-        f32 y;
+        f32 x = 0;
+        f32 y = 0;
+
+        MousePosition operator -(const MousePosition& mousePosition) const;
+
+        template<typename T>
+        friend MousePosition operator *(const MousePosition& mp, T scalar) {
+            return { mp.x * scalar, mp.y * scalar };
+        }
     };
 
     struct JoystickAxisStates {
@@ -37,47 +44,43 @@ namespace engine::event {
         f32 axes[6];
     };
 
-    class Input {
+    class Input final {
 
     public:
-        Input(void* nativeWindow) : nativeWindow(nativeWindow) {}
-
-        ~Input() {
-            destroy();
-        }
+        static void create(void* nativeWindow);
+        static void destroy();
 
     public:
-        bool isKeyPressed(KeyCode keyCode);
-        bool isMousePressed(MouseCode mouseCode);
-        MousePosition getMousePosition();
-        [[nodiscard]] bool isJoystickConnected() const;
-        [[nodiscard]] bool isJoystickDisconnected() const;
-        [[nodiscard]] JoystickAxisStates getJoystickAxisStates() const;
-        [[nodiscard]] JoystickButtonStates getJoystickButtonStates() const;
-        [[nodiscard]] JoystickHatStates getJoystickHatStates() const;
-        [[nodiscard]] const char* getJoystickName() const;
-        [[nodiscard]] bool isGamepadPresent() const;
-        [[nodiscard]] const char* getGamepadName() const;
-        [[nodiscard]] GamepadState getGamepadState() const;
+        static bool isKeyPressed(KeyCode keyCode);
+        static bool isMousePressed(MouseCode mouseCode);
+        static MousePosition getMousePosition();
+        static MousePosition getMouseDelta();
+        [[nodiscard]] static bool isJoystickConnected();
+        [[nodiscard]] static bool isJoystickDisconnected();
+        [[nodiscard]] static JoystickAxisStates getJoystickAxisStates();
+        [[nodiscard]] static JoystickButtonStates getJoystickButtonStates();
+        [[nodiscard]] static JoystickHatStates getJoystickHatStates();
+        [[nodiscard]] static const char* getJoystickName();
+        [[nodiscard]] static bool isGamepadPresent();
+        [[nodiscard]] static const char* getGamepadName();
+        [[nodiscard]] static GamepadState getGamepadState();
 
     public:
-        inline f32 getMousePosX() {
+        static inline f32 getMousePosX() {
             return getMousePosition().x;
         }
 
-        inline f32 getMousePosY() {
+        static inline f32 getMousePosY() {
             return getMousePosition().y;
         }
 
-        inline void setJoystickId(const s32& joystickId) {
-            this->joystickId = joystickId;
+        static void setJoystickId(const s32& joystickId) {
+            Input::joystickId = joystickId;
         }
 
     private:
-        void destroy();
-
-    private:
-        void* nativeWindow;
-        s32 joystickId = 0;
+        static void* nativeWindow;
+        static s32 joystickId;
+        static MousePosition previousMousePosition;
     };
 }

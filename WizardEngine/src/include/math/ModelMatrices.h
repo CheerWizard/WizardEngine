@@ -43,6 +43,8 @@ namespace engine::math {
         : position(modelMatrix3D.position), rotation(modelMatrix3D.rotation), scale(modelMatrix3D.scale), Uniform(modelMatrix3D) {
             updateModel3d(*this);
         }
+
+        void apply();
     };
 
     struct ModelMatrix2d : shader::Mat4fUniform {
@@ -71,6 +73,8 @@ namespace engine::math {
         ) : position(pos), rotation(rot), scale(scale) {
             updateModel2d(*this);
         }
+
+        void apply();
     };
 
     void serialize(YAML::Emitter& out, const char* key, const ModelMatrix2d& model);

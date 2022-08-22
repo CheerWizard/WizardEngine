@@ -59,11 +59,15 @@ namespace engine::graphics {
             return format.colorAttachments[index];
         }
 
-        inline const std::vector<ColorAttachment>& getColorAttachments() {
+        [[nodiscard]] inline const std::vector<ColorAttachment>& getColorAttachments() const {
             return format.colorAttachments;
         }
 
-        inline const DepthStencilAttachment& getDepthStencilAttachment() {
+        [[nodiscard]] inline size_t getColorAttachmentsSize() const {
+            return format.colorAttachments.size();
+        }
+
+        [[nodiscard]] inline const DepthStencilAttachment& getDepthStencilAttachment() const {
             return format.depthStencilAttachment;
         }
 
