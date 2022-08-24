@@ -71,6 +71,7 @@ namespace engine::graphics {
         void rotate(const RotateType &rotateType);
         void rotate(const RotateType &rotateType, float rotateSpeed);
         void setPosition(const vec2f &position);
+        vec3f& getPosition();
 
         void applyZoom(const ZoomType &zoomType);
         void applyZoom(const ZoomType &zoomType, float zoomSpeed);
@@ -131,6 +132,7 @@ namespace engine::graphics {
         void rotate(const RotateType &rotateType);
         void rotate(const RotateType &rotateType, float rotateSpeed);
         void setPosition(const vec3f &position);
+        vec3f& getPosition();
 
         void applyZoom(const ZoomType &zoomType);
         void applyZoom(const ZoomType &zoomType, float zoomSpeed);
@@ -154,6 +156,7 @@ namespace engine::graphics {
         void applyPerspective();
         ViewMatrix3d& getView();
         void applyView();
+        ViewProjection3d& getViewProjection();
         void setAspectRatio(u32 width, u32 height);
         void apply();
 

@@ -9,8 +9,6 @@
 
 namespace engine::graphics {
     using namespace shader;
-    ShaderScript phongLightScript();
-    ShaderScript phongLightUboScript();
     ShaderScript pointLightScript();
     ShaderScript pointLightArrayScript();
     ShaderScript pointLightUboScript();

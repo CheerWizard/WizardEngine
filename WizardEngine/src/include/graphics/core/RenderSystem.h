@@ -9,6 +9,7 @@
 #include <platform/graphics/FrameBuffer.h>
 #include <graphics/text/TextRenderer.h>
 #include <graphics/core/geometry/Screen.h>
+#include <graphics/materials/Phong.h>
 
 namespace engine::graphics {
 
@@ -48,6 +49,7 @@ namespace engine::graphics {
         void createScreenRenderer();
         void createSceneRenderer();
         void createLineRenderers();
+        void updatePhongMaterial(u32 index, Phong* phong, const BaseShader& shader);
         void createQuadRenderer();
         void createCircleRenderer();
         void createOutlineRenderer();

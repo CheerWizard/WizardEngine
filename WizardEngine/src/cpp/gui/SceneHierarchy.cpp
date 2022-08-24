@@ -443,9 +443,10 @@ namespace engine::gui {
         // draw light components
         drawComponent<graphics::PhongLightComponent>("PhongLight", entity, [](graphics::PhongLightComponent& phongLight) {
             drawVec3Controller(phongLight.position.name, phongLight.position, phongLight.position.isUpdated);
-            drawVec3Controller(phongLight.ambient.name, phongLight.ambient, phongLight.ambient.isUpdated);
-            drawVec3Controller(phongLight.diffuse.name, phongLight.diffuse, phongLight.diffuse.isUpdated);
-            drawVec3Controller(phongLight.specular.name, phongLight.specular, phongLight.specular.isUpdated);
+            drawVec4Controller(phongLight.color.name, phongLight.color.value, phongLight.color.isUpdated);
+            drawFloatSlider(phongLight.ambient);
+            drawFloatSlider(phongLight.diffuse);
+            drawFloatSlider(phongLight.specular);
         });
         drawComponent<graphics::DirectLightComponent>("DirectLight", entity, [](graphics::DirectLightComponent& directLight) {
             drawVec3Controller(directLight.direction.name, directLight.direction, directLight.direction.isUpdated);

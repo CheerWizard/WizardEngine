@@ -6,7 +6,7 @@
 
 namespace engine::math {
 
-    vec4f RayCast::toWorldSpace(
+    vec3f RayCast::toWorldSpace(
             const vec2f &screenCoords,
             u32 width, u32 height,
             const ViewProjection3d& vp
@@ -63,7 +63,7 @@ namespace engine::math {
         return { eyeCoords.x(), eyeCoords.y(), -1.0f, 0 };
     }
 
-    vec4f RayCast::toWorldSpace(const vec4f &eyeCoords, const mat4f &viewMatrix) {
+    vec3f RayCast::toWorldSpace(const vec4f &eyeCoords, const mat4f &viewMatrix) {
         mat4f v = viewMatrix;
         glm::mat4 m;
 
@@ -94,8 +94,8 @@ namespace engine::math {
         inverseV.v2 = { inverseM[2][0], inverseM[2][1], inverseM[2][2], inverseM[2][3] };
         inverseV.v3 = { inverseM[3][0], inverseM[3][1], inverseM[3][2], inverseM[3][3] };
 
-        vec4f worldCoords = inverseV * eyeCoords;
-        return worldCoords.normalize();
+        vec4f worldCoords = (inverseV * eyeCoords);
+        return { worldCoords.x(), worldCoords.y(), worldCoords.z() };
     }
 
 }

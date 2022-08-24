@@ -20,6 +20,11 @@ namespace engine::shader {
         Uniform(const char* name, const V& value) : name(name), value(value) {}
         Uniform(const char* name, const V& value, const bool& isUpdated) : name(name), value(value), isUpdated(isUpdated) {}
         Uniform(const Uniform<V>& uniform) : name(uniform.name), value(uniform.value), isUpdated(uniform.isUpdated) {}
+
+        Uniform<V>& operator =(const V& otherValue) {
+            value = otherValue;
+            return *this;
+        }
     };
 
     typedef Uniform<float> FloatUniform;

@@ -9,6 +9,8 @@
 #include <core/Memory.h>
 #include <core/ProjectManager.h>
 
+#include <math/RayCast.h>
+
 #include <event/Events.h>
 #include <event/GamepadCodes.h>
 
@@ -27,6 +29,9 @@
 #include <graphics/skybox/Skybox.h>
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/GraphicsObject.h>
+#include <graphics/materials/ColorMaterial.h>
+#include <graphics/materials/SolidPhong.h>
+#include <graphics/materials/Phong.h>
 
 #include <scripting/ScriptSystem.h>
 

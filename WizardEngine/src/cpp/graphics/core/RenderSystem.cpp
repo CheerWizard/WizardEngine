@@ -11,6 +11,8 @@
 #include <graphics/outline/Outline.h>
 #include <graphics/skybox/Skybox.h>
 #include <graphics/core/geometry/Point.h>
+#include <graphics/materials/ColorMaterial.h>
+#include <graphics/materials/SolidPhong.h>
 
 namespace engine::graphics {
 
@@ -113,24 +115,24 @@ namespace engine::graphics {
 
     void RenderSystem::createSceneRenderer() {
         auto vBatchShader = shader::BaseShader({ camera3dUboScript() });
-        auto fBatchShader = shader::BaseShader({ phongLightScript(), pointLightArrayScript() });
+        auto fBatchShader = shader::BaseShader({ phongLightScript() });
         auto batchShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "batch",
                         "v_batch.glsl",
-                        "f_batch.glsl",
+                        "scene_phong.glsl",
                         ENGINE_SHADERS_PATH
                 },
                 vBatchShader,
                 fBatchShader
         );
         auto vInstanceShader = shader::BaseShader({ camera3dUboScript() });
-        auto fInstanceShader = shader::BaseShader({ phongLightScript(), pointLightArrayScript() });
+        auto fInstanceShader = shader::BaseShader({ phongLightScript() });
         auto instanceShader = shader::BaseShaderProgram(
                 io::ShaderProps {
                         "instance",
                         "v_instance.glsl",
-                        "f_instance.glsl",
+                        "scene_phong.glsl",
                         ENGINE_SHADERS_PATH
                 },
                 vInstanceShader,
@@ -138,7 +140,10 @@ namespace engine::graphics {
         );
 
         sceneRenderer = DefaultRenderer(batchShader, instanceShader);
-        sceneRenderer.addEntityHandler([&batchShader, &instanceShader](ecs::Registry& registry, ecs::entity_id entityId, u32 index) {
+        sceneRenderer.getRenderer1().setInstanceCountLimit(5);
+        sceneRenderer.getRenderer2().setInstanceCountLimit(5);
+        sceneRenderer.addEntityHandler([this](ecs::Registry& registry,
+                ecs::entity_id entityId, u32 index, BaseShaderProgram& shader) {
             int entityIdInt = (int) entityId;
             ENGINE_INFO("entityHandler: entity_id: {0}, index: {1}", entityIdInt, index);
             // update polygon mode
@@ -149,8 +154,10 @@ namespace engine::graphics {
             Culling::setCulling(culling ? *culling : CullingComponent());
             // pass entity id to shader
             IntUniform entityIdUniform = { "entityId", entityIdInt };
-            batchShader.getFShader().setUniformArrayElement(index, entityIdUniform);
-            instanceShader.getFShader().setUniformArrayElement(index, entityIdUniform);
+            shader.getFShader().setUniformArrayElement(index, entityIdUniform);
+            // phong material
+            auto phong = registry.getComponent<Phong>(entityId);
+            updatePhongMaterial(index, phong, shader.getFShader());
         });
     }
 
@@ -413,5 +420,37 @@ namespace engine::graphics {
 
     void RenderSystem::removeRenderSystemCallback() {
         callback = nullptr;
+    }
+
+    void RenderSystem::updatePhongMaterial(u32 index, Phong* phong, const BaseShader& shader) {
+        shader.setUniformArrayStructField(index, phong->name, phong->color);
+
+        shader.setUniformArrayStructField(index, phong->name, phong->ambient);
+
+        int nextSlot = index * phong->slotCount();
+
+        auto& albedo = phong->albedo;
+        albedo.sampler.value += nextSlot;
+        shader.setUniformArrayStructField(index, phong->name, albedo.sampler);
+        TextureBuffer::activate(albedo.sampler.value);
+        TextureBuffer::bind(albedo.textureId, TextureBuffer::getTypeId(static_cast<TextureType>(albedo.typeId)));
+
+        shader.setUniformArrayStructField(index, phong->name, phong->diffuse);
+
+        auto& diff = phong->diffuseMap;
+        diff.sampler.value += nextSlot;
+        shader.setUniformArrayStructField(index, phong->name, diff.sampler);
+//        TextureBuffer::activate(diff.sampler.value);
+//        TextureBuffer::bind(diff.textureId, TextureBuffer::getTypeId(static_cast<TextureType>(diff.typeId)));
+
+        shader.setUniformArrayStructField(index, phong->name, phong->specular);
+
+        auto& spec = phong->specularMap;
+        spec.sampler.value += nextSlot;
+        shader.setUniformArrayStructField(index, phong->name, spec.sampler);
+//        TextureBuffer::activate(spec.sampler.value);
+//        TextureBuffer::bind(spec.textureId, TextureBuffer::getTypeId(static_cast<TextureType>(spec.typeId)));
+
+        shader.setUniformArrayStructField(index, phong->name, phong->shiny);
     }
 }

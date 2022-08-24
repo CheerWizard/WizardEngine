@@ -24,8 +24,16 @@ namespace engine::graphics {
         template<typename Text>
         void render(ecs::Registry& registry);
 
+    public:
+        inline void setInstanceCountLimit(u32 instanceCountLimit) {
+            this->instanceCountLimit = instanceCountLimit;
+        }
+
     private:
         void init();
+
+    private:
+        u32 instanceCountLimit = 128;
     };
 
     template<typename Text>
@@ -121,7 +129,7 @@ namespace engine::graphics {
                     previousChar = currentChar;
                 }
 
-                if (++i > INSTANCE_COUNT_LIMIT) {
+                if (++i > instanceCountLimit) {
                     renderModel.vao.bind();
                     drawV(drawType, totalVertexCount);
                     i = 0;

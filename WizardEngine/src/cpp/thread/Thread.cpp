@@ -16,4 +16,8 @@ namespace engine::thread {
     void current_sleep_time(const time::Time &time) {
         current_sleep(time.getLongMs());
     }
+
+    u32 cpu_cores_count() {
+        return std::thread::hardware_concurrency();
+    }
 }

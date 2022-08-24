@@ -870,4 +870,31 @@ namespace engine::math {
 
         return result;
     }
+
+    template<typename T>
+    T distance(const vec2<T>& v1, const vec2<T>& v2) {
+        return sqrt(
+                ((v2.x() - v1.x()) * (v2.x() - v1.x())) +
+                ((v2.y() - v1.y()) * (v2.y() - v1.y()))
+        );
+    }
+
+    template<typename T>
+    T distance(const vec3<T>& v1, const vec3<T>& v2) {
+        return sqrt(
+                ((v2.x() - v1.x()) * (v2.x() - v1.x())) +
+                ((v2.y() - v1.y()) * (v2.y() - v1.y())) +
+                ((v2.z() - v1.z()) * (v2.z() - v1.z()))
+        );
+    }
+
+    template<typename T>
+    T distance(const vec4<T>& v1, const vec4<T>& v2) {
+        return sqrt(
+                ((v2.x() - v1.x()) * (v2.x() - v1.x())) +
+                ((v2.y() - v1.y()) * (v2.y() - v1.y())) +
+                ((v2.z() - v1.z()) * (v2.z() - v1.z())) +
+                ((v2.w() - v1.w()) * (v2.w() - v1.w()))
+        );
+    }
 }

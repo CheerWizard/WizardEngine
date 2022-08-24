@@ -160,6 +160,10 @@ namespace engine::graphics {
         return { glm::vec3(-rot, -rot, 0) };
     }
 
+    vec3f &Camera2D::getPosition() {
+        return getView().position;
+    }
+
     void Camera3D::create(f32 aspectRatio) {
         add<Camera3dComponent>(Camera3dComponent(aspectRatio));
     }
@@ -378,6 +382,14 @@ namespace engine::graphics {
 
     void Camera3D::applyPosition() {
         getView().position.value = focalPoint - getView().forwardDirection() * distance;
+    }
+
+    ViewProjection3d &Camera3D::getViewProjection() {
+        return get<Camera3dComponent>()->viewProjection;
+    }
+
+    vec3f &Camera3D::getPosition() {
+        return getView().position.value;
     }
 
 }

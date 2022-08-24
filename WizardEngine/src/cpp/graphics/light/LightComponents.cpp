@@ -6,11 +6,41 @@
 
 namespace engine::graphics {
 
+    ShaderScript phongLightScript() {
+        auto script = ShaderScript();
+
+        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+            u32 i = 0;
+            registry.each<PhongLightComponent>([&shader, &i](PhongLightComponent* phongLight) {
+                shader.setUniformArrayStructField(i, phongLight->name, phongLight->position);
+                shader.setUniformArrayStructField(i, phongLight->name, phongLight->color);
+                shader.setUniformArrayStructField(i, phongLight->name, phongLight->ambient);
+                shader.setUniformArrayStructField(i, phongLight->name, phongLight->diffuse);
+                shader.setUniformArrayStructField(i, phongLight->name, phongLight->specular);
+                i++;
+            });
+        };
+
+        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+            auto phongLight = entity.get<PhongLightComponent>();
+            if (phongLight) {
+                shader.setUniformStructField(phongLight->name, phongLight->position);
+                shader.setUniformStructField(phongLight->name, phongLight->color);
+                shader.setUniformStructField(phongLight->name, phongLight->ambient);
+                shader.setUniformStructField(phongLight->name, phongLight->diffuse);
+                shader.setUniformStructField(phongLight->name, phongLight->specular);
+            }
+        };
+
+        return script;
+    }
+
     void PhongLightComponent::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap;
         out << YAML::Key << "PhongLightComponent";
         yaml::serialize(out, "name", name);
         yaml::serialize(out, "position", position);
+        yaml::serialize(out, "color", color);
         yaml::serialize(out, "ambient", ambient);
         yaml::serialize(out, "diffuse", diffuse);
         yaml::serialize(out, "specular", specular);
@@ -22,6 +52,7 @@ namespace engine::graphics {
         if (root) {
             yaml::deserialize(root, "name", name);
             yaml::deserialize(root, "position", position);
+            yaml::deserialize(root, "color", color);
             yaml::deserialize(root, "ambient", ambient);
             yaml::deserialize(root, "diffuse", diffuse);
             yaml::deserialize(root, "specular", specular);

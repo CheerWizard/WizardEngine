@@ -59,6 +59,23 @@ namespace test {
             }
         });
 
+//        SolidPhong carSolidPhong;
+//        carSolidPhong.color.value = { 0.5, 0, 0, 1 };
+//        carSolidPhong.ambient.value = 1;
+//        carSolidPhong.diffuse.value = 0.8;
+//        carSolidPhong.specular.value = 0.2;
+//        carSolidPhong.shiny.value = 16;
+//        car.add<SolidPhong>(carSolidPhong);
+
+        Phong carPhong;
+        carPhong.color.value = { 0.5, 0, 0, 1 };
+        carPhong.ambient.value = 1;
+        carPhong.diffuse.value = 0.8;
+        carPhong.specular.value = 0.2;
+        carPhong.shiny.value = 16;
+        carPhong.albedo.textureId = TextureBuffer::load("assets/materials/survival_pack/1001_albedo.jpg");
+        car.add<Phong>(carPhong);
+
 //        Cube<BatchVertex<Vertex3d>> cube;
 //        Object3d<BatchVertex<Vertex3d>> cubeObj {
 //            "Cube", scene.get()
@@ -75,6 +92,8 @@ namespace test {
 //                    audio::MediaPlayer::playStream();
 //                }
 //        );
+
+        light = PhongLight(scene.get());
 
         bool tcpClientCreated = tcp::Client::init(this, this, this);
         if (tcpClientCreated) {
@@ -132,6 +151,8 @@ namespace test {
                     msaaEnabled ? Application::get().setSampleSize(1) : Application::get().setSampleSize(8);
                     msaaEnabled = !msaaEnabled;
         );
+
+        KEY_HOLD(LeftAlt, onLeftAltHold(););
 
 //        KEY_PRESSED(KeyCode::D1, audio::MediaPlayer::pause(););
 //        KEY_PRESSED(KeyCode::D2, audio::MediaPlayer::stop(););
@@ -348,5 +369,33 @@ namespace test {
 //            modelMatrix.rotation.v[1] += rotationY;
 //            updateModel3d(modelMatrix);
         }
+    }
+
+    void TestLayer::onLeftAltHold() {
+        RUNTIME_INFO("onLeftAltHold()");
+        auto mouseCoords = Input::getMousePosition();
+        u32 w = Application::get().getWindowWidth();
+        u32 h = Application::get().getWindowHeight();
+        vec3f mouseWorldPos = RayCast::toWorldSpace(
+                { mouseCoords.x, mouseCoords.y }, w, h,
+                mainCamera.getViewProjection()
+        );
+
+//        auto distanceToCar = math::distance(mainCamera.getPosition(), car.getTransform().position);
+//        mouseWorldPos[0] *= distanceToCar;
+//        mouseWorldPos[1] *= distanceToCar;
+//        mouseWorldPos[2] *= distanceToCar;
+//        RUNTIME_INFO("distanceToCar: {0}", distanceToCar);
+
+        RUNTIME_INFO("mouseWorldPos: {0}, {1}, {2}", mouseWorldPos.x(), mouseWorldPos.y(), mouseWorldPos.z());
+//        car.getTransform().position = mouseWorldPos;
+//        car.applyTransform();
+
+        mouseWorldPos[0] *= 10;
+        mouseWorldPos[1] *= -10;
+        mouseWorldPos[2] *= 10;
+
+        light.getPosition() = mouseWorldPos;
+        light.apply();
     }
 }

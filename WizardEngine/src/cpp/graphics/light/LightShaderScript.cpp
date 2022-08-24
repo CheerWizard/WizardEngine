@@ -6,44 +6,6 @@
 
 namespace engine::graphics {
 
-    ShaderScript phongLightScript() {
-        auto script = ShaderScript();
-
-        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
-            registry.each<PhongLightComponent>([&shader](PhongLightComponent* phongLight) {
-                updateLight(shader, *phongLight);
-            });
-        };
-
-        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
-            auto phongLight = entity.get<PhongLightComponent>();
-            if (phongLight) {
-                updateLight(shader, *phongLight);
-            }
-        };
-
-        return script;
-    }
-
-    ShaderScript phongLightUboScript() {
-        auto script = ShaderScript();
-
-        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
-            registry.each<PhongLightComponent>([&shader](PhongLightComponent* phongLight) {
-                updateUboLight(shader, *phongLight);
-            });
-        };
-
-        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
-            auto phongLight = entity.get<PhongLightComponent>();
-            if (phongLight) {
-                updateUboLight(shader, *phongLight);
-            }
-        };
-
-        return script;
-    }
-
     ShaderScript pointLightScript() {
         auto script = ShaderScript();
 

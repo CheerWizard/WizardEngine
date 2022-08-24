@@ -7,6 +7,7 @@
 #include <core/Application.h>
 #include <graphics/GraphicsObject.h>
 #include <graphics/camera/Camera.h>
+#include <graphics/light/Light.h>
 
 namespace test {
 
@@ -70,6 +71,8 @@ namespace test {
         void onPadX();
         void onPadY();
 
+        void onLeftAltHold();
+
         void onGamepadRollLeft(const GamepadRoll& roll);
         void onGamepadRollRight(const GamepadRoll& roll);
 
@@ -78,6 +81,7 @@ namespace test {
         Object3d<BatchVertex<Vertex3d>> car;
         bool msaaEnabled = false;
         Entity hoveredEntity;
+        PhongLight light;
     };
 
 }

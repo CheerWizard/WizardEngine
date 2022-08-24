@@ -11,13 +11,11 @@
 #include <platform/graphics/RenderCommands.h>
 #include <platform/graphics/TextureBuffer.h>
 
-#define INSTANCE_COUNT_LIMIT 128
-
 using namespace engine::shader;
 
 namespace engine::graphics {
 
-    typedef std::function<void(ecs::Registry&, ecs::entity_id, u32)> Handle;
+    typedef std::function<void(ecs::Registry&, ecs::entity_id, u32, BaseShaderProgram&)> Handle;
     struct EntityHandler {
         Handle handle;
 
@@ -83,6 +81,14 @@ namespace engine::graphics {
         void renderV(ecs::Registry &registry);
         template<typename T, typename V>
         void renderVI(ecs::Registry &registry);
+
+    public:
+        inline void setInstanceCountLimit(u32 instanceCountLimit) {
+            this->instanceCountLimit = instanceCountLimit;
+        }
+
+    private:
+        u32 instanceCountLimit = 128;
     };
 
     class InstanceRenderer : public Renderer {
@@ -94,6 +100,14 @@ namespace engine::graphics {
         void renderV(ecs::Registry &registry);
         template<typename T, typename V>
         void renderVI(ecs::Registry &registry);
+
+    public:
+        inline void setInstanceCountLimit(u32 instanceCountLimit) {
+            this->instanceCountLimit = instanceCountLimit;
+        }
+
+    private:
+        u32 instanceCountLimit = 128;
     };
 
     template<class Renderer1 = Renderer, class Renderer2 = Renderer>
@@ -125,6 +139,15 @@ namespace engine::graphics {
 
     public:
         void release();
+
+    public:
+        Renderer1& getRenderer1() {
+            return renderer1;
+        }
+
+        Renderer2& getRenderer2() {
+            return renderer2;
+        }
 
     private:
         Renderer1 renderer1;
@@ -245,7 +268,7 @@ namespace engine::graphics {
                 tryUploadBatch(i, *geometry, totalVertexCount, renderModel);
                 shaderProgram.getVShader().setUniformArrayElement(i, transform->modelMatrix);
                 handleEntity(registry, transform->entityId, i++);
-                if (i > INSTANCE_COUNT_LIMIT) {
+                if (i > instanceCountLimit) {
                     renderModel.vao.bind();
                     drawV(drawType, totalVertexCount);
                     i = 0;
@@ -294,7 +317,7 @@ namespace engine::graphics {
                 tryUploadBatchMesh(i, *mesh, totalVertexCount, totalIndexCount, renderModel);
                 shaderProgram.getVShader().setUniformArrayElement(i, transform->modelMatrix);
                 handleEntity(registry, transform->entityId, i++);
-                if (i > INSTANCE_COUNT_LIMIT) {
+                if (i > instanceCountLimit) {
                     renderModel.vao.bind();
                     drawVI(drawType, totalIndexCount);
                     i = 0;
@@ -346,7 +369,7 @@ namespace engine::graphics {
             handleEntity(registry, transform->entityId, i++);
             // if transform count is out of limit, then draw current instances and repeat iteration!
             auto& renderModel = vRenderModels[renderModelId];
-            if (i > INSTANCE_COUNT_LIMIT) {
+            if (i > instanceCountLimit) {
                 renderModel.vao.bind();
                 drawV(drawType, totalVertexCount, i);
                 i = 0;
@@ -397,7 +420,7 @@ namespace engine::graphics {
             handleEntity(registry, transform->entityId, i++);
             // if transform count is out of limit, then draw current instances and continue iteration!
             auto& renderModel = viRenderModels[renderModelId];
-            if (i > INSTANCE_COUNT_LIMIT) {
+            if (i > instanceCountLimit) {
                 renderModel.vao.bind();
                 drawVI(drawType, totalIndexCount, i);
                 i = 0;
