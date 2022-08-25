@@ -50,12 +50,12 @@ namespace engine::graphics {
         }
     }
 
-    void TextureBuffer::init(const TextureType& textureType) {
+    void TextureBuffer::create(const TextureType& textureType) {
         toGLTextureType(textureType, type);
         glCreateTextures(type, 1, &id);
     }
 
-    u32 TextureBuffer::create(const TextureType& textureType) {
+    u32 TextureBuffer::createFrom(const TextureType& textureType) {
         GLenum type;
         GLuint id;
         toGLTextureType(textureType, type);
@@ -105,7 +105,7 @@ namespace engine::graphics {
     u32 TextureBuffer::load(const char* filePath) {
         auto textureData = io::TextureFile::read(filePath);
 
-        TextureBuffer textureBuffer {};
+        TextureBuffer textureBuffer;
         if (textureData.data == nullptr) {
             ENGINE_WARN("Can't stream texture {0} from NULL data!", filePath);
         } else {
