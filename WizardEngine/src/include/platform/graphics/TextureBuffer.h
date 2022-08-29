@@ -56,8 +56,13 @@ namespace engine::graphics {
 
         static u32 getTypeId(const TextureType& textureType);
 
+        static bool exists(const char* filepath);
+        static void clearTextureIdCache();
+        static u32 getTextureId(const char* filepath);
+
     private:
         u32 id = 0;
         u32 type = 0;
+        static unordered_map<const char*, u32> textureIdCache;
     };
 }

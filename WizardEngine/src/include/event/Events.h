@@ -31,6 +31,7 @@ namespace engine::event {
     class EventRegistry final {
 
         typedef core::unordered_map<KeyCode, Action<KeyCode>> KeyCodeMap;
+        typedef core::unordered_map<KeyCode, bool> KeyHoldMap;
         typedef core::unordered_map<MouseCode, Action<MouseCode>> MouseCodeMap;
         typedef core::unordered_map<MouseCode, bool> MouseHoldMap;
         typedef core::unordered_map<GamepadButtonCode, Action<GamepadButtonCode>> GamepadButtonMap;
@@ -40,7 +41,7 @@ namespace engine::event {
         static Action<const uint32_t&, const uint32_t&> onWindowResized;
 
         static KeyCodeMap onKeyPressedMap;
-        static KeyCodeMap onKeyHoldMap;
+        static KeyHoldMap onKeyHoldMap;
         static KeyCodeMap onKeyReleasedMap;
         static KeyCodeMap onKeyTypedMap;
 
@@ -60,6 +61,7 @@ namespace engine::event {
         static GamepadRoll inactiveGamepadRollLeft;
         static GamepadRoll inactiveGamepadRollRight;
 
+        static bool keyHold(KeyCode keyCode);
         static bool mouseHold(MouseCode mouseCode);
     };
 }

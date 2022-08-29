@@ -143,4 +143,6 @@ namespace engine::graphics {
         static PolygonMode polygonMode;
         static FaceType faceType;
     };
+
+    void enableSRGB();
 }

@@ -6,24 +6,24 @@
 
 namespace engine::graphics {
 
-    void release(VRenderModel& renderModel) {
-        renderModel.vao.destroy();
-        renderModel.vbo.destroy();
+    void VRenderModel::release() {
+        vao.destroy();
+        vbo.destroy();
     }
 
-    void resetCounts(VRenderModel& renderModel) {
-        renderModel.vbo.setCount(0);
+    void VRenderModel::resetCounts() {
+        vbo.setCount(0);
     }
 
-    void release(VIRenderModel& renderModel) {
-        renderModel.vao.destroy();
-        renderModel.vbo.destroy();
-        renderModel.ibo.destroy();
+    void VIRenderModel::release() {
+        vao.destroy();
+        vbo.destroy();
+        ibo.destroy();
     }
 
-    void resetCounts(VIRenderModel& renderModel) {
-        renderModel.vbo.setCount(0);
-        renderModel.ibo.setCount(0);
+    void VIRenderModel::resetCounts() {
+        vbo.setCount(0);
+        ibo.setCount(0);
     }
 
     void VertexBuffer::setFormat(const shader::VertexFormat &vertexFormat) {

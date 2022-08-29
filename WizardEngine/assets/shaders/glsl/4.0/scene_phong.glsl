@@ -9,13 +9,15 @@ uniform PhongLight phongLight[LIGHT_COUNT];
 uniform Phong phong[PHONG_MAX_COUNT];
 
 void main() {
-    vec3 normal = normalize(f_normal);
-    vec3 viewDir = normalize(viewPosition - f_pos);
     for (uint i = 0 ; i < LIGHT_COUNT ; i++) {
         PhongLight light = phongLight[i];
         vec3 lightDir = normalize(light.position - f_pos);
         fragment += applyPhong(
-            phong[getId()], f_uv, normal, viewDir, lightDir, light
+            phong[getId()],
+            f_pos, f_uv, f_normal,
+            f_tangent, f_bitangent,
+            viewPosition,
+            light
         );
     }
 }

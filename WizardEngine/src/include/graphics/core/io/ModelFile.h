@@ -27,6 +27,8 @@ namespace engine::io {
         vec3f position = { 0.5f, 0.5f, 0.5f };
         vec2f uv = { 0, 0 };
         vec3f normal = { 0, 0, 0 };
+        vec3f tangent = { 0, 0, 0 };
+        vec3f bitangent = { 0, 0, 0 };
     };
 
     struct ModelTexture {
@@ -75,16 +77,36 @@ namespace engine::io {
         std::function<T(const io::ModelVertex&)> vertexMapper;
     };
 
+    enum ModelFileOption {
+        triangulate = aiProcess_Triangulate,
+        flip_uv = aiProcess_FlipUVs,
+        calc_tang_space = aiProcess_CalcTangentSpace
+    };
+
+    struct ModelFileOptions {
+        vector<ModelFileOption> flags = { triangulate, calc_tang_space };
+
+        [[nodiscard]] u32 getFlag() const {
+            if (flags.empty()) return 0;
+
+            u32 flag = flags[0];
+            for (u32 i = 1; i < flags.size(); i++) {
+                flag = flag | flags[i];
+            }
+            return flag;
+        }
+    };
+
     template<typename T>
     class ModelFile final {
 
         typedef std::unordered_map<std::string, graphics::BaseMeshComponent<T>> MeshMap;
 
     public:
-        static void read(const std::string &filepath, const ModelFileListener<T>& listener);
+        static void read(const std::string &filepath, const ModelFileListener<T>& listener, const ModelFileOptions& options = ModelFileOptions());
 
     private:
-        static Model read(const std::string &filePath);
+        static Model read(const std::string &filePath, const ModelFileOptions& options);
         static bool exists(const std::string &filepath);
         static void clear();
         static void extractNodes(
@@ -96,6 +118,8 @@ namespace engine::io {
         static ModelMesh extractMesh(aiMesh *mesh);
         static ModelMaterial extractMaterial(aiMesh *mesh, const aiScene *scene);
         static void extractTextures(std::vector<ModelTexture>& textures, aiMaterial *mat, const aiTextureType& type);
+        static Model getFromMemory(const std::string& filepath);
+        static Model copyFromMemory(const std::string& filepath);
 
     private:
         static MeshMap _meshMap;
@@ -105,9 +129,9 @@ namespace engine::io {
     std::unordered_map<std::string, graphics::BaseMeshComponent<T>> ModelFile<T>::_meshMap;
 
     template<typename T>
-    Model ModelFile<T>::read(const std::string &filePath) {
+    Model ModelFile<T>::read(const std::string &filePath, const ModelFileOptions& options) {
         Assimp::Importer import;
-        const aiScene *scene = import.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs);
+        const aiScene *scene = import.ReadFile(filePath, options.getFlag());
 
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
             std::string message = "Assimp: failed to import file '" + filePath + "'; error: " + import.GetErrorString();
@@ -121,8 +145,8 @@ namespace engine::io {
         ModelMeshComponent meshComponent;
         meshComponent.meshes = engine::core::mapTo(meshes);
         meshComponent.meshCount = meshes.size();
+        meshComponent.invalidateSize();
 
-        graphics::updateStartAndCounts(meshComponent, 0, 0);
         return { meshComponent, materials };
     }
 
@@ -151,11 +175,13 @@ namespace engine::io {
         std::vector<uint32_t> indicesVector;
         // extract vertices
         for (uint32_t i = 0; i < mesh->mNumVertices; i++) {
+            // positions
             vertices[i].position = {
                     mesh->mVertices[i].x,
                     mesh->mVertices[i].y,
                     mesh->mVertices[i].z,
             };
+            // normals
             vertices[i].normal = {
                     mesh->mNormals[i].x,
                     mesh->mNormals[i].y,
@@ -166,6 +192,22 @@ namespace engine::io {
                 vertices[i].uv = {
                         mesh->mTextureCoords[0][i].x,
                         mesh->mTextureCoords[0][i].y
+                };
+            }
+            // tangents
+            if (mesh->mTangents) {
+                vertices[i].tangent = {
+                        mesh->mTangents[i].x,
+                        mesh->mTangents[i].y,
+                        mesh->mTangents[i].z,
+                };
+            }
+            // bitangents
+            if (mesh->mBitangents) {
+                vertices[i].bitangent = {
+                        mesh->mBitangents[i].x,
+                        mesh->mBitangents[i].y,
+                        mesh->mBitangents[i].z,
                 };
             }
         }
@@ -219,16 +261,17 @@ namespace engine::io {
     }
 
     template<typename T>
-    void ModelFile<T>::read(const std::string &filepath, const ModelFileListener<T> &listener) {
+    void ModelFile<T>::read(const std::string &filepath, const ModelFileListener<T> &listener, const ModelFileOptions& options) {
+        ENGINE_INFO("ModelFile: read='{0}'", filepath);
         // get a copy of mesh that's already loaded from a model file
         if (exists(filepath)) {
-            listener.success(graphics::copy(_meshMap.at(filepath)));
+            listener.success(_meshMap.at(filepath).copy());
             return;
         }
         // load new mesh from model file
         try {
-            auto model = read(filepath);
-            auto mesh = toMeshComponent<T>(model.meshComponent, listener.vertexMapper);
+            auto model = read(filepath, options);
+            auto mesh = model.meshComponent.template toMeshComponent<T>(listener.vertexMapper);
             _meshMap.insert({ filepath, mesh });
             listener.success(mesh);
         } catch (const file_not_found& ex) {
@@ -245,6 +288,24 @@ namespace engine::io {
     template<typename T>
     void ModelFile<T>::clear() {
         _meshMap.clear();
+    }
+
+    template<typename T>
+    Model ModelFile<T>::getFromMemory(const std::string &filepath) {
+        if (exists(filepath)) {
+            return _meshMap.at(filepath);
+        }
+        ENGINE_ERR("ModelFile getFromMemory: no such model in memory filepath='{0}'", filepath);
+        return {};
+    }
+
+    template<typename T>
+    Model ModelFile<T>::copyFromMemory(const std::string &filepath) {
+        if (exists(filepath)) {
+            return _meshMap.at(filepath).copy();
+        }
+        ENGINE_ERR("ModelFile copyFromMemory: no such model in memory filepath='{0}'", filepath);
+        return {};
     }
 
     template<typename T>

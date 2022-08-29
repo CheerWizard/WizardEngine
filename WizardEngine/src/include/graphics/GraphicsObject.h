@@ -11,26 +11,26 @@
 namespace engine::graphics {
 
     template<typename T>
-    class Object3d : public ecs::Entity {
+    class Object : public ecs::Entity {
 
     public:
-        Object3d() = default;
+        Object() = default;
 
-        Object3d(
+        Object(
                 const std::string &tag,
                 ecs::EntityContainer* container
         ) : Entity(tag, container) {
             add<Transform3dComponent>(Transform3dComponent());
         }
 
-        Object3d(
+        Object(
                 ecs::EntityContainer* container
         ) : Entity("GraphicsObject", container) {
             add<Transform3dComponent>(Transform3dComponent());
             add<BaseMeshComponent<T>>();
         }
 
-        Object3d(
+        Object(
                 ecs::EntityContainer* container,
                 const std::string &tag,
                 const Transform3dComponent& transform
@@ -38,7 +38,7 @@ namespace engine::graphics {
             add<Transform3dComponent>(transform);
         }
 
-        Object3d(
+        Object(
                 ecs::EntityContainer* container,
                 const std::string &tag,
                 const Transform3dComponent &transform,
@@ -48,7 +48,7 @@ namespace engine::graphics {
             add<BaseMeshComponent<T>>(mesh);
         }
 
-        Object3d(
+        Object(
                 ecs::EntityContainer* container,
                 const std::string& tag,
                 const Transform3dComponent &transform,
@@ -58,7 +58,7 @@ namespace engine::graphics {
             add<VertexDataComponent<InstanceVertex<T>>>(vertexDataComponent);
         }
 
-        Object3d(
+        Object(
                 ecs::EntityContainer* container,
                 const std::string& tag,
                 const Transform3dComponent &transform,
@@ -68,20 +68,29 @@ namespace engine::graphics {
             add<VertexDataComponent<BatchVertex<T>>>(vertexDataComponent);
         }
 
-        ~Object3d() = default;
+        ~Object() = default;
 
     public:
         ModelMatrix3d& getTransform();
         void applyTransform();
+        BaseMeshComponent<BatchVertex<Vertex3d>>& getBatch3d();
     };
 
     template<typename T>
-    ModelMatrix3d& Object3d<T>::getTransform() {
+    ModelMatrix3d& Object<T>::getTransform() {
         return get<Transform3dComponent>()->modelMatrix;
     }
 
     template<typename T>
-    void Object3d<T>::applyTransform() {
+    void Object<T>::applyTransform() {
         math::updateModel3d(getTransform());
     }
+
+    template<typename T>
+    BaseMeshComponent<BatchVertex<Vertex3d>>& Object<T>::getBatch3d() {
+        return *get<BaseMeshComponent<BatchVertex<Vertex3d>>>();
+    }
+
+    typedef Object<BatchVertex<Vertex3d>> Batch3d;
+    typedef Object<InstanceVertex<Vertex3d>> Instance3d;
 }

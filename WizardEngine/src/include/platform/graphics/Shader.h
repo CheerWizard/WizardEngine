@@ -100,6 +100,11 @@ namespace engine::shader {
         void setUniformArrayStructField(
                 const u32 &index,
                 const char *structName,
+                DoubleUniform &structField
+        ) const;
+        void setUniformArrayStructField(
+                const u32 &index,
+                const char *structName,
                 Vec3fUniform &structField
         ) const;
         void setUniformArrayStructField(

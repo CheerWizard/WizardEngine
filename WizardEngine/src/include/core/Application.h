@@ -20,6 +20,7 @@
 #include <platform/core/Input.h>
 #include <platform/tools/FileDialog.h>
 #include <platform/graphics/graphics_context.h>
+#include <platform/graphics/tools/VideoStats.h>
 
 #include <graphics/core/RenderSystem.h>
 #include <graphics/core/sources/ShaderSource.h>
@@ -29,7 +30,7 @@
 #include <graphics/skybox/Skybox.h>
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/GraphicsObject.h>
-#include <graphics/materials/ColorMaterial.h>
+#include <graphics/materials/Color.h>
 #include <graphics/materials/SolidPhong.h>
 #include <graphics/materials/Phong.h>
 
@@ -120,6 +121,7 @@ namespace engine::core {
         void setWindowIcon(const std::string &filePath);
         Ref<tools::FileDialog> createFileDialog();
         void setSampleSize(const uint32_t& samples);
+        void applyScreenSettings();
         void setActiveScene(const Ref<Scene>& activeScene);
         void setActiveScene(const uint32_t& activeSceneId);
         void loadGamepadMappings(const char* mappingsFilePath);
@@ -149,6 +151,7 @@ namespace engine::core {
         Entity hoveredEntity;
         // mouse cursor tracker
         bool enableMouseCursor = false;
+        ScreenSettings screenSettings;
 
     private:
         static Application* instance;
@@ -158,8 +161,6 @@ namespace engine::core {
         // core systems
         LayerStack _layerStack;
         Scope<Window> _window;
-        // graphics system
-        Scope<RenderSystem> _renderSystem;
         // scripting system
         Scope<scripting::ScriptSystem> _scriptSystem;
     };

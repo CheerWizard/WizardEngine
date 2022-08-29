@@ -36,77 +36,51 @@ namespace engine::graphics {
         bool isUpdated = true;
         u8 renderModelId = 0;
         DrawType drawType = DrawType::QUAD;
+
+        VertexDataComponent<T> copy();
+
+        void setBatchId(u32 batchId);
+
+        void updateStart(u32 prevVertexCount);
+
+        void invalidate();
+
+        template<typename TO>
+        VertexDataComponent<TO> toVertexDataComponent(const std::function<TO(const T&)>& vertexMapper);
     };
 
     template<typename T>
-    array<T> copy(const array<T> &vertexData) {
-        auto* copyVertices = new T[vertexData.size];
-        std::copy(vertexData.values, vertexData.values + vertexData.size, copyVertices);
-
-        return array<T> {
-                copyVertices,
-                vertexData.offset,
-                vertexData.size
-        };
+    VertexDataComponent<T> VertexDataComponent<T>::copy() {
+        VertexDataComponent<T> copyVertexDataComponent;
+        copyVertexDataComponent.drawType = drawType;
+        copyVertexDataComponent.renderModelId = renderModelId;
+        copyVertexDataComponent.isUpdated = isUpdated;
+        copyVertexDataComponent.vertexData = vertexData.copy();
+        return copyVertexDataComponent;
     }
 
     template<typename T>
-    VertexDataComponent<T> copy(const VertexDataComponent<T> &vertexDataComponent) {
-        return { copy(vertexDataComponent.vertexData) };
-    }
-
-    template<typename T>
-    void setBatchId(VertexDataComponent<BatchVertex<T>>& vertexDataComponent, const uint32_t& batchId) {
-        auto& vertexData = vertexDataComponent.vertexData;
+    void VertexDataComponent<T>::setBatchId(u32 batchId) {
         for (auto i = 0; i < vertexData.size; i++) {
             vertexData.values[i].id = (float) batchId;
         }
     }
 
     template<typename T>
-    void updateStart(VertexDataComponent<T> &vertexDataComponent, const uint32_t &prevVertexCount) {
-        vertexDataComponent.vertexData.offset = prevVertexCount;
+    void VertexDataComponent<T>::updateStart(u32 prevVertexCount) {
+        vertexData.offset = prevVertexCount;
     }
 
     template<typename T>
-    void invalidate(VertexDataComponent<T> &vertexDataComponent) {
-        vertexDataComponent.vertexData.offset = 0;
+    void VertexDataComponent<T>::invalidate() {
+        vertexData.offset = 0;
     }
 
-    template<typename FROM, typename TO>
-    array<TO> toVertexData(const std::vector<FROM>& inVertices) {
-        size_t size = inVertices.size();
-        auto* outVertices = new TO[size];
-        for (auto i = 0; i < size; i++) {
-            outVertices[i] = { inVertices[i] };
-        }
-        return array<TO> {
-                outVertices,
-                0,
-                static_cast<uint32_t>(size)
-        };
-    }
-
-    template<typename FROM, typename TO>
-    array<TO> toVertexData(const array<FROM>& fromVertexData, const std::function<TO(const FROM&)> vertexMapper) {
-        auto* fromVertices = fromVertexData.values;
-        auto* toVertices = new TO[fromVertexData.size];
-        for (auto i = 0; i < fromVertexData.size; i++) {
-            toVertices[i] = vertexMapper(fromVertices[i]);
-        }
-        return array<TO> {
-                toVertices,
-                fromVertexData.offset,
-                fromVertexData.size
-        };
-    }
-
-    template<typename FROM, typename TO>
-    VertexDataComponent<TO> toVertexDataComponent(
-            const VertexDataComponent<FROM>& fromVertexDataComponent,
-            const std::function<TO(const FROM&)> vertexMapper
-    ) {
-        return VertexDataComponent<TO>{ toVertexData<FROM, TO>(fromVertexDataComponent.vertexData, vertexMapper) };
+    template<typename T>
+    template<typename TO>
+    VertexDataComponent<TO>
+    VertexDataComponent<T>::toVertexDataComponent(const std::function<TO(const T &)>& vertexMapper) {
+        return VertexDataComponent<TO>{ vertexData.toVertexData(vertexMapper) };
     }
 }
 

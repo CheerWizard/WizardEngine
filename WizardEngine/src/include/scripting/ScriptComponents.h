@@ -4,9 +4,11 @@
 
 #pragma once
 
-#include <scripting/Scriptable.h>
+#include <ecs/Entity.h>
 
 namespace engine::scripting {
+
+    using namespace ecs;
 
     component(NativeScript) {
         Entity script;
@@ -21,10 +23,6 @@ namespace engine::scripting {
             onDestroyFunction = [](Entity& script) { ((T&) script).onDestroy(); };
             onUpdateFunction = [](Entity& script, time::Time dt) { ((T&) script).onUpdate(dt); };
         }
-    };
-
-    component(DLLScript) {
-        Scriptable* scriptable = nullptr;
     };
 
 }

@@ -12,6 +12,10 @@ namespace engine::graphics {
         switch (format) {
             case ColorFormat::RGBA8:       return GL_RGBA8;
             case ColorFormat::RED_INTEGER: return GL_RED_INTEGER;
+            case ColorFormat::RGB16F: return GL_RGB16F;
+            case ColorFormat::RGBA16F: return GL_RGBA16F;
+            case ColorFormat::RGB32F: return GL_RGB32F;
+            case ColorFormat::RGBA32F: return GL_RGBA32F;
             default: return 0;
         }
     }
@@ -29,6 +33,22 @@ namespace engine::graphics {
         switch (colorFormat) {
             case ColorFormat::RGBA8:
                 internalFormat = GL_RGBA8;
+                dataFormat = GL_RGBA;
+                break;
+            case ColorFormat::RGB16F:
+                internalFormat = GL_RGB16F;
+                dataFormat = GL_RGBA;
+                break;
+            case ColorFormat::RGBA16F:
+                internalFormat = GL_RGBA16F;
+                dataFormat = GL_RGBA;
+                break;
+            case ColorFormat::RGB32F:
+                internalFormat = GL_RGB32F;
+                dataFormat = GL_RGBA;
+                break;
+            case ColorFormat::RGBA32F:
+                internalFormat = GL_RGBA32F;
                 dataFormat = GL_RGBA;
                 break;
             case ColorFormat::RED_INTEGER:

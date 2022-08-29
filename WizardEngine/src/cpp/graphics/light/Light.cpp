@@ -18,6 +18,10 @@ namespace engine::graphics {
         get<PhongLightComponent>()->position.isUpdated = true;
     }
 
+    vec4f &PhongLight::getColor() {
+        return get<PhongLightComponent>()->color.value;
+    }
+
     void DirectLight::create() {
         add<DirectLightComponent>(DirectLightComponent());
     }

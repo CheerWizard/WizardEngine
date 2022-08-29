@@ -39,6 +39,8 @@ namespace engine::shader {
 
         if (invalidate()) {
             parseVertexFormat();
+            _vShader.initUbf();
+            _fShader.initUbf();
             parseUniformBlockFormat(_vShader);
             parseUniformBlockFormat(_fShader);
             state = ShaderState::READY;
@@ -131,6 +133,10 @@ namespace engine::shader {
         clearScripts();
         uniformBuffer.destroy();
         destroy();
+    }
+
+    void BaseShader::initUbf() {
+        uniformBuffer.create();
     }
 
     void BaseShaderProgram::detachShaders() {

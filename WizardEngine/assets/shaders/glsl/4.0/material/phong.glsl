@@ -1,21 +1,40 @@
 #include ../include/diffuse.glsl
 #include ../include/specular.glsl
+#include ../include/gamma.glsl
+#include ../include/parallax.glsl
 
 struct Phong {
     vec4 color;
 
     sampler2D albedo;
+    bool enableAlbedoMap;
     float ambient;
 
     sampler2D diffuseMap;
+    bool enableDiffuseMap;
     float diffuse;
 
     sampler2D specularMap;
+    bool enableSpecularMap;
     float specular;
     float shiny;
+
+    bool enableBlinn;
+
+    float gamma;
+
+    sampler2D normalMap;
+    bool enableNormalMap;
+
+    sampler2D depthMap;
+    bool enableParallaxMap;
+    float heightScale;
+    float minLayers;
+    float maxLayers;
 };
-const uint TEXTURE_SLOTS_PER_STAGE = 16;
-const uint PHONG_MAX_COUNT = 5;
+
+const uint TEXTURE_UNITS = 30;
+const uint PHONG_MAX_COUNT = TEXTURE_UNITS / 5;
 
 struct PhongLight {
     vec3 position;
@@ -26,32 +45,73 @@ struct PhongLight {
 };
 
 vec4 applyPhong(
-    Phong material, vec2 uv, vec3 normal, vec3 viewDir,
-    vec3 lightDir, PhongLight light
+    Phong material,
+    vec3 pos, vec2 uv, vec3 normal,
+    vec3 tangent, vec3 bitangent,
+    vec3 viewPos,
+    PhongLight light
 ) {
     light.ambient *= material.ambient;
     light.diffuse *= material.diffuse;
     light.specular *= material.specular;
 
-    vec3 diff = diff(light.color.xyz, lightDir, normal) * light.diffuse;
-    vec3 spec = spec(light.color.xyz, lightDir, normal, viewDir, material.shiny) * light.specular;
+    vec3 lightPos = light.position;
+    mat3 TBN = transpose(mat3(tangent, bitangent, normal));
+    // apply TBN matrix
+    pos *= TBN;
+    viewPos *= TBN;
+    lightPos *= TBN;
 
-    vec3 albedo = vec3(texture(material.albedo, uv));
+    vec3 lightDir = normalize(lightPos - pos);
+    vec3 viewDir = normalize(viewPos - pos);
+
+    if (material.enableParallaxMap) {
+        uv = parallax(
+            material.depthMap, uv, viewDir,
+            material.heightScale, material.minLayers, material.maxLayers
+        );
+        // UV bounds should be [0, 1]
+        // discard pixels that are out of bounds [0, 1]
+        if (uv.x > 1.0 || uv.y > 1.0 || uv.x < 0.0 || uv.y < 0.0) {
+            discard;
+        }
+    }
+
+    if (material.enableNormalMap) {
+        // apply normal map
+        normal = texture(material.normalMap, uv).rgb;
+        normal = normalize(normal * 2.0 - 1.0);
+        normal = normalize(TBN * normal);
+    }
+
+    vec3 albedo = vec3(0);
+    vec3 amb = vec3(light.ambient);
+    vec3 diff = diff(light.color.xyz, lightDir, normal) * light.diffuse;
+    vec3 specular;
+    if (material.enableBlinn) {
+        specular = specBlinn(light.color.xyz, lightDir, normal, viewDir, material.shiny);
+    } else {
+        specular = spec(light.color.xyz, lightDir, normal, viewDir, material.shiny);
+    }
+    specular *= light.specular;
+
+    vec3 albedoMap = vec3(texture(material.albedo, uv));
     vec3 diffMap = vec3(texture(material.diffuseMap, uv));
     vec3 specMap = vec3(texture(material.specularMap, uv));
 
-    vec3 amb = vec3(light.ambient);
+    if (material.enableAlbedoMap) {
+        albedo = albedoMap;
+    }
 
-    if (diffMap.x != 0 || diffMap.y != 0 || diffMap.z != 0) {
+    if (material.enableDiffuseMap) {
         amb *= diffMap;
         diff *= diffMap;
     }
 
-    if (specMap.x != 0 || specMap.y != 0 || specMap.z != 0) {
-        spec *= specMap;
+    if (material.enableSpecularMap) {
+        specular *= specMap;
     }
 
-    vec3 result = amb * (material.color.xyz + albedo + diff + spec);
-
-    return vec4(result, material.color.w * light.color.w);
+    vec3 color = amb * (material.color.xyz + albedo + diff + specular);
+    return vec4(gamma(color.rgb, material.gamma), material.color.w);
 }

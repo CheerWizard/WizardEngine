@@ -342,7 +342,7 @@ namespace studio {
         EDITOR_INFO("onObjDragged({0})", fileName);
         ModelFile<BatchVertex<Vertex3d>>::read("assets/obj/" + fileName, {
                 [this, &fileName](const BaseMeshComponent<BatchVertex<Vertex3d>>& mesh) {
-                    Object3d {
+                    Object {
                             app->activeScene.get(),
                             engine::filesystem::getFileName(fileName),
                             Transform3dComponent(),

@@ -3,6 +3,8 @@
 //
 
 #include <core/Application.h>
+#include <event/Events.h>
+
 
 namespace engine::core {
 
@@ -38,11 +40,12 @@ namespace engine::core {
         setSampleSize(1);
         _layerStack.onPrepare();
         loadGamepadMappings("../WizardEngine/assets/db/game_controller_db.txt");
-        _renderSystem->onPrepare();
+        RenderSystem::onPrepare();
     }
 
     void Application::onDestroy() {
         ENGINE_INFO("onDestroy()");
+        RenderSystem::onDestroy();
         _scriptSystem->onDestroy();
         audio::MediaPlayer::clear();
         audio::DeviceManager::clear();
@@ -97,12 +100,13 @@ namespace engine::core {
 
     void Application::onKeyHold(event::KeyCode keyCode) {
         _layerStack.onKeyHold(keyCode);
-        EventRegistry::onKeyHoldMap[keyCode].function(keyCode);
+        EventRegistry::onKeyHoldMap[keyCode] = true;
     }
 
     void Application::onKeyReleased(event::KeyCode keyCode) {
         _layerStack.onKeyReleased(keyCode);
         EventRegistry::onKeyReleasedMap[keyCode].function(keyCode);
+        EventRegistry::onKeyHoldMap[keyCode] = false;
     }
 
     void Application::onMousePressed(event::MouseCode mouseCode) {
@@ -138,15 +142,15 @@ namespace engine::core {
     void Application::setActiveScene(const Ref<Scene>& scene) {
         scenes.emplace_back(scene);
         activeScene = scene;
-        _renderSystem->setActiveScene(scene);
+        RenderSystem::activeScene = scene;
         _scriptSystem->setActiveScene(scene);
     }
 
     void Application::setActiveScene(const u32 &sceneIndex) {
         activeScene = scenes[sceneIndex];
         _scriptSystem->setActiveScene(activeScene);
-        _renderSystem->setActiveScene(activeScene);
-        _renderSystem->onUpdate();
+        RenderSystem::activeScene = activeScene;
+        RenderSystem::onUpdate();
     }
 
     void Application::restart() {
@@ -211,14 +215,16 @@ namespace engine::core {
         graphics::initContext(_window->getNativeWindow());
         activeSceneFrame = createRef<FrameBuffer>();
         screenFrame = createRef<FrameBuffer>();
-        _renderSystem = createScope<RenderSystem>(activeSceneFrame, screenFrame);
-        _renderSystem->setRenderSystemCallback(this);
+        RenderSystem::sceneFrame = activeSceneFrame;
+        RenderSystem::screenFrame = screenFrame;
+        RenderSystem::setRenderSystemCallback(this);
+        RenderSystem::initDefault();
     }
 
     void Application::updateRuntime(Time dt) {
         if (!activeScene->isEmpty()) {
             _scriptSystem->onUpdate(dt);
-            _renderSystem->onUpdate();
+            RenderSystem::onUpdate();
         } else {
             ENGINE_WARN("Active scene is empty!");
         }
@@ -325,6 +331,21 @@ namespace engine::core {
         }
     }
 
+    void Application::applyScreenSettings() {
+        FrameBufferFormat screenFrameFormat;
+        screenFrameFormat.colorAttachments = { { screenSettings.colorFormat } };
+        screenFrameFormat.width = _window->getWidth();
+        screenFrameFormat.height = _window->getHeight();
+        screenFrameFormat.samples = screenSettings.samples;
+        screenFrame->updateFormat(screenFrameFormat);
+
+        auto& screenShader = RenderSystem::screenRenderer.getShaderProgram();
+        screenShader.start();
+        screenShader.getFShader().setUniform(screenSettings.enableHDR);
+        screenShader.getFShader().setUniform(screenSettings.gamma);
+        screenShader.getFShader().setUniform(screenSettings.exposure);
+        screenShader.stop();
+    }
 }
 
 namespace engine::event {
@@ -333,7 +354,7 @@ namespace engine::event {
     Action<const uint32_t&, const uint32_t&> EventRegistry::onWindowResized;
 
     EventRegistry::KeyCodeMap EventRegistry::onKeyPressedMap;
-    EventRegistry::KeyCodeMap EventRegistry::onKeyHoldMap;
+    EventRegistry::KeyHoldMap EventRegistry::onKeyHoldMap;
     EventRegistry::KeyCodeMap EventRegistry::onKeyReleasedMap;
     EventRegistry::KeyCodeMap EventRegistry::onKeyTypedMap;
 
@@ -352,6 +373,10 @@ namespace engine::event {
     Action<GamepadRoll> EventRegistry::onGamepadRollRight;
     GamepadRoll EventRegistry::inactiveGamepadRollLeft;
     GamepadRoll EventRegistry::inactiveGamepadRollRight;
+
+    bool EventRegistry::keyHold(KeyCode keyCode) {
+        return onKeyHoldMap[keyCode];
+    }
 
     bool EventRegistry::mouseHold(MouseCode mouseCode) {
         return mouseHoldMap[mouseCode];

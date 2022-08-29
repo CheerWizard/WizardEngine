@@ -17,17 +17,38 @@ namespace engine::graphics {
         vec3f position = { 0.5f, 0.5f, 0.5f };
         vec2f uv = {0.25f, -0.25f };
         vec3f normal = { 0, 0, 0 };
+        vec3f tangent = { 0, 0, 0 };
+        vec3f bitangent = { 0, 0, 0 };
     };
 
     template<typename T>
     struct BaseMesh {
         array<T> vertexData;
         IndexData indexData;
+
+        BaseMesh<T> copy();
+
+        template<typename TO>
+        BaseMesh<TO> toMesh(const std::function<TO(const T&)>& vertexMapper);
     };
 
     template<typename T>
-    BaseMesh<T> copy(const BaseMesh<T> &mesh) {
-        return BaseMesh<T>{ copy<T>(mesh.vertexData), copy(mesh.indexData) };
+    BaseMesh<T> BaseMesh<T>::copy() {
+        return BaseMesh<T>{ vertexData.copy(), indexData.copy() };
+    }
+
+    template<typename T>
+    template<typename TO>
+    BaseMesh<TO> BaseMesh<T>::toMesh(const std::function<TO(const T &)> &vertexMapper) {
+        auto toVertexData = array<TO> {
+                new TO[vertexData.size],
+                vertexData.offset,
+                vertexData.size
+        };
+        for (auto j = 0; j < vertexData.size; j++) {
+            toVertexData.values[j] = vertexMapper(vertexData.values[j]);
+        }
+        return { toVertexData, indexData };
     }
 
     template_component(BaseMeshComponent, T) {
@@ -38,120 +59,114 @@ namespace engine::graphics {
         u32 vertexStart = 0;
         u32 indexStart = 0;
         bool isUpdated = true;
-        u8 renderModelId = 0;
+        u32 renderModelId = 0;
         DrawType drawType = DrawType::TRIANGLE;
 
         BaseMeshComponent() = default;
         BaseMeshComponent(BaseMesh<T>* meshes, u32 meshCount) : meshes(meshes), meshCount(meshCount) {}
+
+        [[nodiscard]] u32 getId() const {
+            return meshes[0].vertexData.values[0].id;
+        }
+
+        template<typename TO>
+        BaseMeshComponent<TO> toMeshComponent(const std::function<TO(const T&)>& vertexMapper);
+
+        void setId(u32 id);
+
+        BaseMeshComponent<T> copy() const;
+
+        void invalidateMeshes(u32 prevVertexCount, u32 prevIndexCount);
+        void invalidateSize();
     };
 
-    template<typename TO, typename FROM>
-    BaseMesh<TO> toMesh(const BaseMesh<FROM>& fromBaseMesh, const std::function<TO(const FROM&)>& vertexMapper) {
-        auto& fromVertexData = fromBaseMesh.vertexData;
-        auto toVertexData = array<TO> {
-                new TO[fromVertexData.size],
-                fromVertexData.offset,
-                fromVertexData.size
-        };
-        for (auto j = 0; j < fromVertexData.size; j++) {
-            toVertexData.values[j] = vertexMapper(fromVertexData.values[j]);
-        }
-        return { toVertexData, fromBaseMesh.indexData };
-    }
+    template<typename T>
+    template<typename TO>
+    BaseMeshComponent<TO> BaseMeshComponent<T>::toMeshComponent(const std::function<TO(const T&)> &vertexMapper) {
+        auto toMeshes = new BaseMesh<TO>[meshCount];
 
-    template<typename TO, typename FROM>
-    BaseMeshComponent<TO> toMeshComponent(const BaseMeshComponent<FROM>& fromBaseMeshComponent, const std::function<TO(const FROM&)>& vertexMapper) {
-        auto& fromMeshes = fromBaseMeshComponent.meshes;
-        auto toMeshes = new BaseMesh<TO>[fromBaseMeshComponent.meshCount];
-
-        for (auto j = 0; j < fromBaseMeshComponent.meshCount; j++) {
-            toMeshes[j] = toMesh<TO, FROM>(fromMeshes[j], vertexMapper);
+        for (auto j = 0; j < meshCount; j++) {
+            toMeshes[j] = meshes[j].template toMesh<TO>(vertexMapper);
         }
 
         auto meshComponent = BaseMeshComponent<TO>();
         meshComponent.meshes = toMeshes;
-        meshComponent.meshCount = fromBaseMeshComponent.meshCount;
-        meshComponent.totalVertexCount = fromBaseMeshComponent.totalVertexCount;
-        meshComponent.totalIndexCount = fromBaseMeshComponent.totalIndexCount;
-        meshComponent.vertexStart = fromBaseMeshComponent.vertexStart;
-        meshComponent.indexStart = fromBaseMeshComponent.indexStart;
-        meshComponent.isUpdated = fromBaseMeshComponent.isUpdated;
-        meshComponent.renderModelId = fromBaseMeshComponent.renderModelId;
+        meshComponent.meshCount = meshCount;
+        meshComponent.totalVertexCount = totalVertexCount;
+        meshComponent.totalIndexCount = totalIndexCount;
+        meshComponent.vertexStart = vertexStart;
+        meshComponent.indexStart = indexStart;
+        meshComponent.isUpdated = isUpdated;
+        meshComponent.renderModelId = renderModelId;
         return meshComponent;
     }
 
     template<typename T>
-    BaseMeshComponent<InstanceVertex<Vertex3d>> toMesh3dInstance(const BaseMeshComponent<T>& fromBaseMeshComponent) {
-        return toMeshComponent<T, InstanceVertex<Vertex3d>>(
-                fromBaseMeshComponent,
-                [](const T& vertex) {
-                    return InstanceVertex<Vertex3d> {
-                        Vertex3d { vertex.position, vertex.uv, vertex.normal }
-                    };
-                }
-        );
-    }
-
-    template<typename T>
-    BaseMeshComponent<BatchVertex<Vertex3d>> toMesh3dBatch(const BaseMeshComponent<T>& fromBaseMeshComponent) {
-        return toMeshComponent<T, BatchVertex<Vertex3d>>(
-                fromBaseMeshComponent,
-                [](const T& vertex) {
-                    return BatchVertex<Vertex3d> { { vertex.position, vertex.uv, vertex.normal } };
-                }
-        );
-    }
-
-    template<typename T>
-    void setBatchId(BaseMeshComponent<BatchVertex<T>> &meshComponent, const uint32_t &batchId) {
-        const auto& meshInstanceId = meshComponent.meshes[0].vertexData.values[0].id;
-        if (meshInstanceId == batchId) return;
-        for (auto i = 0 ; i < meshComponent.meshCount ; i++) {
-            const auto& vertexData = meshComponent.meshes[i].vertexData;
+    void BaseMeshComponent<T>::setId(u32 id) {
+        u32 meshInstanceId = getId();
+        if (meshInstanceId == id) return;
+        for (auto i = 0 ; i < meshCount ; i++) {
+            const auto& vertexData = meshes[i].vertexData;
             for (auto j = 0; j < vertexData.size; j++) {
                 auto& vertex = vertexData.values[j];
-                vertex.id = (float) batchId;
+                vertex.id = (float) id;
             }
         }
     }
 
     template<typename T>
-    BaseMeshComponent<T> copy(const BaseMeshComponent<T> &meshComponent) {
-        auto* copyMeshes = new BaseMesh<T>[meshComponent.meshCount];
+    BaseMeshComponent<T> BaseMeshComponent<T>::copy() const {
+        auto* copyMeshes = new BaseMesh<T>[meshCount];
 
-        for (auto i = 0 ; i < meshComponent.meshCount ; i++) {
-            const auto& mesh = meshComponent.meshes[i];
-            copyMeshes[i] = copy<T>(mesh);
+        for (auto i = 0 ; i < meshCount ; i++) {
+            copyMeshes[i] = meshes[i].copy();
         }
 
-        return BaseMeshComponent<T> { copyMeshes, meshComponent.meshCount };
+        BaseMeshComponent<T> copyMeshComponent;
+        copyMeshComponent.renderModelId = renderModelId;
+        copyMeshComponent.isUpdated = isUpdated;
+        copyMeshComponent.drawType = drawType;
+        copyMeshComponent.indexStart = indexStart;
+        copyMeshComponent.vertexStart = vertexStart;
+        copyMeshComponent.totalIndexCount = totalIndexCount;
+        copyMeshComponent.totalVertexCount = totalVertexCount;
+        copyMeshComponent.meshCount = meshCount;
+        copyMeshComponent.meshes = copyMeshes;
+
+        return copyMeshComponent;
     }
 
     template<typename T>
-    void updateStartAndCounts(
-            BaseMeshComponent<T> &meshComponent,
-            const u32 &prevVertexCount,
-            const u32 &prevIndexCount
-    ) {
-        meshComponent.vertexStart = prevVertexCount;
-        meshComponent.indexStart = prevIndexCount;
-        meshComponent.totalVertexCount = 0;
-        meshComponent.totalIndexCount = 0;
+    void BaseMeshComponent<T>::invalidateMeshes(u32 prevVertexCount, u32 prevIndexCount) {
+        vertexStart = prevVertexCount;
+        indexStart = prevIndexCount;
+        totalVertexCount = 0;
+        totalIndexCount = 0;
 
-        for (auto i = 0; i < meshComponent.meshCount ; i++) {
-            array<T>& vertexData = meshComponent.meshes[i].vertexData;
-            IndexData& indexData = meshComponent.meshes[i].indexData;
+        for (auto i = 0; i < meshCount ; i++) {
+            array<T>& vertexData = meshes[i].vertexData;
+            IndexData& indexData = meshes[i].indexData;
 
-            vertexData.offset = meshComponent.vertexStart + meshComponent.totalVertexCount;
-            indexData.offset = meshComponent.indexStart + meshComponent.totalIndexCount;
+            vertexData.offset = vertexStart + totalVertexCount;
+            indexData.offset = indexStart + totalIndexCount;
 
             for (auto j = 0 ; j < indexData.size ; j++) {
                 auto& index = indexData.values[j];
                 index += vertexData.offset;
             }
 
-            meshComponent.totalVertexCount += vertexData.size;
-            meshComponent.totalIndexCount += indexData.size;
+            totalVertexCount += vertexData.size;
+            totalIndexCount += indexData.size;
+        }
+    }
+
+    template<typename T>
+    void BaseMeshComponent<T>::invalidateSize() {
+        totalVertexCount = 0;
+        totalIndexCount = 0;
+        for (auto i = 0; i < meshCount ; i++) {
+            totalVertexCount += meshes[i].vertexData.size;
+            totalIndexCount += meshes[i].indexData.size;
         }
     }
 }

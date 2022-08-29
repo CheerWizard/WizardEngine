@@ -21,7 +21,7 @@ namespace engine::gui {
     public:
         MeshLayout(
                 const ImageLayoutProps &props,
-                const Ref<VIRenderer> &renderer,
+                const Ref<VIRenderer<io::ModelVertex>> &renderer,
                 const Ref<FrameBuffer> &frame,
                 const Ref<Camera3D> &camera3D
         ) : ImageLayout(props),
@@ -67,7 +67,7 @@ namespace engine::gui {
         void rotateEntity(const time::Time &dt);
 
     private:
-        Ref<VIRenderer> _renderer;
+        Ref<VIRenderer<io::ModelVertex>> _renderer;
         Ref<FrameBuffer> _frame;
         Ref<Camera3D> _camera3D;
         ecs::Entity _entity;

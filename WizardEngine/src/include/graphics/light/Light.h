@@ -28,6 +28,7 @@ namespace engine::graphics {
 
     public:
         vec3f& getPosition();
+        vec4f& getColor();
         void apply();
 
     private:

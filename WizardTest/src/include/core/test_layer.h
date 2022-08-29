@@ -11,6 +11,7 @@
 
 namespace test {
 
+    using namespace engine;
     using namespace engine::graphics;
 
     class TestLayer : public Layer,
@@ -58,8 +59,8 @@ namespace test {
 
     public:
         void onWindowClosed() override;
-        void onMousePressed(event::MouseCode mouseCode) override;
-        void onMouseRelease(event::MouseCode mouseCode) override;
+        void onMousePressed(MouseCode mouseCode) override;
+        void onMouseRelease(MouseCode mouseCode) override;
         void onMouseScrolled(double xOffset, double yOffset) override;
         void onCursorMoved(double xPos, double yPos) override;
 
@@ -71,17 +72,23 @@ namespace test {
         void onPadX();
         void onPadY();
 
-        void onLeftAltHold();
+        void dragLight();
+
+        void switchHDR();
+
+        void switchMSAA();
 
         void onGamepadRollLeft(const GamepadRoll& roll);
         void onGamepadRollRight(const GamepadRoll& roll);
 
     private:
         Camera3D mainCamera;
-        Object3d<BatchVertex<Vertex3d>> car;
+        vector<Batch3d> packs;
+        vector<Instance3d> instancedPacks;
         bool msaaEnabled = false;
         Entity hoveredEntity;
         PhongLight light;
+        bool hdrEnabled = false;
     };
 
 }

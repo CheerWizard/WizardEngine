@@ -110,12 +110,10 @@ namespace engine::shader {
     }
 
     void Shader::setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) const {
-        if (!uniform.isUpdated) return;
         glUniformMatrix4fv(getUniformArrayElementLocation(uniform.name, index), 1, GL_FALSE, toFloatPtr(uniform));
     }
 
     void Shader::setUniformArrayElement(const u32 &index, GLMMat4fUniform &uniform) const {
-        if (!uniform.isUpdated) return;
         glUniformMatrix4fv(getUniformArrayElementLocation(uniform.name, index), 1, GL_FALSE, glm_toFloatPtr(uniform));
     }
 
@@ -183,6 +181,12 @@ namespace engine::shader {
         if (!structField.isUpdated) return;
         structField.isUpdated = false;
         glUniform1f(getUniformArrayStructLocation(structName, structField.name, index), structField.value);
+    }
+
+    void Shader::setUniformArrayStructField(const uint32_t &index, const char* structName, DoubleUniform &structField) const {
+        if (!structField.isUpdated) return;
+        structField.isUpdated = false;
+        glUniform1d(getUniformArrayStructLocation(structName, structField.name, index), structField.value);
     }
 
     void Shader::setUniformArrayStructField(const uint32_t &index, const char *structName, Vec3fUniform &structField) const {

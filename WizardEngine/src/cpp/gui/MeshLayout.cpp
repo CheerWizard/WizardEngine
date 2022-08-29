@@ -75,7 +75,7 @@ namespace engine::gui {
         graphics::setStencilTestOperator(ALWAYS, 1, false);
         graphics::stencilMask(false);
 
-        _renderer->render<Transform3dComponent, io::ModelVertex>(_entity);
+        _renderer->render(_entity);
 
         // stop write to stencil buffer
         graphics::setStencilTestOperator(NOT_EQUAL, 1, false);

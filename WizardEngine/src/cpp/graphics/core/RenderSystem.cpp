@@ -9,38 +9,54 @@
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/core/geometry/Circle.h>
 #include <graphics/outline/Outline.h>
-#include <graphics/skybox/Skybox.h>
 #include <graphics/core/geometry/Point.h>
-#include <graphics/materials/ColorMaterial.h>
-#include <graphics/materials/SolidPhong.h>
 
 namespace engine::graphics {
+    // frames
+    Ref<Scene> RenderSystem::activeScene;
+    Ref<FrameBuffer> RenderSystem::sceneFrame;
+    Ref<FrameBuffer> RenderSystem::screenFrame;
+    // screen
+    VRenderer<ScreenVertex> RenderSystem::screenRenderer;
+    // skybox
+    VRenderer<SkyboxVertex> RenderSystem::skyboxRenderer;
+    // scene
+    vector<Ref<Renderer>> RenderSystem::sceneRenderers;
+    // outlining
+    vector<Ref<Renderer>> RenderSystem::outlineRenderers;
+    // points
+//    VRenderer<PointVertex> RenderSystem::pointRenderer;
+    // text
+    vector<Ref<Renderer>> RenderSystem::textRenderers;
+    // callback
+    RenderSystemCallback* RenderSystem::callback;
 
-    void RenderSystem::create() {
+    void RenderSystem::initDefault() {
         createScreenRenderer();
-        createSceneRenderer();
-        createLineRenderers();
-        createQuadRenderer();
-        createCircleRenderer();
-        createOutlineRenderer();
         createSkyboxRenderer();
-        createTextRenderers();
-        createPointRenderer();
+        createSceneRenderer();
+//        createLineRenderer();
+//        createQuadRenderer();
+//        createCircleRenderer();
+//        createOutlineRenderer();
+//        createTextRenderers();
+//        createPointRenderer();
         setClearColor({0, 0, 0, 1});
     }
 
-    RenderSystem::~RenderSystem() {
+    void RenderSystem::onDestroy() {
         screenRenderer.release();
-        sceneRenderer.release();
-        lineRenderer.release();
-        quadRenderer.release();
-        circleRenderer.release();
-        outlineSceneRenderer.release();
-        outlineQuadRenderer.release();
         skyboxRenderer.release();
-        text2dRenderer.release();
-        text3dRenderer.release();
-        pointRenderer.release();
+//        pointRenderer.release();
+        for (const auto& sceneRenderer : sceneRenderers) {
+            sceneRenderer->release();
+        }
+        for (const auto& outlineRenderer : outlineRenderers) {
+            outlineRenderer->release();
+        }
+        for (const auto& textRenderer : textRenderers) {
+            textRenderer->release();
+        }
     }
 
     void RenderSystem::onUpdate() {
@@ -66,35 +82,32 @@ namespace engine::graphics {
 
         auto& registry = activeScene->getRegistry();
         // scene
-        sceneRenderer.renderVI<Transform3dComponent, Vertex3d>(registry);
-        // lines
-        lineRenderer.renderV<Transform3dComponent, LineVertex>(registry);
-        stripLineRenderer.renderV<Transform3dComponent, LineVertex>(registry);
-        loopLineRenderer.renderV<Transform3dComponent, LineVertex>(registry);
-        // quads
-        quadRenderer.renderV<Transform3dComponent, QuadVertex>(registry);
-        // circles
-        circleRenderer.renderV<Transform3dComponent, CircleVertex>(registry);
+        for (const auto& renderer : sceneRenderers) {
+            renderer->render(registry);
+        }
         // text
-        text2dRenderer.render<Text2d>(registry);
-        text3dRenderer.render<Text3d>(registry);
+        for (const auto& textRenderer : textRenderers) {
+            textRenderer->render(registry);
+        }
         // points
-        registry.each<Points>([this](Points* points) {
-            pointRenderer.render(*points);
-        });
+//        registry.each<Points>([](Points* points) {
+//            pointRenderer.render(*points);
+//        });
         // outlining
         // stop write to stencil buffer
         setStencilTestOperator(NOT_EQUAL, 1, false);
         stencilMask(true);
         setDepthTest(false);
-        outlineSceneRenderer.render<Transform3dComponent, OutlineVertex>(registry);
+        for (const auto& outlineRenderer : outlineRenderers) {
+            outlineRenderer->render(registry);
+        }
         // write to stencil buffer
         stencilMask(false);
         setStencilTestOperator(ALWAYS, 0, false);
         setDepthTest(true);
         // skybox
         setDepthTestOperator(LESS_EQUAL); // we need to pass depth test for some skybox pixels
-        skyboxRenderer.renderStatic<Transform3dComponent, SkyboxVertex>(activeScene->getSkybox());
+        skyboxRenderer.renderStatic(activeScene->getSkybox());
         setDepthTestOperator(LESS);
         // notify that scene frame end drawing
         if (callback != nullptr) {
@@ -107,10 +120,6 @@ namespace engine::graphics {
 
         FrameBuffer::bindDefault();
         screenRenderer.renderQuad(screenFrame->getColorAttachment(0).id);
-
-        activeScene->getRegistry().each<Transform3dComponent>([](Transform3dComponent* transform) {
-            transform->modelMatrix.isUpdated = false;
-        });
     }
 
     void RenderSystem::createSceneRenderer() {
@@ -126,6 +135,7 @@ namespace engine::graphics {
                 vBatchShader,
                 fBatchShader
         );
+
         auto vInstanceShader = shader::BaseShader({ camera3dUboScript() });
         auto fInstanceShader = shader::BaseShader({ phongLightScript() });
         auto instanceShader = shader::BaseShaderProgram(
@@ -139,13 +149,12 @@ namespace engine::graphics {
                 fInstanceShader
         );
 
-        sceneRenderer = DefaultRenderer(batchShader, instanceShader);
-        sceneRenderer.getRenderer1().setInstanceCountLimit(5);
-        sceneRenderer.getRenderer2().setInstanceCountLimit(5);
-        sceneRenderer.addEntityHandler([this](ecs::Registry& registry,
-                ecs::entity_id entityId, u32 index, BaseShaderProgram& shader) {
+        Ref<Renderer> batchRenderer = createRef<BatchRenderer<Vertex3d>>(batchShader);
+        Ref<Renderer> instanceRenderer = createRef<InstanceRenderer<Vertex3d>>(instanceShader);
+        auto entityHandler = [](ecs::Registry& registry,
+        ecs::entity_id entityId, u32 index, BaseShaderProgram& shader) {
             int entityIdInt = (int) entityId;
-            ENGINE_INFO("entityHandler: entity_id: {0}, index: {1}", entityIdInt, index);
+//            ENGINE_INFO("entityHandler: entity_id: {0}, index: {1}", entityIdInt, index);
             // update polygon mode
             auto* pmc = registry.getComponent<PolygonModeComponent>(entityId);
             PolygonModes::setPolygonMode(pmc ? *pmc : PolygonModeComponent());
@@ -155,13 +164,29 @@ namespace engine::graphics {
             // pass entity id to shader
             IntUniform entityIdUniform = { "entityId", entityIdInt };
             shader.getFShader().setUniformArrayElement(index, entityIdUniform);
-            // phong material
-            auto phong = registry.getComponent<Phong>(entityId);
-            updatePhongMaterial(index, phong, shader.getFShader());
-        });
+            // update single material
+            auto material = registry.getComponent<Material>(entityId);
+            if (material) {
+                MaterialShader(shader.getFShader()).setMaterial(index, material);
+            }
+            // update material list
+            auto materialList = registry.getComponent<MaterialList>(entityId);
+            if (materialList) {
+                for (u32 i = 0; i < materialList->materials.size(); i++) {
+                    auto& m = materialList->materials[i];
+                    MaterialShader(shader.getFShader()).setMaterial(index + i, &m);
+                }
+            }
+        };
+
+        batchRenderer->addEntityHandler(entityHandler);
+        instanceRenderer->addEntityHandler(entityHandler);
+
+        sceneRenderers.emplace_back(batchRenderer);
+        sceneRenderers.emplace_back(instanceRenderer);
     }
 
-    void RenderSystem::createLineRenderers() {
+    void RenderSystem::createLineRenderer() {
         auto vBatchShader = shader::BaseShader({ camera3dUboScript() });
         auto fBatchShader = shader::BaseShader();
         auto batchShader = shader::BaseShaderProgram(
@@ -187,9 +212,26 @@ namespace engine::graphics {
                 fInstanceShader
         );
 
-        lineRenderer = DefaultRenderer(batchShader, instanceShader, DrawType::LINE);
-        stripLineRenderer = DefaultRenderer(batchShader, instanceShader, DrawType::LINE_STRIP);
-        loopLineRenderer = DefaultRenderer(batchShader, instanceShader, DrawType::LINE_LOOP);
+        sceneRenderers.emplace_back(createRef<BatchRenderer<LineVertex>>(
+                batchShader,
+                DrawType::LINE));
+        sceneRenderers.emplace_back(createRef<InstanceRenderer<LineVertex>>(
+                instanceShader,
+                DrawType::LINE));
+
+        sceneRenderers.emplace_back(createRef<BatchRenderer<LineVertex>>(
+                batchShader,
+                DrawType::LINE_STRIP));
+        sceneRenderers.emplace_back(createRef<InstanceRenderer<LineVertex>>(
+                instanceShader,
+                DrawType::LINE_STRIP));
+
+        sceneRenderers.emplace_back(createRef<BatchRenderer<LineVertex>>(
+                batchShader,
+                DrawType::LINE_LOOP));
+        sceneRenderers.emplace_back(createRef<InstanceRenderer<LineVertex>>(
+                instanceShader,
+                DrawType::LINE_LOOP));
     }
 
     void RenderSystem::createQuadRenderer() {
@@ -218,7 +260,8 @@ namespace engine::graphics {
                 fInstanceShader
         );
 
-        quadRenderer = DefaultRenderer(batchShader, instanceShader, DrawType::QUAD);
+        sceneRenderers.emplace_back(createRef<BatchRenderer<QuadVertex>>(batchShader, DrawType::QUAD));
+        sceneRenderers.emplace_back(createRef<InstanceRenderer<QuadVertex>>(instanceShader, DrawType::QUAD));
     }
 
     void RenderSystem::createCircleRenderer() {
@@ -267,7 +310,12 @@ namespace engine::graphics {
                 fInstanceShader
         );
 
-        circleRenderer = DefaultRenderer(batchShader, instanceShader, DrawType::QUAD);
+        sceneRenderers.emplace_back(createRef<BatchRenderer<CircleVertex>>(
+                batchShader,
+                DrawType::QUAD));
+        sceneRenderers.emplace_back(createRef<InstanceRenderer<CircleVertex>>(
+                instanceShader,
+                DrawType::QUAD));
     }
 
     void RenderSystem::createOutlineRenderer() {
@@ -315,8 +363,12 @@ namespace engine::graphics {
                 fInstanceShader
         );
 
-        outlineSceneRenderer = DefaultRenderer(batchShader, instanceShader, DrawType::TRIANGLE);
-        outlineQuadRenderer = DefaultRenderer(batchShader, instanceShader, DrawType::TRIANGLE_STRIP);
+        outlineRenderers.emplace_back(createRef<BatchRenderer<OutlineVertex>>(batchShader));
+        outlineRenderers.emplace_back(createRef<InstanceRenderer<OutlineVertex>>(instanceShader));
+        outlineRenderers.emplace_back(createRef<BatchRenderer<OutlineVertex>>(batchShader,
+                DrawType::TRIANGLE_STRIP));
+        outlineRenderers.emplace_back(createRef<InstanceRenderer<OutlineVertex>>(instanceShader,
+                DrawType::TRIANGLE_STRIP));
     }
 
     void RenderSystem::createSkyboxRenderer() {
@@ -333,7 +385,7 @@ namespace engine::graphics {
                 fShader
         );
 
-        skyboxRenderer = VRenderer(shader);
+        skyboxRenderer = VRenderer<SkyboxVertex>(shader);
     }
 
     void RenderSystem::createTextRenderers() {
@@ -350,7 +402,7 @@ namespace engine::graphics {
                 vText2dShader,
                 fTextShader
         );
-        text2dRenderer = TextRenderer(text2dShader);
+        textRenderers.emplace_back(createRef<TextRenderer<Text2d>>(text2dShader));
 
         auto vText3dShader = shader::BaseShader();
         auto text3dShader = shader::BaseShaderProgram(
@@ -363,7 +415,7 @@ namespace engine::graphics {
                 vText3dShader,
                 fTextShader
         );
-        text3dRenderer = TextRenderer(text3dShader);
+        textRenderers.emplace_back(createRef<TextRenderer<Text3d>>(text3dShader));
     }
 
     void RenderSystem::createScreenRenderer() {
@@ -381,7 +433,7 @@ namespace engine::graphics {
                 fShader
         );
         // upload screen geometry to GPU memory and delete from heap memory
-        screenRenderer = VRenderer(shader);
+        screenRenderer = VRenderer<ScreenVertex>(shader);
         screenRenderer.uploadStatic(screen);
         delete screen.vertexData.values;
     }
@@ -397,7 +449,7 @@ namespace engine::graphics {
                 }
         );
 
-        pointRenderer = VRenderer(shader);
+//        pointRenderer = VRenderer<PointVertex>(shader);
     }
 
     void RenderSystem::onPrepare() {
@@ -420,37 +472,5 @@ namespace engine::graphics {
 
     void RenderSystem::removeRenderSystemCallback() {
         callback = nullptr;
-    }
-
-    void RenderSystem::updatePhongMaterial(u32 index, Phong* phong, const BaseShader& shader) {
-        shader.setUniformArrayStructField(index, phong->name, phong->color);
-
-        shader.setUniformArrayStructField(index, phong->name, phong->ambient);
-
-        int nextSlot = index * phong->slotCount();
-
-        auto& albedo = phong->albedo;
-        albedo.sampler.value += nextSlot;
-        shader.setUniformArrayStructField(index, phong->name, albedo.sampler);
-        TextureBuffer::activate(albedo.sampler.value);
-        TextureBuffer::bind(albedo.textureId, TextureBuffer::getTypeId(static_cast<TextureType>(albedo.typeId)));
-
-        shader.setUniformArrayStructField(index, phong->name, phong->diffuse);
-
-        auto& diff = phong->diffuseMap;
-        diff.sampler.value += nextSlot;
-        shader.setUniformArrayStructField(index, phong->name, diff.sampler);
-//        TextureBuffer::activate(diff.sampler.value);
-//        TextureBuffer::bind(diff.textureId, TextureBuffer::getTypeId(static_cast<TextureType>(diff.typeId)));
-
-        shader.setUniformArrayStructField(index, phong->name, phong->specular);
-
-        auto& spec = phong->specularMap;
-        spec.sampler.value += nextSlot;
-        shader.setUniformArrayStructField(index, phong->name, spec.sampler);
-//        TextureBuffer::activate(spec.sampler.value);
-//        TextureBuffer::bind(spec.textureId, TextureBuffer::getTypeId(static_cast<TextureType>(spec.typeId)));
-
-        shader.setUniformArrayStructField(index, phong->name, phong->shiny);
     }
 }

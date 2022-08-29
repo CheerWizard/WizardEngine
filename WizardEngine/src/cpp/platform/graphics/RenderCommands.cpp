@@ -23,22 +23,22 @@ namespace engine::graphics {
     }
 
     void drawV(const DrawType& drawType, const uint32_t& vertexCount) {
-        ENGINE_INFO("drawV(drawType: {0}, vertexCount : {1})", drawType, vertexCount);
+//        ENGINE_INFO("drawV(drawType: {0}, vertexCount : {1})", drawType, vertexCount);
         glDrawArrays(toGLDrawType(drawType), 0, vertexCount);
     }
 
     void drawV(const DrawType& drawType, const uint32_t& vertexCount, const uint32_t& instanceCount) {
-        ENGINE_INFO("drawV(drawType: {0}, vertexCount: {1}, instanceCount: {2})", drawType, vertexCount, instanceCount);
+//        ENGINE_INFO("drawV(drawType: {0}, vertexCount: {1}, instanceCount: {2})", drawType, vertexCount, instanceCount);
         glDrawArraysInstanced(toGLDrawType(drawType), 0, vertexCount, instanceCount);
     }
 
     void drawVI(const DrawType& drawType, const uint32_t& indexCount) {
-        ENGINE_INFO("drawVI(drawType: {0}, indexCount: {1})", drawType, indexCount);
+//        ENGINE_INFO("drawVI(drawType: {0}, indexCount: {1})", drawType, indexCount);
         glDrawElements(toGLDrawType(drawType), (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr);
     }
 
     void drawVI(const DrawType& drawType, const uint32_t& indexCount, const uint32_t& instanceCount) {
-        ENGINE_INFO("drawVI(drawType: {0}, indexCount: {1}, instanceCount: {2})", drawType, indexCount, instanceCount);
+//        ENGINE_INFO("drawVI(drawType: {0}, indexCount: {1}, instanceCount: {2})", drawType, indexCount, instanceCount);
         glDrawElementsInstanced(toGLDrawType(drawType), (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
     }
 
@@ -273,5 +273,9 @@ namespace engine::graphics {
             faceType = polygonModeComponent.face;
             graphics::setPolygonMode(polygonModeComponent.face, polygonModeComponent.mode);
         }
+    }
+
+    void enableSRGB() {
+        glEnable(GL_FRAMEBUFFER_SRGB);
     }
 }

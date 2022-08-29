@@ -52,6 +52,7 @@ namespace engine::shader {
             bindUbf(uniformBlockFormat.getName().data(), uniformBlockFormat.getId());
         }
 
+        void initUbf();
         void applyUbf(const UniformBlockFormat& uniformBlockFormat);
 
         void updateUniformBuffer(const UniformData &uniformData) const;
@@ -128,6 +129,14 @@ namespace engine::shader {
             return vertexFormat;
         }
 
+        inline void setInstancesPerDraw(u32 instancesPerDraw) {
+            this->instancesPerDraw = instancesPerDraw;
+        }
+
+        [[nodiscard]] inline u32 getInstancesPerDraw() const {
+            return instancesPerDraw;
+        }
+
     public:
         void construct(const io::ShaderProps& props);
         void detachShaders();
@@ -151,7 +160,6 @@ namespace engine::shader {
         BaseShader _gShader; // Geometry shader
         VertexFormat vertexFormat;
         uint32_t uniformBlockSlots = 0;
-
+        u32 instancesPerDraw = 128;
     };
-
 }

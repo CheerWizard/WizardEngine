@@ -11,6 +11,7 @@
 
 namespace engine::graphics {
 
+    template<typename Text>
     class TextRenderer : public Renderer {
 
     public:
@@ -21,23 +22,19 @@ namespace engine::graphics {
         }
 
     public:
-        template<typename Text>
-        void render(ecs::Registry& registry);
-
-    public:
-        inline void setInstanceCountLimit(u32 instanceCountLimit) {
-            this->instanceCountLimit = instanceCountLimit;
-        }
+        void render(ecs::Registry& registry) override;
 
     private:
         void init();
-
-    private:
-        u32 instanceCountLimit = 128;
     };
 
     template<typename Text>
-    void TextRenderer::render(ecs::Registry &registry) {
+    void TextRenderer<Text>::init() {
+        vRenderModels.emplace_back(createRenderModel(DEFAULT_VERTEX_COUNT));
+    }
+
+    template<typename Text>
+    void TextRenderer<Text>::render(ecs::Registry &registry) {
         if (!shaderProgram.isReady() || registry.empty_entity() || registry.empty_components<Text>()) return;
 
         shaderProgram.start();
@@ -51,10 +48,10 @@ namespace engine::graphics {
                 auto& character = font[c];
                 auto& vertexDataComponent = character.vertexDataComponent;
 
-                vertexDataComponent.renderModelId += nextRenderModelId;
-                if (!validate<BatchVertex<CharVertex>>(vertexDataComponent)) {
-                    nextRenderModelId++;
-                }
+//                vertexDataComponent.renderModelId += nextRenderModelId;
+//                if (!validate<BatchVertex<CharVertex>>(vertexDataComponent)) {
+//                    nextRenderModelId++;
+//                }
             }
         });
 
@@ -123,13 +120,13 @@ namespace engine::graphics {
                         vertices[0].vertex.position = { x, y + h };
                     }
 
-                    tryUploadBatch(i, vertexDataComponent, totalVertexCount, renderModel);
+                    renderModel.tryUploadBatch(i, vertexDataComponent, totalVertexCount);
 
                     textX += character.size.x() + text.paddingX;
                     previousChar = currentChar;
                 }
 
-                if (++i > instanceCountLimit) {
+                if (++i > shaderProgram.getInstancesPerDraw()) {
                     renderModel.vao.bind();
                     drawV(drawType, totalVertexCount);
                     i = 0;
@@ -141,7 +138,7 @@ namespace engine::graphics {
                 renderModel.vao.bind();
                 drawV(drawType, totalVertexCount);
             }
-            resetCounts(renderModel);
+            renderModel.resetCounts();
         }
 
         shaderProgram.stop();

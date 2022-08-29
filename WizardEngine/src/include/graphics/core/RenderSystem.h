@@ -9,9 +9,14 @@
 #include <platform/graphics/FrameBuffer.h>
 #include <graphics/text/TextRenderer.h>
 #include <graphics/core/geometry/Screen.h>
-#include <graphics/materials/Phong.h>
+#include <graphics/materials/Material.h>
+#include <graphics/materials/Color.h>
+#include <graphics/skybox/Skybox.h>
 
 namespace engine::graphics {
+
+    using namespace core;
+    using namespace ecs;
 
     class RenderSystemCallback {
     public:
@@ -21,73 +26,50 @@ namespace engine::graphics {
         virtual void onFrameEnd(const Ref<FrameBuffer>& frameBuffer) = 0;
     };
 
-    class RenderSystem {
+    class RenderSystem final {
 
     public:
-        RenderSystem(const core::Ref<FrameBuffer> &sceneFrame, const core::Ref<FrameBuffer>& screenFrame)
-        : sceneFrame(sceneFrame), screenFrame(screenFrame) {
-            create();
-        }
-
-        ~RenderSystem();
-
-    public:
-        void onPrepare();
-        void onUpdate();
-        void uploadSkybox();
+        static void initDefault();
+        static void onPrepare();
+        static void onUpdate();
+        static void uploadSkybox();
+        static void onDestroy();
 
     public:
-        inline void setActiveScene(const core::Ref<ecs::Scene> &activeScene) {
-            this->activeScene = activeScene;
-        }
+        static void setRenderSystemCallback(RenderSystemCallback* renderSystemCallback);
+        static void removeRenderSystemCallback();
 
-        void setRenderSystemCallback(RenderSystemCallback* renderSystemCallback);
-        void removeRenderSystemCallback();
-
-    private:
-        void create();
-        void createScreenRenderer();
-        void createSceneRenderer();
-        void createLineRenderers();
-        void updatePhongMaterial(u32 index, Phong* phong, const BaseShader& shader);
-        void createQuadRenderer();
-        void createCircleRenderer();
-        void createOutlineRenderer();
-        void createSkyboxRenderer();
-        void createTextRenderers();
-        void createPointRenderer();
-
-    private:
-        RenderSystemCallback* callback;
-        // we must share this data with front-end, so that's why they are pointers
-        core::Ref<ecs::Scene> activeScene = nullptr;
-        core::Ref<FrameBuffer> sceneFrame;
-        core::Ref<FrameBuffer> screenFrame;
-        // these data are mostly for back-end, they are mostly just u32 numbers
+    public:
+        // frames
+        static Ref<Scene> activeScene;
+        static Ref<FrameBuffer> sceneFrame;
+        static Ref<FrameBuffer> screenFrame;
         // screen
-        VRenderer screenRenderer;
-        // scene
-        DefaultRenderer sceneRenderer;
-        // line
-        DefaultRenderer lineRenderer;
-        DefaultRenderer stripLineRenderer;
-        DefaultRenderer loopLineRenderer;
-        // quad
-        DefaultRenderer quadRenderer;
-        // circle
-        DefaultRenderer circleRenderer;
-        // outlining everything
-        // scene
-        DefaultRenderer outlineSceneRenderer;
-        // quad
-        DefaultRenderer outlineQuadRenderer;
+        static VRenderer<ScreenVertex> screenRenderer;
         // skybox
-        VRenderer skyboxRenderer;
+        static VRenderer<SkyboxVertex> skyboxRenderer;
+        // scene
+        static vector<Ref<Renderer>> sceneRenderers;
+        // outlining
+        static vector<Ref<Renderer>> outlineRenderers;
+        // points
+//        static VRenderer<PointVertex> pointRenderer;
         // text
-        TextRenderer text2dRenderer;
-        TextRenderer text3dRenderer;
-        // points renderer
-        VRenderer pointRenderer;
+        static vector<Ref<Renderer>> textRenderers;
+
+    public:
+        static void createSceneRenderer();
+        static void createScreenRenderer();
+        static void createLineRenderer();
+        static void createQuadRenderer();
+        static void createCircleRenderer();
+        static void createOutlineRenderer();
+        static void createSkyboxRenderer();
+        static void createTextRenderers();
+        static void createPointRenderer();
+
+    private:
+        static RenderSystemCallback* callback;
     };
 
 }
