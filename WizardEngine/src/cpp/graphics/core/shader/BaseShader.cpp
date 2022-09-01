@@ -47,30 +47,6 @@ namespace engine::shader {
         }
     }
 
-    void BaseShader::updateScripts(ecs::Registry &registry) const {
-        for (const auto& script : scripts) {
-            script.updateRegistry(*this, registry);
-        }
-    }
-
-    void BaseShader::updateScripts(const ecs::Entity &entity) const {
-        for (const auto& script : scripts) {
-            script.updateEntity(*this, entity);
-        }
-    }
-
-    void BaseShader::addScript(const ShaderScript& script) {
-        scripts.emplace_back(script);
-    }
-
-    void BaseShader::removeScript(const ShaderScript& script) {
-        scripts.erase(std::find(scripts.begin(), scripts.end(), script));
-    }
-
-    void BaseShader::clearScripts() {
-        scripts.clear();
-    }
-
     void BaseShader::updateUniformBuffer(const UniformData &uniformData) const {
         uniformBuffer.bindBlock();
         uniformBuffer.bind();
@@ -79,8 +55,6 @@ namespace engine::shader {
     }
 
     void BaseShader::updateUniformBuffer(IntUniform &uniform, const uint32_t &index) const {
-        if (!uniform.isUpdated) return;
-        uniform.isUpdated = false;
         auto v = (float) uniform.value;
         updateUniformBuffer(UniformData { &v, index });
     }
@@ -88,40 +62,29 @@ namespace engine::shader {
     void BaseShader::updateUniformBuffer(BoolUniform &uniform, const uint32_t &index) const {
         auto intUniform = IntUniform {
             uniform.name,
-            uniform.value ? 1 : 0,
-            uniform.isUpdated
+            uniform.value ? 1 : 0
         };
         updateUniformBuffer(intUniform, index);
     }
 
     void BaseShader::updateUniformBuffer(FloatUniform &uniform, const uint32_t &index) const {
-        if (!uniform.isUpdated) return;
-        uniform.isUpdated = false;
         auto& v = uniform.value;
         updateUniformBuffer(UniformData { &v, index });
     }
 
     void BaseShader::updateUniformBuffer(Vec3fUniform &uniform, const uint32_t &index) const {
-        if (!uniform.isUpdated) return;
-        uniform.isUpdated = false;
         updateUniformBuffer(UniformData { toFloatPtr(uniform), index });
     }
 
     void BaseShader::updateUniformBuffer(Vec4fUniform &uniform, const uint32_t &index) const {
-        if (!uniform.isUpdated) return;
-        uniform.isUpdated = false;
         updateUniformBuffer(UniformData { toFloatPtr(uniform), index });
     }
 
     void BaseShader::updateUniformBuffer(Mat4fUniform &uniform, const uint32_t &index) const {
-        if (!uniform.isUpdated) return;
-        uniform.isUpdated = false;
         updateUniformBuffer(UniformData { toFloatPtr(uniform), index });
     }
 
     void BaseShader::updateUniformBuffer(GLMMat4fUniform &uniform, const uint32_t &index) const {
-        if (!uniform.isUpdated) return;
-        uniform.isUpdated = false;
         updateUniformBuffer(UniformData { glm_toFloatPtr(uniform), index });
     }
 
@@ -130,7 +93,6 @@ namespace engine::shader {
     }
 
     void BaseShader::release() {
-        clearScripts();
         uniformBuffer.destroy();
         destroy();
     }
@@ -418,16 +380,19 @@ namespace engine::shader {
     }
 
     void BaseShaderProgram::update(ecs::Registry& registry) {
-        _vShader.updateScripts(registry);
-        _fShader.updateScripts(registry);
+        for (const auto& script : scripts) {
+            script.updateRegistry(*this, registry);
+        }
     }
 
     void BaseShaderProgram::update(const ecs::Entity &entity) {
-        _vShader.updateScripts(entity);
-        _fShader.updateScripts(entity);
+        for (const auto& script : scripts) {
+            script.updateEntity(*this, entity);
+        }
     }
 
     void BaseShaderProgram::release() {
+        clearScripts();
         detachShaders();
         releaseShaders();
         destroy();
@@ -442,5 +407,17 @@ namespace engine::shader {
 
     bool BaseShaderProgram::isReady() {
         return state == ShaderState::READY;
+    }
+
+    void BaseShaderProgram::addScript(const ShaderScript& script) {
+        scripts.emplace_back(script);
+    }
+
+    void BaseShaderProgram::removeScript(const ShaderScript& script) {
+        scripts.erase(std::find(scripts.begin(), scripts.end(), script));
+    }
+
+    void BaseShaderProgram::clearScripts() {
+        scripts.clear();
     }
 }

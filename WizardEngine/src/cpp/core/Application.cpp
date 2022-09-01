@@ -3,8 +3,6 @@
 //
 
 #include <core/Application.h>
-#include <event/Events.h>
-
 
 namespace engine::core {
 
@@ -24,6 +22,13 @@ namespace engine::core {
         createGraphics();
         Input::create(_window->getNativeWindow());
 
+#ifdef VISUAL
+        Visual::init(getNativeWindow(), {
+            static_cast<float>(getWindowWidth()),
+            static_cast<float>(getWindowHeight())
+        });
+#endif
+
         createScripting();
 
         fpsController.setMaxFps(getRefreshRate());
@@ -31,16 +36,29 @@ namespace engine::core {
         setActiveScene(createRef<Scene>());
 
         audio::DeviceManager::createContext();
+        // init post effect renderers
+        initHDR();
+        initBlur();
+        initSharpen();
+        initEdgeDetection();
+        initGaussianBlur();
+        initTextureMixer();
     }
 
     void Application::onPrepare() {
-        graphics::logApiInfo();
         _window->onPrepare();
         _window->setInCenter();
         setSampleSize(1);
         _layerStack.onPrepare();
         loadGamepadMappings("../WizardEngine/assets/db/game_controller_db.txt");
-        RenderSystem::onPrepare();
+
+        auto skybox = activeScene->getSkybox().get<VertexDataComponent<SkyboxVertex>>();
+        if (skybox->vertexData.values) {
+            RenderSystem::skyboxRenderer.uploadStatic(*skybox);
+            delete skybox->vertexData.values;
+        } else {
+            ENGINE_WARN("Skybox of '{0}' is already uploaded!", activeScene->getName());
+        }
     }
 
     void Application::onDestroy() {
@@ -49,13 +67,22 @@ namespace engine::core {
         _scriptSystem->onDestroy();
         audio::MediaPlayer::clear();
         audio::DeviceManager::clear();
+#ifdef VISUAL
+        Visual::release();
+#endif
     }
 
     void Application::onUpdate() {
         auto dt = fpsController.getDeltaTime();
         fpsController.begin();
-        updateEventRegistry();
-        updateRuntime(dt);
+        onEventUpdate();
+        onRuntimeUpdate(dt);
+#ifdef VISUAL
+        Visual::begin();
+        onVisualDraw(dt);
+        _layerStack.onVisualDraw(dt);
+        Visual::end();
+#endif
         // draw editor/tools
         _layerStack.onUpdate(dt);
         // poll events + swap chain
@@ -80,6 +107,9 @@ namespace engine::core {
         ENGINE_INFO("Application : onWindowClosed()");
         _layerStack.onWindowClosed();
         EventRegistry::onWindowClosed.function();
+#ifdef VISUAL
+        Visual::onWindowClosed();
+#endif
         shutdown();
     }
 
@@ -91,48 +121,75 @@ namespace engine::core {
         activeSceneFrame->resize(width, height);
         screenFrame->resize(width, height);
         EventRegistry::onWindowResized.function(width, height);
+#ifdef VISUAL
+        Visual::onWindowResized(width, height);
+#endif
     }
 
     void Application::onKeyPressed(event::KeyCode keyCode) {
         _layerStack.onKeyPressed(keyCode);
         EventRegistry::onKeyPressedMap[keyCode].function(keyCode);
+#ifdef VISUAL
+        Visual::onKeyPressed(keyCode);
+#endif
     }
 
     void Application::onKeyHold(event::KeyCode keyCode) {
         _layerStack.onKeyHold(keyCode);
         EventRegistry::onKeyHoldMap[keyCode] = true;
+#ifdef VISUAL
+        Visual::onKeyHold(keyCode);
+#endif
     }
 
     void Application::onKeyReleased(event::KeyCode keyCode) {
         _layerStack.onKeyReleased(keyCode);
         EventRegistry::onKeyReleasedMap[keyCode].function(keyCode);
         EventRegistry::onKeyHoldMap[keyCode] = false;
+#ifdef VISUAL
+        Visual::onKeyReleased(keyCode);
+#endif
     }
 
     void Application::onMousePressed(event::MouseCode mouseCode) {
         _layerStack.onMousePressed(mouseCode);
         EventRegistry::onMousePressedMap[mouseCode].function(mouseCode);
         EventRegistry::mouseHoldMap[mouseCode] = true;
+#ifdef VISUAL
+        Visual::onMousePressed(mouseCode);
+#endif
     }
 
     void Application::onMouseRelease(event::MouseCode mouseCode) {
         _layerStack.onMouseRelease(mouseCode);
         EventRegistry::onMouseReleasedMap[mouseCode].function(mouseCode);
         EventRegistry::mouseHoldMap[mouseCode] = false;
+#ifdef VISUAL
+        Visual::onMouseRelease(mouseCode);
+#endif
     }
 
     void Application::onMouseScrolled(double xOffset, double yOffset) {
         _layerStack.onMouseScrolled(xOffset, yOffset);
         EventRegistry::onMouseScrolled.function(xOffset, yOffset);
+#ifdef VISUAL
+        Visual::onMouseScrolled(xOffset, yOffset);
+#endif
     }
 
     void Application::onCursorMoved(double xPos, double yPos) {
         _layerStack.onCursorMoved(xPos, yPos);
         EventRegistry::onCursorMoved.function(xPos, yPos);
+#ifdef VISUAL
+        Visual::onCursorMoved(xPos, yPos);
+#endif
     }
 
     void Application::onKeyTyped(event::KeyCode keyCode) {
         _layerStack.onKeyTyped(keyCode);
+#ifdef VISUAL
+        Visual::onKeyTyped(keyCode);
+#endif
     }
 
     float Application::getAspectRatio() const {
@@ -191,7 +248,8 @@ namespace engine::core {
         // update active scene fbo
         FrameBufferFormat activeSceneFrameFormat;
         activeSceneFrameFormat.colorAttachments = {
-                { graphics::ColorFormat::RGBA8 }
+                { ColorFormat::RGBA8 },
+                { ColorFormat::RGBA8 }
         };
         activeSceneFrameFormat.renderBufferAttachment = { DepthStencilFormat::DEPTH24STENCIL8 };
         activeSceneFrameFormat.width = _window->getWidth();
@@ -201,7 +259,7 @@ namespace engine::core {
         // update screen fbo
         FrameBufferFormat screenFrameFormat;
         screenFrameFormat.colorAttachments = {
-                { graphics::ColorFormat::RGBA8 }
+                { ColorFormat::RGBA8 }
         };
         screenFrameFormat.width = _window->getWidth();
         screenFrameFormat.height = _window->getHeight();
@@ -213,15 +271,17 @@ namespace engine::core {
 
     void Application::createGraphics() {
         graphics::initContext(_window->getNativeWindow());
+        setClearColor({0, 0, 0, 1});
         activeSceneFrame = createRef<FrameBuffer>();
         screenFrame = createRef<FrameBuffer>();
         RenderSystem::sceneFrame = activeSceneFrame;
         RenderSystem::screenFrame = screenFrame;
         RenderSystem::setRenderSystemCallback(this);
-        RenderSystem::initDefault();
+        RenderSystem::screenRenderer.init();
+        RenderSystem::skyboxRenderer.init();
     }
 
-    void Application::updateRuntime(Time dt) {
+    void Application::onRuntimeUpdate(Time dt) {
         if (!activeScene->isEmpty()) {
             _scriptSystem->onUpdate(dt);
             RenderSystem::onUpdate();
@@ -264,7 +324,7 @@ namespace engine::core {
         _window->loadGamepadMappings(mappingsFilePath);
     }
 
-    void Application::updateEventRegistry() {
+    void Application::onEventUpdate() {
         if (isJoystickConnected) {
             ENGINE_INFO("Joystick CONNECTED! Polling buttons and axes...");
             const auto& gamepadState = Input::getGamepadState();
@@ -331,20 +391,77 @@ namespace engine::core {
         }
     }
 
-    void Application::applyScreenSettings() {
-        FrameBufferFormat screenFrameFormat;
-        screenFrameFormat.colorAttachments = { { screenSettings.colorFormat } };
-        screenFrameFormat.width = _window->getWidth();
-        screenFrameFormat.height = _window->getHeight();
-        screenFrameFormat.samples = screenSettings.samples;
-        screenFrame->updateFormat(screenFrameFormat);
+    void Application::initHDR() {
+        FrameBufferFormat hdrFrameFormat;
+        hdrFrameFormat.colorAttachments = {
+                { ColorFormat::RGBA16F },
+        };
+        hdrFrameFormat.width = _window->getWidth();
+        hdrFrameFormat.height = _window->getHeight();
+        RenderSystem::hdrEffectRenderer = { hdrFrameFormat };
+        hdrEffect = RenderSystem::hdrEffectRenderer.getHdrEffect();
+    }
 
-        auto& screenShader = RenderSystem::screenRenderer.getShaderProgram();
-        screenShader.start();
-        screenShader.getFShader().setUniform(screenSettings.enableHDR);
-        screenShader.getFShader().setUniform(screenSettings.gamma);
-        screenShader.getFShader().setUniform(screenSettings.exposure);
-        screenShader.stop();
+    void Application::initBlur() {
+        FrameBufferFormat blurFrameFormat;
+        blurFrameFormat.colorAttachments = {
+                { ColorFormat::RGBA8 },
+        };
+        blurFrameFormat.width = _window->getWidth();
+        blurFrameFormat.height = _window->getHeight();
+        BlurEffectRenderer blurEffectRenderer(blurFrameFormat);
+        blurEffect = blurEffectRenderer.getBlurEffect();
+        RenderSystem::postEffectRenderers.emplace_back(blurEffectRenderer);
+    }
+
+    void Application::initSharpen() {
+        FrameBufferFormat sharpenFrameFormat;
+        sharpenFrameFormat.colorAttachments = {
+                { ColorFormat::RGBA8 },
+        };
+        sharpenFrameFormat.width = _window->getWidth();
+        sharpenFrameFormat.height = _window->getHeight();
+        SharpenEffectRenderer sharpenEffectRenderer(sharpenFrameFormat);
+        sharpenEffect = sharpenEffectRenderer.getSharpenEffect();
+        RenderSystem::postEffectRenderers.emplace_back(sharpenEffectRenderer);
+    }
+
+    void Application::initEdgeDetection() {
+        FrameBufferFormat edgeDetectionFrameFormat;
+        edgeDetectionFrameFormat.colorAttachments = {
+                { ColorFormat::RGBA8 },
+        };
+        edgeDetectionFrameFormat.width = _window->getWidth();
+        edgeDetectionFrameFormat.height = _window->getHeight();
+        EdgeDetectionEffectRenderer edgeDetectionEffectRenderer(edgeDetectionFrameFormat);
+        edgeDetectionEffect = edgeDetectionEffectRenderer.getEdgeDetectionEffect();
+        RenderSystem::postEffectRenderers.emplace_back(edgeDetectionEffectRenderer);
+    }
+
+    void Application::initGaussianBlur() {
+        FrameBufferFormat gaussianBlurFrameFormat;
+        gaussianBlurFrameFormat.colorAttachments = {
+                { ColorFormat::RGBA8 },
+        };
+        gaussianBlurFrameFormat.width = _window->getWidth();
+        gaussianBlurFrameFormat.height = _window->getHeight();
+        GaussianBlurEffectRenderer gaussianBlurEffectRenderer(gaussianBlurFrameFormat);
+        gaussianBlurEffect = gaussianBlurEffectRenderer.getGaussianBlurEffect();
+        RenderSystem::postEffectRenderers.emplace_back(gaussianBlurEffectRenderer);
+    }
+
+    void Application::initTextureMixer() {
+        FrameBufferFormat textureMixerFrameFormat;
+        textureMixerFrameFormat.colorAttachments = {
+                { ColorFormat::RGBA8 },
+        };
+        textureMixerFrameFormat.width = _window->getWidth();
+        textureMixerFrameFormat.height = _window->getHeight();
+        RenderSystem::textureMixer = { textureMixerFrameFormat };
+    }
+
+    void Application::onVisualDraw(time::Time dt) {
+        // this method will be called only from derived class that defines VISUAL macro
     }
 }
 

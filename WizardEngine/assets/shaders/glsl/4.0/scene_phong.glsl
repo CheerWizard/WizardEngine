@@ -3,6 +3,8 @@
 #include include/f_scene.glsl
 #include material/phong.glsl
 
+layout(location = 1) out vec4 brightColor;
+
 const uint LIGHT_COUNT = 8;
 uniform PhongLight phongLight[LIGHT_COUNT];
 
@@ -19,5 +21,12 @@ void main() {
             viewPosition,
             light
         );
+    }
+
+    float brightness = dot(fragment.rgb, vec3(0.2126, 0.7152, 0.0722));
+    if (brightness > phong[getId()].brightness) {
+        brightColor = vec4(fragment.rgb, 1);
+    } else {
+        brightColor = vec4(0, 0, 0, 1);
     }
 }

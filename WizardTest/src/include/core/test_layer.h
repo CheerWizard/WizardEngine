@@ -64,6 +64,8 @@ namespace test {
         void onMouseScrolled(double xOffset, double yOffset) override;
         void onCursorMoved(double xPos, double yPos) override;
 
+        void onVisualDraw(time::Time dt) override;
+
     private:
         void bindCamera();
         void init();
@@ -74,9 +76,13 @@ namespace test {
 
         void dragLight();
 
-        void switchHDR();
-
         void switchMSAA();
+        void switchHDR();
+        void switchBlur();
+        void switchSharpen();
+        void switchEdgeDetection();
+        void switchGaussianBlur();
+        void switchBloom();
 
         void onGamepadRollLeft(const GamepadRoll& roll);
         void onGamepadRollRight(const GamepadRoll& roll);
@@ -88,7 +94,6 @@ namespace test {
         bool msaaEnabled = false;
         Entity hoveredEntity;
         PhongLight light;
-        bool hdrEnabled = false;
     };
 
 }

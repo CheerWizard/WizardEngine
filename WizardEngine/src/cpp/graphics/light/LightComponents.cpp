@@ -9,7 +9,7 @@ namespace engine::graphics {
     ShaderScript phongLightScript() {
         auto script = ShaderScript();
 
-        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+        script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry& registry) {
             u32 i = 0;
             registry.each<PhongLightComponent>([&shader, &i](PhongLightComponent* phongLight) {
                 shader.setUniformArrayStructField(i, phongLight->name, phongLight->position);
@@ -21,7 +21,7 @@ namespace engine::graphics {
             });
         };
 
-        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+        script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
             auto phongLight = entity.get<PhongLightComponent>();
             if (phongLight) {
                 shader.setUniformStructField(phongLight->name, phongLight->position);

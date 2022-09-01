@@ -62,6 +62,14 @@ using namespace engine::ecs;
 #define GAMEPAD_ROLL_LEFT(action) engine::event::EventRegistry::onGamepadRollLeft.function = { [this](const GamepadRoll& roll) { action } }
 #define GAMEPAD_ROLL_RIGHT(action) engine::event::EventRegistry::onGamepadRollRight.function = { [this](const GamepadRoll& roll) { action } }
 
+#ifdef VISUAL
+#include <visual/Visual.h>
+#include <visual/Console.h>
+#include <visual/Widgets.h>
+
+using namespace engine::visual;
+#endif
+
 namespace engine::core {
 
     // The entry point in core hierarchy, behaves as singleton.
@@ -111,6 +119,7 @@ namespace engine::core {
         virtual void onPrepare();
         virtual void onDestroy();
         virtual WindowProps createWindowProps();
+        virtual void onVisualDraw(time::Time dt);
 
     public:
         [[nodiscard]] float getAspectRatio() const;
@@ -121,7 +130,6 @@ namespace engine::core {
         void setWindowIcon(const std::string &filePath);
         Ref<tools::FileDialog> createFileDialog();
         void setSampleSize(const uint32_t& samples);
-        void applyScreenSettings();
         void setActiveScene(const Ref<Scene>& activeScene);
         void setActiveScene(const uint32_t& activeSceneId);
         void loadGamepadMappings(const char* mappingsFilePath);
@@ -133,11 +141,20 @@ namespace engine::core {
     private:
         void shutdown();
         void restart();
+
         void onUpdate();
-        void updateRuntime(time::Time dt);
-        void updateEventRegistry();
+        void onRuntimeUpdate(time::Time dt);
+        void onEventUpdate();
+
         void createGraphics();
         void createScripting();
+        // init post effect renderers
+        void initHDR();
+        void initBlur();
+        void initSharpen();
+        void initEdgeDetection();
+        void initGaussianBlur();
+        void initTextureMixer();
 
     public:
         std::vector<Ref<Scene>> scenes;
@@ -151,7 +168,12 @@ namespace engine::core {
         Entity hoveredEntity;
         // mouse cursor tracker
         bool enableMouseCursor = false;
-        ScreenSettings screenSettings;
+        // post effects
+        Ref<HdrEffect> hdrEffect;
+        Ref<BlurEffect> blurEffect;
+        Ref<SharpenEffect> sharpenEffect;
+        Ref<EdgeDetectionEffect> edgeDetectionEffect;
+        Ref<GaussianBlurEffect> gaussianBlurEffect;
 
     private:
         static Application* instance;

@@ -7,16 +7,12 @@
 namespace engine::math {
 
     void updateModel2d(ModelMatrix2d &modelMatrix2D) {
-        modelMatrix2D.isUpdated = true;
-
         auto identity = math::mat4f();
         auto translationMatrix = math::translate(identity, math::vec3f(modelMatrix2D.position, 1));
         auto rotationMatrix = math::rotateZ(translationMatrix, modelMatrix2D.rotation);
     }
 
     void updateModel3d(ModelMatrix3d &modelMatrix3D) {
-        modelMatrix3D.isUpdated = true;
-
         auto identity = glm::mat4(1);
         glm::vec3 position = {
                 modelMatrix3D.position.x(),

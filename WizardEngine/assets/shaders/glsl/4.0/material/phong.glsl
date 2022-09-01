@@ -31,6 +31,8 @@ struct Phong {
     float heightScale;
     float minLayers;
     float maxLayers;
+
+    float brightness;
 };
 
 const uint TEXTURE_UNITS = 30;
@@ -95,20 +97,18 @@ vec4 applyPhong(
     }
     specular *= light.specular;
 
-    vec3 albedoMap = vec3(texture(material.albedo, uv));
-    vec3 diffMap = vec3(texture(material.diffuseMap, uv));
-    vec3 specMap = vec3(texture(material.specularMap, uv));
-
     if (material.enableAlbedoMap) {
-        albedo = albedoMap;
+        albedo = vec3(texture(material.albedo, uv));
     }
 
     if (material.enableDiffuseMap) {
+        vec3 diffMap = vec3(texture(material.diffuseMap, uv));
         amb *= diffMap;
         diff *= diffMap;
     }
 
     if (material.enableSpecularMap) {
+        vec3 specMap = vec3(texture(material.specularMap, uv));
         specular *= specMap;
     }
 

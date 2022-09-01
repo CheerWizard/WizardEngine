@@ -57,4 +57,30 @@ namespace engine::graphics {
     void Renderer::addEntityHandler(const Handle &handle) {
         entityHandlers.emplace_back(handle);
     }
+
+    void PrimitiveRenderer::renderQuad() {
+        if (!shaderProgram.isReady()) return;
+
+        shaderProgram.start();
+
+        drawV(DrawType::TRIANGLE_STRIP, 4);
+
+        shaderProgram.stop();
+    }
+
+    void PrimitiveRenderer::renderQuad(u32 textureId) {
+        if (!shaderProgram.isReady()) return;
+
+        shaderProgram.start();
+
+        TextureBuffer::activate(0);
+        TextureBuffer::bind(textureId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
+        drawV(DrawType::TRIANGLE_STRIP, 4);
+
+        shaderProgram.stop();
+    }
+
+    void PrimitiveRenderer::release() {
+        shaderProgram.release();
+    }
 }

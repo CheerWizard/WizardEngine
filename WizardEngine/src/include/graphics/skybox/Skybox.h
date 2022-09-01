@@ -8,6 +8,7 @@
 #include <graphics/core/geometry/Cube.h>
 #include <graphics/transform/TransformComponents.h>
 #include <graphics/core/texture/Texture.h>
+#include <graphics/core/Renderer.h>
 
 namespace engine::graphics {
 
@@ -86,6 +87,18 @@ namespace engine::graphics {
             add<SkyCube>(SkyCube());
             add<CubeMapTextureComponent>(cubeMapTextures);
         }
+    };
+
+    class SkyboxRenderer : public VRenderer<SkyboxVertex> {
+
+    public:
+        SkyboxRenderer() : VRenderer<SkyboxVertex>() {}
+
+    public:
+        void init();
+
+    protected:
+        void uploadUniforms(const ecs::Entity& entity) override;
     };
 
 }

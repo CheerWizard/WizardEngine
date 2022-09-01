@@ -36,11 +36,6 @@ namespace engine::graphics {
     void drawVI(const DrawType& drawType, const uint32_t& indexCount);
     void drawVI(const DrawType& drawType, const uint32_t& indexCount, const uint32_t& instanceCount);
 
-    const unsigned char* getAPIName();
-    const unsigned char* getVendorName();
-    const unsigned char* getRendererName();
-    const unsigned char* getVersion();
-
     void setMSAA(bool enabled);
 
     void clearColorBuffer();
@@ -99,8 +94,6 @@ namespace engine::graphics {
     void setCullFaceMode(bool isEnabled);
     void setCullFace(const FaceType& faceType);
     void setFrontFace(const FrontFaceType& frontFaceType);
-
-    void logApiInfo();
 
     component(CullingComponent) {
         bool enabled = false;

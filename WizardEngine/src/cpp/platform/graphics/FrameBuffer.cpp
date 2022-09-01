@@ -65,6 +65,7 @@ namespace engine::graphics {
 
     const std::vector<ColorAttachment>& FrameBuffer::updateFormat(const FrameBufferFormat &format) {
         setFormat(format);
+        textureTarget = format.samples > 1 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
         loadAttachments();
         const auto& colors = getColorAttachments();
         ENGINE_INFO("Update FBO format. Color buffer id: {0}", colors[0].id);
@@ -115,7 +116,7 @@ namespace engine::graphics {
         for (int i = 0 ; i < format.colorAttachments.size() ; i++) {
             auto& colorAttachment = format.colorAttachments[i];
 
-            glCreateTextures(getTextureTarget(), 1, &colorAttachment.id);
+            glCreateTextures(textureTarget, 1, &colorAttachment.id);
             bindTexture(colorAttachment.id);
 
             uint32_t colorInternalFormat;
@@ -159,7 +160,7 @@ namespace engine::graphics {
 
             bindTexture(0);
 
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, getTextureTarget(), colorAttachment.id, 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, textureTarget, colorAttachment.id, 0);
         }
     }
 
@@ -167,7 +168,7 @@ namespace engine::graphics {
         if (format.depthStencilAttachment.format == DepthStencilFormat::NONE) return;
 
         auto& depthStencilAttachment = format.depthStencilAttachment;
-        glCreateTextures(getTextureTarget(), 1, &depthStencilAttachment.id);
+        glCreateTextures(textureTarget, 1, &depthStencilAttachment.id);
         bindTexture(depthStencilAttachment.id);
 
         auto depthFormat = toGLDepthStencilFormat(depthStencilAttachment.format);
@@ -197,7 +198,7 @@ namespace engine::graphics {
 
         bindTexture(0);
 
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, getTextureTarget(), depthStencilAttachment.id, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, textureTarget, depthStencilAttachment.id, 0);
     }
 
     void FrameBuffer::attachRbo() {
@@ -253,12 +254,8 @@ namespace engine::graphics {
         }
     }
 
-    uint32_t FrameBuffer::getTextureTarget() const {
-        return format.samples > 1 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
-    }
-
     void FrameBuffer::bindTexture(const uint32_t &attachmentId) {
-        glBindTexture(getTextureTarget(), attachmentId);
+        glBindTexture(textureTarget, attachmentId);
     }
 
     void FrameBuffer::bind() const {

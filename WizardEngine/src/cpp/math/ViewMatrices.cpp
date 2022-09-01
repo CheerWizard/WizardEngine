@@ -8,16 +8,12 @@
 namespace engine::math {
 
     void update(ViewMatrix2d &viewMatrix2D) {
-        viewMatrix2D.isUpdated = true;
         math::mat4f identity;
         auto rotMat = math::rotateZ(identity, viewMatrix2D.rotation);
         viewMatrix2D.value = math::translate(rotMat, -viewMatrix2D.position);
     }
 
     void update(ViewMatrix3d &viewMatrix3D) {
-        viewMatrix3D.isUpdated = true;
-        viewMatrix3D.position.isUpdated = true;
-
 //        vec3f yAxis = { 0, 1, 0 };
 //        vec3f zAxis = { 0, 0, 1 };
 //        viewMatrix3D.value = math::lookAt(pos, pos + zAxis, yAxis);

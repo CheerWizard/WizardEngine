@@ -1,8 +1,12 @@
 # Macros to build project for specific platform. Wizard project will detect and process platform under the hood.
 # We should always set it , before adding subprojects!
-if (DEBUG)
+if(DEBUG)
     add_definitions(-DDEBUG=1)
-endif (DEBUG)
+endif(DEBUG)
+
+if(VISUAL)
+    add_definitions(-DVISUAL=1)
+endif(VISUAL)
 
 # copying target dir to destination dir. If destination does not exist, create it.
 macro(copy_dir dir1 dir2)

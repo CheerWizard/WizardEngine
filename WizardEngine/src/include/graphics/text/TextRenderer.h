@@ -60,13 +60,11 @@ namespace engine::graphics {
             uint32_t i = 0;
             registry.each<Text>([this, &totalVertexCount, &i, &renderModel](Text* textComponent) {
                 auto& text = *textComponent;
-                const auto& vShader = shaderProgram.getVShader();
-                const auto& fShader = shaderProgram.getFShader();
 
-                vShader.setUniformArrayElement(i, text.transform.modelMatrix);
-                fShader.setUniformArrayElement(i, text.color);
-                fShader.setUniformArrayElement(i, text.transparency);
-                fShader.setUniform(text.bitmap.sampler);
+                shaderProgram.setUniformArrayElement(i, text.transform.modelMatrix);
+                shaderProgram.setUniformArrayElement(i, text.color);
+                shaderProgram.setUniformArrayElement(i, text.transparency);
+                shaderProgram.setUniform(text.bitmap.sampler);
                 TextureBuffer::bind(text.bitmap.textureId, text.bitmap.typeId);
                 TextureBuffer::activate(text.bitmap.sampler.value);
                 // no needs to update each character again, if the text didn't change!

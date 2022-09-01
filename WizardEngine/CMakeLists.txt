@@ -11,7 +11,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(${PROJECT_NAME} ${ENGINE_SRC} src/cpp/graphics/material/Material.cpp src/include/platform/graphics/tools/VideoStats.h src/cpp/platform/graphics/tools/VideoStats.cpp)
+add_library(${PROJECT_NAME} ${ENGINE_SRC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 #/ Add WizardEngine headers

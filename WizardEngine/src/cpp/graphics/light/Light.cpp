@@ -14,10 +14,6 @@ namespace engine::graphics {
         return get<PhongLightComponent>()->position.value;
     }
 
-    void PhongLight::apply() {
-        get<PhongLightComponent>()->position.isUpdated = true;
-    }
-
     vec4f &PhongLight::getColor() {
         return get<PhongLightComponent>()->color.value;
     }

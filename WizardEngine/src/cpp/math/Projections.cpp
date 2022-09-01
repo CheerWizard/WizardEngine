@@ -53,7 +53,6 @@ namespace engine::math {
     }
 
     void update(OrthographicMatrix &orthographicMatrix) {
-        orthographicMatrix.isUpdated = true;
         orthographicMatrix.value = math::ortho(
                 orthographicMatrix.left,
                 orthographicMatrix.right,
@@ -65,7 +64,6 @@ namespace engine::math {
     }
 
     void update(PerspectiveMatrix &perspectiveMatrix) {
-        perspectiveMatrix.isUpdated = true;
         perspectiveMatrix.value = math::perspective(
                 perspectiveMatrix.fieldOfView,
                 perspectiveMatrix.aspectRatio,

@@ -27,7 +27,7 @@ namespace engine::graphics {
 
         Material(const char* name) : name(name) {}
 
-        size_t getLimit() {
+        [[nodiscard]] size_t getLimit() const {
             return VideoStats::getMaxSlots() / textures.size();
         }
     };
@@ -40,13 +40,13 @@ namespace engine::graphics {
 
     public:
         MaterialShader() = default;
-        MaterialShader(const BaseShader& shader) : shader(shader) {}
+        MaterialShader(const BaseShaderProgram& shaderProgram) : shaderProgram(shaderProgram) {}
 
     public:
         void setMaterial(u32 index, Material* material);
 
     private:
-        BaseShader shader;
+        BaseShaderProgram shaderProgram;
     };
 
 }

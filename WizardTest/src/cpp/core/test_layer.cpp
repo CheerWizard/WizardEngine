@@ -3,12 +3,76 @@
 //
 
 #include <core/test_layer.h>
+#include <graphics/camera/CameraShaderScript.h>
 
 #define ROTATE_SURVIVAL_PACK 123
 
 namespace test {
 
     void TestLayer::init() {
+        // setup custom scene renderer
+        auto batchShader = shader::BaseShaderProgram(
+                io::ShaderProps {
+                        "batch",
+                        "v_batch.glsl",
+                        "scene_phong.glsl",
+                        ENGINE_SHADERS_PATH
+                },
+                BaseShader(),
+                BaseShader(),
+                { camera3dUboScript(), phongLightScript() }
+        );
+
+        auto instanceShader = shader::BaseShaderProgram(
+                io::ShaderProps {
+                        "instance",
+                        "v_instance.glsl",
+                        "scene_phong.glsl",
+                        ENGINE_SHADERS_PATH
+                },
+                BaseShader(),
+                BaseShader(),
+                { camera3dUboScript(), phongLightScript() }
+        );
+
+        Ref<Renderer> batchRenderer = createRef<BatchRenderer<Vertex3d>>(batchShader);
+        Ref<Renderer> instanceRenderer = createRef<InstanceRenderer<Vertex3d>>(instanceShader);
+        auto entityHandler = [](ecs::Registry& registry,
+                                ecs::entity_id entityId, u32 index, BaseShaderProgram& shader) {
+            int entityIdInt = (int) entityId;
+//            ENGINE_INFO("entityHandler: entity_id: {0}, index: {1}", entityIdInt, index);
+            // update polygon mode
+            auto* pmc = registry.getComponent<PolygonModeComponent>(entityId);
+            PolygonModes::setPolygonMode(pmc ? *pmc : PolygonModeComponent());
+            // update culling mode
+            auto* culling = registry.getComponent<CullingComponent>(entityId);
+            Culling::setCulling(culling ? *culling : CullingComponent());
+            // pass entity id to shader
+            IntUniform entityIdUniform = { "entityId", entityIdInt };
+            shader.setUniformArrayElement(index, entityIdUniform);
+            // update single material
+            auto material = registry.getComponent<Material>(entityId);
+            if (material) {
+                MaterialShader(shader).setMaterial(index, material);
+            }
+            // update material list
+            auto materialList = registry.getComponent<MaterialList>(entityId);
+            if (materialList) {
+                for (u32 i = 0; i < materialList->materials.size(); i++) {
+                    auto& m = materialList->materials[i];
+                    MaterialShader(shader).setMaterial(index + i, &m);
+                }
+            }
+        };
+
+        batchRenderer->addEntityHandler(entityHandler);
+        instanceRenderer->addEntityHandler(entityHandler);
+
+        RenderSystem::sceneRenderers.emplace_back(batchRenderer);
+        RenderSystem::sceneRenderers.emplace_back(instanceRenderer);
+
+        // setup scene, entities, components
+
         auto scene = createRef<Scene>("Scene1");
         auto& app = engine::core::Application::get();
         app.setActiveScene(scene);
@@ -37,13 +101,21 @@ namespace test {
                 CubeMapTextureComponent(skyboxId, TextureBuffer::getTypeId(TextureType::CUBE_MAP))
         ));
 
-//        for (u32 i = 0; i < 60; i++) {
-//            packs.emplace_back(Batch3d(&"SurvivalBackPack"[i], scene.get()));
-//        }
+        math::random(-10, 10, 12, [this, &scene](const u32& i, const f32& r) {
+            Batch3d pack = Batch3d(&"SurvivalBackPack"[i], scene.get());
+            pack.getTransform().position = { r * i, r * i, r * i };
+            pack.getTransform().rotation = { r * i, r * i, r * i };
+            pack.applyTransform();
+            packs.emplace_back(pack);
+        });
 
-        for (u32 i = 0; i < 120; i++) {
-            instancedPacks.emplace_back(Instance3d(&"SurvivalBackPackInstanced"[i], scene.get()));
-        }
+        math::random(-10, 10, 1, [this, &scene](const u32& i, const f32& r) {
+            Instance3d pack = Instance3d(&"SurvivalBackPackInstanced"[i], scene.get());
+            pack.getTransform().position = { r * i, r * i, r * i };
+            pack.getTransform().rotation = { r * i, r * i, r * i };
+            pack.applyTransform();
+            instancedPacks.emplace_back(pack);
+        });
 
         RenderSystem::sceneRenderers[0]->getShader().setInstancesPerDraw(Phong().getLimit());
 
@@ -77,6 +149,7 @@ namespace test {
         io::ModelFile<InstanceVertex<Vertex3d>>::read("assets/model/survival_pack.obj", {
                 [this](const BaseMeshComponent<InstanceVertex<Vertex3d>>& mesh) {
                     RUNTIME_INFO("ModelFile read: onSuccess");
+                    if (instancedPacks.empty()) return;
                     instancedPacks[0].add<BaseMeshComponent<InstanceVertex<Vertex3d>>>(mesh.copy());
                     RenderSystem::sceneRenderers[1]->createVIRenderModelInstanced(instancedPacks[0], instancedPacks);
                 },
@@ -105,55 +178,55 @@ namespace test {
 
         for (auto pack : packs) {
             Phong phong;
-            phong.color().value = { 0, 0, 0, 1 };
-            phong.ambient().value = 0.2;
-            phong.diffuse().value = 0.8;
-            phong.specular().value = 0.5;
-            phong.shiny().value = 1;
+            phong.color() = { 0, 0, 0, 1 };
+            phong.ambient() = 0.2;
+            phong.diffuse() = 0.8;
+            phong.specular() = 0.5;
+            phong.shiny() = 1;
 
             phong.albedo().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_albedo.jpg");
             phong.enableAlbedoMap().value = true;
 
             phong.specularMap().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_metallic.jpg");
-            phong.enableSpecularMap().value = true;
+            phong.enableSpecularMap() = true;
 
-            phong.enableBlinn().value = true;
+            phong.enableBlinn() = true;
 
             phong.normalMap().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_normal.png");
-            phong.enableNormalMap().value = true;
+            phong.enableNormalMap() = true;
 
-            phong.gamma().value = 1;
+            phong.gamma() = 1;
 
             phong.depthMap().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_roughness.jpg");
-            phong.enableParallaxMap().value = true;
-            phong.heightScale().value = 0.5;
+            phong.enableParallaxMap() = true;
+            phong.heightScale() = 0.5;
             pack.add<Phong>(phong);
         }
 
         for (auto instancePack : instancedPacks) {
             Phong phong;
-            phong.color().value = { 0, 0, 0, 1 };
-            phong.ambient().value = 0.2;
-            phong.diffuse().value = 0.8;
-            phong.specular().value = 0.5;
-            phong.shiny().value = 1;
+            phong.color() = { 0, 0, 0, 1 };
+            phong.ambient() = 0.2;
+            phong.diffuse() = 0.8;
+            phong.specular() = 0.5;
+            phong.shiny() = 1;
 
             phong.albedo().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_albedo.jpg");
             phong.enableAlbedoMap().value = true;
 
             phong.specularMap().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_metallic.jpg");
-            phong.enableSpecularMap().value = true;
+            phong.enableSpecularMap() = true;
 
-            phong.enableBlinn().value = true;
+            phong.enableBlinn() = true;
 
             phong.normalMap().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_normal.png");
-            phong.enableNormalMap().value = true;
+            phong.enableNormalMap() = true;
 
-            phong.gamma().value = 1;
+            phong.gamma() = 1;
 
             phong.depthMap().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_roughness.jpg");
-            phong.enableParallaxMap().value = true;
-            phong.heightScale().value = 0.5;
+            phong.enableParallaxMap() = true;
+            phong.heightScale() = 0.5;
             instancePack.add<Phong>(phong);
         }
 
@@ -177,7 +250,7 @@ namespace test {
 //        );
 
         light = PhongLight(scene.get());
-        light.getColor() = { 1.39, 1.37, 1.25, 1 };
+        light.getColor() = { 100.39, 100.37, 0.25, 1 };
 
         bool tcpClientCreated = tcp::Client::init(this, this, this);
         if (tcpClientCreated) {
@@ -189,17 +262,7 @@ namespace test {
             udp::Client::connect("192.168.1.101", 54000);
         }
 
-        math::random(-25, 25, packs.size(), [this](const u32& i, const f32& r) {
-            packs[i].getTransform().position = { r, r, r };
-            packs[i].getTransform().rotation = { r, r, r };
-            packs[i].applyTransform();
-        });
-
-        math::random(-25, 25, instancedPacks.size(), [this](const u32& i, const f32& r) {
-            instancedPacks[i].getTransform().position = { r, r, r };
-            instancedPacks[i].getTransform().rotation = { r, r, r };
-            instancedPacks[i].applyTransform();
-        });
+        Visual::setTheme();
     }
 
     TestLayer::~TestLayer() {
@@ -216,7 +279,6 @@ namespace test {
         KEY_PRESSED(KeyCode::E, mainCamera.applyRotate(RotateType::RIGHT_Z););
         KEY_PRESSED(KeyCode::Z, mainCamera.applyZoom(ZoomType::ZOOM_IN););
         KEY_PRESSED(KeyCode::X, mainCamera.applyZoom(ZoomType::ZOOM_OUT););
-        KEY_PRESSED(KeyCode::H, switchHDR(););
 
         mainCamera.zoomSpeed = 10.0f;
         mainCamera.rotateSpeed = 0.5f;
@@ -227,6 +289,15 @@ namespace test {
     void TestLayer::onPrepare() {
         bindCamera();
 
+        KEY_PRESSED(D1, switchHDR(););
+        KEY_PRESSED(D2, switchBlur(););
+        KEY_PRESSED(D3, switchSharpen(););
+        KEY_PRESSED(D4, switchEdgeDetection(););
+        KEY_PRESSED(D5, switchBloom(););
+
+        KEY_PRESSED(D9, Application::get().activeSceneFrame->setRenderTargetIndex(0););
+        KEY_PRESSED(D0, Application::get().activeSceneFrame->setRenderTargetIndex(1););
+
         GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_A, onPadA(););
         GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_B, onPadB(););
         GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_X, onPadX(););
@@ -234,8 +305,6 @@ namespace test {
 
         GAMEPAD_ROLL_LEFT(onGamepadRollLeft(roll););
         GAMEPAD_ROLL_RIGHT(onGamepadRollRight(roll););
-
-        KEY_PRESSED(D1,switchMSAA(););
 
 //        KEY_PRESSED(KeyCode::D1, audio::MediaPlayer::pause(););
 //        KEY_PRESSED(KeyCode::D2, audio::MediaPlayer::stop(););
@@ -276,14 +345,17 @@ namespace test {
         skyboxTransform.apply();
 
         if (EventRegistry::keyHold(R)) {
-            for (auto& pack : packs) {
-                pack.getTransform().rotation[1] += 0.01f;
-                pack.applyTransform();
-            }
-            for (auto& instancePack : instancedPacks) {
-                instancePack.getTransform().rotation[1] += 0.01f;
-                instancePack.applyTransform();
-            }
+            math::random(-10, 10, packs.size(), [this](const u32& i, const f32& r) {
+                packs[i].getTransform().position = { r * i, r * i, r * i };
+                packs[i].getTransform().rotation = { r * i, r * i, r * i };
+                packs[i].applyTransform();
+            });
+
+            math::random(-10, 10, instancedPacks.size(), [this](const u32& i, const f32& r) {
+                instancedPacks[i].getTransform().position = { r * i, r * i, r * i };
+                instancedPacks[i].getTransform().rotation = { r * i, r * i, r * i };
+                instancedPacks[i].applyTransform();
+            });
         }
 
         auto hoveredTransform = hoveredEntity.get<Transform3dComponent>();
@@ -517,22 +589,43 @@ namespace test {
         mouseWorldPos[2] *= 10;
 
         light.getPosition() = mouseWorldPos;
-        light.apply();
-    }
-
-    void TestLayer::switchHDR() {
-        hdrEnabled = !hdrEnabled;
-        auto& app = Application::get();
-        ColorFormat colorFormat = hdrEnabled ? ColorFormat::RGBA16F : ColorFormat::RGBA8;
-        app.screenSettings.enableHDR = hdrEnabled;
-        app.screenSettings.colorFormat = colorFormat;
-        app.applyScreenSettings();
     }
 
     void TestLayer::switchMSAA() {
         msaaEnabled = !msaaEnabled;
-        auto& app = Application::get();
-        auto samples = msaaEnabled ? 8 : 1;
-        app.setSampleSize(samples);
+        Application::get().setSampleSize(msaaEnabled ? 8 : 1);
+    }
+
+    void TestLayer::switchHDR() {
+        Application::get().hdrEffect->enabled = !Application::get().hdrEffect->enabled;
+    }
+
+    void TestLayer::switchBlur() {
+        Application::get().blurEffect->enabled = !Application::get().blurEffect->enabled;
+    }
+
+    void TestLayer::switchSharpen() {
+        Application::get().sharpenEffect->enabled = !Application::get().sharpenEffect->enabled;
+    }
+
+    void TestLayer::switchEdgeDetection() {
+        Application::get().edgeDetectionEffect->enabled = !Application::get().edgeDetectionEffect->enabled;
+    }
+
+    void TestLayer::switchGaussianBlur() {
+        Application::get().gaussianBlurEffect->enabled = !Application::get().gaussianBlurEffect->enabled;
+    }
+
+    void TestLayer::switchBloom() {
+        switchHDR();
+        switchGaussianBlur();
+    }
+
+    void TestLayer::onVisualDraw(time::Time dt) {
+        // test panel
+        Panel::begin("Test Panel");
+        IntUniform intUniform = { "int", 1 };
+        Slider::draw(intUniform, { 0, 100 });
+        Panel::end();
     }
 }

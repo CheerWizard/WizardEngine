@@ -21,6 +21,7 @@ namespace engine::graphics {
             floats.emplace_back("heightScale", 0.1);
             floats.emplace_back("minLayers", 8);
             floats.emplace_back("maxLayers", 32);
+            floats.emplace_back("brightness", 1);
 
             textures.emplace_back(IntUniform { "albedo", 0 });
             textures.emplace_back(IntUniform { "diffuseMap", 1 });
@@ -62,40 +63,44 @@ namespace engine::graphics {
             flags.emplace_back("enableParallaxMap", false);
         }
 
-        inline Vec4fUniform& color() {
-            return vec4[0];
+        inline vec4f& color() {
+            return vec4[0].value;
         }
 
-        inline FloatUniform& ambient() {
-            return floats[0];
+        inline float& ambient() {
+            return floats[0].value;
         }
 
-        inline FloatUniform& diffuse() {
-            return floats[1];
+        inline float& diffuse() {
+            return floats[1].value;
         }
 
-        inline FloatUniform& specular() {
-            return floats[2];
+        inline float& specular() {
+            return floats[2].value;
         }
 
-        inline FloatUniform& shiny() {
-            return floats[3];
+        inline float& shiny() {
+            return floats[3].value;
         }
 
-        inline FloatUniform& gamma() {
-            return floats[4];
+        inline float& gamma() {
+            return floats[4].value;
         }
 
-        inline FloatUniform& heightScale() {
-            return floats[5];
+        inline float& heightScale() {
+            return floats[5].value;
         }
 
-        inline FloatUniform& minLayers() {
-            return floats[6];
+        inline float& minLayers() {
+            return floats[6].value;
         }
 
-        inline FloatUniform& maxLayers() {
-            return floats[7];
+        inline float& maxLayers() {
+            return floats[7].value;
+        }
+
+        inline float& brightness() {
+            return floats[8].value;
         }
 
         inline TextureComponent& albedo() {
@@ -122,24 +127,24 @@ namespace engine::graphics {
             return flags[0];
         }
 
-        inline BoolUniform& enableDiffuseMap() {
-            return flags[1];
+        inline bool& enableDiffuseMap() {
+            return flags[1].value;
         }
 
-        inline BoolUniform& enableSpecularMap() {
-            return flags[2];
+        inline bool& enableSpecularMap() {
+            return flags[2].value;
         }
 
-        inline BoolUniform& enableBlinn() {
-            return flags[3];
+        inline bool& enableBlinn() {
+            return flags[3].value;
         }
 
-        inline BoolUniform& enableNormalMap() {
-            return flags[4];
+        inline bool& enableNormalMap() {
+            return flags[4].value;
         }
 
-        inline BoolUniform& enableParallaxMap() {
-            return flags[5];
+        inline bool& enableParallaxMap() {
+            return flags[5].value;
         }
     };
 

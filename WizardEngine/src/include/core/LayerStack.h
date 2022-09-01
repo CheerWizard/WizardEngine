@@ -44,6 +44,8 @@ namespace engine::core {
 
         void onCursorMoved(double xPos, double yPos);
 
+        void onVisualDraw(time::Time dt);
+
     public:
         typename Layers::iterator begin() { return _layers.begin(); }
         typename Layers::iterator end() { return _layers.end(); }

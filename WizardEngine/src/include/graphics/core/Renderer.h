@@ -26,6 +26,26 @@ namespace engine::graphics {
         EntityHandler(const EntityHandler&) = default;
     };
 
+    // Renderer which is not using RenderModels for storing geometry
+    // It creates primitive geometry under the hood, inside shader program
+    class PrimitiveRenderer {
+
+    public:
+        PrimitiveRenderer() = default;
+        PrimitiveRenderer(const BaseShaderProgram& shaderProgram) : shaderProgram(shaderProgram) {}
+
+    public:
+        void release();
+        void renderQuad();
+        void renderQuad(u32 textureId);
+
+    protected:
+        BaseShaderProgram shaderProgram;
+    };
+
+    // Basic renderer which is using dynamic array of VRenderModels and VIRenderModels to store geometry.
+    // Uses BaseShaderProgram to execute and draw shader, DrawType to specify draw primitives
+    // Uses EntityHandlers as a callback to user space during Registry/Entity rendering
     class Renderer {
 
     public:
@@ -141,41 +161,29 @@ namespace engine::graphics {
 
     public:
         VRenderer() = default;
-        explicit VRenderer(const BaseShaderProgram& shaderProgram) : shaderProgram(shaderProgram) {
-            init();
-        }
+        VRenderer(const BaseShaderProgram& shaderProgram);
         ~VRenderer() = default;
-
-    public:
-        [[nodiscard]] inline const BaseShaderProgram& getShaderProgram() {
-            return shaderProgram;
-        }
 
     public:
         void render(const ecs::Entity& entity);
         void renderStatic(const ecs::Entity& entity);
         void render(VertexDataComponent<Vertex>& vertexDataComponent);
         void render(VertexDataComponent<Vertex>& vertexDataComponent, const uint32_t& textureId);
-        void renderQuad(const u32& textureId);
 
         void release();
 
         void uploadStatic(const VertexDataComponent<Vertex>& vertexDataComponent);
         void upload(VertexDataComponent<Vertex>& vertexDataComponent);
 
+    protected:
+        virtual void uploadUniforms(const ecs::Entity& entity);
+
     private:
-        void init();
-
-        void begin();
-        void begin(const ecs::Entity& entity);
-        void end(const DrawType& drawType, const u32& vertexCount) const;
-
         void validate(const VertexDataComponent<Vertex>& vertexDataComponent);
-
         template<typename Transform>
         void uploadTransform(const ecs::Entity& entity);
 
-    private:
+    protected:
         VRenderModel vRenderModel;
         BaseShaderProgram shaderProgram;
     };
@@ -229,7 +237,7 @@ namespace engine::graphics {
                 Geometry * geometry = registry.getComponent<Geometry>(entityId);
                 Transform* transform = registry.getComponent<Transform>(entityId);
                 renderModel.tryUploadBatch(i, *geometry, totalVertexCount);
-                shaderProgram.getVShader().setUniformArrayElement(i, transform->modelMatrix);
+                shaderProgram.setUniformArrayElement(i, transform->modelMatrix);
                 handleEntity(registry, entityId, i);
                 i++;
 //                ENGINE_INFO("instanceID: {0}, renderModelId: {1}", mesh->getId(), mesh->renderModelId);
@@ -263,7 +271,7 @@ namespace engine::graphics {
                 Mesh* mesh = registry.getComponent<Mesh>(entityId);
                 Transform* transform = registry.getComponent<Transform>(entityId);
                 renderModel.tryUploadBatchMesh(i, *mesh, totalVertexCount, totalIndexCount);
-                shaderProgram.getVShader().setUniformArrayElement(i, transform->modelMatrix);
+                shaderProgram.setUniformArrayElement(i, transform->modelMatrix);
                 handleEntity(registry, entityId, i);
                 i++;
 //                ENGINE_INFO("instanceID: {0}, renderModelId: {1}", mesh->getId(), mesh->renderModelId);
@@ -306,7 +314,7 @@ namespace engine::graphics {
             for (ecs::entity_id entityId : renderModel.entities) {
 //                ENGINE_INFO("instanceID: {0}, renderModelId: {1}", i, geometry->renderModelId);
                 Transform* transform = registry.getComponent<Transform>(entityId);
-                shaderProgram.getVShader().setUniformArrayElement(i, transform->modelMatrix);
+                shaderProgram.setUniformArrayElement(i, transform->modelMatrix);
                 handleEntity(registry, entityId, i);
                 if (++i == shaderProgram.getInstancesPerDraw()) {
                     renderModel.vao.bind();
@@ -349,7 +357,7 @@ namespace engine::graphics {
             for (ecs::entity_id entityId : renderModel.entities) {
 //                ENGINE_INFO("instanceID: {0}, renderModelId: {1}", i, mesh->renderModelId);
                 Transform* transform = registry.getComponent<Transform>(entityId);
-                shaderProgram.getVShader().setUniformArrayElement(i, transform->modelMatrix);
+                shaderProgram.setUniformArrayElement(i, transform->modelMatrix);
                 handleEntity(registry, entityId, i);
                 if (++i == shaderProgram.getInstancesPerDraw()) {
                     renderModel.vao.bind();
@@ -378,12 +386,15 @@ namespace engine::graphics {
         VertexDataComponent<Vertex>* vertexDataComponent = entity.get<VertexDataComponent<Vertex>>();
         if (!shaderProgram.isReady() || !vertexDataComponent) return;
 
-        begin(entity);
+        shaderProgram.start();
 
+        uploadUniforms(entity);
         upload(*vertexDataComponent);
         uploadTransform<Transform3dComponent>(entity);
 
-        end(vertexDataComponent->drawType, vertexDataComponent->vertexData.size);
+        vRenderModel.vao.bind();
+        drawV(vertexDataComponent->drawType, vertexDataComponent->vertexData.size);
+        shaderProgram.stop();
     }
 
     template<typename Vertex>
@@ -391,35 +402,43 @@ namespace engine::graphics {
         VertexDataComponent<Vertex>* vertexDataComponent = entity.get<VertexDataComponent<Vertex>>();
         if (!shaderProgram.isReady() || !vertexDataComponent) return;
 
-        begin(entity);
+        shaderProgram.start();
 
+        ENGINE_INFO("VRenderer::renderStatic()");
+        uploadUniforms(entity);
         uploadTransform<Transform3dComponent>(entity);
 
-        end(vertexDataComponent->drawType, vertexDataComponent->vertexData.size);
+        vRenderModel.vao.bind();
+        drawV(vertexDataComponent->drawType, vertexDataComponent->vertexData.size);
+        shaderProgram.stop();
     }
 
     template<typename Vertex>
     void VRenderer<Vertex>::render(VertexDataComponent<Vertex>& vertexDataComponent) {
         if (!shaderProgram.isReady()) return;
 
-        begin();
+        shaderProgram.start();
 
         upload(vertexDataComponent);
 
-        end(vertexDataComponent.drawType, vertexDataComponent.vertexData.size);
+        vRenderModel.vao.bind();
+        drawV(vertexDataComponent.drawType, vertexDataComponent.vertexData.size);
+        shaderProgram.stop();
     }
 
     template<typename Vertex>
     void VRenderer<Vertex>::render(VertexDataComponent<Vertex>& vertexDataComponent, const uint32_t& textureId) {
         if (!shaderProgram.isReady()) return;
 
-        begin();
+        shaderProgram.start();
 
         upload(vertexDataComponent);
         TextureBuffer::activate(0);
         TextureBuffer::bind(textureId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
 
-        end(vertexDataComponent.drawType, vertexDataComponent.vertexData.size);
+        vRenderModel.vao.bind();
+        drawV(vertexDataComponent.drawType, vertexDataComponent.vertexData.size);
+        shaderProgram.stop();
     }
 
     template<typename Vertex>
@@ -452,7 +471,7 @@ namespace engine::graphics {
     void VRenderer<Vertex>::uploadTransform(const ecs::Entity &entity) {
         auto transform = entity.get<Transform>();
         if (transform) {
-            shaderProgram.getVShader().setUniform(transform->modelMatrix);
+            shaderProgram.setUniform(transform->modelMatrix);
         }
     }
 
@@ -491,7 +510,7 @@ namespace engine::graphics {
     void VIRenderer<Vertex>::uploadTransform(const ecs::Entity &entity) {
         auto transform = entity.get<Transform>();
         if (transform) {
-            shaderProgram.getVShader().setUniform(transform->modelMatrix);
+            shaderProgram.setUniform(transform->modelMatrix);
         }
     }
 
@@ -533,13 +552,20 @@ namespace engine::graphics {
 //    }
 
     template<typename Vertex>
-    void VRenderer<Vertex>::init() {
-        shaderProgram.bindVertexFormat();
+    void VRenderer<Vertex>::release() {
+        shaderProgram.release();
     }
 
     template<typename Vertex>
-    void VRenderer<Vertex>::release() {
-        shaderProgram.release();
+    void VRenderer<Vertex>::uploadUniforms(const ecs::Entity& entity) {
+        // do nothing
+        ENGINE_INFO("VRenderer::uploadUniforms()");
+    }
+
+    template<typename Vertex>
+    VRenderer<Vertex>::VRenderer(const BaseShaderProgram &shaderProgram) {
+        this->shaderProgram = shaderProgram;
+        this->shaderProgram.bindVertexFormat();
     }
 
     template<typename Vertex>
@@ -550,36 +576,6 @@ namespace engine::graphics {
     template<typename Vertex>
     void VIRenderer<Vertex>::release() {
         shaderProgram.release();
-    }
-
-    template<typename Vertex>
-    void VRenderer<Vertex>::renderQuad(const u32& textureId) {
-        if (!shaderProgram.isReady()) return;
-
-        begin();
-
-        TextureBuffer::activate(0);
-        TextureBuffer::bind(textureId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
-
-        end(DrawType::QUAD, 4);
-    }
-
-    template<typename Vertex>
-    void VRenderer<Vertex>::begin() {
-        shaderProgram.start();
-    }
-
-    template<typename Vertex>
-    void VRenderer<Vertex>::begin(const ecs::Entity &entity) {
-        shaderProgram.start();
-        shaderProgram.update(entity);
-    }
-
-    template<typename Vertex>
-    void VRenderer<Vertex>::end(const DrawType& drawType, const u32& vertexCount) const {
-        vRenderModel.vao.bind();
-        drawV(drawType, vertexCount);
-        ShaderProgram::stop();
     }
 
     template<typename Vertex>

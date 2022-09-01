@@ -46,16 +46,15 @@ namespace engine::graphics {
     ShaderScript textureScript() {
         auto script = ShaderScript();
 
-        script.updateRegistry = [](const BaseShader& shader, ecs::Registry &registry) {
+        script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry &registry) {
             registry.each<TextureComponent>([&shader](TextureComponent* texture) {
                 shader.setUniformArrayElement(texture->sampler.value, texture->sampler);
-                texture->sampler.isUpdated = false;
                 TextureBuffer::bind(texture->textureId, texture->typeId);
                 TextureBuffer::activate(texture->sampler.value);
             });
         };
 
-        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+        script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
             auto texture = entity.get<TextureComponent>();
             if (texture) {
                 shader.setUniformArrayElement(texture->sampler.value, texture->sampler);
@@ -70,18 +69,18 @@ namespace engine::graphics {
     ShaderScript textureUboScript() {
         auto script = ShaderScript();
 
-        script.updateRegistry = [](const BaseShader& shader, ecs::Registry &registry) {
+        script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry &registry) {
             registry.each<TextureComponent>([&shader](TextureComponent* texture) {
-                shader.updateUniformBuffer(texture->sampler, 0);
+                shader.getFShader().updateUniformBuffer(texture->sampler, 0);
                 TextureBuffer::bind(texture->textureId, texture->typeId);
                 TextureBuffer::activate(texture->sampler.value);
             });
         };
 
-        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+        script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
             auto texture = entity.get<TextureComponent>();
             if (texture) {
-                shader.updateUniformBuffer(texture->sampler, 0);
+                shader.getFShader().updateUniformBuffer(texture->sampler, 0);
                 TextureBuffer::bind(texture->textureId, texture->typeId);
                 TextureBuffer::activate(texture->sampler.value);
             }
@@ -93,11 +92,11 @@ namespace engine::graphics {
     ShaderScript cubeMapTextureScript() {
         auto script = ShaderScript();
 
-        script.updateRegistry = [](const BaseShader& shader, ecs::Registry &registry) {
+        script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry &registry) {
             // do nothing
         };
 
-        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+        script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
             auto texture = entity.get<CubeMapTextureComponent>();
             if (texture) {
                 shader.setUniform(texture->sampler);

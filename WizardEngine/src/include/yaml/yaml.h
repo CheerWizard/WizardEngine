@@ -180,7 +180,6 @@ namespace engine::yaml {
         out << YAML::Key << key;
         serialize(out, "name", uniform.name);
         serialize(out, "value", uniform.value);
-        serialize(out, "isUpdated", uniform.isUpdated);
         out << YAML::EndMap;
     }
 
@@ -192,7 +191,6 @@ namespace engine::yaml {
         if (root) {
             uniform.name = root["name"].as<std::string>().c_str();
             uniform.value = root["value"].as<T>();
-            uniform.isUpdated = root["isUpdated"].as<bool>();
         }
     }
 

@@ -9,13 +9,13 @@ namespace engine::graphics {
     ShaderScript pointLightScript() {
         auto script = ShaderScript();
 
-        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+        script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry& registry) {
             registry.each<PointLightComponent>([&shader](PointLightComponent* pointLight) {
                 updateLight(shader, *pointLight);
             });
         };
 
-        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+        script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
             auto pointLight = entity.get<PointLightComponent>();
             if (pointLight) {
                 updateLight(shader, *pointLight);
@@ -28,14 +28,14 @@ namespace engine::graphics {
     ShaderScript pointLightArrayScript() {
         auto script = ShaderScript();
 
-        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+        script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry& registry) {
             auto i = 0;
             registry.each<PointLightComponent>([&shader, &i](PointLightComponent* pointLight) {
                 updateLight(shader, *pointLight, i++);
             });
         };
 
-        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+        script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
             auto pointLight = entity.get<PointLightComponent>();
             if (pointLight) {
                 updateLight(shader, *pointLight, 0);
@@ -48,13 +48,13 @@ namespace engine::graphics {
     ShaderScript pointLightUboScript() {
         auto script = ShaderScript();
 
-        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+        script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry& registry) {
             registry.each<PointLightComponent>([&shader](PointLightComponent* pointLight) {
                 updateUboLight(shader, *pointLight);
             });
         };
 
-        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+        script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
             auto pointLight = entity.get<PointLightComponent>();
             if (pointLight) {
                 updateUboLight(shader, *pointLight);
@@ -67,13 +67,13 @@ namespace engine::graphics {
     ShaderScript directLightScript() {
         auto script = ShaderScript();
 
-        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+        script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry& registry) {
             registry.each<DirectLightComponent>([&shader](DirectLightComponent* directLight) {
                 updateLight(shader, *directLight);
             });
         };
 
-        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+        script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
             auto directLight = entity.get<DirectLightComponent>();
             if (directLight) {
                 updateLight(shader, *directLight);
@@ -86,13 +86,13 @@ namespace engine::graphics {
     ShaderScript directLightUboScript() {
         auto script = ShaderScript();
 
-        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+        script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry& registry) {
             registry.each<DirectLightComponent>([&shader](DirectLightComponent* directLight) {
                 updateUboLight(shader, *directLight);
             });
         };
 
-        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+        script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
             auto directLight = entity.get<DirectLightComponent>();
             if (directLight) {
                 updateUboLight(shader, *directLight);
@@ -105,13 +105,13 @@ namespace engine::graphics {
     ShaderScript flashLightScript() {
         auto script = ShaderScript();
 
-        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+        script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry& registry) {
             registry.each<FlashLightComponent>([&shader](FlashLightComponent* flashLight) {
                 updateLight(shader, *flashLight);
             });
         };
 
-        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+        script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
             auto flashLight = entity.get<FlashLightComponent>();
             if (flashLight) {
                 updateLight(shader, *flashLight);
@@ -124,13 +124,13 @@ namespace engine::graphics {
     ShaderScript flashLightUboScript() {
         auto script = ShaderScript();
 
-        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+        script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry& registry) {
             registry.each<FlashLightComponent>([&shader](FlashLightComponent* flashLight) {
                 updateUboLight(shader, *flashLight);
             });
         };
 
-        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+        script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
             auto flashLight = entity.get<FlashLightComponent>();
             if (flashLight) {
                 updateUboLight(shader, *flashLight);
@@ -140,14 +140,14 @@ namespace engine::graphics {
         return script;
     }
 
-    void updateLight(const BaseShader& shader, PhongLightComponent& light) {
+    void updateLight(const BaseShaderProgram& shader, PhongLightComponent& light) {
         shader.setUniformStructField(light.name, light.position);
         shader.setUniformStructField(light.name, light.ambient);
         shader.setUniformStructField(light.name, light.diffuse);
         shader.setUniformStructField(light.name, light.specular);
     }
 
-    void updateLight(const BaseShader& shader, PointLightComponent& light) {
+    void updateLight(const BaseShaderProgram& shader, PointLightComponent& light) {
         shader.setUniformStructField(light.name, light.position);
         shader.setUniformStructField(light.name, light.ambient);
         shader.setUniformStructField(light.name, light.diffuse);
@@ -157,7 +157,7 @@ namespace engine::graphics {
         shader.setUniformStructField(light.name, light.quadratic);
     }
 
-    void updateLight(const BaseShader& shader, PointLightComponent& light, const uint32_t& index) {
+    void updateLight(const BaseShaderProgram& shader, PointLightComponent& light, const uint32_t& index) {
         shader.setUniformArrayStructField(index, light.name, light.position);
         shader.setUniformArrayStructField(index, light.name, light.ambient);
         shader.setUniformArrayStructField(index, light.name, light.diffuse);
@@ -167,14 +167,14 @@ namespace engine::graphics {
         shader.setUniformArrayStructField(index, light.name, light.quadratic);
     }
 
-    void updateLight(const BaseShader& shader, DirectLightComponent& light) {
+    void updateLight(const BaseShaderProgram& shader, DirectLightComponent& light) {
         shader.setUniformStructField(light.name, light.direction);
         shader.setUniformStructField(light.name, light.ambient);
         shader.setUniformStructField(light.name, light.diffuse);
         shader.setUniformStructField(light.name, light.specular);
     }
 
-    void updateLight(const BaseShader& shader, FlashLightComponent& light) {
+    void updateLight(const BaseShaderProgram& shader, FlashLightComponent& light) {
         shader.setUniformStructField(light.name, light.position);
         shader.setUniformStructField(light.name, light.direction);
         shader.setUniformStructField(light.name, light.cutoff);
@@ -187,45 +187,45 @@ namespace engine::graphics {
         shader.setUniformStructField(light.name, light.quadratic);
     }
 
-    void updateUboLight(const BaseShader& shader, PhongLightComponent& light) {
+    void updateUboLight(const BaseShaderProgram& shader, PhongLightComponent& light) {
         uint32_t i = 0;
-        shader.updateUniformBuffer(light.position, i++);
-        shader.updateUniformBuffer(light.ambient, i++);
-        shader.updateUniformBuffer(light.diffuse, i++);
-        shader.updateUniformBuffer(light.specular, i++);
+        shader.getFShader().updateUniformBuffer(light.position, i++);
+        shader.getFShader().updateUniformBuffer(light.ambient, i++);
+        shader.getFShader().updateUniformBuffer(light.diffuse, i++);
+        shader.getFShader().updateUniformBuffer(light.specular, i++);
     }
 
-    void updateUboLight(const BaseShader& shader, PointLightComponent& light) {
+    void updateUboLight(const BaseShaderProgram& shader, PointLightComponent& light) {
         uint32_t i = 4;
-        shader.updateUniformBuffer(light.position, i++);
-        shader.updateUniformBuffer(light.ambient, i++);
-        shader.updateUniformBuffer(light.diffuse, i++);
-        shader.updateUniformBuffer(light.specular, i++);
-        shader.updateUniformBuffer(light.constant, i++);
-        shader.updateUniformBuffer(light.linear, i++);
-        shader.updateUniformBuffer(light.quadratic, i++);
+        shader.getFShader().updateUniformBuffer(light.position, i++);
+        shader.getFShader().updateUniformBuffer(light.ambient, i++);
+        shader.getFShader().updateUniformBuffer(light.diffuse, i++);
+        shader.getFShader().updateUniformBuffer(light.specular, i++);
+        shader.getFShader().updateUniformBuffer(light.constant, i++);
+        shader.getFShader().updateUniformBuffer(light.linear, i++);
+        shader.getFShader().updateUniformBuffer(light.quadratic, i++);
     }
 
-    void updateUboLight(const BaseShader& shader, DirectLightComponent& light) {
+    void updateUboLight(const BaseShaderProgram& shader, DirectLightComponent& light) {
         uint32_t i = 0;
-        shader.updateUniformBuffer(light.direction, i++);
-        shader.updateUniformBuffer(light.ambient, i++);
-        shader.updateUniformBuffer(light.diffuse, i++);
-        shader.updateUniformBuffer(light.specular, i++);
+        shader.getFShader().updateUniformBuffer(light.direction, i++);
+        shader.getFShader().updateUniformBuffer(light.ambient, i++);
+        shader.getFShader().updateUniformBuffer(light.diffuse, i++);
+        shader.getFShader().updateUniformBuffer(light.specular, i++);
     }
 
-    void updateUboLight(const BaseShader& shader, FlashLightComponent& light) {
+    void updateUboLight(const BaseShaderProgram& shader, FlashLightComponent& light) {
         uint32_t i = 0;
-        shader.updateUniformBuffer(light.position, i++);
-        shader.updateUniformBuffer(light.direction, i++);
-        shader.updateUniformBuffer(light.cutoff, i++);
-        shader.updateUniformBuffer(light.outerCutoff, i++);
-        shader.updateUniformBuffer(light.ambient, i++);
-        shader.updateUniformBuffer(light.diffuse, i++);
-        shader.updateUniformBuffer(light.specular, i++);
-        shader.updateUniformBuffer(light.constant, i++);
-        shader.updateUniformBuffer(light.linear, i++);
-        shader.updateUniformBuffer(light.quadratic, i++);
+        shader.getFShader().updateUniformBuffer(light.position, i++);
+        shader.getFShader().updateUniformBuffer(light.direction, i++);
+        shader.getFShader().updateUniformBuffer(light.cutoff, i++);
+        shader.getFShader().updateUniformBuffer(light.outerCutoff, i++);
+        shader.getFShader().updateUniformBuffer(light.ambient, i++);
+        shader.getFShader().updateUniformBuffer(light.diffuse, i++);
+        shader.getFShader().updateUniformBuffer(light.specular, i++);
+        shader.getFShader().updateUniformBuffer(light.constant, i++);
+        shader.getFShader().updateUniformBuffer(light.linear, i++);
+        shader.getFShader().updateUniformBuffer(light.quadratic, i++);
     }
 
 }

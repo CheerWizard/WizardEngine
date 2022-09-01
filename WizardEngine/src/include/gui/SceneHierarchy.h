@@ -79,15 +79,11 @@ namespace engine::gui {
     template<typename T>
     void SceneHierarchy::drawTextComponent(graphics::TextComponent<T>& textComponent) {
         drawTransform3dController(textComponent.transform);
-        bool textUpdated = drawTextField("##Text", textComponent.text, textComponent.text);
-        bool paddingXUpdated = drawFloatSlider("Padding X", textComponent.paddingX, textComponent.paddingX);
-        bool paddingYUpdated = drawFloatSlider("Padding Y", textComponent.paddingY, textComponent.paddingY);
-        bool wwUpdated = drawFloatSlider("WhitespaceWidth", textComponent.whiteSpaceWidth, textComponent.whiteSpaceWidth);
+        drawTextField("##Text", textComponent.text, textComponent.text);
+        drawFloatSlider("Padding X", textComponent.paddingX, textComponent.paddingX);
+        drawFloatSlider("Padding Y", textComponent.paddingY, textComponent.paddingY);
+        drawFloatSlider("WhitespaceWidth", textComponent.whiteSpaceWidth, textComponent.whiteSpaceWidth);
         drawFloatSlider(textComponent.transparency);
-        textComponent.isUpdated = textUpdated
-                                  || paddingXUpdated || paddingYUpdated
-                                  || wwUpdated
-                                  || textComponent.transparency.isUpdated;
         drawColorPicker(textComponent.color);
     }
 

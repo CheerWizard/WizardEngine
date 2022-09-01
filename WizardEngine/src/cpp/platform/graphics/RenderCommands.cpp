@@ -42,22 +42,6 @@ namespace engine::graphics {
         glDrawElementsInstanced(toGLDrawType(drawType), (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
     }
 
-    const unsigned char* getAPIName() {
-        return 0;
-    }
-
-    const unsigned char *getVendorName() {
-        return glGetString(GL_VENDOR);
-    }
-
-    const unsigned char *getRendererName() {
-        return glGetString(GL_RENDERER);
-    }
-
-    const unsigned char *getVersion() {
-        return glGetString(GL_VERSION);
-    }
-
     void setMSAA(bool enabled) {
         enabled ? glEnable(GL_MULTISAMPLE) : glDisable(GL_MULTISAMPLE);
     }
@@ -244,13 +228,6 @@ namespace engine::graphics {
 
     void setPolygonMode(const FaceType& faceType, const PolygonMode& polygonMode) {
         glPolygonMode(toGLFaceType(faceType), toGLPolygonMode(polygonMode));
-    }
-
-    void logApiInfo() {
-        ENGINE_INFO("Graphics API : {0}", getAPIName());
-        ENGINE_INFO("Version : {0}", getVersion());
-        ENGINE_INFO("Vendor : {0}", getVendorName());
-        ENGINE_INFO("Renderer : {0}", getRendererName());
     }
 
     bool Culling::isCullingEnabled = false;

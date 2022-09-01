@@ -54,7 +54,10 @@ namespace engine::gui {
     }
 
     void MeshLayout::onRender(const time::Time &dt) {
-        id = _frame->getColorAttachment(0).id;
+        ColorAttachment texture;
+        if (_frame->getColorAttachment(0, texture)) {
+            id = texture.id;
+        }
 
         _camera3D->onUpdate(dt);
 

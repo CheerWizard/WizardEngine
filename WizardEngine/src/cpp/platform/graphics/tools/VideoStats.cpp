@@ -13,4 +13,20 @@ namespace engine::graphics {
         return slots;
     }
 
+    const char* VideoStats::getAPIName() {
+        return "OpenGL";
+    }
+
+    const unsigned char* VideoStats::getVendorName() {
+        return glGetString(GL_VENDOR);
+    }
+
+    const unsigned char* VideoStats::getRendererName() {
+        return glGetString(GL_RENDERER);
+    }
+
+    const unsigned char *VideoStats::getVersion() {
+        return glGetString(GL_VERSION);
+    }
+
 }

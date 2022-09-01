@@ -4,14 +4,14 @@
 
 #pragma once
 
-#include <graphics/core/Renderer.h>
 #include <ecs/Scene.h>
-#include <platform/graphics/FrameBuffer.h>
+#include <graphics/core/Screen.h>
 #include <graphics/text/TextRenderer.h>
-#include <graphics/core/geometry/Screen.h>
 #include <graphics/materials/Material.h>
 #include <graphics/materials/Color.h>
 #include <graphics/skybox/Skybox.h>
+#include <graphics/core/TextureMixer.h>
+#include <graphics/post_effects/PostEffects.h>
 
 namespace engine::graphics {
 
@@ -28,11 +28,11 @@ namespace engine::graphics {
 
     class RenderSystem final {
 
+    private:
+        RenderSystem() = default;
+
     public:
-        static void initDefault();
-        static void onPrepare();
         static void onUpdate();
-        static void uploadSkybox();
         static void onDestroy();
 
     public:
@@ -45,9 +45,9 @@ namespace engine::graphics {
         static Ref<FrameBuffer> sceneFrame;
         static Ref<FrameBuffer> screenFrame;
         // screen
-        static VRenderer<ScreenVertex> screenRenderer;
+        static ScreenRenderer screenRenderer;
         // skybox
-        static VRenderer<SkyboxVertex> skyboxRenderer;
+        static SkyboxRenderer skyboxRenderer;
         // scene
         static vector<Ref<Renderer>> sceneRenderers;
         // outlining
@@ -56,17 +56,12 @@ namespace engine::graphics {
 //        static VRenderer<PointVertex> pointRenderer;
         // text
         static vector<Ref<Renderer>> textRenderers;
-
-    public:
-        static void createSceneRenderer();
-        static void createScreenRenderer();
-        static void createLineRenderer();
-        static void createQuadRenderer();
-        static void createCircleRenderer();
-        static void createOutlineRenderer();
-        static void createSkyboxRenderer();
-        static void createTextRenderers();
-        static void createPointRenderer();
+        // post effects
+        static vector<PostEffectRenderer> postEffectRenderers;
+        // mixer
+        static TextureMixer textureMixer;
+        // HDR/LDR
+        static HdrEffectRenderer hdrEffectRenderer;
 
     private:
         static RenderSystemCallback* callback;

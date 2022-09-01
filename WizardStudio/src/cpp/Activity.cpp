@@ -177,8 +177,10 @@ namespace studio {
     void Activity::onUpdate(engine::time::Time dt) {
         ImGuiLayer::onUpdate(dt);
         activeCamera->onUpdate(dt);
-        sceneViewport.setId(app->screenFrame->getColorAttachment(0).id);
-        screenViewport.setId(app->screenFrame->getColorAttachment(0).id);
+        ColorAttachment texture;
+        app->screenFrame->getColorAttachment(0, texture);
+        sceneViewport.setId(texture.id);
+        screenViewport.setId(texture.id);
     }
 
     void Activity::onKeyPressed(KeyCode keyCode) {

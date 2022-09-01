@@ -14,12 +14,11 @@ namespace engine::shader {
     struct Uniform {
         const char* name = nullptr;
         V value;
-        bool isUpdated = true; // flag to minimize GPU calls.
 
         Uniform() = default;
         Uniform(const char* name, const V& value) : name(name), value(value) {}
-        Uniform(const char* name, const V& value, const bool& isUpdated) : name(name), value(value), isUpdated(isUpdated) {}
-        Uniform(const Uniform<V>& uniform) : name(uniform.name), value(uniform.value), isUpdated(uniform.isUpdated) {}
+        Uniform(const char* name, const V& value, const bool& isUpdated) : name(name), value(value) {}
+        Uniform(const Uniform<V>& uniform) : name(uniform.name), value(uniform.value) {}
 
         Uniform<V>& operator =(const V& otherValue) {
             value = otherValue;
