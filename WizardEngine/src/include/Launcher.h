@@ -5,7 +5,6 @@
 #pragma once
 
 #include <io/Logger.h>
-#include <scripting/ScriptBuilder.h>
 
 // needs to be defined on Client side.
 extern engine::core::Application* engine::core::createApplication();
@@ -20,7 +19,6 @@ int main() {
     INIT_ENGINE_LOG(engineLog);
     INIT_EDITOR_LOG(editorLog);
     INIT_RUNTIME_LOG(runtimeLog);
-//  scripting::ScriptBuilder::init({engineLog, runtimeLog});
 
     ENGINE_INFO("Running Application...");
     auto* app = engine::core::createApplication();

@@ -34,6 +34,8 @@ namespace engine::core {
 
         virtual void onCursorMoved(double xPos, double yPos) = 0;
 
+        virtual void onVisualDraw(time::Time dt) = 0;
+
     public:
         [[nodiscard]] inline const char* getTag() const { return tag; }
 
@@ -41,5 +43,4 @@ namespace engine::core {
         const char* tag;
 
     };
-
 }

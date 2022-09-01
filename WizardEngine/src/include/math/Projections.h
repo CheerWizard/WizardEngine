@@ -43,7 +43,7 @@ namespace engine::math {
     };
 
     struct PerspectiveMatrix : shader::Mat4fUniform {
-        float aspectRatio = 1;
+        float aspectRatio = 1024.0f / 768.0f;
         float fieldOfView = DEFAULT_FIELD_OF_VIEW;
         float zNear = DEFAULT_Z_NEAR;
         float zFar = DEFAULT_Z_FAR;
@@ -59,16 +59,7 @@ namespace engine::math {
     void serialize(YAML::Emitter& out, const char* key, const PerspectiveMatrix& projection);
     void deserialize(const YAML::Node& parent, const char* key, PerspectiveMatrix& projection);
 
-    class Projections final {
-
-    private:
-        Projections() = default;
-        ~Projections() = default;
-
-    public:
-        static void update(OrthographicMatrix &orthographicMatrix);
-        static void update(PerspectiveMatrix &perspectiveMatrix);
-
-    };
+    void update(OrthographicMatrix &orthographicMatrix);
+    void update(PerspectiveMatrix &perspectiveMatrix);
 
 }

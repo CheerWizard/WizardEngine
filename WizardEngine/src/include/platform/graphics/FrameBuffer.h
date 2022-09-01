@@ -50,21 +50,41 @@ namespace engine::graphics {
             return format;
         }
 
-        [[nodiscard]] ColorAttachment getColorAttachment(u32 index = 0) const {
+        [[nodiscard]] bool getColorAttachment(u32 index, ColorAttachment& colorAttachment) const {
             const auto& size = format.colorAttachments.size();
             if (index >= size) {
-                ENGINE_ERR("getColorAttachment() failed with index out of bounds : [index: {0}, size: {1}]", index, size);
-                return {};
+                ENGINE_ERR("FrameBuffer::getColorAttachment() failed with index out of bounds : [index: {0}, size: {1}]",
+                           index, size);
+                colorAttachment = {};
+                return false;
             }
-            return format.colorAttachments[index];
+            colorAttachment = format.colorAttachments.at(index);
+            return true;
         }
 
-        inline const std::vector<ColorAttachment>& getColorAttachments() {
+        [[nodiscard]] inline const std::vector<ColorAttachment>& getColorAttachments() const {
             return format.colorAttachments;
         }
 
-        inline const DepthStencilAttachment& getDepthStencilAttachment() {
+        [[nodiscard]] inline size_t getColorAttachmentsSize() const {
+            return format.colorAttachments.size();
+        }
+
+        [[nodiscard]] const ColorAttachment& getRenderTarget() {
+            return format.colorAttachments.at(renderTargetIndex);
+        }
+
+        [[nodiscard]] inline const DepthStencilAttachment& getDepthStencilAttachment() const {
             return format.depthStencilAttachment;
+        }
+
+        inline void setRenderTargetIndex(u32 index) {
+            size_t renderTargetCount = getColorAttachmentsSize();
+            if (index >= renderTargetCount) {
+                ENGINE_ERR("FrameBuffer: can't set render target index={0}. RenderTarget count={1}",
+                           index, renderTargetCount);
+            }
+            renderTargetIndex = index;
         }
 
     public:
@@ -92,11 +112,12 @@ namespace engine::graphics {
         void attachRbo();
         void createDrawBuffers() const;
         void bindTexture(const u32 &attachmentId);
-        u32 getTextureTarget() const;
 
     private:
         u32 id = 0;
+        u32 textureTarget;
         FrameBufferFormat format;
+        u32 renderTargetIndex = 0;
 
     public:
         static void bindDefault();

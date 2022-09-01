@@ -16,7 +16,7 @@ namespace engine::graphics {
     public:
         TextureBuffer() = default;
         TextureBuffer(const TextureType& type) {
-            init(type);
+            create(type);
         }
         ~TextureBuffer() = default;
 
@@ -30,13 +30,13 @@ namespace engine::graphics {
         }
 
     public:
-        void init(const TextureType& textureType);
+        void create(const TextureType& textureType);
         void bind() const;
         void unbind() const;
         void setParams(const vector<TextureParam>& params) const;
 
     public:
-        static u32 create(const TextureType& textureType);
+        static u32 createFrom(const TextureType& textureType);
         static u32 recreate(const u32& id, const u32& typeId);
         static void destroy(const u32& id);
 
@@ -56,8 +56,13 @@ namespace engine::graphics {
 
         static u32 getTypeId(const TextureType& textureType);
 
+        static bool exists(const char* filepath);
+        static void clearTextureIdCache();
+        static u32 getTextureId(const char* filepath);
+
     private:
-        u32 id;
-        u32 type;
+        u32 id = 0;
+        u32 type = 0;
+        static unordered_map<const char*, u32> textureIdCache;
     };
 }

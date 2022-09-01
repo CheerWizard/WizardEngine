@@ -57,25 +57,51 @@ namespace engine::shader {
 
         void bindUbf(const char* blockName, const u32& blockIndex) const;
 
+    protected:
+        u32 id = 0;
+        u32 programId = 0;
+        std::string src;
+
+    };
+
+    class ShaderProgram {
+
+    public:
+        ShaderProgram() = default;
+        ~ShaderProgram() = default;
+
+    public:
+        void create();
+        void destroy() const;
+        bool link();
+        void start() const;
+        static void stop() ;
+        u32 bindAttribute(const char* attrName) const;
+
         void setUniform(FloatUniform &uniform) const;
         void setUniform(BoolUniform &uniform) const;
         void setUniform(IntUniform &uniform) const;
         void setUniform(DoubleUniform &uniform) const;
         void setUniform(Vec2fUniform &uniform) const;
         void setUniform(Vec3fUniform &uniform) const;
+        void setUniform(GLMVec3fUniform &uniform) const;
         void setUniform(Vec4fUniform &uniform) const;
         void setUniform(Mat2fUniform &uniform) const;
         void setUniform(Mat3fUniform &uniform) const;
         void setUniform(Mat4fUniform &uniform) const;
+        void setUniform(GLMMat4fUniform &uniform) const;
 
         void setUniformArrayElement(const u32 &index, Mat4fUniform &uniform) const;
         void setUniformArrayElement(const u32 &index, IntUniform &uniform) const;
         void setUniformArrayElement(const u32 &index, FloatUniform &uniform) const;
+        void setUniformArrayElement(const u32 &index, BoolUniform &uniform) const;
         void setUniformArrayElement(const u32 &index, Vec4fUniform &uniform) const;
+        void setUniformArrayElement(const u32 &index, GLMMat4fUniform &uniform) const;
 
         void setUniformStructField(const char *structName, BoolUniform &structField) const;
         void setUniformStructField(const char *structName, IntUniform &structField) const;
         void setUniformStructField(const char *structName, FloatUniform &structField) const;
+        void setUniformStructField(const char *structName, DoubleUniform &structField) const;
         void setUniformStructField(const char *structName, Vec3fUniform &structField) const;
         void setUniformStructField(const char *structName, Vec4fUniform &structField) const;
 
@@ -97,6 +123,11 @@ namespace engine::shader {
         void setUniformArrayStructField(
                 const u32 &index,
                 const char *structName,
+                DoubleUniform &structField
+        ) const;
+        void setUniformArrayStructField(
+                const u32 &index,
+                const char *structName,
                 Vec3fUniform &structField
         ) const;
         void setUniformArrayStructField(
@@ -109,27 +140,6 @@ namespace engine::shader {
         s32 getUniformArrayElementLocation(const char* name, const u32 &index) const;
         s32 getUniformArrayStructLocation(const char* structName, const char* fieldName, const u32 &index) const;
         s32 getUniformStructLocation(const char* structName, const char* fieldName) const;
-
-    protected:
-        u32 id = 0;
-        u32 programId = 0;
-        std::string src;
-
-    };
-
-    class ShaderProgram {
-
-    public:
-        ShaderProgram() = default;
-        ~ShaderProgram() = default;
-
-    public:
-        void create();
-        void destroy() const;
-        bool link();
-        void start() const;
-        static void stop() ;
-        u32 bindAttribute(const char* attrName) const;
 
     protected:
         std::string toStringShaderType(const u32& type);

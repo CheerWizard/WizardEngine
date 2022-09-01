@@ -23,13 +23,13 @@ namespace engine::graphics {
     ShaderScript textProjectionScript() {
         auto script = ShaderScript();
 
-        script.updateRegistry = [](const BaseShader& shader, ecs::Registry& registry) {
+        script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry& registry) {
             registry.each<TextProjection>([&shader](TextProjection* textProjection) {
                 shader.setUniform(textProjection->viewProjection);
             });
         };
 
-        script.updateEntity = [](const BaseShader& shader, const ecs::Entity& entity) {
+        script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
             auto textProjection = entity.get<TextProjection>();
             if (textProjection) {
                 shader.setUniform(textProjection->viewProjection);

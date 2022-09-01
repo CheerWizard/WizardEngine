@@ -9,8 +9,6 @@
 
 namespace engine::graphics {
     using namespace shader;
-    ShaderScript phongLightScript();
-    ShaderScript phongLightUboScript();
     ShaderScript pointLightScript();
     ShaderScript pointLightArrayScript();
     ShaderScript pointLightUboScript();
@@ -18,13 +16,13 @@ namespace engine::graphics {
     ShaderScript directLightUboScript();
     ShaderScript flashLightScript();
     ShaderScript flashLightUboScript();
-    void updateLight(const BaseShader& shader, PhongLightComponent& light);
-    void updateLight(const BaseShader& shader, PointLightComponent& light);
-    void updateLight(const BaseShader& shader, PointLightComponent& light, const u32& index);
-    void updateLight(const BaseShader& shader, DirectLightComponent& light);
-    void updateLight(const BaseShader& shader, FlashLightComponent& light);
-    void updateUboLight(const BaseShader& shader, PhongLightComponent& light);
-    void updateUboLight(const BaseShader& shader, PointLightComponent& light);
-    void updateUboLight(const BaseShader& shader, DirectLightComponent& light);
-    void updateUboLight(const BaseShader& shader, FlashLightComponent& light);
+    void updateLight(const BaseShaderProgram& shader, PhongLightComponent& light);
+    void updateLight(const BaseShaderProgram& shader, PointLightComponent& light);
+    void updateLight(const BaseShaderProgram& shader, PointLightComponent& light, const u32& index);
+    void updateLight(const BaseShaderProgram& shader, DirectLightComponent& light);
+    void updateLight(const BaseShaderProgram& shader, FlashLightComponent& light);
+    void updateUboLight(const BaseShaderProgram& shader, PhongLightComponent& light);
+    void updateUboLight(const BaseShaderProgram& shader, PointLightComponent& light);
+    void updateUboLight(const BaseShaderProgram& shader, DirectLightComponent& light);
+    void updateUboLight(const BaseShaderProgram& shader, FlashLightComponent& light);
 }

@@ -4,76 +4,67 @@
 
 #pragma once
 
-#include <graphics/core/Renderer.h>
 #include <ecs/Scene.h>
-#include <platform/graphics/FrameBuffer.h>
+#include <graphics/core/Screen.h>
 #include <graphics/text/TextRenderer.h>
-#include <graphics/core/geometry/Screen.h>
+#include <graphics/materials/Material.h>
+#include <graphics/materials/Color.h>
+#include <graphics/skybox/Skybox.h>
+#include <graphics/core/TextureMixer.h>
+#include <graphics/post_effects/PostEffects.h>
 
 namespace engine::graphics {
 
-    class RenderSystem {
+    using namespace core;
+    using namespace ecs;
 
+    class RenderSystemCallback {
     public:
-        RenderSystem(const core::Ref<FrameBuffer> &sceneFrame, const core::Ref<FrameBuffer>& screenFrame)
-        : sceneFrame(sceneFrame), screenFrame(screenFrame) {
-            create();
-        }
-
-        ~RenderSystem();
-
+        virtual ~RenderSystemCallback() = default;
     public:
-        void onPrepare();
-        void onUpdate();
-        void uploadSkybox();
+        virtual void onFrameBegin(const Ref<FrameBuffer>& frameBuffer) = 0;
+        virtual void onFrameEnd(const Ref<FrameBuffer>& frameBuffer) = 0;
+    };
 
-    public:
-        inline void setActiveScene(const core::Ref<ecs::Scene> &activeScene) {
-            this->activeScene = activeScene;
-        }
+    class RenderSystem final {
 
     private:
-        void create();
-        void createScreenRenderer();
-        void createSceneRenderer();
-        void createLineRenderers();
-        void createQuadRenderer();
-        void createCircleRenderer();
-        void createOutlineRenderer();
-        void createSkyboxRenderer();
-        void createTextRenderers();
-        void createPointRenderer();
+        RenderSystem() = default;
 
-    private:
-        // we must share this data with front-end, so that's why they are pointers
-        core::Ref<ecs::Scene> activeScene = nullptr;
-        core::Ref<FrameBuffer> sceneFrame;
-        core::Ref<FrameBuffer> screenFrame;
-        // these data are mostly for back-end, they are mostly just u32 numbers
+    public:
+        static void onUpdate();
+        static void onDestroy();
+
+    public:
+        static void setRenderSystemCallback(RenderSystemCallback* renderSystemCallback);
+        static void removeRenderSystemCallback();
+
+    public:
+        // frames
+        static Ref<Scene> activeScene;
+        static Ref<FrameBuffer> sceneFrame;
+        static Ref<FrameBuffer> screenFrame;
         // screen
-        VRenderer screenRenderer;
-        // scene
-        DefaultRenderer sceneRenderer;
-        // line
-        DefaultRenderer lineRenderer;
-        DefaultRenderer stripLineRenderer;
-        DefaultRenderer loopLineRenderer;
-        // quad
-        DefaultRenderer quadRenderer;
-        // circle
-        DefaultRenderer circleRenderer;
-        // outlining everything
-        // scene
-        DefaultRenderer outlineSceneRenderer;
-        // quad
-        DefaultRenderer outlineQuadRenderer;
+        static ScreenRenderer screenRenderer;
         // skybox
-        VRenderer skyboxRenderer;
+        static SkyboxRenderer skyboxRenderer;
+        // scene
+        static vector<Ref<Renderer>> sceneRenderers;
+        // outlining
+        static vector<Ref<Renderer>> outlineRenderers;
+        // points
+//        static VRenderer<PointVertex> pointRenderer;
         // text
-        TextRenderer text2dRenderer;
-        TextRenderer text3dRenderer;
-        // points renderer
-        VRenderer pointRenderer;
+        static vector<Ref<Renderer>> textRenderers;
+        // post effects
+        static vector<PostEffectRenderer> postEffectRenderers;
+        // mixer
+        static TextureMixer textureMixer;
+        // HDR/LDR
+        static HdrEffectRenderer hdrEffectRenderer;
+
+    private:
+        static RenderSystemCallback* callback;
     };
 
 }

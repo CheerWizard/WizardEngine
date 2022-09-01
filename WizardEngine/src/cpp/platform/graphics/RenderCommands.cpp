@@ -23,39 +23,23 @@ namespace engine::graphics {
     }
 
     void drawV(const DrawType& drawType, const uint32_t& vertexCount) {
-        ENGINE_INFO("drawV(drawType: {0}, vertexCount : {1})", drawType, vertexCount);
+//        ENGINE_INFO("drawV(drawType: {0}, vertexCount : {1})", drawType, vertexCount);
         glDrawArrays(toGLDrawType(drawType), 0, vertexCount);
     }
 
     void drawV(const DrawType& drawType, const uint32_t& vertexCount, const uint32_t& instanceCount) {
-        ENGINE_INFO("drawV(drawType: {0}, vertexCount: {1}, instanceCount: {2})", drawType, vertexCount, instanceCount);
+//        ENGINE_INFO("drawV(drawType: {0}, vertexCount: {1}, instanceCount: {2})", drawType, vertexCount, instanceCount);
         glDrawArraysInstanced(toGLDrawType(drawType), 0, vertexCount, instanceCount);
     }
 
     void drawVI(const DrawType& drawType, const uint32_t& indexCount) {
-        ENGINE_INFO("drawVI(drawType: {0}, indexCount: {1})", drawType, indexCount);
+//        ENGINE_INFO("drawVI(drawType: {0}, indexCount: {1})", drawType, indexCount);
         glDrawElements(toGLDrawType(drawType), (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr);
     }
 
     void drawVI(const DrawType& drawType, const uint32_t& indexCount, const uint32_t& instanceCount) {
-        ENGINE_INFO("drawVI(drawType: {0}, indexCount: {1}, instanceCount: {2})", drawType, indexCount, instanceCount);
+//        ENGINE_INFO("drawVI(drawType: {0}, indexCount: {1}, instanceCount: {2})", drawType, indexCount, instanceCount);
         glDrawElementsInstanced(toGLDrawType(drawType), (GLsizei) indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
-    }
-
-    const unsigned char* getAPIName() {
-        return 0;
-    }
-
-    const unsigned char *getVendorName() {
-        return glGetString(GL_VENDOR);
-    }
-
-    const unsigned char *getRendererName() {
-        return glGetString(GL_RENDERER);
-    }
-
-    const unsigned char *getVersion() {
-        return glGetString(GL_VERSION);
     }
 
     void setMSAA(bool enabled) {
@@ -246,13 +230,6 @@ namespace engine::graphics {
         glPolygonMode(toGLFaceType(faceType), toGLPolygonMode(polygonMode));
     }
 
-    void logApiInfo() {
-        ENGINE_INFO("Graphics API : {0}", getAPIName());
-        ENGINE_INFO("Version : {0}", getVersion());
-        ENGINE_INFO("Vendor : {0}", getVendorName());
-        ENGINE_INFO("Renderer : {0}", getRendererName());
-    }
-
     bool Culling::isCullingEnabled = false;
 
     void Culling::setCulling(const CullingComponent &culling) {
@@ -273,5 +250,9 @@ namespace engine::graphics {
             faceType = polygonModeComponent.face;
             graphics::setPolygonMode(polygonModeComponent.face, polygonModeComponent.mode);
         }
+    }
+
+    void enableSRGB() {
+        glEnable(GL_FRAMEBUFFER_SRGB);
     }
 }

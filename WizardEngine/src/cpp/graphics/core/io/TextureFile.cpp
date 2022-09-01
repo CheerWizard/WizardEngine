@@ -21,7 +21,7 @@ namespace engine::io {
             return { width, height, channels };
         }
 
-        return { width, height, channels, data };
+        return { width, height, channels, false, data };
     }
 
     void TextureFile::free(void *data) {

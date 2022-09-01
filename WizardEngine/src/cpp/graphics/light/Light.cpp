@@ -10,6 +10,14 @@ namespace engine::graphics {
         add<PhongLightComponent>(PhongLightComponent());
     }
 
+    vec3f& PhongLight::getPosition() {
+        return get<PhongLightComponent>()->position.value;
+    }
+
+    vec4f &PhongLight::getColor() {
+        return get<PhongLightComponent>()->color.value;
+    }
+
     void DirectLight::create() {
         add<DirectLightComponent>(DirectLightComponent());
     }

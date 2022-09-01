@@ -9,6 +9,8 @@
 
 namespace engine::graphics {
 
+    using namespace math;
+
     class PhongLight : public ecs::Entity {
 
     public:
@@ -23,6 +25,10 @@ namespace engine::graphics {
         }
 
         ~PhongLight() = default;
+
+    public:
+        vec3f& getPosition();
+        vec4f& getColor();
 
     private:
         void create();

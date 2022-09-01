@@ -20,7 +20,14 @@ namespace engine::core {
 
         _window = createScope<Window>(createWindowProps());
         createGraphics();
-        input = createScope<event::Input>(_window->getNativeWindow());
+        Input::create(_window->getNativeWindow());
+
+#ifdef VISUAL
+        Visual::init(getNativeWindow(), {
+            static_cast<float>(getWindowWidth()),
+            static_cast<float>(getWindowHeight())
+        });
+#endif
 
         createScripting();
 
@@ -29,36 +36,59 @@ namespace engine::core {
         setActiveScene(createRef<Scene>());
 
         audio::DeviceManager::createContext();
-
-        network::socket::init();
+        // init post effect renderers
+        initHDR();
+        initBlur();
+        initSharpen();
+        initEdgeDetection();
+        initGaussianBlur();
+        initTextureMixer();
     }
 
     void Application::onPrepare() {
-        graphics::logApiInfo();
         _window->onPrepare();
         _window->setInCenter();
         setSampleSize(1);
         _layerStack.onPrepare();
         loadGamepadMappings("../WizardEngine/assets/db/game_controller_db.txt");
-        _renderSystem->onPrepare();
+
+        auto skybox = activeScene->getSkybox().get<VertexDataComponent<SkyboxVertex>>();
+        if (skybox->vertexData.values) {
+            RenderSystem::skyboxRenderer.uploadStatic(*skybox);
+            delete skybox->vertexData.values;
+        } else {
+            ENGINE_WARN("Skybox of '{0}' is already uploaded!", activeScene->getName());
+        }
     }
 
     void Application::onDestroy() {
         ENGINE_INFO("onDestroy()");
+        RenderSystem::onDestroy();
         _scriptSystem->onDestroy();
         audio::MediaPlayer::clear();
         audio::DeviceManager::clear();
-        network::socket::cleanup();
+#ifdef VISUAL
+        Visual::release();
+#endif
     }
 
     void Application::onUpdate() {
         auto dt = fpsController.getDeltaTime();
         fpsController.begin();
-        updateEventRegistry();
-        updateRuntime(dt);
+        onEventUpdate();
+        onRuntimeUpdate(dt);
+#ifdef VISUAL
+        Visual::begin();
+        onVisualDraw(dt);
+        _layerStack.onVisualDraw(dt);
+        Visual::end();
+#endif
         // draw editor/tools
         _layerStack.onUpdate(dt);
         // poll events + swap chain
+        if (enableMouseCursor) {
+            Input::updateMousePosition();
+        }
         _window->onUpdate();
         fpsController.end();
     }
@@ -76,57 +106,90 @@ namespace engine::core {
     void Application::onWindowClosed() {
         ENGINE_INFO("Application : onWindowClosed()");
         _layerStack.onWindowClosed();
-        eventRegistry.onWindowClosed.function();
+        EventRegistry::onWindowClosed.function();
+#ifdef VISUAL
+        Visual::onWindowClosed();
+#endif
         shutdown();
     }
 
     void Application::onWindowResized(const u32 &width , const u32 &height) {
-        if (width == 0 || height == 0 || input->isMousePressed(event::MouseCode::ButtonLeft)) return;
+        if (width == 0 || height == 0 || Input::isMousePressed(event::MouseCode::ButtonLeft)) return;
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
 
         _layerStack.onWindowResized(width, height);
         activeSceneFrame->resize(width, height);
         screenFrame->resize(width, height);
-        eventRegistry.onWindowResized.function(width, height);
+        EventRegistry::onWindowResized.function(width, height);
+#ifdef VISUAL
+        Visual::onWindowResized(width, height);
+#endif
     }
 
     void Application::onKeyPressed(event::KeyCode keyCode) {
         _layerStack.onKeyPressed(keyCode);
-        eventRegistry.onKeyPressedMap[keyCode].function(keyCode);
+        EventRegistry::onKeyPressedMap[keyCode].function(keyCode);
+#ifdef VISUAL
+        Visual::onKeyPressed(keyCode);
+#endif
     }
 
     void Application::onKeyHold(event::KeyCode keyCode) {
         _layerStack.onKeyHold(keyCode);
-        eventRegistry.onKeyHoldMap[keyCode].function(keyCode);
+        EventRegistry::onKeyHoldMap[keyCode] = true;
+#ifdef VISUAL
+        Visual::onKeyHold(keyCode);
+#endif
     }
 
     void Application::onKeyReleased(event::KeyCode keyCode) {
         _layerStack.onKeyReleased(keyCode);
-        eventRegistry.onKeyReleasedMap[keyCode].function(keyCode);
+        EventRegistry::onKeyReleasedMap[keyCode].function(keyCode);
+        EventRegistry::onKeyHoldMap[keyCode] = false;
+#ifdef VISUAL
+        Visual::onKeyReleased(keyCode);
+#endif
     }
 
     void Application::onMousePressed(event::MouseCode mouseCode) {
         _layerStack.onMousePressed(mouseCode);
-        eventRegistry.onMousePressedMap[mouseCode].function(mouseCode);
+        EventRegistry::onMousePressedMap[mouseCode].function(mouseCode);
+        EventRegistry::mouseHoldMap[mouseCode] = true;
+#ifdef VISUAL
+        Visual::onMousePressed(mouseCode);
+#endif
     }
 
     void Application::onMouseRelease(event::MouseCode mouseCode) {
         _layerStack.onMouseRelease(mouseCode);
-        eventRegistry.onMouseReleasedMap[mouseCode].function(mouseCode);
+        EventRegistry::onMouseReleasedMap[mouseCode].function(mouseCode);
+        EventRegistry::mouseHoldMap[mouseCode] = false;
+#ifdef VISUAL
+        Visual::onMouseRelease(mouseCode);
+#endif
     }
 
     void Application::onMouseScrolled(double xOffset, double yOffset) {
         _layerStack.onMouseScrolled(xOffset, yOffset);
-        eventRegistry.onMouseScrolled.function(xOffset, yOffset);
+        EventRegistry::onMouseScrolled.function(xOffset, yOffset);
+#ifdef VISUAL
+        Visual::onMouseScrolled(xOffset, yOffset);
+#endif
     }
 
     void Application::onCursorMoved(double xPos, double yPos) {
         _layerStack.onCursorMoved(xPos, yPos);
-        eventRegistry.onCursorMoved.function(xPos, yPos);
+        EventRegistry::onCursorMoved.function(xPos, yPos);
+#ifdef VISUAL
+        Visual::onCursorMoved(xPos, yPos);
+#endif
     }
 
     void Application::onKeyTyped(event::KeyCode keyCode) {
         _layerStack.onKeyTyped(keyCode);
+#ifdef VISUAL
+        Visual::onKeyTyped(keyCode);
+#endif
     }
 
     float Application::getAspectRatio() const {
@@ -136,15 +199,15 @@ namespace engine::core {
     void Application::setActiveScene(const Ref<Scene>& scene) {
         scenes.emplace_back(scene);
         activeScene = scene;
-        _renderSystem->setActiveScene(scene);
+        RenderSystem::activeScene = scene;
         _scriptSystem->setActiveScene(scene);
     }
 
     void Application::setActiveScene(const u32 &sceneIndex) {
         activeScene = scenes[sceneIndex];
         _scriptSystem->setActiveScene(activeScene);
-        _renderSystem->setActiveScene(activeScene);
-        _renderSystem->onUpdate();
+        RenderSystem::activeScene = activeScene;
+        RenderSystem::onUpdate();
     }
 
     void Application::restart() {
@@ -185,7 +248,8 @@ namespace engine::core {
         // update active scene fbo
         FrameBufferFormat activeSceneFrameFormat;
         activeSceneFrameFormat.colorAttachments = {
-                { graphics::ColorFormat::RGBA8 }
+                { ColorFormat::RGBA8 },
+                { ColorFormat::RGBA8 }
         };
         activeSceneFrameFormat.renderBufferAttachment = { DepthStencilFormat::DEPTH24STENCIL8 };
         activeSceneFrameFormat.width = _window->getWidth();
@@ -195,7 +259,7 @@ namespace engine::core {
         // update screen fbo
         FrameBufferFormat screenFrameFormat;
         screenFrameFormat.colorAttachments = {
-                { graphics::ColorFormat::RGBA8 }
+                { ColorFormat::RGBA8 }
         };
         screenFrameFormat.width = _window->getWidth();
         screenFrameFormat.height = _window->getHeight();
@@ -207,15 +271,20 @@ namespace engine::core {
 
     void Application::createGraphics() {
         graphics::initContext(_window->getNativeWindow());
+        setClearColor({0, 0, 0, 1});
         activeSceneFrame = createRef<FrameBuffer>();
         screenFrame = createRef<FrameBuffer>();
-        _renderSystem = createScope<RenderSystem>(activeSceneFrame, screenFrame);
+        RenderSystem::sceneFrame = activeSceneFrame;
+        RenderSystem::screenFrame = screenFrame;
+        RenderSystem::setRenderSystemCallback(this);
+        RenderSystem::screenRenderer.init();
+        RenderSystem::skyboxRenderer.init();
     }
 
-    void Application::updateRuntime(Time dt) {
+    void Application::onRuntimeUpdate(Time dt) {
         if (!activeScene->isEmpty()) {
             _scriptSystem->onUpdate(dt);
-            _renderSystem->onUpdate();
+            RenderSystem::onUpdate();
         } else {
             ENGINE_WARN("Active scene is empty!");
         }
@@ -231,13 +300,13 @@ namespace engine::core {
 
     void Application::onGamepadConnected(s32 joystickId) {
         ENGINE_INFO("onGamepadConnected(id: {0})", joystickId);
-        input->setJoystickId(joystickId);
+        Input::setJoystickId(joystickId);
         isJoystickConnected = true;
     }
 
     void Application::onGamepadDisconnected(s32 joystickId) {
         ENGINE_INFO("onGamepadDisconnected(id: {0})", joystickId);
-        input->setJoystickId(joystickId);
+        Input::setJoystickId(joystickId);
         isJoystickConnected = false;
     }
 
@@ -255,20 +324,20 @@ namespace engine::core {
         _window->loadGamepadMappings(mappingsFilePath);
     }
 
-    void Application::updateEventRegistry() {
+    void Application::onEventUpdate() {
         if (isJoystickConnected) {
             ENGINE_INFO("Joystick CONNECTED! Polling buttons and axes...");
-            const auto& gamepadState = input->getGamepadState();
+            const auto& gamepadState = Input::getGamepadState();
             const auto& buttons = gamepadState.buttons;
             const auto& axis = gamepadState.axes;
 
-            for (auto& gamepadButtonPressed : eventRegistry.onGamepadButtonPressedMap) {
+            for (auto& gamepadButtonPressed : EventRegistry::onGamepadButtonPressedMap) {
                 if (buttons[gamepadButtonPressed.first] == event::PRESS) {
                     gamepadButtonPressed.second.function(gamepadButtonPressed.first);
                 }
             }
 
-            for (auto& gamepadButtonReleased : eventRegistry.onGamepadButtonReleasedMap) {
+            for (auto& gamepadButtonReleased : EventRegistry::onGamepadButtonReleasedMap) {
                 if (buttons[gamepadButtonReleased.first] == event::RELEASE) {
                     gamepadButtonReleased.second.function(gamepadButtonReleased.first);
                 }
@@ -279,8 +348,8 @@ namespace engine::core {
                     axis[event::PAD_LEFT_ROLL.y],
                     axis[event::PAD_LEFT_ROLL.trigger] != -1,
             };
-            if (gamepadRollLeft != eventRegistry.inactiveGamepadRollLeft) {
-                eventRegistry.onGamepadRollLeft.function(gamepadRollLeft);
+            if (gamepadRollLeft != EventRegistry::inactiveGamepadRollLeft) {
+                EventRegistry::onGamepadRollLeft.function(gamepadRollLeft);
             }
 
             auto gamepadRollRight = event::GamepadRoll {
@@ -288,12 +357,145 @@ namespace engine::core {
                     axis[event::PAD_RIGHT_ROLL.y],
                     axis[event::PAD_RIGHT_ROLL.trigger] != -1,
             };
-            if (gamepadRollRight != eventRegistry.inactiveGamepadRollRight) {
-                eventRegistry.onGamepadRollRight.function(gamepadRollRight);
+            if (gamepadRollRight != EventRegistry::inactiveGamepadRollRight) {
+                EventRegistry::onGamepadRollRight.function(gamepadRollRight);
             }
         } else {
             ENGINE_WARN("Joystick DISCONNECTED! Polling joystick state...");
-            isJoystickConnected = input->isJoystickConnected();
+            isJoystickConnected = Input::isJoystickConnected();
         }
+    }
+
+    void Application::onFrameBegin(const Ref<FrameBuffer> &frameBuffer) {
+        if (!enableMouseHovering) return;
+        frameBuffer->removeAttachment(frameBuffer->getColorAttachmentsSize() - 1, -1);
+    }
+
+    void Application::onFrameEnd(const Ref<FrameBuffer> &frameBuffer) {
+        if (!enableMouseHovering) return;
+
+        auto mousePos = Input::getMousePosition();
+        auto xPos = mousePos.x;
+        auto yPos = mousePos.y;
+
+        if (xPos > 0 && yPos > 0) {
+            s32 pixel = frameBuffer->readPixel(
+                    frameBuffer->getColorAttachmentsSize() - 1,
+                    static_cast<int>(xPos),
+                    static_cast<int>(yPos)
+            );
+            RUNTIME_INFO("readPixel: {0}", pixel);
+            if (pixel != -1) {
+                hoveredEntity = { activeScene.get(), reinterpret_cast<entity_id>(pixel) };
+            }
+        }
+    }
+
+    void Application::initHDR() {
+        FrameBufferFormat hdrFrameFormat;
+        hdrFrameFormat.colorAttachments = {
+                { ColorFormat::RGBA16F },
+        };
+        hdrFrameFormat.width = _window->getWidth();
+        hdrFrameFormat.height = _window->getHeight();
+        RenderSystem::hdrEffectRenderer = { hdrFrameFormat };
+        hdrEffect = RenderSystem::hdrEffectRenderer.getHdrEffect();
+    }
+
+    void Application::initBlur() {
+        FrameBufferFormat blurFrameFormat;
+        blurFrameFormat.colorAttachments = {
+                { ColorFormat::RGBA8 },
+        };
+        blurFrameFormat.width = _window->getWidth();
+        blurFrameFormat.height = _window->getHeight();
+        BlurEffectRenderer blurEffectRenderer(blurFrameFormat);
+        blurEffect = blurEffectRenderer.getBlurEffect();
+        RenderSystem::postEffectRenderers.emplace_back(blurEffectRenderer);
+    }
+
+    void Application::initSharpen() {
+        FrameBufferFormat sharpenFrameFormat;
+        sharpenFrameFormat.colorAttachments = {
+                { ColorFormat::RGBA8 },
+        };
+        sharpenFrameFormat.width = _window->getWidth();
+        sharpenFrameFormat.height = _window->getHeight();
+        SharpenEffectRenderer sharpenEffectRenderer(sharpenFrameFormat);
+        sharpenEffect = sharpenEffectRenderer.getSharpenEffect();
+        RenderSystem::postEffectRenderers.emplace_back(sharpenEffectRenderer);
+    }
+
+    void Application::initEdgeDetection() {
+        FrameBufferFormat edgeDetectionFrameFormat;
+        edgeDetectionFrameFormat.colorAttachments = {
+                { ColorFormat::RGBA8 },
+        };
+        edgeDetectionFrameFormat.width = _window->getWidth();
+        edgeDetectionFrameFormat.height = _window->getHeight();
+        EdgeDetectionEffectRenderer edgeDetectionEffectRenderer(edgeDetectionFrameFormat);
+        edgeDetectionEffect = edgeDetectionEffectRenderer.getEdgeDetectionEffect();
+        RenderSystem::postEffectRenderers.emplace_back(edgeDetectionEffectRenderer);
+    }
+
+    void Application::initGaussianBlur() {
+        FrameBufferFormat gaussianBlurFrameFormat;
+        gaussianBlurFrameFormat.colorAttachments = {
+                { ColorFormat::RGBA8 },
+        };
+        gaussianBlurFrameFormat.width = _window->getWidth();
+        gaussianBlurFrameFormat.height = _window->getHeight();
+        GaussianBlurEffectRenderer gaussianBlurEffectRenderer(gaussianBlurFrameFormat);
+        gaussianBlurEffect = gaussianBlurEffectRenderer.getGaussianBlurEffect();
+        RenderSystem::postEffectRenderers.emplace_back(gaussianBlurEffectRenderer);
+    }
+
+    void Application::initTextureMixer() {
+        FrameBufferFormat textureMixerFrameFormat;
+        textureMixerFrameFormat.colorAttachments = {
+                { ColorFormat::RGBA8 },
+        };
+        textureMixerFrameFormat.width = _window->getWidth();
+        textureMixerFrameFormat.height = _window->getHeight();
+        RenderSystem::textureMixer = { textureMixerFrameFormat };
+    }
+
+    void Application::onVisualDraw(time::Time dt) {
+        // this method will be called only from derived class that defines VISUAL macro
+    }
+}
+
+namespace engine::event {
+
+    Action<> EventRegistry::onWindowClosed;
+    Action<const uint32_t&, const uint32_t&> EventRegistry::onWindowResized;
+
+    EventRegistry::KeyCodeMap EventRegistry::onKeyPressedMap;
+    EventRegistry::KeyHoldMap EventRegistry::onKeyHoldMap;
+    EventRegistry::KeyCodeMap EventRegistry::onKeyReleasedMap;
+    EventRegistry::KeyCodeMap EventRegistry::onKeyTypedMap;
+
+    EventRegistry::MouseCodeMap EventRegistry::onMousePressedMap;
+    EventRegistry::MouseCodeMap EventRegistry::onMouseReleasedMap;
+
+    EventRegistry::MouseHoldMap EventRegistry::mouseHoldMap;
+
+    Action<double, double> EventRegistry::onMouseScrolled;
+    Action<double, double> EventRegistry::onCursorMoved;
+
+    EventRegistry::GamepadButtonMap EventRegistry::onGamepadButtonPressedMap;
+    EventRegistry::GamepadButtonMap EventRegistry::onGamepadButtonReleasedMap;
+
+    Action<GamepadRoll> EventRegistry::onGamepadRollLeft;
+    Action<GamepadRoll> EventRegistry::onGamepadRollRight;
+    GamepadRoll EventRegistry::inactiveGamepadRollLeft;
+    GamepadRoll EventRegistry::inactiveGamepadRollRight;
+
+    bool EventRegistry::keyHold(KeyCode keyCode) {
+        return onKeyHoldMap[keyCode];
+    }
+
+    bool EventRegistry::mouseHold(MouseCode mouseCode) {
+        return mouseHoldMap[mouseCode];
     }
 }

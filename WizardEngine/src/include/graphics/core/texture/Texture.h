@@ -19,7 +19,9 @@ namespace engine::graphics {
     enum class ColorFormat {
         NONE = 0,
         RGBA8,
-        RED_INTEGER
+        RED_INTEGER,
+        RGB16F, RGBA16F,
+        RGB32F, RGBA32F
     };
 
     // texture format for depth and stencil buffers
@@ -63,8 +65,10 @@ namespace engine::graphics {
         : filePath(filePath), type(type) {}
     };
 
+    constexpr u32 invalidTextureId = 0;
+
     serialize_component(TextureComponent) {
-        u32 textureId = 0;
+        u32 textureId = invalidTextureId;
         u32 typeId = 0;
         IntUniform sampler = { "texture", 0 };
 
@@ -76,12 +80,16 @@ namespace engine::graphics {
         TextureComponent(const u32& textureId, const u32& typeId, const s32& samplerSlot)
         : textureId(textureId), sampler({ "texture", samplerSlot }) {}
 
+        TextureComponent(const IntUniform& sampler) : sampler(sampler) {}
+
         void serialize(YAML::Emitter &out) override;
         void deserialize(const YAML::Node &parent) override;
+
+        inline bool isValid() const { return textureId != invalidTextureId; }
     };
 
     serialize_component(CubeMapTextureComponent) {
-        u32 textureId = 0;
+        u32 textureId = invalidTextureId;
         u32 typeId = 0;
         IntUniform sampler = { "cubeMap", 0 };
 
@@ -98,6 +106,8 @@ namespace engine::graphics {
 
         void serialize(YAML::Emitter &out) override;
         void deserialize(const YAML::Node &parent) override;
+
+        inline bool isValid() const { return textureId != invalidTextureId; }
     };
 
     using namespace shader;

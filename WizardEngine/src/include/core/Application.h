@@ -9,6 +9,8 @@
 #include <core/Memory.h>
 #include <core/ProjectManager.h>
 
+#include <math/RayCast.h>
+
 #include <event/Events.h>
 #include <event/GamepadCodes.h>
 
@@ -18,6 +20,7 @@
 #include <platform/core/Input.h>
 #include <platform/tools/FileDialog.h>
 #include <platform/graphics/graphics_context.h>
+#include <platform/graphics/tools/VideoStats.h>
 
 #include <graphics/core/RenderSystem.h>
 #include <graphics/core/sources/ShaderSource.h>
@@ -27,7 +30,9 @@
 #include <graphics/skybox/Skybox.h>
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/GraphicsObject.h>
-#include <graphics/camera/CameraController.h>
+#include <graphics/materials/Color.h>
+#include <graphics/materials/SolidPhong.h>
+#include <graphics/materials/Phong.h>
 
 #include <scripting/ScriptSystem.h>
 
@@ -47,21 +52,29 @@ using namespace engine::time;
 using namespace engine::network;
 using namespace engine::ecs;
 
-#define KEY_PRESSED(key, action) engine::core::Application::get().eventRegistry.onKeyPressedMap[key] = { [this](KeyCode keyCode) { action } }
-#define KEY_RELEASED(key, action) engine::core::Application::get().eventRegistry.onKeyReleasedMap[key] = { [this](KeyCode keyCode) { action } }
-#define KEY_TYPED(key, action) engine::core::Application::get().eventRegistry.onKeyTypedMap[key] = { [this](KeyCode keyCode) { action } }
-#define KEY_HOLD(key, action) engine::core::Application::get().eventRegistry.onKeyHoldMap[key] = { [this](KeyCode keyCode) { a  ction } }
+#define KEY_PRESSED(key, action) engine::event::EventRegistry::onKeyPressedMap[key] = { [this](KeyCode keyCode) { action } }
+#define KEY_RELEASED(key, action) engine::event::EventRegistry::onKeyReleasedMap[key] = { [this](KeyCode keyCode) { action } }
+#define KEY_TYPED(key, action) engine::event::EventRegistry::onKeyTypedMap[key] = { [this](KeyCode keyCode) { action } }
+#define KEY_HOLD(key, action) engine::event::EventRegistry::onKeyHoldMap[key] = { [this](KeyCode keyCode) { action } }
 
-#define GAMEPAD_PRESSED(btn, action) engine::core::Application::get().eventRegistry.onGamepadButtonPressedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
-#define GAMEPAD_RELEASED(btn, action) engine::core::Application::get().eventRegistry.onGamepadButtonReleasedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
-#define GAMEPAD_ROLL_LEFT(action) engine::core::Application::get().eventRegistry.onGamepadRollLeft.function = { [this](const GamepadRoll& roll) { action } }
-#define GAMEPAD_ROLL_RIGHT(action) engine::core::Application::get().eventRegistry.onGamepadRollRight.function = { [this](const GamepadRoll& roll) { action } }
+#define GAMEPAD_PRESSED(btn, action) engine::event::EventRegistry::onGamepadButtonPressedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
+#define GAMEPAD_RELEASED(btn, action) engine::event::EventRegistry::onGamepadButtonReleasedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
+#define GAMEPAD_ROLL_LEFT(action) engine::event::EventRegistry::onGamepadRollLeft.function = { [this](const GamepadRoll& roll) { action } }
+#define GAMEPAD_ROLL_RIGHT(action) engine::event::EventRegistry::onGamepadRollRight.function = { [this](const GamepadRoll& roll) { action } }
+
+#ifdef VISUAL
+#include <visual/Visual.h>
+#include <visual/Console.h>
+#include <visual/Widgets.h>
+
+using namespace engine::visual;
+#endif
 
 namespace engine::core {
 
     // The entry point in core hierarchy, behaves as singleton.
     // It's standalone class, which can NOT be created several times and should be created only once!
-    class Application {
+    class Application : RenderSystemCallback {
 
     public:
         Application();
@@ -97,12 +110,16 @@ namespace engine::core {
         // input gamepad events
         void onGamepadConnected(s32 joystickId);
         void onGamepadDisconnected(s32 joystickId);
+        // render system callbacks
+        void onFrameBegin(const Ref<FrameBuffer> &frameBuffer) override;
+        void onFrameEnd(const Ref<FrameBuffer> &frameBuffer) override;
 
     protected:
         virtual void onCreate();
         virtual void onPrepare();
         virtual void onDestroy();
         virtual WindowProps createWindowProps();
+        virtual void onVisualDraw(time::Time dt);
 
     public:
         [[nodiscard]] float getAspectRatio() const;
@@ -124,21 +141,39 @@ namespace engine::core {
     private:
         void shutdown();
         void restart();
+
         void onUpdate();
-        void updateRuntime(time::Time dt);
-        void updateEventRegistry();
+        void onRuntimeUpdate(time::Time dt);
+        void onEventUpdate();
+
         void createGraphics();
         void createScripting();
+        // init post effect renderers
+        void initHDR();
+        void initBlur();
+        void initSharpen();
+        void initEdgeDetection();
+        void initGaussianBlur();
+        void initTextureMixer();
 
     public:
-        Scope<event::Input> input;
         std::vector<Ref<Scene>> scenes;
         Ref<Scene> activeScene;
         Ref<FrameBuffer> activeSceneFrame;
         Ref<FrameBuffer> screenFrame;
         time::FpsController fpsController;
-        event::EventRegistry eventRegistry;
         bool isJoystickConnected = false;
+        // hover entity with mouse cursor
+        bool enableMouseHovering = false;
+        Entity hoveredEntity;
+        // mouse cursor tracker
+        bool enableMouseCursor = false;
+        // post effects
+        Ref<HdrEffect> hdrEffect;
+        Ref<BlurEffect> blurEffect;
+        Ref<SharpenEffect> sharpenEffect;
+        Ref<EdgeDetectionEffect> edgeDetectionEffect;
+        Ref<GaussianBlurEffect> gaussianBlurEffect;
 
     private:
         static Application* instance;
@@ -148,8 +183,6 @@ namespace engine::core {
         // core systems
         LayerStack _layerStack;
         Scope<Window> _window;
-        // graphics system
-        Scope<RenderSystem> _renderSystem;
         // scripting system
         Scope<scripting::ScriptSystem> _scriptSystem;
     };

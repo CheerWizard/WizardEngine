@@ -12,9 +12,7 @@ namespace engine::shader {
     class UniformBuffer final {
 
     public:
-        UniformBuffer() {
-            create();
-        }
+        UniformBuffer() = default;
         ~UniformBuffer() = default;
 
     public:
@@ -33,11 +31,11 @@ namespace engine::shader {
         void recreate();
         // bind/unbind
         void bind() const;
-        static void unbind() ;
+        static void unbind();
         void bindBlock() const;
         // GPU allocations
         void alloc() const;
-        static void alloc(const size_t &memorySize) ;
+        static void alloc(const size_t &memorySize);
         void applyFormat(const UniformBlockFormat &uniformBlockFormat);
         // GPU data load
         void load(const UniformData &uniformData) const;

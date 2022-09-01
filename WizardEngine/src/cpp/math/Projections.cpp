@@ -3,6 +3,8 @@
 //
 
 #include <math/Projections.h>
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
 
 namespace engine::math {
 
@@ -50,8 +52,7 @@ namespace engine::math {
         }
     }
 
-    void Projections::update(OrthographicMatrix &orthographicMatrix) {
-        orthographicMatrix.isUpdated = true;
+    void update(OrthographicMatrix &orthographicMatrix) {
         orthographicMatrix.value = math::ortho(
                 orthographicMatrix.left,
                 orthographicMatrix.right,
@@ -62,10 +63,9 @@ namespace engine::math {
         );
     }
 
-    void Projections::update(PerspectiveMatrix &perspectiveMatrix) {
-        perspectiveMatrix.isUpdated = true;
+    void update(PerspectiveMatrix &perspectiveMatrix) {
         perspectiveMatrix.value = math::perspective(
-                math::radians(perspectiveMatrix.fieldOfView),
+                perspectiveMatrix.fieldOfView,
                 perspectiveMatrix.aspectRatio,
                 perspectiveMatrix.zNear,
                 perspectiveMatrix.zFar

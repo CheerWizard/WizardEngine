@@ -50,6 +50,9 @@ include_directories(vendor/openal-soft/include)
 #/ YAML parser. Builds as DLL
 include_directories(vendor/yaml-cpp/include)
 
+add_subdirectory(vendor/glm/glm)
+include_directories(vendor/glm/glm)
+
 #/ linking dependencies.
 target_link_libraries(
         WizardEngine PUBLIC
@@ -59,6 +62,7 @@ target_link_libraries(
         imgui
         stb
         freetype
+        glm
         ../WizardEngine/vendor/dlls/assimp-vc143-mtd
         ../WizardEngine/vendor/dlls/OpenAL32
         ../WizardEngine/vendor/dlls/yaml-cppd

@@ -20,30 +20,30 @@ namespace engine::gui {
         if (width == 0 || height == 0) return;
 
         _frame->resize(width, height);
-        _cameraController->onWindowResized(width, height);
+        _camera3D->setAspectRatio(width, height);
     }
 
     void MeshLayout::onKeyPressed(event::KeyCode keyCode) {
         if (_isFocused) {
-            _cameraController->onKeyPressed(keyCode);
+//            _camera3D->onKeyPressed(keyCode);
         }
     }
 
     void MeshLayout::onKeyHold(event::KeyCode keyCode) {
         if (_isFocused) {
-            _cameraController->onKeyHold(keyCode);
+//            _camera3D->onKeyHold(keyCode);
         }
     }
 
     void MeshLayout::onKeyReleased(event::KeyCode keyCode) {
         if (_isFocused) {
-            _cameraController->onKeyReleased(keyCode);
+//            _camera3D->onKeyReleased(keyCode);
         }
     }
 
     void MeshLayout::onKeyTyped(event::KeyCode keyCode) {
         if (_isFocused) {
-            _cameraController->onKeyTyped(keyCode);
+//            _camera3D->onKeyTyped(keyCode);
         }
     }
 
@@ -54,9 +54,12 @@ namespace engine::gui {
     }
 
     void MeshLayout::onRender(const time::Time &dt) {
-        id = _frame->getColorAttachment(0).id;
+        ColorAttachment texture;
+        if (_frame->getColorAttachment(0, texture)) {
+            id = texture.id;
+        }
 
-        _cameraController->setDeltaTime(dt);
+        _camera3D->onUpdate(dt);
 
         if (_shouldRotateEntity) {
             rotateEntity(dt);
@@ -75,7 +78,7 @@ namespace engine::gui {
         graphics::setStencilTestOperator(ALWAYS, 1, false);
         graphics::stencilMask(false);
 
-        _renderer->render<Transform3dComponent, io::ModelVertex>(_entity);
+        _renderer->render(_entity);
 
         // stop write to stencil buffer
         graphics::setStencilTestOperator(NOT_EQUAL, 1, false);

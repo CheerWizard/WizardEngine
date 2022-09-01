@@ -12,13 +12,13 @@
 
 namespace engine::shader {
 
-    class BaseShader;
+    class BaseShaderProgram;
 
     struct ShaderScript {
         static uint16_t IDS;
         uint16_t id = IDS++;
-        std::function<void(const BaseShader&, ecs::Registry&)> updateRegistry;
-        std::function<void(const BaseShader&, const ecs::Entity&)> updateEntity;
+        std::function<void(const BaseShaderProgram&, ecs::Registry&)> updateRegistry;
+        std::function<void(const BaseShaderProgram&, const ecs::Entity&)> updateEntity;
 
         ShaderScript() = default;
         ShaderScript(const ShaderScript&) = default;
@@ -32,10 +32,7 @@ namespace engine::shader {
 
     public:
         BaseShader() : Shader() {}
-        BaseShader(const std::initializer_list<ShaderScript> &scripts): scripts(scripts) {}
         BaseShader(const char* src) : Shader(src) {}
-        BaseShader(const char* src, const std::initializer_list<ShaderScript> &scripts)
-        : Shader(src), scripts(scripts) {}
         ~BaseShader() = default;
 
     public:
@@ -52,6 +49,7 @@ namespace engine::shader {
             bindUbf(uniformBlockFormat.getName().data(), uniformBlockFormat.getId());
         }
 
+        void initUbf();
         void applyUbf(const UniformBlockFormat& uniformBlockFormat);
 
         void updateUniformBuffer(const UniformData &uniformData) const;
@@ -61,16 +59,11 @@ namespace engine::shader {
         void updateUniformBuffer(Vec3fUniform &uniform, const uint32_t &index = 0) const;
         void updateUniformBuffer(Vec4fUniform &uniform, const uint32_t &index = 0) const;
         void updateUniformBuffer(Mat4fUniform &uniform, const uint32_t &index = 0) const;
+        void updateUniformBuffer(GLMMat4fUniform &uniform, const uint32_t &index = 0) const;
 
-        void updateScripts(const ecs::Entity &entity) const;
-        void updateScripts(ecs::Registry &registry) const;
-        void addScript(const ShaderScript& script);
-        void removeScript(const ShaderScript& script);
-        void clearScripts();
         void release();
 
     protected:
-        std::vector<ShaderScript> scripts;
         UniformBuffer uniformBuffer;
 
     };
@@ -80,22 +73,18 @@ namespace engine::shader {
     public:
         BaseShaderProgram() = default;
 
-        BaseShaderProgram(const io::ShaderProps &props) {
-            construct(props);
-        }
-
         BaseShaderProgram(
                 const io::ShaderProps &props,
-                const BaseShader &vShader
-        ) : _vShader(vShader) {
+                const std::initializer_list<ShaderScript>& scripts = {}
+        ) : scripts(scripts) {
             construct(props);
         }
 
         BaseShaderProgram(
                 const io::ShaderProps &props,
                 const BaseShader &vShader,
-                const BaseShader &fShader
-        ) : _vShader(vShader), _fShader(fShader) {
+                const std::initializer_list<ShaderScript>& scripts = {}
+        ) : _vShader(vShader), scripts(scripts) {
             construct(props);
         }
 
@@ -103,8 +92,18 @@ namespace engine::shader {
                 const io::ShaderProps &props,
                 const BaseShader &vShader,
                 const BaseShader &fShader,
-                const BaseShader &gShader
-        ) : _vShader(vShader), _fShader(fShader), _gShader(gShader) {
+                const std::initializer_list<ShaderScript>& scripts = {}
+        ) : _vShader(vShader), _fShader(fShader), scripts(scripts) {
+            construct(props);
+        }
+
+        BaseShaderProgram(
+                const io::ShaderProps &props,
+                const BaseShader &vShader,
+                const BaseShader &fShader,
+                const BaseShader &gShader,
+                const std::initializer_list<ShaderScript>& scripts = {}
+        ) : _vShader(vShader), _fShader(fShader), _gShader(gShader), scripts(scripts) {
             construct(props);
         }
 
@@ -127,6 +126,14 @@ namespace engine::shader {
             return vertexFormat;
         }
 
+        inline void setInstancesPerDraw(u32 instancesPerDraw) {
+            this->instancesPerDraw = instancesPerDraw;
+        }
+
+        [[nodiscard]] inline u32 getInstancesPerDraw() const {
+            return instancesPerDraw;
+        }
+
     public:
         void construct(const io::ShaderProps& props);
         void detachShaders();
@@ -141,6 +148,10 @@ namespace engine::shader {
         void recompile(const std::string& name);
         bool isReady();
 
+        void addScript(const ShaderScript& script);
+        void removeScript(const ShaderScript& script);
+        void clearScripts();
+
     private:
         static ElementCount toElementCount(const std::string &elementCountStr);
 
@@ -150,7 +161,7 @@ namespace engine::shader {
         BaseShader _gShader; // Geometry shader
         VertexFormat vertexFormat;
         uint32_t uniformBlockSlots = 0;
-
+        u32 instancesPerDraw = 128;
+        vector<ShaderScript> scripts;
     };
-
 }

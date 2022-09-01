@@ -87,13 +87,12 @@ namespace engine::gui {
             const FloatRange &range = {0, 1},
             const float &resetValue = 0.0f
     ) {
-        uniform.isUpdated = ImGui::SliderFloat(uniform.name, &uniform.value, range.begin, range.end);
+        ImGui::SliderFloat(uniform.name, &uniform.value, range.begin, range.end);
     }
 
     static void drawVec3Controller(
             const std::string& label,
             float* vec3,
-            bool &isUpdated,
             float resetValue = 0.0f,
             float columnWidth = 100.0f
     ) {
@@ -127,7 +126,7 @@ namespace engine::gui {
         ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
-        auto xDragged = ImGui::DragFloat("##X", &vec3[0], 0.05f, 0.0f, 0.0f, "%.2f");
+        ImGui::DragFloat("##X", &vec3[0], 0.05f, 0.0f, 0.0f, "%.2f");
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -145,7 +144,7 @@ namespace engine::gui {
         ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
-        auto yDragged = ImGui::DragFloat("##Y", &vec3[1], 0.05f, 0.0f, 0.0f, "%.2f");
+        ImGui::DragFloat("##Y", &vec3[1], 0.05f, 0.0f, 0.0f, "%.2f");
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -163,7 +162,7 @@ namespace engine::gui {
         ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
-        auto zDragged = ImGui::DragFloat("##Z", &vec3[2], 0.05f, 0.0f, 0.0f, "%.2f");
+        ImGui::DragFloat("##Z", &vec3[2], 0.05f, 0.0f, 0.0f, "%.2f");
         ImGui::PopItemWidth();
 
         ImGui::PopStyleVar();
@@ -171,28 +170,24 @@ namespace engine::gui {
         ImGui::Columns(1);
 
         ImGui::PopID();
-
-        isUpdated = xClicked || xDragged || yClicked || yDragged || zClicked || zDragged;
     }
 
     static void drawVec3Controller(
             const std::string& label,
             Vec3fUniform& uniform,
-            bool &isUpdated,
             float resetValue = 0.0f,
             float columnWidth = 100.0f
     ) {
-        drawVec3Controller(label, toFloatPtr(uniform), isUpdated, resetValue, columnWidth);
+        drawVec3Controller(label, toFloatPtr(uniform), resetValue, columnWidth);
     }
 
     static void drawVec3Controller(
             const std::string& label,
             Vec4fUniform& uniform,
-            bool &isUpdated,
             float resetValue = 0.0f,
             float columnWidth = 100.0f
     ) {
-        drawVec3Controller(label, toFloatPtr(uniform), isUpdated, resetValue, columnWidth);
+        drawVec3Controller(label, toFloatPtr(uniform), resetValue, columnWidth);
     }
 
     static void drawVec3Controller(
@@ -200,23 +195,21 @@ namespace engine::gui {
             float resetValue = 0.0f,
             float columnWidth = 100.0f
     ) {
-        drawVec3Controller(uniform.name, uniform, uniform.isUpdated, resetValue, columnWidth);
+        drawVec3Controller(uniform.name, uniform, resetValue, columnWidth);
     }
 
     static void drawVec3Controller(
             const std::string& label,
             vec3f& value,
-            bool& isUpdated,
             float resetValue = 0.0f,
             float columnWidth = 100.0f
     ) {
-        drawVec3Controller(label, math::values(value), isUpdated, resetValue, columnWidth);
+        drawVec3Controller(label, math::values(value), resetValue, columnWidth);
     }
 
     static void drawVec4Controller(
             const std::string& label,
             vec4f& values,
-            bool &isUpdated,
             float resetValue = 0.0f,
             float columnWidth = 100.0f
     ) {
@@ -250,7 +243,7 @@ namespace engine::gui {
         ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
-        auto xDragged = ImGui::DragFloat("##X", &values.v[0], 0.05f, 0.0f, 0.0f, "%.2f");
+        ImGui::DragFloat("##X", &values.v[0], 0.05f, 0.0f, 0.0f, "%.2f");
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -268,7 +261,7 @@ namespace engine::gui {
         ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
-        auto yDragged = ImGui::DragFloat("##Y", &values.v[1], 0.05f, 0.0f, 0.0f, "%.2f");
+        ImGui::DragFloat("##Y", &values.v[1], 0.05f, 0.0f, 0.0f, "%.2f");
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -286,7 +279,7 @@ namespace engine::gui {
         ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
-        auto zDragged = ImGui::DragFloat("##Z", &values.v[2], 0.05f, 0.0f, 0.0f, "%.2f");
+        ImGui::DragFloat("##Z", &values.v[2], 0.05f, 0.0f, 0.0f, "%.2f");
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -310,8 +303,6 @@ namespace engine::gui {
         ImGui::PopStyleVar();
         ImGui::Columns(1);
         ImGui::PopID();
-
-        isUpdated = xClicked || xDragged || yClicked || yDragged || zClicked || zDragged || wClicked || wDragged;
     }
 
     template<typename T, typename UIFunction>
@@ -366,26 +357,16 @@ namespace engine::gui {
     }
 
     void drawCheckBox(BoolUniform &uniform) {
-        uniform.isUpdated = ImGui::Checkbox(uniform.name, &uniform.value);
+        ImGui::Checkbox(uniform.name, &uniform.value);
     }
 
     void drawTransformComponent(const ecs::Entity& entity) {
         drawComponent<graphics::Transform3dComponent>("Transform", entity, [](graphics::Transform3dComponent& transform) {
             auto& model = transform.modelMatrix;
-
-            bool isPosUpdated = false;
-            bool isRotUpdated = false;
-            bool isScaleUpdated = false;
-
-            drawVec3Controller("Translation", model.position, isPosUpdated);
-            drawVec3Controller("Rotation", model.rotation, isRotUpdated);
-            drawVec3Controller("Scale", model.scale, isScaleUpdated, 1.0f);
-
-            model.isUpdated = isPosUpdated || isRotUpdated || isScaleUpdated;
-            if (model.isUpdated) {
-                updateModel3d(model);
-            }
-            EDITOR_INFO("Transform is updated : {0}", model.isUpdated);
+            drawVec3Controller("Translation", model.position);
+            drawVec3Controller("Rotation", model.rotation);
+            drawVec3Controller("Scale", model.scale, 1.0f);
+            updateModel3d(model);
         });
     }
 
@@ -402,25 +383,15 @@ namespace engine::gui {
     }
 
     void drawColorPicker(Vec4fUniform& color) {
-        color.isUpdated = ImGui::ColorPicker4(color.name, toFloatPtr(color));
+        ImGui::ColorPicker4(color.name, toFloatPtr(color));
     }
 
     void drawTransform3dController(graphics::Transform3dComponent& transform) {
         auto& model = transform.modelMatrix;
-
-        bool isPosUpdated = false;
-        bool isRotUpdated = false;
-        bool isScaleUpdated = false;
-
-        drawVec3Controller("Translation", model.position, isPosUpdated);
-        drawVec3Controller("Rotation", model.rotation, isRotUpdated);
-        drawVec3Controller("Scale", model.scale, isScaleUpdated, 1.0f);
-
-        model.isUpdated = isPosUpdated || isRotUpdated || isScaleUpdated;
-        if (model.isUpdated) {
-            updateModel3d(model);
-        }
-        EDITOR_INFO("Transform is updated : {0}", model.isUpdated);
+        drawVec3Controller("Translation", model.position);
+        drawVec3Controller("Rotation", model.rotation);
+        drawVec3Controller("Scale", model.scale, 1.0f);
+        updateModel3d(model);
     }
 
     void SceneHierarchy::drawComponents(ecs::Entity &entity) {
@@ -442,34 +413,35 @@ namespace engine::gui {
         drawTransformComponent(entity);
         // draw light components
         drawComponent<graphics::PhongLightComponent>("PhongLight", entity, [](graphics::PhongLightComponent& phongLight) {
-            drawVec3Controller(phongLight.position.name, phongLight.position, phongLight.position.isUpdated);
-            drawVec3Controller(phongLight.ambient.name, phongLight.ambient, phongLight.ambient.isUpdated);
-            drawVec3Controller(phongLight.diffuse.name, phongLight.diffuse, phongLight.diffuse.isUpdated);
-            drawVec3Controller(phongLight.specular.name, phongLight.specular, phongLight.specular.isUpdated);
+            drawVec3Controller(phongLight.position.name, phongLight.position);
+            drawVec4Controller(phongLight.color.name, phongLight.color.value);
+            drawFloatSlider(phongLight.ambient);
+            drawFloatSlider(phongLight.diffuse);
+            drawFloatSlider(phongLight.specular);
         });
         drawComponent<graphics::DirectLightComponent>("DirectLight", entity, [](graphics::DirectLightComponent& directLight) {
-            drawVec3Controller(directLight.direction.name, directLight.direction, directLight.direction.isUpdated);
-            drawVec3Controller(directLight.ambient.name, directLight.ambient, directLight.ambient.isUpdated);
-            drawVec3Controller(directLight.diffuse.name, directLight.diffuse, directLight.diffuse.isUpdated);
-            drawVec3Controller(directLight.specular.name, directLight.specular, directLight.specular.isUpdated);
+            drawVec3Controller(directLight.direction.name, directLight.direction);
+            drawVec3Controller(directLight.ambient.name, directLight.ambient);
+            drawVec3Controller(directLight.diffuse.name, directLight.diffuse);
+            drawVec3Controller(directLight.specular.name, directLight.specular);
         });
         drawComponent<graphics::PointLightComponent>("PointLight", entity, [](graphics::PointLightComponent& pointLight) {
-            drawVec3Controller(pointLight.position.name, pointLight.position, pointLight.position.isUpdated);
-            drawVec3Controller(pointLight.ambient.name, pointLight.ambient, pointLight.ambient.isUpdated);
-            drawVec3Controller(pointLight.diffuse.name, pointLight.diffuse, pointLight.diffuse.isUpdated);
-            drawVec3Controller(pointLight.specular.name, pointLight.specular, pointLight.specular.isUpdated);
+            drawVec3Controller(pointLight.position.name, pointLight.position);
+            drawVec3Controller(pointLight.ambient.name, pointLight.ambient);
+            drawVec3Controller(pointLight.diffuse.name, pointLight.diffuse);
+            drawVec3Controller(pointLight.specular.name, pointLight.specular);
             drawFloatSlider(pointLight.constant, {0, 1});
             drawFloatSlider(pointLight.linear, {0, 1});
             drawFloatSlider(pointLight.quadratic, {0, 2});
         });
         drawComponent<graphics::FlashLightComponent>("FlashLight", entity, [](graphics::FlashLightComponent& flashLight) {
-            drawVec3Controller(flashLight.position.name, flashLight.position, flashLight.position.isUpdated);
-            drawVec3Controller(flashLight.direction.name, flashLight.direction, flashLight.direction.isUpdated);
+            drawVec3Controller(flashLight.position.name, flashLight.position);
+            drawVec3Controller(flashLight.direction.name, flashLight.direction);
             drawFloatSlider(flashLight.cutoff, {0, 1});
             drawFloatSlider(flashLight.outerCutoff, {0, 1});
-            drawVec3Controller(flashLight.ambient.name, flashLight.ambient, flashLight.ambient.isUpdated);
-            drawVec3Controller(flashLight.diffuse.name, flashLight.diffuse, flashLight.diffuse.isUpdated);
-            drawVec3Controller(flashLight.specular.name, flashLight.specular, flashLight.specular.isUpdated);
+            drawVec3Controller(flashLight.ambient.name, flashLight.ambient);
+            drawVec3Controller(flashLight.diffuse.name, flashLight.diffuse);
+            drawVec3Controller(flashLight.specular.name, flashLight.specular);
             drawFloatSlider(flashLight.constant, {0, 1});
             drawFloatSlider(flashLight.linear, {0, 1});
             drawFloatSlider(flashLight.quadratic, {0, 2});
@@ -477,7 +449,7 @@ namespace engine::gui {
         // draw outline component
         drawComponent<graphics::OutlineComponent>("Outlining", entity, [](graphics::OutlineComponent& outline) {
             drawFloatSlider(outline.thickness, { 0, 0.1 });
-            outline.color.isUpdated = ImGui::ColorPicker4(outline.color.name, toFloatPtr(outline.color));
+            ImGui::ColorPicker4(outline.color.name, toFloatPtr(outline.color));
         });
         // draw text components
         drawComponent<graphics::Text2d>("Text2D", entity, [](graphics::Text2d& textComponent) {

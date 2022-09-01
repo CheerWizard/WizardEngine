@@ -8,11 +8,63 @@
 #include <graphics/core/geometry/Cube.h>
 #include <graphics/transform/TransformComponents.h>
 #include <graphics/core/texture/Texture.h>
+#include <graphics/core/Renderer.h>
 
 namespace engine::graphics {
 
     struct SkyboxVertex {
         math::vec3f position = { 0.5, 0.5 , 0.5 };
+    };
+
+    struct SkyCube : VertexDataComponent<SkyboxVertex> {
+
+        SkyCube() {
+            init();
+        }
+
+        void init() {
+            auto vertices = new SkyboxVertex[36] {
+                    {{-1.0f,  1.0f, -1.0f}},
+                    {{-1.0f, -1.0f, -1.0f}},
+                    {{1.0f, -1.0f, -1.0f}},
+                    {{1.0f, -1.0f, -1.0f}},
+                    {{1.0f,  1.0f, -1.0f}},
+                    {{-1.0f,  1.0f, -1.0f}},
+                    {{-1.0f, -1.0f,  1.0f}},
+                    {{-1.0f, -1.0f, -1.0f}},
+                    {{-1.0f,  1.0f, -1.0f}},
+                    {{-1.0f,  1.0f, -1.0f}},
+                    {{-1.0f,  1.0f,  1.0f}},
+                    {{-1.0f, -1.0f,  1.0f}},
+                    {{1.0f, -1.0f, -1.0f}},
+                    {{1.0f, -1.0f,  1.0f}},
+                    {{1.0f,  1.0f,  1.0f}},
+                    {{1.0f,  1.0f,  1.0f}},
+                    {{1.0f,  1.0f, -1.0f}},
+                    {{1.0f, -1.0f, -1.0f}},
+                    {{-1.0f, -1.0f,  1.0f}},
+                    {{-1.0f,  1.0f,  1.0f}},
+                    {{1.0f,  1.0f,  1.0f}},
+                    {{1.0f,  1.0f,  1.0f}},
+                    {{1.0f, -1.0f,  1.0f}},
+                    {{-1.0f, -1.0f,  1.0f}},
+                    {{-1.0f,  1.0f, -1.0f}},
+                    {{1.0f,  1.0f, -1.0f}},
+                    {{1.0f,  1.0f,  1.0f}},
+                    {{1.0f,  1.0f,  1.0f}},
+                    {{-1.0f,  1.0f,  1.0f}},
+                    {{-1.0f,  1.0f, -1.0f}},
+                    {{-1.0f, -1.0f, -1.0f}},
+                    {{-1.0f, -1.0f,  1.0f}},
+                    {{1.0f, -1.0f, -1.0f}},
+                    {{1.0f, -1.0f, -1.0f}},
+                    {{-1.0f, -1.0f,  1.0f}},
+                    {{1.0f, -1.0f,  1.0f}},
+            };
+
+            this->vertexData = { vertices, 0, 36 };
+            this->drawType = DrawType::TRIANGLE;
+        }
     };
 
     class SkyboxCube : public ecs::Entity {
@@ -32,9 +84,21 @@ namespace engine::graphics {
                     {0,   0,   0},
                     {100, 100, 100}
             });
-            add<VertexDataComponent<SkyboxVertex>>(Cube<SkyboxVertex>());
+            add<SkyCube>(SkyCube());
             add<CubeMapTextureComponent>(cubeMapTextures);
         }
+    };
+
+    class SkyboxRenderer : public VRenderer<SkyboxVertex> {
+
+    public:
+        SkyboxRenderer() : VRenderer<SkyboxVertex>() {}
+
+    public:
+        void init();
+
+    protected:
+        void uploadUniforms(const ecs::Entity& entity) override;
     };
 
 }

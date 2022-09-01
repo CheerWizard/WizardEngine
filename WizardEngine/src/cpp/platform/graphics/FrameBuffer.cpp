@@ -12,6 +12,10 @@ namespace engine::graphics {
         switch (format) {
             case ColorFormat::RGBA8:       return GL_RGBA8;
             case ColorFormat::RED_INTEGER: return GL_RED_INTEGER;
+            case ColorFormat::RGB16F: return GL_RGB16F;
+            case ColorFormat::RGBA16F: return GL_RGBA16F;
+            case ColorFormat::RGB32F: return GL_RGB32F;
+            case ColorFormat::RGBA32F: return GL_RGBA32F;
             default: return 0;
         }
     }
@@ -31,6 +35,22 @@ namespace engine::graphics {
                 internalFormat = GL_RGBA8;
                 dataFormat = GL_RGBA;
                 break;
+            case ColorFormat::RGB16F:
+                internalFormat = GL_RGB16F;
+                dataFormat = GL_RGBA;
+                break;
+            case ColorFormat::RGBA16F:
+                internalFormat = GL_RGBA16F;
+                dataFormat = GL_RGBA;
+                break;
+            case ColorFormat::RGB32F:
+                internalFormat = GL_RGB32F;
+                dataFormat = GL_RGBA;
+                break;
+            case ColorFormat::RGBA32F:
+                internalFormat = GL_RGBA32F;
+                dataFormat = GL_RGBA;
+                break;
             case ColorFormat::RED_INTEGER:
                 internalFormat = GL_R32I;
                 dataFormat = GL_RED_INTEGER;
@@ -45,6 +65,7 @@ namespace engine::graphics {
 
     const std::vector<ColorAttachment>& FrameBuffer::updateFormat(const FrameBufferFormat &format) {
         setFormat(format);
+        textureTarget = format.samples > 1 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
         loadAttachments();
         const auto& colors = getColorAttachments();
         ENGINE_INFO("Update FBO format. Color buffer id: {0}", colors[0].id);
@@ -95,7 +116,7 @@ namespace engine::graphics {
         for (int i = 0 ; i < format.colorAttachments.size() ; i++) {
             auto& colorAttachment = format.colorAttachments[i];
 
-            glCreateTextures(getTextureTarget(), 1, &colorAttachment.id);
+            glCreateTextures(textureTarget, 1, &colorAttachment.id);
             bindTexture(colorAttachment.id);
 
             uint32_t colorInternalFormat;
@@ -139,7 +160,7 @@ namespace engine::graphics {
 
             bindTexture(0);
 
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, getTextureTarget(), colorAttachment.id, 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, textureTarget, colorAttachment.id, 0);
         }
     }
 
@@ -147,7 +168,7 @@ namespace engine::graphics {
         if (format.depthStencilAttachment.format == DepthStencilFormat::NONE) return;
 
         auto& depthStencilAttachment = format.depthStencilAttachment;
-        glCreateTextures(getTextureTarget(), 1, &depthStencilAttachment.id);
+        glCreateTextures(textureTarget, 1, &depthStencilAttachment.id);
         bindTexture(depthStencilAttachment.id);
 
         auto depthFormat = toGLDepthStencilFormat(depthStencilAttachment.format);
@@ -177,7 +198,7 @@ namespace engine::graphics {
 
         bindTexture(0);
 
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, getTextureTarget(), depthStencilAttachment.id, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, textureTarget, depthStencilAttachment.id, 0);
     }
 
     void FrameBuffer::attachRbo() {
@@ -233,12 +254,8 @@ namespace engine::graphics {
         }
     }
 
-    uint32_t FrameBuffer::getTextureTarget() const {
-        return format.samples > 1 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
-    }
-
     void FrameBuffer::bindTexture(const uint32_t &attachmentId) {
-        glBindTexture(getTextureTarget(), attachmentId);
+        glBindTexture(textureTarget, attachmentId);
     }
 
     void FrameBuffer::bind() const {
@@ -277,9 +294,11 @@ namespace engine::graphics {
     int FrameBuffer::readPixel(uint32_t attachmentIndex, int x, int y) const {
         ENGINE_ASSERT(attachmentIndex < format.colorAttachments.size(), "readPixel()");
 
+        ENGINE_INFO("readPixels: x: {0} y: {1} index: {2}", x, y, attachmentIndex);
         glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
         int pixelData;
-        glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+        auto& colorFormat = format.colorAttachments[attachmentIndex].format;
+        glReadPixels(x, y, 1, 1, toGLColorFormat(colorFormat), GL_INT, &pixelData);
         return pixelData;
     }
 
@@ -288,7 +307,7 @@ namespace engine::graphics {
 
         auto& colorAttachment = format.colorAttachments[attachmentIndex];
         auto textureFormat = toGLColorFormat(colorAttachment.format);
-        glClearTexImage(colorAttachment.id, 0, textureFormat, GL_INT,&value);
+        glClearTexImage(colorAttachment.id, 0, textureFormat, GL_INT, &value);
     }
 
     void FrameBuffer::readWriteFrameBuffers(FrameBuffer& src, FrameBuffer& target) {

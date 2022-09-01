@@ -5,21 +5,25 @@
 #pragma once
 
 #include <ecs/ecs.h>
-
-using namespace engine::shader;
+#include <graphics/core/shader/BaseShader.h>
 
 namespace engine::graphics {
 
+    using namespace shader;
+
     serialize_component(PhongLightComponent) {
         const char* name = "phongLight";
-        Vec4fUniform position = { "position", { 0.5f, 0.5f, 0.5f, 0 } };
-        Vec4fUniform ambient = { "ambient", { 0.5f, 0.5f, 0.5f, 0 } };
-        Vec4fUniform diffuse = { "diffuse", { 0.5f, 0.5f, 0.5f, 0 } };
-        Vec4fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f, 0 } };
+        Vec3fUniform position = { "position", { 0.5f, 0.5f, 0.5f } };
+        Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
+        FloatUniform ambient = { "ambient", 1 };
+        FloatUniform diffuse = { "diffuse", 1 };
+        FloatUniform specular = { "specular", 1 };
 
         void serialize(YAML::Emitter &out) override;
         void deserialize(const YAML::Node &parent) override;
     };
+
+    ShaderScript phongLightScript();
 
     serialize_component(DirectLightComponent) {
         const char* name = "directLight";

@@ -22,6 +22,7 @@ namespace engine::core {
 
     // constants
     constexpr f32 max_f32 = 340282340000000000000000000000000000000.0;
+    constexpr f32 PI = 3.14159265359;
 
     constexpr u16 kb_1 = 1024;
     constexpr u16 kb_2 = kb_1 * 2;

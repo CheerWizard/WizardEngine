@@ -12,6 +12,7 @@ namespace engine::io {
 
     struct TextureData {
         int width = 0, height = 0, channels = 0;
+        bool sRGB = false;
         void* data = nullptr;
     };
 

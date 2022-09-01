@@ -5,8 +5,14 @@
 #pragma once
 
 #include <core/Application.h>
+#include <graphics/GraphicsObject.h>
+#include <graphics/camera/Camera.h>
+#include <graphics/light/Light.h>
 
 namespace test {
+
+    using namespace engine;
+    using namespace engine::graphics;
 
     class TestLayer : public Layer,
             tcp::ClientListener, tcp::SenderListener, tcp::ReceiverListener,
@@ -53,10 +59,12 @@ namespace test {
 
     public:
         void onWindowClosed() override;
-        void onMousePressed(event::MouseCode mouseCode) override;
-        void onMouseRelease(event::MouseCode mouseCode) override;
+        void onMousePressed(MouseCode mouseCode) override;
+        void onMouseRelease(MouseCode mouseCode) override;
         void onMouseScrolled(double xOffset, double yOffset) override;
         void onCursorMoved(double xPos, double yPos) override;
+
+        void onVisualDraw(time::Time dt) override;
 
     private:
         void bindCamera();
@@ -66,12 +74,26 @@ namespace test {
         void onPadX();
         void onPadY();
 
+        void dragLight();
+
+        void switchMSAA();
+        void switchHDR();
+        void switchBlur();
+        void switchSharpen();
+        void switchEdgeDetection();
+        void switchGaussianBlur();
+        void switchBloom();
+
         void onGamepadRollLeft(const GamepadRoll& roll);
         void onGamepadRollRight(const GamepadRoll& roll);
 
     private:
-        Ref<Camera3dController> cameraController;
-        Entity survivalBackPack;
+        Camera3D mainCamera;
+        vector<Batch3d> packs;
+        vector<Instance3d> instancedPacks;
+        bool msaaEnabled = false;
+        Entity hoveredEntity;
+        PhongLight light;
     };
 
 }

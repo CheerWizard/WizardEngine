@@ -16,6 +16,8 @@ namespace engine::graphics {
         u8 id = 0;
         VertexArray vao;
         VertexBuffer vbo;
+        vector<ecs::entity_id> entities;
+        ecs::entity_id geometry = invalid_entity_id;
 
         VRenderModel() = default;
 
@@ -27,27 +29,85 @@ namespace engine::graphics {
             vbo.create();
         }
 
-        template<typename T>
-        void upload(VertexDataComponent<T> &vertexDataComponent) {
-            vao.bind();
-            vbo.bind();
-            vbo.load(vertexDataComponent.vertexData);
-        }
+        void release();
+        void resetCounts();
 
         template<typename T>
-        void uploadStatic(const VertexDataComponent<T> &vertexDataComponent) {
-            vao.bind();
-            vbo.bind();
-            vbo.loadStatic(vertexDataComponent.vertexData);
-            VertexArray::unbind();
-        }
+        void upload(VertexDataComponent<T> &vertexDataComponent);
+        template<typename T>
+        void uploadStatic(const VertexDataComponent<T> &vertexDataComponent);
+
+        template<typename T>
+        void tryUpload(VertexDataComponent<T> &vertexDataComponent, u32 &previousVertexCount);
+
+        template<typename T>
+        void tryUploadBatch(
+                u32 batchId,
+                VertexDataComponent<BatchVertex<T>> &vertexDataComponent,
+                uint32_t &previousVertexCount
+        );
+
+        template<typename T>
+        bool hasCapacity(const VertexDataComponent<T> &vertexDataComponent) const;
+
+        template<typename T>
+        void increaseCounts(const VertexDataComponent<T> &vertexDataComponent);
     };
+
+    template<typename T>
+    void VRenderModel::uploadStatic(const VertexDataComponent<T> &vertexDataComponent) {
+        vao.bind();
+        vbo.bind();
+        vbo.loadStatic(vertexDataComponent.vertexData);
+        VertexArray::unbind();
+    }
+
+    template<typename T>
+    void VRenderModel::upload(VertexDataComponent<T> &vertexDataComponent) {
+        vao.bind();
+        vbo.bind();
+        vbo.load(vertexDataComponent.vertexData);
+    }
+
+    template<typename T>
+    bool VRenderModel::hasCapacity(const VertexDataComponent<T> &vertexDataComponent) const {
+        return vbo.hasCapacity(vertexDataComponent.vertexData.size);
+    }
+
+    template<typename T>
+    void VRenderModel::increaseCounts(const VertexDataComponent<T> &vertexDataComponent) {
+        vbo.increaseCount(vertexDataComponent.vertexData.size);
+    }
+
+    template<typename T>
+    void VRenderModel::tryUpload(VertexDataComponent<T> &vertexDataComponent, u32 &previousVertexCount) {
+        if (vertexDataComponent.isUpdated) {
+            vertexDataComponent.isUpdated = false;
+            vertexDataComponent.updateStart(previousVertexCount);
+            upload(vertexDataComponent);
+        }
+        previousVertexCount += vertexDataComponent.vertexData.size;
+    }
+
+    template<typename T>
+    void VRenderModel::tryUploadBatch(
+            u32 batchId,
+            VertexDataComponent<BatchVertex<T>> &vertexDataComponent,
+            uint32_t &previousVertexCount
+    ) {
+        if (vertexDataComponent.isUpdated) {
+            vertexDataComponent.setBatchId(batchId);
+        }
+        tryUpload(vertexDataComponent, previousVertexCount);
+    }
 
     struct VIRenderModel {
         u8 id = 0;
         VertexArray vao;
         VertexBuffer vbo;
         IndexBuffer ibo;
+        vector<ecs::entity_id> entities;
+        ecs::entity_id mesh = invalid_entity_id;
 
         VIRenderModel() = default;
 
@@ -61,66 +121,40 @@ namespace engine::graphics {
             ibo.create();
         }
 
-        template<typename T>
-        void upload(BaseMeshComponent<T> &meshComponent) {
-            vao.bind();
-            vbo.bind();
-            ibo.bind();
+        void release();
+        void resetCounts();
 
-            const auto& meshes = meshComponent.meshes;
-            for (auto i = 0; i < meshComponent.meshCount ; i++) {
-                const auto& vertexData = meshes[i].vertexData;
-                vbo.load(vertexData);
-                const auto& indexData = meshes[i].indexData;
-                ibo.load(indexData);
-            }
-        }
+        template<typename T>
+        void upload(BaseMeshComponent<T> &meshComponent);
+
+        template<typename T>
+        void tryUpload(
+                BaseMeshComponent<T> &meshComponent,
+                u32 &previousVertexCount,
+                u32 &previousIndexCount
+        );
+
+        template<typename T>
+        void tryUploadBatchMesh(
+                u32 batchId,
+                BaseMeshComponent<BatchVertex<T>> &baseMeshComponent,
+                u32 &previousVertexCount,
+                u32 &previousIndexCount
+        );
+
+        template<typename T>
+        bool hasCapacity(const BaseMeshComponent<T> &meshComponent) const;
+
+        template<typename T>
+        void increaseCounts(const BaseMeshComponent<T> &meshComponent);
     };
 
-    void release(VRenderModel& renderModel);
-    void resetCounts(VRenderModel& renderModel);
-
     template<typename T>
-    bool hasCapacity(const VRenderModel& renderModel, const VertexDataComponent<T> &vertexDataComponent) {
-        return renderModel.vbo.hasCapacity(vertexDataComponent.vertexData.size);
-    }
-
-    template<typename T>
-    void increaseCounts(VRenderModel& renderModel, const VertexDataComponent<T> &vertexDataComponent) {
-        renderModel.vbo.increaseCount(vertexDataComponent.vertexData.size);
-    }
-
-    void release(VIRenderModel& renderModel);
-    void resetCounts(VIRenderModel& renderModel);
-
-    template<typename T>
-    bool hasCapacity(const VIRenderModel& renderModel, const BaseMeshComponent<T> &meshComponent) {
-        bool hasVertexCapacity = renderModel.vbo.hasCapacity(meshComponent.totalVertexCount);
-        bool hasIndexCapacity = renderModel.ibo.hasCapacity(meshComponent.totalIndexCount);
-        return hasVertexCapacity && hasIndexCapacity;
-    }
-
-    template<typename T>
-    void increaseCounts(VIRenderModel& renderModel, const BaseMeshComponent<T> &meshComponent) {
-        renderModel.vbo.increaseCount(meshComponent.totalVertexCount);
-        renderModel.ibo.increaseCount(meshComponent.totalIndexCount);
-    }
-
-    template<typename T>
-    void upload(VertexDataComponent<T> &vertexDataComponent, VRenderModel& renderModel) {
-        renderModel.vao.bind();
-        renderModel.vbo.bind();
-        renderModel.vbo.load(vertexDataComponent.vertexData);
-    }
-
-    template<typename T>
-    void upload(BaseMeshComponent<T> &meshComponent, VIRenderModel& renderModel) {
-        auto& vbo = renderModel.vbo;
-        auto& ibo = renderModel.ibo;
-
-        renderModel.vao.bind();
+    void VIRenderModel::upload(BaseMeshComponent<T> &meshComponent) {
+        vao.bind();
         vbo.bind();
         ibo.bind();
+
         const auto& meshes = meshComponent.meshes;
         for (auto i = 0; i < meshComponent.meshCount ; i++) {
             const auto& vertexData = meshes[i].vertexData;
@@ -131,66 +165,39 @@ namespace engine::graphics {
     }
 
     template<typename T>
-    void tryUpload(
-            VertexDataComponent<T> &vertexDataComponent,
-            uint32_t &previousVertexCount,
-            VRenderModel& renderModel
-    ) {
-        if (vertexDataComponent.isUpdated) {
-            vertexDataComponent.isUpdated = false;
-            updateStart(vertexDataComponent, previousVertexCount);
-            upload(vertexDataComponent, renderModel);
-        }
-        previousVertexCount += vertexDataComponent.vertexData.size;
+    bool VIRenderModel::hasCapacity(const BaseMeshComponent<T> &meshComponent) const {
+        bool hasVertexCapacity = vbo.hasCapacity(meshComponent.totalVertexCount);
+        bool hasIndexCapacity = ibo.hasCapacity(meshComponent.totalIndexCount);
+        return hasVertexCapacity && hasIndexCapacity;
     }
 
     template<typename T>
-    void tryUploadBatch(
-            const uint32_t &id,
-            VertexDataComponent<BatchVertex<T>> &vertexDataComponent,
-            uint32_t &previousVertexCount,
-            VRenderModel& renderModel
-    ) {
-        if (vertexDataComponent.isUpdated) {
-            setBatchId(vertexDataComponent, id);
-        }
-        tryUpload<BatchVertex<T>>(vertexDataComponent, previousVertexCount, renderModel);
+    void VIRenderModel::increaseCounts(const BaseMeshComponent<T> &meshComponent) {
+        vbo.increaseCount(meshComponent.totalVertexCount);
+        ibo.increaseCount(meshComponent.totalIndexCount);
     }
 
     template<typename T>
-    void tryUpload(
-            BaseMeshComponent<T> &meshComponent,
-            uint32_t &previousVertexCount,
-            uint32_t &previousIndexCount,
-            VIRenderModel& renderModel
-    ) {
+    void VIRenderModel::tryUpload(BaseMeshComponent<T> &meshComponent,
+                                  u32 &previousVertexCount, u32 &previousIndexCount) {
         if (meshComponent.isUpdated) {
             meshComponent.isUpdated = false;
-            upload(meshComponent, renderModel);
+            meshComponent.invalidateMeshes(previousVertexCount, previousIndexCount);
+            upload(meshComponent);
         }
         previousIndexCount += meshComponent.totalIndexCount;
         previousVertexCount += meshComponent.totalVertexCount;
     }
 
     template<typename T>
-    void tryUploadBatchMesh(
-            const uint32_t &id,
+    void VIRenderModel::tryUploadBatchMesh(
+            u32 batchId,
             BaseMeshComponent<BatchVertex<T>> &baseMeshComponent,
-            uint32_t &previousVertexCount,
-            uint32_t &previousIndexCount,
-            VIRenderModel& renderModel
+            u32 &previousVertexCount, u32 &previousIndexCount
     ) {
         if (baseMeshComponent.isUpdated) {
-            setBatchId(baseMeshComponent, id);
+            baseMeshComponent.setId(batchId);
         }
-        tryUpload<BatchVertex<T>>(baseMeshComponent, previousVertexCount, previousIndexCount, renderModel);
-    }
-
-    template<typename T>
-    void uploadStatic(const VertexDataComponent<T> &vertexDataComponent, VRenderModel& renderModel) {
-        renderModel.vao.bind();
-        renderModel.vbo.bind();
-        renderModel.vbo.loadStatic(vertexDataComponent.vertexData);
-        VertexArray::unbind();
+        tryUpload<BatchVertex<T>>(baseMeshComponent, previousVertexCount, previousIndexCount);
     }
 }

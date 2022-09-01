@@ -9,6 +9,8 @@
 #include <gui/SceneHierarchy.h>
 #include <gui/MeshLayout.h>
 
+#include <graphics/camera/Camera.h>
+
 #include "AssetBrowser.h"
 #include "SceneViewport.h"
 
@@ -123,7 +125,7 @@ namespace studio {
 
         Ref<Scene> editorScene = createRef<Scene>(); // store entities in scope of Editor and not Runtime!
 
-        Ref<Camera3dController> activeSceneCameraController;
+        Ref<Camera3D> activeCamera;
 
         bool windowClosePressed = false;
 

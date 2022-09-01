@@ -114,4 +114,9 @@ namespace engine::core {
         }
     }
 
+    void LayerStack::onVisualDraw(time::Time dt) {
+        for (Layer* layer : _layers) {
+            layer->onVisualDraw(dt);
+        }
+    }
 }
