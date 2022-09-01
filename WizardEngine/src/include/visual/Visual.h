@@ -33,9 +33,9 @@ namespace engine::visual {
         static void setDockspace();
         static void endDockspace();
         // fonts
-        static u32 addFont(const char* filepath, f32 glyphRange);
+        static u32 addFont(const char* filepath, f32 fontSize);
         static void setDefaultFont(u32 fontIndex);
-        static void setDefaultFont(const char* filepath, f32 glyphRange);
+        static void setDefaultFont(const char* filepath, f32 fontSize);
         // theme
         static void setTheme();
         // events
@@ -61,7 +61,7 @@ namespace engine::visual {
     class Panel final {
 
     public:
-        static void begin(const char* title);
+        static void begin(const char* title, const vec2f& size);
         static void end();
 
         static bool isFocused(ImGuiFocusedFlags flags = 0);

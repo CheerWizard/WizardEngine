@@ -201,6 +201,7 @@ namespace engine::core {
         activeScene = scene;
         RenderSystem::activeScene = scene;
         _scriptSystem->setActiveScene(scene);
+        Physics::activeScene = scene;
     }
 
     void Application::setActiveScene(const u32 &sceneIndex) {
@@ -208,6 +209,7 @@ namespace engine::core {
         _scriptSystem->setActiveScene(activeScene);
         RenderSystem::activeScene = activeScene;
         RenderSystem::onUpdate();
+        Physics::activeScene = activeScene;
     }
 
     void Application::restart() {
@@ -283,6 +285,7 @@ namespace engine::core {
 
     void Application::onRuntimeUpdate(Time dt) {
         if (!activeScene->isEmpty()) {
+            Physics::onUpdate(dt);
             _scriptSystem->onUpdate(dt);
             RenderSystem::onUpdate();
         } else {
@@ -446,8 +449,8 @@ namespace engine::core {
         gaussianBlurFrameFormat.width = _window->getWidth();
         gaussianBlurFrameFormat.height = _window->getHeight();
         GaussianBlurEffectRenderer gaussianBlurEffectRenderer(gaussianBlurFrameFormat);
+        RenderSystem::gaussianBlurRenderer = { gaussianBlurFrameFormat };
         gaussianBlurEffect = gaussianBlurEffectRenderer.getGaussianBlurEffect();
-        RenderSystem::postEffectRenderers.emplace_back(gaussianBlurEffectRenderer);
     }
 
     void Application::initTextureMixer() {

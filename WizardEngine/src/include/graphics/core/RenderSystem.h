@@ -58,6 +58,8 @@ namespace engine::graphics {
         static vector<Ref<Renderer>> textRenderers;
         // post effects
         static vector<PostEffectRenderer> postEffectRenderers;
+        // gaussian blur effect
+        static GaussianBlurEffectRenderer gaussianBlurRenderer;
         // mixer
         static TextureMixer textureMixer;
         // HDR/LDR
@@ -66,5 +68,4 @@ namespace engine::graphics {
     private:
         static RenderSystemCallback* callback;
     };
-
 }

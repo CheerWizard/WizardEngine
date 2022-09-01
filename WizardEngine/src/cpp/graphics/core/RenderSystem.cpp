@@ -29,6 +29,8 @@ namespace engine::graphics {
     TextureMixer RenderSystem::textureMixer;
     // HDR/LDR
     HdrEffectRenderer RenderSystem::hdrEffectRenderer;
+    // Gaussian Blur
+    GaussianBlurEffectRenderer RenderSystem::gaussianBlurRenderer;
 
     void RenderSystem::onDestroy() {
         screenRenderer.release();
@@ -112,13 +114,15 @@ namespace engine::graphics {
         ColorAttachment sceneTexture1;
         sceneFrame->getColorAttachment(0, sceneTexture1);
         postProcessedTextures.emplace_back(sceneTexture1.id);
-        // render target 2 has pos effects
+        // render target 2 with post effects
         ColorAttachment sceneTexture2;
         sceneFrame->getColorAttachment(1, sceneTexture2);
         u32 postProcessedTexture = sceneTexture2.id;
         for (PostEffectRenderer& postEffectRenderer : postEffectRenderers) {
             postProcessedTexture = postEffectRenderer.render(postProcessedTexture);
         }
+        // Gaussian Blur effect for render target 2
+        postProcessedTexture = gaussianBlurRenderer.render(postProcessedTexture);
         postProcessedTextures.emplace_back(postProcessedTexture);
 
         // mixing all textures

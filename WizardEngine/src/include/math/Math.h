@@ -13,10 +13,10 @@ namespace engine::math {
     using namespace core;
 
     void random(
-            const s32& minRange,
-            const s32& maxRange,
-            const u32& count,
-            const std::function<void(const u32& i, const f32& random)>& callback
+            int minRange,
+            int maxRange,
+            int count,
+            const std::function<void(int i, f32 random)>& callback
     );
     f32 random(const double& minRange, const double& maxRange);
     f32 random(const s32& minRange, const s32& maxRange);
@@ -896,5 +896,67 @@ namespace engine::math {
                 ((v2.z() - v1.z()) * (v2.z() - v1.z())) +
                 ((v2.w() - v1.w()) * (v2.w() - v1.w()))
         );
+    }
+
+    // TODO clang can't compile for some magic reasons!
+
+//    template<typename T>
+//    vec2<T> max(const vec2<T>& v1, const vec2<T>& v2) {
+//        vec2<T> result;
+//        result[0] = v1[0] > v2[0] ? v1[0] : v2[0];
+//        result[1] = v1[1] > v2[1] ? v1[1] : v2[1];
+//        return result;
+//    }
+//
+//    template<typename T>
+//    vec3<T> max(const vec3<T>& v1, const vec3<T>& v2) {
+//        vec3<T> result;
+//        result[0] = v1[0] > v2[0] ? v1[0] : v2[0];
+//        result[1] = v1[1] > v2[1] ? v1[1] : v2[1];
+//        result[2] = v1[2] > v2[2] ? v1[2] : v2[2];
+//        return result;
+//    }
+//
+//    template<typename T>
+//    vec4<T> max(const vec4<T>& v1, const vec4<T>& v2) {
+//        vec4<T> result;
+//        result[0] = v1[0] > v2[0] ? v1[0] : v2[0];
+//        result[1] = v1[1] > v2[1] ? v1[1] : v2[1];
+//        result[2] = v1[2] > v2[2] ? v1[2] : v2[2];
+//        result[3] = v1[3] > v2[3] ? v1[3] : v2[3];
+//        return result;
+//    }
+//
+//    template<typename T>
+//    T max(const vec2<T>& v) {
+//        return v[0] > v[1] ? v[0] : v[1];
+//    }
+//
+//    template<typename T>
+//    T max(const vec3<T>& v) {
+//        T result = v[0];
+//        for (u32 i = 1; i < 2; i++) {
+//            result = v[i] > result ? v[i] : result;
+//        }
+//        return result;
+//    }
+//
+//    template<typename T>
+//    T max(const vec4<T>& v) {
+//        T result = v[0];
+//        for (u32 i = 1; i < 3; i++) {
+//            result = v[i] > result ? v[i] : result;
+//        }
+//        return result;
+//    }
+
+    template<typename T>
+    T abs(T value) {
+        return std::abs(value);
+    }
+
+    template<typename T>
+    vec3<T> reflect(const vec3<T>& v1, const vec3<T>& v2) {
+        return v1 - v2 * math::dot(v2, v1) * static_cast<T>(2);
     }
 }

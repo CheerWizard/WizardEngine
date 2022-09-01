@@ -170,6 +170,11 @@ template_component(component_type, template_type), engine::io::Serializable
         template<class Component1, class Component2, class Component3, typename Function>
         void each(const Function& function);
 
+        template<class Component, typename Function>
+        void eachCompare(const Function& function);
+        template<class Component1, class Component2, typename Function>
+        void eachCompare(const Function& function);
+
         size_t entity_count();
         template<class Component>
         size_t component_count();
@@ -364,6 +369,39 @@ template_component(component_type, template_type), engine::io::Serializable
             ByComponent* actualComponent = (ByComponent*) &componentData[i];
             if (condition(actualComponent)) {
                 return getComponent<ResultComponent>(actualComponent->entityId);
+            }
+        }
+    }
+
+    template<class Component, typename Function>
+    void Registry::eachCompare(const Function &function) {
+        validate_component("eahcCompare()", Component, );
+
+        u32 typeSize = Component::TYPE_SIZE;
+        component_data& componentData = components[Component::ID];
+        for (u32 i = 0; i < componentData.size(); i += typeSize) {
+            for (u32 j = i + typeSize; j < componentData.size(); j += typeSize) {
+                Component* component1 = (Component*) &componentData[i];
+                Component* component2 = (Component*) &componentData[j];
+                function(component1, component2);
+            }
+        }
+    }
+
+    template<class Component1, class Component2, typename Function>
+    void Registry::eachCompare(const Function &function) {
+        validate_component("eachCompare()", Component1, );
+        validate_component("eachCompare()", Component2, );
+
+        u32 typeSize1 = Component1::TYPE_SIZE;
+        u32 typeSize2 = Component2::TYPE_SIZE;
+        component_data& componentData1 = components[Component1::ID];
+        component_data& componentData2 = components[Component2::ID];
+        for (u32 i = 0; i < componentData1.size(); i += typeSize1) {
+            for (u32 j = 0; j < componentData2.size(); j += typeSize2) {
+                Component1* component1 = (Component1*) &componentData1[i];
+                Component2* component2 = (Component2*) &componentData2[j];
+                function(component1, component2);
             }
         }
     }

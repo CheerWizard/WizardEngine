@@ -101,19 +101,32 @@ namespace test {
                 CubeMapTextureComponent(skyboxId, TextureBuffer::getTypeId(TextureType::CUBE_MAP))
         ));
 
-        math::random(-10, 10, 12, [this, &scene](const u32& i, const f32& r) {
+        math::random(-10, 10, 2, [this, &scene](int i, f32 r) {
             Batch3d pack = Batch3d(&"SurvivalBackPack"[i], scene.get());
             pack.getTransform().position = { r * i, r * i, r * i };
             pack.getTransform().rotation = { r * i, r * i, r * i };
             pack.applyTransform();
+            vec3f velocity = { 0.0005f, 0.0005f, 0.0005f };
+            velocity *= i%2 == 0 ? 1 : -1;
+            pack.add<Velocity>(velocity);
+            pack.add<SphereCollider>(pack.getTransform().position, 1.0f);
             packs.emplace_back(pack);
         });
 
-        math::random(-10, 10, 1, [this, &scene](const u32& i, const f32& r) {
+        packs[0].getTransform().position = { 1, 1, 1 };
+        packs[0].applyTransform();
+        packs[1].getTransform().position = { 5, 5, 3 };
+        packs[1].applyTransform();
+
+        math::random(-10, 10, 0, [this, &scene](int i, f32 r) {
             Instance3d pack = Instance3d(&"SurvivalBackPackInstanced"[i], scene.get());
             pack.getTransform().position = { r * i, r * i, r * i };
             pack.getTransform().rotation = { r * i, r * i, r * i };
             pack.applyTransform();
+            vec3f velocity = { 0.0005f, 0.0005f, 0.0005f };
+            velocity *= i%2 == 0 ? 1 : -1;
+            pack.add<Velocity>(velocity);
+            pack.add<SphereCollider>(pack.getTransform().position, 1.0f);
             instancedPacks.emplace_back(pack);
         });
 
@@ -200,6 +213,9 @@ namespace test {
             phong.depthMap().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_roughness.jpg");
             phong.enableParallaxMap() = true;
             phong.heightScale() = 0.5;
+
+            phong.brightness() = 10;
+
             pack.add<Phong>(phong);
         }
 
@@ -263,6 +279,7 @@ namespace test {
         }
 
         Visual::setTheme();
+        Visual::setDefaultFont("assets/fonts/opensans/OpenSans-Bold.ttf", 18);
     }
 
     TestLayer::~TestLayer() {
@@ -330,6 +347,14 @@ namespace test {
 
         Application::get().enableMouseHovering = true;
         Application::get().enableMouseCursor = true;
+
+        for (auto& pack : packs) {
+            pack.applyTransform();
+        }
+
+        for (auto& pack : instancedPacks) {
+            pack.applyTransform();
+        }
     }
 
     void TestLayer::onUpdate(time::Time dt) {
@@ -343,20 +368,6 @@ namespace test {
         auto& skyboxTransform = Application::get().activeScene->getSkybox().get<Transform3dComponent>()->modelMatrix;
         skyboxTransform.rotation[1] += 0.001f;
         skyboxTransform.apply();
-
-        if (EventRegistry::keyHold(R)) {
-            math::random(-10, 10, packs.size(), [this](const u32& i, const f32& r) {
-                packs[i].getTransform().position = { r * i, r * i, r * i };
-                packs[i].getTransform().rotation = { r * i, r * i, r * i };
-                packs[i].applyTransform();
-            });
-
-            math::random(-10, 10, instancedPacks.size(), [this](const u32& i, const f32& r) {
-                instancedPacks[i].getTransform().position = { r * i, r * i, r * i };
-                instancedPacks[i].getTransform().rotation = { r * i, r * i, r * i };
-                instancedPacks[i].applyTransform();
-            });
-        }
 
         auto hoveredTransform = hoveredEntity.get<Transform3dComponent>();
         if (hoveredTransform) {
@@ -622,10 +633,30 @@ namespace test {
     }
 
     void TestLayer::onVisualDraw(time::Time dt) {
-        // test panel
-        Panel::begin("Test Panel");
-        IntUniform intUniform = { "int", 1 };
-        Slider::draw(intUniform, { 0, 100 });
+        // scene panel
+        Panel::begin("Scene", { 800, 600 });
+        // post effects
+        Checkbox::draw("enabled", Application::get().gaussianBlurEffect->enabled);
+        Slider::draw("amount", Application::get().gaussianBlurEffect->amount, { 1, 20 });
+        // objects
+        for (auto& pack : packs) {
+            Slider::draw("brightness", pack.get<Phong>()->brightness(), { 0, 100 });
+            auto& transform = pack.getTransform();
+            auto v = pack.get<Velocity>();
+            Vec3fUniform position = { "position", transform.position };
+            Vec3fUniform rotation = { "rotation", transform.rotation };
+            Vec3fUniform scale = { "scale", transform.scale };
+            Vec3fUniform velocity = { "velocity", v->velocity };
+            Controller::draw(position, 0, 10);
+            Controller::draw(scale, 0, 10);
+            Controller::draw(rotation, 0, 10);
+            Controller::draw(velocity, 0, 10);
+            transform.position = position.value;
+            transform.rotation = rotation.value;
+            transform.scale = scale.value;
+            v->velocity = velocity.value;
+        }
+
         Panel::end();
     }
 }

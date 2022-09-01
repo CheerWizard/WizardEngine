@@ -83,7 +83,7 @@ namespace engine::graphics {
 
     template<typename T>
     void Object<T>::applyTransform() {
-        math::updateModel3d(getTransform());
+        getTransform().apply();
     }
 
     template<typename T>

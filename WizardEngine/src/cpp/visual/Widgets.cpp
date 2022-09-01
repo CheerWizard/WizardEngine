@@ -239,6 +239,10 @@ namespace engine::visual {
         ImGui::Checkbox(uniform.name, &uniform.value);
     }
 
+    void Checkbox::draw(const char *name, bool &value) {
+        ImGui::Checkbox(name, &value);
+    }
+
     void Slider::draw(FloatUniform &uniform, const vec2f &range) {
         ImGui::SliderFloat(uniform.name, &uniform.value, range.x(), range.y());
     }
@@ -249,5 +253,17 @@ namespace engine::visual {
 
     void Slider::draw(DoubleUniform &uniform, const vec2f &range) {
         ImGui::SliderFloat(uniform.name, (float*) &uniform.value, range.x(), range.y());
+    }
+
+    void Slider::draw(const char* name, float& value, const vec2f &range) {
+        ImGui::SliderFloat(name, &value, range.x(), range.y());
+    }
+
+    void Slider::draw(const char* name, int& value, const vec2i &range) {
+        ImGui::SliderInt(name, &value, range.x(), range.y());
+    }
+
+    void Slider::draw(const char* name, u32& value, const vec2i &range) {
+        ImGui::SliderInt(name, (int*)&value, range.x(), range.y());
     }
 }

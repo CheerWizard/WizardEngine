@@ -45,12 +45,15 @@
 
 #include <serialization/AssetManager.h>
 
+#include <physics/Physics.h>
+
 using namespace engine::core;
 using namespace engine::graphics;
 using namespace engine::event;
 using namespace engine::time;
 using namespace engine::network;
 using namespace engine::ecs;
+using namespace engine::physics;
 
 #define KEY_PRESSED(key, action) engine::event::EventRegistry::onKeyPressedMap[key] = { [this](KeyCode keyCode) { action } }
 #define KEY_RELEASED(key, action) engine::event::EventRegistry::onKeyReleasedMap[key] = { [this](KeyCode keyCode) { action } }

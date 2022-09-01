@@ -21,6 +21,7 @@ namespace engine::visual {
     class Checkbox final {
     public:
         static void draw(BoolUniform& uniform);
+        static void draw(const char* name, bool& value);
     };
 
     class Slider final {
@@ -28,6 +29,10 @@ namespace engine::visual {
         static void draw(FloatUniform& uniform, const vec2f& range);
         static void draw(IntUniform& uniform, const vec2i& range);
         static void draw(DoubleUniform& uniform, const vec2f& range);
+
+        static void draw(const char* name, float& value, const vec2f& range);
+        static void draw(const char* name, int& value, const vec2i& range);
+        static void draw(const char* name, u32& value, const vec2i& range);
     };
 
 }

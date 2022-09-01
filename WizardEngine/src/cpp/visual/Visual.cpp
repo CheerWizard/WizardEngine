@@ -29,12 +29,10 @@ namespace engine::visual {
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-
         IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
         IO.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
         IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
         IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
-
         // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
         if (IO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
             STYLE.WindowRounding = 0.0f;
@@ -45,21 +43,21 @@ namespace engine::visual {
         ImGui_ImplOpenGL3_Init(GRAPHICS_CORE_VERSION);
     }
 
-    u32 Visual::addFont(const char *filepath, f32 glyphRange) {
-        fonts.emplace_back(IO.Fonts->AddFontFromFileTTF(filepath, glyphRange));
-        return fonts.size();
+    u32 Visual::addFont(const char *filepath, f32 fontSize) {
+        fonts.emplace_back(IO.Fonts->AddFontFromFileTTF(filepath, fontSize));
+        return fonts.size() - 1;
     }
 
     void Visual::setDefaultFont(u32 fontIndex) {
-        if (fontIndex > fonts.size()) {
+        if (fontIndex >= fonts.size()) {
             ENGINE_ERR("Visual::setDefaultFont: invalid condition fontIndex > fonts.size()");
             return;
         }
         IO.FontDefault = fonts.at(fontIndex);
     }
 
-    void Visual::setDefaultFont(const char *filepath, f32 glyphRange) {
-        setDefaultFont(addFont(filepath, glyphRange));
+    void Visual::setDefaultFont(const char *filepath, f32 fontSize) {
+        setDefaultFont(addFont(filepath, fontSize));
     }
 
     void Visual::setTheme() {
@@ -152,6 +150,7 @@ namespace engine::visual {
     }
 
     void Visual::end() {
+        ENGINE_INFO("Visual::end(): width={0}, height={1}", props.width, props.height);
         IO.DisplaySize = ImVec2(props.width, props.height);
 
         ImGui::Render();
@@ -218,19 +217,19 @@ namespace engine::visual {
     }
 
     void Visual::onKeyPressed(event::KeyCode keyCode) {
-        IO.KeysDown[keyCode] = true;
+//        IO.KeysDown[keyCode] = true;
     }
 
     void Visual::onKeyHold(event::KeyCode keyCode) {
-        IO.KeysDown[keyCode] = true;
+//        IO.KeysDown[keyCode] = true;
     }
 
     void Visual::onKeyReleased(event::KeyCode keyCode) {
-        IO.KeysDown[keyCode] = false;
+//        IO.KeysDown[keyCode] = false;
     }
 
     void Visual::onKeyTyped(event::KeyCode keyCode) {
-        IO.AddInputCharacter(keyCode);
+//        IO.AddInputCharacter(keyCode);
     }
 
     void Visual::onMouseScrolled(double xOffset, double yOffset) {
@@ -258,9 +257,9 @@ namespace engine::visual {
         ENGINE_INFO("onWindowResized(width = {0}, height = {1})", width, height);
     }
 
-    void Panel::begin(const char* title) {
+    void Panel::begin(const char* title, const vec2f& size) {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2 {0 , 0});
-
+        ImGui::SetNextWindowSize({ size.x(), size.y() });
         static bool open = true;
         if (!ImGui::Begin(title, &open)) {
             end();
