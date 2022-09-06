@@ -8,6 +8,10 @@ if(VISUAL)
     add_definitions(-DVISUAL=1)
 endif(VISUAL)
 
+if(PROFILING)
+    add_definitions(-DPROFILING=1)
+endif(PROFILING)
+
 # copying target dir to destination dir. If destination does not exist, create it.
 macro(copy_dir dir1 dir2)
     set(srcDir ${CMAKE_SOURCE_DIR}/${dir1})

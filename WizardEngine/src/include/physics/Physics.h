@@ -26,10 +26,11 @@ namespace engine::physics {
         static void onUpdate(time::Time dt);
 
     private:
-        static void onIntersect(const IntersectData& intersectData, Registry& registry, entity_id entity1, entity_id entity2);
+        static void handleIntersectData(const IntersectData& intersectData, Registry& registry, entity_id entity1, entity_id entity2);
 
     public:
         static Ref<Scene> activeScene;
         static PhysicsCallback callback;
+        static bool isEnabled;
     };
 }

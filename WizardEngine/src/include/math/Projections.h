@@ -24,22 +24,24 @@ namespace engine::math {
 
         OrthographicMatrix(
                 const char* name,
-                const float& left,
-                const float& right,
-                const float& bottom,
-                const float& top
+                const float left,
+                const float right,
+                const float bottom,
+                const float top
         ) : left(left), right(right), bottom(bottom), top(top) {
             this->name = name;
         }
 
         OrthographicMatrix(
-                const float& left,
-                const float& right,
-                const float& bottom,
-                const float& top
+                const float left,
+                const float right,
+                const float bottom,
+                const float top
         ) : left(left), right(right), bottom(bottom), top(top) {
             name = "projection";
         }
+
+        void apply();
     };
 
     struct PerspectiveMatrix : shader::Mat4fUniform {
@@ -51,6 +53,8 @@ namespace engine::math {
         PerspectiveMatrix() {
             name = "projection";
         }
+
+        void apply();
     };
 
     void serialize(YAML::Emitter& out, const char* key, const OrthographicMatrix& projection);
@@ -58,8 +62,5 @@ namespace engine::math {
 
     void serialize(YAML::Emitter& out, const char* key, const PerspectiveMatrix& projection);
     void deserialize(const YAML::Node& parent, const char* key, PerspectiveMatrix& projection);
-
-    void update(OrthographicMatrix &orthographicMatrix);
-    void update(PerspectiveMatrix &perspectiveMatrix);
 
 }

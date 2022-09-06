@@ -22,7 +22,9 @@ namespace engine::audio {
             Params... params
     )->typename std::enable_if_t<!std::is_same_v<void, decltype(function(params...))>, decltype(function(params...))> {
         auto result = function(std::forward<Params>(params)...);
+#ifdef DEBUG
         checkError();
+#endif
         return result;
     }
 

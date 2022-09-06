@@ -17,8 +17,8 @@ namespace engine::core {
         ENGINE_INFO("Creating window {0} ({1}, {2})", windowProps.title, windowProps.width, windowProps.height);
 
         if (!isInitialized) {
-            ENGINE_ASSERT(glfwInit(), "Failed to initialize GLFW!");
-            isInitialized = true;
+            isInitialized = glfwInit() != 0;
+            ENGINE_ASSERT(isInitialized, "Failed to initialize GLFW!");
             glfwSetErrorCallback(handleError);
         }
 
@@ -180,7 +180,14 @@ namespace engine::core {
     }
 
     void Window::setPosition(const uint32_t &x, const uint32_t &y) {
-        glfwSetWindowPos(NATIVE_WINDOW, x, y);
+        xPos = x;
+        yPos = y;
+        glfwSetWindowPos(NATIVE_WINDOW, xPos, yPos);
+    }
+
+    void Window::getPosition(float x, float y) {
+        x = static_cast<float>(xPos);
+        y = static_cast<float>(yPos);
     }
 
     void Window::onWindowResized(const uint32_t& width, const uint32_t& height) {

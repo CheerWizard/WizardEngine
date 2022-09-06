@@ -15,6 +15,9 @@ namespace engine::graphics {
             case TextureType::CUBE_MAP:
                 glTextureType = GL_TEXTURE_CUBE_MAP;
                 break;
+            case TextureType::TEXTURE_2D_ARRAY:
+                glTextureType = GL_TEXTURE_2D_ARRAY;
+                break;
             default:
                 glTextureType = GL_TEXTURE_2D;
                 break;
@@ -124,6 +127,19 @@ namespace engine::graphics {
         return textureBuffer.id;
     }
 
+    u32 TextureBuffer::loadArray(const vector<std::string> &filepaths) {
+        io::TextureArrayData textureArrayData = io::TextureFile::read(filepaths);
+
+        TextureBuffer textureBuffer(TextureType::TEXTURE_2D_ARRAY);
+        textureBuffer.bind();
+        loadArray(textureBuffer.id, textureArrayData);
+        textureBuffer.unbind();
+
+        io::TextureFile::free(textureArrayData);
+
+        return textureBuffer.id;
+    }
+
     u32 TextureBuffer::load(const std::vector<TextureFace>& faces) {
         TextureBuffer textureBuffer(TextureType::CUBE_MAP);
         textureBuffer.bind();
@@ -161,7 +177,10 @@ namespace engine::graphics {
                 internalFormat = GL_RGBA8;
                 dataFormat = GL_RGBA;
                 break;
-            default: break;
+            default:
+                internalFormat = GL_RGB;
+                dataFormat = GL_RGB;
+                break;
         }
 
         bool formatSupported = internalFormat & dataFormat;
@@ -176,6 +195,56 @@ namespace engine::graphics {
 
         glTextureStorage2D(id, 1, internalFormat, width, height);
         glTextureSubImage2D(id, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
+    }
+
+    void TextureBuffer::loadArray(const u32 &id, const io::TextureArrayData& textureArrayData) {
+        GLint internalFormat = 0;
+        GLenum dataFormat = 0;
+        int width = textureArrayData.width, height = textureArrayData.height;
+
+        switch (textureArrayData.channels) {
+            case CHANNEL_RED:
+                internalFormat = GL_RED;
+                dataFormat = GL_RED;
+                break;
+            case CHANNEL_RGB:
+                internalFormat = GL_RGB8;
+                dataFormat = GL_RGB;
+                break;
+            case CHANNEL_RGBA:
+                internalFormat = GL_RGBA8;
+                dataFormat = GL_RGBA;
+                break;
+            default:
+                internalFormat = GL_RGB8;
+                dataFormat = GL_RGB;
+                break;
+        }
+
+        bool formatSupported = internalFormat & dataFormat;
+        if (!formatSupported) {
+            ENGINE_WARN(
+                    "TextureBuffer {0} does not support format! internalFormat: {1}, dataFormat: {2}",
+                    id,
+                    internalFormat,
+                    dataFormat
+            );
+        }
+
+        glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, width, height,
+                     textureArrayData.textureData.size(), 0,
+                     dataFormat, GL_UNSIGNED_BYTE, nullptr);
+
+        for (int i = 0 ; i < textureArrayData.textureData.size() ; i++) {
+            const auto& textureData = textureArrayData.textureData[i];
+            int sizeX = textureData.width;
+            int sizeY = textureData.height;
+            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, 1000, 1000, 1,
+                            GL_RGBA, GL_UNSIGNED_BYTE, textureData.data);
+        }
+
+        glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
 
     void TextureBuffer::load(const u32& id, const TextureFaceType &faceType, const io::TextureData &textureData) {
@@ -255,4 +324,5 @@ namespace engine::graphics {
     u32 TextureBuffer::getTextureId(const char *filepath) {
         return textureIdCache.at(filepath);
     }
+
 }

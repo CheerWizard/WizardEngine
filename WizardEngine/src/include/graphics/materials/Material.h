@@ -22,14 +22,10 @@ namespace engine::graphics {
         vector<DoubleUniform> doubles;
         // vectors
         vector<Vec4fUniform> vec4;
-        // textures
-        vector<TextureComponent> textures;
+        // primitive arrays
+        vector<IntUniformArray> intArrays;
 
         Material(const char* name) : name(name) {}
-
-        [[nodiscard]] size_t getLimit() const {
-            return VideoStats::getMaxSlots() / textures.size();
-        }
     };
 
     component(MaterialList) {

@@ -12,6 +12,7 @@ macro(include_engine path)
             ${path}/vendor/openal-soft/include
             ${path}/vendor/yaml-cpp/include
             ${path}/vendor/glm/glm
+            ${path}/vendor/ImGuizmo
     )
 endmacro()
 # use this macro to link WizardEngine and all it's dependencies!
@@ -26,6 +27,7 @@ macro(link_to_engine project)
             stb
             freetype
             glm
+            imguizmo
     )
 endmacro()
 
@@ -42,5 +44,6 @@ macro(link_to_engine_dll project)
             assimp-vc143-mtd
             OpenAL32
             yaml-cppd
+            imguizmo
     )
 endmacro()

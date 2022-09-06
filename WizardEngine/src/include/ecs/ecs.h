@@ -171,9 +171,9 @@ template_component(component_type, template_type), engine::io::Serializable
         void each(const Function& function);
 
         template<class Component, typename Function>
-        void eachCompare(const Function& function);
+        void eachPair(const Function& function);
         template<class Component1, class Component2, typename Function>
-        void eachCompare(const Function& function);
+        void eachPair(const Function& function);
 
         size_t entity_count();
         template<class Component>
@@ -374,7 +374,7 @@ template_component(component_type, template_type), engine::io::Serializable
     }
 
     template<class Component, typename Function>
-    void Registry::eachCompare(const Function &function) {
+    void Registry::eachPair(const Function &function) {
         validate_component("eahcCompare()", Component, );
 
         u32 typeSize = Component::TYPE_SIZE;
@@ -389,7 +389,7 @@ template_component(component_type, template_type), engine::io::Serializable
     }
 
     template<class Component1, class Component2, typename Function>
-    void Registry::eachCompare(const Function &function) {
+    void Registry::eachPair(const Function &function) {
         validate_component("eachCompare()", Component1, );
         validate_component("eachCompare()", Component2, );
 

@@ -28,6 +28,8 @@ namespace engine::math {
         vec3f forwardDirection() const;
         vec3f upDirection() const;
         vec3f rightDirection() const;
+
+        void apply();
     };
 
     struct ViewMatrix2d : Mat4fUniform {
@@ -37,10 +39,9 @@ namespace engine::math {
         ViewMatrix2d() {
             name = "view";
         }
-    };
 
-    void update(ViewMatrix2d &viewMatrix2D);
-    void update(ViewMatrix3d &viewMatrix3D);
+        void apply();
+    };
 
     void serialize(YAML::Emitter& out, const char* key, const ViewMatrix2d& vm);
     void deserialize(const YAML::Node& parent, const char* key, ViewMatrix2d& vm);

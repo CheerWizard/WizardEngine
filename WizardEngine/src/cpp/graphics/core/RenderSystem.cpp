@@ -3,6 +3,7 @@
 //
 
 #include <graphics/core/RenderSystem.h>
+#include <profiler/Profiler.h>
 
 namespace engine::graphics {
     // frames
@@ -52,6 +53,8 @@ namespace engine::graphics {
     }
 
     void RenderSystem::onUpdate() {
+        PROFILE_FUNCTION();
+
         sceneFrame->bind();
 
         clearDepthBuffer();

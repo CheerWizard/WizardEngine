@@ -92,8 +92,8 @@ namespace test {
         vector<Batch3d> packs;
         vector<Instance3d> instancedPacks;
         bool msaaEnabled = false;
-        Entity hoveredEntity;
         PhongLight light;
+        bool showGizmo = false;
     };
 
 }

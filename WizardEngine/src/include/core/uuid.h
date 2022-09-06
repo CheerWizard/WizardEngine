@@ -16,16 +16,16 @@ namespace engine {
 
     public:
         uuid();
-        uuid(u64 uuid);
+        uuid(int uuid);
         uuid(const uuid& other);
 
     public:
-        operator u64() { return _uuid; }
-        operator const u64() const { return _uuid; }
-        bool operator ==(u64 other) const { return _uuid == other; }
+        operator int() { return _uuid; }
+        operator const int() const { return _uuid; }
+        bool operator ==(int other) const { return _uuid == other; }
 
     private:
-        u64 _uuid;
+        int _uuid;
     };
 }
 

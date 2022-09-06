@@ -23,18 +23,18 @@ namespace engine::graphics {
             floats.emplace_back("maxLayers", 32);
             floats.emplace_back("brightness", 1);
 
-            textures.emplace_back(IntUniform { "albedo", 0 });
-            textures.emplace_back(IntUniform { "diffuseMap", 1 });
-            textures.emplace_back(IntUniform { "specularMap", 2 });
-            textures.emplace_back(IntUniform { "normalMap", 3 });
-            textures.emplace_back(IntUniform { "depthMap", 4 });
-
             flags.emplace_back("enableAlbedoMap", false);
             flags.emplace_back("enableDiffuseMap", false);
             flags.emplace_back("enableSpecularMap", false);
             flags.emplace_back("enableBlinn", false);
             flags.emplace_back("enableNormalMap", false);
             flags.emplace_back("enableParallaxMap", false);
+
+            ints.emplace_back("albedoSlot", 0);
+            ints.emplace_back("diffuseSlot", 1);
+            ints.emplace_back("specularSlot", 2);
+            ints.emplace_back("normalSlot", 3);
+            ints.emplace_back("depthSlot", 4);
         }
 
         Phong(const vec4f& colorValue) : Material("phong") {
@@ -49,18 +49,18 @@ namespace engine::graphics {
             floats.emplace_back("minLayers", 8);
             floats.emplace_back("maxLayers", 32);
 
-            textures.emplace_back(IntUniform { "albedo", 0 });
-            textures.emplace_back(IntUniform { "diffuseMap", 1 });
-            textures.emplace_back(IntUniform { "specularMap", 2 });
-            textures.emplace_back(IntUniform { "normalMap", 3 });
-            textures.emplace_back(IntUniform { "depthMap", 4 });
-
             flags.emplace_back("enableAlbedoMap", false);
             flags.emplace_back("enableDiffuseMap", false);
             flags.emplace_back("enableSpecularMap", false);
             flags.emplace_back("enableBlinn", false);
             flags.emplace_back("enableNormalMap", false);
             flags.emplace_back("enableParallaxMap", false);
+
+            ints.emplace_back("albedoSlot", 0);
+            ints.emplace_back("diffuseSlot", 1);
+            ints.emplace_back("specularSlot", 2);
+            ints.emplace_back("normalSlot", 3);
+            ints.emplace_back("depthSlot", 4);
         }
 
         inline vec4f& color() {
@@ -101,26 +101,6 @@ namespace engine::graphics {
 
         inline float& brightness() {
             return floats[8].value;
-        }
-
-        inline TextureComponent& albedo() {
-            return textures[0];
-        }
-
-        inline TextureComponent& diffuseMap() {
-            return textures[1];
-        }
-
-        inline TextureComponent& specularMap() {
-            return textures[2];
-        }
-
-        inline TextureComponent& normalMap() {
-            return textures[3];
-        }
-
-        inline TextureComponent& depthMap() {
-            return textures[4];
         }
 
         inline BoolUniform& enableAlbedoMap() {

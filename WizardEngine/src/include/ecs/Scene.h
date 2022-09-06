@@ -34,7 +34,7 @@ namespace engine::ecs {
     public:
         Entity findEntity(const uuid& uuid);
         Entity findEntity(const UUIDComponent& uuid);
-        Entity findEntity(u64 uuid);
+        Entity findEntity(int uuid);
 
     private:
         std::string name;

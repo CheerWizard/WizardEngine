@@ -53,6 +53,10 @@ include_directories(vendor/yaml-cpp/include)
 add_subdirectory(vendor/glm/glm)
 include_directories(vendor/glm/glm)
 
+#/ ImGuizmo
+add_subdirectory(vendor/ImGuizmo)
+include_directories(vendor/ImGuizmo)
+
 #/ linking dependencies.
 target_link_libraries(
         WizardEngine PUBLIC
@@ -66,14 +70,15 @@ target_link_libraries(
         ../WizardEngine/vendor/dlls/assimp-vc143-mtd
         ../WizardEngine/vendor/dlls/OpenAL32
         ../WizardEngine/vendor/dlls/yaml-cppd
+        imguizmo
 )
 
-replace_dirs(WizardEngine/src/include WizardEngine/includes/src/include)
-replace_dirs(WizardEngine/vendor WizardEngine/includes/vendor)
+#replace_dirs(WizardEngine/src/include WizardEngine/includes/src/include)
+#replace_dirs(WizardEngine/vendor WizardEngine/includes/vendor)
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
 replace_dirs(WizardEngine/vendor/dlls WizardEngine/vendor/dlls)
-replace_dirs(WizardEngine/project_template WizardEngine/project_template)
+#replace_dirs(WizardEngine/project_template WizardEngine/project_template)
 replace_dirs(WizardEngine/export_cmake WizardEngine/export_cmake)
 
 replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardSamples/assimp-vc143-mtd.dll)

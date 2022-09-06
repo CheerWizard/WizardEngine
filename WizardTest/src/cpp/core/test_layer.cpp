@@ -39,7 +39,6 @@ namespace test {
         Ref<Renderer> instanceRenderer = createRef<InstanceRenderer<Vertex3d>>(instanceShader);
         auto entityHandler = [](ecs::Registry& registry,
                                 ecs::entity_id entityId, u32 index, BaseShaderProgram& shader) {
-            int entityIdInt = (int) entityId;
 //            ENGINE_INFO("entityHandler: entity_id: {0}, index: {1}", entityIdInt, index);
             // update polygon mode
             auto* pmc = registry.getComponent<PolygonModeComponent>(entityId);
@@ -48,8 +47,10 @@ namespace test {
             auto* culling = registry.getComponent<CullingComponent>(entityId);
             Culling::setCulling(culling ? *culling : CullingComponent());
             // pass entity id to shader
-            IntUniform entityIdUniform = { "entityId", entityIdInt };
-            shader.setUniformArrayElement(index, entityIdUniform);
+            auto* uuid = registry.getComponent<UUIDComponent>(entityId);
+            IntUniform uuidUniform = { "uuids", uuid->uuid };
+            shader.setUniformArrayElement(index, uuidUniform);
+            ENGINE_INFO("UUID: {0}", uuid->uuid);
             // update single material
             auto material = registry.getComponent<Material>(entityId);
             if (material) {
@@ -106,16 +107,16 @@ namespace test {
             pack.getTransform().position = { r * i, r * i, r * i };
             pack.getTransform().rotation = { r * i, r * i, r * i };
             pack.applyTransform();
-            vec3f velocity = { 0.0005f, 0.0005f, 0.0005f };
-            velocity *= i%2 == 0 ? 1 : -1;
-            pack.add<Velocity>(velocity);
-            pack.add<SphereCollider>(pack.getTransform().position, 1.0f);
+//            vec3f velocity = { 0.0005f, 0.0005f, 0.0005f };
+//            velocity *= i%2 == 0 ? 1 : -1;
+//            pack.add<Velocity>(velocity);
+            pack.add<SphereCollider>(pack.getTransform().position, 3.0f);
             packs.emplace_back(pack);
         });
 
         packs[0].getTransform().position = { 1, 1, 1 };
         packs[0].applyTransform();
-        packs[1].getTransform().position = { 5, 5, 3 };
+        packs[1].getTransform().position = { 10, 10, 10 };
         packs[1].applyTransform();
 
         math::random(-10, 10, 0, [this, &scene](int i, f32 r) {
@@ -123,14 +124,14 @@ namespace test {
             pack.getTransform().position = { r * i, r * i, r * i };
             pack.getTransform().rotation = { r * i, r * i, r * i };
             pack.applyTransform();
-            vec3f velocity = { 0.0005f, 0.0005f, 0.0005f };
-            velocity *= i%2 == 0 ? 1 : -1;
-            pack.add<Velocity>(velocity);
-            pack.add<SphereCollider>(pack.getTransform().position, 1.0f);
+//            vec3f velocity = { 0.0005f, 0.0005f, 0.0005f };
+//            velocity *= i%2 == 0 ? 1 : -1;
+//            pack.add<Velocity>(velocity);
+            pack.add<SphereCollider>(pack.getTransform().position, 3.0f);
             instancedPacks.emplace_back(pack);
         });
 
-        RenderSystem::sceneRenderers[0]->getShader().setInstancesPerDraw(Phong().getLimit());
+        RenderSystem::sceneRenderers[0]->getShader().setInstancesPerDraw(VideoStats::getMaxSlots());
 
         io::ModelFile<BatchVertex<Vertex3d>>::read("assets/model/survival_pack.obj", {
             [this](const BaseMeshComponent<BatchVertex<Vertex3d>>& mesh) {
@@ -157,7 +158,7 @@ namespace test {
             }
         });
 
-        RenderSystem::sceneRenderers[1]->getShader().setInstancesPerDraw(Phong().getLimit());
+        RenderSystem::sceneRenderers[1]->getShader().setInstancesPerDraw(VideoStats::getMaxSlots());
 
         io::ModelFile<InstanceVertex<Vertex3d>>::read("assets/model/survival_pack.obj", {
                 [this](const BaseMeshComponent<InstanceVertex<Vertex3d>>& mesh) {
@@ -189,28 +190,47 @@ namespace test {
 //        carSolidPhong.shiny.value = 16;
 //        car.add<SolidPhong>(carSolidPhong);
 
+        u32 materialTextures = TextureBuffer::loadArray({
+            "assets/materials/survival_pack/1001_albedo.jpg",
+            "assets/materials/survival_pack/1001_AO.jpg",
+            "assets/materials/survival_pack/1001_metallic.jpg",
+            "assets/materials/survival_pack/1001_normal.png",
+            "assets/materials/survival_pack/1001_roughness.jpg"
+        });
+        u32 textureArrayTypeId = TextureBuffer::getTypeId(TextureType::TEXTURE_2D_ARRAY);
+
+        ShaderScript shaderScript;
+        shaderScript.updateRegistry = [&materialTextures, &textureArrayTypeId](const BaseShaderProgram&,ecs::Registry&) {
+            if (materialTextures != invalidTextureId) {
+                ENGINE_INFO("MaterialTexture: id={0}, typeId={1}", materialTextures, textureArrayTypeId);
+                TextureBuffer::bind(materialTextures, textureArrayTypeId);
+                TextureBuffer::activate(0);
+            }
+        };
+        shaderScript.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {};
+
+        batchRenderer->getShader().addScript(shaderScript);
+        instanceRenderer->getShader().addScript(shaderScript);
+
         for (auto pack : packs) {
             Phong phong;
             phong.color() = { 0, 0, 0, 1 };
+
             phong.ambient() = 0.2;
             phong.diffuse() = 0.8;
             phong.specular() = 0.5;
             phong.shiny() = 1;
 
-            phong.albedo().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_albedo.jpg");
             phong.enableAlbedoMap().value = true;
 
-            phong.specularMap().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_metallic.jpg");
             phong.enableSpecularMap() = true;
 
             phong.enableBlinn() = true;
 
-            phong.normalMap().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_normal.png");
             phong.enableNormalMap() = true;
 
             phong.gamma() = 1;
 
-            phong.depthMap().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_roughness.jpg");
             phong.enableParallaxMap() = true;
             phong.heightScale() = 0.5;
 
@@ -222,25 +242,22 @@ namespace test {
         for (auto instancePack : instancedPacks) {
             Phong phong;
             phong.color() = { 0, 0, 0, 1 };
+
             phong.ambient() = 0.2;
             phong.diffuse() = 0.8;
             phong.specular() = 0.5;
             phong.shiny() = 1;
 
-            phong.albedo().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_albedo.jpg");
             phong.enableAlbedoMap().value = true;
 
-            phong.specularMap().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_metallic.jpg");
             phong.enableSpecularMap() = true;
 
             phong.enableBlinn() = true;
 
-            phong.normalMap().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_normal.png");
             phong.enableNormalMap() = true;
 
             phong.gamma() = 1;
 
-            phong.depthMap().textureId = TextureBuffer::load("assets/materials/survival_pack/1001_roughness.jpg");
             phong.enableParallaxMap() = true;
             phong.heightScale() = 0.5;
             instancePack.add<Phong>(phong);
@@ -369,9 +386,10 @@ namespace test {
         skyboxTransform.rotation[1] += 0.001f;
         skyboxTransform.apply();
 
-        auto hoveredTransform = hoveredEntity.get<Transform3dComponent>();
+        auto hoveredTransform = Application::get().hoveredEntity.get<Transform3dComponent>();
         if (hoveredTransform) {
-            hoveredTransform->modelMatrix.rotation[1] += 0.001f;
+            ENGINE_INFO("hoveredEntity: transform");
+            hoveredTransform->modelMatrix.rotation[1] += 0.1f;
             hoveredTransform->modelMatrix.apply();
         }
 
@@ -392,6 +410,7 @@ namespace test {
     }
 
     void TestLayer::onWindowResized(const uint32_t &width, const uint32_t &height) {
+        RUNTIME_INFO("TestLayer::onWindowResized(w: {0}, h: {1})", width, height);
         mainCamera.setAspectRatio(width, height);
     }
 
@@ -635,28 +654,69 @@ namespace test {
     void TestLayer::onVisualDraw(time::Time dt) {
         // scene panel
         Panel::begin("Scene", { 800, 600 });
-        // post effects
-        Checkbox::draw("enabled", Application::get().gaussianBlurEffect->enabled);
-        Slider::draw("amount", Application::get().gaussianBlurEffect->amount, { 1, 20 });
-        // objects
-        for (auto& pack : packs) {
-            Slider::draw("brightness", pack.get<Phong>()->brightness(), { 0, 100 });
-            auto& transform = pack.getTransform();
-            auto v = pack.get<Velocity>();
-            Vec3fUniform position = { "position", transform.position };
-            Vec3fUniform rotation = { "rotation", transform.rotation };
-            Vec3fUniform scale = { "scale", transform.scale };
-            Vec3fUniform velocity = { "velocity", v->velocity };
-            Controller::draw(position, 0, 10);
-            Controller::draw(scale, 0, 10);
-            Controller::draw(rotation, 0, 10);
-            Controller::draw(velocity, 0, 10);
-            transform.position = position.value;
-            transform.rotation = rotation.value;
-            transform.scale = scale.value;
-            v->velocity = velocity.value;
-        }
+        // physics
+        Checkbox::draw("enablePhysics", Physics::isEnabled);
+//        // entity hovering
+//        // draw tag of hovered entity
+//        auto* tag = Application::get().hoveredEntity.get<TagComponent>();
+//        if (tag) {
+//            Text::draw(tag->tag.c_str());
+//        }
+//        // checkbox to switch mouse hovering
+//        Checkbox::draw("enableMouseHovering", Application::get().enableMouseHovering);
+//        // post effects
+//        Checkbox::draw("enabled", Application::get().gaussianBlurEffect->enabled);
+//        Slider::draw("amount", Application::get().gaussianBlurEffect->amount, { 1, 20 });
+//        // objects
+//        for (auto& pack : packs) {
+//            Slider::draw("brightness", pack.get<Phong>()->brightness(), { 0, 100 });
+//            auto& transform = pack.getTransform();
+//            auto v = pack.get<Velocity>();
+//            Vec3fUniform position = { "position", transform.position };
+//            Vec3fUniform rotation = { "rotation", transform.rotation };
+//            Vec3fUniform scale = { "scale", transform.scale };
+//            Vec3fUniform velocity = { "velocity", v->velocity };
+//            Controller::draw(position, 0, 10);
+//            Controller::draw(scale, 0, 10);
+//            Controller::draw(rotation, 0, 10);
+//            Controller::draw(velocity, 0, 10);
+//            transform.position = position.value;
+//            transform.rotation = rotation.value;
+//            transform.scale = scale.value;
+//            v->velocity = velocity.value;
+//        }
 
         Panel::end();
+        // Console
+//        Console::draw("Console", { 800, 600 });
+        // demo
+//        ImGui::ShowDemoWindow();
+        // Troubleshoot
+        ProfilerMenu::draw("Profiler Menu", { 800, 600 });
+
+        if (EventRegistry::keyHold(KeyCode::LeftControl) && Input::isMousePressed(MouseCode::ButtonLeft)) {
+            Entity selectedEntity = Application::get().hoveredEntity;
+            auto* selectedTransform = selectedEntity.get<Transform3dComponent>();
+            if (selectedTransform) {
+                Application::get().selectedEntity = selectedEntity;
+                showGizmo = !showGizmo;
+            }
+        }
+
+        if (showGizmo) {
+            // get selected entity transform
+            auto& app = Application::get();
+            Entity selectedEntity = app.selectedEntity;
+            auto* selectedTransform = selectedEntity.get<Transform3dComponent>();
+            // get window position and size
+            vec2f windowSize = {
+                    static_cast<float>(app.getWindowWidth()),
+                    static_cast<float>(app.getWindowHeight())
+            };
+            float xPos = 0, yPos = 0;
+            app.getWindow()->getPosition(xPos, yPos);
+            // draw translation gizmo
+            Gizmo::drawTranslate(mainCamera, *selectedTransform, { xPos, yPos }, windowSize);
+        }
     }
 }

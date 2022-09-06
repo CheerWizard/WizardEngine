@@ -5,6 +5,7 @@
 #pragma once
 
 #include <chrono>
+#include <math/Math.h>
 
 #define MILLIS(millis) time::ms(millis)
 #define NANO_UNIT 1.0E-9
@@ -12,50 +13,37 @@
 
 namespace engine::time {
 
-    typedef std::chrono::milliseconds ms;
-    typedef std::chrono::nanoseconds nano;
+    using namespace math;
 
     class Time {
 
     public:
-        Time(const float &seconds = 0.0f) : _seconds(seconds) {}
+        Time(float ms = 6) : ms(ms) {}
 
-        Time(const ms &ms) {
-            _seconds = (float) ms.count() / (float) MILLI_UNIT ;
+    public:
+        [[nodiscard]] float milliseconds() const;
+        [[nodiscard]] float seconds() const;
+
+    private:
+        float ms;
+
+    public:
+        friend float operator /(float v, const Time& time) {
+            return v / time.milliseconds();
         }
 
-        ~Time() = default;
+        friend float operator *(float v, const Time& time) {
+            return v * time.milliseconds();
+        }
 
-    public:
-        explicit operator float() const { return _seconds; }
-        explicit operator long long() const { return (long long) _seconds; }
-
-        inline bool operator< (const Time& other) const { return _seconds < other.getSeconds(); }
-        inline bool operator> (const Time& other) const { return _seconds > other.getSeconds(); }
-        inline bool operator== (const Time& other) const { return _seconds == other.getSeconds(); }
-        inline bool operator>= (const Time& other) const { return _seconds >= other.getSeconds(); }
-        inline bool operator<= (const Time& other) const { return _seconds <= other.getSeconds(); }
-        inline float operator- (const Time& other) const { return _seconds - other.getSeconds(); }
-        inline float operator/ (const Time& other) const { return _seconds / other.getSeconds(); }
-
-    public:
-        inline const float& getSeconds() const { return _seconds; }
-        inline float getMilliseconds() const { return _seconds * MILLI_UNIT; }
-        inline float getNanoSeconds() const { return _seconds * NANO_UNIT; }
-        inline long long getLongMs() const {
-            auto ms = (long long) getMilliseconds();
+        explicit operator float() const {
             return ms;
         }
 
-        inline void setMs(const float &ms) {
-            _seconds = ms / MILLI_UNIT;
+        template<typename T>
+        friend vec3<T> operator *(const vec3<T>& v, const Time& time) {
+            return v * static_cast<T>(time.milliseconds());
         }
-
-    private:
-        float _seconds;
     };
-
-    inline float operator* (const float& t1, const Time &t2) { return t1 * t2.getSeconds(); }
-    inline float operator/ (const float& t1, const Time &t2) { return t1 / t2.getSeconds(); }
 
 }

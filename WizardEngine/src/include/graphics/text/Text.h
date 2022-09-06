@@ -124,7 +124,7 @@ namespace engine::graphics {
             add<Text2d>(text);
             auto textProjection = TextProjection(aspectRatio);
             textProjection.viewProjection.viewMatrix.position.value = {0, 0, -1};
-            math::ViewProjections::update(textProjection.viewProjection);
+            textProjection.viewProjection.apply();
             add<TextProjection>(textProjection);
         }
     };

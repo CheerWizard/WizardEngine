@@ -16,7 +16,7 @@ namespace engine::graphics {
     }
 
     void Camera2D::applyOrtho() {
-        math::update(getOrtho());
+        getOrtho().apply();
     }
 
     ViewMatrix2d &Camera2D::getView() {
@@ -24,7 +24,7 @@ namespace engine::graphics {
     }
 
     void Camera2D::applyView() {
-        math::update(getView());
+        getView().apply();
     }
 
     void Camera2D::onUpdate(time::Time dt) {
@@ -122,7 +122,7 @@ namespace engine::graphics {
     }
 
     void Camera2D::apply() {
-        ViewProjections::update(get<Camera2dComponent>()->viewProjection);
+        get<Camera2dComponent>()->viewProjection.apply();
     }
 
     void Camera2D::applyZoom(const ZoomType &zoomType) {
@@ -173,7 +173,7 @@ namespace engine::graphics {
     }
 
     void Camera3D::applyPerspective() {
-        math::update(getPerspective());
+        getPerspective().apply();
     }
 
     ViewMatrix3d& Camera3D::getView() {
@@ -181,7 +181,7 @@ namespace engine::graphics {
     }
 
     void Camera3D::applyView() {
-        math::update(getView());
+        getView().apply();
     }
 
     void Camera3D::onUpdate(time::Time dt) {
@@ -338,7 +338,7 @@ namespace engine::graphics {
 
     void Camera3D::apply() {
         applyPosition();
-        ViewProjections::update(get<Camera3dComponent>()->viewProjection);
+        get<Camera3dComponent>()->viewProjection.apply();
     }
 
     void Camera3D::applyMouseRotate() {

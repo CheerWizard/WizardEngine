@@ -9,6 +9,8 @@
 #include <core/vector.h>
 #include <event/Events.h>
 #include <graphics/core/shader/Uniform.h>
+#include <graphics/camera/Camera.h>
+#include <graphics/transform/TransformComponents.h>
 
 namespace engine::visual {
 
@@ -56,6 +58,21 @@ namespace engine::visual {
         static bool fullScreen, openDockspace;
         static int windowFlags, dockspaceFlags;
 
+    };
+
+    using namespace graphics;
+
+    class Gizmo final {
+
+    public:
+        static void drawTranslate(Camera3D& camera, Transform3dComponent& transform,
+                                  const vec2f& windowPosition,
+                                  const vec2f& windowSize);
+        static void drawRotate(Camera3D& camera, Transform3dComponent& transform,
+                               const vec2f& windowPosition, const vec2f& windowSize);
+        static void drawScale(Camera3D& camera, Transform3dComponent& transform,
+                              const vec2f& windowPosition, const vec2f& windowSize);
+        static void enable(bool enabled);
     };
 
     class Panel final {

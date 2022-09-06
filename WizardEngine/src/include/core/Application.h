@@ -9,12 +9,12 @@
 #include <core/Memory.h>
 #include <core/ProjectManager.h>
 
+#include <time/Time.h>
+
 #include <math/RayCast.h>
 
 #include <event/Events.h>
 #include <event/GamepadCodes.h>
-
-#include <time/FpsController.h>
 
 #include <platform/core/Window.h>
 #include <platform/core/Input.h>
@@ -69,6 +69,7 @@ using namespace engine::physics;
 #include <visual/Visual.h>
 #include <visual/Console.h>
 #include <visual/Widgets.h>
+#include <visual/Troubleshoot.h>
 
 using namespace engine::visual;
 #endif
@@ -98,7 +99,7 @@ namespace engine::core {
     public:
         // window events
         void onWindowClosed();
-        void onWindowResized(const u32 &width, const u32 &height);
+        void onWindowResized(u32 width, u32 height);
         // input keyboard events
         void onKeyPressed(event::KeyCode keyCode);
         void onKeyHold(event::KeyCode keyCode);
@@ -164,11 +165,12 @@ namespace engine::core {
         Ref<Scene> activeScene;
         Ref<FrameBuffer> activeSceneFrame;
         Ref<FrameBuffer> screenFrame;
-        time::FpsController fpsController;
+        time::Time dt = 6;
         bool isJoystickConnected = false;
         // hover entity with mouse cursor
         bool enableMouseHovering = false;
         Entity hoveredEntity;
+        Entity selectedEntity;
         // mouse cursor tracker
         bool enableMouseCursor = false;
         // post effects

@@ -35,4 +35,9 @@ namespace engine::visual {
         static void draw(const char* name, u32& value, const vec2i& range);
     };
 
+    class Text final {
+    public:
+        static void draw(const char* text);
+    };
+
 }

@@ -15,6 +15,7 @@
 namespace engine::shader {
 
     using namespace core;
+    using namespace math;
 
     enum ShaderState : u8 {
         READY = 0,
@@ -34,7 +35,7 @@ namespace engine::shader {
         ~Shader() = default;
 
     public:
-        inline void setProgramId(const u32 &programId) {
+        inline void setProgramId(u32 programId) {
             this->programId = programId;
         }
 
@@ -55,13 +56,12 @@ namespace engine::shader {
         void destroy() const;
         [[nodiscard]] bool compile() const;
 
-        void bindUbf(const char* blockName, const u32& blockIndex) const;
+        void bindUbf(const char* blockName, u32 blockIndex) const;
 
     protected:
         u32 id = 0;
         u32 programId = 0;
         std::string src;
-
     };
 
     class ShaderProgram {
@@ -78,10 +78,10 @@ namespace engine::shader {
         static void stop() ;
         u32 bindAttribute(const char* attrName) const;
 
-        void setUniform(FloatUniform &uniform) const;
-        void setUniform(BoolUniform &uniform) const;
-        void setUniform(IntUniform &uniform) const;
-        void setUniform(DoubleUniform &uniform) const;
+        void setUniform(const FloatUniform &uniform) const;
+        void setUniform(const BoolUniform &uniform) const;
+        void setUniform(const IntUniform &uniform) const;
+        void setUniform(const DoubleUniform &uniform) const;
         void setUniform(Vec2fUniform &uniform) const;
         void setUniform(Vec3fUniform &uniform) const;
         void setUniform(GLMVec3fUniform &uniform) const;
@@ -91,39 +91,67 @@ namespace engine::shader {
         void setUniform(Mat4fUniform &uniform) const;
         void setUniform(GLMMat4fUniform &uniform) const;
 
-        void setUniformArrayElement(const u32 &index, Mat4fUniform &uniform) const;
-        void setUniformArrayElement(const u32 &index, IntUniform &uniform) const;
-        void setUniformArrayElement(const u32 &index, FloatUniform &uniform) const;
-        void setUniformArrayElement(const u32 &index, BoolUniform &uniform) const;
+        template<typename T>
+        void setUniformArray(const UniformArray<T> &uniformArray) const {
+            for (u32 i = 0 ; i < uniformArray.values.size(); i++) {
+                setUniformArrayElement(i, uniformArray.name, uniformArray.values[i]);
+            }
+        }
+
+        void setUniformArrayElement(const u32 &index, const IntUniform &uniform) const;
+        void setUniformArrayElement(const u32 &index, const FloatUniform &uniform) const;
+        void setUniformArrayElement(const u32 &index, const BoolUniform &uniform) const;
+        void setUniformArrayElement(const u32 &index, const DoubleUniform &uniform) const;
+
+        void setUniformArrayElement(const u32 &index, Vec2fUniform &uniform) const;
+        void setUniformArrayElement(const u32 &index, Vec3fUniform &uniform) const;
         void setUniformArrayElement(const u32 &index, Vec4fUniform &uniform) const;
+
+        void setUniformArrayElement(const u32 &index, Mat2fUniform &uniform) const;
+        void setUniformArrayElement(const u32 &index, Mat3fUniform &uniform) const;
+        void setUniformArrayElement(const u32 &index, Mat4fUniform &uniform) const;
         void setUniformArrayElement(const u32 &index, GLMMat4fUniform &uniform) const;
 
-        void setUniformStructField(const char *structName, BoolUniform &structField) const;
-        void setUniformStructField(const char *structName, IntUniform &structField) const;
-        void setUniformStructField(const char *structName, FloatUniform &structField) const;
-        void setUniformStructField(const char *structName, DoubleUniform &structField) const;
+        void setUniformArrayElement(const u32 &index, const char* arrayName, int v) const;
+        void setUniformArrayElement(const u32 &index, const char* arrayName, float v) const;
+        void setUniformArrayElement(const u32 &index, const char* arrayName, bool v) const;
+        void setUniformArrayElement(const u32 &index, const char* arrayName, double v) const;
+
+        void setUniformArrayElement(const u32 &index, const char* arrayName, vec2f& v) const;
+        void setUniformArrayElement(const u32 &index, const char* arrayName, vec3f& v) const;
+        void setUniformArrayElement(const u32 &index, const char* arrayName, vec4f& v) const;
+
+        void setUniformArrayElement(const u32 &index, const char* arrayName, mat2f& v) const;
+        void setUniformArrayElement(const u32 &index, const char* arrayName, mat3f& v) const;
+        void setUniformArrayElement(const u32 &index, const char* arrayName, mat4f& v) const;
+        void setUniformArrayElement(const u32 &index, const char* arrayName, glm::mat4& v) const;
+
+        void setUniformStructField(const char *structName, const BoolUniform &structField) const;
+        void setUniformStructField(const char *structName, const IntUniform &structField) const;
+        void setUniformStructField(const char *structName, const FloatUniform &structField) const;
+        void setUniformStructField(const char *structName, const DoubleUniform &structField) const;
         void setUniformStructField(const char *structName, Vec3fUniform &structField) const;
         void setUniformStructField(const char *structName, Vec4fUniform &structField) const;
 
         void setUniformArrayStructField(
                 const u32 &index,
                 const char *structName,
-                BoolUniform &structField
+                const BoolUniform &structField
         ) const;
         void setUniformArrayStructField(
                 const u32 &index,
                 const char *structName,
-                IntUniform &structField
+                const IntUniform &structField
         ) const;
         void setUniformArrayStructField(
                 const u32 &index,
                 const char *structName,
-                FloatUniform &structField
+                const FloatUniform &structField
         ) const;
         void setUniformArrayStructField(
                 const u32 &index,
                 const char *structName,
-                DoubleUniform &structField
+                const DoubleUniform &structField
         ) const;
         void setUniformArrayStructField(
                 const u32 &index,
@@ -137,9 +165,9 @@ namespace engine::shader {
         ) const;
 
     private:
-        s32 getUniformArrayElementLocation(const char* name, const u32 &index) const;
-        s32 getUniformArrayStructLocation(const char* structName, const char* fieldName, const u32 &index) const;
-        s32 getUniformStructLocation(const char* structName, const char* fieldName) const;
+        int getUniformArrayElementLocation(const char* name, u32 index) const;
+        int getUniformArrayStructLocation(const char* structName, const char* fieldName, u32 index) const;
+        int getUniformStructLocation(const char* structName, const char* fieldName) const;
 
     protected:
         std::string toStringShaderType(const u32& type);
@@ -147,7 +175,6 @@ namespace engine::shader {
     protected:
         u32 id = 0;
         ShaderState state = ShaderState::FAILED_READ_FILE;
-
     };
 
 }

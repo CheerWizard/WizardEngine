@@ -1,5 +1,2 @@
 # Project exclude paths
-WizardDebug
-WizardRelease
-VisualDebug
-VisualRelease
+Wizard

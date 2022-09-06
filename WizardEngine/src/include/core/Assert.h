@@ -18,6 +18,7 @@
 	#define DEBUGBREAK()
 #endif
 
+
 #ifdef DEBUG
     #define ASSERT(x, msg) static_assert(x, msg);
     #define RUNTIME_ASSERT(x, ...) if (!(x)) { \
@@ -29,7 +30,7 @@
     DEBUGBREAK();                             \
     }
 #else
-    #define ASSERT(x, msg) x
-    #define RUNTIME_ASSERT(x, ...) x
-    #define ENGINE_ASSERT(x, ...) x
+    #define ASSERT(x, msg)
+    #define RUNTIME_ASSERT(x, ...)
+    #define ENGINE_ASSERT(x, ...)
 #endif

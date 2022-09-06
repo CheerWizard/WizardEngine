@@ -609,7 +609,7 @@ namespace engine::math {
             return { v0.dotP(vec), v1.dotP(vec), v2.dotP(vec) };
         }
 
-        vec3<T> operator *(const vec3<T>& vec) {
+        vec3<T> operator *(const vec3<T>& vec) const {
             return { v0.dotP(vec), v1.dotP(vec), v2.dotP(vec) };
         }
 

@@ -48,7 +48,7 @@ namespace engine::graphics {
     };
 
     enum class TextureType : u32 {
-        TEXTURE_2D = 0, CUBE_MAP = 1, TEXTURE_2D_MULTISAMPLE = 2
+        TEXTURE_2D = 0, CUBE_MAP = 1, TEXTURE_2D_MULTISAMPLE = 2, TEXTURE_2D_ARRAY = 3
     };
 
     enum class TextureFaceType {

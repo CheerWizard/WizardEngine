@@ -10,6 +10,8 @@
 #include <GLFW/glfw3.h>
 #include <platform/graphics/tools/ShaderPath.h>
 #include <imgui_internal.h>
+#include <ImGuizmo.h>
+#include <imconfig.h>
 
 #define IO ImGui::GetIO()
 #define STYLE ImGui::GetStyle()
@@ -147,6 +149,7 @@ namespace engine::visual {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        ImGuizmo::BeginFrame();
     }
 
     void Visual::end() {
@@ -274,5 +277,79 @@ namespace engine::visual {
 
     bool Panel::isFocused(ImGuiFocusedFlags flags) {
         return ImGui::IsWindowFocused(flags);
+    }
+
+    void Gizmo::enable(bool enabled) {
+        ImGuizmo::Enable(enabled);
+    }
+
+    void draw(
+            Camera3D& camera,
+            Transform3dComponent& transform,
+            const ImGuizmo::OPERATION& operation,
+            const ImGuizmo::MODE& mode,
+            const vec2f& windowPosition,
+            const vec2f& windowSize
+    ) {
+        ENGINE_INFO("Gizmo::draw()");
+//        ImGuizmo::SetOrthographic(false);
+//        ImGuizmo::SetDrawlist();
+//        ImGuiIO& io = ImGui::GetIO();
+//        ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+//        ImGuizmo::Manipulate(
+//                toFloatPtr(camera.getView()),
+//                toFloatPtr(camera.getPerspective()),
+//                operation,
+//                mode,
+//                toFloatPtr(transform.modelMatrix)
+//        );
+        float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+        ImGuizmo::DecomposeMatrixToComponents(
+                math::values(transform.modelMatrix.value),
+                matrixTranslation, matrixRotation, matrixScale
+        );
+        ImGui::InputFloat3("Tr", matrixTranslation);
+        ImGui::InputFloat3("Rt", matrixRotation);
+        ImGui::InputFloat3("Sc", matrixScale);
+        ImGuizmo::RecomposeMatrixFromComponents(
+                matrixTranslation, matrixRotation, matrixScale,
+                math::values(transform.modelMatrix.value)
+        );
+        static bool useSnap(false);
+        if (ImGui::IsKeyPressed(83)) useSnap = !useSnap;
+        ImGui::SameLine();
+        vec3f snap;
+        switch (operation) {
+            case ImGuizmo::TRANSLATE:
+                ImGui::InputFloat3("Snap", math::values(snap));
+                break;
+            case ImGuizmo::ROTATE:
+                ImGui::InputFloat("Angle Snap", math::values(snap));
+                break;
+            case ImGuizmo::SCALE:
+                ImGui::InputFloat("Scale Snap", math::values(snap));
+                break;
+        }
+        ImGuizmo::SetRect(windowPosition.x(), windowPosition.y(), windowSize.x(), windowSize.y());
+        camera.getView().apply();
+        camera.getPerspective().apply();
+        ImGuizmo::Manipulate(math::values(camera.getView().value), math::values(camera.getPerspective().value),
+                             operation, mode, math::values(transform.modelMatrix.value),
+                             NULL, useSnap ? math::values(snap) : NULL);
+    }
+
+    void Gizmo::drawTranslate(Camera3D& camera, Transform3dComponent& transform,
+                              const vec2f& windowPosition, const vec2f& windowSize) {
+        draw(camera, transform, ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, windowPosition, windowSize);
+    }
+
+    void Gizmo::drawRotate(Camera3D &camera, Transform3dComponent &transform,
+                           const vec2f& windowPosition, const vec2f& windowSize) {
+        draw(camera, transform, ImGuizmo::ROTATE, ImGuizmo::LOCAL, windowPosition, windowSize);
+    }
+
+    void Gizmo::drawScale(Camera3D &camera, Transform3dComponent &transform,
+                          const vec2f& windowPosition, const vec2f& windowSize) {
+        draw(camera, transform, ImGuizmo::SCALE, ImGuizmo::LOCAL, windowPosition, windowSize);
     }
 }

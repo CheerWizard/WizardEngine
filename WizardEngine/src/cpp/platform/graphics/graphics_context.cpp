@@ -10,7 +10,7 @@
 namespace engine::graphics {
 
     void initContext(void *nativeWindow) {
-        ENGINE_INFO("createContext()");
+        ENGINE_INFO("graphics::initContext()");
         glfwMakeContextCurrent((GLFWwindow*) nativeWindow);
         int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
         ENGINE_ASSERT(status, "Failed to initialize Glad!");

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <io/Logger.h>
+#include <profiler/Profiler.h>
 
 // needs to be defined on Client side.
 extern engine::core::Application* engine::core::createApplication();
@@ -20,11 +21,10 @@ int main() {
     INIT_EDITOR_LOG(editorLog);
     INIT_RUNTIME_LOG(runtimeLog);
 
-    ENGINE_INFO("Running Application...");
     auto* app = engine::core::createApplication();
+    PROFILE_SESSION_BEGIN("WizardProfile.json");
     app->run();
-
-    ENGINE_INFO("Application terminated!");
+    PROFILE_SESSION_END();
     delete app;
 }
 

@@ -16,6 +16,11 @@ namespace engine::io {
         void* data = nullptr;
     };
 
+    struct TextureArrayData {
+        int width = 0, height = 0, channels = 0;
+        vector<TextureData> textureData;
+    };
+
     class TextureFile final {
 
     private:
@@ -26,6 +31,8 @@ namespace engine::io {
         // returns NULL if read from file - failed
         static TextureData read(const char* filePath);
         static void free(void* data);
+        static TextureArrayData read(const vector<std::string>& filepaths);
+        static void free(const TextureArrayData& textureArrayData);
     };
 
 }

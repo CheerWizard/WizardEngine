@@ -33,3 +33,7 @@
 [submodule "WizardEngine/vendor/yaml-cpp"]
     path = WizardEngine/vendor/yaml-cpp
     url = https://github.com/jbeder/yaml-cpp
+
+[submodule "WizardEngine/vendor/ImGuizmo"]
+    path = WizardEngine/vendor/ImGuizmo
+    url = https://github.com/CedricGuillemet/ImGuizmo

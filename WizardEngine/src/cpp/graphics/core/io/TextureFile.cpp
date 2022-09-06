@@ -28,4 +28,28 @@ namespace engine::io {
         stbi_image_free(data);
     }
 
+    TextureArrayData TextureFile::read(const vector<std::string> &filepaths) {
+        TextureArrayData textureArrayData;
+        for (const auto& filepath : filepaths) {
+            TextureData textureData = read(filepath.c_str());
+            if (textureData.data != nullptr) {
+                textureArrayData.textureData.emplace_back(textureData);
+            }
+        }
+
+        if (!textureArrayData.textureData.empty()) {
+            TextureData& textureData = textureArrayData.textureData[0];
+            textureArrayData.width = textureData.width;
+            textureArrayData.height = textureData.height;
+            textureArrayData.channels = textureData.channels;
+        }
+
+        return textureArrayData;
+    }
+
+    void TextureFile::free(const TextureArrayData &textureArrayData) {
+        for (const auto& textureData : textureArrayData.textureData) {
+            free(textureData.data);
+        }
+    }
 }

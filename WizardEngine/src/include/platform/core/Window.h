@@ -54,6 +54,7 @@ namespace engine::core {
         void enableFullScreen();
         void setSampleSize(const uint32_t &size);
         void setPosition(const uint32_t &x, const uint32_t &y);
+        void getPosition(float x, float y);
 
     public:
         void toggleFullScreen();
@@ -102,6 +103,8 @@ namespace engine::core {
         WindowProps windowProps;
         bool isInitialized = false;
         bool isFullScreen = false;
+        u32 xPos = 0;
+        u32 yPos = 0;
     };
 
 }

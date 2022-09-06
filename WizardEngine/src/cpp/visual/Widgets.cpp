@@ -266,4 +266,8 @@ namespace engine::visual {
     void Slider::draw(const char* name, u32& value, const vec2i &range) {
         ImGui::SliderInt(name, (int*)&value, range.x(), range.y());
     }
+
+    void Text::draw(const char* text) {
+        ImGui::TextWrapped(text);
+    }
 }

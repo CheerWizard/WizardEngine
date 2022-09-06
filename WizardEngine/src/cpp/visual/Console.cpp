@@ -12,15 +12,12 @@ namespace engine::visual {
         clearLog();
         memset(InputBuf, 0, sizeof(InputBuf));
         HistoryPos = -1;
-
-        // "CLASSIFY" is here to provide the test case where "C"+[tab] completes to "CL" and display multiple matches.
-        Commands.push_back("HELP");
-        Commands.push_back("HISTORY");
-        Commands.push_back("CLEAR");
-        Commands.push_back("CLASSIFY");
+        Commands.push_back("/help");
+        Commands.push_back("/history");
+        Commands.push_back("/clear");
+        Commands.push_back("/classify");
         AutoScroll = true;
         ScrollToBottom = false;
-        addLog("Welcome to Dear ImGui!");
     }
 
     void ConsoleData::release() {
@@ -90,24 +87,7 @@ namespace engine::visual {
             ImGui::EndPopup();
         }
 
-        ImGui::TextWrapped(
-                "This example implements a console with basic coloring, completion (TAB key) and history (Up/Down keys). A more elaborate "
-                "implementation may want to store entries along with extra data such as timestamp, emitter, etc.");
-        ImGui::TextWrapped("Enter 'HELP' for help.");
-
-        // TODO: display items starting from the bottom
-
-        if (ImGui::SmallButton("Add Debug Text"))  {
-            addLog("%d some text", Items.Size);
-            addLog("some more text");
-            addLog("display very important message here!");
-        }
-        ImGui::SameLine();
-
-        if (ImGui::SmallButton("Add Debug Error")) {
-            addLog("[error] something went wrong");
-        }
-        ImGui::SameLine();
+        ImGui::TextWrapped("Enter '/help' for help.");
 
         if (ImGui::SmallButton("Clear")) {
             clearLog();
@@ -204,7 +184,8 @@ namespace engine::visual {
         ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue |
                 ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
 
-        if (ImGui::InputText("Input", InputBuf, IM_ARRAYSIZE(InputBuf),
+        ImGui::PushItemWidth(-1);
+        if (ImGui::InputText("##label", InputBuf, IM_ARRAYSIZE(InputBuf),
                              input_text_flags, &textEditCallbackStub, (void*)this)) {
             char* s = InputBuf;
             Strtrim(s);
@@ -212,6 +193,7 @@ namespace engine::visual {
             strcpy(s, "");
             reclaim_focus = true;
         }
+        ImGui::PopItemWidth();
 
         // Auto-focus on window apparition
         ImGui::SetItemDefaultFocus();
@@ -235,15 +217,15 @@ namespace engine::visual {
         History.push_back(Strdup(command_line));
         // Process command
         SWITCH (command_line) {
-            CASE("CLEAR"):
+            CASE("/clear"):
                 clearLog();
                 break;
-            CASE("HELP"):
+            CASE("/help"):
                 addLog("Commands:");
                 for (int i = 0; i < Commands.Size; i++)
                     addLog("- %s", Commands[i]);
                 break;
-            CASE("HISTORY"):
+            CASE("/history"):
                 int first = History.Size - 10;
                 for (int i = first > 0 ? first : 0; i < History.Size; i++)
                     addLog("%3d: %s\n", i, History[i]);
@@ -341,6 +323,8 @@ namespace engine::visual {
         }
         return 0;
     }
+
+    ConsoleData Console::data;
 
     void Console::init() {
         data.init();

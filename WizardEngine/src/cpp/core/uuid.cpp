@@ -9,10 +9,10 @@ namespace engine {
 
     static std::random_device randomDevice;
     static std::mt19937_64 mtEngine(randomDevice());
-    static std::uniform_int_distribution<uint64_t> uniformDistribution;
+    static std::uniform_int_distribution<int> uniformDistribution;
 
     uuid::uuid() : _uuid(uniformDistribution(mtEngine)) {}
-    uuid::uuid(uint64_t uuid) : _uuid(uuid) {}
+    uuid::uuid(int uuid) : _uuid(uuid) {}
     uuid::uuid(const uuid& other) = default;
 
 }

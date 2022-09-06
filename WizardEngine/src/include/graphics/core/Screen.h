@@ -14,6 +14,7 @@ namespace engine::graphics {
 
     public:
         void init();
+        void onWindowResized(u32 width, u32 height);
     };
 
 }
