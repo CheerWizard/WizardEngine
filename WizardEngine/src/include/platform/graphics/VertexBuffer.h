@@ -13,7 +13,7 @@
 namespace engine::graphics {
 
     // VBO - Vertex buffer Object allocated for GPU pipeline
-    class VertexBuffer final : public Buffer {
+    class ENGINE_API VertexBuffer final : public Buffer {
 
     public:
         VertexBuffer() : Buffer() {}

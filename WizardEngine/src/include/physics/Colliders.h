@@ -62,14 +62,14 @@ namespace engine::physics {
         Velocity(const vec3f& velocity) : velocity(velocity) {}
     };
 
-    struct IntersectData {
+    struct ENGINE_API IntersectData {
         bool intersected;
         vec3f direction;
 
         [[nodiscard]] float distance() const;
     };
 
-    class Intersections final {
+    class ENGINE_API Intersections final {
 
     public:
         static IntersectData intersect(const AABBCollider& aabb1, const AABBCollider& aabb2);

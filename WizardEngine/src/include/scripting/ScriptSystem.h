@@ -11,7 +11,7 @@ namespace engine::scripting {
 
     using namespace core;
 
-    class ScriptSystem {
+    class ENGINE_API ScriptSystem {
 
     public:
         ScriptSystem() = default;

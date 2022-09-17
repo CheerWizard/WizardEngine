@@ -2,6 +2,7 @@
 
 #include <type_traits>
 #include <core/primitives.h>
+#include <core/core.h>
 
 #define call(function, functionName, ...) engine::graphics::Debugger::callImpl(function, functionName, __VA_ARGS__)
 
@@ -25,7 +26,7 @@ namespace engine::graphics {
         ANY, LOW, MEDIUM, HIGH, NOTIFICATION
     };
 
-    struct DebugMessage {
+    struct ENGINE_API DebugMessage {
         DebugSource source;
         DebugType type;
         u32 id = 0;
@@ -42,7 +43,7 @@ namespace engine::graphics {
         ) : source(source), type(type), id(id), severity(severity), length(length), msg(msg) {}
     };
 
-    class Debugger final {
+    class ENGINE_API Debugger final {
 
     public:
         static void init();

@@ -10,7 +10,7 @@ namespace engine::io {
 
     using namespace ecs;
 
-    class LocalAssetManager final {
+    class ENGINE_API LocalAssetManager final {
 
     public:
         static void saveScene(const Ref<Scene>& scene);
@@ -18,7 +18,7 @@ namespace engine::io {
         static Ref<Scene> loadScene(const char* sceneName);
     };
 
-    class RemoteAssetManager final {
+    class ENGINE_API RemoteAssetManager final {
 
     public:
         static void saveScene(const Ref<Scene>& scene);

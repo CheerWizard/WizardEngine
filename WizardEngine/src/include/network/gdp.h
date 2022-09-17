@@ -18,7 +18,7 @@ namespace engine::network {
 
     using namespace core;
 
-    struct NetworkData {
+    struct ENGINE_API NetworkData {
         char* data = nullptr;
         size_t size = 0;
 
@@ -38,7 +38,7 @@ namespace engine::network {
     constexpr u32 SERVER_SUCCESS = 1;
     constexpr u32 SERVER_ERROR = 2;
 
-    struct GDHeader : io::Serializable {
+    struct ENGINE_API GDHeader : io::Serializable {
         u32 address;
         u32 type;
 
@@ -51,7 +51,7 @@ namespace engine::network {
 
     typedef io::Serializable GDBody;
 
-    class GDSerializer final {
+    class ENGINE_API GDSerializer final {
     public:
         static NetworkData serialize(GDHeader& header, GDBody& body);
         static bool deserialize(char* gameData, std::pair<YAML::Node, GDHeader>& gdNodeHeader);
@@ -161,7 +161,7 @@ namespace engine::network {
     constexpr u16 GD_CODE_200 = 200;
     constexpr u16 GD_CODE_404 = 404;
 
-    struct GDResponse : GDBody {
+    struct ENGINE_API GDResponse : GDBody {
         u16 statusCode = GD_CODE_200;
         const char* message = "";
 

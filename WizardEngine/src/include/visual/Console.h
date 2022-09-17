@@ -6,16 +6,17 @@
 
 #include <imgui.h>
 #include <core/primitives.h>
+#include <core/core.h>
 
 namespace engine::visual {
 
     using namespace core;
 
-    struct ConsoleProps {
+    struct ENGINE_API ConsoleProps {
         f32 width, height;
     };
 
-    struct ConsoleData {
+    struct ENGINE_API ConsoleData {
         char                  InputBuf[256];
         ImVector<char*>       Items;
         ImVector<const char*> Commands;
@@ -47,7 +48,7 @@ namespace engine::visual {
         int textEditCallback(ImGuiInputTextCallbackData* data);
     };
 
-    class Console final {
+    class ENGINE_API Console final {
     public:
         static void init();
         static void release();

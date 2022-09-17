@@ -12,13 +12,13 @@ namespace engine::network {
 
     using namespace engine::core;
 
-    struct ClientProfile {
+    struct ENGINE_API ClientProfile {
         SOCKET socket;
         const char* host;
         const char* service;
     };
 
-    class SceneService {
+    class ENGINE_API SceneService {
 
     public:
         void dispatch(const YAML::Node& gdNode, const GDHeader& header);
@@ -33,7 +33,7 @@ namespace engine::network {
 
     namespace tcp {
 
-        class ServerListener {
+        class ENGINE_API ServerListener {
         public:
             virtual void onTCPSocketCreated() = 0;
             virtual void onTCPSocketUnaccepted() = 0;
@@ -42,7 +42,7 @@ namespace engine::network {
             virtual void onTCPReceiverFailed(char* data, size_t size) = 0;
         };
 
-        class TCPSceneService : public SceneService {
+        class ENGINE_API TCPSceneService : public SceneService {
 
         public:
             void init(SOCKET socket);
@@ -54,7 +54,7 @@ namespace engine::network {
             SOCKET socket{};
         };
 
-        class Server final {
+        class ENGINE_API Server final {
 
         public:
             static bool init(ServerListener* serverListener);
@@ -78,7 +78,7 @@ namespace engine::network {
 
     namespace udp {
 
-        class ServerListener {
+        class ENGINE_API ServerListener {
         public:
             virtual void onUDPSocketCreated() = 0;
             virtual void onUDPSocketClosed() = 0;
@@ -87,7 +87,7 @@ namespace engine::network {
             virtual void onUDPSenderFailed(char* data, size_t size) = 0;
         };
 
-        class UDPSceneService : public SceneService {
+        class ENGINE_API UDPSceneService : public SceneService {
 
         public:
             void init(SOCKET socket, const sockaddr_in& hint);
@@ -100,7 +100,7 @@ namespace engine::network {
             sockaddr_in hint;
         };
 
-        class Server final {
+        class ENGINE_API Server final {
 
         private:
             Server() = default;

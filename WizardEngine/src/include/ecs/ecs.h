@@ -27,32 +27,50 @@ namespace engine::ecs {
     typedef void (*ComponentDestroyFunction)(BaseComponent* component);
 
     // dynamic component type system
-    typedef std::tuple<ComponentCreateFunction, ComponentDestroyFunction, component_size> ComponentType;
-    struct BaseComponent {
+    struct ComponentType {
+        ComponentCreateFunction createFunction;
+        ComponentDestroyFunction destroyFunction;
+        component_size size;
+        const char* name;
+
+        ComponentType(
+                ComponentCreateFunction createFunction,
+                ComponentDestroyFunction destroyFunction,
+                component_size size,
+                const char* name
+        ) : createFunction(createFunction), destroyFunction(destroyFunction), size(size), name(name) {}
+    };
+
+    struct ENGINE_API BaseComponent {
         entity_id entityId = invalid_entity_id;
 
     public:
         static component_id registerComponentType(
                 ComponentCreateFunction createFunction,
                 ComponentDestroyFunction destroyFunction,
-                component_size size
+                component_size size,
+                const char* typeName
         );
 
     public:
         inline static const ComponentType& getType(component_id id) {
-            return (*componentTypes)[id];
+            return componentTypes->at(id);
         }
 
         inline static ComponentCreateFunction getCreateFunction(component_id id) {
-            return std::get<0>((*componentTypes)[id]);
+            return componentTypes->at(id).createFunction;
         }
 
         inline static ComponentDestroyFunction getDestroyFunction(component_id id) {
-            return std::get<1>((*componentTypes)[id]);
+            return componentTypes->at(id).destroyFunction;
         }
 
         inline static component_size getSize(component_id id) {
-            return std::get<2>((*componentTypes)[id]);
+            return componentTypes->at(id).size;
+        }
+
+        inline static const char* getTypeName(component_id id) {
+            return componentTypes->at(id).name;
         }
 
         inline static bool isValid(component_id id) {
@@ -124,7 +142,7 @@ template_component(component_type, template_type), engine::io::Serializable
 
     template<class T>
     const component_id Component<T>::ID(BaseComponent::registerComponentType(
-            createComponent<T>, destroyComponent<T>, sizeof(T)
+            createComponent<T>, destroyComponent<T>, sizeof(T), typeid(T).name()
     ));
 
     template<class T>
@@ -140,7 +158,7 @@ template_component(component_type, template_type), engine::io::Serializable
     typedef std::pair<u32, entity_data> entity; // entity index -> entity data
     typedef void (*EntityFunction)(entity_id);
     // Registry of Components, Systems, Entities
-    class Registry {
+    class ENGINE_API Registry {
         IMMUTABLE(Registry)
     public:
         Registry() = default;

@@ -8,7 +8,7 @@
 
 namespace engine::graphics {
 
-    struct Phong : Material {
+    struct ENGINE_API Phong : Material {
 
         Phong(const char* name = "phong") : Material(name) {
             vec4.emplace_back("color", vec4f { 0.5, 0.5, 0.5, 1 });

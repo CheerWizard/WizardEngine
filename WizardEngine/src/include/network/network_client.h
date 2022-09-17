@@ -13,7 +13,7 @@ namespace engine::network {
 
     using namespace engine::core;
 
-    class RequestQueue {
+    class ENGINE_API RequestQueue {
 
     public:
         void push(const NetworkData& networkData);
@@ -28,13 +28,13 @@ namespace engine::network {
 
     namespace tcp {
 
-        class SenderListener {
+        class ENGINE_API SenderListener {
         public:
             virtual void onTCPSenderFailed(char* data, size_t size) = 0;
             virtual void onTCPSenderSuccess() = 0;
         };
 
-        class Sender {
+        class ENGINE_API Sender {
 
         public:
             Sender(SenderListener* listener) : listener(listener) {}
@@ -56,13 +56,13 @@ namespace engine::network {
             RequestQueue requestQueue;
         };
 
-        class ReceiverListener {
+        class ENGINE_API ReceiverListener {
         public:
             virtual void onTCPReceiverFailed(char* data, size_t size) = 0;
             virtual void onTCPReceiverSuccess(const YAML::Node& gdNode, const GDHeader& header) = 0;
         };
 
-        class Receiver {
+        class ENGINE_API Receiver {
 
         public:
             Receiver(ReceiverListener* listener) : listener(listener) {}
@@ -82,7 +82,7 @@ namespace engine::network {
         };
 
 
-        class ClientListener {
+        class ENGINE_API ClientListener {
         public:
             virtual void onTCPSocketCreated() = 0;
             virtual void onTCPConnectionFailed() = 0;
@@ -90,7 +90,7 @@ namespace engine::network {
             virtual void onTCPSocketClosed() = 0;
         };
 
-        class Client final {
+        class ENGINE_API Client final {
 
         public:
             static bool init(
@@ -116,13 +116,13 @@ namespace engine::network {
 
     namespace udp {
 
-        class SenderListener {
+        class ENGINE_API SenderListener {
         public:
             virtual void onUDPSenderFailed(char* data, size_t size) = 0;
             virtual void onUDPSenderSuccess() = 0;
         };
 
-        class Sender {
+        class ENGINE_API Sender {
 
         public:
             Sender(SenderListener* listener) : listener(listener) {}
@@ -145,13 +145,13 @@ namespace engine::network {
             RequestQueue requestQueue;
         };
 
-        class ReceiverListener {
+        class ENGINE_API ReceiverListener {
         public:
             virtual void onUDPReceiverFailed(char* data, size_t size) = 0;
             virtual void onUDPReceiverSuccess(const YAML::Node& gdNode, const GDHeader& header) = 0;
         };
 
-        class Receiver {
+        class ENGINE_API Receiver {
 
         public:
             Receiver(ReceiverListener* listener) : listener(listener) {}
@@ -171,13 +171,13 @@ namespace engine::network {
             thread::VoidTask<> receiverTask;
         };
 
-        class ClientListener {
+        class ENGINE_API ClientListener {
         public:
             virtual void onUDPSocketCreated() = 0;
             virtual void onUDPSocketClosed() = 0;
         };
 
-        class Client final {
+        class ENGINE_API Client final {
 
         public:
             static bool init(

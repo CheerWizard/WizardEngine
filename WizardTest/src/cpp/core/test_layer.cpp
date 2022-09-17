@@ -102,6 +102,12 @@ namespace test {
                 CubeMapTextureComponent(skyboxId, TextureBuffer::getTypeId(TextureType::CUBE_MAP))
         ));
 
+        auto skycube = scene->getSkybox().get<SkyCube>();
+
+        auto skycubeId = SkyCube::ID;
+        auto transformId = Transform3dComponent::ID;
+        auto cubemapId = CubeMapTextureComponent::ID;
+
         math::random(-10, 10, 2, [this, &scene](int i, f32 r) {
             Batch3d pack = Batch3d(&"SurvivalBackPack"[i], scene.get());
             pack.getTransform().position = { r * i, r * i, r * i };
@@ -655,7 +661,7 @@ namespace test {
         // scene panel
         Panel::begin("Scene", { 800, 600 });
         // physics
-        Checkbox::draw("enablePhysics", Physics::isEnabled);
+//        Checkbox::draw("enablePhysics", Physics::isEnabled);
 //        // entity hovering
 //        // draw tag of hovered entity
 //        auto* tag = Application::get().hoveredEntity.get<TagComponent>();

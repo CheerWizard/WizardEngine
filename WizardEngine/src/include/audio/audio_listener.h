@@ -13,9 +13,9 @@ namespace engine::audio {
     using namespace core;
 
     struct Orientation : io::Serializable {
-        void serialize(YAML::Emitter &out) override;
 
-        void deserialize(const YAML::Node &parent) override;
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
 
         math::vec3f lookVec = { 0, 0, -1 };
         math::vec3f upVec = { 0, 1, 0 };
@@ -26,11 +26,11 @@ namespace engine::audio {
         math::vec3f velocity;
         Orientation orientation;
 
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
-    class Listener final {
+    class ENGINE_API Listener final {
 
     private:
         Listener() = default;
@@ -41,7 +41,6 @@ namespace engine::audio {
         static void setVelocity(const math::vec3f& velocity);
         static void setOrientation(const Orientation& orientation);
         static void setComponent(const AudioListenerComponent& component);
-
     };
 
 }

@@ -42,7 +42,7 @@ namespace engine::graphics {
         LINEAR, REPEAT, CLAMP_TO_EDGE
     };
 
-    struct TextureParam {
+    struct ENGINE_API TextureParam {
         TextureParamName name;
         TextureParamValue value;
     };
@@ -57,7 +57,7 @@ namespace engine::graphics {
         TOP, BOTTOM
     };
 
-    struct TextureFace {
+    struct ENGINE_API TextureFace {
         const char* filePath;
         TextureFaceType type;
 
@@ -82,8 +82,8 @@ namespace engine::graphics {
 
         TextureComponent(const IntUniform& sampler) : sampler(sampler) {}
 
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
 
         inline bool isValid() const { return textureId != invalidTextureId; }
     };
@@ -104,8 +104,8 @@ namespace engine::graphics {
         CubeMapTextureComponent(const u32& textureId, const u32& typeId, const s32& samplerSlot)
         : textureId(textureId), typeId(typeId), sampler({ "cubeMap", samplerSlot }) {}
 
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
 
         inline bool isValid() const { return textureId != invalidTextureId; }
     };

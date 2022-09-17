@@ -12,7 +12,7 @@
 
 namespace engine::math {
 
-    struct OrthographicMatrix : shader::Mat4fUniform {
+    struct ENGINE_API OrthographicMatrix : shader::Mat4fUniform {
         float left = -1;
         float right = 1;
         float bottom = -1;
@@ -44,7 +44,7 @@ namespace engine::math {
         void apply();
     };
 
-    struct PerspectiveMatrix : shader::Mat4fUniform {
+    struct ENGINE_API PerspectiveMatrix : shader::Mat4fUniform {
         float aspectRatio = 1024.0f / 768.0f;
         float fieldOfView = DEFAULT_FIELD_OF_VIEW;
         float zNear = DEFAULT_Z_NEAR;

@@ -12,7 +12,7 @@
 namespace engine::shader {
 
     template<typename V>
-    struct Uniform {
+    struct ENGINE_API Uniform {
         const char* name = nullptr;
         V value;
 
@@ -27,7 +27,7 @@ namespace engine::shader {
     };
 
     template<typename V>
-    struct UniformArray {
+    struct ENGINE_API UniformArray {
         const char* name = nullptr;
         std::vector<V> values {};
 
@@ -68,17 +68,17 @@ namespace engine::shader {
     typedef UniformArray<glm::mat4> GLMMat4fUniformArray;
 
     template<typename V>
-    inline float* glm_toFloatPtr(Uniform<V> &uniform) {
+    ENGINE_API inline float* glm_toFloatPtr(Uniform<V> &uniform) {
         return glm::value_ptr(uniform.value);
     }
 
     template<typename V>
-    inline float* toFloatPtr(Uniform<V> &uniform) {
+    ENGINE_API inline float* toFloatPtr(Uniform<V> &uniform) {
         return math::values(uniform.value);
     }
 
     template<typename V>
-    inline int* toIntPtr(Uniform<V> &uniform) {
+    ENGINE_API inline int* toIntPtr(Uniform<V> &uniform) {
         return math::values(uniform.value);
     }
 }

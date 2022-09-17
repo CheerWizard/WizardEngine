@@ -10,7 +10,7 @@ namespace engine::audio {
 
     decl_exception(audio_context_exception)
 
-    class Context final {
+    class ENGINE_API Context final {
 
     public:
         Context(const Ref<Device>& device);

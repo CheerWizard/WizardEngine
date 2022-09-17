@@ -18,7 +18,7 @@ namespace engine::graphics {
     using namespace core;
     using namespace ecs;
 
-    class RenderSystemCallback {
+    class ENGINE_API RenderSystemCallback {
     public:
         virtual ~RenderSystemCallback() = default;
     public:
@@ -26,7 +26,7 @@ namespace engine::graphics {
         virtual void onFrameEnd(const Ref<FrameBuffer>& frameBuffer) = 0;
     };
 
-    class RenderSystem final {
+    class ENGINE_API RenderSystem final {
 
     private:
         RenderSystem() = default;

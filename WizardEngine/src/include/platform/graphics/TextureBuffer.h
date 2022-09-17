@@ -11,7 +11,7 @@
 
 namespace engine::graphics {
 
-    class TextureBuffer final {
+    class ENGINE_API TextureBuffer final {
 
     public:
         TextureBuffer() = default;

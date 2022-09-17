@@ -12,7 +12,7 @@
 
 namespace engine::core {
 
-    struct WindowProps {
+    struct ENGINE_API WindowProps {
         std::string title;
         uint32_t width;
         uint32_t height;
@@ -28,7 +28,7 @@ namespace engine::core {
         ) : title(title), width(width), height(height), vSyncEnabled(vSyncEnabled), sampleSize(sampleSize) {}
     };
 
-    class Window {
+    class ENGINE_API Window {
 
     public:
         Window(const WindowProps &windowProps = WindowProps()) : windowProps(windowProps) {

@@ -19,11 +19,11 @@ namespace engine::graphics {
         FloatUniform diffuse = { "diffuse", 1 };
         FloatUniform specular = { "specular", 1 };
 
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
-    ShaderScript phongLightScript();
+    ENGINE_API ShaderScript phongLightScript();
 
     serialize_component(DirectLightComponent) {
         const char* name = "directLight";
@@ -32,8 +32,8 @@ namespace engine::graphics {
         Vec4fUniform diffuse = { "diffuse", { 0.5f, 0.5f, 0.5f, 0 } };
         Vec4fUniform specular = { "specular", { 0.5f, 0.5f, 0.5f, 0 } };
 
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
     serialize_component(PointLightComponent) {
@@ -46,8 +46,8 @@ namespace engine::graphics {
         FloatUniform linear = { "linear", 0.045f};
         FloatUniform quadratic = { "quadratic", 0.0075f};
 
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
     serialize_component(FlashLightComponent) {
@@ -63,8 +63,8 @@ namespace engine::graphics {
         FloatUniform linear = { "linear", 0.045f};
         FloatUniform quadratic = { "quadratic", 0.0075f};
 
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
 }

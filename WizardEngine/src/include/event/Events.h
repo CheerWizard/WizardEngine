@@ -9,6 +9,7 @@
 #include <event/GamepadCodes.h>
 #include <core/map.h>
 #include <functional>
+#include <core/core.h>
 
 namespace engine::event {
 
@@ -40,10 +41,10 @@ namespace engine::event {
         static Action<> onWindowClosed;
         static Action<const uint32_t&, const uint32_t&> onWindowResized;
 
-        static KeyCodeMap onKeyPressedMap;
-        static KeyHoldMap onKeyHoldMap;
-        static KeyCodeMap onKeyReleasedMap;
-        static KeyCodeMap onKeyTypedMap;
+        ENGINE_API static KeyCodeMap onKeyPressedMap;
+        ENGINE_API static KeyHoldMap onKeyHoldMap;
+        ENGINE_API static KeyCodeMap onKeyReleasedMap;
+        ENGINE_API static KeyCodeMap onKeyTypedMap;
 
         static MouseCodeMap onMousePressedMap;
         static MouseCodeMap onMouseReleasedMap;
@@ -53,15 +54,15 @@ namespace engine::event {
         static Action<double, double> onMouseScrolled;
         static Action<double, double> onCursorMoved;
 
-        static GamepadButtonMap onGamepadButtonPressedMap;
-        static GamepadButtonMap onGamepadButtonReleasedMap;
+        ENGINE_API static GamepadButtonMap onGamepadButtonPressedMap;
+        ENGINE_API static GamepadButtonMap onGamepadButtonReleasedMap;
 
-        static Action<GamepadRoll> onGamepadRollLeft;
-        static Action<GamepadRoll> onGamepadRollRight;
+        ENGINE_API static Action<GamepadRoll> onGamepadRollLeft;
+        ENGINE_API static Action<GamepadRoll> onGamepadRollRight;
         static GamepadRoll inactiveGamepadRollLeft;
         static GamepadRoll inactiveGamepadRollRight;
 
-        static bool keyHold(KeyCode keyCode);
-        static bool mouseHold(MouseCode mouseCode);
+        ENGINE_API static bool keyHold(KeyCode keyCode);
+        ENGINE_API static bool mouseHold(MouseCode mouseCode);
     };
 }

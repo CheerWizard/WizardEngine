@@ -12,14 +12,14 @@ namespace engine::math {
 
     using namespace core;
 
-    void random(
+    void ENGINE_API random(
             int minRange,
             int maxRange,
             int count,
             const std::function<void(int i, f32 random)>& callback
     );
-    f32 random(const double& minRange, const double& maxRange);
-    f32 random(const s32& minRange, const s32& maxRange);
+    f32 ENGINE_API random(const double& minRange, const double& maxRange);
+    f32 ENGINE_API random(const s32& minRange, const s32& maxRange);
 
     template<typename Result, typename V1, typename V2>
     Result dot(const V1& v1, const V2& v2, u32 size) {
@@ -36,7 +36,7 @@ namespace engine::math {
     }
 
     template<typename T>
-    struct vec2 {
+    struct ENGINE_API vec2 {
         T v[2] = { 1, 1 };
 
         vec2() = default;
@@ -156,7 +156,7 @@ namespace engine::math {
     };
 
     template<typename T>
-    struct vec3 {
+    struct ENGINE_API vec3 {
         T v[3] = { 1, 1, 1 };
 
         vec3() = default;
@@ -307,7 +307,7 @@ namespace engine::math {
     }
 
     template<typename T>
-    struct vec4 {
+    struct ENGINE_API vec4 {
         T v[4] = { 1, 1, 1, 1 };
 
         vec4() = default;
@@ -497,7 +497,7 @@ namespace engine::math {
     }
 
     template<typename T>
-    struct mat2 {
+    struct ENGINE_API mat2 {
         vec2<T> v0 = { 1, 0 };
         vec2<T> v1 = { 0, 1 };
 
@@ -525,7 +525,7 @@ namespace engine::math {
     };
 
     template<typename T>
-    struct mat3 {
+    struct ENGINE_API mat3 {
         vec3<T> v0 = { 1, 0, 0 };
         vec3<T> v1 = { 0, 1, 0 };
         vec3<T> v2 = { 0, 0, 1 };
@@ -558,7 +558,7 @@ namespace engine::math {
     };
 
     template<typename T>
-    struct mat4 {
+    struct ENGINE_API mat4 {
         vec4<T> v0 = { 1, 0, 0, 0 };
         vec4<T> v1 = { 0, 1, 0, 0 };
         vec4<T> v2 = { 0, 0, 1, 0 };

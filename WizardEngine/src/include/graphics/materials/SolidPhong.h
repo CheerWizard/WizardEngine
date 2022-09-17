@@ -8,7 +8,7 @@
 
 namespace engine::graphics {
 
-    struct SolidPhong : Material {
+    struct ENGINE_API SolidPhong : Material {
 
         SolidPhong(const char* name = "solidPhong") : Material(name) {
             floats.emplace_back("ambient", 1);

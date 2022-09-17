@@ -8,7 +8,7 @@
 
 namespace engine::graphics {
 
-    class ScreenRenderer : public PrimitiveRenderer {
+    class ENGINE_API ScreenRenderer : public PrimitiveRenderer {
     public:
         ScreenRenderer() = default;
 

@@ -18,7 +18,7 @@ namespace engine::io {
 
     typedef spdlog::logger Log;
 
-    class Logger final {
+    class ENGINE_API Logger final {
 
     public:
         static void createEngineLogger(const std::string& name);
@@ -43,7 +43,7 @@ namespace engine::io {
     private:
         static void createLogger(Ref<Log> &logger, const std::string &name);
 
-    private:
+    public:
         static Ref<Log> _engineLogger;
         static Ref<Log> _editorLogger;
         static Ref<Log> _runtimeLogger;

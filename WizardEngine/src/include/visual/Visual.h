@@ -18,11 +18,11 @@ namespace engine::visual {
     using namespace shader;
     using namespace math;
 
-    struct VisualProps {
+    struct ENGINE_API VisualProps {
         f32 width = 0, height = 0;
     };
 
-    class Visual final {
+    class ENGINE_API Visual final {
 
     public:
         // core lifecycle
@@ -55,14 +55,16 @@ namespace engine::visual {
     public:
         static VisualProps props;
         static vector<ImFont*> fonts;
-        static bool fullScreen, openDockspace;
-        static int windowFlags, dockspaceFlags;
+        static bool fullScreen;
+        static bool openDockspace;
+        static int windowFlags;
+        static int dockspaceFlags;
 
     };
 
     using namespace graphics;
 
-    class Gizmo final {
+    class ENGINE_API Gizmo final {
 
     public:
         static void drawTranslate(Camera3D& camera, Transform3dComponent& transform,
@@ -75,7 +77,7 @@ namespace engine::visual {
         static void enable(bool enabled);
     };
 
-    class Panel final {
+    class ENGINE_API Panel final {
 
     public:
         static void begin(const char* title, const vec2f& size);

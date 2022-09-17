@@ -5,13 +5,14 @@
 #pragma once
 
 #include <core/primitives.h>
+#include <core/core.h>
 
 namespace engine::graphics {
 
     using namespace core;
 
     // VAO - Vertex Array Object in Graphics pipeline
-    class VertexArray final {
+    class ENGINE_API VertexArray final {
 
     public:
         VertexArray() = default;

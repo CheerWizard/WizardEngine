@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <core/core.h>
 #include <core/LayerStack.h>
 #include <core/String.h>
 #include <core/Memory.h>
@@ -47,6 +48,8 @@
 
 #include <physics/Physics.h>
 
+#include <core/Game.h>
+
 using namespace engine::core;
 using namespace engine::graphics;
 using namespace engine::event;
@@ -74,11 +77,17 @@ using namespace engine::physics;
 using namespace engine::visual;
 #endif
 
+#ifdef RCC
+#include <rcc/RuntimeCompiler.h>
+
+using namespace engine::rcc;
+#endif
+
 namespace engine::core {
 
     // The entry point in core hierarchy, behaves as singleton.
     // It's standalone class, which can NOT be created several times and should be created only once!
-    class Application : RenderSystemCallback {
+    class ENGINE_API Application : RenderSystemCallback {
 
     public:
         Application();
@@ -190,6 +199,8 @@ namespace engine::core {
         Scope<Window> _window;
         // scripting system
         Scope<scripting::ScriptSystem> _scriptSystem;
+        // game
+        Game* game = nullptr;
     };
 
     Application* createApplication();

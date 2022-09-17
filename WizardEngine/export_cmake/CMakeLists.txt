@@ -13,37 +13,16 @@ macro(include_engine path)
             ${path}/vendor/yaml-cpp/include
             ${path}/vendor/glm/glm
             ${path}/vendor/ImGuizmo
+            ${path}/vendor/rcc/RuntimeCompiler
+            ${path}/vendor/rcc/RuntimeObjectSystem
     )
 endmacro()
 # use this macro to link WizardEngine and all it's dependencies!
 macro(link_to_engine project)
-    target_link_libraries(
-            ${project} PUBLIC
-            WizardEngine
-            spdlog
-            glfw
-            glad
-            imgui
-            stb
-            freetype
-            glm
-            imguizmo
-    )
-endmacro()
-
-macro(link_to_engine_dll project)
-    target_link_libraries(
-            ${project} PUBLIC
-            WizardEngine
-            spdlog
-            glfw
-            glad
-            imgui
-            stb
-            freetype
-            assimp-vc143-mtd
-            OpenAL32
-            yaml-cppd
-            imguizmo
-    )
+    add_definitions(-DENGINE_DLL=1)
+    target_link_libraries(${project} PUBLIC WizardEngine)
+    replace_file(../WizardEngine/vendor/dlls/assimp-vc143-mtd.dll assimp-vc143-mtd.dll)
+    replace_file(../WizardEngine/vendor/dlls/OpenAL32.dll OpenAL32.dll)
+    replace_file(../WizardEngine/vendor/dlls/yaml-cppd.dll yaml-cppd.dll)
+    replace_file(${PROJECT_BINARY_DIR}/../WizardEngine/WizardEngine.dll WizardEngine.dll)
 endmacro()

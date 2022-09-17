@@ -9,7 +9,7 @@
 
 namespace engine::shader {
 
-    class UniformBuffer final {
+    class ENGINE_API UniformBuffer final {
 
     public:
         UniformBuffer() = default;

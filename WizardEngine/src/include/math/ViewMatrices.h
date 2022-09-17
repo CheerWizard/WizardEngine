@@ -13,7 +13,7 @@ using namespace engine::shader;
 
 namespace engine::math {
 
-    struct ViewMatrix3d : Mat4fUniform {
+    struct ENGINE_API ViewMatrix3d : Mat4fUniform {
         Vec3fUniform position = { "viewPosition", DEFAULT_VIEW_POS_3D };
         float pitch = 0;
         float yaw = 0;
@@ -32,7 +32,7 @@ namespace engine::math {
         void apply();
     };
 
-    struct ViewMatrix2d : Mat4fUniform {
+    struct ENGINE_API ViewMatrix2d : Mat4fUniform {
         vec3f position = DEFAULT_VIEW_POS_2D;
         float rotation = 0;
 

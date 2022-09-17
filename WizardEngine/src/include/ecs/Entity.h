@@ -11,7 +11,7 @@ namespace engine::ecs {
 
     class Entity;
 
-    class EntityContainer {
+    class ENGINE_API EntityContainer {
 
     public:
         void clear();
@@ -87,7 +87,7 @@ namespace engine::ecs {
         return findComponent<T>(UUIDComponent(engine::uuid(uuid)));
     }
 
-    class Entity {
+    class ENGINE_API Entity {
 
     public:
         Entity() = default;

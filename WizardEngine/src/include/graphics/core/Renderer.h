@@ -17,7 +17,7 @@ using namespace engine::shader;
 namespace engine::graphics {
 
     typedef std::function<void(ecs::Registry&, ecs::entity_id, u32, BaseShaderProgram&)> Handle;
-    struct EntityHandler {
+    struct ENGINE_API EntityHandler {
         Handle handle;
 
         EntityHandler() = default;
@@ -28,7 +28,7 @@ namespace engine::graphics {
 
     // Renderer which is not using RenderModels for storing geometry
     // It creates primitive geometry under the hood, inside shader program
-    class PrimitiveRenderer {
+    class ENGINE_API PrimitiveRenderer {
 
     public:
         PrimitiveRenderer() = default;
@@ -46,7 +46,7 @@ namespace engine::graphics {
     // Basic renderer which is using dynamic array of VRenderModels and VIRenderModels to store geometry.
     // Uses BaseShaderProgram to execute and draw shader, DrawType to specify draw primitives
     // Uses EntityHandlers as a callback to user space during Registry/Entity rendering
-    class Renderer {
+    class ENGINE_API Renderer {
 
     public:
         Renderer() = default;

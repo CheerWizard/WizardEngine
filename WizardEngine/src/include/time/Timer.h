@@ -4,11 +4,13 @@
 
 #pragma once
 
+#include <core/core.h>
+
 #define invalid_limit -1
 
 namespace engine::time {
 
-    class Timer {
+    class ENGINE_API Timer {
 
     public:
         Timer(const char* functionName, float limit = invalid_limit);

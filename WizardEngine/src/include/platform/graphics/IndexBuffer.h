@@ -12,7 +12,7 @@
 namespace engine::graphics {
 
     // IBO - Index buffer Object, component of graphics pipeline
-    class IndexBuffer final : public Buffer {
+    class ENGINE_API IndexBuffer final : public Buffer {
 
     public:
         IndexBuffer() : Buffer() {}

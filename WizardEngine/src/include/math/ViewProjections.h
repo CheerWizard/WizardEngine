@@ -9,7 +9,7 @@
 
 namespace engine::math {
 
-    struct ViewProjection2d : Mat4fUniform {
+    struct ENGINE_API ViewProjection2d : Mat4fUniform {
         ViewMatrix2d viewMatrix;
         OrthographicMatrix orthographicMatrix;
 
@@ -20,7 +20,7 @@ namespace engine::math {
         void apply();
     };
 
-    struct ViewProjection3d : Mat4fUniform {
+    struct ENGINE_API ViewProjection3d : Mat4fUniform {
         ViewMatrix3d viewMatrix;
         PerspectiveMatrix perspectiveMatrix;
 

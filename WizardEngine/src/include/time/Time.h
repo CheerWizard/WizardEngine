@@ -15,7 +15,7 @@ namespace engine::time {
 
     using namespace math;
 
-    class Time {
+    class ENGINE_API Time {
 
     public:
         Time(float ms = 6) : ms(ms) {}

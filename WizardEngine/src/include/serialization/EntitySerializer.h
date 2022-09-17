@@ -15,7 +15,7 @@
 
 namespace engine::io {
 
-    class EntitySerializable : public Serializable {
+    class ENGINE_API EntitySerializable : public Serializable {
 
     public:
         EntitySerializable(const ecs::Entity& entity) : entity(entity) {}
@@ -49,7 +49,7 @@ namespace engine::io {
         }
     }
 
-    class EntitySerializer final {
+    class ENGINE_API EntitySerializer final {
 
     public:
         EntitySerializer(const ecs::Entity& entity) : entity(entity) {}

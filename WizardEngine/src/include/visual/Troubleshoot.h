@@ -10,7 +10,7 @@ namespace engine::visual {
 
     using namespace math;
 
-    class ProfilerMenu final {
+    class ENGINE_API ProfilerMenu final {
 
     public:
         static void draw(const char* title, const vec2f& size);

@@ -4,6 +4,8 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake_tools/CMakeLists.txt)
 
 project(WizardEngine)
 
+add_definitions(-DENGINE_DLL_BUILD=1)
+
 #/ creating a library from sources.
 file(GLOB_RECURSE ENGINE_SRC
         src/*.c
@@ -11,7 +13,7 @@ file(GLOB_RECURSE ENGINE_SRC
         src/*.h
         src/*.hpp
 )
-add_library(${PROJECT_NAME} ${ENGINE_SRC})
+add_library(${PROJECT_NAME} SHARED ${ENGINE_SRC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 #/ Add WizardEngine headers
@@ -57,6 +59,11 @@ include_directories(vendor/glm/glm)
 add_subdirectory(vendor/ImGuizmo)
 include_directories(vendor/ImGuizmo)
 
+#/ RCC (Runtime Compiled C++)
+add_subdirectory(vendor/rcc)
+include_directories(vendor/rcc/RuntimeCompiler)
+include_directories(vendor/rcc/RuntimeObjectSystem)
+
 #/ linking dependencies.
 target_link_libraries(
         WizardEngine PUBLIC
@@ -71,27 +78,18 @@ target_link_libraries(
         ../WizardEngine/vendor/dlls/OpenAL32
         ../WizardEngine/vendor/dlls/yaml-cppd
         imguizmo
+        RuntimeCompiler
+        RuntimeObjectSystem
 )
-
-#replace_dirs(WizardEngine/src/include WizardEngine/includes/src/include)
-#replace_dirs(WizardEngine/vendor WizardEngine/includes/vendor)
 
 replace_dirs(WizardEngine/assets WizardEngine/assets)
 replace_dirs(WizardEngine/vendor/dlls WizardEngine/vendor/dlls)
 #replace_dirs(WizardEngine/project_template WizardEngine/project_template)
 replace_dirs(WizardEngine/export_cmake WizardEngine/export_cmake)
 
-replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardSamples/assimp-vc143-mtd.dll)
-replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardStudio/assimp-vc143-mtd.dll)
-replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardTest/assimp-vc143-mtd.dll)
-replace_file(vendor/dlls/assimp-vc143-mtd.dll ../WizardServer/assimp-vc143-mtd.dll)
-
-replace_file(vendor/dlls/OpenAL32.dll ../WizardSamples/OpenAL32.dll)
-replace_file(vendor/dlls/OpenAL32.dll ../WizardStudio/OpenAL32.dll)
-replace_file(vendor/dlls/OpenAL32.dll ../WizardTest/OpenAL32.dll)
-replace_file(vendor/dlls/OpenAL32.dll ../WizardServer/OpenAL32.dll)
-
-replace_file(vendor/dlls/yaml-cppd.dll ../WizardSamples/yaml-cppd.dll)
-replace_file(vendor/dlls/yaml-cppd.dll ../WizardStudio/yaml-cppd.dll)
-replace_file(vendor/dlls/yaml-cppd.dll ../WizardTest/yaml-cppd.dll)
-replace_file(vendor/dlls/yaml-cppd.dll ../WizardServer/yaml-cppd.dll)
+#add_custom_command(
+#        TARGET ${PROJECT_NAME}
+#        POST_BUILD
+#        COMMAND replace_file(vendor/dlls/yaml-cppd.dll ../WizardServer/yaml-cppd.dll)
+#        COMMENT "Replace files"
+#)

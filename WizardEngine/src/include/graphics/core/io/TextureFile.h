@@ -10,18 +10,18 @@
 
 namespace engine::io {
 
-    struct TextureData {
+    struct ENGINE_API TextureData {
         int width = 0, height = 0, channels = 0;
         bool sRGB = false;
         void* data = nullptr;
     };
 
-    struct TextureArrayData {
+    struct ENGINE_API TextureArrayData {
         int width = 0, height = 0, channels = 0;
         vector<TextureData> textureData;
     };
 
-    class TextureFile final {
+    class ENGINE_API TextureFile final {
 
     private:
         TextureFile() = default;

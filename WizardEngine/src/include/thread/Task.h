@@ -10,7 +10,7 @@
 namespace engine::thread {
 
     template<typename Runnable, typename Done, typename... Args>
-    struct Task {
+    struct ENGINE_API Task {
         const char* name = "Default_Task";
         const char* threadName = "Default_Thread";
         bool isRunning = false;
@@ -39,7 +39,7 @@ namespace engine::thread {
     };
 
     template<typename... Args>
-    struct VoidTask : public Task<void(Args...), void(), Args...> {
+    struct ENGINE_API VoidTask : public Task<void(Args...), void(), Args...> {
         VoidTask() : Task<void(Args...), void(), Args...>() {}
         VoidTask(const char* name,
                  const char* threadName,

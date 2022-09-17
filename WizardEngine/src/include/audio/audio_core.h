@@ -7,6 +7,7 @@
 #include <AL/alc.h>
 #include <AL/al.h>
 #include <type_traits>
+#include <core/core.h>
 
 #define alCall(function, ...) alCallImpl(function, __VA_ARGS__)
 #define alcCall(function, device, ...) alcCallImpl(function, device, __VA_ARGS__)

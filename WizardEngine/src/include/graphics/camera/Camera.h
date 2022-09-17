@@ -44,7 +44,7 @@ namespace engine::graphics {
     typedef std::unordered_map<event::KeyCode, RotateType> RotateKeys;
     typedef std::unordered_map<event::KeyCode, MoveType> MoveKeys;
 
-    class Camera2D : public ecs::Entity {
+    class ENGINE_API Camera2D : public ecs::Entity {
 
     public:
         Camera2D() = default;
@@ -105,7 +105,7 @@ namespace engine::graphics {
 
     };
 
-    class Camera3D : public ecs::Entity {
+    class ENGINE_API Camera3D : public ecs::Entity {
 
     public:
         Camera3D() = default;

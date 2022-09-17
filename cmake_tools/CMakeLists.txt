@@ -12,6 +12,10 @@ if(PROFILING)
     add_definitions(-DPROFILING=1)
 endif(PROFILING)
 
+if (RCC)
+    add_definitions(-DRCC=1)
+endif(RCC)
+
 # copying target dir to destination dir. If destination does not exist, create it.
 macro(copy_dir dir1 dir2)
     set(srcDir ${CMAKE_SOURCE_DIR}/${dir1})

@@ -11,7 +11,7 @@ namespace engine::audio {
 
     using namespace core;
 
-    struct Cursor {
+    struct ENGINE_API Cursor {
         u8 bufferCount = 0;
         size_t bufferSize = 0;
 
@@ -31,8 +31,8 @@ namespace engine::audio {
         f32 maxDistance = max_f32;
         f32 rollOffFactor = 1;
 
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
     enum Attenuation {
@@ -43,7 +43,7 @@ namespace engine::audio {
         DEFAULT = INVERSE_DISTANCE_CLAMPED
     };
 
-    class Source final {
+    class ENGINE_API Source final {
 
     public:
         Source() = default;

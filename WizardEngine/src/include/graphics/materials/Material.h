@@ -32,7 +32,7 @@ namespace engine::graphics {
         vector<Material> materials;
     };
 
-    class MaterialShader final {
+    class ENGINE_API MaterialShader final {
 
     public:
         MaterialShader() = default;

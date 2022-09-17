@@ -9,29 +9,29 @@
 
 namespace engine::graphics {
 
-    struct ColorAttachment {
+    struct ENGINE_API ColorAttachment {
         ColorFormat format = ColorFormat::NONE;
         u32 id = 0;
     };
 
-    struct DepthStencilAttachment {
+    struct ENGINE_API DepthStencilAttachment {
         DepthStencilFormat format = DepthStencilFormat::NONE;
         u32 id = 0;
     };
 
-    struct RenderBufferAttachment {
+    struct ENGINE_API RenderBufferAttachment {
         DepthStencilFormat format = DepthStencilFormat::NONE;
         u32 id = 0;
     };
 
-    struct FrameBufferFormat {
+    struct ENGINE_API FrameBufferFormat {
         u32 width = 0, height = 0, samples = 1;
         std::vector<ColorAttachment> colorAttachments;
         DepthStencilAttachment depthStencilAttachment;
         RenderBufferAttachment renderBufferAttachment;
     };
 
-    class FrameBuffer final {
+    class ENGINE_API FrameBuffer final {
 
     public:
         FrameBuffer() {

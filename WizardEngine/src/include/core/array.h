@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <core/core.h>
 
 namespace engine::core {
 

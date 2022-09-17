@@ -9,22 +9,22 @@
 
 namespace engine::shader {
 
-    struct UniformAttribute {
+    struct ENGINE_API UniformAttribute {
         std::string name;
         ElementCount elementCount = SINGLE;
         u16 count = 1;
         size_t offset = 0;
     };
 
-    inline size_t elementSize(const UniformAttribute &uniformAttribute) {
+    ENGINE_API inline size_t elementSize(const UniformAttribute &uniformAttribute) {
         return uniformAttribute.elementCount * sizeof(float);
     }
 
-    inline size_t size_of(const UniformAttribute &uniformAttribute) {
+    ENGINE_API inline size_t size_of(const UniformAttribute &uniformAttribute) {
         return uniformAttribute.count * elementSize(uniformAttribute);
     }
 
-    struct UniformStructAttribute {
+    struct ENGINE_API UniformStructAttribute {
         std::string name;
         vector<UniformAttribute> uniformAttributes;
 

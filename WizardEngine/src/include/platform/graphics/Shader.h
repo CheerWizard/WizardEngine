@@ -27,7 +27,7 @@ namespace engine::shader {
         NOT_READY = 6
     };
 
-    class Shader {
+    class ENGINE_API Shader {
 
     public:
         Shader() = default;
@@ -64,7 +64,7 @@ namespace engine::shader {
         std::string src;
     };
 
-    class ShaderProgram {
+    class ENGINE_API ShaderProgram {
 
     public:
         ShaderProgram() = default;

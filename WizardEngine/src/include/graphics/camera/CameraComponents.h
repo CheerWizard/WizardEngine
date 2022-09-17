@@ -19,8 +19,8 @@ namespace engine::graphics {
             viewProjection.name = "camera";
         }
 
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
     serialize_component(Camera3dComponent) {
@@ -36,8 +36,8 @@ namespace engine::graphics {
             viewProjection.name = "camera";
         }
 
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
 }

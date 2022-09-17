@@ -55,7 +55,7 @@ namespace engine::graphics {
         CircleComponent(const Vec4fUniform& color, const FloatUniform& thickness, const FloatUniform& fade)
         : color(color), thickness(thickness), fade(fade) {}
 
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 }

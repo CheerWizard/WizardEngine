@@ -5,12 +5,13 @@
 #pragma once
 
 #include <core/primitives.h>
+#include <core/core.h>
 
 namespace engine::graphics {
 
     using namespace core;
 
-    class Buffer {
+    class ENGINE_API Buffer {
 
     public:
         Buffer() = default;

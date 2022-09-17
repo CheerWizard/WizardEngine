@@ -7,8 +7,8 @@
 #include <graphics/core/shader/BaseShader.h>
 
 namespace engine::shader {
-    ShaderScript camera2dUboScript();
-    ShaderScript camera3dUboScript();
-    ShaderScript camera2dScript();
-    ShaderScript camera3dScript();
+    ENGINE_API ShaderScript camera2dUboScript();
+    ENGINE_API ShaderScript camera3dUboScript();
+    ENGINE_API ShaderScript camera2dScript();
+    ENGINE_API ShaderScript camera3dScript();
 }

@@ -10,7 +10,7 @@
 
 namespace engine::graphics {
 
-    struct Color { f32 r,g,b,a; };
+    struct ENGINE_API Color { f32 r,g,b,a; };
 
     enum TestOperator {
         ALWAYS, NEVER,
@@ -25,34 +25,34 @@ namespace engine::graphics {
         INCREASE_WRAP, DECREASE_WRAP
     };
 
-    struct StencilTestActions {
+    struct ENGINE_API StencilTestActions {
         TestAction stencilFails;
         TestAction stencilPassDepthFails;
         TestAction stencilPassDepthPass;
     };
 
-    void drawV(const DrawType& drawType, const uint32_t& vertexCount);
-    void drawV(const DrawType& drawType, const uint32_t& vertexCount, const uint32_t& instanceCount);
-    void drawVI(const DrawType& drawType, const uint32_t& indexCount);
-    void drawVI(const DrawType& drawType, const uint32_t& indexCount, const uint32_t& instanceCount);
+    ENGINE_API void drawV(const DrawType& drawType, const uint32_t& vertexCount);
+    ENGINE_API void drawV(const DrawType& drawType, const uint32_t& vertexCount, const uint32_t& instanceCount);
+    ENGINE_API void drawVI(const DrawType& drawType, const uint32_t& indexCount);
+    ENGINE_API void drawVI(const DrawType& drawType, const uint32_t& indexCount, const uint32_t& instanceCount);
 
-    void setMSAA(bool enabled);
+    ENGINE_API void setMSAA(bool enabled);
 
-    void clearColorBuffer();
+    ENGINE_API void clearColorBuffer();
 
-    void setClearColor(const Color& color);
-    void setDepthTest(bool enabled);
-    void clearDepthBuffer();
-    void setDepthBufferState(bool readOnly);
-    void setDepthTestOperator(const TestOperator& testOperator);
-    int depthBits();
+    ENGINE_API void setClearColor(const Color& color);
+    ENGINE_API void setDepthTest(bool enabled);
+    ENGINE_API void clearDepthBuffer();
+    ENGINE_API void setDepthBufferState(bool readOnly);
+    ENGINE_API void setDepthTestOperator(const TestOperator& testOperator);
+    ENGINE_API int depthBits();
 
-    void setStencilTest(bool enabled);
-    void clearStencilBuffer();
-    void setStencilBufferState(bool readOnly);
-    void setStencilTestOperator(const TestOperator& testOperator, int value, bool readOnly);
-    int stencilMask(bool readOnly);
-    void setStencilTestActions(const StencilTestActions& stencilTestActions);
+    ENGINE_API void setStencilTest(bool enabled);
+    ENGINE_API void clearStencilBuffer();
+    ENGINE_API void setStencilBufferState(bool readOnly);
+    ENGINE_API void setStencilTestOperator(const TestOperator& testOperator, int value, bool readOnly);
+    ENGINE_API int stencilMask(bool readOnly);
+    ENGINE_API void setStencilTestActions(const StencilTestActions& stencilTestActions);
 
     enum BlendFactor {
         F_ZERO, F_ONE,
@@ -68,15 +68,15 @@ namespace engine::graphics {
         ADD, SUBTRACT, REVERSE_SUBTRACT, MIN, MAX
     };
 
-    void setBlendMode(bool isEnabled);
-    void setBlendFunction(const BlendFactor& srcFactor, const BlendFactor& destFactor);
-    void setBlendFunctionSeparate(
+    ENGINE_API void setBlendMode(bool isEnabled);
+    ENGINE_API void setBlendFunction(const BlendFactor& srcFactor, const BlendFactor& destFactor);
+    ENGINE_API void setBlendFunctionSeparate(
         const BlendFactor& srcRgbFactor,
         const BlendFactor& destRgbFactor,
         const BlendFactor& srcAlphaFactor,
         const BlendFactor& destAlphaFactor
     );
-    void setBlendEquation(const BlendOperator& srcDestOperator);
+    ENGINE_API void setBlendEquation(const BlendOperator& srcDestOperator);
 
     enum PolygonMode {
         DOT, LINES, FILL
@@ -90,10 +90,10 @@ namespace engine::graphics {
         CLOCK_WISE, COUNTER_CLOCK_WISE
     };
 
-    void setPolygonMode(const FaceType& faceType, const PolygonMode &polygonMode);
-    void setCullFaceMode(bool isEnabled);
-    void setCullFace(const FaceType& faceType);
-    void setFrontFace(const FrontFaceType& frontFaceType);
+    ENGINE_API void setPolygonMode(const FaceType& faceType, const PolygonMode &polygonMode);
+    ENGINE_API void setCullFaceMode(bool isEnabled);
+    ENGINE_API void setCullFace(const FaceType& faceType);
+    ENGINE_API void setFrontFace(const FrontFaceType& frontFaceType);
 
     component(CullingComponent) {
         bool enabled = false;
@@ -103,7 +103,7 @@ namespace engine::graphics {
         CullingComponent(bool enabled) : enabled(enabled) {}
     };
 
-    class Culling final {
+    class ENGINE_API Culling final {
 
     private:
         Culling() = default;
@@ -123,7 +123,7 @@ namespace engine::graphics {
         PolygonModeComponent(const FaceType& face, const PolygonMode& mode) : face(face), mode(mode) {}
     };
 
-    class PolygonModes final {
+    class ENGINE_API PolygonModes final {
 
     private:
         PolygonModes() = default;
@@ -137,5 +137,5 @@ namespace engine::graphics {
         static FaceType faceType;
     };
 
-    void enableSRGB();
+    ENGINE_API void enableSRGB();
 }

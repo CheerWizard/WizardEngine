@@ -10,11 +10,9 @@ namespace engine::network {
 
     using namespace core;
 
-    class NetworkApplication : Application {
+    class ENGINE_API NetworkApplication : Application {
         void onCreate() override;
-
         void onDestroy() override;
-
     };
 
 }

@@ -14,13 +14,13 @@ namespace engine::physics {
 
     typedef std::function<void(entity_id, entity_id)> CollisionCallback;
 
-    struct PhysicsCallback {
+    struct ENGINE_API PhysicsCallback {
         // collision callbacks
         CollisionCallback onCollided = [](entity_id, entity_id){};
         CollisionCallback onNotCollided = [](entity_id, entity_id){};
     };
 
-    class Physics final {
+    class ENGINE_API Physics final {
 
     public:
         static void onUpdate(time::Time dt);

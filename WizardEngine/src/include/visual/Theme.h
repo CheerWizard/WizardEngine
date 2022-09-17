@@ -5,10 +5,11 @@
 #pragma once
 
 #include <imgui.h>
+#include <core/core.h>
 
 namespace engine::visual {
 
-    class Theme final {
+    class ENGINE_API Theme final {
 
     public:
         float Convert_sRGB_FromLinear(float theLinearValue);

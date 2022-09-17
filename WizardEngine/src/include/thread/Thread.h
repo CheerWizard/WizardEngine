@@ -12,7 +12,7 @@
 
 namespace engine::thread {
     using namespace core;
-    void current_sleep(const u32 &millis);
-    u32 cpu_cores_count();
-    u32 currentThreadId();
+    ENGINE_API void current_sleep(const u32 &millis);
+    ENGINE_API u32 cpu_cores_count();
+    ENGINE_API u32 currentThreadId();
 }

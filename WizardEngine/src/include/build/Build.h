@@ -13,7 +13,7 @@ namespace engine::build {
     typedef std::unordered_map<std::string, std::string> StringsMap;
     typedef std::unordered_map<std::string, HMODULE> HModuleMap;
 
-    class Libs final {
+    class ENGINE_API Libs final {
 
     public:
         static void generate(const std::string &name);
@@ -31,7 +31,7 @@ namespace engine::build {
 
     };
 
-    class Objects final {
+    class ENGINE_API Objects final {
 
     public:
         static void compile(const std::string &srcPath);
@@ -48,7 +48,7 @@ namespace engine::build {
         static StringsMap map;
     };
 
-    class HModules final {
+    class ENGINE_API HModules final {
 
     public:
         static void add(const std::string &name, const HMODULE& hmodule);
@@ -62,7 +62,7 @@ namespace engine::build {
         static HModuleMap map;
     };
 
-    class Executable final {
+    class ENGINE_API Executable final {
 
     public:
         static void generate(const std::string &srcPath, std::string& exePath);
@@ -75,7 +75,7 @@ namespace engine::build {
     };
 
     template<typename Object>
-    Object* createObject(const std::string &libName, const std::string &createFnName) {
+    ENGINE_API Object* createObject(const std::string &libName, const std::string &createFnName) {
         ENGINE_INFO("createObject({0}, {1})", libName, createFnName);
         Object* object = nullptr;
         if (!Libs::exists(libName)) {
@@ -111,7 +111,7 @@ namespace engine::build {
     }
 
     template<typename... Args>
-    void createFunction(const std::string &libName, const std::string &fnName, Args&&... args) {
+    ENGINE_API void createFunction(const std::string &libName, const std::string &fnName, Args&&... args) {
         ENGINE_INFO("createFunction({0}, {1})", libName, fnName);
         if (!Libs::exists(libName)) {
             ENGINE_ERR("Library with name {0} does not exists in cache!");

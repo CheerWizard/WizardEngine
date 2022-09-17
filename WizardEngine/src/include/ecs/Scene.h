@@ -8,7 +8,7 @@
 
 namespace engine::ecs {
 
-    class Scene : public EntityContainer {
+    class ENGINE_API Scene : public EntityContainer {
 
     public:
         Scene(const char* name = "Untitled") : name(name) {}

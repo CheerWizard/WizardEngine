@@ -5,13 +5,14 @@
 #pragma once
 
 #include <imgui.h>
+#include <core/core.h>
 
 namespace engine::gui {
 
-    float Convert_sRGB_FromLinear(float theLinearValue);
-    float Convert_sRGB_ToLinear(float thesRGBValue);
-    ImVec4 ConvertFromSRGB(ImVec4 colour);
-    ImVec4 ConvertToSRGB(ImVec4 colour);
+    ENGINE_API float Convert_sRGB_FromLinear(float theLinearValue);
+    ENGINE_API float Convert_sRGB_ToLinear(float thesRGBValue);
+    ENGINE_API ImVec4 ConvertFromSRGB(ImVec4 colour);
+    ENGINE_API ImVec4 ConvertToSRGB(ImVec4 colour);
 
     // To experiment with editor theme live you can change these constexpr into static
     // members of a static "Theme" class and add a quick ImGui window to adjust the colour values

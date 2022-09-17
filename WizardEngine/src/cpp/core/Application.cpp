@@ -44,6 +44,10 @@ namespace engine::core {
         initEdgeDetection();
         initGaussianBlur();
         initTextureMixer();
+
+#ifdef RCC
+        RuntimeCompiler::init();
+#endif
     }
 
     void Application::onPrepare() {
@@ -54,14 +58,21 @@ namespace engine::core {
         _layerStack.onPrepare();
         loadGamepadMappings("../WizardEngine/assets/db/game_controller_db.txt");
 
-        auto skybox = activeScene->getSkybox().get<VertexDataComponent<SkyboxVertex>>();
-        if (skybox->vertexData.values) {
-            RenderSystem::skyboxRenderer.uploadStatic(*skybox);
-            delete skybox->vertexData.values;
+        auto skycubeId = SkyCube::ID;
+        auto transformId = Transform3dComponent::ID;
+        auto cubemapId = CubeMapTextureComponent::ID;
+
+        auto skyCube = activeScene->getSkybox().get<SkyCube>();
+
+        if (skyCube->vertexData.values) {
+            ENGINE_INFO("uploadStatic Skybox to renderer");
+            RenderSystem::skyboxRenderer.uploadStatic(*skyCube);
+            delete skyCube->vertexData.values;
         } else {
             ENGINE_WARN("Skybox of '{0}' is already uploaded!", activeScene->getName());
         }
 
+        ENGINE_INFO("screenRenderer.onWindowResized");
         RenderSystem::screenRenderer.onWindowResized(getWindowWidth(), getWindowHeight());
     }
 
@@ -72,8 +83,13 @@ namespace engine::core {
         _scriptSystem->onDestroy();
         audio::MediaPlayer::clear();
         audio::DeviceManager::clear();
+
 #ifdef VISUAL
         Visual::release();
+#endif
+
+#ifdef RCC
+        RuntimeCompiler::release();
 #endif
     }
 
@@ -90,6 +106,11 @@ namespace engine::core {
         _layerStack.onVisualDraw(dt);
         Visual::end();
 #endif
+
+#ifdef RCC
+        RuntimeCompiler::onUpdate(dt);
+#endif
+
         // draw editor/tools
         _layerStack.onUpdate(dt);
         // poll events + swap chain

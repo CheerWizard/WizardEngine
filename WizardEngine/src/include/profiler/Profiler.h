@@ -6,6 +6,7 @@
 
 #include <time/Timer.h>
 #include <core/primitives.h>
+#include <core/core.h>
 #include <fstream>
 
 namespace engine::profiler {
@@ -13,14 +14,14 @@ namespace engine::profiler {
     using namespace core;
     using namespace time;
 
-    struct ProfileData {
+    struct ENGINE_API ProfileData {
         const char* name;
         u32 threadId;
         long long beginTime;
         long long endTime;
     };
 
-    class Profiler final {
+    class ENGINE_API Profiler final {
 
     public:
         static void beginSession(const char* filepath);
@@ -42,7 +43,7 @@ namespace engine::profiler {
         static u32 actualFrames;
     };
 
-    class ProfileTimer {
+    class ENGINE_API ProfileTimer {
 
     public:
         ProfileTimer(const char* name, float limit = invalid_limit);

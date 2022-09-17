@@ -12,7 +12,7 @@ namespace engine::graphics {
 
     using namespace math;
 
-    struct PostEffect {
+    struct ENGINE_API PostEffect {
         const char* name = nullptr;
         bool enabled = false; // used to enable/disable rendering for this post effect
         // primitives
@@ -33,7 +33,7 @@ namespace engine::graphics {
         }
     };
 
-    class PostEffectRenderer {
+    class ENGINE_API PostEffectRenderer {
 
     public:
         PostEffectRenderer() = default;

@@ -6,7 +6,7 @@
 
 namespace engine::graphics {
 
-    struct HdrEffect : PostEffect {
+    struct ENGINE_API HdrEffect : PostEffect {
 
         HdrEffect(const char* name = "hdrEffect") : PostEffect(name) {
             floats.emplace_back("gamma", 2.2);
@@ -23,7 +23,7 @@ namespace engine::graphics {
 
     };
 
-    class HdrEffectRenderer : public PostEffectRenderer {
+    class ENGINE_API HdrEffectRenderer : public PostEffectRenderer {
 
     public:
         HdrEffectRenderer() : PostEffectRenderer() {}
@@ -35,7 +35,7 @@ namespace engine::graphics {
         }
     };
 
-    struct KernelEffect : PostEffect {
+    struct ENGINE_API KernelEffect : PostEffect {
 
         KernelEffect(const char* name = "kernelEffect") : PostEffect(name) {
             floats.emplace_back("offset", 1.0 / 300.0);
@@ -47,19 +47,19 @@ namespace engine::graphics {
 
     };
 
-    struct BlurEffect : KernelEffect {
+    struct ENGINE_API BlurEffect : KernelEffect {
         BlurEffect(const char* name = "blurEffect") : KernelEffect(name) {}
     };
 
-    struct SharpenEffect : KernelEffect {
+    struct ENGINE_API SharpenEffect : KernelEffect {
         SharpenEffect(const char* name = "sharpenEffect") : KernelEffect(name) {}
     };
 
-    struct EdgeDetectionEffect : KernelEffect {
+    struct ENGINE_API EdgeDetectionEffect : KernelEffect {
         EdgeDetectionEffect(const char* name = "edgeDetectionEffect") : KernelEffect(name) {}
     };
 
-    class BlurEffectRenderer : public PostEffectRenderer {
+    class ENGINE_API BlurEffectRenderer : public PostEffectRenderer {
 
     public:
         BlurEffectRenderer() : PostEffectRenderer() {}
@@ -71,7 +71,7 @@ namespace engine::graphics {
         }
     };
 
-    class SharpenEffectRenderer : public PostEffectRenderer {
+    class ENGINE_API SharpenEffectRenderer : public PostEffectRenderer {
 
     public:
         SharpenEffectRenderer() : PostEffectRenderer() {}
@@ -83,7 +83,7 @@ namespace engine::graphics {
         }
     };
 
-    class EdgeDetectionEffectRenderer : public PostEffectRenderer {
+    class ENGINE_API EdgeDetectionEffectRenderer : public PostEffectRenderer {
 
     public:
         EdgeDetectionEffectRenderer() : PostEffectRenderer() {}
@@ -95,12 +95,12 @@ namespace engine::graphics {
         }
     };
 
-    struct GaussianBlurEffect : PostEffect {
+    struct ENGINE_API GaussianBlurEffect : PostEffect {
         u32 amount = 10;
-        GaussianBlurEffect() : PostEffect() {}
+        GaussianBlurEffect(const char* name = "gaussianBlurEffect") : PostEffect(name) {}
     };
 
-    class GaussianBlurEffectRenderer : public PostEffectRenderer {
+    class ENGINE_API GaussianBlurEffectRenderer : public PostEffectRenderer {
 
     public:
         GaussianBlurEffectRenderer() : PostEffectRenderer() {}
