@@ -108,8 +108,8 @@ namespace engine::graphics {
             viewProjection = math::ViewProjection3d(aspectRatio);
         }
 
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
     class Text2dView : public ecs::Entity {
@@ -124,7 +124,7 @@ namespace engine::graphics {
             add<Text2d>(text);
             auto textProjection = TextProjection(aspectRatio);
             textProjection.viewProjection.viewMatrix.position.value = {0, 0, -1};
-            math::ViewProjections::update(textProjection.viewProjection);
+            textProjection.viewProjection.apply();
             add<TextProjection>(textProjection);
         }
     };

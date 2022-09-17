@@ -10,7 +10,7 @@
 namespace engine::io {
 
     template<class Component>
-    class ComponentSerializer final {
+    class ENGINE_API ComponentSerializer final {
 
     public:
         ComponentSerializer(const Component& component) : component(component) {}

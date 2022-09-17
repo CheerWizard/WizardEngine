@@ -13,7 +13,7 @@ namespace engine::graphics {
     using namespace shader;
     using namespace math;
 
-    struct OutlineVertex {
+    struct ENGINE_API OutlineVertex {
         vec3f position = { 0.5, 0.5, 0.5 };
         vec3f normal = { 0.5, 0.5, 0.5 };
     };
@@ -29,8 +29,8 @@ namespace engine::graphics {
         OutlineComponent(const char* name, const Vec4fUniform& color, const FloatUniform& thickness)
         : name(name), color(color), thickness(thickness) {}
 
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
     typedef BaseMeshComponent<InstanceVertex<OutlineVertex>> OutlineInstanceMesh;
@@ -39,12 +39,12 @@ namespace engine::graphics {
     typedef VertexDataComponent<BatchVertex<OutlineVertex>> OutlineBatchVertexData;
 
     template<typename T>
-    OutlineVertex map(const T& vertex) {
+    ENGINE_API OutlineVertex map(const T& vertex) {
         return { vertex.position, vertex.normal };
     }
 
     template<typename T>
-    BaseMeshComponent<InstanceVertex<OutlineVertex>> toOutlineInstanceMesh(const BaseMeshComponent<InstanceVertex<T>>& baseMeshComponent) {
+    ENGINE_API BaseMeshComponent<InstanceVertex<OutlineVertex>> toOutlineInstanceMesh(const BaseMeshComponent<InstanceVertex<T>>& baseMeshComponent) {
         return toMeshComponent<InstanceVertex<T>, InstanceVertex<OutlineVertex>>(
                 baseMeshComponent,
                 [](const InstanceVertex<T>& vertex) { return InstanceVertex<OutlineVertex> { map(vertex.vertex) }; }
@@ -52,7 +52,7 @@ namespace engine::graphics {
     }
 
     template<typename T>
-    BaseMeshComponent<BatchVertex<OutlineVertex>> toOutlineBatchMesh(const BaseMeshComponent<BatchVertex<T>>& baseMeshComponent) {
+    ENGINE_API BaseMeshComponent<BatchVertex<OutlineVertex>> toOutlineBatchMesh(const BaseMeshComponent<BatchVertex<T>>& baseMeshComponent) {
         return toMeshComponent<BatchVertex<T>, BatchVertex<OutlineVertex>>(
                 baseMeshComponent,
                 [](const BatchVertex<T>& vertex) { return BatchVertex<OutlineVertex> { map(vertex.vertex) }; }
@@ -60,7 +60,7 @@ namespace engine::graphics {
     }
 
     template<typename T>
-    VertexDataComponent<InstanceVertex<OutlineVertex>> toOutlineInstanceVertexData(const VertexDataComponent<InstanceVertex<T>>& vertexDataComponent) {
+    ENGINE_API VertexDataComponent<InstanceVertex<OutlineVertex>> toOutlineInstanceVertexData(const VertexDataComponent<InstanceVertex<T>>& vertexDataComponent) {
         return toVertexDataComponent<InstanceVertex<T>, InstanceVertex<OutlineVertex>>(
                 vertexDataComponent,
                 [](const InstanceVertex<T>& vertex) { return InstanceVertex<OutlineVertex> { map(vertex.vertex) }; }
@@ -68,7 +68,7 @@ namespace engine::graphics {
     }
 
     template<typename T>
-    VertexDataComponent<BatchVertex<OutlineVertex>> toOutlineBatchVertexData(const VertexDataComponent<BatchVertex<T>>& vertexDataComponent) {
+    ENGINE_API VertexDataComponent<BatchVertex<OutlineVertex>> toOutlineBatchVertexData(const VertexDataComponent<BatchVertex<T>>& vertexDataComponent) {
         return toVertexDataComponent<BatchVertex<T>, BatchVertex<OutlineVertex>>(
                 vertexDataComponent,
                 [](const BatchVertex<T>& vertex) { return BatchVertex<OutlineVertex> { map(vertex.vertex) }; }

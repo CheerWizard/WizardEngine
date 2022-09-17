@@ -89,7 +89,7 @@ namespace engine::graphics {
         }
     };
 
-    class SkyboxRenderer : public VRenderer<SkyboxVertex> {
+    class ENGINE_API SkyboxRenderer : public VRenderer<SkyboxVertex> {
 
     public:
         SkyboxRenderer() : VRenderer<SkyboxVertex>() {}

@@ -9,7 +9,7 @@
 
 namespace engine::core {
 
-    class Layer {
+    class ENGINE_API Layer {
 
     public:
         Layer(const char* tag = "Layer") : tag(tag) {}

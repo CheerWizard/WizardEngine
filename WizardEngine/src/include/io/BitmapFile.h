@@ -3,10 +3,11 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <core/core.h>
 
 namespace engine::io {
 
-    struct BitMapFileHeader {
+    struct ENGINE_API BitMapFileHeader {
         short type;
         int filesize;
         short reserved1;
@@ -14,7 +15,7 @@ namespace engine::io {
         int offset;
     };
 
-    struct BitMapInfoHeader {
+    struct ENGINE_API BitMapInfoHeader {
         int headerSize;
         int width;
         int height;
@@ -28,14 +29,14 @@ namespace engine::io {
         int importantColorsUsed;
     };
 
-    struct BitmapData {
+    struct ENGINE_API BitmapData {
         int imageWidth;
         int imageHeight;
         uint8_t* buffer;
         int* bufferSize;
     };
 
-    class BitmapFile final {
+    class ENGINE_API BitmapFile final {
 
     private:
         BitmapFile() = default;

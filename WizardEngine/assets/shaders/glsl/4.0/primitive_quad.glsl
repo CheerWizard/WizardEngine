@@ -10,6 +10,7 @@ const vec2 vertices[4] = vec2[](
 );
 
 void main() {
-    gl_Position = vec4(vertices[gl_VertexID], 0, 1.0);
-    f_uv = (gl_Position.xy) / 2.0 + 0.5;
+    vec2 vertex = vertices[gl_VertexID];
+    gl_Position = vec4(vertex, 0, 1.0);
+    f_uv = vertex / 2.0 + 0.5;
 }

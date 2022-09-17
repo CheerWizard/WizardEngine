@@ -9,7 +9,7 @@
 
 namespace engine::audio {
 
-    class DeviceManager final {
+    class ENGINE_API DeviceManager final {
 
     private:
         DeviceManager() = default;

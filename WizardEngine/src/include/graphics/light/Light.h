@@ -11,7 +11,7 @@ namespace engine::graphics {
 
     using namespace math;
 
-    class PhongLight : public ecs::Entity {
+    class ENGINE_API PhongLight : public ecs::Entity {
 
     public:
         PhongLight() = default;
@@ -35,7 +35,7 @@ namespace engine::graphics {
 
     };
 
-    class DirectLight : public ecs::Entity {
+    class ENGINE_API DirectLight : public ecs::Entity {
 
     public:
         DirectLight() = default;
@@ -55,7 +55,7 @@ namespace engine::graphics {
 
     };
 
-    class PointLight : public ecs::Entity {
+    class ENGINE_API PointLight : public ecs::Entity {
 
     public:
         PointLight() = default;
@@ -75,7 +75,7 @@ namespace engine::graphics {
 
     };
 
-    class FlashLight : public ecs::Entity {
+    class ENGINE_API FlashLight : public ecs::Entity {
 
     public:
         FlashLight() = default;

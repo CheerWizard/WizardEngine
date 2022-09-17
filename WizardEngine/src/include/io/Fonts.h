@@ -21,14 +21,14 @@ namespace engine::graphics {
 
     using namespace math;
 
-    struct CharVertex {
+    struct ENGINE_API CharVertex {
         vec2f position = { 0.5, 0.5 };
         vec2f uv = { 0, 0 };
     };
 
     typedef BatchVertex<CharVertex> BatchCharVertex;
 
-    struct Character {
+    struct ENGINE_API Character {
         graphics::VertexDataComponent<BatchCharVertex> vertexDataComponent;
         vec2f size = { 0, 0 };
         vec2f bearing = { 0, 0 };
@@ -42,7 +42,7 @@ namespace engine::io {
 
     using namespace core;
 
-    class Fonts {
+    class ENGINE_API Fonts {
 
     private:
         Fonts() = default;

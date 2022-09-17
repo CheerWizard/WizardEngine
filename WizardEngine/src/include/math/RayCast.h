@@ -8,7 +8,7 @@
 
 namespace engine::math {
 
-    class RayCast final {
+    class ENGINE_API RayCast final {
 
     public:
         static vec3f toWorldSpace(

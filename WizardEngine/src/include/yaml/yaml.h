@@ -183,7 +183,7 @@ namespace engine::yaml {
         out << YAML::EndMap;
     }
 
-    void deserialize(const YAML::Node& parent, const char* key, const char* value);
+    ENGINE_API void deserialize(const YAML::Node& parent, const char* key, const char* value);
 
     template<typename T>
     void deserialize(const YAML::Node& parent, const char* key, shader::Uniform<T>& uniform) {

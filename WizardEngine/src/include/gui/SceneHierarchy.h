@@ -11,11 +11,11 @@
 
 namespace engine::gui {
 
-    struct SceneHierarchyProps {
+    struct ENGINE_API SceneHierarchyProps {
         const char* name = "Scene Hierarchy";
     };
 
-    class SceneHierarchyCallback {
+    class ENGINE_API SceneHierarchyCallback {
     public:
         virtual ~SceneHierarchyCallback() = default;
 
@@ -23,7 +23,7 @@ namespace engine::gui {
         virtual void onEntityRemoved(const ecs::Entity &entity) = 0;
     };
 
-    class SceneHierarchy {
+    class ENGINE_API SceneHierarchy {
 
     public:
         SceneHierarchy(const SceneHierarchyProps &props = SceneHierarchyProps()) : _props(props) {}

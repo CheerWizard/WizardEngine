@@ -15,7 +15,7 @@ namespace engine::audio {
     typedef thread::VoidTask<const std::string&, const AudioSourceComponent&, const SourceLoaded&> LoadTask;
     typedef thread::VoidTask<const u32&> SourceTask;
 
-    class MediaPlayer final {
+    class ENGINE_API MediaPlayer final {
 
     private:
         MediaPlayer() = default;

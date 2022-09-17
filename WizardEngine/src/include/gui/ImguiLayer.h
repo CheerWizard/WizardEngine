@@ -11,12 +11,12 @@ struct ImFont;
 
 namespace engine::gui {
 
-    struct ImGuiLayerProps {
+    struct ENGINE_API ImGuiLayerProps {
         uint32_t width, height;
         const char* tag = "ImGuiLayer";
     };
 
-    class ImGuiLayer : public core::Layer {
+    class ENGINE_API ImGuiLayer : public core::Layer {
 
     public:
         ImGuiLayer(Application* app, const ImGuiLayerProps &props) :
@@ -73,8 +73,10 @@ namespace engine::gui {
     protected:
         core::Application* app = nullptr;
         ImGuiLayerProps props;
-        static bool isFullScreen, isDockSpaceOpened;
-        static int windowFlags, dockSpaceFlags;
+        static bool isDockSpaceOpened;
+        static bool isFullScreen;
+        static int windowFlags;
+        static int dockSpaceFlags;
 
         ImFont* boldFont = nullptr;
         ImFont* regularFont = nullptr;

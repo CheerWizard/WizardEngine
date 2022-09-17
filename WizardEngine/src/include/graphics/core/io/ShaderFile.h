@@ -13,7 +13,7 @@
 
 namespace engine::io {
 
-    struct ShaderProps {
+    struct ENGINE_API ShaderProps {
         std::string name;
         std::string vFileName;
         std::string fFileName;
@@ -41,7 +41,7 @@ namespace engine::io {
         assetPath(assetPath) {}
     };
 
-    struct ShaderSources {
+    struct ENGINE_API ShaderSources {
         std::string vSrc;
         std::string fSrc;
         std::string gSrc;
@@ -49,7 +49,7 @@ namespace engine::io {
 
     typedef std::unordered_map<std::string, ShaderProps> ShaderPropsMap;
 
-    class ShaderFile final {
+    class ENGINE_API ShaderFile final {
 
     private:
         ShaderFile() = default;

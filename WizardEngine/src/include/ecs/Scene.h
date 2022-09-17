@@ -8,7 +8,7 @@
 
 namespace engine::ecs {
 
-    class Scene : public EntityContainer {
+    class ENGINE_API Scene : public EntityContainer {
 
     public:
         Scene(const char* name = "Untitled") : name(name) {}
@@ -34,7 +34,7 @@ namespace engine::ecs {
     public:
         Entity findEntity(const uuid& uuid);
         Entity findEntity(const UUIDComponent& uuid);
-        Entity findEntity(u64 uuid);
+        Entity findEntity(int uuid);
 
     private:
         std::string name;

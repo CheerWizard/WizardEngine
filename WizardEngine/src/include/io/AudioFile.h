@@ -21,18 +21,18 @@ namespace engine::io {
         DEFAULT = MONO_8
     };
 
-    struct AudioFormat {
+    struct ENGINE_API AudioFormat {
         s32 size = 0;
         s32 frequency = 0;
         Channels channels = DEFAULT;
     };
 
-    struct AudioData {
+    struct ENGINE_API AudioData {
         AudioFormat format;
         char* data = nullptr;
     };
 
-    class AudioFile final {
+    class ENGINE_API AudioFile final {
 
     private:
         AudioFile() = default;

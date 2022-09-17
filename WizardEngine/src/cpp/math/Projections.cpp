@@ -52,24 +52,11 @@ namespace engine::math {
         }
     }
 
-    void update(OrthographicMatrix &orthographicMatrix) {
-        orthographicMatrix.value = math::ortho(
-                orthographicMatrix.left,
-                orthographicMatrix.right,
-                orthographicMatrix.bottom,
-                orthographicMatrix.top,
-                -1.0f,
-                1.0f
-        );
+    void OrthographicMatrix::apply() {
+        value = math::ortho(left, right, bottom, top, -1.0f, 1.0f);
     }
 
-    void update(PerspectiveMatrix &perspectiveMatrix) {
-        perspectiveMatrix.value = math::perspective(
-                perspectiveMatrix.fieldOfView,
-                perspectiveMatrix.aspectRatio,
-                perspectiveMatrix.zNear,
-                perspectiveMatrix.zFar
-        );
+    void PerspectiveMatrix::apply() {
+        value = math::perspective(fieldOfView, aspectRatio, zNear, zFar);
     }
-
 }

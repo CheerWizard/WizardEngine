@@ -109,6 +109,8 @@ namespace engine::graphics {
     }
 
     u32 GaussianBlurEffectRenderer::render(u32 textureId) {
+        ENGINE_INFO("GaussianBlurEffectRenderer::render()");
+
         if (!postEffect->enabled) {
             ENGINE_WARN("GaussianBlurEffectRenderer: {0} is disabled!", postEffect->name);
             return textureId;

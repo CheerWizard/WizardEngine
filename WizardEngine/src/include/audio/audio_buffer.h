@@ -7,6 +7,7 @@
 #include <core/vector.h>
 #include <core/Memory.h>
 #include <core/primitives.h>
+#include <core/core.h>
 
 #include <io/AudioFile.h>
 
@@ -14,7 +15,7 @@ namespace engine::audio {
 
     using namespace core;
 
-    class Buffer final {
+    class ENGINE_API Buffer final {
 
     public:
         Buffer() = default;

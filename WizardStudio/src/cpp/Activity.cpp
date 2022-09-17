@@ -8,7 +8,6 @@
 #include <graphics/light/Light.h>
 #include <graphics/camera/CameraShaderScript.h>
 #include <graphics/light/LightShaderScript.h>
-#include <scripting/ScriptBuilder.h>
 
 #include <imgui.h>
 

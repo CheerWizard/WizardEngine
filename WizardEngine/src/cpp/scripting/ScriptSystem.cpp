@@ -5,10 +5,12 @@
 #pragma once
 
 #include <scripting/ScriptSystem.h>
+#include <profiler/Profiler.h>
 
 namespace engine::scripting {
 
     void ScriptSystem::onUpdate(time::Time dt) {
+        PROFILE_FUNCTION();
         auto& registry = activeScene->getRegistry();
 
         registry.each<NativeScript>([&dt, this](NativeScript* sc) {
@@ -21,6 +23,7 @@ namespace engine::scripting {
     }
 
     void ScriptSystem::onDestroy() {
+        PROFILE_FUNCTION();
         auto& registry = activeScene->getRegistry();
 
         registry.each<NativeScript>([](NativeScript* sc) {

@@ -36,7 +36,7 @@ namespace engine::shader {
         A_TRUE = 1
     };
 
-    struct VertexAttribute {
+    struct ENGINE_API VertexAttribute {
         std::string name;
         u32 location;
         u32 offset = 0;

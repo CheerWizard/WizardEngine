@@ -11,7 +11,7 @@
 
 namespace engine::graphics {
 
-    class TextureBuffer final {
+    class ENGINE_API TextureBuffer final {
 
     public:
         TextureBuffer() = default;
@@ -50,9 +50,11 @@ namespace engine::graphics {
         // read from file and load into texture buffer
         static u32 load(const char* filePath);
         static u32 load(const vector<TextureFace>& faces);
+        static u32 loadArray(const vector<std::string>& filepaths);
         // load texture data into texture buffer
         static void load(const u32& id, const io::TextureData &textureData);
         static void load(const u32& id, const TextureFaceType& faceType, const io::TextureData& textureData);
+        static void loadArray(const u32& id, const io::TextureArrayData& textureArrayData);
 
         static u32 getTypeId(const TextureType& textureType);
 

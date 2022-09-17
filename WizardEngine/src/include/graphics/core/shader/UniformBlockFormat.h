@@ -8,7 +8,7 @@
 
 namespace engine::shader {
 
-    class UniformBlockFormat final {
+    class ENGINE_API UniformBlockFormat final {
 
     public:
         UniformBlockFormat() = default;

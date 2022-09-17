@@ -4,11 +4,14 @@
 #include material/phong.glsl
 
 layout(location = 1) out vec4 brightColor;
+layout(location = 2) out int uuid;
 
 const uint LIGHT_COUNT = 8;
 uniform PhongLight phongLight[LIGHT_COUNT];
 
 uniform Phong phong[PHONG_MAX_COUNT];
+
+uniform int uuids[2];
 
 void main() {
     for (uint i = 0 ; i < LIGHT_COUNT ; i++) {
@@ -29,4 +32,6 @@ void main() {
     } else {
         brightColor = vec4(0, 0, 0, 1);
     }
+
+    uuid = uuids[getId()];
 }

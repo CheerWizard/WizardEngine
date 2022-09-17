@@ -17,7 +17,7 @@ using namespace engine::shader;
 namespace engine::graphics {
 
     typedef std::function<void(ecs::Registry&, ecs::entity_id, u32, BaseShaderProgram&)> Handle;
-    struct EntityHandler {
+    struct ENGINE_API EntityHandler {
         Handle handle;
 
         EntityHandler() = default;
@@ -28,7 +28,7 @@ namespace engine::graphics {
 
     // Renderer which is not using RenderModels for storing geometry
     // It creates primitive geometry under the hood, inside shader program
-    class PrimitiveRenderer {
+    class ENGINE_API PrimitiveRenderer {
 
     public:
         PrimitiveRenderer() = default;
@@ -46,7 +46,7 @@ namespace engine::graphics {
     // Basic renderer which is using dynamic array of VRenderModels and VIRenderModels to store geometry.
     // Uses BaseShaderProgram to execute and draw shader, DrawType to specify draw primitives
     // Uses EntityHandlers as a callback to user space during Registry/Entity rendering
-    class Renderer {
+    class ENGINE_API Renderer {
 
     public:
         Renderer() = default;
@@ -234,13 +234,13 @@ namespace engine::graphics {
             // for indexing geometry as instances
             u32 i = 0;
             for (ecs::entity_id entityId : renderModel.entities) {
-                Geometry * geometry = registry.getComponent<Geometry>(entityId);
+                Geometry* geometry = registry.getComponent<Geometry>(entityId);
                 Transform* transform = registry.getComponent<Transform>(entityId);
                 renderModel.tryUploadBatch(i, *geometry, totalVertexCount);
                 shaderProgram.setUniformArrayElement(i, transform->modelMatrix);
                 handleEntity(registry, entityId, i);
                 i++;
-//                ENGINE_INFO("instanceID: {0}, renderModelId: {1}", mesh->getId(), mesh->renderModelId);
+                ENGINE_INFO("instanceID: {0}, renderModelId: {1}", i, geometry->renderModelId);
             }
 
             renderModel.vao.bind();
@@ -274,7 +274,7 @@ namespace engine::graphics {
                 shaderProgram.setUniformArrayElement(i, transform->modelMatrix);
                 handleEntity(registry, entityId, i);
                 i++;
-//                ENGINE_INFO("instanceID: {0}, renderModelId: {1}", mesh->getId(), mesh->renderModelId);
+                ENGINE_INFO("instanceID: {0}, renderModelId: {1}", mesh->getId(), mesh->renderModelId);
             }
 
             renderModel.vao.bind();
@@ -312,7 +312,7 @@ namespace engine::graphics {
             Geometry* geometry = registry.getComponent<Geometry>(renderModel.geometry);
             renderModel.tryUpload(*geometry, totalVertexCount);
             for (ecs::entity_id entityId : renderModel.entities) {
-//                ENGINE_INFO("instanceID: {0}, renderModelId: {1}", i, geometry->renderModelId);
+                ENGINE_INFO("instanceID: {0}, renderModelId: {1}", i, geometry->renderModelId);
                 Transform* transform = registry.getComponent<Transform>(entityId);
                 shaderProgram.setUniformArrayElement(i, transform->modelMatrix);
                 handleEntity(registry, entityId, i);
@@ -355,7 +355,7 @@ namespace engine::graphics {
             Mesh* mesh = registry.getComponent<Mesh>(renderModel.mesh);
             renderModel.tryUpload(*mesh, totalVertexCount, totalIndexCount);
             for (ecs::entity_id entityId : renderModel.entities) {
-//                ENGINE_INFO("instanceID: {0}, renderModelId: {1}", i, mesh->renderModelId);
+                ENGINE_INFO("instanceID: {0}, renderModelId: {1}", i, mesh->renderModelId);
                 Transform* transform = registry.getComponent<Transform>(entityId);
                 shaderProgram.setUniformArrayElement(i, transform->modelMatrix);
                 handleEntity(registry, entityId, i);
@@ -640,6 +640,20 @@ namespace engine::graphics {
     template<typename T>
     void Renderer::createVRenderModel(vector<Object<T>> &objects) {
         u32 instancesPerDraw = shaderProgram.getInstancesPerDraw();
+
+        if (objects.size() < instancesPerDraw) {
+            u32 vertexCount = 0;
+            for (Object<T>& object : objects) {
+                VertexDataComponent<T>* geometry = object.get<VertexDataComponent<T>>();
+                vertexCount += geometry->vertexData.size;
+            }
+            VRenderModel& renderModel = createRenderModel(vertexCount);
+            for (Object<T>& object : objects) {
+                renderModel.entities.emplace_back(object.getId());
+            }
+            return;
+        }
+
         u32 k = objects.size() / instancesPerDraw;
 
         for (u32 i = 0; i < k; i++) {
@@ -665,6 +679,23 @@ namespace engine::graphics {
     template<typename T>
     void Renderer::createVIRenderModel(vector<Object<T>> &objects) {
         u32 instancesPerDraw = shaderProgram.getInstancesPerDraw();
+
+        if (objects.size() < instancesPerDraw) {
+            u32 vertexCount = 0;
+            u32 indexCount = 0;
+            for (Object<T>& object : objects) {
+                BaseMeshComponent<T>* mesh = object.get<BaseMeshComponent<T>>();
+                vertexCount += mesh->totalVertexCount;
+                indexCount += mesh->totalIndexCount;
+            }
+
+            VIRenderModel& renderModel = createRenderModel(vertexCount, indexCount);
+            for (Object<T>& object : objects) {
+                renderModel.entities.emplace_back(object.getId());
+            }
+            return;
+        }
+
         u32 k = objects.size() / instancesPerDraw;
 
         for (u32 i = 0; i < k; i++) {

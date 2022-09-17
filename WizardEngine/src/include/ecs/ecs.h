@@ -27,32 +27,50 @@ namespace engine::ecs {
     typedef void (*ComponentDestroyFunction)(BaseComponent* component);
 
     // dynamic component type system
-    typedef std::tuple<ComponentCreateFunction, ComponentDestroyFunction, component_size> ComponentType;
-    struct BaseComponent {
+    struct ComponentType {
+        ComponentCreateFunction createFunction;
+        ComponentDestroyFunction destroyFunction;
+        component_size size;
+        const char* name;
+
+        ComponentType(
+                ComponentCreateFunction createFunction,
+                ComponentDestroyFunction destroyFunction,
+                component_size size,
+                const char* name
+        ) : createFunction(createFunction), destroyFunction(destroyFunction), size(size), name(name) {}
+    };
+
+    struct ENGINE_API BaseComponent {
         entity_id entityId = invalid_entity_id;
 
     public:
         static component_id registerComponentType(
                 ComponentCreateFunction createFunction,
                 ComponentDestroyFunction destroyFunction,
-                component_size size
+                component_size size,
+                const char* typeName
         );
 
     public:
         inline static const ComponentType& getType(component_id id) {
-            return (*componentTypes)[id];
+            return componentTypes->at(id);
         }
 
         inline static ComponentCreateFunction getCreateFunction(component_id id) {
-            return std::get<0>((*componentTypes)[id]);
+            return componentTypes->at(id).createFunction;
         }
 
         inline static ComponentDestroyFunction getDestroyFunction(component_id id) {
-            return std::get<1>((*componentTypes)[id]);
+            return componentTypes->at(id).destroyFunction;
         }
 
         inline static component_size getSize(component_id id) {
-            return std::get<2>((*componentTypes)[id]);
+            return componentTypes->at(id).size;
+        }
+
+        inline static const char* getTypeName(component_id id) {
+            return componentTypes->at(id).name;
         }
 
         inline static bool isValid(component_id id) {
@@ -124,7 +142,7 @@ template_component(component_type, template_type), engine::io::Serializable
 
     template<class T>
     const component_id Component<T>::ID(BaseComponent::registerComponentType(
-            createComponent<T>, destroyComponent<T>, sizeof(T)
+            createComponent<T>, destroyComponent<T>, sizeof(T), typeid(T).name()
     ));
 
     template<class T>
@@ -140,7 +158,7 @@ template_component(component_type, template_type), engine::io::Serializable
     typedef std::pair<u32, entity_data> entity; // entity index -> entity data
     typedef void (*EntityFunction)(entity_id);
     // Registry of Components, Systems, Entities
-    class Registry {
+    class ENGINE_API Registry {
         IMMUTABLE(Registry)
     public:
         Registry() = default;
@@ -169,6 +187,11 @@ template_component(component_type, template_type), engine::io::Serializable
         void each(const Function& function);
         template<class Component1, class Component2, class Component3, typename Function>
         void each(const Function& function);
+
+        template<class Component, typename Function>
+        void eachPair(const Function& function);
+        template<class Component1, class Component2, typename Function>
+        void eachPair(const Function& function);
 
         size_t entity_count();
         template<class Component>
@@ -364,6 +387,39 @@ template_component(component_type, template_type), engine::io::Serializable
             ByComponent* actualComponent = (ByComponent*) &componentData[i];
             if (condition(actualComponent)) {
                 return getComponent<ResultComponent>(actualComponent->entityId);
+            }
+        }
+    }
+
+    template<class Component, typename Function>
+    void Registry::eachPair(const Function &function) {
+        validate_component("eahcCompare()", Component, );
+
+        u32 typeSize = Component::TYPE_SIZE;
+        component_data& componentData = components[Component::ID];
+        for (u32 i = 0; i < componentData.size(); i += typeSize) {
+            for (u32 j = i + typeSize; j < componentData.size(); j += typeSize) {
+                Component* component1 = (Component*) &componentData[i];
+                Component* component2 = (Component*) &componentData[j];
+                function(component1, component2);
+            }
+        }
+    }
+
+    template<class Component1, class Component2, typename Function>
+    void Registry::eachPair(const Function &function) {
+        validate_component("eachCompare()", Component1, );
+        validate_component("eachCompare()", Component2, );
+
+        u32 typeSize1 = Component1::TYPE_SIZE;
+        u32 typeSize2 = Component2::TYPE_SIZE;
+        component_data& componentData1 = components[Component1::ID];
+        component_data& componentData2 = components[Component2::ID];
+        for (u32 i = 0; i < componentData1.size(); i += typeSize1) {
+            for (u32 j = 0; j < componentData2.size(); j += typeSize2) {
+                Component1* component1 = (Component1*) &componentData1[i];
+                Component2* component2 = (Component2*) &componentData2[j];
+                function(component1, component2);
             }
         }
     }

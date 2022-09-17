@@ -9,42 +9,31 @@
 
 namespace engine::math {
 
-    struct ViewProjection2d;
-    struct ViewProjection3d;
-
-    class ViewProjections final {
-
-    private:
-        ViewProjections() = default;
-        ~ViewProjections() = default;
-
-    public:
-        static void update(ViewProjection2d &viewProjection2D);
-        static void update(ViewProjection3d &viewProjection3D);
-
-    };
-
-    struct ViewProjection2d : Mat4fUniform {
+    struct ENGINE_API ViewProjection2d : Mat4fUniform {
         ViewMatrix2d viewMatrix;
         OrthographicMatrix orthographicMatrix;
 
         ViewProjection2d() {
-            ViewProjections::update(*this);
+            apply();
         }
+
+        void apply();
     };
 
-    struct ViewProjection3d : Mat4fUniform {
+    struct ENGINE_API ViewProjection3d : Mat4fUniform {
         ViewMatrix3d viewMatrix;
         PerspectiveMatrix perspectiveMatrix;
 
         ViewProjection3d() {
-            ViewProjections::update(*this);
+            apply();
         }
 
         ViewProjection3d(const float& aspectRatio) {
             perspectiveMatrix.aspectRatio = aspectRatio;
-            ViewProjections::update(*this);
+            apply();
         }
+
+        void apply();
     };
 
     void serialize(YAML::Emitter& out, const char* key, const ViewProjection2d& vp);

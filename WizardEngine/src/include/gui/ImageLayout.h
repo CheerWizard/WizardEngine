@@ -10,17 +10,17 @@
 
 namespace engine::gui {
 
-    struct ImageLayoutProps {
+    struct ENGINE_API ImageLayoutProps {
         const char* title;
         uint32_t width, height;
     };
 
-    class ImageLayoutCallback {
+    class ENGINE_API ImageLayoutCallback {
     public:
         virtual void onImageResized(const uint32_t &width, const uint32_t &height) = 0;
     };
 
-    class ImageLayout {
+    class ENGINE_API ImageLayout {
 
     public:
         ImageLayout(const ImageLayoutProps &props) : _props(props) {}

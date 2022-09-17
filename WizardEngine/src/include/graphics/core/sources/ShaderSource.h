@@ -18,7 +18,7 @@ namespace engine::shader {
     typedef ShaderPrograms::iterator ShaderIterator;
 
     // Singleton class. Stores and provides ShaderProgram instances from memory.
-    class ShaderSource {
+    class ENGINE_API ShaderSource {
 
     private:
         ShaderSource() = default;

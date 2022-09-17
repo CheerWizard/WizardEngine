@@ -6,26 +6,27 @@
 
 #include <xhash>
 #include <core/primitives.h>
+#include <core/core.h>
 
 namespace engine {
 
     using namespace core;
     // "UUID" (universally unique identifier) or GUID is (usually) a 128-bit integer
     // used to "uniquely" identify information.
-    class uuid {
+    class ENGINE_API uuid {
 
     public:
         uuid();
-        uuid(u64 uuid);
+        uuid(int uuid);
         uuid(const uuid& other);
 
     public:
-        operator u64() { return _uuid; }
-        operator const u64() const { return _uuid; }
-        bool operator ==(u64 other) const { return _uuid == other; }
+        operator int() { return _uuid; }
+        operator const int() const { return _uuid; }
+        bool operator ==(int other) const { return _uuid == other; }
 
     private:
-        u64 _uuid;
+        int _uuid;
     };
 }
 

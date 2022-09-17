@@ -11,13 +11,21 @@ namespace engine::ecs {
     u32 BaseComponent::registerComponentType(
             ComponentCreateFunction createFunction,
             ComponentDestroyFunction destroyFunction,
-            component_size size
+            component_size size,
+            const char* typeName
     ) {
         if (componentTypes == nullptr) {
             componentTypes = new vector<ComponentType>();
         }
+
         u32 id = componentTypes->size();
-        componentTypes->emplace_back(ComponentType(createFunction, destroyFunction, size));
+
+        for (u32 i = 0 ; i < componentTypes->size(); i++) {
+            auto componentType = componentTypes->at(i);
+            if (strcmp(componentType.name, typeName) == 0) return i;
+        }
+
+        componentTypes->emplace_back(createFunction, destroyFunction, size, typeName);
         return id;
     }
 

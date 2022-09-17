@@ -5,13 +5,14 @@
 #pragma once
 
 #include <string>
+#include <core/core.h>
 
 #define ENGINE_SHADERS_PATH engine::io::getEngineShadersPath()
 #define RUNTIME_SHADERS_PATH engine::io::getRuntimeShadersPath()
 #define GRAPHICS_CORE_VERSION engine::io::getGraphicsCoreVersion()
 
 namespace engine::io {
-    std::string getRuntimeShadersPath();
-    std::string getEngineShadersPath();
-    const char* getGraphicsCoreVersion();
+    ENGINE_API std::string getRuntimeShadersPath();
+    ENGINE_API std::string getEngineShadersPath();
+    ENGINE_API const char* getGraphicsCoreVersion();
 }

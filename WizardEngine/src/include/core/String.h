@@ -6,6 +6,7 @@
 
 #include <core/vector.h>
 #include <core/primitives.h>
+#include <core/core.h>
 #include <string>
 
 #define MAX_LENGTH 10

@@ -4,9 +4,11 @@
 
 #pragma once
 
+#include <core/core.h>
+
 namespace engine::graphics {
 
-    class VideoStats final {
+    class ENGINE_API VideoStats final {
     public:
         static int getMaxSlots();
         static const char* getAPIName();

@@ -11,7 +11,7 @@
 
 namespace engine::core {
 
-    class LayerStack {
+    class ENGINE_API LayerStack {
 
         typedef std::vector<Layer*> Layers;
 

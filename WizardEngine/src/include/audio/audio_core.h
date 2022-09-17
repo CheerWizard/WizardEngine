@@ -7,6 +7,7 @@
 #include <AL/alc.h>
 #include <AL/al.h>
 #include <type_traits>
+#include <core/core.h>
 
 #define alCall(function, ...) alCallImpl(function, __VA_ARGS__)
 #define alcCall(function, device, ...) alcCallImpl(function, device, __VA_ARGS__)
@@ -22,7 +23,9 @@ namespace engine::audio {
             Params... params
     )->typename std::enable_if_t<!std::is_same_v<void, decltype(function(params...))>, decltype(function(params...))> {
         auto result = function(std::forward<Params>(params)...);
+#ifdef DEBUG
         checkError();
+#endif
         return result;
     }
 

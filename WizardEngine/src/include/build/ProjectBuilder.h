@@ -5,6 +5,7 @@
 #pragma once
 
 #include <string_view>
+#include <core/core.h>
 
 #define PLATFORM_CPP_PATH "../WizardEngine/src/cpp/platform"
 #define ENGINE_PROJECT_PATH "../WizardEngine/WizardEngine.sln"
@@ -22,7 +23,7 @@ namespace engine::build {
         OPENGL
     };
 
-    struct Platform {
+    struct ENGINE_API Platform {
         OperatingSystem os;
         std::string osPath;
         GraphicsVendor gv;
@@ -52,12 +53,12 @@ namespace engine::build {
         }
     };
 
-    struct ProjectProps {
+    struct ENGINE_API ProjectProps {
         std::string name;
         bool isRunning;
     };
 
-    class ProjectBuilder final {
+    class ENGINE_API ProjectBuilder final {
 
     public:
         static void buildTask(const Platform& platform);
@@ -70,7 +71,6 @@ namespace engine::build {
     private:
         static void build(const std::string& cmakePath, const std::string& projectPath);
         static void run(const ProjectProps& projectProps, const std::string& buildPath);
-
     };
 
 }

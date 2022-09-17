@@ -17,7 +17,7 @@
 
 namespace engine::io {
 
-    class SceneSerializable : public Serializable {
+    class ENGINE_API SceneSerializable : public Serializable {
 
     public:
         SceneSerializable(const Ref<ecs::Scene>& scene) : scene(scene) {}
@@ -30,7 +30,7 @@ namespace engine::io {
         Ref<ecs::Scene> scene;
     };
 
-    class SceneSerializer {
+    class ENGINE_API SceneSerializer final {
 
     public:
         SceneSerializer(const Ref<ecs::Scene>& scene) : scene(scene) {}

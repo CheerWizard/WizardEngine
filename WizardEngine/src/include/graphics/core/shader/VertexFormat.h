@@ -8,7 +8,7 @@
 
 namespace engine::shader {
 
-    class VertexFormat {
+    class ENGINE_API VertexFormat {
 
     public:
         VertexFormat() = default;

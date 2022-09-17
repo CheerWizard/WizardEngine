@@ -8,7 +8,7 @@
 
 namespace engine::tools {
 
-    class FileDialog {
+    class ENGINE_API FileDialog {
 
     public:
         FileDialog(void* nativeWindow) : nativeWindow(nativeWindow) {}

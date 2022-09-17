@@ -4,17 +4,18 @@
 
 #pragma once
 
+#include <core/core.h>
 #include <core/LayerStack.h>
 #include <core/String.h>
 #include <core/Memory.h>
 #include <core/ProjectManager.h>
 
+#include <time/Time.h>
+
 #include <math/RayCast.h>
 
 #include <event/Events.h>
 #include <event/GamepadCodes.h>
-
-#include <time/FpsController.h>
 
 #include <platform/core/Window.h>
 #include <platform/core/Input.h>
@@ -45,12 +46,17 @@
 
 #include <serialization/AssetManager.h>
 
+#include <physics/Physics.h>
+
+#include <core/Game.h>
+
 using namespace engine::core;
 using namespace engine::graphics;
 using namespace engine::event;
 using namespace engine::time;
 using namespace engine::network;
 using namespace engine::ecs;
+using namespace engine::physics;
 
 #define KEY_PRESSED(key, action) engine::event::EventRegistry::onKeyPressedMap[key] = { [this](KeyCode keyCode) { action } }
 #define KEY_RELEASED(key, action) engine::event::EventRegistry::onKeyReleasedMap[key] = { [this](KeyCode keyCode) { action } }
@@ -66,15 +72,22 @@ using namespace engine::ecs;
 #include <visual/Visual.h>
 #include <visual/Console.h>
 #include <visual/Widgets.h>
+#include <visual/Troubleshoot.h>
 
 using namespace engine::visual;
+#endif
+
+#ifdef RCC
+#include <rcc/RuntimeCompiler.h>
+
+using namespace engine::rcc;
 #endif
 
 namespace engine::core {
 
     // The entry point in core hierarchy, behaves as singleton.
     // It's standalone class, which can NOT be created several times and should be created only once!
-    class Application : RenderSystemCallback {
+    class ENGINE_API Application : RenderSystemCallback {
 
     public:
         Application();
@@ -95,7 +108,7 @@ namespace engine::core {
     public:
         // window events
         void onWindowClosed();
-        void onWindowResized(const u32 &width, const u32 &height);
+        void onWindowResized(u32 width, u32 height);
         // input keyboard events
         void onKeyPressed(event::KeyCode keyCode);
         void onKeyHold(event::KeyCode keyCode);
@@ -161,11 +174,12 @@ namespace engine::core {
         Ref<Scene> activeScene;
         Ref<FrameBuffer> activeSceneFrame;
         Ref<FrameBuffer> screenFrame;
-        time::FpsController fpsController;
+        time::Time dt = 6;
         bool isJoystickConnected = false;
         // hover entity with mouse cursor
         bool enableMouseHovering = false;
         Entity hoveredEntity;
+        Entity selectedEntity;
         // mouse cursor tracker
         bool enableMouseCursor = false;
         // post effects
@@ -185,6 +199,8 @@ namespace engine::core {
         Scope<Window> _window;
         // scripting system
         Scope<scripting::ScriptSystem> _scriptSystem;
+        // game
+        Game* game = nullptr;
     };
 
     Application* createApplication();

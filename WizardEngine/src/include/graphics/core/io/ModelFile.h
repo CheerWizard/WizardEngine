@@ -17,13 +17,13 @@ namespace engine::io {
 
     using namespace math;
 
-    struct Face {
+    struct ENGINE_API Face {
         int posIndex;
         int uvIndex;
         int normalIndex;
     };
 
-    struct ModelVertex {
+    struct ENGINE_API ModelVertex {
         vec3f position = { 0.5f, 0.5f, 0.5f };
         vec2f uv = { 0, 0 };
         vec3f normal = { 0, 0, 0 };
@@ -31,26 +31,26 @@ namespace engine::io {
         vec3f bitangent = { 0, 0, 0 };
     };
 
-    struct ModelTexture {
+    struct ENGINE_API ModelTexture {
         uint32_t id;
         aiTextureType type;
         std::string path;
     };
 
-    struct ModelMaterial {
+    struct ENGINE_API ModelMaterial {
         std::vector<ModelTexture> textures;
     };
 
     typedef graphics::BaseMesh<ModelVertex> ModelMesh;
     typedef graphics::BaseMeshComponent<ModelVertex> ModelMeshComponent;
 
-    struct Model {
+    struct ENGINE_API Model {
         ModelMeshComponent meshComponent;
         std::vector<ModelMaterial> materials;
     };
 
     // const container of aiTextureType and actual const string naming
-    class ModelTextureTypes final {
+    class ENGINE_API ModelTextureTypes final {
 
     private:
         ModelTextureTypes() = default;
@@ -83,7 +83,7 @@ namespace engine::io {
         calc_tang_space = aiProcess_CalcTangentSpace
     };
 
-    struct ModelFileOptions {
+    struct ENGINE_API ModelFileOptions {
         vector<ModelFileOption> flags = { triangulate, calc_tang_space };
 
         [[nodiscard]] u32 getFlag() const {

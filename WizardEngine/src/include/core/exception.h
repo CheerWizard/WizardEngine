@@ -12,7 +12,7 @@ namespace engine::core {
         TRACE = 0, INFO = 1, WARN = 2, ERR = 3, FATAL = 4
     };
 
-    struct exception {
+    struct ENGINE_API exception {
         exception_priority priority = exception_priority::ERR;
         const char* message;
         u16 errorCode = 0;
@@ -30,7 +30,7 @@ namespace engine::core {
 
     // helps declare new exception type
     #define decl_exception(name) \
-    struct name : engine::core::exception {    \
+    struct ENGINE_API name : engine::core::exception {    \
     explicit name(const char* message) : engine::core::exception(message) {} \
     explicit name(const std::string& message) : engine::core::exception(message) {} \
     name(engine::core::exception_priority priority, const char* message) : engine::core::exception(priority, message) {} \

@@ -13,7 +13,7 @@ namespace engine::audio {
 
     decl_exception(audio_device_exception);
 
-    class Device final {
+    class ENGINE_API Device final {
 
     public:
         Device(const char* name = nullptr);

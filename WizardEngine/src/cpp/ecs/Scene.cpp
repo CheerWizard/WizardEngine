@@ -25,7 +25,7 @@ namespace engine::ecs {
         return { this, entityId };
     }
 
-    Entity Scene::findEntity(u64 uuid) {
+    Entity Scene::findEntity(int uuid) {
         UUIDComponent uuidComponent((engine::uuid(uuid)));
         entity_id entityId = registry.findEntity<UUIDComponent>([&uuidComponent](UUIDComponent* found) {
             return *found == uuidComponent;

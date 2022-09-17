@@ -14,21 +14,15 @@ namespace engine::shader {
 
     class BaseShaderProgram;
 
-    struct ShaderScript {
-        static uint16_t IDS;
-        uint16_t id = IDS++;
+    struct ENGINE_API ShaderScript {
         std::function<void(const BaseShaderProgram&, ecs::Registry&)> updateRegistry;
         std::function<void(const BaseShaderProgram&, const ecs::Entity&)> updateEntity;
 
         ShaderScript() = default;
         ShaderScript(const ShaderScript&) = default;
-
-        bool operator==(const ShaderScript& other) const {
-            return id == other.id;
-        }
     };
 
-    class BaseShader final : public Shader {
+    class ENGINE_API BaseShader final : public Shader {
 
     public:
         BaseShader() : Shader() {}
@@ -68,7 +62,7 @@ namespace engine::shader {
 
     };
 
-    class BaseShaderProgram final : public ShaderProgram {
+    class ENGINE_API BaseShaderProgram final : public ShaderProgram {
 
     public:
         BaseShaderProgram() = default;
@@ -149,7 +143,6 @@ namespace engine::shader {
         bool isReady();
 
         void addScript(const ShaderScript& script);
-        void removeScript(const ShaderScript& script);
         void clearScripts();
 
     private:

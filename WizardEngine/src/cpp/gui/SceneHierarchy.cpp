@@ -366,7 +366,7 @@ namespace engine::gui {
             drawVec3Controller("Translation", model.position);
             drawVec3Controller("Rotation", model.rotation);
             drawVec3Controller("Scale", model.scale, 1.0f);
-            updateModel3d(model);
+            model.apply();
         });
     }
 
@@ -391,7 +391,7 @@ namespace engine::gui {
         drawVec3Controller("Translation", model.position);
         drawVec3Controller("Rotation", model.rotation);
         drawVec3Controller("Scale", model.scale, 1.0f);
-        updateModel3d(model);
+        model.apply();
     }
 
     void SceneHierarchy::drawComponents(ecs::Entity &entity) {

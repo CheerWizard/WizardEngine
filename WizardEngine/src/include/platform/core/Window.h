@@ -12,7 +12,7 @@
 
 namespace engine::core {
 
-    struct WindowProps {
+    struct ENGINE_API WindowProps {
         std::string title;
         uint32_t width;
         uint32_t height;
@@ -28,7 +28,7 @@ namespace engine::core {
         ) : title(title), width(width), height(height), vSyncEnabled(vSyncEnabled), sampleSize(sampleSize) {}
     };
 
-    class Window {
+    class ENGINE_API Window {
 
     public:
         Window(const WindowProps &windowProps = WindowProps()) : windowProps(windowProps) {
@@ -54,6 +54,7 @@ namespace engine::core {
         void enableFullScreen();
         void setSampleSize(const uint32_t &size);
         void setPosition(const uint32_t &x, const uint32_t &y);
+        void getPosition(float x, float y);
 
     public:
         void toggleFullScreen();
@@ -102,6 +103,8 @@ namespace engine::core {
         WindowProps windowProps;
         bool isInitialized = false;
         bool isFullScreen = false;
+        u32 xPos = 0;
+        u32 yPos = 0;
     };
 
 }

@@ -5,11 +5,12 @@
 #pragma once
 
 #include <core/vector.h>
+#include <core/core.h>
 #include <string>
 
 namespace engine::core {
 
-    struct Project {
+    struct ENGINE_API Project {
         const char* name = nullptr;
         const char* workspacePath = nullptr;
 
@@ -33,7 +34,7 @@ namespace engine::core {
         std::string getFullPath(const char* assetPath) const;
     };
 
-    class ProjectManager final {
+    class ENGINE_API ProjectManager final {
 
     public:
         static Project create(const char* projectName, const char* workspacePath);

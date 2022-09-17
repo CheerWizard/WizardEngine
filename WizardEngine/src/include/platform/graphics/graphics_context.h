@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <core/core.h>
+
 namespace engine::graphics {
-    void initContext(void* nativeWindow);
+    ENGINE_API void initContext(void* nativeWindow);
 }

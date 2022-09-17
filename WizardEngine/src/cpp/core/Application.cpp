@@ -3,6 +3,8 @@
 //
 
 #include <core/Application.h>
+#include <profiler/Profiler.h>
+#include <time/Timer.h>
 
 namespace engine::core {
 
@@ -16,6 +18,7 @@ namespace engine::core {
     }
 
     void Application::onCreate() {
+        PROFILE_FUNCTION();
         ENGINE_INFO("onCreate()");
 
         _window = createScope<Window>(createWindowProps());
@@ -31,8 +34,6 @@ namespace engine::core {
 
         createScripting();
 
-        fpsController.setMaxFps(getRefreshRate());
-
         setActiveScene(createRef<Scene>());
 
         audio::DeviceManager::createContext();
@@ -43,38 +44,60 @@ namespace engine::core {
         initEdgeDetection();
         initGaussianBlur();
         initTextureMixer();
+
+#ifdef RCC
+        RuntimeCompiler::init();
+#endif
     }
 
     void Application::onPrepare() {
+        PROFILE_FUNCTION();
         _window->onPrepare();
         _window->setInCenter();
         setSampleSize(1);
         _layerStack.onPrepare();
         loadGamepadMappings("../WizardEngine/assets/db/game_controller_db.txt");
 
-        auto skybox = activeScene->getSkybox().get<VertexDataComponent<SkyboxVertex>>();
-        if (skybox->vertexData.values) {
-            RenderSystem::skyboxRenderer.uploadStatic(*skybox);
-            delete skybox->vertexData.values;
+        auto skycubeId = SkyCube::ID;
+        auto transformId = Transform3dComponent::ID;
+        auto cubemapId = CubeMapTextureComponent::ID;
+
+        auto skyCube = activeScene->getSkybox().get<SkyCube>();
+
+        if (skyCube->vertexData.values) {
+            ENGINE_INFO("uploadStatic Skybox to renderer");
+            RenderSystem::skyboxRenderer.uploadStatic(*skyCube);
+            delete skyCube->vertexData.values;
         } else {
             ENGINE_WARN("Skybox of '{0}' is already uploaded!", activeScene->getName());
         }
+
+        ENGINE_INFO("screenRenderer.onWindowResized");
+        RenderSystem::screenRenderer.onWindowResized(getWindowWidth(), getWindowHeight());
     }
 
     void Application::onDestroy() {
+        PROFILE_FUNCTION();
         ENGINE_INFO("onDestroy()");
         RenderSystem::onDestroy();
         _scriptSystem->onDestroy();
         audio::MediaPlayer::clear();
         audio::DeviceManager::clear();
+
 #ifdef VISUAL
         Visual::release();
+#endif
+
+#ifdef RCC
+        RuntimeCompiler::release();
 #endif
     }
 
     void Application::onUpdate() {
-        auto dt = fpsController.getDeltaTime();
-        fpsController.begin();
+        PROFILE_FUNCTION();
+        // measure dt time
+        Timer timer("Application::onUpdate()", 30);
+
         onEventUpdate();
         onRuntimeUpdate(dt);
 #ifdef VISUAL
@@ -83,6 +106,11 @@ namespace engine::core {
         _layerStack.onVisualDraw(dt);
         Visual::end();
 #endif
+
+#ifdef RCC
+        RuntimeCompiler::onUpdate(dt);
+#endif
+
         // draw editor/tools
         _layerStack.onUpdate(dt);
         // poll events + swap chain
@@ -90,7 +118,10 @@ namespace engine::core {
             Input::updateMousePosition();
         }
         _window->onUpdate();
-        fpsController.end();
+
+        dt = timer.stop();
+
+        PROFILE_ON_FRAME_UPDATED();
     }
 
     void Application::pushFront(Layer *layer) {
@@ -113,20 +144,23 @@ namespace engine::core {
         shutdown();
     }
 
-    void Application::onWindowResized(const u32 &width , const u32 &height) {
-        if (width == 0 || height == 0 || Input::isMousePressed(event::MouseCode::ButtonLeft)) return;
+    void Application::onWindowResized(u32 width, u32 height) {
+        PROFILE_FUNCTION();
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
+        if (width == 0 || height == 0) return;
 
         _layerStack.onWindowResized(width, height);
-        activeSceneFrame->resize(width, height);
-        screenFrame->resize(width, height);
+//        activeSceneFrame->resize(width, height);
+//        screenFrame->resize(width, height);
         EventRegistry::onWindowResized.function(width, height);
+        RenderSystem::screenRenderer.onWindowResized(width, height);
 #ifdef VISUAL
         Visual::onWindowResized(width, height);
 #endif
     }
 
     void Application::onKeyPressed(event::KeyCode keyCode) {
+        PROFILE_FUNCTION();
         _layerStack.onKeyPressed(keyCode);
         EventRegistry::onKeyPressedMap[keyCode].function(keyCode);
 #ifdef VISUAL
@@ -135,6 +169,7 @@ namespace engine::core {
     }
 
     void Application::onKeyHold(event::KeyCode keyCode) {
+        PROFILE_FUNCTION();
         _layerStack.onKeyHold(keyCode);
         EventRegistry::onKeyHoldMap[keyCode] = true;
 #ifdef VISUAL
@@ -143,6 +178,7 @@ namespace engine::core {
     }
 
     void Application::onKeyReleased(event::KeyCode keyCode) {
+        PROFILE_FUNCTION();
         _layerStack.onKeyReleased(keyCode);
         EventRegistry::onKeyReleasedMap[keyCode].function(keyCode);
         EventRegistry::onKeyHoldMap[keyCode] = false;
@@ -152,6 +188,7 @@ namespace engine::core {
     }
 
     void Application::onMousePressed(event::MouseCode mouseCode) {
+        PROFILE_FUNCTION();
         _layerStack.onMousePressed(mouseCode);
         EventRegistry::onMousePressedMap[mouseCode].function(mouseCode);
         EventRegistry::mouseHoldMap[mouseCode] = true;
@@ -161,6 +198,7 @@ namespace engine::core {
     }
 
     void Application::onMouseRelease(event::MouseCode mouseCode) {
+        PROFILE_FUNCTION();
         _layerStack.onMouseRelease(mouseCode);
         EventRegistry::onMouseReleasedMap[mouseCode].function(mouseCode);
         EventRegistry::mouseHoldMap[mouseCode] = false;
@@ -170,6 +208,7 @@ namespace engine::core {
     }
 
     void Application::onMouseScrolled(double xOffset, double yOffset) {
+        PROFILE_FUNCTION();
         _layerStack.onMouseScrolled(xOffset, yOffset);
         EventRegistry::onMouseScrolled.function(xOffset, yOffset);
 #ifdef VISUAL
@@ -178,6 +217,7 @@ namespace engine::core {
     }
 
     void Application::onCursorMoved(double xPos, double yPos) {
+        PROFILE_FUNCTION();
         _layerStack.onCursorMoved(xPos, yPos);
         EventRegistry::onCursorMoved.function(xPos, yPos);
 #ifdef VISUAL
@@ -186,6 +226,7 @@ namespace engine::core {
     }
 
     void Application::onKeyTyped(event::KeyCode keyCode) {
+        PROFILE_FUNCTION();
         _layerStack.onKeyTyped(keyCode);
 #ifdef VISUAL
         Visual::onKeyTyped(keyCode);
@@ -197,17 +238,21 @@ namespace engine::core {
     }
 
     void Application::setActiveScene(const Ref<Scene>& scene) {
+        PROFILE_FUNCTION();
         scenes.emplace_back(scene);
         activeScene = scene;
         RenderSystem::activeScene = scene;
         _scriptSystem->setActiveScene(scene);
+        Physics::activeScene = scene;
     }
 
     void Application::setActiveScene(const u32 &sceneIndex) {
+        PROFILE_FUNCTION();
         activeScene = scenes[sceneIndex];
         _scriptSystem->setActiveScene(activeScene);
         RenderSystem::activeScene = activeScene;
         RenderSystem::onUpdate();
+        Physics::activeScene = activeScene;
     }
 
     void Application::restart() {
@@ -249,7 +294,8 @@ namespace engine::core {
         FrameBufferFormat activeSceneFrameFormat;
         activeSceneFrameFormat.colorAttachments = {
                 { ColorFormat::RGBA8 },
-                { ColorFormat::RGBA8 }
+                { ColorFormat::RGBA8 },
+                { ColorFormat::RED_INTEGER }
         };
         activeSceneFrameFormat.renderBufferAttachment = { DepthStencilFormat::DEPTH24STENCIL8 };
         activeSceneFrameFormat.width = _window->getWidth();
@@ -283,6 +329,7 @@ namespace engine::core {
 
     void Application::onRuntimeUpdate(Time dt) {
         if (!activeScene->isEmpty()) {
+            Physics::onUpdate(dt);
             _scriptSystem->onUpdate(dt);
             RenderSystem::onUpdate();
         } else {
@@ -368,27 +415,26 @@ namespace engine::core {
 
     void Application::onFrameBegin(const Ref<FrameBuffer> &frameBuffer) {
         if (!enableMouseHovering) return;
-        frameBuffer->removeAttachment(frameBuffer->getColorAttachmentsSize() - 1, -1);
+
+        ENGINE_INFO("Application::onFrameBegin()");
+//        frameBuffer->removeAttachment(frameBuffer->getColorAttachmentsSize() - 1, -1);
     }
 
     void Application::onFrameEnd(const Ref<FrameBuffer> &frameBuffer) {
         if (!enableMouseHovering) return;
 
+        ENGINE_INFO("Application::onFrameEnd()");
         auto mousePos = Input::getMousePosition();
         auto xPos = mousePos.x;
         auto yPos = mousePos.y;
 
-        if (xPos > 0 && yPos > 0) {
-            s32 pixel = frameBuffer->readPixel(
-                    frameBuffer->getColorAttachmentsSize() - 1,
-                    static_cast<int>(xPos),
-                    static_cast<int>(yPos)
-            );
-            RUNTIME_INFO("readPixel: {0}", pixel);
-            if (pixel != -1) {
-                hoveredEntity = { activeScene.get(), reinterpret_cast<entity_id>(pixel) };
-            }
-        }
+        int uuid = frameBuffer->readPixel(
+                frameBuffer->getColorAttachmentsSize() - 1,
+                static_cast<int>(xPos),
+                static_cast<int>(yPos)
+        );
+        RUNTIME_INFO("readPixel: {0}", uuid);
+        hoveredEntity = activeScene->findEntity(uuid);
     }
 
     void Application::initHDR() {
@@ -446,8 +492,8 @@ namespace engine::core {
         gaussianBlurFrameFormat.width = _window->getWidth();
         gaussianBlurFrameFormat.height = _window->getHeight();
         GaussianBlurEffectRenderer gaussianBlurEffectRenderer(gaussianBlurFrameFormat);
+        RenderSystem::gaussianBlurRenderer = { gaussianBlurFrameFormat };
         gaussianBlurEffect = gaussianBlurEffectRenderer.getGaussianBlurEffect();
-        RenderSystem::postEffectRenderers.emplace_back(gaussianBlurEffectRenderer);
     }
 
     void Application::initTextureMixer() {

@@ -12,7 +12,7 @@
 
 namespace engine::graphics {
 
-    struct VRenderModel {
+    struct ENGINE_API VRenderModel {
         u8 id = 0;
         VertexArray vao;
         VertexBuffer vbo;
@@ -101,7 +101,7 @@ namespace engine::graphics {
         tryUpload(vertexDataComponent, previousVertexCount);
     }
 
-    struct VIRenderModel {
+    struct ENGINE_API VIRenderModel {
         u8 id = 0;
         VertexArray vao;
         VertexBuffer vbo;

@@ -9,8 +9,8 @@
 
 namespace engine::shader {
 
-    void Shader::bindUbf(const char *blockName, const uint32_t &blockIndex) const {
-        auto uniformBlockIndex = glGetUniformBlockIndex(id, blockName);
+    void Shader::bindUbf(const char *blockName, u32 blockIndex) const {
+        GLuint uniformBlockIndex = glGetUniformBlockIndex(id, blockName);
         glUniformBlockBinding(id, uniformBlockIndex, blockIndex);
     }
 
@@ -117,15 +117,15 @@ namespace engine::shader {
         glDeleteProgram(id);
     }
 
-    GLint ShaderProgram::getUniformArrayElementLocation(const char* name, const uint32_t &index) const {
+    GLint ShaderProgram::getUniformArrayElementLocation(const char* name, u32 index) const {
         std::stringstream ss;
-        ss << name << "[" << std::to_string(index) << "]";
+        ss << name << "[" << index << "]";
         return glGetUniformLocation(id, ss.str().c_str());
     }
 
-    GLint ShaderProgram::getUniformArrayStructLocation(const char* structName, const char* fieldName, const uint32_t &index) const {
+    GLint ShaderProgram::getUniformArrayStructLocation(const char* structName, const char* fieldName, u32 index) const {
         std::stringstream ss;
-        ss << structName << "[" << std::to_string(index) << "]" << "." << fieldName;
+        ss << structName << "[" << index << "]" << "." << fieldName;
         return glGetUniformLocation(id, ss.str().c_str());
     }
 
@@ -135,22 +135,22 @@ namespace engine::shader {
         return glGetUniformLocation(id, ss.str().c_str());
     }
 
-    void ShaderProgram::setUniform(FloatUniform &uniform) const {
+    void ShaderProgram::setUniform(const FloatUniform &uniform) const {
         auto location = glGetUniformLocation(id, uniform.name);
         glUniform1f(location, uniform.value);
     }
 
-    void ShaderProgram::setUniform(BoolUniform &uniform) const {
+    void ShaderProgram::setUniform(const BoolUniform &uniform) const {
         auto location = glGetUniformLocation(id, uniform.name);
         glUniform1i(location, uniform.value); // bool is 32-bit as integer in GLSL compiler.
     }
 
-    void ShaderProgram::setUniform(IntUniform &uniform) const {
+    void ShaderProgram::setUniform(const IntUniform &uniform) const {
         auto location = glGetUniformLocation(id, uniform.name);
         glUniform1i(location, uniform.value);
     }
 
-    void ShaderProgram::setUniform(DoubleUniform &uniform) const {
+    void ShaderProgram::setUniform(const DoubleUniform &uniform) const {
         auto location = glGetUniformLocation(id, uniform.name);
         glUniform1d(location, uniform.value);
     }
@@ -195,6 +195,42 @@ namespace engine::shader {
         glUniformMatrix4fv(location, 1, GL_FALSE, glm_toFloatPtr(uniform));
     }
 
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, const IntUniform &uniform) const {
+        glUniform1i(getUniformArrayElementLocation(uniform.name, index), uniform.value);
+    }
+
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, const FloatUniform &uniform) const {
+        glUniform1f(getUniformArrayElementLocation(uniform.name, index), uniform.value);
+    }
+
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, const BoolUniform &uniform) const {
+        glUniform1i(getUniformArrayElementLocation(uniform.name, index), uniform.value);
+    }
+
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, const DoubleUniform &uniform) const {
+        glUniform1d(getUniformArrayElementLocation(uniform.name, index), uniform.value);
+    }
+
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, Vec2fUniform &uniform) const {
+        glUniform2fv(getUniformArrayElementLocation(uniform.name, index), 1, toFloatPtr(uniform));
+    }
+
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, Vec3fUniform &uniform) const {
+        glUniform3fv(getUniformArrayElementLocation(uniform.name, index), 1, toFloatPtr(uniform));
+    }
+
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, Vec4fUniform &uniform) const {
+        glUniform4fv(getUniformArrayElementLocation(uniform.name, index), 1, toFloatPtr(uniform));
+    }
+
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, Mat2fUniform &uniform) const {
+        glUniformMatrix2fv(getUniformArrayElementLocation(uniform.name, index), 1, GL_FALSE, toFloatPtr(uniform));
+    }
+
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, Mat3fUniform &uniform) const {
+        glUniformMatrix3fv(getUniformArrayElementLocation(uniform.name, index), 1, GL_FALSE, toFloatPtr(uniform));
+    }
+
     void ShaderProgram::setUniformArrayElement(const uint32_t &index, Mat4fUniform &uniform) const {
         glUniformMatrix4fv(getUniformArrayElementLocation(uniform.name, index), 1, GL_FALSE, toFloatPtr(uniform));
     }
@@ -203,35 +239,63 @@ namespace engine::shader {
         glUniformMatrix4fv(getUniformArrayElementLocation(uniform.name, index), 1, GL_FALSE, glm_toFloatPtr(uniform));
     }
 
-    void ShaderProgram::setUniformArrayElement(const uint32_t &index, IntUniform &uniform) const {
-        glUniform1i(getUniformArrayElementLocation(uniform.name, index), uniform.value);
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, const char* arrayName, int v) const {
+        glUniform1i(getUniformArrayElementLocation(arrayName, index), v);
     }
 
-    void ShaderProgram::setUniformArrayElement(const uint32_t &index, FloatUniform &uniform) const {
-        glUniform1f(getUniformArrayElementLocation(uniform.name, index), uniform.value);
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, const char* arrayName, float v) const {
+        glUniform1f(getUniformArrayElementLocation(arrayName, index), v);
     }
 
-    void ShaderProgram::setUniformArrayElement(const uint32_t &index, BoolUniform &uniform) const {
-        glUniform1i(getUniformArrayElementLocation(uniform.name, index), uniform.value);
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, const char* arrayName, bool v) const {
+        glUniform1i(getUniformArrayElementLocation(arrayName, index), v);
     }
 
-    void ShaderProgram::setUniformArrayElement(const uint32_t &index, Vec4fUniform &uniform) const {
-        glUniform4fv(getUniformArrayElementLocation(uniform.name, index), 1, toFloatPtr(uniform));
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, const char* arrayName, double v) const {
+        glUniform1d(getUniformArrayElementLocation(arrayName, index), v);
     }
 
-    void ShaderProgram::setUniformStructField(const char *structName, BoolUniform &structField) const {
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, const char* arrayName, vec2f& v) const {
+        glUniform2fv(getUniformArrayElementLocation(arrayName, index), 1, math::values(v));
+    }
+
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, const char* arrayName, vec3f& v) const {
+        glUniform3fv(getUniformArrayElementLocation(arrayName, index), 1, math::values(v));
+    }
+
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, const char* arrayName, vec4f& v) const {
+        glUniform4fv(getUniformArrayElementLocation(arrayName, index), 1, math::values(v));
+    }
+
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, const char* arrayName, mat2f& v) const {
+        glUniformMatrix2fv(getUniformArrayElementLocation(arrayName, index), 1, GL_FALSE, math::values(v));
+    }
+
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, const char* arrayName, mat3f& v) const {
+        glUniformMatrix3fv(getUniformArrayElementLocation(arrayName, index), 1, GL_FALSE, math::values(v));
+    }
+
+    void ShaderProgram::setUniformArrayElement(const uint32_t &index, const char* arrayName, mat4f& v) const {
+        glUniformMatrix4fv(getUniformArrayElementLocation(arrayName, index), 1, GL_FALSE, math::values(v));
+    }
+
+    void ShaderProgram::setUniformArrayElement(const u32 &index, const char* arrayName, glm::mat4& v) const {
+        glUniformMatrix4fv(getUniformArrayElementLocation(arrayName, index), 1, GL_FALSE, glm::value_ptr(v));
+    }
+
+    void ShaderProgram::setUniformStructField(const char *structName, const BoolUniform &structField) const {
         glUniform1i(getUniformStructLocation(structName, structField.name), structField.value);
     }
 
-    void ShaderProgram::setUniformStructField(const char *structName, FloatUniform &structField) const {
+    void ShaderProgram::setUniformStructField(const char *structName, const FloatUniform &structField) const {
         glUniform1f(getUniformStructLocation(structName, structField.name), structField.value);
     }
 
-    void ShaderProgram::setUniformStructField(const char *structName, DoubleUniform &structField) const {
+    void ShaderProgram::setUniformStructField(const char *structName, const DoubleUniform &structField) const {
         glUniform1d(getUniformStructLocation(structName, structField.name), structField.value);
     }
 
-    void ShaderProgram::setUniformStructField(const char *structName, IntUniform &structField) const {
+    void ShaderProgram::setUniformStructField(const char *structName, const IntUniform &structField) const {
         glUniform1i(getUniformStructLocation(structName, structField.name), structField.value);
     }
 
@@ -243,19 +307,19 @@ namespace engine::shader {
         glUniform4fv(getUniformStructLocation(structName, structField.name), 1, toFloatPtr(structField));
     }
 
-    void ShaderProgram::setUniformArrayStructField(const uint32_t &index, const char *structName, BoolUniform &structField) const {
+    void ShaderProgram::setUniformArrayStructField(const uint32_t &index, const char *structName, const BoolUniform &structField) const {
         glUniform1i(getUniformArrayStructLocation(structName, structField.name, index), structField.value);
     }
 
-    void ShaderProgram::setUniformArrayStructField(const uint32_t &index, const char *structName, IntUniform &structField) const {
+    void ShaderProgram::setUniformArrayStructField(const uint32_t &index, const char *structName, const IntUniform &structField) const {
         glUniform1i(getUniformArrayStructLocation(structName, structField.name, index), structField.value);
     }
 
-    void ShaderProgram::setUniformArrayStructField(const uint32_t &index, const char* structName, FloatUniform &structField) const {
+    void ShaderProgram::setUniformArrayStructField(const uint32_t &index, const char* structName, const FloatUniform &structField) const {
         glUniform1f(getUniformArrayStructLocation(structName, structField.name, index), structField.value);
     }
 
-    void ShaderProgram::setUniformArrayStructField(const uint32_t &index, const char* structName, DoubleUniform &structField) const {
+    void ShaderProgram::setUniformArrayStructField(const uint32_t &index, const char* structName, const DoubleUniform &structField) const {
         glUniform1d(getUniformArrayStructLocation(structName, structField.name, index), structField.value);
     }
 

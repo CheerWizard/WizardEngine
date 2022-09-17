@@ -8,12 +8,13 @@
 
 namespace engine::graphics {
 
-    class ScreenRenderer : public PrimitiveRenderer {
+    class ENGINE_API ScreenRenderer : public PrimitiveRenderer {
     public:
         ScreenRenderer() = default;
 
     public:
         void init();
+        void onWindowResized(u32 width, u32 height);
     };
 
 }

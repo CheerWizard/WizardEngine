@@ -18,7 +18,7 @@ namespace engine::graphics {
     using namespace core;
     using namespace ecs;
 
-    class RenderSystemCallback {
+    class ENGINE_API RenderSystemCallback {
     public:
         virtual ~RenderSystemCallback() = default;
     public:
@@ -26,7 +26,7 @@ namespace engine::graphics {
         virtual void onFrameEnd(const Ref<FrameBuffer>& frameBuffer) = 0;
     };
 
-    class RenderSystem final {
+    class ENGINE_API RenderSystem final {
 
     private:
         RenderSystem() = default;
@@ -58,6 +58,8 @@ namespace engine::graphics {
         static vector<Ref<Renderer>> textRenderers;
         // post effects
         static vector<PostEffectRenderer> postEffectRenderers;
+        // gaussian blur effect
+        static GaussianBlurEffectRenderer gaussianBlurRenderer;
         // mixer
         static TextureMixer textureMixer;
         // HDR/LDR
@@ -66,5 +68,4 @@ namespace engine::graphics {
     private:
         static RenderSystemCallback* callback;
     };
-
 }

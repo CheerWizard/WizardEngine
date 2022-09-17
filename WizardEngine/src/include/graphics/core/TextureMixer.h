@@ -9,7 +9,7 @@
 
 namespace engine::graphics {
 
-    class TextureMixer final {
+    class ENGINE_API TextureMixer final {
 
     public:
         TextureMixer() = default;

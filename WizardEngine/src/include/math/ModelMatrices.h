@@ -19,16 +19,13 @@ namespace engine::math {
     struct ModelMatrix2d;
     struct ModelMatrix3d;
 
-    void updateModel2d(ModelMatrix2d &modelMatrix2D);
-    void updateModel3d(ModelMatrix3d &modelMatrix3D);
-
-    struct ModelMatrix3d : shader::Mat4fUniform {
+    struct ENGINE_API ModelMatrix3d : shader::Mat4fUniform {
         math::vec3f position = DEFAULT_TRANSLATION_3D;
         math::vec3f rotation = DEFAULT_ROTATION_3D;
         math::vec3f scale = DEFAULT_SCALE_3D;
 
         ModelMatrix3d() {
-            updateModel3d(*this);
+            apply();
         }
 
         ModelMatrix3d(
@@ -36,24 +33,24 @@ namespace engine::math {
                 const math::vec3f& rot,
                 const math::vec3f& scale
         ) : position(pos), rotation(rot), scale(scale) {
-            updateModel3d(*this);
+            apply();
         }
 
         ModelMatrix3d(const ModelMatrix3d& modelMatrix3D)
         : position(modelMatrix3D.position), rotation(modelMatrix3D.rotation), scale(modelMatrix3D.scale), Uniform(modelMatrix3D) {
-            updateModel3d(*this);
+            apply();
         }
 
         void apply();
     };
 
-    struct ModelMatrix2d : shader::Mat4fUniform {
+    struct ENGINE_API ModelMatrix2d : shader::Mat4fUniform {
         math::vec2f position = DEFAULT_TRANSLATION_2D;
         float rotation = DEFAULT_ROTATION_2D;
         math::vec2f scale = DEFAULT_SCALE_2D;
 
         ModelMatrix2d() {
-            updateModel2d(*this);
+            apply();
         }
 
         ModelMatrix2d(
@@ -63,7 +60,7 @@ namespace engine::math {
                 const math::vec2f& scale
         ) : position(pos), rotation(rot), scale(scale) {
             this->name = name;
-            updateModel2d(*this);
+            apply();
         }
 
         ModelMatrix2d(
@@ -71,7 +68,7 @@ namespace engine::math {
                 const float& rot,
                 const math::vec2f& scale
         ) : position(pos), rotation(rot), scale(scale) {
-            updateModel2d(*this);
+            apply();
         }
 
         void apply();

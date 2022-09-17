@@ -16,7 +16,7 @@ namespace engine::gui {
 
     using namespace engine::graphics;
 
-    class MeshLayout : public ImageLayout, public ImageLayoutCallback {
+    class ENGINE_API MeshLayout : public ImageLayout, public ImageLayoutCallback {
 
     public:
         MeshLayout(

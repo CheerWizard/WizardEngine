@@ -6,8 +6,6 @@
 
 namespace engine::shader {
 
-    u16 ShaderScript::IDS = 0;
-
     void BaseShaderProgram::construct(const io::ShaderProps &props) {
         auto sources = io::ShaderFile::readAssetWithIncludes(props);
         // required shader, if failed - skip construction!
@@ -411,10 +409,6 @@ namespace engine::shader {
 
     void BaseShaderProgram::addScript(const ShaderScript& script) {
         scripts.emplace_back(script);
-    }
-
-    void BaseShaderProgram::removeScript(const ShaderScript& script) {
-        scripts.erase(std::find(scripts.begin(), scripts.end(), script));
     }
 
     void BaseShaderProgram::clearScripts() {

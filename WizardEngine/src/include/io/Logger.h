@@ -18,7 +18,7 @@ namespace engine::io {
 
     typedef spdlog::logger Log;
 
-    class Logger final {
+    class ENGINE_API Logger final {
 
     public:
         static void createEngineLogger(const std::string& name);
@@ -43,7 +43,7 @@ namespace engine::io {
     private:
         static void createLogger(Ref<Log> &logger, const std::string &name);
 
-    private:
+    public:
         static Ref<Log> _engineLogger;
         static Ref<Log> _editorLogger;
         static Ref<Log> _runtimeLogger;
@@ -85,35 +85,35 @@ namespace engine::io {
     #define EDITOR_THROW(ex)      EDITOR_EXCEPT(ex); throw (ex)
 
 #else
-    #define LOG_PATTERN(...) __VA_ARGS__
+    #define LOG_PATTERN(...)
 
     // Engine log macros
-    #define INIT_ENGINE_LOG(...)    __VA_ARGS__
-    #define ENGINE_TRACE(...)       __VA_ARGS__
-    #define ENGINE_INFO(...)        __VA_ARGS__
-    #define ENGINE_WARN(...)        __VA_ARGS__
-    #define ENGINE_ERR(...)         __VA_ARGS__
-    #define ENGINE_CRIT(...)        __VA_ARGS__
-    #define ENGINE_EXCEPT(ex)       ex
-    #define ENGINE_THROW(ex)        throw (ex)
+    #define INIT_ENGINE_LOG(...)
+    #define ENGINE_TRACE(...)
+    #define ENGINE_INFO(...)
+    #define ENGINE_WARN(...)
+    #define ENGINE_ERR(...)
+    #define ENGINE_CRIT(...)
+    #define ENGINE_EXCEPT(ex)
+    #define ENGINE_THROW(ex) throw (ex)
 
     // Runtime log macros
-    #define INIT_RUNTIME_LOG(...)  __VA_ARGS__
-    #define RUNTIME_TRACE(...)     __VA_ARGS__
-    #define RUNTIME_INFO(...)      __VA_ARGS__
-    #define RUNTIME_WARN(...)      __VA_ARGS__
-    #define RUNTIME_ERR(...)       __VA_ARGS__
-    #define RUNTIME_CRIT(...)      __VA_ARGS__
-    #define RUNTIME_EXCEPT(ex)     ex
-    #define RUNTIME_THROW(ex)      throw (ex)
+    #define INIT_RUNTIME_LOG(...)
+    #define RUNTIME_TRACE(...)
+    #define RUNTIME_INFO(...)
+    #define RUNTIME_WARN(...)
+    #define RUNTIME_ERR(...)
+    #define RUNTIME_CRIT(...)
+    #define RUNTIME_EXCEPT(ex)
+    #define RUNTIME_THROW(ex) throw (ex)
 
     // Editor log macros
-    #define INIT_EDITOR_LOG(...)  __VA_ARGS__
-    #define EDITOR_TRACE(...)     __VA_ARGS__
-    #define EDITOR_INFO(...)      __VA_ARGS__
-    #define EDITOR_WARN(...)      __VA_ARGS__
-    #define EDITOR_ERR(...)       __VA_ARGS__
-    #define EDITOR_CRIT(...)      __VA_ARGS__
-    #define EDITOR_EXCEPT(ex)     ex
-    #define EDITOR_THROW(ex)      throw (ex)
+    #define INIT_EDITOR_LOG(...)
+    #define EDITOR_TRACE(...)
+    #define EDITOR_INFO(...)
+    #define EDITOR_WARN(...)
+    #define EDITOR_ERR(...)
+    #define EDITOR_CRIT(...)
+    #define EDITOR_EXCEPT(ex)
+    #define EDITOR_THROW(ex) throw (ex)
 #endif

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <core/primitives.h>
+#include <core/core.h>
 #include <event/KeyCodes.h>
 #include <event/MouseCodes.h>
 
@@ -12,7 +13,7 @@ namespace engine::event {
 
     using namespace core;
 
-    struct MousePosition {
+    struct ENGINE_API MousePosition {
         f32 x = 0;
         f32 y = 0;
 
@@ -24,27 +25,27 @@ namespace engine::event {
         }
     };
 
-    struct JoystickAxisStates {
+    struct ENGINE_API JoystickAxisStates {
         const f32* axes;
         s32 count;
     };
 
-    struct JoystickButtonStates {
+    struct ENGINE_API JoystickButtonStates {
         const u8* buttons;
         s32 count;
     };
 
-    struct JoystickHatStates {
+    struct ENGINE_API JoystickHatStates {
         const u8* hats;
         s32 count;
     };
 
-    struct GamepadState {
+    struct ENGINE_API GamepadState {
         u8 buttons[15];
         f32 axes[6];
     };
 
-    class Input final {
+    class ENGINE_API Input final {
 
     public:
         static void create(void* nativeWindow);

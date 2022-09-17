@@ -10,6 +10,8 @@
 #include <GLFW/glfw3.h>
 #include <platform/graphics/tools/ShaderPath.h>
 #include <imgui_internal.h>
+#include <ImGuizmo.h>
+#include <imconfig.h>
 
 #define IO ImGui::GetIO()
 #define STYLE ImGui::GetStyle()
@@ -29,12 +31,10 @@ namespace engine::visual {
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-
         IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
         IO.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
         IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
         IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
-
         // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
         if (IO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
             STYLE.WindowRounding = 0.0f;
@@ -45,21 +45,21 @@ namespace engine::visual {
         ImGui_ImplOpenGL3_Init(GRAPHICS_CORE_VERSION);
     }
 
-    u32 Visual::addFont(const char *filepath, f32 glyphRange) {
-        fonts.emplace_back(IO.Fonts->AddFontFromFileTTF(filepath, glyphRange));
-        return fonts.size();
+    u32 Visual::addFont(const char *filepath, f32 fontSize) {
+        fonts.emplace_back(IO.Fonts->AddFontFromFileTTF(filepath, fontSize));
+        return fonts.size() - 1;
     }
 
     void Visual::setDefaultFont(u32 fontIndex) {
-        if (fontIndex > fonts.size()) {
+        if (fontIndex >= fonts.size()) {
             ENGINE_ERR("Visual::setDefaultFont: invalid condition fontIndex > fonts.size()");
             return;
         }
         IO.FontDefault = fonts.at(fontIndex);
     }
 
-    void Visual::setDefaultFont(const char *filepath, f32 glyphRange) {
-        setDefaultFont(addFont(filepath, glyphRange));
+    void Visual::setDefaultFont(const char *filepath, f32 fontSize) {
+        setDefaultFont(addFont(filepath, fontSize));
     }
 
     void Visual::setTheme() {
@@ -149,9 +149,11 @@ namespace engine::visual {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        ImGuizmo::BeginFrame();
     }
 
     void Visual::end() {
+        ENGINE_INFO("Visual::end(): width={0}, height={1}", props.width, props.height);
         IO.DisplaySize = ImVec2(props.width, props.height);
 
         ImGui::Render();
@@ -218,19 +220,19 @@ namespace engine::visual {
     }
 
     void Visual::onKeyPressed(event::KeyCode keyCode) {
-        IO.KeysDown[keyCode] = true;
+//        IO.KeysDown[keyCode] = true;
     }
 
     void Visual::onKeyHold(event::KeyCode keyCode) {
-        IO.KeysDown[keyCode] = true;
+//        IO.KeysDown[keyCode] = true;
     }
 
     void Visual::onKeyReleased(event::KeyCode keyCode) {
-        IO.KeysDown[keyCode] = false;
+//        IO.KeysDown[keyCode] = false;
     }
 
     void Visual::onKeyTyped(event::KeyCode keyCode) {
-        IO.AddInputCharacter(keyCode);
+//        IO.AddInputCharacter(keyCode);
     }
 
     void Visual::onMouseScrolled(double xOffset, double yOffset) {
@@ -258,9 +260,9 @@ namespace engine::visual {
         ENGINE_INFO("onWindowResized(width = {0}, height = {1})", width, height);
     }
 
-    void Panel::begin(const char* title) {
+    void Panel::begin(const char* title, const vec2f& size) {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2 {0 , 0});
-
+        ImGui::SetNextWindowSize({ size.x(), size.y() });
         static bool open = true;
         if (!ImGui::Begin(title, &open)) {
             end();
@@ -275,5 +277,79 @@ namespace engine::visual {
 
     bool Panel::isFocused(ImGuiFocusedFlags flags) {
         return ImGui::IsWindowFocused(flags);
+    }
+
+    void Gizmo::enable(bool enabled) {
+        ImGuizmo::Enable(enabled);
+    }
+
+    void draw(
+            Camera3D& camera,
+            Transform3dComponent& transform,
+            const ImGuizmo::OPERATION& operation,
+            const ImGuizmo::MODE& mode,
+            const vec2f& windowPosition,
+            const vec2f& windowSize
+    ) {
+        ENGINE_INFO("Gizmo::draw()");
+//        ImGuizmo::SetOrthographic(false);
+//        ImGuizmo::SetDrawlist();
+//        ImGuiIO& io = ImGui::GetIO();
+//        ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+//        ImGuizmo::Manipulate(
+//                toFloatPtr(camera.getView()),
+//                toFloatPtr(camera.getPerspective()),
+//                operation,
+//                mode,
+//                toFloatPtr(transform.modelMatrix)
+//        );
+        float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+        ImGuizmo::DecomposeMatrixToComponents(
+                math::values(transform.modelMatrix.value),
+                matrixTranslation, matrixRotation, matrixScale
+        );
+        ImGui::InputFloat3("Tr", matrixTranslation);
+        ImGui::InputFloat3("Rt", matrixRotation);
+        ImGui::InputFloat3("Sc", matrixScale);
+        ImGuizmo::RecomposeMatrixFromComponents(
+                matrixTranslation, matrixRotation, matrixScale,
+                math::values(transform.modelMatrix.value)
+        );
+        static bool useSnap(false);
+        if (ImGui::IsKeyPressed(83)) useSnap = !useSnap;
+        ImGui::SameLine();
+        vec3f snap;
+        switch (operation) {
+            case ImGuizmo::TRANSLATE:
+                ImGui::InputFloat3("Snap", math::values(snap));
+                break;
+            case ImGuizmo::ROTATE:
+                ImGui::InputFloat("Angle Snap", math::values(snap));
+                break;
+            case ImGuizmo::SCALE:
+                ImGui::InputFloat("Scale Snap", math::values(snap));
+                break;
+        }
+        ImGuizmo::SetRect(windowPosition.x(), windowPosition.y(), windowSize.x(), windowSize.y());
+        camera.getView().apply();
+        camera.getPerspective().apply();
+        ImGuizmo::Manipulate(math::values(camera.getView().value), math::values(camera.getPerspective().value),
+                             operation, mode, math::values(transform.modelMatrix.value),
+                             NULL, useSnap ? math::values(snap) : NULL);
+    }
+
+    void Gizmo::drawTranslate(Camera3D& camera, Transform3dComponent& transform,
+                              const vec2f& windowPosition, const vec2f& windowSize) {
+        draw(camera, transform, ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, windowPosition, windowSize);
+    }
+
+    void Gizmo::drawRotate(Camera3D &camera, Transform3dComponent &transform,
+                           const vec2f& windowPosition, const vec2f& windowSize) {
+        draw(camera, transform, ImGuizmo::ROTATE, ImGuizmo::LOCAL, windowPosition, windowSize);
+    }
+
+    void Gizmo::drawScale(Camera3D &camera, Transform3dComponent &transform,
+                          const vec2f& windowPosition, const vec2f& windowSize) {
+        draw(camera, transform, ImGuizmo::SCALE, ImGuizmo::LOCAL, windowPosition, windowSize);
     }
 }
