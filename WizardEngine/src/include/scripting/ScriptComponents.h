@@ -4,25 +4,44 @@
 
 #pragma once
 
-#include <ecs/Entity.h>
+#include <scripting/Scriptable.h>
+#include <ecs/Scene.h>
 
 namespace engine::scripting {
 
     using namespace ecs;
 
     component(NativeScript) {
-        Entity script;
-        // lifecycle functions
-        std::function<void(Entity&)> onCreateFunction;
-        std::function<void(Entity&)> onDestroyFunction;
-        std::function<void(Entity&, time::Time)> onUpdateFunction;
+        std::function<void()> onCreateFunction;
+        std::function<void()> onDestroyFunction;
+        std::function<void(time::Time)> onUpdateFunction;
 
         template<class T>
-        void bind() {
-            onCreateFunction = [](Entity& script) { ((T&) script).onCreate(); };
-            onDestroyFunction = [](Entity& script) { ((T&) script).onDestroy(); };
-            onUpdateFunction = [](Entity& script, time::Time dt) { ((T&) script).onUpdate(dt); };
+        static NativeScript create(const Ref<Scene>& scene) {
+            NativeScript script;
+            script.bind<T>(scene);
+            return script;
+        }
+
+        template<class T>
+        void bind(const Ref<Scene>& scene) {
+            T scriptable(scene.get());
+            onCreateFunction = [&scriptable]() { scriptable.onCreate(); };
+            onDestroyFunction = [&scriptable]() { scriptable.onDestroy(); };
+            onUpdateFunction = [&scriptable](time::Time dt) { scriptable.onUpdate(dt); };
         }
     };
 
+    serialize_component(CppScript) {
+        const char* cppName = nullptr;
+        Scriptable* scriptable = nullptr;
+
+        CppScript() = default;
+
+        CppScript(const char* cppName, Scriptable* scriptable)
+        : scriptable(scriptable), cppName(cppName) {}
+
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
+    };
 }

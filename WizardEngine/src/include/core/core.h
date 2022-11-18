@@ -13,3 +13,12 @@
 // static library
 #define ENGINE_API
 #endif
+
+// dynamic library
+// defined for library
+#ifdef SCRIPT_DLL
+#define SCRIPT_API __declspec(dllexport)
+// defined for client
+#else
+#define SCRIPT_API __declspec(dllimport)
+#endif

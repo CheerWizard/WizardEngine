@@ -7,6 +7,7 @@
 
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <imgui_stdlib.h>
 
 namespace engine::visual {
 
@@ -267,7 +268,168 @@ namespace engine::visual {
         ImGui::SliderInt(name, (int*)&value, range.x(), range.y());
     }
 
-    void Text::draw(const char* text) {
+    void Text::label(const char* text, const vec2f& padding) {
+        // begin padding
+        ImVec2 sz = ImGui::CalcTextSize(text);
+        ImVec2 cursor = ImGui::GetCursorPos();
+        ImVec2 paddingSize = { sz.x + padding.x() * 2, sz.y + padding.y() * 2 };
+        ImGui::InvisibleButton("##padded-text", paddingSize);
+        ImVec2 final_cursor_pos = ImGui::GetCursorPos();
+        ImVec2 cursorPos = { cursor.x + padding.x(), cursor.y + padding.y() };
+        ImGui::SetCursorPos(cursorPos);
+        // draw text label
         ImGui::TextWrapped(text);
+        // end padding
+        ImGui::SetCursorPos(final_cursor_pos);
+    }
+
+    bool Text::field(const char* id, const char* title, std::string* text, const vec2f& padding, bool alignLeft) {
+        // begin padding
+        ImVec2 sz = ImGui::CalcTextSize(text->c_str());
+        ImVec2 cursor = ImGui::GetCursorPos();
+        ImVec2 paddingSize = { sz.x + padding.x() * 2, sz.y + padding.y() * 2 };
+        ImGui::InvisibleButton("##padded-text", paddingSize);
+        ImVec2 final_cursor_pos = ImGui::GetCursorPos();
+        ImVec2 cursorPos = { cursor.x + padding.x(), cursor.y + padding.y() };
+        ImGui::SetCursorPos(cursorPos);
+        // draw text input
+        bool result;
+        if (alignLeft) {
+            ImGui::Text(title);
+            ImGui::SameLine();
+            result = ImGui::InputText(id, text);
+        } else {
+            result = ImGui::InputText(title, text);
+        }
+        // end padding
+        ImGui::SetCursorPos(final_cursor_pos);
+        return result;
+    }
+
+    void Text::centered(const char *text, float maxWidth, int lineId, bool separator) {
+        ImGui::Spacing();
+        ImGui::SameLine((maxWidth / 2) - (ImGui::CalcTextSize(text).x / 2));
+        ImGui::Text(text);
+        ImGui::Spacing();
+        if (separator) Line::draw(lineId);
+    }
+
+    bool Button::textButton(const char* text, const vec2f& size,
+                            float paddingTop, float paddingBottom, float paddingLeft, float paddingRight) {
+        if (paddingTop > 0) {
+            ImGui::InvisibleButton("##padded-button-top", { size.x(), paddingTop });
+        }
+        if (paddingLeft > 0) {
+            ImGui::InvisibleButton("##padded-button-left", { paddingLeft, size.y() });
+            ImGui::SameLine();
+        }
+        bool result = ImGui::Button(text, { size.x(), size.y() });
+        if (paddingRight > 0) {
+            ImGui::SameLine();
+            ImGui::InvisibleButton("##padded-button-right", { paddingRight, size.y() });
+        }
+        if (paddingBottom > 0) {
+            ImGui::InvisibleButton("##padded-button-bottom", { size.x(), paddingBottom });
+        }
+        return result;
+    }
+
+    void Line::draw(int id) {
+        std::string newId = "draw_line_" + std::to_string(id);
+        ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(0, 0, 0, 0));
+
+        ImGui::BeginChild(newId.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 1), false);
+        ImGui::Separator();
+        ImGui::EndChild();
+
+        ImGui::PopStyleColor();
+    }
+
+    void CustomCheckbox::draw(BoolUniform &uniform) {
+        draw(uniform.name, uniform.value);
+    }
+
+    void CustomCheckbox::draw(const char *label, bool &value) {
+        bool result = false;
+        auto* drawList = ImGui::GetWindowDrawList();
+
+        const bool isMixedState = ImGuiItemFlags_MixedValue;
+
+        const auto pos = ImGui::GetCursorScreenPos();
+        const auto mousePos = ImGui::GetMousePos();
+
+        const auto itemSpacing = ImGui::GetStyle().ItemSpacing;
+        const float lineHeight = ImGui::GetTextLineHeight();
+        const float boxSize = std::floor(lineHeight * 0.9f);
+        const float boxOffsetHorz = std::ceil(itemSpacing.x * 1.3f);
+        const float boxOffsetVert = itemSpacing.y + std::floor(0.5f * (lineHeight - boxSize));
+        const float clearance = boxSize * 0.2f;
+        const auto corner = ImVec2 { pos.x + boxOffsetHorz, pos.y + boxOffsetVert };
+
+        char buf[1024];
+        strcpy(buf, label);
+        for (int i = 0; i < sizeof(buf); ++i)
+        {
+            if (buf[i] == '#')
+            {
+                buf[i] = '\0';
+                break;
+            }
+        }
+        const float labelWidth = ImGui::CalcTextSize(buf).x;
+
+        bool isHovered = ImRect(pos, { pos.x + lineHeight + labelWidth + 2.0f * itemSpacing.x,
+                                       pos.y + lineHeight }).Contains(mousePos);
+
+        ImVec4 color = ImGui::GetStyleColorVec4(ImGuiCol_Text);
+        ImVec4 colorMark = color;
+        color.w *= isHovered ? 1.0f : 0.25f;
+        drawList->AddRect(corner, { corner.x + boxSize, corner.y + boxSize }, ImColor(color), 0.0f, 0, 1.0f);
+
+        if (isHovered && ImGui::IsWindowHovered())
+        {
+            if (ImGui::IsMouseClicked(0))
+            {
+                if (isMixedState)
+                {
+                    value = false;
+                }
+                else
+                {
+                    value = !value;
+                }
+                result = true;
+            }
+        }
+
+        if (isMixedState)
+        {
+            drawList->AddRectFilled(
+                    { corner.x + clearance, corner.y + clearance},
+                    { corner.x + boxSize - clearance, corner.y + boxSize - clearance},
+                    ImColor(colorMark)
+            );
+        }
+        else if (value) {
+            ImVec2 checkMarkPts[3] = {
+                    { corner.x + clearance, corner.y + clearance + boxSize * 0.3f },
+                      { corner.x + boxSize * 0.5f, corner.y + boxSize - clearance },
+                        { corner.x + boxSize - clearance, corner.y + clearance }
+            };
+            drawList->AddPolyline(checkMarkPts, 3, ImColor(colorMark), false, 2.5f);
+        }
+
+        ImGui::Dummy(ImVec2(lineHeight + itemSpacing.x, lineHeight));
+
+        if (strlen(buf) > 0) {
+            ImGui::SameLine();
+            ImGui::AlignTextToFramePadding();
+            ImGui::Text(buf);
+        }
+
+        ImGui::SetCursorScreenPos(ImVec2(ImGui::GetCursorScreenPos().x,
+                                         pos.y + ImGui::GetTextLineHeightWithSpacing() + itemSpacing.y));
+
+        value = result;
     }
 }

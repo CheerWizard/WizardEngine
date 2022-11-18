@@ -6,7 +6,7 @@
 
 #include "imgui.h"
 
-namespace engine::gui {
+namespace engine::visual {
 
     void MeshLayout::create() {
         setCallback(this);

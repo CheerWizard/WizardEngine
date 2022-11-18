@@ -3,11 +3,13 @@
 //
 
 #include <core/filesystem.h>
-#include <core/exception.h>
 
 #include <direct.h>
 #include <sstream>
 #include <fstream>
+
+#include <zip.h>
+#include <dirent.h>
 
 namespace engine::filesystem {
 
@@ -70,7 +72,19 @@ namespace engine::filesystem {
     }
 
     bool remove(const std::string &target) {
+        ENGINE_INFO("filesystem::remove: {0}", target);
         auto isRemoved = std::filesystem::remove(target);
+        if (isRemoved) {
+            ENGINE_INFO("filesystem: file has been removed. File path: {0}", target);
+        } else {
+            ENGINE_ERR("filesystem: file has not been removed. File path: {0}", target);
+        }
+        return isRemoved;
+    }
+
+    bool removeAll(const std::string &target) {
+        ENGINE_INFO("filesystem::removeAll: {0}", target);
+        auto isRemoved = std::filesystem::remove_all(target);
         if (isRemoved) {
             ENGINE_INFO("filesystem: file has been removed. File path: {0}", target);
         } else {
@@ -135,6 +149,10 @@ namespace engine::filesystem {
         return filePath.substr(lastSlash, count);
     }
 
+    std::string getFileName(const fpath &filePath) {
+        return getFileName(filePath.string());
+    }
+
     void newFile(const fpath &filePath) {
         write(filePath, " ");
     }
@@ -170,7 +188,7 @@ namespace engine::filesystem {
     }
 
     bool exists(const fpath &path) {
-        return std::filesystem::exists(path);
+        return !path.empty() && std::filesystem::exists(path);
     }
 
     bool replace(const std::string& src, const std::string& dest) {
@@ -207,6 +225,41 @@ namespace engine::filesystem {
         std::ofstream file(filepath);
         file << data;
         return true;
+    }
+
+    void zipDir(struct zip_t *zip, const char *path) {
+        DIR *dir;
+        struct dirent *entry;
+        char fullpath[MAX_PATH];
+        struct stat s;
+
+        memset(fullpath, 0, MAX_PATH);
+        dir = opendir(path);
+        assert(dir);
+
+        while ((entry = readdir(dir))) {
+            // skip "." and ".."
+            if (!strcmp(entry->d_name, ".\0") || !strcmp(entry->d_name, "..\0"))
+                continue;
+
+            snprintf(fullpath, sizeof(fullpath), "%s/%s", path, entry->d_name);
+            stat(fullpath, &s);
+            if (S_ISDIR(s.st_mode))
+                zipDir(zip, fullpath);
+            else {
+                zip_entry_open(zip, fullpath);
+                zip_entry_fwrite(zip, fullpath);
+                zip_entry_close(zip);
+            }
+        }
+
+        closedir(dir);
+    }
+
+    void zip(const char* zipPath, const char* dirPath) {
+        struct zip_t *zip = zip_open(zipPath, ZIP_DEFAULT_COMPRESSION_LEVEL, 'w');
+        zipDir(zip, dirPath);
+        zip_close(zip);
     }
 
 }

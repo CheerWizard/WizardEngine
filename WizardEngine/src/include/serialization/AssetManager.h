@@ -16,6 +16,11 @@ namespace engine::io {
         static void saveScene(const Ref<Scene>& scene);
         static void loadScene(Ref<Scene>& sceneOut);
         static Ref<Scene> loadScene(const char* sceneName);
+        static vector<Ref<Scene>> loadAll();
+        static void saveAll(const vector<Ref<Scene>>& scenes);
+
+    public:
+        static std::string assetsPath;
     };
 
     class ENGINE_API RemoteAssetManager final {

@@ -6,12 +6,14 @@
 #include <profiler/Profiler.h>
 
 namespace engine::graphics {
+
+    u32 RenderSystem::finalRenderTargetId = 0;
     // frames
     Ref<Scene> RenderSystem::activeScene;
     Ref<FrameBuffer> RenderSystem::sceneFrame;
-    Ref<FrameBuffer> RenderSystem::screenFrame;
     // screen
     ScreenRenderer RenderSystem::screenRenderer;
+    bool RenderSystem::enableScreenRenderer = true;
     // skybox
     SkyboxRenderer RenderSystem::skyboxRenderer;
     // scene
@@ -132,12 +134,14 @@ namespace engine::graphics {
         u32 mixedTexture = textureMixer.render(postProcessedTextures);
 
         // apply HDR/LDR to final texture
-        u32 finalTexture = hdrEffectRenderer.render(mixedTexture);
+        finalRenderTargetId = hdrEffectRenderer.render(mixedTexture);
 
         // bind to window default frame buffer and draw screen
         setDepthTest(false);
         FrameBuffer::bindDefault();
-        screenRenderer.renderQuad(finalTexture);
+        if (enableScreenRenderer) {
+            screenRenderer.renderQuad(finalRenderTargetId);
+        }
     }
 
     void RenderSystem::setRenderSystemCallback(RenderSystemCallback* renderSystemCallback) {

@@ -12,17 +12,41 @@
 
 namespace engine::graphics {
 
+    enum class SkyboxType {
+        CUBE = 0,
+        SPHERE = 1
+    };
+
     struct SkyboxVertex {
         math::vec3f position = { 0.5, 0.5 , 0.5 };
     };
 
-    struct SkyCube : VertexDataComponent<SkyboxVertex> {
+    serialize_component(Skybox) {
+        SkyboxType type = SkyboxType::CUBE;
+        VertexDataComponent<SkyboxVertex> geometry;
+        CubeMapTextureComponent textures;
 
-        SkyCube() {
+        Skybox() = default;
+
+        Skybox(SkyboxType type) : type(type) {
             init();
         }
 
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
+
+    private:
         void init() {
+            switch (type) {
+                case SkyboxType::CUBE:
+                    initCube();
+                    break;
+                case SkyboxType::SPHERE:
+                    break;
+            }
+        }
+
+        void initCube() {
             auto vertices = new SkyboxVertex[36] {
                     {{-1.0f,  1.0f, -1.0f}},
                     {{-1.0f, -1.0f, -1.0f}},
@@ -62,8 +86,8 @@ namespace engine::graphics {
                     {{1.0f, -1.0f,  1.0f}},
             };
 
-            this->vertexData = { vertices, 0, 36 };
-            this->drawType = DrawType::TRIANGLE;
+            geometry.vertexData = { vertices, 0, 36 };
+            geometry.drawType = DrawType::TRIANGLE;
         }
     };
 
@@ -84,7 +108,7 @@ namespace engine::graphics {
                     {0,   0,   0},
                     {100, 100, 100}
             });
-            add<SkyCube>(SkyCube());
+            add<Skybox>(SkyboxType::CUBE);
             add<CubeMapTextureComponent>(cubeMapTextures);
         }
     };

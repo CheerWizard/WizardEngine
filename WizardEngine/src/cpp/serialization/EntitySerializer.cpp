@@ -7,6 +7,9 @@
 
 #include <graphics/transform/TransformComponents.h>
 #include <graphics/camera/CameraComponents.h>
+#include <graphics/skybox/Skybox.h>
+
+#include <scripting/ScriptComponents.h>
 
 namespace engine::io {
 
@@ -24,6 +27,8 @@ namespace engine::io {
         deserializeComponent<graphics::Transform3dComponent>(parent);
         deserializeComponent<graphics::Camera2dComponent>(parent);
         deserializeComponent<graphics::Camera3dComponent>(parent);
+        deserializeComponent<scripting::CppScript>(parent);
+        deserializeComponent<graphics::Skybox>(parent);
     }
 
     void EntitySerializable::serializeComponents(YAML::Emitter &out) {
@@ -32,6 +37,8 @@ namespace engine::io {
         serializeComponent<graphics::Transform3dComponent>(out);
         serializeComponent<graphics::Camera2dComponent>(out);
         serializeComponent<graphics::Camera3dComponent>(out);
+        serializeComponent<scripting::CppScript>(out);
+        serializeComponent<graphics::Skybox>(out);
     }
 
     void EntitySerializer::serializeText(YAML::Emitter &out) {

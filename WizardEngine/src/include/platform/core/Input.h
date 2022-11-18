@@ -53,6 +53,7 @@ namespace engine::event {
 
     public:
         static bool isKeyPressed(KeyCode keyCode);
+        static bool isKeyHold(KeyCode keyCode);
         static bool isMousePressed(MouseCode mouseCode);
         static MousePosition getMousePosition();
         static MousePosition getMouseDelta();

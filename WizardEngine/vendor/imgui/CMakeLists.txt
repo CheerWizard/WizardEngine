@@ -3,6 +3,7 @@ project(imgui)
 file(GLOB_RECURSE PROJECT_SRC
         backends/imgui_impl_opengl3.cpp
         backends/imgui_impl_glfw.cpp
+        misc/cpp/imgui_stdlib.cpp
         imgui.cpp
         imgui_widgets.cpp
         imgui_tables.cpp

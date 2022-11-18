@@ -32,22 +32,14 @@ namespace engine::core {
         });
 #endif
 
-        createScripting();
-
-        setActiveScene(createRef<Scene>());
-
         audio::DeviceManager::createContext();
-        // init post effect renderers
+        // init default post effect renderers
         initHDR();
         initBlur();
         initSharpen();
         initEdgeDetection();
         initGaussianBlur();
         initTextureMixer();
-
-#ifdef RCC
-        RuntimeCompiler::init();
-#endif
     }
 
     void Application::onPrepare() {
@@ -56,40 +48,46 @@ namespace engine::core {
         _window->setInCenter();
         setSampleSize(1);
         _layerStack.onPrepare();
-        loadGamepadMappings("../WizardEngine/assets/db/game_controller_db.txt");
+        loadGamepadMappings("assets/mappings/game_controller.txt");
+        ENGINE_INFO("screenRenderer.onWindowResized");
+        RenderSystem::screenRenderer.onWindowResized(getWindowWidth(), getWindowHeight());
+    }
 
-        auto skycubeId = SkyCube::ID;
-        auto transformId = Transform3dComponent::ID;
-        auto cubemapId = CubeMapTextureComponent::ID;
-
-        auto skyCube = activeScene->getSkybox().get<SkyCube>();
-
-        if (skyCube->vertexData.values) {
-            ENGINE_INFO("uploadStatic Skybox to renderer");
-            RenderSystem::skyboxRenderer.uploadStatic(*skyCube);
-            delete skyCube->vertexData.values;
+    void Application::setSkybox(Ref<Scene> &scene, const Entity& skybox) const {
+        scene->setSkybox(skybox);
+        auto skyboxGeometry = activeScene->getSkybox().get<Skybox>()->geometry;
+        if (skyboxGeometry.vertexData.values) {
+            ENGINE_INFO("uploadStatic skybox to renderer");
+            RenderSystem::skyboxRenderer.uploadStatic(skyboxGeometry);
+            delete skyboxGeometry.vertexData.values;
         } else {
             ENGINE_WARN("Skybox of '{0}' is already uploaded!", activeScene->getName());
         }
+    }
 
-        ENGINE_INFO("screenRenderer.onWindowResized");
-        RenderSystem::screenRenderer.onWindowResized(getWindowWidth(), getWindowHeight());
+    void Application::setSkyCube(Ref<Scene> &scene, const char* skyboxName, u32 skyboxId) const {
+        setSkybox(scene, SkyboxCube(
+                skyboxName,
+                scene.get(),
+                CubeMapTextureComponent(skyboxId, TextureBuffer::getTypeId(TextureType::CUBE_MAP))
+        ));
+    }
+
+    void Application::setSkyCube(Ref<Scene>& scene, const char* skyboxName, const vector<TextureFace>& skyboxFaces) const {
+        u32 skyboxId = TextureBuffer::load(skyboxFaces);
+        TextureBuffer::setDefaultParamsCubeMap(skyboxId);
+        setSkyCube(scene, skyboxName, skyboxId);
     }
 
     void Application::onDestroy() {
         PROFILE_FUNCTION();
         ENGINE_INFO("onDestroy()");
         RenderSystem::onDestroy();
-        _scriptSystem->onDestroy();
+        ScriptSystem::onDestroy();
         audio::MediaPlayer::clear();
         audio::DeviceManager::clear();
-
 #ifdef VISUAL
         Visual::release();
-#endif
-
-#ifdef RCC
-        RuntimeCompiler::release();
 #endif
     }
 
@@ -106,11 +104,6 @@ namespace engine::core {
         _layerStack.onVisualDraw(dt);
         Visual::end();
 #endif
-
-#ifdef RCC
-        RuntimeCompiler::onUpdate(dt);
-#endif
-
         // draw editor/tools
         _layerStack.onUpdate(dt);
         // poll events + swap chain
@@ -239,20 +232,16 @@ namespace engine::core {
 
     void Application::setActiveScene(const Ref<Scene>& scene) {
         PROFILE_FUNCTION();
-        scenes.emplace_back(scene);
         activeScene = scene;
-        RenderSystem::activeScene = scene;
-        _scriptSystem->setActiveScene(scene);
-        Physics::activeScene = scene;
+        RenderSystem::activeScene = activeScene;
+        ScriptSystem::activeScene = activeScene;
+        Physics::activeScene = activeScene;
+        RenderSystem::onUpdate();
     }
 
     void Application::setActiveScene(const u32 &sceneIndex) {
         PROFILE_FUNCTION();
-        activeScene = scenes[sceneIndex];
-        _scriptSystem->setActiveScene(activeScene);
-        RenderSystem::activeScene = activeScene;
-        RenderSystem::onUpdate();
-        Physics::activeScene = activeScene;
+        setActiveScene(scenes.at(sceneIndex));
     }
 
     void Application::restart() {
@@ -302,15 +291,6 @@ namespace engine::core {
         activeSceneFrameFormat.height = _window->getHeight();
         activeSceneFrameFormat.samples = samples;
         activeSceneFrame->updateFormat(activeSceneFrameFormat);
-        // update screen fbo
-        FrameBufferFormat screenFrameFormat;
-        screenFrameFormat.colorAttachments = {
-                { ColorFormat::RGBA8 }
-        };
-        screenFrameFormat.width = _window->getWidth();
-        screenFrameFormat.height = _window->getHeight();
-        screenFrameFormat.samples = 1;
-        screenFrame->updateFormat(screenFrameFormat);
         // resolve size issue
         onWindowResized(_window->getWidth(), _window->getHeight());
     }
@@ -319,9 +299,7 @@ namespace engine::core {
         graphics::initContext(_window->getNativeWindow());
         setClearColor({0, 0, 0, 1});
         activeSceneFrame = createRef<FrameBuffer>();
-        screenFrame = createRef<FrameBuffer>();
         RenderSystem::sceneFrame = activeSceneFrame;
-        RenderSystem::screenFrame = screenFrame;
         RenderSystem::setRenderSystemCallback(this);
         RenderSystem::screenRenderer.init();
         RenderSystem::skyboxRenderer.init();
@@ -330,7 +308,7 @@ namespace engine::core {
     void Application::onRuntimeUpdate(Time dt) {
         if (!activeScene->isEmpty()) {
             Physics::onUpdate(dt);
-            _scriptSystem->onUpdate(dt);
+            ScriptSystem::onUpdate(dt);
             RenderSystem::onUpdate();
         } else {
             ENGINE_WARN("Active scene is empty!");
@@ -339,10 +317,6 @@ namespace engine::core {
 
     void Application::shutdown() {
         _isRunning = false;
-    }
-
-    void Application::createScripting() {
-        _scriptSystem = createScope<scripting::ScriptSystem>();
     }
 
     void Application::onGamepadConnected(s32 joystickId) {
@@ -508,6 +482,12 @@ namespace engine::core {
 
     void Application::onVisualDraw(time::Time dt) {
         // this method will be called only from derived class that defines VISUAL macro
+    }
+
+    void Application::pushScenes(const vector<Ref<Scene>> &scenes) {
+        if (scenes.empty()) return;
+        this->scenes = scenes;
+        setActiveScene(0);
     }
 }
 

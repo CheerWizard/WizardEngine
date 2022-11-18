@@ -12,10 +12,6 @@ if(PROFILING)
     add_definitions(-DPROFILING=1)
 endif(PROFILING)
 
-if (RCC)
-    add_definitions(-DRCC=1)
-endif(RCC)
-
 # copying target dir to destination dir. If destination does not exist, create it.
 macro(copy_dir dir1 dir2)
     set(srcDir ${CMAKE_SOURCE_DIR}/${dir1})
@@ -57,6 +53,15 @@ endmacro(replace_dirs)
 
 # replace file
 macro(replace_file srcFile destFile)
-    file(REMOVE_RECURSE ${destFile})
-    configure_file(${srcFile} ${destFile} COPYONLY)
+    if (EXISTS ${srcFile})
+        file(REMOVE_RECURSE ${destFile})
+        configure_file(${srcFile} ${destFile} COPYONLY)
+    endif()
+endmacro()
+
+# replace dll/lib files and link to lib file
+macro(dynamic_link target src)
+    replace_file(${PROJECT_SOURCE_DIR}/${src}.lib ${PROJECT_BINARY_DIR}/${src}.lib)
+    replace_file(${PROJECT_SOURCE_DIR}/${src}.dll ${PROJECT_BINARY_DIR}/${src}.dll)
+    target_link_libraries(${target} PUBLIC ${src})
 endmacro()

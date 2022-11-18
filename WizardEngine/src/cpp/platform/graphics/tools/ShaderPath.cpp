@@ -11,7 +11,7 @@ namespace engine::io {
     }
 
     std::string getEngineShadersPath() {
-        return "../WizardEngine/assets/shaders/glsl/4.0";
+        return "core_shaders/glsl/4.0";
     }
 
     const char* getGraphicsCoreVersion() {

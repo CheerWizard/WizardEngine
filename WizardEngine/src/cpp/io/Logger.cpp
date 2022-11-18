@@ -18,7 +18,7 @@ namespace engine::io {
             ENGINE_WARN("Engine logger is already created!");
             return;
         }
-        createLogger(_engineLogger, name);
+        _engineLogger = createRef<Log>(name);
     }
 
     void Logger::createRuntimeLogger(const std::string &name) {
@@ -26,7 +26,7 @@ namespace engine::io {
             ENGINE_WARN("Runtime logger is already created!");
             return;
         }
-        createLogger(_runtimeLogger, name);
+        _runtimeLogger = createRef<Log>(name);
     }
 
     void Logger::createEditorLogger(const std::string &name) {
@@ -34,26 +34,11 @@ namespace engine::io {
             ENGINE_WARN("Editor logger is already created!");
             return;
         }
-        createLogger(_editorLogger, name);
+        _editorLogger = createRef<Log>(name);
     }
 
     void Logger::setPattern(const std::string& pattern) {
         spdlog::set_pattern(pattern);
-    }
-
-    void Logger::createLogger(Ref<Log> &logger, const std::string &name) {
-        std::vector<spdlog::sink_ptr> logSinks;
-        logSinks.emplace_back(createRef<spdlog::sinks::stdout_color_sink_mt>());
-        logSinks.emplace_back(createRef<spdlog::sinks::basic_file_sink_mt>(name + ".log", true));
-
-        logSinks[0]->set_pattern("%^[%T] %n: %v%$");
-        logSinks[1]->set_pattern("[%T] [%l] %n: %v");
-
-        logger = createRef<Log>(name, std::begin(logSinks), std::end(logSinks));
-
-        spdlog::register_logger(logger);
-        logger->set_level(spdlog::level::trace);
-        logger->flush_on(spdlog::level::trace);
     }
 
     void Logger::printException(const Ref<Log> &logger, const exception &exception) {
@@ -76,4 +61,18 @@ namespace engine::io {
         }
     }
 
+    Log::Log(const std::string &name) {
+        std::vector<spdlog::sink_ptr> logSinks;
+        logSinks.emplace_back(createRef<spdlog::sinks::stdout_color_sink_mt>());
+        logSinks.emplace_back(createRef<spdlog::sinks::basic_file_sink_mt>("logs/" + name + ".log", true));
+
+        logSinks[0]->set_pattern("%^[%T] %n: %v%$");
+        logSinks[1]->set_pattern("[%T] [%l] %n: %v");
+
+        _log = createRef<spdlog::logger>(name, std::begin(logSinks), std::end(logSinks));
+
+        spdlog::register_logger(_log);
+        _log->set_level(spdlog::level::trace);
+        _log->flush_on(spdlog::level::trace);
+    }
 }

@@ -15,6 +15,8 @@ namespace engine::time {
 
     using namespace math;
 
+    std::string currentLocalTime();
+
     class ENGINE_API Time {
 
     public:

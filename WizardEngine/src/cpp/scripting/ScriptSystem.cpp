@@ -9,27 +9,36 @@
 
 namespace engine::scripting {
 
+    Ref<Scene> ScriptSystem::activeScene = nullptr;
+
+    void ScriptSystem::onCreate() {
+        PROFILE_FUNCTION();
+        activeScene->getRegistry().each<NativeScript>([](NativeScript* sc) {
+            sc->onCreateFunction();
+        });
+        activeScene->getRegistry().each<CppScript>([](CppScript* script) {
+            script->scriptable->onCreate();
+        });
+    }
+
     void ScriptSystem::onUpdate(time::Time dt) {
         PROFILE_FUNCTION();
-        auto& registry = activeScene->getRegistry();
-
-        registry.each<NativeScript>([&dt, this](NativeScript* sc) {
-            if (!sc->script) {
-                sc->script = { activeScene.get(), sc->entityId };
-                sc->onCreateFunction(sc->script);
-            }
-            sc->onUpdateFunction(sc->script, dt);
+        activeScene->getRegistry().each<NativeScript>([&dt](NativeScript* sc) {
+            sc->onUpdateFunction(dt);
+        });
+        activeScene->getRegistry().each<CppScript>([&dt](CppScript* script) {
+            script->scriptable->onUpdate(dt);
         });
     }
 
     void ScriptSystem::onDestroy() {
         PROFILE_FUNCTION();
-        auto& registry = activeScene->getRegistry();
-
-        registry.each<NativeScript>([](NativeScript* sc) {
-            if (sc->script) {
-                sc->onDestroyFunction(sc->script);
-            }
+        activeScene->getRegistry().each<NativeScript>([](NativeScript* sc) {
+            sc->onDestroyFunction();
+        });
+        activeScene->getRegistry().each<CppScript>([](CppScript* script) {
+            script->scriptable->onDestroy();
+            delete script->scriptable;
         });
     }
 }

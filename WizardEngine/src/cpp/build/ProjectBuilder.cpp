@@ -58,7 +58,7 @@ namespace engine::build {
         if (!filesystem::exists(projectPath)) {
             terminal::cmakeD(cmakePath, { "DEBUG" });
         }
-        terminal::msBuild(projectPath);
+        terminal::msbuild({ projectPath.c_str(), terminal::MS_DEBUG });
     }
 
     void ProjectBuilder::runProject(const ProjectProps& projectProps) {

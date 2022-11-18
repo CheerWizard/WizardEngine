@@ -16,10 +16,12 @@ file(GLOB_RECURSE ENGINE_SRC
 add_library(${PROJECT_NAME} SHARED ${ENGINE_SRC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
+#/ Include static dependencies.
+
 #/ Add WizardEngine headers
 include_directories(src/include)
 
-#/ Logger.
+#/ Logger
 add_subdirectory(vendor/spdlog)
 include_directories(vendor/spdlog/include)
 
@@ -43,15 +45,7 @@ include_directories(vendor/stb/stb)
 add_subdirectory(vendor/freetype)
 include_directories(vendor/freetype)
 
-#/ Assets importer/exporter. Builds as DLL
-include_directories(vendor/assimp/include)
-
-#/ Audio core. Builds as DLL
-include_directories(vendor/openal-soft/include)
-
-#/ YAML parser. Builds as DLL
-include_directories(vendor/yaml-cpp/include)
-
+#/ Math library
 add_subdirectory(vendor/glm/glm)
 include_directories(vendor/glm/glm)
 
@@ -59,12 +53,15 @@ include_directories(vendor/glm/glm)
 add_subdirectory(vendor/ImGuizmo)
 include_directories(vendor/ImGuizmo)
 
-#/ RCC (Runtime Compiled C++)
-add_subdirectory(vendor/rcc)
-include_directories(vendor/rcc/RuntimeCompiler)
-include_directories(vendor/rcc/RuntimeObjectSystem)
+#/ .zip compress library
+add_subdirectory(vendor/zip)
+include_directories(vendor/zip/src)
 
-#/ linking dependencies.
+#/ Dirent API support for Windows
+add_subdirectory(vendor/dirent)
+include_directories(vendor/dirent/include)
+
+#/ Link static dependencies.
 target_link_libraries(
         WizardEngine PUBLIC
         spdlog
@@ -74,22 +71,42 @@ target_link_libraries(
         stb
         freetype
         glm
-        ../WizardEngine/vendor/dlls/assimp-vc143-mtd
-        ../WizardEngine/vendor/dlls/OpenAL32
-        ../WizardEngine/vendor/dlls/yaml-cppd
         imguizmo
-        RuntimeCompiler
-        RuntimeObjectSystem
+        zip
 )
 
-replace_dirs(WizardEngine/assets WizardEngine/assets)
-replace_dirs(WizardEngine/vendor/dlls WizardEngine/vendor/dlls)
-#replace_dirs(WizardEngine/project_template WizardEngine/project_template)
-replace_dirs(WizardEngine/export_cmake WizardEngine/export_cmake)
+#/ Include dynamic dependencies
 
-#add_custom_command(
-#        TARGET ${PROJECT_NAME}
-#        POST_BUILD
-#        COMMAND replace_file(vendor/dlls/yaml-cppd.dll ../WizardServer/yaml-cppd.dll)
-#        COMMENT "Replace files"
-#)
+#/ Assets importer/exporter. Builds as DLL
+include_directories(vendor/assimp/include)
+#/ Audio core. Builds as DLL
+include_directories(vendor/openal-soft/include)
+#/ YAML parser. Builds as DLL
+include_directories(vendor/yaml-cpp/include)
+
+#/ Link dynamic dependencies
+dynamic_link(WizardEngine assimp-vc143-mtd)
+dynamic_link(WizardEngine OpenAL32)
+dynamic_link(WizardEngine yaml-cppd)
+
+#/ move engine binaries into output dir
+replace_dirs(WizardEngine/assets WizardEngine/assets)
+replace_dirs(WizardEngine/export_cmake WizardEngine/export_cmake)
+#/ move project template resources
+replace_dirs(WizardEngine/project_template WizardEngine/project_template)
+replace_dirs(cmake_tools WizardEngine/project_template/cmake_tools)
+replace_dirs(WizardEngine/export_cmake WizardEngine/project_template/export_cmake)
+replace_dirs(WizardEngine/core_shaders WizardEngine/project_template/core_shaders)
+#/ move headers as well for game projects linking at runtime
+replace_dirs(WizardEngine/src/include WizardEngine/includes/src/include)
+replace_dirs(WizardEngine/vendor/assimp/include WizardEngine/includes/vendor/assimp/include)
+replace_dirs(WizardEngine/vendor/freetype/include WizardEngine/includes/vendor/freetype/include)
+replace_dirs(WizardEngine/vendor/glad/include WizardEngine/includes/vendor/glad/include)
+replace_dirs(WizardEngine/vendor/glfw/include WizardEngine/includes/vendor/glfw/include)
+replace_dirs(WizardEngine/vendor/glm WizardEngine/includes/vendor/glm)
+replace_dirs(WizardEngine/vendor/imgui WizardEngine/includes/vendor/imgui)
+replace_dirs(WizardEngine/vendor/ImGuizmo WizardEngine/includes/vendor/ImGuizmo)
+replace_dirs(WizardEngine/vendor/openal-soft/include WizardEngine/includes/vendor/openal-soft/include)
+replace_dirs(WizardEngine/vendor/spdlog/include WizardEngine/includes/vendor/spdlog/include)
+replace_dirs(WizardEngine/vendor/stb WizardEngine/includes/vendor/stb)
+replace_dirs(WizardEngine/vendor/yaml-cpp/include WizardEngine/includes/vendor/yaml-cpp/include)

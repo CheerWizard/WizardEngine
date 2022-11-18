@@ -13,7 +13,6 @@ namespace engine::terminal {
     ENGINE_API void openPhotoshop(const std::string &filePath);
     ENGINE_API void openBlender(const std::string &filePath);
     ENGINE_API void openZBrush(const std::string &filePath);
-    ENGINE_API void msBuild(const std::string& slnPath);
     ENGINE_API void cmake(const std::string& cmakePath);
     ENGINE_API void cmakeD(const std::string& cmakePath, const std::vector<const char*>& definitions);
     ENGINE_API void exe(const std::string& exePath);
@@ -24,6 +23,20 @@ namespace engine::terminal {
     ENGINE_API void openPhotoshopTask(const std::string &filePath);
     ENGINE_API void openBlenderTask(const std::string &filePath);
     ENGINE_API void openZBrushTask(const std::string &filePath);
-    ENGINE_API void msBuildTask(const std::string &slnPath);
     ENGINE_API void cmakeTask(const std::string& cmakePath);
+
+    enum MSBuildVersion {
+        MS_DEBUG, MS_RELEASE
+    };
+
+    struct MSBuildTarget {
+        const char* slnPath;
+        MSBuildVersion version;
+
+        MSBuildTarget(const char* slnPath, MSBuildVersion version)
+        : slnPath(slnPath), version(version) {}
+    };
+
+    ENGINE_API void msbuild(const MSBuildTarget& target);
+
 }
