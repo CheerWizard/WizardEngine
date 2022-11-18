@@ -17,4 +17,4 @@ add_executable(${PROJECT_NAME} ${SRC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 include_engine(../WizardEngine)
-link_to_engine(${PROJECT_NAME})
+link_to_engine(${PROJECT_NAME} ../WizardEngine)

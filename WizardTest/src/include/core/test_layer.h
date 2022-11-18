@@ -94,6 +94,11 @@ namespace test {
         bool msaaEnabled = false;
         PhongLight light;
         bool showGizmo = false;
+        ImageLayout sceneViewport {
+            "Scene",
+                    512,
+                    512
+        };
     };
 
 }

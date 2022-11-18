@@ -7,6 +7,25 @@
 
 namespace engine::graphics {
 
+    void Skybox::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
+        out << YAML::Key << "Skybox";
+
+        yaml::serialize(out, "type", static_cast<u32>(type));
+        textures.serialize(out);
+
+        out << YAML::EndMap;
+    }
+
+    void Skybox::deserialize(const YAML::Node &parent) {
+        auto root = parent["Skybox"];
+        if (root) {
+            type = static_cast<SkyboxType>(root["type"].as<u32>());
+            textures.deserialize(parent);
+            init();
+        }
+    }
+
     void SkyboxRenderer::init() {
         shaderProgram = shader::BaseShaderProgram(
                 io::ShaderProps {

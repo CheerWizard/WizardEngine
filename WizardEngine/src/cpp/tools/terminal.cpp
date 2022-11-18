@@ -4,6 +4,8 @@
 
 #include <tools/terminal.h>
 #include <sstream>
+#include <core/filesystem.h>
+#include <Windows.h>
 
 namespace engine::terminal {
 
@@ -85,16 +87,6 @@ namespace engine::terminal {
         task.run(filePath);
     }
 
-    void msBuildTask(const std::string &slnPath) {
-        EDITOR_INFO("msBuildTask({0})", slnPath);
-        thread::VoidTask<const std::string&> task = {
-                "MSBuild_Task",
-                "MSBuild_Thread",
-                msBuild
-        };
-        task.run(slnPath);
-    }
-
     void cmakeTask(const std::string &cmakePath) {
         EDITOR_INFO("cmakeTask({0})", cmakePath);
         thread::VoidTask<const std::string&> task = {
@@ -123,12 +115,6 @@ namespace engine::terminal {
         system(cmd.c_str());
     }
 
-    void msBuild(const std::string &slnPath) {
-        EDITOR_INFO("msBuild({0})", slnPath);
-        std::string cmd = "msbuild " + slnPath;
-        system(cmd.c_str());
-    }
-
     void cmake(const std::string &cmakePath) {
         EDITOR_INFO("cmake({0})", cmakePath);
         std::string cmd = "cmake " + cmakePath;
@@ -148,7 +134,50 @@ namespace engine::terminal {
 
     void exe(const std::string& exePath) {
         EDITOR_INFO("exe({0})", exePath);
-        system(exePath.c_str());
+        ENGINE_INFO("Current working directory {0}", engine::filesystem::getCurrentWorkingDirectory());
+        system(("start " + exePath).c_str());
+//        ShellExecute(NULL, "open", exePath.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+
+//        // additional information
+//        STARTUPINFO si;
+//        PROCESS_INFORMATION pi;
+//
+//        // set the size of the structures
+//        ZeroMemory( &si, sizeof(si) );
+//        si.cb = sizeof(si);
+//        ZeroMemory( &pi, sizeof(pi) );
+//
+//        // start the program up
+//        CreateProcess(,   // the path
+//                       argv[1],        // Command line
+//                       NULL,           // Process handle not inheritable
+//                       NULL,           // Thread handle not inheritable
+//                       FALSE,          // Set handle inheritance to FALSE
+//                       0,              // No creation flags
+//                       NULL,           // Use parent's environment block
+//                       NULL,           // Use parent's starting directory
+//                       &si,            // Pointer to STARTUPINFO structure
+//                       &pi             // Pointer to PROCESS_INFORMATION structure (removed extra parentheses)
+//        );
+//        // Close process and thread handles.
+//        CloseHandle( pi.hProcess );
+//        CloseHandle( pi.hThread );
     }
 
+    void msbuild(const MSBuildTarget &target) {
+        std::stringstream cmd;
+        cmd << "msbuild " << target.slnPath;
+
+        switch (target.version) {
+            case MS_DEBUG:
+                cmd << " /p:Configuration=Debug";
+                break;
+            case MS_RELEASE:
+                cmd << " /p:Configuration=Release";
+                break;
+        }
+
+        ENGINE_INFO("MSBuild: {0}", cmd.str());
+        system(cmd.str().c_str());
+    }
 }

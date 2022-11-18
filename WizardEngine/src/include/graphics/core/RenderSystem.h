@@ -40,12 +40,14 @@ namespace engine::graphics {
         static void removeRenderSystemCallback();
 
     public:
+        // final render target id
+        static u32 finalRenderTargetId;
         // frames
         static Ref<Scene> activeScene;
         static Ref<FrameBuffer> sceneFrame;
-        static Ref<FrameBuffer> screenFrame;
         // screen
         static ScreenRenderer screenRenderer;
+        static bool enableScreenRenderer;
         // skybox
         static SkyboxRenderer skyboxRenderer;
         // scene

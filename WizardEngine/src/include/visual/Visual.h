@@ -52,6 +52,9 @@ namespace engine::visual {
         static void onWindowClosed();
         static void onWindowResized(const uint32_t &width, const uint32_t &height);
 
+        static void sameLine();
+        static void separator();
+
     public:
         static VisualProps props;
         static vector<ImFont*> fonts;

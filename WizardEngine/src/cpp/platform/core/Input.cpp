@@ -28,6 +28,10 @@ namespace engine::event {
         return state == GLFW_PRESS || state == GLFW_REPEAT;
     }
 
+    bool Input::isKeyHold(KeyCode keyCode) {
+        return glfwGetKey((GLFWwindow*) nativeWindow, keyCode) == GLFW_REPEAT;
+    }
+
     bool Input::isMousePressed(MouseCode mouseCode) {
         auto state = glfwGetMouseButton((GLFWwindow*) nativeWindow, mouseCode);
         return state == GLFW_PRESS;

@@ -24,6 +24,12 @@ namespace engine::visual {
         static void draw(const char* name, bool& value);
     };
 
+    class ENGINE_API CustomCheckbox final {
+    public:
+        static void draw(BoolUniform& uniform);
+        static void draw(const char* name, bool& value);
+    };
+
     class ENGINE_API Slider final {
     public:
         static void draw(FloatUniform& uniform, const vec2f& range);
@@ -37,7 +43,21 @@ namespace engine::visual {
 
     class ENGINE_API Text final {
     public:
-        static void draw(const char* text);
+        static void label(const char* text, const vec2f& padding = {0,0});
+        static bool field(const char* id, const char* title, std::string* text,
+                          const vec2f& padding = {0, 0}, bool alignLeft = true);
+        static void centered(const char* text, float maxWidth, int lineId = 0, bool separator = false);
+    };
+
+    class ENGINE_API Line final {
+    public:
+        static void draw(int id);
+    };
+
+    class ENGINE_API Button final {
+    public:
+        static bool textButton(const char* text, const vec2f& size,
+                               float paddingTop = 0, float paddingBottom = 0, float paddingLeft = 0, float paddingRight = 0);
     };
 
 }

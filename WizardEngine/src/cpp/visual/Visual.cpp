@@ -4,6 +4,7 @@
 
 #include <visual/Visual.h>
 #include <visual/Theme.h>
+#include <visual/FontAwesome4.h>
 
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
@@ -12,6 +13,8 @@
 #include <imgui_internal.h>
 #include <ImGuizmo.h>
 #include <imconfig.h>
+#include <imgui_stdlib.h>
+#include <visual/GoogleMaterialIcons.h>
 
 #define IO ImGui::GetIO()
 #define STYLE ImGui::GetStyle()
@@ -40,6 +43,8 @@ namespace engine::visual {
             STYLE.WindowRounding = 0.0f;
             COLORS[ImGuiCol_WindowBg].w = 1.0f;
         }
+        IO.IniFilename = "Visual";
+        setTheme();
         // Setup Platform/Renderer bindings
         ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*) nativeWindow, true);
         ImGui_ImplOpenGL3_Init(GRAPHICS_CORE_VERSION);
@@ -63,86 +68,165 @@ namespace engine::visual {
     }
 
     void Visual::setTheme() {
-        auto& style = ImGui::GetStyle();
-        auto& colors = ImGui::GetStyle().Colors;
+//        auto& style = ImGui::GetStyle();
+//        auto& colors = ImGui::GetStyle().Colors;
+//        ImGui::StyleColorsDark(&style);
+//
+//        //========================================================
+//        /// Colours
+//
+//        // Headers
+//        colors[ImGuiCol_Header]				= ImGui::ColorConvertU32ToFloat4(Theme::groupHeader);
+//        colors[ImGuiCol_HeaderHovered]		= ImGui::ColorConvertU32ToFloat4(Theme::groupHeader);
+//        colors[ImGuiCol_HeaderActive]		= ImGui::ColorConvertU32ToFloat4(Theme::groupHeader);
+//
+//        // Buttons
+//        colors[ImGuiCol_Button]				= ImColor(56, 56, 56, 200);
+//        colors[ImGuiCol_ButtonHovered]		= ImColor(70, 70, 70, 255);
+//        colors[ImGuiCol_ButtonActive]		= ImColor(56, 56, 56, 150);
+//
+//        // Frame BG
+//        colors[ImGuiCol_FrameBg]			= ImGui::ColorConvertU32ToFloat4(Theme::propertyField);
+//        colors[ImGuiCol_FrameBgHovered]		= ImGui::ColorConvertU32ToFloat4(Theme::propertyField);
+//        colors[ImGuiCol_FrameBgActive]		= ImGui::ColorConvertU32ToFloat4(Theme::propertyField);
+//
+//        // Tabs
+//        colors[ImGuiCol_Tab]				= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
+//        colors[ImGuiCol_TabHovered]			= ImColor(255, 225, 135, 30);
+//        colors[ImGuiCol_TabActive]			= ImColor(255, 225, 135, 60);
+//        colors[ImGuiCol_TabUnfocused]		= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
+//        colors[ImGuiCol_TabUnfocusedActive] = colors[ImGuiCol_TabHovered];
+//
+//        // Title
+//        colors[ImGuiCol_TitleBg]			= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
+//        colors[ImGuiCol_TitleBgActive]		= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
+//        colors[ImGuiCol_TitleBgCollapsed]	= ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+//
+//        // Resize Grip
+//        colors[ImGuiCol_ResizeGrip]			= ImVec4(0.91f, 0.91f, 0.91f, 0.25f);
+//        colors[ImGuiCol_ResizeGripHovered]	= ImVec4(0.81f, 0.81f, 0.81f, 0.67f);
+//        colors[ImGuiCol_ResizeGripActive]	= ImVec4(0.46f, 0.46f, 0.46f, 0.95f);
+//
+//        // Scrollbar
+//        colors[ImGuiCol_ScrollbarBg]		= ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+//        colors[ImGuiCol_ScrollbarGrab]		= ImVec4(0.31f, 0.31f, 0.31f, 1.0f);
+//        colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.0f);
+//        colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.0f);
+//
+//        // Check Mark
+//        colors[ImGuiCol_CheckMark]			= ImColor(200, 200, 200, 255);
+//
+//        // Slider
+//        colors[ImGuiCol_SliderGrab]			= ImVec4(0.51f, 0.51f, 0.51f, 0.7f);
+//        colors[ImGuiCol_SliderGrabActive]	= ImVec4(0.66f, 0.66f, 0.66f, 1.0f);
+//
+//        // Text
+//        colors[ImGuiCol_Text]				= ImGui::ColorConvertU32ToFloat4(Theme::text);
+//
+//        // Checkbox
+//        colors[ImGuiCol_CheckMark]			= ImGui::ColorConvertU32ToFloat4(Theme::text);
+//
+//        // Separator
+//        colors[ImGuiCol_Separator]			= ImGui::ColorConvertU32ToFloat4(Theme::backgroundDark);
+//        colors[ImGuiCol_SeparatorActive]	= ImGui::ColorConvertU32ToFloat4(Theme::highlight);
+//        colors[ImGuiCol_SeparatorHovered]	= ImColor(39, 185, 242, 150);
+//
+//        // Window Background
+//        colors[ImGuiCol_WindowBg]			= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
+//        colors[ImGuiCol_ChildBg]			= ImGui::ColorConvertU32ToFloat4(Theme::background);
+//        colors[ImGuiCol_PopupBg]			= ImGui::ColorConvertU32ToFloat4(Theme::backgroundPopup);
+//        colors[ImGuiCol_Border]				= ImGui::ColorConvertU32ToFloat4(Theme::backgroundDark);
+//
+//        // Tables
+//        colors[ImGuiCol_TableHeaderBg]		= ImGui::ColorConvertU32ToFloat4(Theme::groupHeader);
+//        colors[ImGuiCol_TableBorderLight]	= ImGui::ColorConvertU32ToFloat4(Theme::backgroundDark);
+//
+//        // Menubar
+//        colors[ImGuiCol_MenuBarBg]			= ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f };
+//
+//        //========================================================
+//        /// Style
+//        style.FrameRounding = 2.5f;
+//        style.FrameBorderSize = 1.0f;
+//        style.IndentSpacing = 11.0f;
 
-        //========================================================
-        /// Colours
+        IO.Fonts->Clear();
+//        io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Light.ttf", 16);
+        setDefaultFont("assets/fonts/opensans/OpenSans-Regular.ttf", 16);
+//        io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Light.ttf", 32);
+//        io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", 11);
+//        io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", 11);
+        // load icon font
+        static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+        ImFontConfig icons_config;
+        icons_config.MergeMode = true;
+        icons_config.PixelSnapH = true;
+        icons_config.OversampleH = 2.5;
+        icons_config.OversampleV = 2.5;
+        IO.Fonts->AddFontFromFileTTF("assets/fonts/font_awesome_4/fontawesome-webfont.ttf", 18,
+                                     &icons_config, icons_ranges);
 
-        // Headers
-        colors[ImGuiCol_Header]				= ImGui::ColorConvertU32ToFloat4(Theme::groupHeader);
-        colors[ImGuiCol_HeaderHovered]		= ImGui::ColorConvertU32ToFloat4(Theme::groupHeader);
-        colors[ImGuiCol_HeaderActive]		= ImGui::ColorConvertU32ToFloat4(Theme::groupHeader);
+        IO.Fonts->Build();
 
-        // Buttons
-        colors[ImGuiCol_Button]				= ImColor(56, 56, 56, 200);
-        colors[ImGuiCol_ButtonHovered]		= ImColor(70, 70, 70, 255);
-        colors[ImGuiCol_ButtonActive]		= ImColor(56, 56, 56, 150);
+        ImGuiStyle* style = &ImGui::GetStyle();
 
-        // Frame BG
-        colors[ImGuiCol_FrameBg]			= ImGui::ColorConvertU32ToFloat4(Theme::propertyField);
-        colors[ImGuiCol_FrameBgHovered]		= ImGui::ColorConvertU32ToFloat4(Theme::propertyField);
-        colors[ImGuiCol_FrameBgActive]		= ImGui::ColorConvertU32ToFloat4(Theme::propertyField);
+        ImGui::StyleColorsLight(style);
 
-        // Tabs
-        colors[ImGuiCol_Tab]				= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
-        colors[ImGuiCol_TabHovered]			= ImColor(255, 225, 135, 30);
-        colors[ImGuiCol_TabActive]			= ImColor(255, 225, 135, 60);
-        colors[ImGuiCol_TabUnfocused]		= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
-        colors[ImGuiCol_TabUnfocusedActive] = colors[ImGuiCol_TabHovered];
+        style->WindowPadding            = ImVec2(15, 15);
+        style->WindowRounding           = 5.0f;
+        style->FramePadding             = ImVec2(5, 5);
+        style->FrameRounding            = 4.0f;
+        style->ItemSpacing              = ImVec2(12, 8);
+        style->ItemInnerSpacing         = ImVec2(8, 6);
+        style->IndentSpacing            = 25.0f;
+        style->ScrollbarSize            = 15.0f;
+        style->ScrollbarRounding        = 9.0f;
+        style->GrabMinSize              = 5.0f;
+        style->GrabRounding             = 3.0f;
 
-        // Title
-        colors[ImGuiCol_TitleBg]			= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
-        colors[ImGuiCol_TitleBgActive]		= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
-        colors[ImGuiCol_TitleBgCollapsed]	= ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-
-        // Resize Grip
-        colors[ImGuiCol_ResizeGrip]			= ImVec4(0.91f, 0.91f, 0.91f, 0.25f);
-        colors[ImGuiCol_ResizeGripHovered]	= ImVec4(0.81f, 0.81f, 0.81f, 0.67f);
-        colors[ImGuiCol_ResizeGripActive]	= ImVec4(0.46f, 0.46f, 0.46f, 0.95f);
-
-        // Scrollbar
-        colors[ImGuiCol_ScrollbarBg]		= ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
-        colors[ImGuiCol_ScrollbarGrab]		= ImVec4(0.31f, 0.31f, 0.31f, 1.0f);
-        colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.0f);
-        colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.0f);
-
-        // Check Mark
-        colors[ImGuiCol_CheckMark]			= ImColor(200, 200, 200, 255);
-
-        // Slider
-        colors[ImGuiCol_SliderGrab]			= ImVec4(0.51f, 0.51f, 0.51f, 0.7f);
-        colors[ImGuiCol_SliderGrabActive]	= ImVec4(0.66f, 0.66f, 0.66f, 1.0f);
-
-        // Text
-        colors[ImGuiCol_Text]				= ImGui::ColorConvertU32ToFloat4(Theme::text);
-
-        // Checkbox
-        colors[ImGuiCol_CheckMark]			= ImGui::ColorConvertU32ToFloat4(Theme::text);
-
-        // Separator
-        colors[ImGuiCol_Separator]			= ImGui::ColorConvertU32ToFloat4(Theme::backgroundDark);
-        colors[ImGuiCol_SeparatorActive]	= ImGui::ColorConvertU32ToFloat4(Theme::highlight);
-        colors[ImGuiCol_SeparatorHovered]	= ImColor(39, 185, 242, 150);
-
-        // Window Background
-        colors[ImGuiCol_WindowBg]			= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
-        colors[ImGuiCol_ChildBg]			= ImGui::ColorConvertU32ToFloat4(Theme::background);
-        colors[ImGuiCol_PopupBg]			= ImGui::ColorConvertU32ToFloat4(Theme::backgroundPopup);
-        colors[ImGuiCol_Border]				= ImGui::ColorConvertU32ToFloat4(Theme::backgroundDark);
-
-        // Tables
-        colors[ImGuiCol_TableHeaderBg]		= ImGui::ColorConvertU32ToFloat4(Theme::groupHeader);
-        colors[ImGuiCol_TableBorderLight]	= ImGui::ColorConvertU32ToFloat4(Theme::backgroundDark);
-
-        // Menubar
-        colors[ImGuiCol_MenuBarBg]			= ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f };
-
-        //========================================================
-        /// Style
-        style.FrameRounding = 2.5f;
-        style.FrameBorderSize = 1.0f;
-        style.IndentSpacing = 11.0f;
+        style->Colors[ImGuiCol_Text]                  = ImVec4(0.40f, 0.39f, 0.38f, 1.00f);
+        style->Colors[ImGuiCol_TextDisabled]          = ImVec4(0.40f, 0.39f, 0.38f, 0.77f);
+        style->Colors[ImGuiCol_WindowBg]              = ImVec4(0.92f, 0.91f, 0.88f, 0.70f);
+        style->Colors[ImGuiCol_ChildBg]               = ImVec4(1.00f, 0.98f, 0.95f, 0.58f);
+        style->Colors[ImGuiCol_PopupBg]               = ImVec4(0.92f, 0.91f, 0.88f, 0.92f);
+        style->Colors[ImGuiCol_Border]                = ImVec4(0.84f, 0.83f, 0.80f, 0.65f);
+        style->Colors[ImGuiCol_BorderShadow]          = ImVec4(0.92f, 0.91f, 0.88f, 0.00f);
+        style->Colors[ImGuiCol_FrameBg]               = ImVec4(1.00f, 0.98f, 0.95f, 1.00f);
+        style->Colors[ImGuiCol_FrameBgHovered]        = ImVec4(0.25f, 1.00f, 1.00f, 0.78f);
+        style->Colors[ImGuiCol_FrameBgActive]         = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+        style->Colors[ImGuiCol_TitleBg]               = ImVec4(1.00f, 0.98f, 0.95f, 1.00f);
+        style->Colors[ImGuiCol_TitleBgCollapsed]      = ImVec4(1.00f, 0.98f, 0.95f, 0.75f);
+        style->Colors[ImGuiCol_TitleBgActive]         = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+        style->Colors[ImGuiCol_MenuBarBg]             = ImVec4(1.00f, 0.98f, 0.95f, 0.47f);
+        style->Colors[ImGuiCol_ScrollbarBg]           = ImVec4(1.00f, 0.98f, 0.95f, 1.00f);
+        style->Colors[ImGuiCol_ScrollbarGrab]         = ImVec4(0.00f, 0.00f, 0.00f, 0.21f);
+        style->Colors[ImGuiCol_ScrollbarGrabHovered]  = ImVec4(0.25, 1.00f, 1.00f, 0.78f);
+        style->Colors[ImGuiCol_ScrollbarGrabActive]   = ImVec4(0.25f, 1.00f, 1.00f, 1.00f);
+//        style->Colors[ImGuiCol_ComboBg]               = ImVec4(1.00f, 0.98f, 0.95f, 1.00f);
+        style->Colors[ImGuiCol_CheckMark]             = ImVec4(0.25f, 1.00f, 1.00f, 0.80f);
+        style->Colors[ImGuiCol_SliderGrab]            = ImVec4(0.00f, 0.00f, 0.00f, 0.14f);
+        style->Colors[ImGuiCol_SliderGrabActive]      = ImVec4(0.25f, 1.00f, 1.00f, 1.00f);
+        style->Colors[ImGuiCol_Button]                = ImVec4(0.00f, 0.00f, 0.00f, 0.14f);
+        style->Colors[ImGuiCol_ButtonHovered]         = ImVec4(0.25f, 1.00f, 1.00f, 0.86f);
+        style->Colors[ImGuiCol_ButtonActive]          = ImVec4(0.25f, 1.00f, 1.00f, 1.00f);
+        style->Colors[ImGuiCol_Header]                = ImVec4(0.25f, 1.00f, 1.00f, 0.76f);
+        style->Colors[ImGuiCol_HeaderHovered]         = ImVec4(0.25f, 1.00f, 1.00f, 0.86f);
+        style->Colors[ImGuiCol_HeaderActive]          = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+//        style->Colors[ImGuiCol_Column]                = ImVec4(0.00f, 0.00f, 0.00f, 0.32f);
+//        style->Colors[ImGuiCol_ColumnHovered]         = ImVec4(0.25f, 1.00f, 0.00f, 0.78f);
+//        style->Colors[ImGuiCol_ColumnActive]          = ImVec4(0.25f, 1.00f, 0.00f, 1.00f);
+        style->Colors[ImGuiCol_ResizeGrip]            = ImVec4(0.00f, 0.00f, 0.00f, 0.04f);
+        style->Colors[ImGuiCol_ResizeGripHovered]     = ImVec4(0.25f, 1.00f, 1.00f, 0.78f);
+        style->Colors[ImGuiCol_ResizeGripActive]      = ImVec4(0.25f, 1.00f, 1.00f, 1.00f);
+//        style->Colors[ImGuiCol_CloseButton]           = ImVec4(0.40f, 0.39f, 0.38f, 0.16f);
+//        style->Colors[ImGuiCol_CloseButtonHovered]    = ImVec4(0.40f, 0.39f, 0.38f, 0.39f);
+//        style->Colors[ImGuiCol_CloseButtonActive]     = ImVec4(0.40f, 0.39f, 0.38f, 1.00f);
+        style->Colors[ImGuiCol_PlotLines]             = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
+        style->Colors[ImGuiCol_PlotLinesHovered]      = ImVec4(0.25f, 1.00f, 1.00f, 1.00f);
+        style->Colors[ImGuiCol_PlotHistogram]         = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
+        style->Colors[ImGuiCol_PlotHistogramHovered]  = ImVec4(0.25f, 1.00f, 1.00f, 1.00f);
+        style->Colors[ImGuiCol_TextSelectedBg]        = ImVec4(0.25f, 1.00f, 1.00f, 0.43f);
+        style->Colors[ImGuiCol_ModalWindowDimBg]      = ImVec4(1.00f, 0.98f, 0.95f, 0.73f);
     }
 
     void Visual::begin() {
@@ -220,19 +304,19 @@ namespace engine::visual {
     }
 
     void Visual::onKeyPressed(event::KeyCode keyCode) {
-//        IO.KeysDown[keyCode] = true;
+        IO.KeysDown[keyCode] = true;
     }
 
     void Visual::onKeyHold(event::KeyCode keyCode) {
-//        IO.KeysDown[keyCode] = true;
+        IO.KeysDown[keyCode] = true;
     }
 
     void Visual::onKeyReleased(event::KeyCode keyCode) {
-//        IO.KeysDown[keyCode] = false;
+        IO.KeysDown[keyCode] = false;
     }
 
     void Visual::onKeyTyped(event::KeyCode keyCode) {
-//        IO.AddInputCharacter(keyCode);
+        IO.AddInputCharacter(keyCode);
     }
 
     void Visual::onMouseScrolled(double xOffset, double yOffset) {
@@ -258,6 +342,14 @@ namespace engine::visual {
 
     void Visual::onWindowResized(const uint32_t &width, const uint32_t &height) {
         ENGINE_INFO("onWindowResized(width = {0}, height = {1})", width, height);
+    }
+
+    void Visual::sameLine() {
+        ImGui::SameLine();
+    }
+
+    void Visual::separator() {
+        ImGui::Separator();
     }
 
     void Panel::begin(const char* title, const vec2f& size) {

@@ -11,23 +11,13 @@ namespace engine::scripting {
 
     using namespace core;
 
-    class ENGINE_API ScriptSystem {
+    class ENGINE_API ScriptSystem final {
 
     public:
-        ScriptSystem() = default;
-        ~ScriptSystem() = default;
-
-    public:
-        void onUpdate(time::Time dt);
-        void onDestroy();
-
-    public:
-        inline void setActiveScene(const Ref<Scene> &activeScene) {
-            this->activeScene = activeScene;
-        }
-
-    private:
-        Ref<Scene> activeScene = nullptr;
+        static void onCreate();
+        static void onUpdate(time::Time dt);
+        static void onDestroy();
+        static Ref<Scene> activeScene;
     };
 
 }

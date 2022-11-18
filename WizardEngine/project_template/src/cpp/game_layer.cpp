@@ -3,37 +3,46 @@
 //
 
 #include <game_layer.h>
+#include "../include/game_layer.h"
 
 namespace game {
+
+    game::GameLayer::GameLayer() {
+        engine::scripting::ScriptManager::init();
+    }
+
+    GameLayer::~GameLayer() {
+        engine::scripting::ScriptManager::free();
+    }
 
     void GameLayer::onPrepare() {
     }
 
-    void GameLayer::onUpdate(time::Time deltaTime) {
+    void GameLayer::onUpdate(Time deltaTime) {
     }
 
     void GameLayer::onWindowResized(const uint32_t &width, const uint32_t &height) {
     }
 
-    void GameLayer::onKeyPressed(event::KeyCode keyCode) {
+    void GameLayer::onKeyPressed(KeyCode keyCode) {
     }
 
-    void GameLayer::onKeyHold(event::KeyCode keyCode) {
+    void GameLayer::onKeyHold(KeyCode keyCode) {
     }
 
-    void GameLayer::onKeyReleased(event::KeyCode keyCode) {
+    void GameLayer::onKeyReleased(KeyCode keyCode) {
     }
 
-    void GameLayer::onKeyTyped(event::KeyCode keyCode) {
+    void GameLayer::onKeyTyped(KeyCode keyCode) {
     }
 
     void GameLayer::onWindowClosed() {
     }
 
-    void GameLayer::onMousePressed(event::MouseCode mouseCode) {
+    void GameLayer::onMousePressed(MouseCode mouseCode) {
     }
 
-    void GameLayer::onMouseRelease(event::MouseCode mouseCode) {
+    void GameLayer::onMouseRelease(MouseCode mouseCode) {
     }
 
     void GameLayer::onMouseScrolled(double xOffset, double yOffset) {
@@ -42,4 +51,6 @@ namespace game {
     void GameLayer::onCursorMoved(double xPos, double yPos) {
     }
 
+    void GameLayer::onVisualDraw(Time dt) {
+    }
 }

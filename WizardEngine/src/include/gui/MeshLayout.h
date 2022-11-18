@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <gui/ImageLayout.h>
+#include <visual/ImageLayout.h>
 
 #include <graphics/core/Renderer.h>
 #include <graphics/core/io/ModelFile.h>
@@ -12,7 +12,7 @@
 
 #include <platform/graphics/FrameBuffer.h>
 
-namespace engine::gui {
+namespace engine::visual {
 
     using namespace engine::graphics;
 

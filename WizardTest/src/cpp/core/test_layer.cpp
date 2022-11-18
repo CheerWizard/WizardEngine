@@ -84,30 +84,17 @@ namespace test {
                 scene.get()
         };
 
-        u32 skyboxId = TextureBuffer::load(
-                {
-                        { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
-                        { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
-                        { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
-                        { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
-                        { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
-                        { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM },
-                }
-        );
-        TextureBuffer::setDefaultParamsCubeMap(skyboxId);
+        // setup skybox
+        app.setSkyCube(scene, "Skybox", {
+                { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
+                { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
+                { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
+                { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
+                { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
+                { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM },
+        });
 
-        scene->setSkybox(SkyboxCube(
-                "Skybox",
-                scene.get(),
-                CubeMapTextureComponent(skyboxId, TextureBuffer::getTypeId(TextureType::CUBE_MAP))
-        ));
-
-        auto skycube = scene->getSkybox().get<SkyCube>();
-
-        auto skycubeId = SkyCube::ID;
-        auto transformId = Transform3dComponent::ID;
-        auto cubemapId = CubeMapTextureComponent::ID;
-
+        // spawn random objects
         math::random(-10, 10, 2, [this, &scene](int i, f32 r) {
             Batch3d pack = Batch3d(&"SurvivalBackPack"[i], scene.get());
             pack.getTransform().position = { r * i, r * i, r * i };
@@ -301,11 +288,25 @@ namespace test {
             udp::Client::connect("192.168.1.101", 54000);
         }
 
-        Visual::setTheme();
-        Visual::setDefaultFont("assets/fonts/opensans/OpenSans-Bold.ttf", 18);
+        Visual::openDockspace = true;
+        Visual::fullScreen = true;
+
+        // disable screen rendering as we are using ImGui for scene rendering
+        RenderSystem::enableScreenRenderer = false;
+
+        ProjectsPanel::init();
+        AssetBrowser::create(app.getNativeWindow(), { "AssetBrowser" });
+
+        sceneViewport.show();
+
+        Application::get().pushScenes(io::LocalAssetManager::loadAll());
     }
 
     TestLayer::~TestLayer() {
+        AssetBrowser::destroy();
+        ProjectsPanel::destroy();
+        io::LocalAssetManager::saveAll(Application::get().scenes);
+        Log::clear();
         tcp::Client::close();
         udp::Client::close();
     }
@@ -497,7 +498,6 @@ namespace test {
     }
 
     void TestLayer::onWindowClosed() {
-
     }
 
     void TestLayer::onMousePressed(event::MouseCode mouseCode) {
@@ -658,8 +658,11 @@ namespace test {
     }
 
     void TestLayer::onVisualDraw(time::Time dt) {
+        // dock space
+        Visual::beginDockspace("Test");
+        Visual::endDockspace();
         // scene panel
-        Panel::begin("Scene", { 800, 600 });
+//        Panel::begin("Scene", { 800, 600 });
         // physics
 //        Checkbox::draw("enablePhysics", Physics::isEnabled);
 //        // entity hovering
@@ -692,13 +695,13 @@ namespace test {
 //            v->velocity = velocity.value;
 //        }
 
-        Panel::end();
+//        Panel::end();
         // Console
 //        Console::draw("Console", { 800, 600 });
         // demo
 //        ImGui::ShowDemoWindow();
         // Troubleshoot
-        ProfilerMenu::draw("Profiler Menu", { 800, 600 });
+//        ProfilerMenu::draw("Profiler Menu", { 800, 600 });
 
         if (EventRegistry::keyHold(KeyCode::LeftControl) && Input::isMousePressed(MouseCode::ButtonLeft)) {
             Entity selectedEntity = Application::get().hoveredEntity;
@@ -724,5 +727,17 @@ namespace test {
             // draw translation gizmo
             Gizmo::drawTranslate(mainCamera, *selectedTransform, { xPos, yPos }, windowSize);
         }
-    }
+
+        ProjectsPanel::draw("Project Manager", { 800, 600 }, [this](const Project& openedProject) {
+//            ProjectManager::loadScripts(openedProject, ProjectVersion::V_DEBUG);
+//            Scriptable* playerScript = ScriptManager::load("Player");
+//            playerScript->root = { mainCamera.getContainer(), mainCamera.getId() };
+//            mainCamera.add<CppScript>(playerScript);
+        });
+
+        AssetBrowser::draw(dt);
+        Log::draw("Log");
+        sceneViewport.setId(RenderSystem::finalRenderTargetId);
+        sceneViewport.onUpdate(dt);
+     }
 }

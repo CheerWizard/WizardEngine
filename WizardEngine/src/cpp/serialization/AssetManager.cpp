@@ -4,8 +4,11 @@
 
 #include <serialization/AssetManager.h>
 #include <network/network_client.h>
+#include <core/filesystem.h>
 
 namespace engine::io {
+
+    std::string LocalAssetManager::assetsPath = "assets";
 
     void LocalAssetManager::saveScene(const Ref<Scene> &scene) {
         std::stringstream sceneFilePath;
@@ -25,6 +28,28 @@ namespace engine::io {
         auto newScene = createRef<Scene>(sceneName);
         loadScene(newScene);
         return newScene;
+    }
+
+    vector<Ref<Scene>> LocalAssetManager::loadAll() {
+        vector<Ref<Scene>> scenes;
+
+        for (auto& entry : std::filesystem::directory_iterator("assets/scenes")) {
+            if (!entry.is_directory()) {
+                std::string scenePath = entry.path().string();
+                Ref<Scene> scene = createRef<Scene>(entry.path().filename().c_str());
+                ENGINE_INFO("LocalAssetManager: loadScene '{0}'", scenePath);
+                SCENE_DESERIALIZE_TEXT_FILE(scene, scenePath.c_str());
+                scenes.emplace_back(scene);
+            }
+        }
+
+        return scenes;
+    }
+
+    void LocalAssetManager::saveAll(const vector<Ref<Scene>> &scenes) {
+        for (const Ref<Scene>& scene : scenes) {
+            saveScene(scene);
+        }
     }
 
     using namespace network;

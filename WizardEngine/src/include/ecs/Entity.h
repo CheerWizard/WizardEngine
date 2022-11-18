@@ -112,6 +112,10 @@ namespace engine::ecs {
             return id;
         }
 
+        [[nodiscard]] inline EntityContainer* getContainer() const {
+            return container;
+        }
+
         [[nodiscard]] inline bool isValid() const {
             return id != invalid_entity_id;
         }

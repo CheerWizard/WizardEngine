@@ -36,6 +36,7 @@
 #include <graphics/materials/Phong.h>
 
 #include <scripting/ScriptSystem.h>
+#include <scripting/ScriptManager.h>
 
 #include <audio/audio_device_manager.h>
 #include <audio/audio_player.h>
@@ -48,8 +49,6 @@
 
 #include <physics/Physics.h>
 
-#include <core/Game.h>
-
 using namespace engine::core;
 using namespace engine::graphics;
 using namespace engine::event;
@@ -57,6 +56,7 @@ using namespace engine::time;
 using namespace engine::network;
 using namespace engine::ecs;
 using namespace engine::physics;
+using namespace engine::scripting;
 
 #define KEY_PRESSED(key, action) engine::event::EventRegistry::onKeyPressedMap[key] = { [this](KeyCode keyCode) { action } }
 #define KEY_RELEASED(key, action) engine::event::EventRegistry::onKeyReleasedMap[key] = { [this](KeyCode keyCode) { action } }
@@ -73,14 +73,12 @@ using namespace engine::physics;
 #include <visual/Console.h>
 #include <visual/Widgets.h>
 #include <visual/Troubleshoot.h>
+#include <visual/ProjectsPanel.h>
+#include <visual/AssetBrowser.h>
+#include <visual/Log.h>
+#include <visual/ImageLayout.h>
 
 using namespace engine::visual;
-#endif
-
-#ifdef RCC
-#include <rcc/RuntimeCompiler.h>
-
-using namespace engine::rcc;
 #endif
 
 namespace engine::core {
@@ -145,7 +143,11 @@ namespace engine::core {
         void setSampleSize(const uint32_t& samples);
         void setActiveScene(const Ref<Scene>& activeScene);
         void setActiveScene(const uint32_t& activeSceneId);
+        void pushScenes(const vector<Ref<Scene>>& scenes);
         void loadGamepadMappings(const char* mappingsFilePath);
+        void setSkybox(Ref<Scene>& scene, const Entity& skybox) const;
+        void setSkyCube(Ref<Scene>& scene, const char* skyboxName, u32 skyboxId) const;
+        void setSkyCube(Ref<Scene>& scene, const char* skyboxName, const vector<TextureFace>& skyboxFaces) const;
 
     protected:
         void pushFront(Layer* layer);
@@ -160,7 +162,6 @@ namespace engine::core {
         void onEventUpdate();
 
         void createGraphics();
-        void createScripting();
         // init post effect renderers
         void initHDR();
         void initBlur();
@@ -173,7 +174,6 @@ namespace engine::core {
         std::vector<Ref<Scene>> scenes;
         Ref<Scene> activeScene;
         Ref<FrameBuffer> activeSceneFrame;
-        Ref<FrameBuffer> screenFrame;
         time::Time dt = 6;
         bool isJoystickConnected = false;
         // hover entity with mouse cursor
@@ -197,10 +197,6 @@ namespace engine::core {
         // core systems
         LayerStack _layerStack;
         Scope<Window> _window;
-        // scripting system
-        Scope<scripting::ScriptSystem> _scriptSystem;
-        // game
-        Game* game = nullptr;
     };
 
     Application* createApplication();

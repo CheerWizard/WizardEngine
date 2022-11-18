@@ -2,10 +2,10 @@
 // Created by mecha on 01.10.2021.
 //
 
-#include <gui/ImageLayout.h>
+#include <visual/ImageLayout.h>
 #include <imgui.h>
 
-namespace engine::gui {
+namespace engine::visual {
 
     void ImageLayout::onUpdate(time::Time dt) {
         if (!_isVisible) return;
@@ -13,22 +13,22 @@ namespace engine::gui {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2 {0 , 0});
 
         // end updating if window can't be created!
-        if (!ImGui::Begin(_props.title, &_isVisible)) {
+        if (!ImGui::Begin(props.title, &_isVisible)) {
             end();
             return;
         }
 
         _isFocused = ImGui::IsWindowFocused();
-        ENGINE_INFO("{0} is focused = {1}", _props.title, _isFocused);
+        ENGINE_INFO("{0} is focused = {1}", props.title, _isFocused);
 
         ImVec2 imageSize = ImGui::GetContentRegionAvail();
 
-        if (_isFocused && (imageSize.x != (float) _props.width || imageSize.y != (float) _props.height)) {
+        if (_isFocused && (imageSize.x != (float) props.width || imageSize.y != (float) props.height)) {
             // we will resize image content only if user stopped holding mouse!
-            _props.width = (uint32_t) imageSize.x;
-            _props.height = (uint32_t) imageSize.y;
+            props.width = (uint32_t) imageSize.x;
+            props.height = (uint32_t) imageSize.y;
             if (_callback != nullptr) {
-                _callback->onImageResized(_props.width, _props.height);
+                _callback->onImageResized(props.width, props.height);
             }
         }
 

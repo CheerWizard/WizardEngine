@@ -18,7 +18,7 @@ add_executable(${PROJECT_NAME} ${STUDIO_SRC} ${ICON_RC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 include_engine(../WizardEngine)
-link_to_engine(${PROJECT_NAME})
+link_to_engine(${PROJECT_NAME} ../WizardEngine)
 # copy assets, editor res and imgui init file.
 replace_dirs(WizardStudio/assets WizardStudio/assets)
 replace_dirs(WizardStudio/editor WizardStudio/editor)

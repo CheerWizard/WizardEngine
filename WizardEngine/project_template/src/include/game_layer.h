@@ -11,8 +11,8 @@ namespace game {
     class GameLayer : public Layer {
 
     public:
-        GameLayer() : Layer() {}
-        ~GameLayer() override {}
+        GameLayer();
+        ~GameLayer() override;
 
     public:
         void onPrepare() override;
@@ -27,10 +27,11 @@ namespace game {
 
     public:
         void onWindowClosed() override;
-        void onMousePressed(event::MouseCode mouseCode) override;
-        void onMouseRelease(event::MouseCode mouseCode) override;
+        void onMousePressed(MouseCode mouseCode) override;
+        void onMouseRelease(MouseCode mouseCode) override;
         void onMouseScrolled(double xOffset, double yOffset) override;
         void onCursorMoved(double xPos, double yPos) override;
+        void onVisualDraw(Time dt) override;
     };
 
 }
