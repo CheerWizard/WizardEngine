@@ -75,7 +75,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="More features for Project Managment System. &#10;Updated Asset Managment and Scene systems.&#10;Added visual Logger and other visual tools for editor.&#10;Changed theme for WizardStudio&#10;Changed AssetBrowser for WizardStudio.&#10;Added Runtime Compile/Build/Run system.&#10;Added Runtime Build Zipping feature for game distribution.">
+    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Remove workspace.xml from .gitignore to share CMake settings">
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/assimp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/assimp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/freetype" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/freetype" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/glfw" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/glfw" afterDir="false" />
@@ -1003,14 +1003,7 @@
       <workItem from="1668420217027" duration="7933000" />
       <workItem from="1668505169630" duration="2703000" />
       <workItem from="1668794675090" duration="1087000" />
-      <workItem from="1668840940484" duration="1046000" />
-    </task>
-    <task id="LOCAL-00148" summary="Fixed audio errors during shutdown">
-      <created>1650714812845</created>
-      <option name="number" value="00148" />
-      <option name="presentableId" value="LOCAL-00148" />
-      <option name="project" value="LOCAL" />
-      <updated>1650714812845</updated>
+      <workItem from="1668840940484" duration="1406000" />
     </task>
     <task id="LOCAL-00149" summary="Fixed gamepad controller.">
       <created>1650719117232</created>
@@ -1348,7 +1341,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668795132362</updated>
     </task>
-    <option name="localTasksCounter" value="197" />
+    <task id="LOCAL-00197" summary="Remove workspace.xml from .gitignore to share CMake settings">
+      <created>1668844708191</created>
+      <option name="number" value="00197" />
+      <option name="presentableId" value="LOCAL-00197" />
+      <option name="project" value="LOCAL" />
+      <updated>1668844708191</updated>
+    </task>
+    <option name="localTasksCounter" value="198" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1389,7 +1389,6 @@
       <path value="$PROJECT_DIR$/ScriptDLL/engine/spdlog" />
       <path value="$PROJECT_DIR$/ScriptDLL/engine/stb/stb" />
     </ignored-roots>
-    <MESSAGE value="GDP messaging, Network integration with YAML Serialization, entrypoint for Multiplayer." />
     <MESSAGE value="Fixed UDP client messaging" />
     <MESSAGE value="Fixed TCP client-server-client messaging." />
     <MESSAGE value="Add few serializables" />
@@ -1414,7 +1413,8 @@
     <MESSAGE value="Custom Profiler, GPU Debugger, few more Visuals, support of Gizmos UI with ImGuizmo, Timer, TextureArray" />
     <MESSAGE value="Moving WizardEngine into DLL library, fixing all conflicts after DLL migration, added RCC++, naming and convention changes." />
     <MESSAGE value="More features for Project Managment System. &#10;Updated Asset Managment and Scene systems.&#10;Added visual Logger and other visual tools for editor.&#10;Changed theme for WizardStudio&#10;Changed AssetBrowser for WizardStudio.&#10;Added Runtime Compile/Build/Run system.&#10;Added Runtime Build Zipping feature for game distribution." />
-    <option name="LAST_COMMIT_MESSAGE" value="More features for Project Managment System. &#10;Updated Asset Managment and Scene systems.&#10;Added visual Logger and other visual tools for editor.&#10;Changed theme for WizardStudio&#10;Changed AssetBrowser for WizardStudio.&#10;Added Runtime Compile/Build/Run system.&#10;Added Runtime Build Zipping feature for game distribution." />
+    <MESSAGE value="Remove workspace.xml from .gitignore to share CMake settings" />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove workspace.xml from .gitignore to share CMake settings" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
