@@ -1,0 +1,1507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="Wizard" targetName="t-telldir" />
+      <config projectName="Wizard" targetName="ContinuousCoverage" />
+      <config projectName="Wizard" targetName="NightlyTest" />
+      <config projectName="Wizard" targetName="WizardTest" />
+      <config projectName="Wizard" targetName="ls" />
+      <config projectName="Wizard" targetName="t-utf8" />
+      <config projectName="Wizard" targetName="t-unicode" />
+      <config projectName="Wizard" targetName="ContinuousBuild" />
+      <config projectName="Wizard" targetName="ExperimentalTest" />
+      <config projectName="Wizard" targetName="glad" />
+      <config projectName="Wizard" targetName="WizardEngine" />
+      <config projectName="Wizard" targetName="t-compile" />
+      <config projectName="Wizard" targetName="t-scandir" />
+      <config projectName="Wizard" targetName="Experimental" />
+      <config projectName="Wizard" targetName="Nightly" />
+      <config projectName="Wizard" targetName="imgui" />
+      <config projectName="Wizard" targetName="ExperimentalCoverage" />
+      <config projectName="Wizard" targetName="stb" />
+      <config projectName="Wizard" targetName="zip" />
+      <config projectName="Wizard" targetName="NightlyUpdate" />
+      <config projectName="Wizard" targetName="ExperimentalUpdate" />
+      <config projectName="Wizard" targetName="NightlyBuild" />
+      <config projectName="Wizard" targetName="check" />
+      <config projectName="Wizard" targetName="t-strverscmp" />
+      <config projectName="Wizard" targetName="NightlyStart" />
+      <config projectName="Wizard" targetName="uninstall" />
+      <config projectName="Wizard" targetName="dir" />
+      <config projectName="Wizard" targetName="du" />
+      <config projectName="Wizard" targetName="ContinuousConfigure" />
+      <config projectName="Wizard" targetName="ContinuousSubmit" />
+      <config projectName="Wizard" targetName="Continuous" />
+      <config projectName="Wizard" targetName="NightlyCoverage" />
+      <config projectName="Wizard" targetName="ContinuousTest" />
+      <config projectName="Wizard" targetName="ExperimentalConfigure" />
+      <config projectName="Wizard" targetName="locate" />
+      <config projectName="Wizard" targetName="ExperimentalBuild" />
+      <config projectName="Wizard" targetName="update_mappings" />
+      <config projectName="Wizard" targetName="NightlyMemCheck" />
+      <config projectName="Wizard" targetName="ContinuousUpdate" />
+      <config projectName="Wizard" targetName="ExperimentalStart" />
+      <config projectName="Wizard" targetName="ContinuousMemCheck" />
+      <config projectName="Wizard" targetName="glfw" />
+      <config projectName="Wizard" targetName="NightlyConfigure" />
+      <config projectName="Wizard" targetName="distclean" />
+      <config projectName="Wizard" targetName="NightlySubmit" />
+      <config projectName="Wizard" targetName="freetype" />
+      <config projectName="Wizard" targetName="ExperimentalSubmit" />
+      <config projectName="Wizard" targetName="ExperimentalMemCheck" />
+      <config projectName="Wizard" targetName="imguizmo" />
+      <config projectName="Wizard" targetName="find" />
+      <config projectName="Wizard" targetName="scandir" />
+      <config projectName="Wizard" targetName="spdlog" />
+      <config projectName="Wizard" targetName="t-cplusplus" />
+      <config projectName="Wizard" targetName="updatedb" />
+      <config projectName="Wizard" targetName="cat" />
+      <config projectName="Wizard" targetName="NightlyMemoryCheck" />
+      <config projectName="Wizard" targetName="ContinuousStart" />
+      <config projectName="Wizard" targetName="t-dirent" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="debug" ENABLED="true" GENERATION_DIR="Wizard/Debug" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DDEBUG=1" />
+      <configuration PROFILE_NAME="release" ENABLED="true" GENERATION_DIR="Wizard/Release" CONFIG_NAME="Debug" />
+      <configuration PROFILE_NAME="visual-debug" ENABLED="true" GENERATION_DIR="Wizard/Visual/Debug" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DVISUAL=1 -DDEBUG=1" />
+      <configuration PROFILE_NAME="visual-release" ENABLED="true" GENERATION_DIR="Wizard/Visual/Release" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DVISUAL=1" />
+      <configuration PROFILE_NAME="profile" ENABLED="true" GENERATION_DIR="Wizard/Profile" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DVISUAL=1 -DPROFILING=1" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Remove workspace.xml from .gitignore to share CMake settings">
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/assimp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/assimp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/freetype" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/freetype" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/glfw" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/glfw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="clangTidyViaClangd" value="false" />
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:visual-debug" />
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+        <option value="GLSL Shader" />
+        <option value="CMakeLists.txt" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Merge.Settings">
+    <option name="BRANCH" value="dev" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/WizardEngine/src/cpp/core/ProjectManager.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/WizardEngine/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/WizardEngine/export_cmake/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="ProjectId" id="1x8mrljdnVIzvrQqXCsvtcPPQrc" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.advertisement.text.has.clang-format" value="true" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="cidr.known.project.marker" value="true" />
+    <property name="cmake.loaded.for.project" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/WizardEngine/project_template/assets/materials" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="CMakeSettings" />
+    <property name="settings.editor.splitter.proportion" value="0.2382892" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\project_template\assets\materials" />
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\project_template\assets\model" />
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardTest\assets\fonts\opensans" />
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardTest\assets\fonts\font_awesome_4" />
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardTest\assets\fonts\google_materials" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\src\include\visual" />
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine" />
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\lib" />
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\vendor\bin" />
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\vendor\rcc" />
+    </key>
+  </component>
+  <component name="RunManager" selected="CMake Application.WizardTest">
+    <configuration name="Continuous" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="Continuous" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ContinuousBuild" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ContinuousBuild" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ContinuousBuild">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ContinuousConfigure" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ContinuousConfigure" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ContinuousConfigure">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ContinuousCoverage" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ContinuousCoverage" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ContinuousCoverage">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ContinuousMemCheck" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ContinuousMemCheck" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ContinuousMemCheck">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ContinuousStart" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ContinuousStart" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ContinuousStart">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ContinuousSubmit" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ContinuousSubmit" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ContinuousSubmit">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ContinuousTest" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ContinuousTest" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ContinuousTest">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ContinuousUpdate" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ContinuousUpdate" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ContinuousUpdate">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Experimental" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="Experimental" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ExperimentalBuild" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ExperimentalBuild" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ExperimentalBuild">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ExperimentalConfigure" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ExperimentalConfigure" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ExperimentalConfigure">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ExperimentalCoverage" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ExperimentalCoverage" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ExperimentalCoverage">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ExperimentalMemCheck" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ExperimentalMemCheck" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ExperimentalMemCheck">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ExperimentalStart" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ExperimentalStart" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ExperimentalStart">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ExperimentalSubmit" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ExperimentalSubmit" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ExperimentalSubmit">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ExperimentalTest" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ExperimentalTest" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ExperimentalTest">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ExperimentalUpdate" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ExperimentalUpdate" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ExperimentalUpdate">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Nightly" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="Nightly" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NightlyBuild" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="NightlyBuild" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="NightlyBuild">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NightlyConfigure" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="NightlyConfigure" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="NightlyConfigure">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NightlyCoverage" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="NightlyCoverage" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="NightlyCoverage">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NightlyMemCheck" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="NightlyMemCheck" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="NightlyMemCheck">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NightlyMemoryCheck" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="NightlyMemoryCheck" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="NightlyMemoryCheck">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NightlyStart" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="NightlyStart" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="NightlyStart">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NightlySubmit" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="NightlySubmit" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="NightlySubmit">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NightlyTest" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="NightlyTest" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="NightlyTest">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NightlyUpdate" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="NightlyUpdate" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="NightlyUpdate">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WizardEngine" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="WizardEngine" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WizardTest" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="WizardTest" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="WizardTest">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="cat" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="cat" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="cat">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="check" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="check" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="dir" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="dir" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="dir">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="distclean" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="distclean" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="du" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="du" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="du">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="find" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="find" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="find">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="freetype" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="freetype" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="glad" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="glad" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="glfw" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="glfw" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="imgui" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="imgui" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="imguizmo" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="imguizmo" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="locate" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="locate" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="locate">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ls" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="ls" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="ls">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="scandir" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="scandir" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="scandir">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="spdlog" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="spdlog" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="stb" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="stb" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="t-compile" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="t-compile" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="t-compile">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="t-cplusplus" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="t-cplusplus" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="t-cplusplus">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="t-dirent" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="t-dirent" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="t-dirent">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="t-scandir" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="t-scandir" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="t-scandir">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="t-strverscmp" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="t-strverscmp" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="t-strverscmp">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="t-telldir" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="t-telldir" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="t-telldir">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="t-unicode" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="t-unicode" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="t-unicode">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="t-utf8" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="t-utf8" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="t-utf8">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="uninstall" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="uninstall" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="update_mappings" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="update_mappings" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="updatedb" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="updatedb" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="updatedb">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="zip" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="zip" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="compile-external-libs.sh" type="ShConfigurationType" temporary="true">
+      <option name="SCRIPT_TEXT" value="" />
+      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/WizardEngine/vendor/zipper/external/compile-external-libs.sh" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$/WizardEngine/vendor/zipper/external" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+      <option name="INTERPRETER_PATH" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="EXECUTE_IN_TERMINAL" value="true" />
+      <option name="EXECUTE_SCRIPT_FILE" value="true" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="download-external-libs.sh" type="ShConfigurationType" temporary="true">
+      <option name="SCRIPT_TEXT" value="" />
+      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/WizardEngine/vendor/zipper/external/download-external-libs.sh" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$/WizardEngine/vendor/zipper/external" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+      <option name="INTERPRETER_PATH" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="EXECUTE_IN_TERMINAL" value="true" />
+      <option name="EXECUTE_SCRIPT_FILE" value="true" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.WizardEngine" />
+      <item itemvalue="CMake Application.cat" />
+      <item itemvalue="CMake Application.check" />
+      <item itemvalue="CMake Application.Continuous" />
+      <item itemvalue="CMake Application.ContinuousBuild" />
+      <item itemvalue="CMake Application.ContinuousConfigure" />
+      <item itemvalue="CMake Application.ContinuousCoverage" />
+      <item itemvalue="CMake Application.ContinuousMemCheck" />
+      <item itemvalue="CMake Application.ContinuousStart" />
+      <item itemvalue="CMake Application.ContinuousSubmit" />
+      <item itemvalue="CMake Application.ContinuousTest" />
+      <item itemvalue="CMake Application.ContinuousUpdate" />
+      <item itemvalue="CMake Application.dir" />
+      <item itemvalue="CMake Application.distclean" />
+      <item itemvalue="CMake Application.du" />
+      <item itemvalue="CMake Application.Experimental" />
+      <item itemvalue="CMake Application.ExperimentalBuild" />
+      <item itemvalue="CMake Application.ExperimentalConfigure" />
+      <item itemvalue="CMake Application.ExperimentalCoverage" />
+      <item itemvalue="CMake Application.ExperimentalMemCheck" />
+      <item itemvalue="CMake Application.ExperimentalStart" />
+      <item itemvalue="CMake Application.ExperimentalSubmit" />
+      <item itemvalue="CMake Application.ExperimentalTest" />
+      <item itemvalue="CMake Application.ExperimentalUpdate" />
+      <item itemvalue="CMake Application.find" />
+      <item itemvalue="CMake Application.locate" />
+      <item itemvalue="CMake Application.ls" />
+      <item itemvalue="CMake Application.Nightly" />
+      <item itemvalue="CMake Application.NightlyBuild" />
+      <item itemvalue="CMake Application.NightlyConfigure" />
+      <item itemvalue="CMake Application.NightlyCoverage" />
+      <item itemvalue="CMake Application.NightlyMemCheck" />
+      <item itemvalue="CMake Application.NightlyMemoryCheck" />
+      <item itemvalue="CMake Application.NightlyStart" />
+      <item itemvalue="CMake Application.NightlySubmit" />
+      <item itemvalue="CMake Application.NightlyTest" />
+      <item itemvalue="CMake Application.NightlyUpdate" />
+      <item itemvalue="CMake Application.scandir" />
+      <item itemvalue="CMake Application.t-compile" />
+      <item itemvalue="CMake Application.t-cplusplus" />
+      <item itemvalue="CMake Application.t-dirent" />
+      <item itemvalue="CMake Application.t-scandir" />
+      <item itemvalue="CMake Application.t-strverscmp" />
+      <item itemvalue="CMake Application.t-telldir" />
+      <item itemvalue="CMake Application.t-unicode" />
+      <item itemvalue="CMake Application.t-utf8" />
+      <item itemvalue="CMake Application.updatedb" />
+      <item itemvalue="CMake Application.freetype" />
+      <item itemvalue="CMake Application.glad" />
+      <item itemvalue="CMake Application.uninstall" />
+      <item itemvalue="CMake Application.glfw" />
+      <item itemvalue="CMake Application.update_mappings" />
+      <item itemvalue="CMake Application.imgui" />
+      <item itemvalue="CMake Application.imguizmo" />
+      <item itemvalue="CMake Application.spdlog" />
+      <item itemvalue="CMake Application.stb" />
+      <item itemvalue="CMake Application.zip" />
+      <item itemvalue="CMake Application.WizardTest" />
+      <item itemvalue="Shell Script.compile-external-libs.sh" />
+      <item itemvalue="Shell Script.download-external-libs.sh" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Shell Script.download-external-libs.sh" />
+        <item itemvalue="Shell Script.compile-external-libs.sh" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="" />
+      <created>1629745291032</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1629745291032</updated>
+      <workItem from="1629745293082" duration="1091000" />
+      <workItem from="1629801743147" duration="5000" />
+      <workItem from="1629956794743" duration="2061000" />
+      <workItem from="1630067458223" duration="1192000" />
+      <workItem from="1630142660399" duration="9185000" />
+      <workItem from="1630216911155" duration="7364000" />
+      <workItem from="1630224718438" duration="27139000" />
+      <workItem from="1630261228531" duration="443000" />
+      <workItem from="1630298409937" duration="21433000" />
+      <workItem from="1630359815398" duration="302000" />
+      <workItem from="1630389859817" duration="5996000" />
+      <workItem from="1630397797094" duration="5339000" />
+      <workItem from="1630411480403" duration="16013000" />
+      <workItem from="1630433686972" duration="1349000" />
+      <workItem from="1630475108797" duration="7385000" />
+      <workItem from="1630737691683" duration="4397000" />
+      <workItem from="1630742625346" duration="28159000" />
+      <workItem from="1630819962736" duration="35246000" />
+      <workItem from="1630863673149" duration="395000" />
+      <workItem from="1630906105925" duration="4339000" />
+      <workItem from="1631026866830" duration="6225000" />
+      <workItem from="1631360700436" duration="15692000" />
+      <workItem from="1631434872343" duration="25605000" />
+      <workItem from="1631468806617" duration="3468000" />
+      <workItem from="1631599783545" duration="5284000" />
+      <workItem from="1631807264083" duration="664000" />
+      <workItem from="1631892469141" duration="9810000" />
+      <workItem from="1631940939449" duration="8983000" />
+      <workItem from="1632036671652" duration="24656000" />
+      <workItem from="1632069630507" duration="1799000" />
+      <workItem from="1632209193224" duration="3478000" />
+      <workItem from="1632321504118" duration="620000" />
+      <workItem from="1632322142687" duration="339000" />
+      <workItem from="1632322519954" duration="9991000" />
+      <workItem from="1632334528444" duration="42000" />
+      <workItem from="1632373650721" duration="39997000" />
+      <workItem from="1632460713592" duration="46613000" />
+      <workItem from="1632546999340" duration="47310000" />
+      <workItem from="1632630501005" duration="45247000" />
+      <workItem from="1632712263619" duration="2481000" />
+      <workItem from="1632715392049" duration="17319000" />
+      <workItem from="1632743374713" duration="15121000" />
+      <workItem from="1632804021857" duration="14721000" />
+      <workItem from="1632888124561" duration="38340000" />
+      <workItem from="1632939478245" duration="1357000" />
+      <workItem from="1632977134847" duration="23942000" />
+      <workItem from="1633005524237" duration="2373000" />
+      <workItem from="1633009391016" duration="2533000" />
+      <workItem from="1633062636176" duration="32681000" />
+      <workItem from="1633102728810" duration="89000" />
+      <workItem from="1633105965070" duration="4394000" />
+      <workItem from="1633114926318" duration="3733000" />
+      <workItem from="1633150382904" duration="23095000" />
+      <workItem from="1633178154150" duration="3064000" />
+      <workItem from="1633181252235" duration="57000" />
+      <workItem from="1633181541744" duration="4635000" />
+      <workItem from="1633190379426" duration="5374000" />
+      <workItem from="1633233466494" duration="12396000" />
+      <workItem from="1633246050288" duration="8572000" />
+      <workItem from="1633265546084" duration="11569000" />
+      <workItem from="1633345210076" duration="4000" />
+      <workItem from="1633350281074" duration="5597000" />
+      <workItem from="1633413308194" duration="12866000" />
+      <workItem from="1633427551870" duration="62000" />
+      <workItem from="1633429360032" duration="9483000" />
+      <workItem from="1633440551604" duration="3771000" />
+      <workItem from="1633453912525" duration="5434000" />
+      <workItem from="1633460226038" duration="999000" />
+      <workItem from="1633494001965" duration="13378000" />
+      <workItem from="1633510538006" duration="289000" />
+      <workItem from="1633513499711" duration="9199000" />
+      <workItem from="1633584701376" duration="40049000" />
+      <workItem from="1633667782588" duration="29800000" />
+      <workItem from="1633702502698" duration="2823000" />
+      <workItem from="1633711143933" duration="8009000" />
+      <workItem from="1633720118076" duration="3114000" />
+      <workItem from="1633753771883" duration="22796000" />
+      <workItem from="1633780563649" duration="1042000" />
+      <workItem from="1633781705705" duration="1372000" />
+      <workItem from="1633805907196" duration="1372000" />
+      <workItem from="1633842567442" duration="15304000" />
+      <workItem from="1633859161801" duration="4933000" />
+      <workItem from="1633874746222" duration="5906000" />
+      <workItem from="1634105051457" duration="142000" />
+      <workItem from="1634360634318" duration="233000" />
+      <workItem from="1634373548411" duration="3277000" />
+      <workItem from="1634410020149" duration="571000" />
+      <workItem from="1634410605179" duration="148000" />
+      <workItem from="1634456422589" duration="1220000" />
+      <workItem from="1634551060247" duration="3134000" />
+      <workItem from="1634889770021" duration="10952000" />
+      <workItem from="1634908920414" duration="7163000" />
+      <workItem from="1634920606935" duration="3747000" />
+      <workItem from="1634965799682" duration="21889000" />
+      <workItem from="1634998960672" duration="1544000" />
+      <workItem from="1635002953407" duration="6327000" />
+      <workItem from="1635061086857" duration="4042000" />
+      <workItem from="1635078382965" duration="16754000" />
+      <workItem from="1635140240056" duration="15806000" />
+      <workItem from="1635248634376" duration="13435000" />
+      <workItem from="1635315425955" duration="34919000" />
+      <workItem from="1635421609083" duration="3368000" />
+      <workItem from="1635479637414" duration="26943000" />
+      <workItem from="1635519111253" duration="8779000" />
+      <workItem from="1635569396123" duration="24176000" />
+      <workItem from="1635595644925" duration="6646000" />
+      <workItem from="1635657405241" duration="2797000" />
+      <workItem from="1635665219144" duration="2296000" />
+      <workItem from="1635704859675" duration="1271000" />
+      <workItem from="1635746218613" duration="3073000" />
+      <workItem from="1635762359830" duration="681000" />
+      <workItem from="1635763054270" duration="28053000" />
+      <workItem from="1635861426870" duration="7814000" />
+      <workItem from="1635928850508" duration="1249000" />
+      <workItem from="1635930251076" duration="673000" />
+      <workItem from="1635931277015" duration="530000" />
+      <workItem from="1635932433266" duration="93000" />
+      <workItem from="1635932613245" duration="658000" />
+      <workItem from="1635933282984" duration="818000" />
+      <workItem from="1635934123399" duration="948000" />
+      <workItem from="1635935289053" duration="361000" />
+      <workItem from="1635935903458" duration="83000" />
+      <workItem from="1635936173846" duration="211000" />
+      <workItem from="1635936488795" duration="61000" />
+      <workItem from="1635937011270" duration="1000" />
+      <workItem from="1635939573224" duration="2000" />
+      <workItem from="1635940183909" duration="790000" />
+      <workItem from="1635941011925" duration="4478000" />
+      <workItem from="1635949629790" duration="12548000" />
+      <workItem from="1636005209478" duration="30557000" />
+      <workItem from="1636097002430" duration="45925000" />
+      <workItem from="1636177392371" duration="23943000" />
+      <workItem from="1636227910025" duration="1725000" />
+      <workItem from="1636264206546" duration="31134000" />
+      <workItem from="1636312357450" duration="907000" />
+      <workItem from="1636313377819" duration="409000" />
+      <workItem from="1636315068834" duration="1298000" />
+      <workItem from="1636316563035" duration="616000" />
+      <workItem from="1636352672660" duration="35859000" />
+      <workItem from="1636396927972" duration="139000" />
+      <workItem from="1636520995676" duration="6407000" />
+      <workItem from="1636537952508" duration="21368000" />
+      <workItem from="1636617953269" duration="9470000" />
+      <workItem from="1636637152548" duration="3152000" />
+      <workItem from="1636699953951" duration="548000" />
+      <workItem from="1636725443635" duration="7690000" />
+      <workItem from="1636799876279" duration="3779000" />
+      <workItem from="1636887215170" duration="2723000" />
+      <workItem from="1636959112068" duration="713000" />
+      <workItem from="1636981221718" duration="19011000" />
+      <workItem from="1637167312944" duration="15648000" />
+      <workItem from="1637318398959" duration="6201000" />
+      <workItem from="1637416192013" duration="1445000" />
+      <workItem from="1640535572591" duration="3888000" />
+      <workItem from="1640701352814" duration="9000" />
+      <workItem from="1640759374805" duration="13979000" />
+      <workItem from="1640860310613" duration="8965000" />
+      <workItem from="1641026697318" duration="6520000" />
+      <workItem from="1641117455857" duration="10861000" />
+      <workItem from="1641148125580" duration="1334000" />
+      <workItem from="1641200882124" duration="5231000" />
+      <workItem from="1641209902175" duration="5044000" />
+      <workItem from="1641228292979" duration="10991000" />
+      <workItem from="1641283183868" duration="13884000" />
+      <workItem from="1641304322603" duration="7000" />
+      <workItem from="1641306737432" duration="8171000" />
+      <workItem from="1641379631198" duration="1191000" />
+      <workItem from="1641401305808" duration="5858000" />
+      <workItem from="1641458616253" duration="2558000" />
+      <workItem from="1641541198758" duration="35385000" />
+      <workItem from="1641587781477" duration="787000" />
+      <workItem from="1641625906963" duration="15573000" />
+      <workItem from="1641646383822" duration="11194000" />
+      <workItem from="1641662318014" duration="5004000" />
+      <workItem from="1641669290126" duration="3604000" />
+      <workItem from="1641713207182" duration="1629000" />
+      <workItem from="1641723166391" duration="15227000" />
+      <workItem from="1641758004528" duration="1308000" />
+      <workItem from="1641887751066" duration="2198000" />
+      <workItem from="1642018804896" duration="913000" />
+      <workItem from="1642056288038" duration="3725000" />
+      <workItem from="1642089178583" duration="15957000" />
+      <workItem from="1642139109731" duration="28927000" />
+      <workItem from="1642586723848" duration="1374000" />
+      <workItem from="1642664615060" duration="8758000" />
+      <workItem from="1642760987198" duration="26603000" />
+      <workItem from="1642796653079" duration="3945000" />
+      <workItem from="1642833460667" duration="4659000" />
+      <workItem from="1642840581774" duration="6807000" />
+      <workItem from="1642922146472" duration="2769000" />
+      <workItem from="1642925511645" duration="138000" />
+      <workItem from="1642925659404" duration="3246000" />
+      <workItem from="1642945772001" duration="1769000" />
+      <workItem from="1642947860798" duration="118000" />
+      <workItem from="1642962885065" duration="949000" />
+      <workItem from="1643012858852" duration="8825000" />
+      <workItem from="1643033155711" duration="5104000" />
+      <workItem from="1643049762056" duration="657000" />
+      <workItem from="1643093824342" duration="12933000" />
+      <workItem from="1643129687560" duration="1000" />
+      <workItem from="1643181842507" duration="1927000" />
+      <workItem from="1643183873622" duration="3792000" />
+      <workItem from="1643191650732" duration="14471000" />
+      <workItem from="1643277980559" duration="3080000" />
+      <workItem from="1643359279163" duration="4672000" />
+      <workItem from="1643390049005" duration="1253000" />
+      <workItem from="1643441443708" duration="17445000" />
+      <workItem from="1643471924973" duration="259000" />
+      <workItem from="1643472328533" duration="866000" />
+      <workItem from="1643535105139" duration="20902000" />
+      <workItem from="1643562479748" duration="8197000" />
+      <workItem from="1643619697858" duration="5271000" />
+      <workItem from="1643659307211" duration="804000" />
+      <workItem from="1643702223269" duration="1793000" />
+      <workItem from="1643726821970" duration="3312000" />
+      <workItem from="1644084972392" duration="1777000" />
+      <workItem from="1644127925757" duration="9096000" />
+      <workItem from="1644149794388" duration="7075000" />
+      <workItem from="1644674657836" duration="3834000" />
+      <workItem from="1645292093734" duration="877000" />
+      <workItem from="1645352026478" duration="6741000" />
+      <workItem from="1645360272084" duration="6785000" />
+      <workItem from="1645525168672" duration="903000" />
+      <workItem from="1646934092305" duration="625000" />
+      <workItem from="1647078145242" duration="5066000" />
+      <workItem from="1647152401407" duration="5476000" />
+      <workItem from="1647170801124" duration="15450000" />
+      <workItem from="1647191990404" duration="3987000" />
+      <workItem from="1647359848301" duration="5126000" />
+      <workItem from="1647374342641" duration="4223000" />
+      <workItem from="1647442947479" duration="18817000" />
+      <workItem from="1647499809041" duration="22655000" />
+      <workItem from="1647545106656" duration="2049000" />
+      <workItem from="1647582088569" duration="25872000" />
+      <workItem from="1647668223509" duration="27679000" />
+      <workItem from="1647755058865" duration="38003000" />
+      <workItem from="1647848891463" duration="24789000" />
+      <workItem from="1647927625421" duration="28971000" />
+      <workItem from="1648017420697" duration="16964000" />
+      <workItem from="1648104140182" duration="11856000" />
+      <workItem from="1648126452931" duration="25356000" />
+      <workItem from="1648191540106" duration="29079000" />
+      <workItem from="1648273592117" duration="10126000" />
+      <workItem from="1648295466145" duration="11872000" />
+      <workItem from="1648367491229" duration="24446000" />
+      <workItem from="1648445078183" duration="6443000" />
+      <workItem from="1648464785736" duration="2724000" />
+      <workItem from="1648467582940" duration="18234000" />
+      <workItem from="1648530123362" duration="43616000" />
+      <workItem from="1648618242031" duration="35225000" />
+      <workItem from="1648703438377" duration="31563000" />
+      <workItem from="1648744295795" duration="2269000" />
+      <workItem from="1648791453264" duration="13611000" />
+      <workItem from="1648808004737" duration="28316000" />
+      <workItem from="1648883432913" duration="21322000" />
+      <workItem from="1648907770441" duration="16750000" />
+      <workItem from="1648965245345" duration="42556000" />
+      <workItem from="1649047417438" duration="36034000" />
+      <workItem from="1649136136626" duration="10458000" />
+      <workItem from="1649155586777" duration="21195000" />
+      <workItem from="1649190392854" duration="2147000" />
+      <workItem from="1649220621962" duration="32927000" />
+      <workItem from="1649310686334" duration="15430000" />
+      <workItem from="1649398340081" duration="22776000" />
+      <workItem from="1649488440457" duration="29086000" />
+      <workItem from="1649585629341" duration="20130000" />
+      <workItem from="1649658588346" duration="20648000" />
+      <workItem from="1649923248913" duration="3790000" />
+      <workItem from="1650023860936" duration="3033000" />
+      <workItem from="1650029354406" duration="11951000" />
+      <workItem from="1650087804129" duration="11503000" />
+      <workItem from="1650189866967" duration="2537000" />
+      <workItem from="1650348215064" duration="8243000" />
+      <workItem from="1650449382901" duration="18564000" />
+      <workItem from="1650519710280" duration="11122000" />
+      <workItem from="1650548257667" duration="8622000" />
+      <workItem from="1650608982308" duration="29709000" />
+      <workItem from="1650641846337" duration="16185000" />
+      <workItem from="1650694357730" duration="18751000" />
+      <workItem from="1650717541693" duration="2221000" />
+      <workItem from="1650723634789" duration="9366000" />
+      <workItem from="1650782675859" duration="14561000" />
+      <workItem from="1650803598824" duration="16405000" />
+      <workItem from="1650867640048" duration="19560000" />
+      <workItem from="1650897071313" duration="3736000" />
+      <workItem from="1650910711799" duration="3200000" />
+      <workItem from="1652087358169" duration="2548000" />
+      <workItem from="1652609989600" duration="22075000" />
+      <workItem from="1652690087797" duration="1379000" />
+      <workItem from="1652703047732" duration="8172000" />
+      <workItem from="1652771761716" duration="8326000" />
+      <workItem from="1652856079772" duration="15638000" />
+      <workItem from="1652881043174" duration="3623000" />
+      <workItem from="1652960641626" duration="7375000" />
+      <workItem from="1653030727728" duration="8130000" />
+      <workItem from="1653108713046" duration="32505000" />
+      <workItem from="1653199266200" duration="6659000" />
+      <workItem from="1653284899596" duration="6384000" />
+      <workItem from="1653292701871" duration="11578000" />
+      <workItem from="1653408783840" duration="10694000" />
+      <workItem from="1653463090443" duration="9857000" />
+      <workItem from="1653506114261" duration="4184000" />
+      <workItem from="1653565733517" duration="5000" />
+      <workItem from="1653567980105" duration="4000" />
+      <workItem from="1653678178963" duration="3229000" />
+      <workItem from="1653805351806" duration="29113000" />
+      <workItem from="1653842042003" duration="115000" />
+      <workItem from="1653850846988" duration="7719000" />
+      <workItem from="1653900764523" duration="10777000" />
+      <workItem from="1653916934682" duration="11092000" />
+      <workItem from="1653978626776" duration="9874000" />
+      <workItem from="1654003823403" duration="15970000" />
+      <workItem from="1654069268264" duration="5047000" />
+      <workItem from="1654175448508" duration="6330000" />
+      <workItem from="1654259391785" duration="1000" />
+      <workItem from="1654335617621" duration="12470000" />
+      <workItem from="1654413483011" duration="13024000" />
+      <workItem from="1654435604026" duration="16510000" />
+      <workItem from="1654501595037" duration="2999000" />
+      <workItem from="1654509997593" duration="6658000" />
+      <workItem from="1654521282121" duration="9481000" />
+      <workItem from="1654614699032" duration="92000" />
+      <workItem from="1654681967845" duration="1288000" />
+      <workItem from="1654753598166" duration="11434000" />
+      <workItem from="1654765287065" duration="2340000" />
+      <workItem from="1654786669127" duration="135000" />
+      <workItem from="1654787588062" duration="711000" />
+      <workItem from="1654928540955" duration="4390000" />
+      <workItem from="1654934728336" duration="3211000" />
+      <workItem from="1655800845078" duration="1199000" />
+      <workItem from="1656318645664" duration="32000" />
+      <workItem from="1658575123609" duration="3444000" />
+      <workItem from="1659354078181" duration="13589000" />
+      <workItem from="1659421965243" duration="30943000" />
+      <workItem from="1659512587764" duration="5844000" />
+      <workItem from="1659594566488" duration="20352000" />
+      <workItem from="1659685192303" duration="236000" />
+      <workItem from="1659718267936" duration="3884000" />
+      <workItem from="1659725402883" duration="1108000" />
+      <workItem from="1659786557603" duration="13807000" />
+      <workItem from="1659801409393" duration="6351000" />
+      <workItem from="1659858424983" duration="721000" />
+      <workItem from="1660112586738" duration="4000" />
+      <workItem from="1660724724534" duration="62000" />
+      <workItem from="1660727730934" duration="4508000" />
+      <workItem from="1660740919057" duration="2422000" />
+      <workItem from="1660763895556" duration="6582000" />
+      <workItem from="1660808953145" duration="10063000" />
+      <workItem from="1660836766178" duration="4156000" />
+      <workItem from="1660896557504" duration="18944000" />
+      <workItem from="1660981967145" duration="16418000" />
+      <workItem from="1661025949425" duration="2808000" />
+      <workItem from="1661064511620" duration="21832000" />
+      <workItem from="1661147081442" duration="12113000" />
+      <workItem from="1661183484073" duration="4119000" />
+      <workItem from="1661190543552" duration="3535000" />
+      <workItem from="1661237355548" duration="3555000" />
+      <workItem from="1661324090428" duration="30887000" />
+      <workItem from="1661364144115" duration="2658000" />
+      <workItem from="1661429991579" duration="3705000" />
+      <workItem from="1661456812510" duration="3321000" />
+      <workItem from="1661494421276" duration="30688000" />
+      <workItem from="1661537374560" duration="410000" />
+      <workItem from="1661597785834" duration="2930000" />
+      <workItem from="1661606230101" duration="2615000" />
+      <workItem from="1661614298305" duration="11414000" />
+      <workItem from="1661668718205" duration="14999000" />
+      <workItem from="1661684902432" duration="25183000" />
+      <workItem from="1661710520547" duration="1124000" />
+      <workItem from="1661716571550" duration="9399000" />
+      <workItem from="1661752980260" duration="19251000" />
+      <workItem from="1661776047831" duration="10618000" />
+      <workItem from="1661836514137" duration="1435000" />
+      <workItem from="1661848818291" duration="8917000" />
+      <workItem from="1661867902286" duration="10353000" />
+      <workItem from="1661890465314" duration="613000" />
+      <workItem from="1661940082706" duration="13635000" />
+      <workItem from="1661968388781" duration="8414000" />
+      <workItem from="1662010227672" duration="33122000" />
+      <workItem from="1662053323136" duration="19532000" />
+      <workItem from="1662098732223" duration="2630000" />
+      <workItem from="1662103517442" duration="4209000" />
+      <workItem from="1662113869847" duration="19085000" />
+      <workItem from="1662146265298" duration="4218000" />
+      <workItem from="1662184862731" duration="40450000" />
+      <workItem from="1662271094712" duration="18575000" />
+      <workItem from="1662298163186" duration="596000" />
+      <workItem from="1662316632707" duration="3519000" />
+      <workItem from="1662326411224" duration="3247000" />
+      <workItem from="1662397700186" duration="5256000" />
+      <workItem from="1662449380205" duration="2870000" />
+      <workItem from="1662484760048" duration="6568000" />
+      <workItem from="1662532516355" duration="7621000" />
+      <workItem from="1662621141544" duration="2994000" />
+      <workItem from="1662641425989" duration="650000" />
+      <workItem from="1662657250532" duration="1242000" />
+      <workItem from="1662706425809" duration="1669000" />
+      <workItem from="1663149630347" duration="1384000" />
+      <workItem from="1663159792640" duration="5873000" />
+      <workItem from="1663228082391" duration="22316000" />
+      <workItem from="1663323780421" duration="2895000" />
+      <workItem from="1663346548866" duration="10550000" />
+      <workItem from="1663399878191" duration="3863000" />
+      <workItem from="1663417569157" duration="10297000" />
+      <workItem from="1663840123880" duration="3975000" />
+      <workItem from="1663924839165" duration="3075000" />
+      <workItem from="1664093647596" duration="42000" />
+      <workItem from="1664438161327" duration="2796000" />
+      <workItem from="1664474555598" duration="2594000" />
+      <workItem from="1664698636324" duration="29253000" />
+      <workItem from="1664782178007" duration="39115000" />
+      <workItem from="1664867600279" duration="31859000" />
+      <workItem from="1664914602611" duration="9308000" />
+      <workItem from="1664954835099" duration="27911000" />
+      <workItem from="1665039664686" duration="50739000" />
+      <workItem from="1665126060673" duration="38730000" />
+      <workItem from="1665215147174" duration="24810000" />
+      <workItem from="1665299310759" duration="6933000" />
+      <workItem from="1665388074309" duration="630000" />
+      <workItem from="1665478823475" duration="730000" />
+      <workItem from="1665576801980" duration="5391000" />
+      <workItem from="1665587974715" duration="1230000" />
+      <workItem from="1665651020128" duration="10718000" />
+      <workItem from="1665745356731" duration="8618000" />
+      <workItem from="1666255999840" duration="9000" />
+      <workItem from="1667887615040" duration="31000" />
+      <workItem from="1668420217027" duration="7933000" />
+      <workItem from="1668505169630" duration="2703000" />
+      <workItem from="1668794675090" duration="1087000" />
+      <workItem from="1668840940484" duration="1406000" />
+    </task>
+    <task id="LOCAL-00149" summary="Fixed gamepad controller.">
+      <created>1650719117232</created>
+      <option name="number" value="00149" />
+      <option name="presentableId" value="LOCAL-00149" />
+      <option name="project" value="LOCAL" />
+      <updated>1650719117232</updated>
+    </task>
+    <task id="LOCAL-00150" summary="Fixed audio streaming from RAM memory.">
+      <created>1650785814925</created>
+      <option name="number" value="00150" />
+      <option name="presentableId" value="LOCAL-00150" />
+      <option name="project" value="LOCAL" />
+      <updated>1650785814925</updated>
+    </task>
+    <task id="LOCAL-00151" summary="Audio listener and distance attenuation for audio source.">
+      <created>1650796870586</created>
+      <option name="number" value="00151" />
+      <option name="presentableId" value="LOCAL-00151" />
+      <option name="project" value="LOCAL" />
+      <updated>1650796870586</updated>
+    </task>
+    <task id="LOCAL-00152" summary="Streaming audio chunk from asset .wav file.">
+      <created>1650811365821</created>
+      <option name="number" value="00152" />
+      <option name="presentableId" value="LOCAL-00152" />
+      <option name="project" value="LOCAL" />
+      <updated>1650811365821</updated>
+    </task>
+    <task id="LOCAL-00153" summary="Streaming audio chunk from asset .wav file.">
+      <created>1650817610801</created>
+      <option name="number" value="00153" />
+      <option name="presentableId" value="LOCAL-00153" />
+      <option name="project" value="LOCAL" />
+      <updated>1650817610801</updated>
+    </task>
+    <task id="LOCAL-00154" summary="TCP server init">
+      <created>1650827256272</created>
+      <option name="number" value="00154" />
+      <option name="presentableId" value="LOCAL-00154" />
+      <option name="project" value="LOCAL" />
+      <updated>1650827256272</updated>
+    </task>
+    <task id="LOCAL-00155" summary="Network core, TCP Client/Server using localhost connection.&#10;For now, just transfers &quot;Hello world&quot; data to each other.">
+      <created>1650876872833</created>
+      <option name="number" value="00155" />
+      <option name="presentableId" value="LOCAL-00155" />
+      <option name="project" value="LOCAL" />
+      <updated>1650876872833</updated>
+    </task>
+    <task id="LOCAL-00156" summary="Added WizardServer which represents TCP/UDP network server as second machine for managing TCP/UDP network clients data.">
+      <created>1650888288165</created>
+      <option name="number" value="00156" />
+      <option name="presentableId" value="LOCAL-00156" />
+      <option name="project" value="LOCAL" />
+      <updated>1650888288165</updated>
+    </task>
+    <task id="LOCAL-00157" summary="Audio recorder with OpenAL implementation.">
+      <created>1652087410660</created>
+      <option name="number" value="00157" />
+      <option name="presentableId" value="LOCAL-00157" />
+      <option name="project" value="LOCAL" />
+      <updated>1652087410661</updated>
+    </task>
+    <task id="LOCAL-00158" summary="Add prebuild for Windows&#10;Fix uncaught exception issues for network system.">
+      <created>1652634689548</created>
+      <option name="number" value="00158" />
+      <option name="presentableId" value="LOCAL-00158" />
+      <option name="project" value="LOCAL" />
+      <updated>1652634689548</updated>
+    </task>
+    <task id="LOCAL-00159" summary="YAML parser, Scene Serialization.">
+      <created>1652779792400</created>
+      <option name="number" value="00159" />
+      <option name="presentableId" value="LOCAL-00159" />
+      <option name="project" value="LOCAL" />
+      <updated>1652779792400</updated>
+    </task>
+    <task id="LOCAL-00160" summary="Studio refactoring">
+      <created>1652874420037</created>
+      <option name="number" value="00160" />
+      <option name="presentableId" value="LOCAL-00160" />
+      <option name="project" value="LOCAL" />
+      <updated>1652874420037</updated>
+    </task>
+    <task id="LOCAL-00161" summary="Linux Socket support merge">
+      <created>1652961044065</created>
+      <option name="number" value="00161" />
+      <option name="presentableId" value="LOCAL-00161" />
+      <option name="project" value="LOCAL" />
+      <updated>1652961044065</updated>
+    </task>
+    <task id="LOCAL-00162" summary="Linux Socket API support">
+      <created>1652966671962</created>
+      <option name="number" value="00162" />
+      <option name="presentableId" value="LOCAL-00162" />
+      <option name="project" value="LOCAL" />
+      <updated>1652966671962</updated>
+    </task>
+    <task id="LOCAL-00163" summary="Linux Socket API support">
+      <created>1652968448603</created>
+      <option name="number" value="00163" />
+      <option name="presentableId" value="LOCAL-00163" />
+      <option name="project" value="LOCAL" />
+      <updated>1652968448603</updated>
+    </task>
+    <task id="LOCAL-00164" summary="Fixed prebuild of ImGui">
+      <created>1653125123976</created>
+      <option name="number" value="00164" />
+      <option name="presentableId" value="LOCAL-00164" />
+      <option name="project" value="LOCAL" />
+      <updated>1653125123976</updated>
+    </task>
+    <task id="LOCAL-00165" summary="Fixed prebuild of ImGui">
+      <created>1653125247622</created>
+      <option name="number" value="00165" />
+      <option name="presentableId" value="LOCAL-00165" />
+      <option name="project" value="LOCAL" />
+      <updated>1653125247622</updated>
+    </task>
+    <task id="LOCAL-00166" summary="ECS YAML serialization">
+      <created>1653292889014</created>
+      <option name="number" value="00166" />
+      <option name="presentableId" value="LOCAL-00166" />
+      <option name="project" value="LOCAL" />
+      <updated>1653292889014</updated>
+    </task>
+    <task id="LOCAL-00167" summary="Update gamepad event registry.">
+      <created>1653334130923</created>
+      <option name="number" value="00167" />
+      <option name="presentableId" value="LOCAL-00167" />
+      <option name="project" value="LOCAL" />
+      <updated>1653334130923</updated>
+    </task>
+    <task id="LOCAL-00168" summary="Update gamepad event registry.">
+      <created>1653423793397</created>
+      <option name="number" value="00168" />
+      <option name="presentableId" value="LOCAL-00168" />
+      <option name="project" value="LOCAL" />
+      <updated>1653423793397</updated>
+    </task>
+    <task id="LOCAL-00169" summary="GDP messaging, Network integration with YAML Serialization, entrypoint for Multiplayer.">
+      <created>1653841781502</created>
+      <option name="number" value="00169" />
+      <option name="presentableId" value="LOCAL-00169" />
+      <option name="project" value="LOCAL" />
+      <updated>1653841781502</updated>
+    </task>
+    <task id="LOCAL-00170" summary="Fixed UDP client messaging">
+      <created>1653912858476</created>
+      <option name="number" value="00170" />
+      <option name="presentableId" value="LOCAL-00170" />
+      <option name="project" value="LOCAL" />
+      <updated>1653912858476</updated>
+    </task>
+    <task id="LOCAL-00171" summary="Fixed TCP client-server-client messaging.">
+      <created>1653923976781</created>
+      <option name="number" value="00171" />
+      <option name="presentableId" value="LOCAL-00171" />
+      <option name="project" value="LOCAL" />
+      <updated>1653923976782</updated>
+    </task>
+    <task id="LOCAL-00172" summary="Add few serializables">
+      <created>1653932946855</created>
+      <option name="number" value="00172" />
+      <option name="presentableId" value="LOCAL-00172" />
+      <option name="project" value="LOCAL" />
+      <updated>1653932946855</updated>
+    </task>
+    <task id="LOCAL-00173" summary="Fixed scene serialization">
+      <created>1653997016171</created>
+      <option name="number" value="00173" />
+      <option name="presentableId" value="LOCAL-00173" />
+      <option name="project" value="LOCAL" />
+      <updated>1653997016171</updated>
+    </task>
+    <task id="LOCAL-00174" summary="UUID component for identifying loaded/saved world">
+      <created>1654013875439</created>
+      <option name="number" value="00174" />
+      <option name="presentableId" value="LOCAL-00174" />
+      <option name="project" value="LOCAL" />
+      <updated>1654013875439</updated>
+    </task>
+    <task id="LOCAL-00175" summary="UUID component for identifying loaded/saved world">
+      <created>1654016574608</created>
+      <option name="number" value="00175" />
+      <option name="presentableId" value="LOCAL-00175" />
+      <option name="project" value="LOCAL" />
+      <updated>1654016574608</updated>
+    </task>
+    <task id="LOCAL-00176" summary="Loading/Saving world into Server">
+      <created>1654022121671</created>
+      <option name="number" value="00176" />
+      <option name="presentableId" value="LOCAL-00176" />
+      <option name="project" value="LOCAL" />
+      <updated>1654022121671</updated>
+    </task>
+    <task id="LOCAL-00177" summary="AssetManager for loading/saving scenes locally and remotely. GDResponse and status codes for handling response state. Updated scene and GDP serialization">
+      <created>1654443564552</created>
+      <option name="number" value="00177" />
+      <option name="presentableId" value="LOCAL-00177" />
+      <option name="project" value="LOCAL" />
+      <updated>1654443564552</updated>
+    </task>
+    <task id="LOCAL-00178" summary="Fixed crash of deleting serialized component.&#10;Added WizardSamples project for unit testing of WizardEngine details.&#10;SceneService for dispatching and processing scene requests on server side.">
+      <created>1654462125808</created>
+      <option name="number" value="00178" />
+      <option name="presentableId" value="LOCAL-00178" />
+      <option name="project" value="LOCAL" />
+      <updated>1654462125808</updated>
+    </task>
+    <task id="LOCAL-00179" summary="Updated serialization : Uniform, all matrices, Text, Outline, Light, Transform, AudioListener, AudioSource.">
+      <created>1654516701349</created>
+      <option name="number" value="00179" />
+      <option name="presentableId" value="LOCAL-00179" />
+      <option name="project" value="LOCAL" />
+      <updated>1654516701349</updated>
+    </task>
+    <task id="LOCAL-00180" summary="Updated serialization : array, IndexData, VertexData, Lines, Texture, Text, Circle.">
+      <created>1654535158811</created>
+      <option name="number" value="00180" />
+      <option name="presentableId" value="LOCAL-00180" />
+      <option name="project" value="LOCAL" />
+      <updated>1654535158812</updated>
+    </task>
+    <task id="LOCAL-00181" summary="Beginning with project management system.&#10;Serializing Vertex structs.">
+      <created>1654765151910</created>
+      <option name="number" value="00181" />
+      <option name="presentableId" value="LOCAL-00181" />
+      <option name="project" value="LOCAL" />
+      <updated>1654765151911</updated>
+    </task>
+    <task id="LOCAL-00182" summary="Beginning with project management system.&#10;Serializing Vertex structs.">
+      <created>1654767671074</created>
+      <option name="number" value="00182" />
+      <option name="presentableId" value="LOCAL-00182" />
+      <option name="project" value="LOCAL" />
+      <updated>1654767671074</updated>
+    </task>
+    <task id="LOCAL-00183" summary="Project Template System, replaced GLM library with my own Math System.">
+      <created>1659612621167</created>
+      <option name="number" value="00183" />
+      <option name="presentableId" value="LOCAL-00183" />
+      <option name="project" value="LOCAL" />
+      <updated>1659612621168</updated>
+    </task>
+    <task id="LOCAL-00184" summary="Initial work to fix visual bug with matrices.">
+      <created>1659798310588</created>
+      <option name="number" value="00184" />
+      <option name="presentableId" value="LOCAL-00184" />
+      <option name="project" value="LOCAL" />
+      <updated>1659798310588</updated>
+    </task>
+    <task id="LOCAL-00185" summary="Fixed visual 3D projection issue, caused by incorrect matrix multiplication order. Changed order (projection * view) into (view * projection).">
+      <created>1660821863380</created>
+      <option name="number" value="00185" />
+      <option name="presentableId" value="LOCAL-00185" />
+      <option name="project" value="LOCAL" />
+      <updated>1660821863381</updated>
+    </task>
+    <task id="LOCAL-00186" summary="Fixed visual 3D projection issue, caused by incorrect matrix multiplication order. Changed order (projection * view) into (view * projection).">
+      <created>1660821876019</created>
+      <option name="number" value="00186" />
+      <option name="presentableId" value="LOCAL-00186" />
+      <option name="project" value="LOCAL" />
+      <updated>1660821876019</updated>
+    </task>
+    <task id="LOCAL-00187" summary="Ray Casting, Advanced Camera, refactored EventRegistry, can't add more than 1 color attachment to scene FBO.">
+      <created>1661155173016</created>
+      <option name="number" value="00187" />
+      <option name="presentableId" value="LOCAL-00187" />
+      <option name="project" value="LOCAL" />
+      <updated>1661155173016</updated>
+    </task>
+    <task id="LOCAL-00188" summary="Fixed mouse cursor update position, when moving, zooming and rotating camera.">
+      <created>1661156690519</created>
+      <option name="number" value="00188" />
+      <option name="presentableId" value="LOCAL-00188" />
+      <option name="project" value="LOCAL" />
+      <updated>1661156690519</updated>
+    </task>
+    <task id="LOCAL-00189" summary="Material System, Phong, SolidPhong, Mouse Picking, Ray Cast, updated EventRegistry, updated Math functions, little updates in Renderers, updated Light System">
+      <created>1661367126268</created>
+      <option name="number" value="00189" />
+      <option name="presentableId" value="LOCAL-00189" />
+      <option name="project" value="LOCAL" />
+      <updated>1661367126269</updated>
+    </task>
+    <task id="LOCAL-00190" summary="Fixed TextureBuffer::load, TextureBuffer creation functions.">
+      <created>1661462281348</created>
+      <option name="number" value="00190" />
+      <option name="presentableId" value="LOCAL-00190" />
+      <option name="project" value="LOCAL" />
+      <updated>1661462281349</updated>
+    </task>
+    <task id="LOCAL-00191" summary="Material System, refactored Render System, HDR/LDR, blinn-phong lighting, diffuse map, specular map, normal map, parallax map, gamma correction, making Batching/Instancing render faster. Fixed a lot of crash and memory issues with Render System.">
+      <created>1661772718117</created>
+      <option name="number" value="00191" />
+      <option name="presentableId" value="LOCAL-00191" />
+      <option name="project" value="LOCAL" />
+      <updated>1661772718118</updated>
+    </task>
+    <task id="LOCAL-00192" summary="Post Effects Rendering, MRT support, a couple of refactoring of Shader API and Render API. &#10;Added next post effects : HDR/LDR, Blur, Edge Detection, Sharpen, Gaussian Blur.&#10;Added TextureMixer as a renderer that receives texture id list as an input, mixes all textures inside pixel shader and outputs it in separate frame buffer texture attachment.&#10;Added ImGui as Visual support, if macro VISUAL is defined inside the app you are building. This system has different widgets, console, themes.&#10;Added primitive vertex shader that allows to draw geometry without using VBO, VAO, IBO.">
+      <created>1662034023879</created>
+      <option name="number" value="00192" />
+      <option name="presentableId" value="LOCAL-00192" />
+      <option name="project" value="LOCAL" />
+      <updated>1662034023880</updated>
+    </task>
+    <task id="LOCAL-00193" summary="Basic Physics, simulation of objects velocity, collision detection for SphereCollider, AABBCollider, PlaneCollider, callbacks and respond to detected/undetected collision. When objects are collided, they will be reflected into different direction based on direction they had during simulation.">
+      <created>1662073025504</created>
+      <option name="number" value="00193" />
+      <option name="presentableId" value="LOCAL-00193" />
+      <option name="project" value="LOCAL" />
+      <updated>1662073025504</updated>
+    </task>
+    <task id="LOCAL-00194" summary="Custom Profiler, GPU Debugger, few more Visuals, support of Gizmos UI with ImGuizmo, Timer, TextureArray">
+      <created>1662484899218</created>
+      <option name="number" value="00194" />
+      <option name="presentableId" value="LOCAL-00194" />
+      <option name="project" value="LOCAL" />
+      <updated>1662484899218</updated>
+    </task>
+    <task id="LOCAL-00195" summary="Moving WizardEngine into DLL library, fixing all conflicts after DLL migration, added RCC++, naming and convention changes.">
+      <created>1663446442523</created>
+      <option name="number" value="00195" />
+      <option name="presentableId" value="LOCAL-00195" />
+      <option name="project" value="LOCAL" />
+      <updated>1663446442523</updated>
+    </task>
+    <task id="LOCAL-00196" summary="More features for Project Managment System. &#10;Updated Asset Managment and Scene systems.&#10;Added visual Logger and other visual tools for editor.&#10;Changed theme for WizardStudio&#10;Changed AssetBrowser for WizardStudio.&#10;Added Runtime Compile/Build/Run system.&#10;Added Runtime Build Zipping feature for game distribution.">
+      <created>1668795132362</created>
+      <option name="number" value="00196" />
+      <option name="presentableId" value="LOCAL-00196" />
+      <option name="project" value="LOCAL" />
+      <updated>1668795132362</updated>
+    </task>
+    <task id="LOCAL-00197" summary="Remove workspace.xml from .gitignore to share CMake settings">
+      <created>1668844708191</created>
+      <option name="number" value="00197" />
+      <option name="presentableId" value="LOCAL-00197" />
+      <option name="project" value="LOCAL" />
+      <updated>1668844708191</updated>
+    </task>
+    <option name="localTasksCounter" value="198" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="project_manager_and_own_math" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/ScriptDLL/engine/asio" />
+      <path value="$PROJECT_DIR$/ScriptDLL/engine/entt" />
+      <path value="$PROJECT_DIR$/ScriptDLL/engine/glfw" />
+      <path value="$PROJECT_DIR$/ScriptDLL/engine/glm" />
+      <path value="$PROJECT_DIR$/ScriptDLL/engine/imgui/imgui" />
+      <path value="$PROJECT_DIR$/ScriptDLL/engine/spdlog" />
+      <path value="$PROJECT_DIR$/ScriptDLL/engine/stb/stb" />
+    </ignored-roots>
+    <MESSAGE value="Fixed UDP client messaging" />
+    <MESSAGE value="Fixed TCP client-server-client messaging." />
+    <MESSAGE value="Add few serializables" />
+    <MESSAGE value="Fixed scene serialization" />
+    <MESSAGE value="UUID component for identifying loaded/saved world" />
+    <MESSAGE value="Loading/Saving world into Server" />
+    <MESSAGE value="AssetManager for loading/saving scenes locally and remotely. GDResponse and status codes for handling response state. Updated scene and GDP serialization" />
+    <MESSAGE value="Fixed crash of deleting serialized component.&#10;Added WizardSamples project for unit testing of WizardEngine details.&#10;SceneService for dispatching and processing scene requests on server side." />
+    <MESSAGE value="Updated serialization : Uniform, all matrices, Text, Outline, Light, Transform, AudioListener, AudioSource." />
+    <MESSAGE value="Updated serialization : array, IndexData, VertexData, Lines, Texture, Text, Circle." />
+    <MESSAGE value="Beginning with project management system.&#10;Serializing Vertex structs." />
+    <MESSAGE value="Project Template System, replaced GLM library with my own Math System." />
+    <MESSAGE value="Initial work to fix visual bug with matrices." />
+    <MESSAGE value="Fixed visual 3D projection issue, caused by incorrect matrix multiplication order. Changed order (projection * view) into (view * projection)." />
+    <MESSAGE value="Ray Casting, Advanced Camera, refactored EventRegistry, can't add more than 1 color attachment to scene FBO." />
+    <MESSAGE value="Fixed mouse cursor update position, when moving, zooming and rotating camera." />
+    <MESSAGE value="Material System, Phong, SolidPhong, Mouse Picking, Ray Cast, updated EventRegistry, updated Math functions, little updates in Renderers, updated Light System" />
+    <MESSAGE value="Fixed TextureBuffer::load, TextureBuffer creation functions." />
+    <MESSAGE value="Material System, refactored Render System, HDR/LDR, blinn-phong lighting, diffuse map, specular map, normal map, parallax map, gamma correction, making Batching/Instancing render faster. Fixed a lot of crash and memory issues with Render System." />
+    <MESSAGE value="Post Effects Rendering, MRT support, a couple of refactoring of Shader API and Render API. &#10;Added next post effects : HDR/LDR, Blur, Edge Detection, Sharpen, Gaussian Blur.&#10;Added TextureMixer as a renderer that receives texture id list as an input, mixes all textures inside pixel shader and outputs it in separate frame buffer texture attachment.&#10;Added ImGui as Visual support, if macro VISUAL is defined inside the app you are building. This system has different widgets, console, themes.&#10;Added primitive vertex shader that allows to draw geometry without using VBO, VAO, IBO." />
+    <MESSAGE value="Basic Physics, simulation of objects velocity, collision detection for SphereCollider, AABBCollider, PlaneCollider, callbacks and respond to detected/undetected collision. When objects are collided, they will be reflected into different direction based on direction they had during simulation." />
+    <MESSAGE value="Custom Profiler, GPU Debugger, few more Visuals, support of Gizmos UI with ImGuizmo, Timer, TextureArray" />
+    <MESSAGE value="Moving WizardEngine into DLL library, fixing all conflicts after DLL migration, added RCC++, naming and convention changes." />
+    <MESSAGE value="More features for Project Managment System. &#10;Updated Asset Managment and Scene systems.&#10;Added visual Logger and other visual tools for editor.&#10;Changed theme for WizardStudio&#10;Changed AssetBrowser for WizardStudio.&#10;Added Runtime Compile/Build/Run system.&#10;Added Runtime Build Zipping feature for game distribution." />
+    <MESSAGE value="Remove workspace.xml from .gitignore to share CMake settings" />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove workspace.xml from .gitignore to share CMake settings" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/WizardEngine/opengl/graphics/Shader.cpp</url>
+          <line>40</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/WizardEngine/opengl/graphics/Shader.cpp</url>
+          <line>47</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/WizardEngine/opengl/graphics/Shader.cpp</url>
+          <line>54</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/WizardEngine/opengl/graphics/Shader.cpp</url>
+          <line>62</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/WizardEngine/opengl/graphics/Shader.cpp</url>
+          <line>78</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/WizardEngine/opengl/graphics/Shader.cpp</url>
+          <line>85</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/WizardEngine/opengl/graphics/Shader.cpp</url>
+          <line>92</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/FairyLab/src/cpp/AssetBrowser.cpp</url>
+          <line>240</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/WizardEngine/cpp_scripting/src/Test.cpp</url>
+          <line>25</line>
+          <option name="timeStamp" value="44" />
+        </line-breakpoint>
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/WizardEngine/cpp_scripting/src/Test.cpp</url>
+          <line>28</line>
+          <option name="timeStamp" value="45" />
+        </line-breakpoint>
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/WizardEngine/cpp_scripting/src/Test.cpp</url>
+          <line>14</line>
+          <option name="timeStamp" value="49" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/WizardEngine/src/cpp/core/filesystem.cpp</url>
+          <line>53</line>
+          <option name="timeStamp" value="67" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/WizardEngine/src/cpp/core/filesystem.cpp</url>
+          <line>54</line>
+          <option name="timeStamp" value="68" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/WizardEngine/src/cpp/visual/Log.cpp</url>
+          <line>79</line>
+          <option name="timeStamp" value="70" />
+        </line-breakpoint>
+      </breakpoints>
+      <default-breakpoints>
+        <breakpoint enabled="true" type="CidrExceptionBreakpoint" />
+      </default-breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="CMakeRunConfiguration">
+        <watch expression="subDataOffset" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
