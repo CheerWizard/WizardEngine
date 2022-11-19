@@ -38,6 +38,14 @@
     path = WizardEngine/vendor/ImGuizmo
     url = https://github.com/CedricGuillemet/ImGuizmo
 
+[submodule "WizardEngine/vendor/dirent"]
+    path = WizardEngine/vendor/dirent
+    url = https://github.com/tronkko/dirent
+
+[submodule "WizardEngine/vendor/glm"]
+    path = WizardEngine/vendor/glm
+    url = https://github.com/g-truc/glm
+
 [submodule "WizardEngine/vendor/zip"]
     path = WizardEngine/vendor/zip
     url = https://github.com/kuba--/zip
