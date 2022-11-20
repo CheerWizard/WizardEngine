@@ -3,13 +3,10 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
-  <component name="CMakePresetLoader">{
-  &quot;useNewFormat&quot;: true
-}</component>
   <component name="CMakeReloadState">
     <option name="reloaded" value="true" />
   </component>
-  <component name="CMakeRunConfigurationManager">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
     <generated>
       <config projectName="Wizard" targetName="t-telldir" />
       <config projectName="Wizard" targetName="ContinuousCoverage" />
@@ -73,9 +70,9 @@
   </component>
   <component name="CMakeSettings">
     <configurations>
-      <configuration PROFILE_NAME="debug" ENABLED="true" GENERATION_DIR="Wizard/Debug" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Visual Studio" GENERATION_OPTIONS="-DDEBUG=1" NO_GENERATOR="true" />
+      <configuration PROFILE_NAME="debug" ENABLED="true" GENERATION_DIR="Wizard/Debug" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Visual Studio" GENERATION_OPTIONS="-DDEBUG=1" />
       <configuration PROFILE_NAME="release" ENABLED="true" GENERATION_DIR="Wizard/Release" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Visual Studio" />
-      <configuration PROFILE_NAME="visual-debug" ENABLED="true" GENERATION_DIR="Wizard/Visual/Debug" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Visual Studio" GENERATION_OPTIONS="-DVISUAL=1 -DDEBUG=1" NO_GENERATOR="true" />
+      <configuration PROFILE_NAME="visual-debug" ENABLED="true" GENERATION_DIR="Wizard/Visual/Debug" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Visual Studio" GENERATION_OPTIONS="-DVISUAL=1 -DDEBUG=1" />
       <configuration PROFILE_NAME="visual-release" ENABLED="true" GENERATION_DIR="Wizard/Visual/Release" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DVISUAL=1" />
       <configuration PROFILE_NAME="profile" ENABLED="true" GENERATION_DIR="Wizard/Profile" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DVISUAL=1 -DPROFILING=1" />
     </configurations>
@@ -83,9 +80,24 @@
   <component name="ChangeListManager">
     <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Add properties.yaml for Project Properties feature">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/glm" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/glm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prebuild/linux.sh" beforeDir="false" afterPath="$PROJECT_DIR$/prebuild/linux.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prebuild/windows.sh" beforeDir="false" afterPath="$PROJECT_DIR$/prebuild/windows.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/core/Application.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/core/Application.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/gui/ImageLayout.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/ImageLayout.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/gui/ImguiLayer.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/gui/theme.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/serialization/AssetManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/serialization/AssetManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/ProjectsPanel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/ProjectsPanel.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/ecs/Scene.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/ecs/Scene.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/skybox/Skybox.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/skybox/Skybox.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/gui/ImguiLayer.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/gui/theme.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/serialization/SceneSerializer.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/serialization/SceneSerializer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/assimp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/assimp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/freetype" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/freetype" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/glfw" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/glfw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardTest/src/cpp/core/test_layer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/src/cpp/core/test_layer.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,10 +138,10 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/WizardEngine/src/cpp/core/ProjectManager.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/WizardEngine/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/WizardEngine/export_cmake/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/WizardEngine/src/cpp/core/ProjectManager.cpp" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -140,21 +152,10 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Git.Branch.Popup.ShowAllRemotes&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;cf.advertisement.text.has.clang-format&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Lenovo/CLionProjects/WizardEngine/WizardTest&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;CPPToolchains&quot;
-  }
-}</component>
+  <component name="PropertiesComponent">
+    <property name="cf.advertisement.text.has.clang-format" value="true" />
+    <property name="cmake.loaded.for.project" value="true" />
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Lenovo\CLionProjects\WizardEngine\WizardTest" />
@@ -164,17 +165,17 @@
       <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardTest\assets\fonts\opensans" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\src\cpp\visual" />
       <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\src\include\visual" />
       <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine" />
       <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\lib" />
       <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\vendor\bin" />
-      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\vendor\rcc" />
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.WizardTest">
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
     <configuration name="Continuous" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="Continuous" CONFIG_NAME="debug">
@@ -1383,6 +1384,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />

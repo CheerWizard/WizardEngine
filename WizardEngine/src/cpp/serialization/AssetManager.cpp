@@ -36,7 +36,7 @@ namespace engine::io {
         for (auto& entry : std::filesystem::directory_iterator("assets/scenes")) {
             if (!entry.is_directory()) {
                 std::string scenePath = entry.path().string();
-                Ref<Scene> scene = createRef<Scene>(entry.path().filename().c_str());
+                Ref<Scene> scene = createRef<Scene>(entry.path().filename().string());
                 ENGINE_INFO("LocalAssetManager: loadScene '{0}'", scenePath);
                 SCENE_DESERIALIZE_TEXT_FILE(scene, scenePath.c_str());
                 scenes.emplace_back(scene);

@@ -298,14 +298,11 @@ namespace test {
         AssetBrowser::create(app.getNativeWindow(), { "AssetBrowser" });
 
         sceneViewport.show();
-
-        Application::get().pushScenes(io::LocalAssetManager::loadAll());
     }
 
     TestLayer::~TestLayer() {
         AssetBrowser::destroy();
         ProjectsPanel::destroy();
-        io::LocalAssetManager::saveAll(Application::get().scenes);
         Log::clear();
         tcp::Client::close();
         udp::Client::close();
@@ -729,10 +726,6 @@ namespace test {
         }
 
         ProjectsPanel::draw("Project Manager", { 800, 600 }, [this](const Project& openedProject) {
-//            ProjectManager::loadScripts(openedProject, ProjectVersion::V_DEBUG);
-//            Scriptable* playerScript = ScriptManager::load("Player");
-//            playerScript->root = { mainCamera.getContainer(), mainCamera.getId() };
-//            mainCamera.add<CppScript>(playerScript);
         });
 
         AssetBrowser::draw(dt);

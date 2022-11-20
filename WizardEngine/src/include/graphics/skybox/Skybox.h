@@ -32,8 +32,12 @@ namespace engine::graphics {
             init();
         }
 
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        Skybox(SkyboxType type, const CubeMapTextureComponent& textures) : type(type), textures(textures) {
+            init();
+        }
+
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
 
     private:
         void init() {
@@ -108,8 +112,7 @@ namespace engine::graphics {
                     {0,   0,   0},
                     {100, 100, 100}
             });
-            add<Skybox>(SkyboxType::CUBE);
-            add<CubeMapTextureComponent>(cubeMapTextures);
+            add<Skybox>(SkyboxType::CUBE, cubeMapTextures);
         }
     };
 

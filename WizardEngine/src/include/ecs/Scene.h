@@ -11,7 +11,12 @@ namespace engine::ecs {
     class ENGINE_API Scene : public EntityContainer {
 
     public:
-        Scene(const char* name = "Untitled") : name(name) {}
+        Scene() {
+            name = "Untitled";
+        }
+
+        Scene(const std::string& name) : name(name) {}
+
         ~Scene();
 
     public:

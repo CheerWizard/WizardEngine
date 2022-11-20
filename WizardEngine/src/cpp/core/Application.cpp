@@ -496,6 +496,7 @@ namespace engine::core {
 
     void Application::pushScenes(const vector<Ref<Scene>> &scenes) {
         if (scenes.empty()) return;
+        this->scenes.clear();
         this->scenes = scenes;
         setActiveScene(0);
     }

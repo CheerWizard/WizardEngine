@@ -20,6 +20,7 @@ namespace engine::io {
     class ENGINE_API SceneSerializable : public Serializable {
 
     public:
+        SceneSerializable() = default;
         SceneSerializable(const Ref<ecs::Scene>& scene) : scene(scene) {}
 
     public:
@@ -33,7 +34,8 @@ namespace engine::io {
     class ENGINE_API SceneSerializer final {
 
     public:
-        SceneSerializer(const Ref<ecs::Scene>& scene = createRef<ecs::Scene>()) : scene(scene) {}
+        SceneSerializer() = default;
+        SceneSerializer(const Ref<ecs::Scene>& scene) : scene(scene) {}
 
     public:
         const char* serializeText();
