@@ -21,7 +21,15 @@ namespace engine::core {
         PROFILE_FUNCTION();
         ENGINE_INFO("onCreate()");
 
-        _window = createScope<Window>(createWindowProps());
+        if (!ProjectProps::createFromFile("properties.yaml", projectProps)) {
+            ENGINE_WARN("Application: Unable to create properties from properties.yaml");
+        }
+
+        _window = createScope<Window>(projectProps.windowProps);
+        if (projectProps.icon != "") {
+            setWindowIcon(projectProps.icon);
+        }
+
         createGraphics();
         Input::create(_window->getNativeWindow());
 
@@ -40,6 +48,12 @@ namespace engine::core {
         initEdgeDetection();
         initGaussianBlur();
         initTextureMixer();
+
+        if (projectProps.launcher != "") {
+            setActiveScene(io::LocalAssetManager::loadScene(projectProps.launcher.c_str()));
+        } else {
+            ENGINE_WARN("Application: Launcher scene not specified in properties.yaml!");
+        }
     }
 
     void Application::onPrepare() {
@@ -263,10 +277,6 @@ namespace engine::core {
 
     void *Application::getNativeWindow() {
         return _window->getNativeWindow();
-    }
-
-    WindowProps Application::createWindowProps() {
-        return {};
     }
 
     void Application::setWindowIcon(const std::string &filePath) {

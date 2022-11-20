@@ -129,7 +129,6 @@ namespace engine::core {
         virtual void onCreate();
         virtual void onPrepare();
         virtual void onDestroy();
-        virtual WindowProps createWindowProps();
         virtual void onVisualDraw(time::Time dt);
 
     public:
@@ -188,6 +187,7 @@ namespace engine::core {
         Ref<SharpenEffect> sharpenEffect;
         Ref<EdgeDetectionEffect> edgeDetectionEffect;
         Ref<GaussianBlurEffect> gaussianBlurEffect;
+        ProjectProps projectProps;
 
     private:
         static Application* instance;

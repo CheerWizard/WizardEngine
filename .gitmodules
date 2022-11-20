@@ -42,8 +42,8 @@
     path = WizardEngine/vendor/dirent
     url = https://github.com/tronkko/dirent
 
-[submodule "WizardEngine/vendor/glm"]
-    path = WizardEngine/vendor/glm
+[submodule "WizardEngine/vendor/glm/glm"]
+    path = WizardEngine/vendor/glm/glm
     url = https://github.com/g-truc/glm
 
 [submodule "WizardEngine/vendor/zip"]

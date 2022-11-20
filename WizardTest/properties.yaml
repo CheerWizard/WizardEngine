@@ -1,0 +1,10 @@
+properties:
+  title: "WizardTest"
+  icon: ""
+  launcher: ""
+  window:
+    title: "WizardTest"
+    vsync: false
+    width: 800
+    height: 600
+    samples: 4

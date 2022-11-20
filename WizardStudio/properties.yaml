@@ -1,0 +1,10 @@
+properties:
+  title: "WizardStudio"
+  icon: "WizardStudio.png"
+  launcher: ""
+  window:
+    title: "WizardStudio"
+    vsync: false
+    width: 800
+    height: 600
+    samples: 4
