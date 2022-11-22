@@ -65,3 +65,7 @@ macro(dynamic_link target src)
     replace_file(${PROJECT_SOURCE_DIR}/${src}.dll ${PROJECT_BINARY_DIR}/${src}.dll)
     target_link_libraries(${target} PUBLIC ${src})
 endmacro()
+
+macro(move_to_build file)
+    replace_file(${PROJECT_SOURCE_DIR}/${file} ${PROJECT_BINARY_DIR}/${file})
+endmacro()

@@ -145,8 +145,16 @@ namespace engine::core {
         void pushScenes(const vector<Ref<Scene>>& scenes);
         void loadGamepadMappings(const char* mappingsFilePath);
         void setSkybox(Ref<Scene>& scene, const Entity& skybox) const;
-        void setSkyCube(Ref<Scene>& scene, const char* skyboxName, u32 skyboxId) const;
-        void setSkyCube(Ref<Scene>& scene, const char* skyboxName, const vector<TextureFace>& skyboxFaces) const;
+        void setSkyCube(
+                Ref<Scene>& scene,
+                const char* skyboxName,
+                u32 skyboxId
+        ) const;
+        void setSkyCube(
+                Ref<Scene>& scene,
+                const char* skyboxName,
+                const vector<TextureFace>& skyboxFaces
+        ) const;
 
     protected:
         void pushFront(Layer* layer);

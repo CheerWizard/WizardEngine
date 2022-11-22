@@ -83,6 +83,7 @@ namespace test {
                 app.getAspectRatio(),
                 scene.get()
         };
+        scene->setCamera(mainCamera);
 
         // setup skybox
         app.setSkyCube(scene, "Skybox", {
@@ -91,7 +92,7 @@ namespace test {
                 { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
                 { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
                 { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
-                { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM },
+                { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
         });
 
         // spawn random objects
@@ -386,9 +387,7 @@ namespace test {
         udp::Client::getRequestQueue().push(header, rotation);
         tcp::Client::getRequestQueue().push(header, rotation);
 
-        auto& skyboxTransform = Application::get().activeScene->getSkybox().get<Transform3dComponent>()->modelMatrix;
-        skyboxTransform.rotation[1] += 0.001f;
-        skyboxTransform.apply();
+        Application::get().activeScene->getSkybox().get<Skybox>()->rotate({0, 0.001f, 0});
 
         auto hoveredTransform = Application::get().hoveredEntity.get<Transform3dComponent>();
         if (hoveredTransform) {

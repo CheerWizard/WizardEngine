@@ -1,6 +1,6 @@
 properties:
   title: "WizardTest"
-  icon: ""
+  icon: "WizardTest.png"
   launcher: ""
   window:
     title: "WizardTest"

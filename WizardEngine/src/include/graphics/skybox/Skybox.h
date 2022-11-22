@@ -9,6 +9,7 @@
 #include <graphics/transform/TransformComponents.h>
 #include <graphics/core/texture/Texture.h>
 #include <graphics/core/Renderer.h>
+#include <graphics/camera/Camera.h>
 
 namespace engine::graphics {
 
@@ -25,6 +26,11 @@ namespace engine::graphics {
         SkyboxType type = SkyboxType::CUBE;
         VertexDataComponent<SkyboxVertex> geometry;
         CubeMapTextureComponent textures;
+        Transform3dComponent transform = {
+                {0,   0,   0},
+                {0,   0,   0},
+                {100, 100, 100}
+        };
 
         Skybox() = default;
 
@@ -38,6 +44,12 @@ namespace engine::graphics {
 
         ENGINE_API void serialize(YAML::Emitter &out) override;
         ENGINE_API void deserialize(const YAML::Node &parent) override;
+
+    public:
+        void rotate(const vec3f& rotation) {
+            transform.modelMatrix.rotation += rotation;
+            transform.modelMatrix.apply();
+        }
 
     private:
         void init() {
@@ -98,8 +110,11 @@ namespace engine::graphics {
     class SkyboxCube : public ecs::Entity {
 
     public:
-        SkyboxCube(const std::string& tag, ecs::EntityContainer* container, const CubeMapTextureComponent& cubeMapTextures)
-        : ecs::Entity(tag, container) {
+        SkyboxCube(
+                const std::string& tag,
+                ecs::EntityContainer* container,
+                const CubeMapTextureComponent& cubeMapTextures
+        ) : ecs::Entity(tag, container) {
             init(cubeMapTextures);
         }
 
@@ -107,25 +122,24 @@ namespace engine::graphics {
 
     private:
         void init(const CubeMapTextureComponent& cubeMapTextures) {
-            add<Transform3dComponent>(Transform3dComponent{
-                    {0,   0,   0},
-                    {0,   0,   0},
-                    {100, 100, 100}
-            });
             add<Skybox>(SkyboxType::CUBE, cubeMapTextures);
         }
     };
 
-    class ENGINE_API SkyboxRenderer : public VRenderer<SkyboxVertex> {
+    class ENGINE_API SkyboxRenderer {
 
     public:
-        SkyboxRenderer() : VRenderer<SkyboxVertex>() {}
+        SkyboxRenderer() = default;
 
     public:
         void init();
+        void release();
+        void upload(Skybox* skybox);
+        void render(const ecs::Entity& entity, Camera3D& camera);
 
-    protected:
-        void uploadUniforms(const ecs::Entity& entity) override;
+    private:
+        BaseShaderProgram shaderProgram;
+        VRenderModel renderModel;
     };
 
 }

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <ecs/Entity.h>
+#include <graphics/camera/Camera.h>
 
 namespace engine::ecs {
 
@@ -28,6 +29,14 @@ namespace engine::ecs {
             return skybox;
         }
 
+        inline void setCamera(const graphics::Camera3D& camera) {
+            this->camera = camera;
+        }
+
+        [[nodiscard]] inline graphics::Camera3D& getCamera() {
+            return camera;
+        }
+
         inline const std::string& getName() {
             return name;
         }
@@ -44,6 +53,7 @@ namespace engine::ecs {
     private:
         std::string name;
         Entity skybox;
+        graphics::Camera3D camera;
     };
 
 }

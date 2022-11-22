@@ -69,14 +69,7 @@ namespace engine::core {
 
     void Application::setSkybox(Ref<Scene> &scene, const Entity& skybox) const {
         scene->setSkybox(skybox);
-        auto skyboxGeometry = activeScene->getSkybox().get<Skybox>()->geometry;
-        if (skyboxGeometry.vertexData.values) {
-            ENGINE_INFO("uploadStatic skybox to renderer");
-            RenderSystem::skyboxRenderer.uploadStatic(skyboxGeometry);
-            delete skyboxGeometry.vertexData.values;
-        } else {
-            ENGINE_WARN("Skybox of '{0}' is already uploaded!", activeScene->getName());
-        }
+        RenderSystem::skyboxRenderer.upload(scene->getSkybox().get<Skybox>());
     }
 
     void Application::setSkyCube(Ref<Scene> &scene, const char* skyboxName, u32 skyboxId) const {
