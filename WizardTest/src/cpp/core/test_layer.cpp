@@ -56,14 +56,6 @@ namespace test {
             if (material) {
                 MaterialShader(shader).setMaterial(index, material);
             }
-            // update material list
-            auto materialList = registry.getComponent<MaterialList>(entityId);
-            if (materialList) {
-                for (u32 i = 0; i < materialList->materials.size(); i++) {
-                    auto& m = materialList->materials[i];
-                    MaterialShader(shader).setMaterial(index + i, &m);
-                }
-            }
         };
 
         batchRenderer->addEntityHandler(entityHandler);
@@ -125,7 +117,7 @@ namespace test {
             instancedPacks.emplace_back(pack);
         });
 
-        RenderSystem::sceneRenderers[0]->getShader().setInstancesPerDraw(VideoStats::getMaxSlots());
+        RenderSystem::sceneRenderers[0]->getShader().setInstancesPerDraw(6);
 
         io::ModelFile<BatchVertex<Vertex3d>>::read("assets/model/survival_pack.obj", {
             [this](const BaseMeshComponent<BatchVertex<Vertex3d>>& mesh) {
@@ -152,7 +144,7 @@ namespace test {
             }
         });
 
-        RenderSystem::sceneRenderers[1]->getShader().setInstancesPerDraw(VideoStats::getMaxSlots());
+        RenderSystem::sceneRenderers[1]->getShader().setInstancesPerDraw(6);
 
         io::ModelFile<InstanceVertex<Vertex3d>>::read("assets/model/survival_pack.obj", {
                 [this](const BaseMeshComponent<InstanceVertex<Vertex3d>>& mesh) {
@@ -184,77 +176,97 @@ namespace test {
 //        carSolidPhong.shiny.value = 16;
 //        car.add<SolidPhong>(carSolidPhong);
 
-        u32 materialTextures = TextureBuffer::loadArray({
-            "assets/materials/survival_pack/1001_albedo.jpg",
-            "assets/materials/survival_pack/1001_AO.jpg",
-            "assets/materials/survival_pack/1001_metallic.jpg",
-            "assets/materials/survival_pack/1001_normal.png",
-            "assets/materials/survival_pack/1001_roughness.jpg"
-        });
-        u32 textureArrayTypeId = TextureBuffer::getTypeId(TextureType::TEXTURE_2D_ARRAY);
+//        u32 materialTextures = TextureBuffer::loadArray({
+//            "assets/materials/survival_pack/1001_albedo.jpg",
+//            "assets/materials/survival_pack/1001_AO.jpg",
+//            "assets/materials/survival_pack/1001_metallic.jpg",
+//            "assets/materials/survival_pack/1001_normal.png",
+//            "assets/materials/survival_pack/1001_roughness.jpg"
+//        });
+//        u32 textureArrayTypeId = TextureBuffer::getTypeId(TextureType::TEXTURE_2D_ARRAY);
 
-        ShaderScript shaderScript;
-        shaderScript.updateRegistry = [&materialTextures, &textureArrayTypeId](const BaseShaderProgram&,ecs::Registry&) {
-            if (materialTextures != invalidTextureId) {
-                ENGINE_INFO("MaterialTexture: id={0}, typeId={1}", materialTextures, textureArrayTypeId);
-                TextureBuffer::bind(materialTextures, textureArrayTypeId);
-                TextureBuffer::activate(0);
-            }
-        };
-        shaderScript.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {};
+//        ShaderScript shaderScript;
+//        shaderScript.updateRegistry = [&materialTextures, &textureArrayTypeId](const BaseShaderProgram&,ecs::Registry&) {
+//            if (materialTextures != invalidTextureId) {
+//                ENGINE_INFO("MaterialTexture: id={0}, typeId={1}", materialTextures, textureArrayTypeId);
+//                TextureBuffer::bind(materialTextures, textureArrayTypeId);
+//                TextureBuffer::activate(0);
+//            }
+//        };
+//        shaderScript.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {};
 
-        batchRenderer->getShader().addScript(shaderScript);
-        instanceRenderer->getShader().addScript(shaderScript);
+//        batchRenderer->getShader().addScript(shaderScript);
+//        instanceRenderer->getShader().addScript(shaderScript);
+
+
+        u32 albedoSlot = TextureBuffer::load("assets/materials/survival_pack/1001_albedo.jpg");
+        u32 diffuseSlot = TextureBuffer::load("assets/materials/survival_pack/1001_AO.jpg");
+        u32 specularSlot = TextureBuffer::load("assets/materials/survival_pack/1001_metallic.jpg");
+        u32 normalSlot = TextureBuffer::load("assets/materials/survival_pack/1001_normal.png");
+        u32 depthSlot = TextureBuffer::load("assets/materials/survival_pack/1001_roughness.jpg");
 
         for (auto pack : packs) {
-            Phong phong;
-            phong.color() = { 0, 0, 0, 1 };
+            Material material;
+            material.color.value = { 0, 0, 0, 1 };
 
-            phong.ambient() = 0.2;
-            phong.diffuse() = 0.8;
-            phong.specular() = 0.5;
-            phong.shiny() = 1;
+            material.ambient.value = 0.2;
+            material.diffuse.value = 0.8;
+            material.specular.value = 0.5;
+            material.shiny.value = 1;
 
-            phong.enableAlbedoMap().value = true;
+            material.enableAlbedoMap.value = true;
 
-            phong.enableSpecularMap() = true;
+            material.enableSpecularMap.value = false;
 
-            phong.enableBlinn() = true;
+            material.enableBlinn.value = true;
 
-            phong.enableNormalMap() = true;
+            material.enableNormalMap.value = false;
 
-            phong.gamma() = 1;
+            material.gamma.value = 1;
 
-            phong.enableParallaxMap() = true;
-            phong.heightScale() = 0.5;
+            material.enableParallaxMap.value = false;
+            material.heightScale.value = 0.5;
 
-            phong.brightness() = 10;
+            material.brightness.value = 10;
 
-            pack.add<Phong>(phong);
+            material.albedoSlot.textureId = albedoSlot;
+            material.diffuseSlot.textureId = diffuseSlot;
+            material.specularSlot.textureId = specularSlot;
+            material.normalSlot.textureId = normalSlot;
+            material.depthSlot.textureId = depthSlot;
+
+            pack.add<Material>(material);
         }
 
         for (auto instancePack : instancedPacks) {
-            Phong phong;
-            phong.color() = { 0, 0, 0, 1 };
+            Material material;
+            material.color.value = { 0, 0, 0, 1 };
 
-            phong.ambient() = 0.2;
-            phong.diffuse() = 0.8;
-            phong.specular() = 0.5;
-            phong.shiny() = 1;
+            material.ambient.value = 0.2;
+            material.diffuse.value = 0.8;
+            material.specular.value = 0.5;
+            material.shiny.value = 1;
 
-            phong.enableAlbedoMap().value = true;
+            material.enableAlbedoMap.value = false;
 
-            phong.enableSpecularMap() = true;
+            material.enableSpecularMap.value = false;
 
-            phong.enableBlinn() = true;
+            material.enableBlinn.value = true;
 
-            phong.enableNormalMap() = true;
+            material.enableNormalMap.value = false;
 
-            phong.gamma() = 1;
+            material.gamma.value = 1;
 
-            phong.enableParallaxMap() = true;
-            phong.heightScale() = 0.5;
-            instancePack.add<Phong>(phong);
+            material.enableParallaxMap.value = false;
+            material.heightScale.value = 0.5;
+
+            material.albedoSlot.textureId = albedoSlot;
+            material.diffuseSlot.textureId = diffuseSlot;
+            material.specularSlot.textureId = specularSlot;
+            material.normalSlot.textureId = normalSlot;
+            material.depthSlot.textureId = depthSlot;
+
+            instancePack.add<Material>(material);
         }
 
         graphics::enableSRGB();
@@ -277,7 +289,7 @@ namespace test {
 //        );
 
         light = PhongLight(scene.get());
-        light.getColor() = { 100.39, 100.37, 0.25, 1 };
+        light.getColor() = { 0.39, 0.37, 0.25, 1 };
 
         bool tcpClientCreated = tcp::Client::init(this, this, this);
         if (tcpClientCreated) {

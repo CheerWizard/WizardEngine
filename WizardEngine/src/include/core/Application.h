@@ -32,8 +32,7 @@
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/GraphicsObject.h>
 #include <graphics/materials/Color.h>
-#include <graphics/materials/SolidPhong.h>
-#include <graphics/materials/Phong.h>
+#include <graphics/materials/Material.h>
 
 #include <scripting/ScriptSystem.h>
 #include <scripting/ScriptManager.h>

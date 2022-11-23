@@ -1,7 +1,7 @@
 #version 400 core
 
 #include include/f_scene.glsl
-#include material/phong.glsl
+#include material/material.glsl
 
 layout(location = 1) out vec4 brightColor;
 layout(location = 2) out int uuid;
@@ -9,7 +9,7 @@ layout(location = 2) out int uuid;
 const uint LIGHT_COUNT = 8;
 uniform PhongLight phongLight[LIGHT_COUNT];
 
-uniform Phong phong[PHONG_MAX_COUNT];
+uniform Material material[30 / MATERIAL_TEXTURE_UNITS];
 
 uniform int uuids[2];
 
@@ -18,7 +18,7 @@ void main() {
         PhongLight light = phongLight[i];
         vec3 lightDir = normalize(light.position - f_pos);
         fragment += applyPhong(
-            phong[getId()],
+            material[getId()],
             f_pos, f_uv, f_normal,
             f_tangent, f_bitangent,
             viewPosition,
@@ -27,7 +27,7 @@ void main() {
     }
 
     float brightness = dot(fragment.rgb, vec3(0.2126, 0.7152, 0.0722));
-    if (brightness > phong[getId()].brightness) {
+    if (brightness > material[getId()].brightness) {
         brightColor = vec4(fragment.rgb, 1);
     } else {
         brightColor = vec4(0, 0, 0, 1);

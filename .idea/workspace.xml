@@ -3,10 +3,13 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="CMakePresetLoader"><![CDATA[{
+  "useNewFormat": true
+}]]></component>
   <component name="CMakeReloadState">
     <option name="reloaded" value="true" />
   </component>
-  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+  <component name="CMakeRunConfigurationManager">
     <generated>
       <config projectName="Wizard" targetName="t-telldir" />
       <config projectName="Wizard" targetName="ContinuousCoverage" />
@@ -70,9 +73,9 @@
   </component>
   <component name="CMakeSettings">
     <configurations>
-      <configuration PROFILE_NAME="debug" ENABLED="true" GENERATION_DIR="Wizard/Debug" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Visual Studio" GENERATION_OPTIONS="-DDEBUG=1" />
-      <configuration PROFILE_NAME="release" ENABLED="true" GENERATION_DIR="Wizard/Release" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Visual Studio" />
-      <configuration PROFILE_NAME="visual-debug" ENABLED="true" GENERATION_DIR="Wizard/Visual/Debug" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Visual Studio" GENERATION_OPTIONS="-DVISUAL=1 -DDEBUG=1" />
+      <configuration PROFILE_NAME="debug" ENABLED="true" GENERATION_DIR="Wizard/Debug" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DDEBUG=1" />
+      <configuration PROFILE_NAME="release" ENABLED="true" GENERATION_DIR="Wizard/Release" CONFIG_NAME="Debug" />
+      <configuration PROFILE_NAME="visual-debug" ENABLED="true" GENERATION_DIR="Wizard/Visual/Debug" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DVISUAL=1 -DDEBUG=1" />
       <configuration PROFILE_NAME="visual-release" ENABLED="true" GENERATION_DIR="Wizard/Visual/Release" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DVISUAL=1" />
       <configuration PROFILE_NAME="profile" ENABLED="true" GENERATION_DIR="Wizard/Profile" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DVISUAL=1 -DPROFILING=1" />
     </configurations>
@@ -80,22 +83,17 @@
   <component name="ChangeListManager">
     <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Added Visual file for UI init">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/core/Application.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/core/Application.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/RenderSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/RenderSystem.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/skybox/Skybox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/skybox/Skybox.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/material/phong.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/material/material.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/scene_phong.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/scene_phong.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/post_processing/PostEffect.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/post_processing/PostEffect.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/material/Material.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/material/Material.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/core/Application.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/core/Application.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/ecs/Scene.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/ecs/Scene.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/skybox/Skybox.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/skybox/Skybox.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/assimp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/assimp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/freetype" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/freetype" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/glfw" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/glfw" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardTest/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardTest/properties.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/properties.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/texture/Texture.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/texture/Texture.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/materials/Material.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/materials/Material.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/materials/Phong.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/materials/SolidPhong.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/glm" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/glm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardTest/src/cpp/core/test_layer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/src/cpp/core/test_layer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake_tools/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake_tools/CMakeLists.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -149,10 +147,10 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/WizardEngine/src/cpp/core/ProjectManager.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/WizardEngine/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/WizardEngine/export_cmake/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/WizardEngine/src/cpp/core/ProjectManager.cpp" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -163,17 +161,11 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="cf.advertisement.text.has.clang-format" value="true" />
-    <property name="cf.first.check.clang-format" value="false" />
-    <property name="cidr.known.project.marker" value="true" />
-    <property name="cmake.loaded.for.project" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/WizardTest" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "settings.editor.selected.configurable": "preferences.pluginManager"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardTest" />
@@ -191,6 +183,16 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.WizardTest">
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Continuous" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="Continuous" CONFIG_NAME="debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -341,11 +343,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="cat" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="cat" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="cat">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -484,11 +481,6 @@
     <configuration name="zip" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="zip" CONFIG_NAME="debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="compile-external-libs.sh" type="ShConfigurationType" temporary="true">
@@ -1404,7 +1396,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />

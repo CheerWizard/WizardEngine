@@ -3,18 +3,18 @@
 #include ../include/gamma.glsl
 #include ../include/parallax.glsl
 
-struct Phong {
+struct Material {
     vec4 color;
 
-    int albedoSlot;
+    sampler2D albedoSlot;
     bool enableAlbedoMap;
     float ambient;
 
-    int diffuseSlot;
+    sampler2D diffuseSlot;
     bool enableDiffuseMap;
     float diffuse;
 
-    int specularSlot;
+    sampler2D specularSlot;
     bool enableSpecularMap;
     float specular;
     float shiny;
@@ -23,10 +23,10 @@ struct Phong {
 
     float gamma;
 
-    int normalSlot;
+    sampler2D normalSlot;
     bool enableNormalMap;
 
-    int depthSlot;
+    sampler2D depthSlot;
     bool enableParallaxMap;
     float heightScale;
     float minLayers;
@@ -35,10 +35,7 @@ struct Phong {
     float brightness;
 };
 
-uniform sampler2DArray textures;
-
-const uint TEXTURE_UNITS = 30;
-const uint PHONG_MAX_COUNT = TEXTURE_UNITS;
+const int MATERIAL_TEXTURE_UNITS = 5;
 
 struct PhongLight {
     vec3 position;
@@ -49,7 +46,7 @@ struct PhongLight {
 };
 
 vec4 applyPhong(
-    Phong material,
+    Material material,
     vec3 pos, vec2 uv, vec3 normal,
     vec3 tangent, vec3 bitangent,
     vec3 viewPos,
@@ -71,7 +68,7 @@ vec4 applyPhong(
 
     if (material.enableParallaxMap) {
         uv = parallax(
-            textures, material.depthSlot, uv, viewDir,
+            material.depthSlot, uv, viewDir,
             material.heightScale, material.minLayers, material.maxLayers
         );
         // UV bounds should be [0, 1]
@@ -83,7 +80,7 @@ vec4 applyPhong(
 
     if (material.enableNormalMap) {
         // apply normal map
-        normal = texture(textures, vec3(uv, material.normalSlot)).rgb;
+        normal = texture(material.normalSlot, uv).rgb;
         normal = normalize(normal * 2.0 - 1.0);
         normal = normalize(TBN * normal);
     }
@@ -100,17 +97,17 @@ vec4 applyPhong(
     specular *= light.specular;
 
     if (material.enableAlbedoMap) {
-        albedo = texture(textures, vec3(uv, material.albedoSlot)).rgb;
+        albedo = texture(material.albedoSlot, uv).rgb;
     }
 
     if (material.enableDiffuseMap) {
-        vec3 diffMap = texture(textures, vec3(uv, material.diffuseSlot)).rgb;
+        vec3 diffMap = texture(material.diffuseSlot, uv).rgb;
         amb *= diffMap;
         diff *= diffMap;
     }
 
     if (material.enableSpecularMap) {
-        vec3 specMap = texture(textures, vec3(uv, material.specularSlot)).rgb;
+        vec3 specMap = texture(material.specularSlot, uv).rgb;
         specular *= specMap;
     }
 

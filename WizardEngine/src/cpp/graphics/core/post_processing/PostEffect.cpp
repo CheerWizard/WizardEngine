@@ -50,7 +50,7 @@ namespace engine::graphics {
             if (texture.isValid()) {
                 shaderProgram.setUniformStructField(effect.name, texture.sampler);
                 TextureBuffer::activate(texture.sampler.value);
-                TextureBuffer::bind(texture.textureId, TextureBuffer::getTypeId(static_cast<TextureType>(texture.typeId)));
+                TextureBuffer::bind(texture.textureId, texture.typeId);
             }
         }
     }
