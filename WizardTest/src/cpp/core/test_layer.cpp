@@ -212,21 +212,16 @@ namespace test {
             material.diffuse.value = 0.8;
             material.specular.value = 0.5;
             material.shiny.value = 1;
-
-            material.enableAlbedoMap.value = true;
-
-            material.enableSpecularMap.value = false;
+            material.gamma.value = 1;
+            material.heightScale.value = 0.5;
+            material.brightness.value = 10;
 
             material.enableBlinn.value = true;
-
-            material.enableNormalMap.value = false;
-
-            material.gamma.value = 1;
-
+            material.enableAlbedoMap.value = true;
+            material.enableDiffuseMap.value = false;
+            material.enableSpecularMap.value = false;
+            material.enableNormalMap.value = true;
             material.enableParallaxMap.value = false;
-            material.heightScale.value = 0.5;
-
-            material.brightness.value = 10;
 
             material.albedoSlot.textureId = albedoSlot;
             material.diffuseSlot.textureId = diffuseSlot;
@@ -245,19 +240,16 @@ namespace test {
             material.diffuse.value = 0.8;
             material.specular.value = 0.5;
             material.shiny.value = 1;
-
-            material.enableAlbedoMap.value = true;
-
-            material.enableSpecularMap.value = false;
+            material.gamma.value = 1;
+            material.heightScale.value = 0.5;
 
             material.enableBlinn.value = true;
+            material.enableAlbedoMap.value = true;
+            material.enableDiffuseMap.value = true;
+            material.enableSpecularMap.value = true;
+            material.enableNormalMap.value = true;
+            material.enableParallaxMap.value = true;
 
-            material.enableNormalMap.value = false;
-
-            material.gamma.value = 1;
-
-            material.enableParallaxMap.value = false;
-            material.heightScale.value = 0.5;
 
             material.albedoSlot.textureId = albedoSlot;
             material.diffuseSlot.textureId = diffuseSlot;
@@ -268,7 +260,7 @@ namespace test {
             instancePack.add<Material>(material);
         }
 
-//        graphics::enableSRGB();
+        graphics::enableSRGB();
 
 //        Cube<BatchVertex<Vertex3d>> cube;
 //        Object<BatchVertex<Vertex3d>> cubeObj {
@@ -288,7 +280,7 @@ namespace test {
 //        );
 
         light = PhongLight(scene.get());
-        light.getColor() = { 100.39, 100.37, 100.25, 1 };
+        light.getColor() = { 0.39, 0.37, 0.25, 1 };
 
         bool tcpClientCreated = tcp::Client::init(this, this, this);
         if (tcpClientCreated) {

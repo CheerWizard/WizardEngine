@@ -79,23 +79,23 @@ namespace engine::graphics {
         shaderProgram.setUniformArrayStructField(index, material->name, material->enableNormalMap);
         shaderProgram.setUniformArrayStructField(index, material->name, material->enableParallaxMap);
 
-        if (material->enableAlbedoMap.value && material->albedoSlot.textureId != invalidTextureId) {
+        if (material->enableAlbedoMap.value) {
             setMaterialTexture(index, material->name, material->albedoSlot);
         }
 
-        if (material->enableDiffuseMap.value && material->diffuseSlot.textureId != invalidTextureId) {
+        if (material->enableDiffuseMap.value) {
             setMaterialTexture(index, material->name, material->diffuseSlot);
         }
 
-        if (material->enableSpecularMap.value && material->specularSlot.textureId != invalidTextureId) {
+        if (material->enableSpecularMap.value) {
             setMaterialTexture(index, material->name, material->specularSlot);
         }
 
-        if (material->enableNormalMap.value && material->normalSlot.textureId != invalidTextureId) {
+        if (material->enableNormalMap.value) {
             setMaterialTexture(index, material->name, material->normalSlot);
         }
 
-        if (material->enableParallaxMap.value && material->depthSlot.textureId != invalidTextureId) {
+        if (material->enableParallaxMap.value) {
             setMaterialTexture(index, material->name, material->depthSlot);
         }
     }

@@ -20,18 +20,18 @@ namespace engine::graphics {
         FloatUniform ambient = { "ambient", 1 };
         FloatUniform diffuse = { "diffuse", 1 };
         FloatUniform specular = { "specular", 1 };
-        FloatUniform shiny = { "specular", 1 };
-        FloatUniform gamma = { "specular", 2.2 };
-        FloatUniform heightScale = { "specular", 0.1 };
-        FloatUniform minLayers = { "specular", 8 };
-        FloatUniform maxLayers = { "specular", 32 };
-        FloatUniform brightness = { "specular", 1 };
+        FloatUniform shiny = { "shiny", 1 };
+        FloatUniform gamma = { "gamma", 2.2 };
+        FloatUniform heightScale = { "heightScale", 0.1 };
+        FloatUniform minLayers = { "minLayers", 8 };
+        FloatUniform maxLayers = { "maxLayers", 32 };
+        FloatUniform brightness = { "brightness", 1 };
         BoolUniform enableAlbedoMap = { "enableAlbedoMap", false };
-        BoolUniform enableDiffuseMap = { "enableAlbedoMap", false };
-        BoolUniform enableSpecularMap = { "enableAlbedoMap", false };
-        BoolUniform enableBlinn = { "enableAlbedoMap", false };
-        BoolUniform enableNormalMap = { "enableAlbedoMap", false };
-        BoolUniform enableParallaxMap = { "enableAlbedoMap", false };
+        BoolUniform enableDiffuseMap = { "enableDiffuseMap", false };
+        BoolUniform enableSpecularMap = { "enableSpecularMap", false };
+        BoolUniform enableBlinn = { "enableBlinn", false };
+        BoolUniform enableNormalMap = { "enableNormalMap", false };
+        BoolUniform enableParallaxMap = { "enableParallaxMap", false };
         TextureComponent albedoSlot = {
                 TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
                 IntUniform { "albedoSlot", 0 }
