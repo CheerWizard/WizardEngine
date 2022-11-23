@@ -9,7 +9,7 @@ layout(location = 2) out int uuid;
 const uint LIGHT_COUNT = 8;
 uniform PhongLight phongLight[LIGHT_COUNT];
 
-uniform Material material[30 / MATERIAL_TEXTURE_UNITS];
+uniform Material material[2];
 
 uniform int uuids[2];
 

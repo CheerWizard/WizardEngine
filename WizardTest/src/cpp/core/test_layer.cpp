@@ -198,7 +198,6 @@ namespace test {
 //        batchRenderer->getShader().addScript(shaderScript);
 //        instanceRenderer->getShader().addScript(shaderScript);
 
-
         u32 albedoSlot = TextureBuffer::load("assets/materials/survival_pack/1001_albedo.jpg");
         u32 diffuseSlot = TextureBuffer::load("assets/materials/survival_pack/1001_AO.jpg");
         u32 specularSlot = TextureBuffer::load("assets/materials/survival_pack/1001_metallic.jpg");
@@ -247,7 +246,7 @@ namespace test {
             material.specular.value = 0.5;
             material.shiny.value = 1;
 
-            material.enableAlbedoMap.value = false;
+            material.enableAlbedoMap.value = true;
 
             material.enableSpecularMap.value = false;
 
@@ -269,7 +268,7 @@ namespace test {
             instancePack.add<Material>(material);
         }
 
-        graphics::enableSRGB();
+//        graphics::enableSRGB();
 
 //        Cube<BatchVertex<Vertex3d>> cube;
 //        Object<BatchVertex<Vertex3d>> cubeObj {
@@ -289,7 +288,7 @@ namespace test {
 //        );
 
         light = PhongLight(scene.get());
-        light.getColor() = { 0.39, 0.37, 0.25, 1 };
+        light.getColor() = { 100.39, 100.37, 100.25, 1 };
 
         bool tcpClientCreated = tcp::Client::init(this, this, this);
         if (tcpClientCreated) {

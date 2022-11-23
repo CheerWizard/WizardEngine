@@ -102,9 +102,10 @@ namespace engine::graphics {
 
     void MaterialShader::setMaterialTexture(u32 index, const char* materialName, const TextureComponent& texture) {
         if (texture.textureId != invalidTextureId) {
+            ENGINE_INFO("MaterialShader::setMaterialTexture()");
             shaderProgram.setUniformArrayStructField(index, materialName, texture.sampler);
-            TextureBuffer::bind(texture.textureId, texture.typeId);
             TextureBuffer::activate(texture.sampler.value);
+            TextureBuffer::bind(texture.textureId, texture.typeId);
         }
     }
 

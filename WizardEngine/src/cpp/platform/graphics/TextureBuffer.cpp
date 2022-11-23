@@ -177,10 +177,7 @@ namespace engine::graphics {
                 internalFormat = GL_RGBA8;
                 dataFormat = GL_RGBA;
                 break;
-            default:
-                internalFormat = GL_RGB;
-                dataFormat = GL_RGB;
-                break;
+            default: break;
         }
 
         bool formatSupported = internalFormat & dataFormat;
