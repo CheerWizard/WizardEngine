@@ -80,6 +80,9 @@ namespace engine::graphics {
         TextureComponent(const u32& textureId, const u32& typeId, const s32& samplerSlot)
         : textureId(textureId), sampler({ "texture", samplerSlot }) {}
 
+        TextureComponent(const u32& typeId, const shader::IntUniform& sampler)
+        : typeId(typeId), sampler(sampler) {}
+
         TextureComponent(const IntUniform& sampler) : sampler(sampler) {}
 
         ENGINE_API void serialize(YAML::Emitter &out) override;

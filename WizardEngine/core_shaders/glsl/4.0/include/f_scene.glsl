@@ -14,9 +14,3 @@ uniform int entityId[128];
 uint getId() {
     return f_id;
 }
-
-//void updateFragment() {
-//    vec3 normal = normalize(f_normal);
-//    vec3 viewDir = normalize(viewPosition - f_pos);
-//    fragment = vec4(0.5, 0.5, 0.5, 1.0);
-//}

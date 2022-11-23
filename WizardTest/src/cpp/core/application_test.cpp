@@ -29,9 +29,4 @@ namespace test {
         engine::core::Application::pushFront(new TestLayer());
     }
 
-    WindowProps Application::createWindowProps() {
-        return WindowProps {
-            "Test"
-        };
-    }
 }

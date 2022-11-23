@@ -8,6 +8,8 @@
 #include <visual/FontAwesome4.h>
 #include <visual/AssetBrowser.h>
 
+#include <core/Application.h>
+
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <imgui_stdlib.h>
@@ -121,6 +123,7 @@ namespace engine::visual {
 
                     if (ImGui::Button(ICON_FA_FOLDER_OPEN" Open", { 205, 34 })) {
                         selectedProject.loadScenes();
+                        Application::get().pushScenes(selectedProject.scenes);
                         ProjectManager::setCurrentProject(selectedProject);
                         AssetBrowser::setProject(selectedProject);
                         onProjectOpen(selectedProject);

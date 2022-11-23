@@ -21,7 +21,15 @@ namespace engine::core {
         PROFILE_FUNCTION();
         ENGINE_INFO("onCreate()");
 
-        _window = createScope<Window>(createWindowProps());
+        if (!ProjectProps::createFromFile("properties.yaml", projectProps)) {
+            ENGINE_WARN("Application: Unable to create properties from properties.yaml");
+        }
+
+        _window = createScope<Window>(projectProps.windowProps);
+        if (projectProps.icon != "") {
+            setWindowIcon(projectProps.icon);
+        }
+
         createGraphics();
         Input::create(_window->getNativeWindow());
 
@@ -40,6 +48,12 @@ namespace engine::core {
         initEdgeDetection();
         initGaussianBlur();
         initTextureMixer();
+
+        if (projectProps.launcher != "") {
+            setActiveScene(io::LocalAssetManager::loadScene(projectProps.launcher.c_str()));
+        } else {
+            ENGINE_WARN("Application: Launcher scene not specified in properties.yaml!");
+        }
     }
 
     void Application::onPrepare() {
@@ -55,14 +69,7 @@ namespace engine::core {
 
     void Application::setSkybox(Ref<Scene> &scene, const Entity& skybox) const {
         scene->setSkybox(skybox);
-        auto skyboxGeometry = activeScene->getSkybox().get<Skybox>()->geometry;
-        if (skyboxGeometry.vertexData.values) {
-            ENGINE_INFO("uploadStatic skybox to renderer");
-            RenderSystem::skyboxRenderer.uploadStatic(skyboxGeometry);
-            delete skyboxGeometry.vertexData.values;
-        } else {
-            ENGINE_WARN("Skybox of '{0}' is already uploaded!", activeScene->getName());
-        }
+        RenderSystem::skyboxRenderer.upload(scene->getSkybox().get<Skybox>());
     }
 
     void Application::setSkyCube(Ref<Scene> &scene, const char* skyboxName, u32 skyboxId) const {
@@ -263,10 +270,6 @@ namespace engine::core {
 
     void *Application::getNativeWindow() {
         return _window->getNativeWindow();
-    }
-
-    WindowProps Application::createWindowProps() {
-        return {};
     }
 
     void Application::setWindowIcon(const std::string &filePath) {
@@ -486,6 +489,7 @@ namespace engine::core {
 
     void Application::pushScenes(const vector<Ref<Scene>> &scenes) {
         if (scenes.empty()) return;
+        this->scenes.clear();
         this->scenes = scenes;
         setActiveScene(0);
     }

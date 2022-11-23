@@ -32,7 +32,6 @@ namespace studio {
     void Application::onCreate() {
         engine::core::Application::onCreate();
         EDITOR_INFO("Current workspace '{0}'", CURRENT_WORKING_DIR);
-        setWindowIcon("WizardStudio.png");
 
         auto* activity = new Activity(
                 this,
@@ -45,9 +44,4 @@ namespace studio {
         pushBack(activity);
     }
 
-    WindowProps Application::createWindowProps() {
-        return WindowProps {
-            "Wizard Studio"
-        };
-    }
 }

@@ -120,19 +120,22 @@ namespace engine::shader {
     GLint ShaderProgram::getUniformArrayElementLocation(const char* name, u32 index) const {
         std::stringstream ss;
         ss << name << "[" << index << "]";
-        return glGetUniformLocation(id, ss.str().c_str());
+        std::string s = ss.str();
+        return glGetUniformLocation(id, s.c_str());
     }
 
     GLint ShaderProgram::getUniformArrayStructLocation(const char* structName, const char* fieldName, u32 index) const {
         std::stringstream ss;
         ss << structName << "[" << index << "]" << "." << fieldName;
-        return glGetUniformLocation(id, ss.str().c_str());
+        std::string s = ss.str();
+        return glGetUniformLocation(id, s.c_str());
     }
 
     GLint ShaderProgram::getUniformStructLocation(const char *structName, const char *fieldName) const {
         std::stringstream ss;
         ss << structName << "." << fieldName;
-        return glGetUniformLocation(id, ss.str().c_str());
+        std::string s = ss.str();
+        return glGetUniformLocation(id, s.c_str());
     }
 
     void ShaderProgram::setUniform(const FloatUniform &uniform) const {
@@ -316,7 +319,8 @@ namespace engine::shader {
     }
 
     void ShaderProgram::setUniformArrayStructField(const uint32_t &index, const char* structName, const FloatUniform &structField) const {
-        glUniform1f(getUniformArrayStructLocation(structName, structField.name, index), structField.value);
+        auto location = getUniformArrayStructLocation(structName, structField.name, index);
+        glUniform1f(location, structField.value);
     }
 
     void ShaderProgram::setUniformArrayStructField(const uint32_t &index, const char* structName, const DoubleUniform &structField) const {

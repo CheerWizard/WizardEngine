@@ -5,13 +5,19 @@
 #pragma once
 
 #include <ecs/Entity.h>
+#include <graphics/camera/Camera.h>
 
 namespace engine::ecs {
 
     class ENGINE_API Scene : public EntityContainer {
 
     public:
-        Scene(const char* name = "Untitled") : name(name) {}
+        Scene() {
+            name = "Untitled";
+        }
+
+        Scene(const std::string& name) : name(name) {}
+
         ~Scene();
 
     public:
@@ -21,6 +27,14 @@ namespace engine::ecs {
 
         [[nodiscard]] inline const Entity& getSkybox() const {
             return skybox;
+        }
+
+        inline void setCamera(const graphics::Camera3D& camera) {
+            this->camera = camera;
+        }
+
+        [[nodiscard]] inline graphics::Camera3D& getCamera() {
+            return camera;
         }
 
         inline const std::string& getName() {
@@ -39,6 +53,7 @@ namespace engine::ecs {
     private:
         std::string name;
         Entity skybox;
+        graphics::Camera3D camera;
     };
 
 }

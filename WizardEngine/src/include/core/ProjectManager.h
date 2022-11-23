@@ -8,6 +8,7 @@
 #include <core/core.h>
 #include <scripting/Scriptable.h>
 #include <ecs/Scene.h>
+#include <platform/core/Window.h>
 
 #include <string>
 
@@ -17,10 +18,27 @@ namespace engine::core {
         V_RELEASE, V_DEBUG, V_VISUAL, V_PROFILING
     };
 
-    struct ENGINE_API Project : io::Serializable {
+    struct ENGINE_API ProjectProps : io::Serializable {
+        void serialize(YAML::Emitter &out) override;
+        void deserialize(const YAML::Node &parent) override;
+
+        std::string title = "Untitled";
+        std::string icon = "";
+        std::string launcher = "";
+        WindowProps windowProps = { "Untitled" };
+
+        ProjectProps() = default;
+
+    public:
+        void save(const char* filepath);
+        static bool createFromFile(const char* filepath, ProjectProps& props);
+    };
+
+    struct ENGINE_API Project {
         std::string name;
         std::string workspacePath;
         vector<Ref<Scene>> scenes;
+        ProjectProps props;
 
         Project() = default;
         Project(const std::string& name, const std::string& workspacePath)
@@ -40,6 +58,7 @@ namespace engine::core {
         [[nodiscard]] inline std::string getExePath(ProjectVersion version) const;
         [[nodiscard]] inline std::string getBuildPath(ProjectVersion version) const;
         [[nodiscard]] inline std::string getZipPath(ProjectVersion version) const;
+        [[nodiscard]] inline std::string getPropsPath() const;
 
         void loadScenes();
         void saveScenes() const;

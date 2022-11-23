@@ -26,12 +26,8 @@ namespace game {
 
     void Application::onCreate() {
         engine::core::Application::onCreate();
+
         engine::core::Application::pushFront(new GameLayer());
     }
 
-    WindowProps Application::createWindowProps() {
-        return WindowProps {
-                "Game"
-        };
-    }
 }

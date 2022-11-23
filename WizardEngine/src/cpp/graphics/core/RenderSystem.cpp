@@ -104,7 +104,8 @@ namespace engine::graphics {
         setDepthTest(true);
         // skybox
         setDepthTestOperator(LESS_EQUAL); // we need to pass depth test for some skybox pixels
-        skyboxRenderer.renderStatic(activeScene->getSkybox());
+        activeScene->getRegistry();
+        skyboxRenderer.render(activeScene->getSkybox(), activeScene->getCamera());
         setDepthTestOperator(LESS);
         // notify that scene frame end drawing
         if (callback != nullptr) {

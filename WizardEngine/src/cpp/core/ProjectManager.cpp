@@ -14,6 +14,69 @@
 
 namespace engine::core {
 
+    void ProjectProps::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
+
+        out << YAML::Key << "properties";
+        yaml::serialize(out, "title", title);
+        yaml::serialize(out, "icon", icon);
+        yaml::serialize(out, "launcher", launcher);
+
+        out << YAML::BeginMap;
+        out << YAML::Key << "window";
+        yaml::serialize(out, "title", windowProps.title);
+        yaml::serialize(out, "vsync", windowProps.vSyncEnabled);
+        yaml::serialize(out, "width", windowProps.width);
+        yaml::serialize(out, "height", windowProps.height);
+        yaml::serialize(out, "samples", windowProps.sampleSize);
+        out << YAML::EndMap;
+
+        out << YAML::EndMap;
+    }
+
+    void ProjectProps::deserialize(const YAML::Node &parent) {
+        auto root = parent["properties"];
+        if (root) {
+            yaml::deserialize(root, "title", title);
+            yaml::deserialize(root, "icon", icon);
+            yaml::deserialize(root, "launcher", launcher);
+
+            auto window = root["window"];
+            if (window) {
+                yaml::deserialize(window, "title", windowProps.title);
+                yaml::deserialize(window, "vsync", windowProps.vSyncEnabled);
+                yaml::deserialize(window, "width", windowProps.width);
+                yaml::deserialize(window, "height", windowProps.height);
+                yaml::deserialize(window, "samples", windowProps.sampleSize);
+            }
+        }
+    }
+
+    void ProjectProps::save(const char *filepath) {
+        YAML::Emitter out;
+        serialize(out);
+        engine::filesystem::write(filepath, out.c_str());
+    }
+
+    bool ProjectProps::createFromFile(const char* filepath, ProjectProps& props) {
+        YAML::Node propsNode;
+
+        try {
+            propsNode = YAML::LoadFile(filepath);
+            props.deserialize(propsNode);
+        } catch (YAML::ParserException& e) {
+            ENGINE_ERR("ProjectProps: Failed to parse YAML text from '{0}' file!", filepath);
+            ENGINE_ERR(e.msg);
+            return false;
+        } catch (YAML::BadFile& e) {
+            ENGINE_ERR("ProjectProps: Failed to open '{0}' file", filepath);
+            ENGINE_ERR(e.msg);
+            return false;
+        }
+
+        return true;
+    }
+
     std::string Project::getFullPath(const char *assetPath) const {
         std::stringstream ss;
         ss << workspacePath << "/" << name << assetPath;
@@ -94,6 +157,12 @@ namespace engine::core {
         return ss.str();
     }
 
+    std::string Project::getPropsPath() const {
+        std::stringstream ss;
+        ss << getFullPath() << "/" << "properties" << ".yaml";
+        return ss.str();
+    }
+
     vector<Project> ProjectManager::projects;
     Project ProjectManager::currentProject;
 
@@ -132,6 +201,8 @@ namespace engine::core {
         engine::filesystem::newDirectory(newProject.getModelsPath());
         engine::filesystem::newDirectory(newProject.getScenesPath());
         engine::filesystem::newDirectory(newProject.getScriptsPath());
+        // create props
+        newProject.props.save(newProject.getPropsPath().c_str());
         // save in memory
         projects.emplace_back(newProject);
         // auto build
@@ -274,6 +345,10 @@ namespace engine::core {
             engine::filesystem::newDirectory(project.getModelsPath());
             engine::filesystem::newDirectory(project.getScenesPath());
             engine::filesystem::newDirectory(project.getScriptsPath());
+        }
+        // copy props
+        if (!filesystem::copyRecursive(project.getPropsPath().c_str(), project.getBuildPath(projectVersion).c_str())) {
+            ENGINE_ERR("Unable to copy properties.yaml into {0}", project.getBuildPath(projectVersion));
         }
         // remove scripts assets from build path
         std::string scriptsBinaryPath = project.getBuildPath(projectVersion) + "/assets/scripts";

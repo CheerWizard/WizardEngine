@@ -161,7 +161,7 @@ namespace engine::graphics {
     }
 
     void TextureBuffer::load(const u32& id, const io::TextureData &textureData) {
-        GLenum internalFormat = 0, dataFormat = 0;
+        GLenum internalFormat = GL_RED, dataFormat = GL_RED;
         int channels = textureData.channels, width = textureData.width, height = textureData.height;
 
         switch (channels) {
@@ -177,10 +177,7 @@ namespace engine::graphics {
                 internalFormat = GL_RGBA8;
                 dataFormat = GL_RGBA;
                 break;
-            default:
-                internalFormat = GL_RGB;
-                dataFormat = GL_RGB;
-                break;
+            default: break;
         }
 
         bool formatSupported = internalFormat & dataFormat;

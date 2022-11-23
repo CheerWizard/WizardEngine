@@ -32,8 +32,7 @@
 #include <graphics/core/geometry/Quad.h>
 #include <graphics/GraphicsObject.h>
 #include <graphics/materials/Color.h>
-#include <graphics/materials/SolidPhong.h>
-#include <graphics/materials/Phong.h>
+#include <graphics/materials/Material.h>
 
 #include <scripting/ScriptSystem.h>
 #include <scripting/ScriptManager.h>
@@ -129,7 +128,6 @@ namespace engine::core {
         virtual void onCreate();
         virtual void onPrepare();
         virtual void onDestroy();
-        virtual WindowProps createWindowProps();
         virtual void onVisualDraw(time::Time dt);
 
     public:
@@ -146,8 +144,16 @@ namespace engine::core {
         void pushScenes(const vector<Ref<Scene>>& scenes);
         void loadGamepadMappings(const char* mappingsFilePath);
         void setSkybox(Ref<Scene>& scene, const Entity& skybox) const;
-        void setSkyCube(Ref<Scene>& scene, const char* skyboxName, u32 skyboxId) const;
-        void setSkyCube(Ref<Scene>& scene, const char* skyboxName, const vector<TextureFace>& skyboxFaces) const;
+        void setSkyCube(
+                Ref<Scene>& scene,
+                const char* skyboxName,
+                u32 skyboxId
+        ) const;
+        void setSkyCube(
+                Ref<Scene>& scene,
+                const char* skyboxName,
+                const vector<TextureFace>& skyboxFaces
+        ) const;
 
     protected:
         void pushFront(Layer* layer);
@@ -188,6 +194,7 @@ namespace engine::core {
         Ref<SharpenEffect> sharpenEffect;
         Ref<EdgeDetectionEffect> edgeDetectionEffect;
         Ref<GaussianBlurEffect> gaussianBlurEffect;
+        ProjectProps projectProps;
 
     private:
         static Application* instance;

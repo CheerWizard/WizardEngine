@@ -13,7 +13,6 @@ namespace test {
 
     protected:
         void onCreate() override;
-        engine::core::WindowProps createWindowProps() override;
     };
 
 }
