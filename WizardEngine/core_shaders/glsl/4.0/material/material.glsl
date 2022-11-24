@@ -33,6 +33,18 @@ struct Material {
     float maxLayers;
 
     float brightness;
+
+    sampler2D metallicSlot;
+    bool enableMetallicMap;
+    float metallic;
+
+    sampler2D roughnessSlot;
+    bool enableRoughnessMap;
+    float roughness;
+
+    sampler2D aoSlot;
+    bool enableAOMap;
+    float ao;
 };
 
 const int MATERIAL_TEXTURE_UNITS = 5;
@@ -85,7 +97,7 @@ vec4 applyPhong(
         normal = normalize(TBN * normal);
     }
 
-    vec3 albedo = vec3(0);
+    vec3 albedo = material.color.rgb;
     vec3 amb = vec3(light.ambient);
     vec3 diff = diff(light.color.xyz, lightDir, normal) * light.diffuse;
     vec3 specular;
@@ -111,6 +123,24 @@ vec4 applyPhong(
         specular *= specMap;
     }
 
-    vec3 color = amb * (material.color.xyz + albedo + diff + specular);
+    // calculate PBR surface model
+
+    float metallic = material.metallicSlot;
+    float roughness = material.roughness;
+    float ao = material.ao;
+
+    if (material.enableMetallicMap) {
+        metallic = texture(material.metallicSlot, uv).r;
+    }
+
+    if (material.enableRoughnessMap) {
+        roughness = texture(material.roughnessSlot, uv).r;
+    }
+
+    if (material.enableAOMap) {
+        ao = texture(material.aoSlot, uv).r;
+    }
+
+    vec3 color = amb * (albedo + diff + specular);
     return vec4(gamma(color.rgb, material.gamma), material.color.w);
 }

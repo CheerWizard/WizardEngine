@@ -57,7 +57,7 @@ void main() {
             normal = normalize(TBN * normal);
         }
 
-        vec3 albedo = vec3(0);
+        vec3 albedo = material[getId()].color.rgb;
         vec3 amb = vec3(light.ambient);
         vec3 diff = diff(light.color.xyz, lightDir, normal) * light.diffuse;
         vec3 specular;
@@ -83,7 +83,25 @@ void main() {
             specular *= specMap;
         }
 
-        vec3 color = amb * (material[getId()].color.xyz + albedo + diff + specular);
+        // calculate PBR surface model
+
+        float metallic = material[getId()].metallicSlot;
+        float roughness = material[getId()].roughness;
+        float ao = material[getId()].ao;
+
+        if (material[getId()].enableMetallicMap) {
+            metallic = texture(material[getId()].metallicSlot, uv).r;
+        }
+
+        if (material[getId()].enableRoughnessMap) {
+            roughness = texture(material[getId()].roughnessSlot, uv).r;
+        }
+
+        if (material[getId()].enableAOMap) {
+            ao = texture(material[getId()].aoSlot, uv).r;
+        }
+
+        vec3 color = amb * (albedo + diff + specular);
         fragment += vec4(gamma(color.rgb, material[getId()].gamma), material[getId()].color.w);
     }
 

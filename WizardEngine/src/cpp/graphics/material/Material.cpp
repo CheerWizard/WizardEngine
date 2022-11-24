@@ -20,17 +20,26 @@ namespace engine::graphics {
         yaml::serialize(out, "heightScale", heightScale);
         yaml::serialize(out, "minLayers", minLayers);
         yaml::serialize(out, "maxLayers", maxLayers);
+        yaml::serialize(out, "metallic", metallic);
+        yaml::serialize(out, "roughness", roughness);
+        yaml::serialize(out, "ao", ao);
         yaml::serialize(out, "enableBlinn", enableBlinn);
         yaml::serialize(out, "enableAlbedoMap", enableAlbedoMap);
         yaml::serialize(out, "enableDiffuseMap", enableDiffuseMap);
         yaml::serialize(out, "enableSpecularMap", enableSpecularMap);
         yaml::serialize(out, "enableNormalMap", enableNormalMap);
         yaml::serialize(out, "enableParallaxMap", enableParallaxMap);
+        yaml::serialize(out, "enableMetallicMap", enableMetallicMap);
+        yaml::serialize(out, "enableRoughnessMap", enableRoughnessMap);
+        yaml::serialize(out, "enableAOMap", enableAOMap);
         albedoSlot.serialize(out);
         diffuseSlot.serialize(out);
         specularSlot.serialize(out);
         normalSlot.serialize(out);
         depthSlot.serialize(out);
+        metallicSlot.serialize(out);
+        roughnessSlot.serialize(out);
+        aoSlot.serialize(out);
         out << YAML::EndMap;
     }
 
@@ -47,17 +56,26 @@ namespace engine::graphics {
             yaml::deserialize(root, "heightScale", heightScale);
             yaml::deserialize(root, "minLayers", minLayers);
             yaml::deserialize(root, "maxLayers", maxLayers);
+            yaml::deserialize(root, "metallic", metallic);
+            yaml::deserialize(root, "roughness", roughness);
+            yaml::deserialize(root, "ao", ao);
             yaml::deserialize(root, "enableBlinn", enableBlinn);
             yaml::deserialize(root, "enableAlbedoMap", enableAlbedoMap);
             yaml::deserialize(root, "enableDiffuseMap", enableDiffuseMap);
             yaml::deserialize(root, "enableSpecularMap", enableSpecularMap);
             yaml::deserialize(root, "enableNormalMap", enableNormalMap);
             yaml::deserialize(root, "enableParallaxMap", enableParallaxMap);
+            yaml::deserialize(root, "enableMetallicMap", enableMetallicMap);
+            yaml::deserialize(root, "enableRoughnessMap", enableRoughnessMap);
+            yaml::deserialize(root, "enableAOMap", enableAOMap);
             albedoSlot.deserialize(root);
             diffuseSlot.deserialize(root);
             specularSlot.deserialize(root);
             normalSlot.deserialize(root);
             depthSlot.deserialize(root);
+            metallicSlot.deserialize(root);
+            roughnessSlot.deserialize(root);
+            aoSlot.deserialize(root);
         }
     }
 
@@ -78,6 +96,9 @@ namespace engine::graphics {
         shaderProgram.setUniformArrayStructField(index, material->name, material->enableSpecularMap);
         shaderProgram.setUniformArrayStructField(index, material->name, material->enableNormalMap);
         shaderProgram.setUniformArrayStructField(index, material->name, material->enableParallaxMap);
+        shaderProgram.setUniformArrayStructField(index, material->name, material->enableMetallicMap);
+        shaderProgram.setUniformArrayStructField(index, material->name, material->enableRoughnessMap);
+        shaderProgram.setUniformArrayStructField(index, material->name, material->enableAOMap);
 
         if (material->enableAlbedoMap.value) {
             setMaterialTexture(index, material->name, material->albedoSlot);
@@ -97,6 +118,18 @@ namespace engine::graphics {
 
         if (material->enableParallaxMap.value) {
             setMaterialTexture(index, material->name, material->depthSlot);
+        }
+
+        if (material->enableMetallicMap.value) {
+            setMaterialTexture(index, material->name, material->metallicSlot);
+        }
+
+        if (material->enableRoughnessMap.value) {
+            setMaterialTexture(index, material->name, material->roughnessSlot);
+        }
+
+        if (material->enableAOMap.value) {
+            setMaterialTexture(index, material->name, material->aoSlot);
         }
     }
 
