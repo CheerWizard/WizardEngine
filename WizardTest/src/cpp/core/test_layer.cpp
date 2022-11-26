@@ -222,6 +222,9 @@ namespace test {
             material.enableSpecularMap.value = false;
             material.enableNormalMap.value = true;
             material.enableParallaxMap.value = false;
+            material.enableMetallicMap.value = true;
+            material.enableRoughnessMap.value = true;
+            material.enableAOMap.value = true;
 
             material.albedoSlot.textureId = albedoSlot;
             material.diffuseSlot.textureId = diffuseSlot;
@@ -245,11 +248,13 @@ namespace test {
 
             material.enableBlinn.value = true;
             material.enableAlbedoMap.value = true;
-            material.enableDiffuseMap.value = true;
-            material.enableSpecularMap.value = true;
+            material.enableDiffuseMap.value = false;
+            material.enableSpecularMap.value = false;
             material.enableNormalMap.value = true;
-            material.enableParallaxMap.value = true;
-
+            material.enableParallaxMap.value = false;
+            material.enableMetallicMap.value = true;
+            material.enableRoughnessMap.value = true;
+            material.enableAOMap.value = true;
 
             material.albedoSlot.textureId = albedoSlot;
             material.diffuseSlot.textureId = diffuseSlot;

@@ -101,8 +101,43 @@ void main() {
             ao = texture(material[getId()].aoSlot, uv).r;
         }
 
-        vec3 color = amb * (albedo + diff + specular);
-        fragment += vec4(gamma(color.rgb, material[getId()].gamma), material[getId()].color.w);
+        vec3 F0 = vec3(0.04);
+        F0 = mix(F0, albedo, metallic);
+
+        // reflectance equation
+        vec3 Lo = vec3(0.0);
+
+        // calculate per-light radiance
+        vec3 H = normalize(viewDir + lightDir);
+        float distance    = length(lightPos - pos);
+        float attenuation = 1.0 / (distance * distance);
+        vec3 radiance     = light.color.rgb * attenuation;
+
+        // cook-torrance brdf
+        float NDF = distributionGGX(normal, H, roughness);
+        float G   = geometrySmith(normal, viewDir, lightDir, roughness);
+        vec3 F    = fresnelSchlick(max(dot(H, viewDir), 0.0), F0);
+
+        vec3 kS = F;
+        vec3 kD = vec3(1.0) - kS;
+        kD *= 1.0 - metallic;
+
+        vec3 numerator    = NDF * G * F;
+        float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(dot(normal, lightDir), 0.0) + 0.0001;
+        vec3 specular     = numerator / denominator;
+
+        // add to outgoing radiance Lo
+        float NdotL = max(dot(normal, lightDir), 0.0);
+        Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+
+        amb = vec3(0.03) * albedo * ao;
+        vec3 color = amb + Lo;
+        color = color / (color + vec3(1.0));
+
+        fragment += vec4(gamma(color, material.gamma), material[getId()].color.w);
+
+//        vec3 color = amb * (albedo + diff + specular);
+//        fragment += vec4(gamma(color.rgb, material[getId()].gamma), material[getId()].color.w);
     }
 
     float brightness = dot(fragment.rgb, vec3(0.2126, 0.7152, 0.0722));
