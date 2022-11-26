@@ -14,6 +14,7 @@ uniform Material material[2];
 uniform int uuids[2];
 
 void main() {
+
     for (uint i = 0 ; i < LIGHT_COUNT ; i++) {
         PhongLight light = phongLight[i];
         vec3 pos = f_pos;

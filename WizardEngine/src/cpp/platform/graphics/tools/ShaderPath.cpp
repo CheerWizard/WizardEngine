@@ -15,7 +15,7 @@ namespace engine::io {
     }
 
     const char* getGraphicsCoreVersion() {
-        return "#version 400";
+        return "#version 400 core";
     }
 
 }
