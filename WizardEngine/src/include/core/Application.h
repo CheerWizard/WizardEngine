@@ -33,6 +33,7 @@
 #include <graphics/GraphicsObject.h>
 #include <graphics/materials/Color.h>
 #include <graphics/materials/Material.h>
+#include <graphics/hdr_env/hdr_env.h>
 
 #include <scripting/ScriptSystem.h>
 #include <scripting/ScriptManager.h>
@@ -76,6 +77,7 @@ using namespace engine::scripting;
 #include <visual/AssetBrowser.h>
 #include <visual/Log.h>
 #include <visual/ImageLayout.h>
+#include <visual/MaterialPanel.h>
 
 using namespace engine::visual;
 #endif
@@ -154,6 +156,8 @@ namespace engine::core {
                 const char* skyboxName,
                 const vector<TextureFace>& skyboxFaces
         ) const;
+        void setHdrEnv(Ref<Scene>& scene, const Entity& hdrEnv) const;
+        void setHdrEnvCube(Ref<Scene>& scene, const char* filepath) const;
 
     protected:
         void pushFront(Layer* layer);

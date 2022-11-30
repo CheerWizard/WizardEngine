@@ -105,14 +105,13 @@ namespace engine::graphics {
         glActiveTexture(GL_TEXTURE0 + slot);
     }
 
-    u32 TextureBuffer::load(const char* filePath) {
+    u32 TextureBuffer::load(const char* filePath, bool hdrEnabled) {
         if (exists(filePath)) {
             return textureIdCache.at(filePath);
         }
 
-        auto textureData = io::TextureFile::read(filePath);
-
         TextureBuffer textureBuffer;
+        auto textureData = io::TextureFile::read(filePath, hdrEnabled);
         if (textureData.data == nullptr) {
             ENGINE_WARN("Can't stream texture {0} from NULL data!", filePath);
         } else {
@@ -160,24 +159,71 @@ namespace engine::graphics {
         return textureBuffer.id;
     }
 
+    u32 TextureBuffer::generateCubeMap(
+            u32 width, u32 height,
+            ColorFormat internalFormat, ColorFormat dataFormat,
+            PixelsType pixelsType
+    ) {
+        TextureBuffer textureBuffer(TextureType::CUBE_MAP);
+        textureBuffer.bind();
+        for (u32 i = 0 ; i < 6 ; i++) {
+            GLint internalF;
+            GLenum dataF;
+            GLenum pixelsT;
+            switch (internalFormat) {
+                case ColorFormat::RGB16F:
+                    internalF = GL_RGB16F;
+                    break;
+            }
+            switch (dataFormat) {
+                case ColorFormat::RGB:
+                    dataF = GL_RGB;
+                    break;
+            }
+            switch (pixelsType) {
+                case PixelsType::FLOAT:
+                    pixelsT = GL_FLOAT;
+                    break;
+                case PixelsType::U_BYTE:
+                    pixelsT = GL_UNSIGNED_BYTE;
+                    break;
+            }
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalF, width, height, 0, dataF, pixelsT, nullptr);
+        }
+        textureBuffer.unbind();
+        return textureBuffer.id;
+    }
+
     void TextureBuffer::load(const u32& id, const io::TextureData &textureData) {
         GLenum internalFormat = GL_RED, dataFormat = GL_RED;
         int channels = textureData.channels, width = textureData.width, height = textureData.height;
 
-        switch (channels) {
-            case CHANNEL_RED:
-                internalFormat = GL_RED;
-                dataFormat = GL_RED;
-                break;
-            case CHANNEL_RGB:
-                internalFormat = GL_RGB8;
-                dataFormat = GL_RGB;
-                break;
-            case CHANNEL_RGBA:
-                internalFormat = GL_RGBA8;
-                dataFormat = GL_RGBA;
-                break;
-            default: break;
+        if (textureData.hdr) {
+            internalFormat = GL_RGB16F;
+            dataFormat = GL_RGB;
+            glTextureStorage2D(id, 1, internalFormat, width, height);
+            glTextureSubImage2D(id, 0, 0, 0, width, height, dataFormat, GL_FLOAT, textureData.data);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            return;
+        } else {
+            switch (channels) {
+                case CHANNEL_RED:
+                    internalFormat = GL_RED;
+                    dataFormat = GL_RED;
+                    break;
+                case CHANNEL_RGB:
+                    internalFormat = GL_RGB8;
+                    dataFormat = GL_RGB;
+                    break;
+                case CHANNEL_RGBA:
+                    internalFormat = GL_RGBA8;
+                    dataFormat = GL_RGBA;
+                    break;
+                default: break;
+            }
         }
 
         bool formatSupported = internalFormat & dataFormat;
@@ -261,7 +307,8 @@ namespace engine::graphics {
                 internalFormat = GL_RGBA8;
                 dataFormat = GL_RGBA;
                 break;
-            default: break;
+            default:
+                break;
         }
         // we can load texture as sRGB type
         if (textureData.sRGB) {

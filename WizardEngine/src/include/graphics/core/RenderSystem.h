@@ -12,6 +12,7 @@
 #include <graphics/skybox/Skybox.h>
 #include <graphics/core/TextureMixer.h>
 #include <graphics/post_effects/PostEffects.h>
+#include <graphics/hdr_env/hdr_env.h>
 
 namespace engine::graphics {
 
@@ -50,6 +51,8 @@ namespace engine::graphics {
         static bool enableScreenRenderer;
         // skybox
         static SkyboxRenderer skyboxRenderer;
+        // HDR env
+        static HdrEnvRenderer hdrEnvRenderer;
         // scene
         static vector<Ref<Renderer>> sceneRenderers;
         // outlining

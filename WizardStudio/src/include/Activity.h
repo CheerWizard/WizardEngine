@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include <gui/ImguiLayer.h>
-#include <gui/ImageLayout.h>
+#include <visual/ImageLayout.h>
 #include <gui/SceneHierarchy.h>
 #include <gui/MeshLayout.h>
 

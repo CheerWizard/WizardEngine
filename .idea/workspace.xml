@@ -3,13 +3,10 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
-  <component name="CMakePresetLoader"><![CDATA[{
-  "useNewFormat": true
-}]]></component>
   <component name="CMakeReloadState">
     <option name="reloaded" value="true" />
   </component>
-  <component name="CMakeRunConfigurationManager">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
     <generated>
       <config projectName="Wizard" targetName="t-telldir" />
       <config projectName="Wizard" targetName="ContinuousCoverage" />
@@ -81,19 +78,17 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Added Visual file for UI init">
+    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Added PBR support">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/material/phong.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/material/material.glsl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/scene_phong.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/scene_phong.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/post_processing/PostEffect.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/post_processing/PostEffect.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/material/Material.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/material/Material.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/core/Application.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/core/Application.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/texture/Texture.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/texture/Texture.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/materials/Material.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/materials/Material.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/materials/Phong.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/materials/SolidPhong.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/glm" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/glm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardTest/src/cpp/core/test_layer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/src/cpp/core/test_layer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/graphics/tools/ShaderPath.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/graphics/tools/ShaderPath.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/assimp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/assimp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/freetype" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/freetype" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/glfw" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/glfw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardStudio/src/include/Activity.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardStudio/src/include/Activity.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,10 +142,10 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/WizardEngine/src/cpp/core/ProjectManager.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/WizardEngine/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/WizardEngine/export_cmake/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/WizardEngine/src/cpp/core/ProjectManager.cpp" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -161,11 +156,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "settings.editor.selected.configurable": "preferences.pluginManager"
-  }
-}]]></component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="cidr.known.project.marker" value="true" />
+    <property name="cmake.loaded.for.project" value="true" />
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardTest" />
@@ -183,16 +182,6 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.WizardTest">
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="Continuous" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="Continuous" CONFIG_NAME="debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -343,6 +332,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="cat" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="cat" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="cat">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -481,6 +475,11 @@
     <configuration name="zip" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="zip" CONFIG_NAME="debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="compile-external-libs.sh" type="ShConfigurationType" temporary="true">
@@ -1024,20 +1023,8 @@
       <workItem from="1668956355610" duration="932000" />
       <workItem from="1669116587382" duration="8750000" />
       <workItem from="1669139144206" duration="2068000" />
-    </task>
-    <task id="LOCAL-00152" summary="Streaming audio chunk from asset .wav file.">
-      <created>1650811365821</created>
-      <option name="number" value="00152" />
-      <option name="presentableId" value="LOCAL-00152" />
-      <option name="project" value="LOCAL" />
-      <updated>1650811365821</updated>
-    </task>
-    <task id="LOCAL-00153" summary="Streaming audio chunk from asset .wav file.">
-      <created>1650817610801</created>
-      <option name="number" value="00153" />
-      <option name="presentableId" value="LOCAL-00153" />
-      <option name="project" value="LOCAL" />
-      <updated>1650817610801</updated>
+      <workItem from="1669412798010" duration="5870000" />
+      <workItem from="1669450064900" duration="2779000" />
     </task>
     <task id="LOCAL-00154" summary="TCP server init">
       <created>1650827256272</created>
@@ -1368,7 +1355,21 @@
       <option name="project" value="LOCAL" />
       <updated>1668968851306</updated>
     </task>
-    <option name="localTasksCounter" value="201" />
+    <task id="LOCAL-00201" summary="Fixed Material Rendering">
+      <created>1669245704519</created>
+      <option name="number" value="00201" />
+      <option name="presentableId" value="LOCAL-00201" />
+      <option name="project" value="LOCAL" />
+      <updated>1669245704519</updated>
+    </task>
+    <task id="LOCAL-00202" summary="Added PBR support">
+      <created>1669421360364</created>
+      <option name="number" value="00202" />
+      <option name="presentableId" value="LOCAL-00202" />
+      <option name="project" value="LOCAL" />
+      <updated>1669421360364</updated>
+    </task>
+    <option name="localTasksCounter" value="203" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1396,6 +1397,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
@@ -1408,8 +1410,6 @@
       <path value="$PROJECT_DIR$/ScriptDLL/engine/spdlog" />
       <path value="$PROJECT_DIR$/ScriptDLL/engine/stb/stb" />
     </ignored-roots>
-    <MESSAGE value="Add few serializables" />
-    <MESSAGE value="Fixed scene serialization" />
     <MESSAGE value="UUID component for identifying loaded/saved world" />
     <MESSAGE value="Loading/Saving world into Server" />
     <MESSAGE value="AssetManager for loading/saving scenes locally and remotely. GDResponse and status codes for handling response state. Updated scene and GDP serialization" />
@@ -1433,7 +1433,9 @@
     <MESSAGE value="Remove workspace.xml from .gitignore to share CMake settings" />
     <MESSAGE value="Add properties.yaml for Project Properties feature" />
     <MESSAGE value="Added Visual file for UI init" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Visual file for UI init" />
+    <MESSAGE value="Fixed Material Rendering" />
+    <MESSAGE value="Added PBR support" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added PBR support" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -16,15 +16,18 @@ namespace engine::graphics {
             case ColorFormat::RGBA16F: return GL_RGBA16F;
             case ColorFormat::RGB32F: return GL_RGB32F;
             case ColorFormat::RGBA32F: return GL_RGBA32F;
+            case ColorFormat::RGB: return GL_RGB;
             default: return 0;
         }
     }
 
     uint32_t toGLDepthStencilFormat(const DepthStencilFormat &format) {
         switch (format) {
-            case DepthStencilFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
             case DepthStencilFormat::DEPTH16:         return GL_DEPTH_COMPONENT16;
-            case DepthStencilFormat::DEPTH32:         return GL_DEPTH32F_STENCIL8;
+            case DepthStencilFormat::DEPTH24:         return GL_DEPTH_COMPONENT24;
+            case DepthStencilFormat::DEPTH32:         return GL_DEPTH_COMPONENT32;
+            case DepthStencilFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
+            case DepthStencilFormat::DEPTH32STENCIL8: return GL_DEPTH32F_STENCIL8;
             default: return 0;
         }
     }
@@ -68,7 +71,11 @@ namespace engine::graphics {
         textureTarget = format.samples > 1 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
         loadAttachments();
         const auto& colors = getColorAttachments();
-        ENGINE_INFO("Update FBO format. Color buffer id: {0}", colors[0].id);
+        if (colors.empty()) {
+            ENGINE_INFO("Update FBO format. No color attachments");
+        } else {
+            ENGINE_INFO("Update FBO format. Color buffer id: {0}", colors[0].id);
+        }
         return colors;
     }
 
@@ -162,6 +169,10 @@ namespace engine::graphics {
 
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, textureTarget, colorAttachment.id, 0);
         }
+    }
+
+    void FrameBuffer::attachCubeMap(u32 i, u32 textureId) {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, textureId, 0);
     }
 
     void FrameBuffer::attachDepthStencil() {

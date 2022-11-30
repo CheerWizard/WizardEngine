@@ -104,6 +104,7 @@ namespace engine::graphics {
         void resize(u32 width, u32 height);
         int readPixel(u32 attachmentIndex, s32 x, s32 y) const;
         void removeAttachment(u32 attachmentIndex, s32 value);
+        void attachCubeMap(u32 i, u32 textureId);
 
     private:
         bool isCompleted();

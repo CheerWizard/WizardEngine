@@ -1,6 +1,6 @@
 [Window][Test]
 Pos=0,0
-Size=1024,768
+Size=1366,768
 Collapsed=0
 
 [Window][Debug##Default]
@@ -23,7 +23,7 @@ DockId=0x00000001,0
 
 [Window][Scene]
 Pos=0,26
-Size=1024,742
+Size=1366,742
 Collapsed=0
 DockId=0xB52D7659,0
 
@@ -34,7 +34,19 @@ Size=807,584
 Collapsed=0
 DockId=0x00000001,1
 
+[Window][M_SurvivalPack]
+ViewportPos=625,65
+ViewportId=0x7549B3AD
+Size=524,914
+Collapsed=0
+
+[Window][L_Sun]
+ViewportPos=-86,422
+ViewportId=0x5EF70CA4
+Size=800,600
+Collapsed=0
+
 [Docking][Data]
 DockNode  ID=0x00000001 Pos=291,226 Size=807,584 Selected=0xAD88028E
-DockSpace ID=0xB52D7659 Window=0x784DD132 Pos=512,410 Size=1024,742 CentralNode=1 Selected=0xE192E354
+DockSpace ID=0xB52D7659 Window=0x784DD132 Pos=445,263 Size=1366,742 CentralNode=1 Selected=0xE192E354
 

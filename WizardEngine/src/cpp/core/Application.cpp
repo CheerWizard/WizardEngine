@@ -54,6 +54,8 @@ namespace engine::core {
         } else {
             ENGINE_WARN("Application: Launcher scene not specified in properties.yaml!");
         }
+
+        RenderSystem::hdrEnvRenderer.init();
     }
 
     void Application::onPrepare() {
@@ -84,6 +86,26 @@ namespace engine::core {
         u32 skyboxId = TextureBuffer::load(skyboxFaces);
         TextureBuffer::setDefaultParamsCubeMap(skyboxId);
         setSkyCube(scene, skyboxName, skyboxId);
+    }
+
+    void Application::setHdrEnv(Ref<Scene>& scene, const Entity& hdrEnv) const {
+        scene->setHdrEnv(hdrEnv);
+        RenderSystem::hdrEnvRenderer.upload(scene->getHdrEnv().get<HdrEnv>());
+    }
+
+    void Application::setHdrEnvCube(Ref<Scene>& scene, const char* filepath) const {
+        setHdrEnv(
+                scene,
+                HdrEnvCube(
+                        "HdrEnvCube",
+                        scene.get(),
+                        TextureComponent(
+                                TextureBuffer::load(filepath, true),
+                                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
+                                IntUniform { "hdrEnv", 0 }
+                        )
+                )
+        );
     }
 
     void Application::onDestroy() {

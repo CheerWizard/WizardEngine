@@ -6,7 +6,7 @@
 layout(location = 1) out vec4 brightColor;
 layout(location = 2) out int uuid;
 
-const uint LIGHT_COUNT = 8;
+const uint LIGHT_COUNT = 1;
 uniform PhongLight phongLight[LIGHT_COUNT];
 
 uniform Material material[2];
@@ -14,6 +14,7 @@ uniform Material material[2];
 uniform int uuids[2];
 
 void main() {
+
     for (uint i = 0 ; i < LIGHT_COUNT ; i++) {
         PhongLight light = phongLight[i];
         vec3 pos = f_pos;
@@ -57,7 +58,7 @@ void main() {
             normal = normalize(TBN * normal);
         }
 
-        vec3 albedo = vec3(0);
+        vec3 albedo = material[getId()].color.rgb;
         vec3 amb = vec3(light.ambient);
         vec3 diff = diff(light.color.xyz, lightDir, normal) * light.diffuse;
         vec3 specular;
@@ -83,8 +84,61 @@ void main() {
             specular *= specMap;
         }
 
-        vec3 color = amb * (material[getId()].color.xyz + albedo + diff + specular);
-        fragment += vec4(gamma(color.rgb, material[getId()].gamma), material[getId()].color.w);
+        // calculate PBR surface model
+
+        float metallic = material[getId()].metallic;
+        float roughness = material[getId()].roughness;
+        float ao = material[getId()].ao;
+
+        if (material[getId()].enableMetallicMap) {
+            metallic = texture(material[getId()].metallicSlot, uv).r;
+        }
+
+        if (material[getId()].enableRoughnessMap) {
+            roughness = texture(material[getId()].roughnessSlot, uv).r;
+        }
+
+        if (material[getId()].enableAOMap) {
+            ao = texture(material[getId()].aoSlot, uv).r;
+        }
+
+        vec3 F0 = vec3(0.04);
+        F0 = mix(F0, albedo, metallic);
+
+        // reflectance equation
+        vec3 Lo = vec3(0.0);
+
+        // calculate per-light radiance
+        vec3 H = normalize(viewDir + lightDir);
+        float distance    = length(lightPos - pos);
+        float attenuation = 1.0 / (distance * distance);
+        vec3 radiance     = light.color.rgb * attenuation;
+
+        // cook-torrance brdf
+        float NDF = distributionGGX(normal, H, roughness);
+        float G   = geometrySmith(normal, viewDir, lightDir, roughness);
+        vec3 F    = fresnelSchlick(max(dot(H, viewDir), 0.0), F0);
+
+        vec3 kS = F;
+        vec3 kD = vec3(1.0) - kS;
+        kD *= 1.0 - metallic;
+
+        vec3 numerator    = NDF * G * F;
+        float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(dot(normal, lightDir), 0.0) + 0.0001;
+        specular = numerator / denominator;
+
+        // add to outgoing radiance Lo
+        float NdotL = max(dot(normal, lightDir), 0.0);
+        Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+
+        amb = vec3(0.03) * albedo * ao;
+        vec3 color = amb + Lo;
+        color = color / (color + vec3(1.0));
+
+        fragment += vec4(gamma(color, material[getId()].gamma), material[getId()].color.w);
+
+//        vec3 color = amb * (albedo + diff + specular);
+//        fragment += vec4(gamma(color.rgb, material[getId()].gamma), material[getId()].color.w);
     }
 
     float brightness = dot(fragment.rgb, vec3(0.2126, 0.7152, 0.0722));

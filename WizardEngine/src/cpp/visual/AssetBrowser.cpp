@@ -6,7 +6,6 @@
 
 #include <core/FileExtensions.h>
 #include <event/MouseCodes.h>
-#include <build/Build.h>
 #include <graphics/core/sources/ShaderSource.h>
 #include <tools/terminal.h>
 #include <visual/Widgets.h>

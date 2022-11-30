@@ -78,17 +78,17 @@ namespace test {
         scene->setCamera(mainCamera);
 
         // setup skybox
-        app.setSkyCube(scene, "Skybox", {
-                { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
-                { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
-                { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
-                { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
-                { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
-                { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
-        });
+//        app.setSkyCube(scene, "Skybox", {
+//                { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
+//                { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
+//                { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
+//                { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
+//                { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
+//                { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
+//        });
 
         // spawn random objects
-        math::random(-10, 10, 2, [this, &scene](int i, f32 r) {
+        math::random(-10, 10, 1, [this, &scene](int i, f32 r) {
             Batch3d pack = Batch3d(&"SurvivalBackPack"[i], scene.get());
             pack.getTransform().position = { r * i, r * i, r * i };
             pack.getTransform().rotation = { r * i, r * i, r * i };
@@ -102,8 +102,6 @@ namespace test {
 
         packs[0].getTransform().position = { 1, 1, 1 };
         packs[0].applyTransform();
-        packs[1].getTransform().position = { 10, 10, 10 };
-        packs[1].applyTransform();
 
         math::random(-10, 10, 0, [this, &scene](int i, f32 r) {
             Instance3d pack = Instance3d(&"SurvivalBackPackInstanced"[i], scene.get());
@@ -199,66 +197,53 @@ namespace test {
 //        instanceRenderer->getShader().addScript(shaderScript);
 
         u32 albedoSlot = TextureBuffer::load("assets/materials/survival_pack/1001_albedo.jpg");
-        u32 diffuseSlot = TextureBuffer::load("assets/materials/survival_pack/1001_AO.jpg");
-        u32 specularSlot = TextureBuffer::load("assets/materials/survival_pack/1001_metallic.jpg");
+        u32 aoSlot = TextureBuffer::load("assets/materials/survival_pack/1001_AO.jpg");
+        u32 metallicSlot = TextureBuffer::load("assets/materials/survival_pack/1001_metallic.jpg");
         u32 normalSlot = TextureBuffer::load("assets/materials/survival_pack/1001_normal.png");
-        u32 depthSlot = TextureBuffer::load("assets/materials/survival_pack/1001_roughness.jpg");
+        u32 roughnessSlot = TextureBuffer::load("assets/materials/survival_pack/1001_roughness.jpg");
+
+        // setup HDR env
+        Application::get().setHdrEnvCube(scene, "assets/hdr/ice_lake.hdr");
+
+        // setup material
+        Material material;
+        material.title = "M_SurvivalPack";
+
+        material.color.value = { 0, 0, 0, 1 };
+
+        material.ambient.value = 1.0;
+        material.diffuse.value = 0.8;
+        material.specular.value = 0.5;
+        material.shiny.value = 1;
+        material.gamma.value = 2.2;
+        material.heightScale.value = 0.5;
+        material.brightness.value = 10;
+
+        material.enableBlinn.value = true;
+        material.enableAlbedoMap.value = true;
+        material.enableDiffuseMap.value = false;
+        material.enableSpecularMap.value = false;
+        material.enableNormalMap.value = true;
+        material.enableParallaxMap.value = false;
+        material.enableMetallicMap.value = true;
+        material.enableRoughnessMap.value = true;
+        material.enableAOMap.value = true;
+
+        material.albedoSlot.textureId = albedoSlot;
+        material.aoSlot.textureId = aoSlot;
+        material.metallicSlot.textureId = metallicSlot;
+        material.normalSlot.textureId = normalSlot;
+        material.roughnessSlot.textureId = roughnessSlot;
 
         for (auto pack : packs) {
-            Material material;
-            material.color.value = { 0, 0, 0, 1 };
-
-            material.ambient.value = 0.2;
-            material.diffuse.value = 0.8;
-            material.specular.value = 0.5;
-            material.shiny.value = 1;
-            material.gamma.value = 1;
-            material.heightScale.value = 0.5;
-            material.brightness.value = 10;
-
-            material.enableBlinn.value = true;
-            material.enableAlbedoMap.value = true;
-            material.enableDiffuseMap.value = false;
-            material.enableSpecularMap.value = false;
-            material.enableNormalMap.value = true;
-            material.enableParallaxMap.value = false;
-
-            material.albedoSlot.textureId = albedoSlot;
-            material.diffuseSlot.textureId = diffuseSlot;
-            material.specularSlot.textureId = specularSlot;
-            material.normalSlot.textureId = normalSlot;
-            material.depthSlot.textureId = depthSlot;
-
             pack.add<Material>(material);
         }
 
         for (auto instancePack : instancedPacks) {
-            Material material;
-            material.color.value = { 0, 0, 0, 1 };
-
-            material.ambient.value = 0.2;
-            material.diffuse.value = 0.8;
-            material.specular.value = 0.5;
-            material.shiny.value = 1;
-            material.gamma.value = 1;
-            material.heightScale.value = 0.5;
-
-            material.enableBlinn.value = true;
-            material.enableAlbedoMap.value = true;
-            material.enableDiffuseMap.value = true;
-            material.enableSpecularMap.value = true;
-            material.enableNormalMap.value = true;
-            material.enableParallaxMap.value = true;
-
-
-            material.albedoSlot.textureId = albedoSlot;
-            material.diffuseSlot.textureId = diffuseSlot;
-            material.specularSlot.textureId = specularSlot;
-            material.normalSlot.textureId = normalSlot;
-            material.depthSlot.textureId = depthSlot;
-
             instancePack.add<Material>(material);
         }
+
+        currentEntity = packs[0];
 
         graphics::enableSRGB();
 
@@ -279,8 +264,8 @@ namespace test {
 //                }
 //        );
 
-        light = PhongLight(scene.get());
-        light.getColor() = { 0.39, 0.37, 0.25, 1 };
+        light = PhongLight("L_Sun", scene.get());
+        light.getPosition() = { 0, 100, 10 };
 
         bool tcpClientCreated = tcp::Client::init(this, this, this);
         if (tcpClientCreated) {
@@ -390,13 +375,13 @@ namespace test {
         udp::Client::getRequestQueue().push(header, rotation);
         tcp::Client::getRequestQueue().push(header, rotation);
 
-        Application::get().activeScene->getSkybox().get<Skybox>()->rotate({0, 0.001f, 0});
+//        Application::get().activeScene->getSkybox().get<Skybox>()->rotate({0, 0.001f, 0});
 
         auto hoveredTransform = Application::get().hoveredEntity.get<Transform3dComponent>();
         if (hoveredTransform) {
             ENGINE_INFO("hoveredEntity: transform");
-            hoveredTransform->modelMatrix.rotation[1] += 0.1f;
-            hoveredTransform->modelMatrix.apply();
+//            hoveredTransform->modelMatrix.rotation[1] += 0.1f;
+//            hoveredTransform->modelMatrix.apply();
         }
 
         if (EventRegistry::mouseHold(ButtonLeft)) {
@@ -731,8 +716,18 @@ namespace test {
         });
 
         AssetBrowser::draw(dt);
-        Log::draw("Log");
+//        Log::draw("Log");
         sceneViewport.setId(RenderSystem::finalRenderTargetId);
         sceneViewport.onUpdate(dt);
+
+        Material* currentMaterial = currentEntity.get<Material>();
+        if (currentMaterial) {
+            materialPanel.draw(*currentMaterial);
+        }
+
+        Panel::begin(light.get<TagComponent>()->tag.c_str(), { 800, 600 });
+        Controller::draw(light.get<PhongLightComponent>()->position, 0, 100);
+        ColorPicker::draw(light.get<PhongLightComponent>()->color);
+        Panel::end();
      }
 }

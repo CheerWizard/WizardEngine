@@ -60,4 +60,9 @@ namespace engine::visual {
                                float paddingTop = 0, float paddingBottom = 0, float paddingLeft = 0, float paddingRight = 0);
     };
 
+    class ENGINE_API ColorPicker final {
+    public:
+        static bool draw(Vec4fUniform& colorUniform);
+    };
+
 }
