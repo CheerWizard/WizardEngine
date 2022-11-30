@@ -21,7 +21,13 @@ namespace engine::graphics {
         RGBA8,
         RED_INTEGER,
         RGB16F, RGBA16F,
-        RGB32F, RGBA32F
+        RGB32F, RGBA32F,
+        RGB
+    };
+
+    enum class PixelsType {
+        U_BYTE,
+        FLOAT
     };
 
     // texture format for depth and stencil buffers
@@ -30,7 +36,9 @@ namespace engine::graphics {
         DEPTH16,
         DEPTH24PAD8,
         DEPTH24STENCIL8,
-        DEPTH32
+        DEPTH24,
+        DEPTH32,
+        DEPTH32STENCIL8
     };
 
     enum class TextureParamName {

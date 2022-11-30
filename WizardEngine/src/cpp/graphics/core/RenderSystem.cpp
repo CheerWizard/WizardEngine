@@ -16,6 +16,8 @@ namespace engine::graphics {
     bool RenderSystem::enableScreenRenderer = true;
     // skybox
     SkyboxRenderer RenderSystem::skyboxRenderer;
+    // HDR env
+    HdrEnvRenderer RenderSystem::hdrEnvRenderer;
     // scene
     vector<Ref<Renderer>> RenderSystem::sceneRenderers;
     // outlining
@@ -38,6 +40,7 @@ namespace engine::graphics {
     void RenderSystem::onDestroy() {
         screenRenderer.release();
         skyboxRenderer.release();
+        hdrEnvRenderer.release();
 //        pointRenderer.release();
         for (const auto& sceneRenderer : sceneRenderers) {
             sceneRenderer->release();
@@ -102,9 +105,9 @@ namespace engine::graphics {
         stencilMask(false);
         setStencilTestOperator(ALWAYS, 0, false);
         setDepthTest(true);
-        // skybox
+        // skybox and HDR env
         setDepthTestOperator(LESS_EQUAL); // we need to pass depth test for some skybox pixels
-        activeScene->getRegistry();
+        hdrEnvRenderer.render(activeScene->getHdrEnv(), activeScene->getCamera());
         skyboxRenderer.render(activeScene->getSkybox(), activeScene->getCamera());
         setDepthTestOperator(LESS);
         // notify that scene frame end drawing

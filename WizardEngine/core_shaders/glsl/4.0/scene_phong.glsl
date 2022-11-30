@@ -6,7 +6,7 @@
 layout(location = 1) out vec4 brightColor;
 layout(location = 2) out int uuid;
 
-const uint LIGHT_COUNT = 8;
+const uint LIGHT_COUNT = 1;
 uniform PhongLight phongLight[LIGHT_COUNT];
 
 uniform Material material[2];
@@ -86,7 +86,7 @@ void main() {
 
         // calculate PBR surface model
 
-        float metallic = material[getId()].metallicSlot;
+        float metallic = material[getId()].metallic;
         float roughness = material[getId()].roughness;
         float ao = material[getId()].ao;
 
@@ -125,7 +125,7 @@ void main() {
 
         vec3 numerator    = NDF * G * F;
         float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(dot(normal, lightDir), 0.0) + 0.0001;
-        vec3 specular     = numerator / denominator;
+        specular = numerator / denominator;
 
         // add to outgoing radiance Lo
         float NdotL = max(dot(normal, lightDir), 0.0);
@@ -135,7 +135,7 @@ void main() {
         vec3 color = amb + Lo;
         color = color / (color + vec3(1.0));
 
-        fragment += vec4(gamma(color, material.gamma), material[getId()].color.w);
+        fragment += vec4(gamma(color, material[getId()].gamma), material[getId()].color.w);
 
 //        vec3 color = amb * (albedo + diff + specular);
 //        fragment += vec4(gamma(color.rgb, material[getId()].gamma), material[getId()].color.w);

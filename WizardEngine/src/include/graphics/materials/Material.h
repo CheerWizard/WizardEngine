@@ -16,6 +16,7 @@ namespace engine::graphics {
 
     serialize_component(Material) {
         const char* name = "material";
+        const char* title = "Untitled";
         Vec4fUniform color = { "color", { 0.5, 0.5, 0.5, 1 } };
         FloatUniform ambient = { "ambient", 1 };
         FloatUniform diffuse = { "diffuse", 1 };
@@ -26,9 +27,9 @@ namespace engine::graphics {
         FloatUniform minLayers = { "minLayers", 8 };
         FloatUniform maxLayers = { "maxLayers", 32 };
         FloatUniform brightness = { "brightness", 1 };
-        FloatUniform metallic = { "metallic", 1 };
-        FloatUniform roughness = { "roughness", 1 };
-        FloatUniform ao = { "ao", 1 };
+        FloatUniform metallic = { "metallic", 0.5 };
+        FloatUniform roughness = { "roughness", 0.5 };
+        FloatUniform ao = { "ao", 0.5 };
         BoolUniform enableAlbedoMap = { "enableAlbedoMap", false };
         BoolUniform enableDiffuseMap = { "enableDiffuseMap", false };
         BoolUniform enableSpecularMap = { "enableSpecularMap", false };

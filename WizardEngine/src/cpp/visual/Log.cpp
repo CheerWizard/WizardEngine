@@ -42,8 +42,7 @@ namespace engine::visual {
         Text::field("##logger-line-limit", "Limit", &maxLinesStr);
         ImGui::SameLine();
         ImGui::PopStyleVar();
-        maxLines = std::stoi(maxLinesStr);
-
+        maxLines = maxLinesStr.empty() ? 0 : std::stoi(maxLinesStr);
         // Main window
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
         ImGui::SameLine();

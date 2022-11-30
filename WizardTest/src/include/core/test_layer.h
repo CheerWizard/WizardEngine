@@ -99,6 +99,8 @@ namespace test {
                     512,
                     512
         };
+        MaterialPanel materialPanel;
+        Batch3d currentEntity;
     };
 
 }

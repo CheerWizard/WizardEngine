@@ -9,10 +9,16 @@
 
 namespace engine::io {
 
-    TextureData TextureFile::read(const char* filePath) {
-        int width, height, channels;
+    TextureData TextureFile::read(const char* filePath, bool hdrEnabled) {
         ENGINE_INFO("Reading texture from '{0}'", filePath);
-        void* data = stbi_load(filePath, &width, &height, &channels, 0);
+        int width, height, channels;
+        void* data;
+        if (hdrEnabled) {
+            data = stbi_loadf(filePath, &width, &height, &channels, 0);
+        } else {
+            data = stbi_load(filePath, &width, &height, &channels, 0);
+        }
+
         if (data == nullptr) {
             if (stbi_failure_reason()) {
                 ENGINE_ERR("Error occurs when loading texture from '{0}'", filePath);
@@ -21,7 +27,7 @@ namespace engine::io {
             return { width, height, channels };
         }
 
-        return { width, height, channels, false, data };
+        return { width, height, channels, false, hdrEnabled, data };
     }
 
     void TextureFile::free(void *data) {

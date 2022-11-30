@@ -45,6 +45,14 @@ namespace engine::ecs {
             this->name = name;
         }
 
+        inline void setHdrEnv(const Entity& hdrEnv) {
+            this->hdrEnv = hdrEnv;
+        }
+
+        [[nodiscard]] inline const Entity& getHdrEnv() const {
+            return hdrEnv;
+        }
+
     public:
         Entity findEntity(const uuid& uuid);
         Entity findEntity(const UUIDComponent& uuid);
@@ -53,6 +61,7 @@ namespace engine::ecs {
     private:
         std::string name;
         Entity skybox;
+        Entity hdrEnv;
         graphics::Camera3D camera;
     };
 

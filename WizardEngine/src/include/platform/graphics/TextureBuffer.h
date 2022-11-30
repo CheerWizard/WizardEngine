@@ -48,9 +48,11 @@ namespace engine::graphics {
         static void setDefaultParamsCubeMap(const u32& id);
         static void disableByteAlignment();
         // read from file and load into texture buffer
-        static u32 load(const char* filePath);
+        static u32 load(const char* filePath, bool hdrEnabled = false);
         static u32 load(const vector<TextureFace>& faces);
         static u32 loadArray(const vector<std::string>& filepaths);
+        static u32 generateCubeMap(u32 width, u32 height,
+                                   ColorFormat internalFormat, ColorFormat dataFormat, PixelsType pixelsType);
         // load texture data into texture buffer
         static void load(const u32& id, const io::TextureData &textureData);
         static void load(const u32& id, const TextureFaceType& faceType, const io::TextureData& textureData);

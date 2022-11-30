@@ -432,4 +432,8 @@ namespace engine::visual {
 
         value = result;
     }
+
+    bool ColorPicker::draw(Vec4fUniform& colorUniform) {
+        return ImGui::ColorPicker4(colorUniform.name, toFloatPtr(colorUniform));
+    }
 }

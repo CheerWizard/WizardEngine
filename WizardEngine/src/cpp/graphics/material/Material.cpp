@@ -90,6 +90,10 @@ namespace engine::graphics {
         shaderProgram.setUniformArrayStructField(index, material->name, material->minLayers);
         shaderProgram.setUniformArrayStructField(index, material->name, material->maxLayers);
         shaderProgram.setUniformArrayStructField(index, material->name, material->heightScale);
+        shaderProgram.setUniformArrayStructField(index, material->name, material->roughness);
+        shaderProgram.setUniformArrayStructField(index, material->name, material->metallic);
+        shaderProgram.setUniformArrayStructField(index, material->name, material->ao);
+
         shaderProgram.setUniformArrayStructField(index, material->name, material->enableBlinn);
         shaderProgram.setUniformArrayStructField(index, material->name, material->enableAlbedoMap);
         shaderProgram.setUniformArrayStructField(index, material->name, material->enableDiffuseMap);
