@@ -114,8 +114,16 @@ namespace test {
 
         RenderSystem::sceneRenderers[0]->getShader().setInstancesPerDraw(4);
 
+        // we need to flip textures as they will be loaded vice versa
+        io::TextureFile::setFlipTexture(true);
+        u32 albedoSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/BaseColor.png");
+        u32 aoSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/AOMap.png");
+        u32 metallicSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/Metalness.png");
+        u32 normalSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/NormalMap.png");
+        u32 roughnessSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/Roughness.png");
+
         io::ModelFile<BatchVertex<Vertex3d>>::read("assets/SamuraiHelmet/source/SamuraiHelmet.fbx.fbx", {
-            [this, &scene](const io::Model& model) {
+            [this, &scene, &albedoSlot, &roughnessSlot, &normalSlot, &metallicSlot, &aoSlot](const io::Model& model) {
                 RUNTIME_INFO("ModelFile read: onSuccess");
                 for (int i = 0; i < model.meshes.size(); i++) {
                     auto modelMesh = model.meshes[i];
@@ -134,6 +142,42 @@ namespace test {
                     newEntity.getTransform().position = { 1, 1, 1 };
                     newEntity.applyTransform();
                     newEntity.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(meshComponent);
+
+                    // setup material
+                    Material material;
+
+                    std::stringstream ss;
+                    ss << "M_" << newEntity.get<TagComponent>()->tag;
+                    std::string title = ss.str();
+
+                    material.title = title.c_str();
+
+                    material.ambient.value = 1.0;
+                    material.diffuse.value = 0.8;
+                    material.specular.value = 0.5;
+                    material.shiny.value = 1;
+                    material.gamma.value = 2.2;
+                    material.heightScale.value = 0.5;
+                    material.brightness.value = 10;
+
+                    material.enableBlinn.value = true;
+                    material.enableAlbedoMap.value = true;
+                    material.enableDiffuseMap.value = false;
+                    material.enableSpecularMap.value = false;
+                    material.enableNormalMap.value = true;
+                    material.enableParallaxMap.value = false;
+                    material.enableMetallicMap.value = true;
+                    material.enableRoughnessMap.value = true;
+                    material.enableAOMap.value = true;
+
+                    material.albedoSlot.textureId = albedoSlot;
+                    material.aoSlot.textureId = aoSlot;
+                    material.metallicSlot.textureId = metallicSlot;
+                    material.normalSlot.textureId = normalSlot;
+                    material.roughnessSlot.textureId = roughnessSlot;
+
+                    newEntity.add<Material>(material);
+
                     packs.emplace_back(newEntity);
                 }
                 RenderSystem::sceneRenderers[0]->createVIRenderModel(packs);
@@ -147,7 +191,7 @@ namespace test {
         RenderSystem::sceneRenderers[1]->getShader().setInstancesPerDraw(4);
 
         io::ModelFile<InstanceVertex<Vertex3d>>::read("assets/SamuraiHelmet/source/SamuraiHelmet.fbx.fbx", {
-                [this, &scene](const io::Model& model) {
+                [this, &scene, &roughnessSlot, &normalSlot, &metallicSlot, &aoSlot, &albedoSlot](const io::Model& model) {
                     RUNTIME_INFO("ModelFile read: onSuccess");
                     for (int i = 0; i < model.meshes.size(); i++) {
                         auto modelMesh = model.meshes[i];
@@ -165,6 +209,42 @@ namespace test {
                         newEntity.getTransform().position = { 1, 1, 1 };
                         newEntity.applyTransform();
                         newEntity.add<BaseMeshComponent<InstanceVertex<Vertex3d>>>(meshComponent);
+
+                        // setup material
+                        Material material;
+
+                        std::stringstream ss;
+                        ss << "M_" << newEntity.get<TagComponent>()->tag;
+                        std::string title = ss.str();
+
+                        material.title = title.c_str();
+
+                        material.ambient.value = 1.0;
+                        material.diffuse.value = 0.8;
+                        material.specular.value = 0.5;
+                        material.shiny.value = 1;
+                        material.gamma.value = 2.2;
+                        material.heightScale.value = 0.5;
+                        material.brightness.value = 10;
+
+                        material.enableBlinn.value = true;
+                        material.enableAlbedoMap.value = true;
+                        material.enableDiffuseMap.value = false;
+                        material.enableSpecularMap.value = false;
+                        material.enableNormalMap.value = true;
+                        material.enableParallaxMap.value = false;
+                        material.enableMetallicMap.value = true;
+                        material.enableRoughnessMap.value = true;
+                        material.enableAOMap.value = true;
+
+                        material.albedoSlot.textureId = albedoSlot;
+                        material.aoSlot.textureId = aoSlot;
+                        material.metallicSlot.textureId = metallicSlot;
+                        material.normalSlot.textureId = normalSlot;
+                        material.roughnessSlot.textureId = roughnessSlot;
+
+                        newEntity.add<Material>(material);
+
                         instancedPacks.emplace_back(newEntity);
                     }
                     RenderSystem::sceneRenderers[1]->createVIRenderModelInstanced(instancedPacks[0], instancedPacks);
@@ -205,57 +285,8 @@ namespace test {
 //        batchRenderer->getShader().addScript(shaderScript);
 //        instanceRenderer->getShader().addScript(shaderScript);
 
-        // we need to flip textures as they will be loaded vice versa
-        io::TextureFile::setFlipTexture(true);
-
-        u32 albedoSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/BaseColor.png");
-        u32 aoSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/AOMap.png");
-        u32 metallicSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/Metalness.png");
-        u32 normalSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/NormalMap.png");
-        u32 roughnessSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/Roughness.png");
-
         // setup HDR env
         Application::get().setHdrEnvCube(scene, "assets/hdr/ice_lake.hdr");
-
-        // setup material
-        Material material;
-        material.title = "M_SurvivalPack";
-
-        material.color.value = { 0, 0, 0, 1 };
-
-        material.ambient.value = 1.0;
-        material.diffuse.value = 0.8;
-        material.specular.value = 0.5;
-        material.shiny.value = 1;
-        material.gamma.value = 2.2;
-        material.heightScale.value = 0.5;
-        material.brightness.value = 10;
-
-        material.enableBlinn.value = true;
-        material.enableAlbedoMap.value = true;
-        material.enableDiffuseMap.value = false;
-        material.enableSpecularMap.value = false;
-        material.enableNormalMap.value = true;
-        material.enableParallaxMap.value = false;
-        material.enableMetallicMap.value = true;
-        material.enableRoughnessMap.value = true;
-        material.enableAOMap.value = true;
-
-        material.albedoSlot.textureId = albedoSlot;
-        material.aoSlot.textureId = aoSlot;
-        material.metallicSlot.textureId = metallicSlot;
-        material.normalSlot.textureId = normalSlot;
-        material.roughnessSlot.textureId = roughnessSlot;
-
-        for (auto pack : packs) {
-            pack.add<Material>(material);
-        }
-
-        for (auto instancePack : instancedPacks) {
-            instancePack.add<Material>(material);
-        }
-
-        currentEntity = packs[0];
 
         graphics::enableSRGB();
 
@@ -732,9 +763,11 @@ namespace test {
         sceneViewport.setId(RenderSystem::finalRenderTargetId);
         sceneViewport.onUpdate(dt);
 
-        Material* currentMaterial = currentEntity.get<Material>();
-        if (currentMaterial) {
-            materialPanel.draw(*currentMaterial);
+        for (auto entity : packs) {
+            Material* currentMaterial = entity.get<Material>();
+            if (currentMaterial) {
+                MaterialPanel::draw(*currentMaterial);
+            }
         }
 
         Panel::begin(light.get<TagComponent>()->tag.c_str(), { 800, 600 });

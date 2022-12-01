@@ -123,8 +123,8 @@ namespace engine::graphics {
         array<T>& vertexData = mesh.vertexData;
         IndexData& indexData = mesh.indexData;
 
-        vertexData.offset = vertexStart + totalVertexCount();
-        indexData.offset = indexStart + totalIndexCount();
+        vertexData.offset = vertexStart;
+        indexData.offset = indexStart;
 
         for (auto j = 0 ; j < indexData.size ; j++) {
             auto& index = indexData.values[j];
