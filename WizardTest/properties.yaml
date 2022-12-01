@@ -8,3 +8,4 @@ properties:
     width: 1600
     height: 900
     samples: 4
+    fullscreen: true

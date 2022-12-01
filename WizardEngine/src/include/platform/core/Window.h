@@ -18,14 +18,17 @@ namespace engine::core {
         uint32_t height;
         bool vSyncEnabled;
         uint32_t sampleSize;
+        bool fullscreen;
 
         WindowProps(
                 const std::string& title = "Wizard Engine",
                 uint32_t width = DEFAULT_WINDOW_WIDTH,
                 uint32_t height = DEFAULT_WINDOW_HEIGHT,
                 bool vSyncEnabled = false,
-                uint32_t sampleSize = 4
-        ) : title(title), width(width), height(height), vSyncEnabled(vSyncEnabled), sampleSize(sampleSize) {}
+                uint32_t sampleSize = 4,
+                bool fullscreen = false
+        ) : title(title), width(width), height(height),
+        vSyncEnabled(vSyncEnabled), sampleSize(sampleSize), fullscreen(fullscreen) {}
     };
 
     class ENGINE_API Window {

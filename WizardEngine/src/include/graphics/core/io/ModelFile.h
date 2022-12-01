@@ -80,7 +80,8 @@ namespace engine::io {
     enum ModelFileOption {
         triangulate = aiProcess_Triangulate,
         flip_uv = aiProcess_FlipUVs,
-        calc_tang_space = aiProcess_CalcTangentSpace
+        calc_tang_space = aiProcess_CalcTangentSpace,
+        texture_invert = aiTextureFlags_Invert
     };
 
     struct ENGINE_API ModelFileOptions {
@@ -143,8 +144,8 @@ namespace engine::io {
         extractNodes(scene->mRootNode, scene, meshes, materials);
 
         ModelMeshComponent meshComponent;
-        meshComponent.meshes = engine::core::mapTo(meshes);
-        meshComponent.meshCount = meshes.size();
+        meshComponent.meshes = new ModelMesh(meshes[2]);
+        meshComponent.meshCount = 1;
         meshComponent.invalidateSize();
 
         return { meshComponent, materials };
@@ -159,7 +160,7 @@ namespace engine::io {
     ) {
         // extract all meshes and materials of node
         for (uint32_t i = 0; i < node->mNumMeshes; i++) {
-            aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+            aiMesh *mesh = scene->mMeshes[node->mMeshes[0]];
             meshes.push_back(extractMesh(mesh));
             materials.push_back(extractMaterial(mesh, scene));
         }

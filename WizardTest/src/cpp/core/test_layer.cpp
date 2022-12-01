@@ -117,7 +117,7 @@ namespace test {
 
         RenderSystem::sceneRenderers[0]->getShader().setInstancesPerDraw(6);
 
-        io::ModelFile<BatchVertex<Vertex3d>>::read("assets/model/survival_pack.obj", {
+        io::ModelFile<BatchVertex<Vertex3d>>::read("assets/SamuraiHelmet/scene.gltf", {
             [this](const BaseMeshComponent<BatchVertex<Vertex3d>>& mesh) {
                 RUNTIME_INFO("ModelFile read: onSuccess");
                 for (auto pack : packs) {
@@ -144,7 +144,7 @@ namespace test {
 
         RenderSystem::sceneRenderers[1]->getShader().setInstancesPerDraw(6);
 
-        io::ModelFile<InstanceVertex<Vertex3d>>::read("assets/model/survival_pack.obj", {
+        io::ModelFile<InstanceVertex<Vertex3d>>::read("assets/SamuraiHelmet/scene.gltf", {
                 [this](const BaseMeshComponent<InstanceVertex<Vertex3d>>& mesh) {
                     RUNTIME_INFO("ModelFile read: onSuccess");
                     if (instancedPacks.empty()) return;
@@ -196,11 +196,11 @@ namespace test {
 //        batchRenderer->getShader().addScript(shaderScript);
 //        instanceRenderer->getShader().addScript(shaderScript);
 
-        u32 albedoSlot = TextureBuffer::load("assets/materials/survival_pack/1001_albedo.jpg");
-        u32 aoSlot = TextureBuffer::load("assets/materials/survival_pack/1001_AO.jpg");
-        u32 metallicSlot = TextureBuffer::load("assets/materials/survival_pack/1001_metallic.jpg");
-        u32 normalSlot = TextureBuffer::load("assets/materials/survival_pack/1001_normal.png");
-        u32 roughnessSlot = TextureBuffer::load("assets/materials/survival_pack/1001_roughness.jpg");
+        u32 albedoSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/albedo.png");
+        u32 aoSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/ao.png");
+        u32 metallicSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/metallic.png");
+        u32 normalSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/normal.png");
+        u32 roughnessSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/roughness.png");
 
         // setup HDR env
         Application::get().setHdrEnvCube(scene, "assets/hdr/ice_lake.hdr");

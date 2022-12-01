@@ -30,6 +30,8 @@ namespace engine::core {
                 windowProps.title.c_str(),
                 nullptr,
                 nullptr);
+
+        windowProps.fullscreen ? enableFullScreen() : disableFullScreen();
     }
 
     void Window::enableFullScreen() {
