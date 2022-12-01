@@ -145,8 +145,8 @@ namespace engine::io {
         extractNodes(scene->mRootNode, scene, meshes, materials);
 
         ModelMeshComponent meshComponent;
-        meshComponent.meshes = new ModelMesh(meshes[1]);
-        meshComponent.meshCount = 1;
+        meshComponent.meshes = engine::core::mapTo(meshes);
+        meshComponent.meshCount = meshes.size();
         meshComponent.invalidateSize();
 
         return { meshComponent, materials };
@@ -161,7 +161,7 @@ namespace engine::io {
     ) {
         // extract all meshes and materials of node
         for (uint32_t i = 0; i < node->mNumMeshes; i++) {
-            aiMesh *mesh = scene->mMeshes[node->mMeshes[0]];
+            aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
             meshes.push_back(extractMesh(mesh));
             materials.push_back(extractMaterial(mesh, scene));
         }
