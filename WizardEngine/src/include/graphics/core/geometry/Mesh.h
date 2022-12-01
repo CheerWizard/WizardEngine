@@ -53,8 +53,6 @@ namespace engine::graphics {
 
     template_component(BaseMeshComponent, T) {
         BaseMesh<T> mesh;
-        u32 totalVertexCount = 0;
-        u32 totalIndexCount = 0;
         u32 vertexStart = 0;
         u32 indexStart = 0;
         bool isUpdated = true;
@@ -65,7 +63,7 @@ namespace engine::graphics {
         BaseMeshComponent(const BaseMesh<T>& mesh) : mesh(mesh) {}
 
         [[nodiscard]] u32 getId() const {
-            return meshes[0].vertexData.values[0].id;
+            return mesh.vertexData.values[0].id;
         }
 
         template<typename TO>
@@ -76,7 +74,9 @@ namespace engine::graphics {
         BaseMeshComponent<T> copy() const;
 
         void invalidateMeshes(u32 prevVertexCount, u32 prevIndexCount);
-        void invalidateSize();
+
+        [[nodiscard]] inline u32 totalVertexCount() const { return mesh.vertexData.size; }
+        [[nodiscard]] inline u32 totalIndexCount() const { return mesh.indexData.size; }
     };
 
     template<typename T>
@@ -84,8 +84,6 @@ namespace engine::graphics {
     BaseMeshComponent<TO> BaseMeshComponent<T>::toMeshComponent(const std::function<TO(const T&)> &vertexMapper) {
         BaseMeshComponent<TO> meshComponent;
         meshComponent.mesh = mesh.template toMesh<TO>(vertexMapper);
-        meshComponent.totalVertexCount = totalVertexCount;
-        meshComponent.totalIndexCount = totalIndexCount;
         meshComponent.vertexStart = vertexStart;
         meshComponent.indexStart = indexStart;
         meshComponent.isUpdated = isUpdated;
@@ -113,8 +111,6 @@ namespace engine::graphics {
         copyMeshComponent.drawType = drawType;
         copyMeshComponent.indexStart = indexStart;
         copyMeshComponent.vertexStart = vertexStart;
-        copyMeshComponent.totalIndexCount = totalIndexCount;
-        copyMeshComponent.totalVertexCount = totalVertexCount;
         copyMeshComponent.meshes = mesh.copy();
         return copyMeshComponent;
     }
@@ -123,29 +119,16 @@ namespace engine::graphics {
     void BaseMeshComponent<T>::invalidateMeshes(u32 prevVertexCount, u32 prevIndexCount) {
         vertexStart = prevVertexCount;
         indexStart = prevIndexCount;
-        totalVertexCount = 0;
-        totalIndexCount = 0;
 
         array<T>& vertexData = mesh.vertexData;
         IndexData& indexData = mesh.indexData;
 
-        vertexData.offset = vertexStart + totalVertexCount;
-        indexData.offset = indexStart + totalIndexCount;
+        vertexData.offset = vertexStart + totalVertexCount();
+        indexData.offset = indexStart + totalIndexCount();
 
         for (auto j = 0 ; j < indexData.size ; j++) {
             auto& index = indexData.values[j];
             index += vertexData.offset;
         }
-
-        totalVertexCount += vertexData.size;
-        totalIndexCount += indexData.size;
-    }
-
-    template<typename T>
-    void BaseMeshComponent<T>::invalidateSize() {
-        totalVertexCount = 0;
-        totalIndexCount = 0;
-        totalVertexCount += mesh.vertexData.size;
-        totalIndexCount += mesh.indexData.size;
     }
 }

@@ -118,27 +118,29 @@ namespace test {
         RenderSystem::sceneRenderers[0]->getShader().setInstancesPerDraw(6);
 
         io::ModelFile<BatchVertex<Vertex3d>>::read("assets/SamuraiHelmet/source/SamuraiHelmet.fbx.fbx", {
-            [this](const BaseMeshComponent<BatchVertex<Vertex3d>>& mesh) {
+            [this](const io::Model& model) {
                 RUNTIME_INFO("ModelFile read: onSuccess");
-                for (auto pack : packs) {
-                    auto m = mesh.copy();
-                    pack.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(m);
+                for (auto modelMesh : model.meshes) {
+                    BaseMeshComponent<BatchVertex<Vertex3d>> meshComponent;
+                    meshComponent.mesh = modelMesh.toMesh<BatchVertex<Vertex3d>>([](const io::ModelVertex& modelVertex) {
+                        return BatchVertex<Vertex3d> {
+                                modelVertex.position,
+                                modelVertex.uv,
+                                modelVertex.normal,
+                                modelVertex.tangent,
+                                modelVertex.bitangent,
+                                0
+                        };
+                    });
+                    Object<BatchVertex<Vertex3d>> newEntity;
+                    newEntity.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(meshComponent);
+                    packs.emplace_back(newEntity);
                 }
                 RenderSystem::sceneRenderers[0]->createVIRenderModel(packs);
             },
             [](const exception& exception) {
                 RUNTIME_INFO("ModelFile read: onError");
                 RUNTIME_EXCEPT(exception);
-            },
-            [](const io::ModelVertex& modelVertex) {
-                return BatchVertex<Vertex3d> {
-                    modelVertex.position,
-                    modelVertex.uv,
-                    modelVertex.normal,
-                    modelVertex.tangent,
-                    modelVertex.bitangent,
-                    0
-                };
             }
         });
 

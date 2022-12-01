@@ -154,27 +154,21 @@ namespace engine::graphics {
         vao.bind();
         vbo.bind();
         ibo.bind();
-
-        const auto& meshes = meshComponent.meshes;
-        for (auto i = 0; i < meshComponent.meshCount ; i++) {
-            const auto& vertexData = meshes[i].vertexData;
-            vbo.load(vertexData);
-            const auto& indexData = meshes[i].indexData;
-            ibo.load(indexData);
-        }
+        vbo.load(meshComponent.mesh.vertexData);
+        ibo.load(meshComponent.mesh.indexData);
     }
 
     template<typename T>
     bool VIRenderModel::hasCapacity(const BaseMeshComponent<T> &meshComponent) const {
-        bool hasVertexCapacity = vbo.hasCapacity(meshComponent.totalVertexCount);
-        bool hasIndexCapacity = ibo.hasCapacity(meshComponent.totalIndexCount);
+        bool hasVertexCapacity = vbo.hasCapacity(meshComponent.totalVertexCount());
+        bool hasIndexCapacity = ibo.hasCapacity(meshComponent.totalIndexCount());
         return hasVertexCapacity && hasIndexCapacity;
     }
 
     template<typename T>
     void VIRenderModel::increaseCounts(const BaseMeshComponent<T> &meshComponent) {
-        vbo.increaseCount(meshComponent.totalVertexCount);
-        ibo.increaseCount(meshComponent.totalIndexCount);
+        vbo.increaseCount(meshComponent.totalVertexCount());
+        ibo.increaseCount(meshComponent.totalIndexCount());
     }
 
     template<typename T>
@@ -185,8 +179,8 @@ namespace engine::graphics {
             meshComponent.invalidateMeshes(previousVertexCount, previousIndexCount);
             upload(meshComponent);
         }
-        previousIndexCount += meshComponent.totalIndexCount;
-        previousVertexCount += meshComponent.totalVertexCount;
+        previousIndexCount += meshComponent.totalIndexCount();
+        previousVertexCount += meshComponent.totalVertexCount();
     }
 
     template<typename T>

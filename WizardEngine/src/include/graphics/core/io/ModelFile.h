@@ -42,10 +42,9 @@ namespace engine::io {
     };
 
     typedef graphics::BaseMesh<ModelVertex> ModelMesh;
-    typedef graphics::BaseMeshComponent<ModelVertex> ModelMeshComponent;
 
     struct ENGINE_API Model {
-        ModelMeshComponent meshComponent;
+        std::vector<ModelMesh> meshes;
         std::vector<ModelMaterial> materials;
     };
 
@@ -72,9 +71,8 @@ namespace engine::io {
 
     template<typename T>
     struct ModelFileListener {
-        std::function<void(const graphics::BaseMeshComponent<T>)> success;
+        std::function<void(const Model&)> success;
         std::function<void(const exception&)> failure;
-        std::function<T(const io::ModelVertex&)> vertexMapper;
     };
 
     enum ModelFileOption {
@@ -102,7 +100,7 @@ namespace engine::io {
     template<typename T>
     class ModelFile final {
 
-        typedef std::unordered_map<std::string, graphics::BaseMeshComponent<T>> MeshMap;
+        typedef std::unordered_map<std::string, Model> ModelMap;
 
     public:
         static void read(const std::string &filepath, const ModelFileListener<T>& listener, const ModelFileOptions& options = ModelFileOptions());
@@ -124,11 +122,11 @@ namespace engine::io {
         static Model copyFromMemory(const std::string& filepath);
 
     private:
-        static MeshMap _meshMap;
+        static ModelMap modelMap;
     };
 
     template<typename T>
-    std::unordered_map<std::string, graphics::BaseMeshComponent<T>> ModelFile<T>::_meshMap;
+    std::unordered_map<std::string, Model> ModelFile<T>::modelMap;
 
     template<typename T>
     Model ModelFile<T>::read(const std::string &filePath, const ModelFileOptions& options) {
@@ -144,12 +142,7 @@ namespace engine::io {
         std::vector<ModelMaterial> materials;
         extractNodes(scene->mRootNode, scene, meshes, materials);
 
-        ModelMeshComponent meshComponent;
-        meshComponent.meshes = engine::core::mapTo(meshes);
-        meshComponent.meshCount = meshes.size();
-        meshComponent.invalidateSize();
-
-        return { meshComponent, materials };
+        return { meshes, materials };
     }
 
     template<typename T>
@@ -267,15 +260,14 @@ namespace engine::io {
         ENGINE_INFO("ModelFile: read='{0}'", filepath);
         // get a copy of mesh that's already loaded from a model file
         if (exists(filepath)) {
-            listener.success(_meshMap.at(filepath).copy());
+            listener.success(modelMap.at(filepath));
             return;
         }
         // load new mesh from model file
         try {
             auto model = read(filepath, options);
-            auto mesh = model.meshComponent.template toMeshComponent<T>(listener.vertexMapper);
-            _meshMap.insert({ filepath, mesh });
-            listener.success(mesh);
+            modelMap.insert({ filepath, model });
+            listener.success(model);
         } catch (const file_not_found& ex) {
             ENGINE_ERR("ModelFile: Failed to read file '{0}'", filepath);
             listener.failure(ex);
@@ -284,18 +276,18 @@ namespace engine::io {
 
     template<typename T>
     bool ModelFile<T>::exists(const std::string &filepath) {
-        return _meshMap.find(filepath) != _meshMap.end();
+        return modelMap.find(filepath) != modelMap.end();
     }
 
     template<typename T>
     void ModelFile<T>::clear() {
-        _meshMap.clear();
+        modelMap.clear();
     }
 
     template<typename T>
     Model ModelFile<T>::getFromMemory(const std::string &filepath) {
         if (exists(filepath)) {
-            return _meshMap.at(filepath);
+            return modelMap.at(filepath);
         }
         ENGINE_ERR("ModelFile getFromMemory: no such model in memory filepath='{0}'", filepath);
         return {};
@@ -304,7 +296,7 @@ namespace engine::io {
     template<typename T>
     Model ModelFile<T>::copyFromMemory(const std::string &filepath) {
         if (exists(filepath)) {
-            return _meshMap.at(filepath).copy();
+            return modelMap.at(filepath);
         }
         ENGINE_ERR("ModelFile copyFromMemory: no such model in memory filepath='{0}'", filepath);
         return {};
