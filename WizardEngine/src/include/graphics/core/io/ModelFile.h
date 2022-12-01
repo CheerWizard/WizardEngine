@@ -81,11 +81,12 @@ namespace engine::io {
         triangulate = aiProcess_Triangulate,
         flip_uv = aiProcess_FlipUVs,
         calc_tang_space = aiProcess_CalcTangentSpace,
-        texture_invert = aiTextureFlags_Invert
+        texture_invert = aiTextureFlags_Invert,
+        embed_textures = aiProcess_EmbedTextures
     };
 
     struct ENGINE_API ModelFileOptions {
-        vector<ModelFileOption> flags = { triangulate, calc_tang_space };
+        vector<ModelFileOption> flags = { embed_textures, calc_tang_space, triangulate };
 
         [[nodiscard]] u32 getFlag() const {
             if (flags.empty()) return 0;
@@ -144,7 +145,7 @@ namespace engine::io {
         extractNodes(scene->mRootNode, scene, meshes, materials);
 
         ModelMeshComponent meshComponent;
-        meshComponent.meshes = new ModelMesh(meshes[2]);
+        meshComponent.meshes = new ModelMesh(meshes[1]);
         meshComponent.meshCount = 1;
         meshComponent.invalidateSize();
 

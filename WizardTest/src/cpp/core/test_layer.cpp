@@ -196,6 +196,9 @@ namespace test {
 //        batchRenderer->getShader().addScript(shaderScript);
 //        instanceRenderer->getShader().addScript(shaderScript);
 
+        // we need to flip textures as they will be loaded vice versa
+        io::TextureFile::setFlipTexture(true);
+
         u32 albedoSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/albedo.png");
         u32 aoSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/ao.png");
         u32 metallicSlot = TextureBuffer::load("assets/SamuraiHelmet/textures/metallic.png");

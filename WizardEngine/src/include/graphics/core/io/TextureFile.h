@@ -29,6 +29,7 @@ namespace engine::io {
         ~TextureFile() = default;
 
     public:
+        static void setFlipTexture(bool flipEnabled);
         // returns NULL if read from file - failed
         static TextureData read(const char* filePath, bool hdrEnabled = false);
         static void free(void* data);

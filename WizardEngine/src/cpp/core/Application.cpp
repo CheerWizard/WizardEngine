@@ -21,6 +21,8 @@ namespace engine::core {
         PROFILE_FUNCTION();
         ENGINE_INFO("onCreate()");
 
+        io::TextureFile::setFlipTexture(false);
+
         if (!ProjectProps::createFromFile("properties.yaml", projectProps)) {
             ENGINE_WARN("Application: Unable to create properties from properties.yaml");
         }
