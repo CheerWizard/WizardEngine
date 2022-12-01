@@ -88,39 +88,37 @@ namespace test {
 //        });
 
         // spawn random objects
-        math::random(-10, 10, 1, [this, &scene](int i, f32 r) {
-            Batch3d pack = Batch3d(&"SurvivalBackPack"[i], scene.get());
-            pack.getTransform().position = { r * i, r * i, r * i };
-            pack.getTransform().rotation = { r * i, r * i, r * i };
-            pack.applyTransform();
+//        math::random(-10, 10, 1, [this, &scene](int i, f32 r) {
+//            Batch3d pack = Batch3d(&"SurvivalBackPack"[i], scene.get());
+//            pack.getTransform().position = { r * i, r * i, r * i };
+//            pack.getTransform().rotation = { r * i, r * i, r * i };
+//            pack.applyTransform();
 //            vec3f velocity = { 0.0005f, 0.0005f, 0.0005f };
 //            velocity *= i%2 == 0 ? 1 : -1;
 //            pack.add<Velocity>(velocity);
-            pack.add<SphereCollider>(pack.getTransform().position, 3.0f);
-            packs.emplace_back(pack);
-        });
+//            pack.add<SphereCollider>(pack.getTransform().position, 3.0f);
+//            packs.emplace_back(pack);
+//        });
 
-        packs[0].getTransform().position = { 1, 1, 1 };
-        packs[0].applyTransform();
-
-        math::random(-10, 10, 0, [this, &scene](int i, f32 r) {
-            Instance3d pack = Instance3d(&"SurvivalBackPackInstanced"[i], scene.get());
-            pack.getTransform().position = { r * i, r * i, r * i };
-            pack.getTransform().rotation = { r * i, r * i, r * i };
-            pack.applyTransform();
+//        math::random(-10, 10, 0, [this, &scene](int i, f32 r) {
+//            Instance3d pack = Instance3d(&"SurvivalBackPackInstanced"[i], scene.get());
+//            pack.getTransform().position = { r * i, r * i, r * i };
+//            pack.getTransform().rotation = { r * i, r * i, r * i };
+//            pack.applyTransform();
 //            vec3f velocity = { 0.0005f, 0.0005f, 0.0005f };
 //            velocity *= i%2 == 0 ? 1 : -1;
 //            pack.add<Velocity>(velocity);
-            pack.add<SphereCollider>(pack.getTransform().position, 3.0f);
-            instancedPacks.emplace_back(pack);
-        });
+//            pack.add<SphereCollider>(pack.getTransform().position, 3.0f);
+//            instancedPacks.emplace_back(pack);
+//        });
 
-        RenderSystem::sceneRenderers[0]->getShader().setInstancesPerDraw(6);
+        RenderSystem::sceneRenderers[0]->getShader().setInstancesPerDraw(4);
 
         io::ModelFile<BatchVertex<Vertex3d>>::read("assets/SamuraiHelmet/source/SamuraiHelmet.fbx.fbx", {
-            [this](const io::Model& model) {
+            [this, &scene](const io::Model& model) {
                 RUNTIME_INFO("ModelFile read: onSuccess");
-                for (auto modelMesh : model.meshes) {
+                for (int i = 0; i < model.meshes.size(); i++) {
+                    auto modelMesh = model.meshes[i];
                     BaseMeshComponent<BatchVertex<Vertex3d>> meshComponent;
                     meshComponent.mesh = modelMesh.toMesh<BatchVertex<Vertex3d>>([](const io::ModelVertex& modelVertex) {
                         return BatchVertex<Vertex3d> {
@@ -132,7 +130,9 @@ namespace test {
                                 0
                         };
                     });
-                    Object<BatchVertex<Vertex3d>> newEntity;
+                    Batch3d newEntity = Batch3d(&"Entity"[i], scene.get());
+                    newEntity.getTransform().position = { 1, 1, 1 };
+                    newEntity.applyTransform();
                     newEntity.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(meshComponent);
                     packs.emplace_back(newEntity);
                 }
@@ -144,27 +144,34 @@ namespace test {
             }
         });
 
-        RenderSystem::sceneRenderers[1]->getShader().setInstancesPerDraw(6);
+        RenderSystem::sceneRenderers[1]->getShader().setInstancesPerDraw(4);
 
         io::ModelFile<InstanceVertex<Vertex3d>>::read("assets/SamuraiHelmet/source/SamuraiHelmet.fbx.fbx", {
-                [this](const BaseMeshComponent<InstanceVertex<Vertex3d>>& mesh) {
+                [this, &scene](const io::Model& model) {
                     RUNTIME_INFO("ModelFile read: onSuccess");
-                    if (instancedPacks.empty()) return;
-                    instancedPacks[0].add<BaseMeshComponent<InstanceVertex<Vertex3d>>>(mesh.copy());
+                    for (int i = 0; i < model.meshes.size(); i++) {
+                        auto modelMesh = model.meshes[i];
+                        BaseMeshComponent<InstanceVertex<Vertex3d>> meshComponent;
+                        meshComponent.mesh = modelMesh.toMesh<InstanceVertex<Vertex3d>>([](const io::ModelVertex& modelVertex) {
+                            return InstanceVertex<Vertex3d> {
+                                    modelVertex.position,
+                                    modelVertex.uv,
+                                    modelVertex.normal,
+                                    modelVertex.tangent,
+                                    modelVertex.bitangent
+                            };
+                        });
+                        Instance3d newEntity = Instance3d(&"Instanced_Entity"[i], scene.get());
+                        newEntity.getTransform().position = { 1, 1, 1 };
+                        newEntity.applyTransform();
+                        newEntity.add<BaseMeshComponent<InstanceVertex<Vertex3d>>>(meshComponent);
+                        instancedPacks.emplace_back(newEntity);
+                    }
                     RenderSystem::sceneRenderers[1]->createVIRenderModelInstanced(instancedPacks[0], instancedPacks);
                 },
                 [](const exception& exception) {
                     RUNTIME_INFO("ModelFile read: onError");
                     RUNTIME_EXCEPT(exception);
-                },
-                [](const io::ModelVertex& modelVertex) {
-                    return InstanceVertex<Vertex3d> {
-                            modelVertex.position,
-                            modelVertex.uv,
-                            modelVertex.normal,
-                            modelVertex.tangent,
-                            modelVertex.bitangent
-                    };
                 }
         });
 

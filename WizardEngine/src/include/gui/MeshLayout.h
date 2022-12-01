@@ -45,7 +45,7 @@ namespace engine::visual {
             _entity = entity;
         }
 
-        inline void setMesh(const io::ModelMeshComponent &meshComponent) {
+        inline void setMesh(const BaseMeshComponent<io::ModelVertex> &meshComponent) {
             _entity.update<BaseMeshComponent<io::ModelVertex>>(meshComponent);
         }
 
