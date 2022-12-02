@@ -78,17 +78,27 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Added PBR support">
+    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Fixing model importing">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/include/specular.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/include/specular.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/material/material.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/material/material.glsl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/scene_phong.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/scene_phong.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/graphics/tools/ShaderPath.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/graphics/tools/ShaderPath.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/core/filesystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/core/filesystem.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/material/Material.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/material/Material.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/graphics/TextureBuffer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/graphics/TextureBuffer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/MaterialPanel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/MaterialPanel.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/core/filesystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/core/filesystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/io/ModelFile.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/io/ModelFile.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/texture/Texture.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/texture/Texture.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/materials/Material.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/materials/Material.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/assimp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/assimp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/freetype" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/freetype" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/glfw" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/glfw" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardStudio/src/include/Activity.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardStudio/src/include/Activity.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardTest/src/cpp/core/test_layer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/src/cpp/core/test_layer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardTest/src/include/core/test_layer.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/src/include/core/test_layer.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,27 +171,34 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.advertisement.text.has.clang-format" value="true" />
     <property name="cf.first.check.clang-format" value="false" />
     <property name="cidr.known.project.marker" value="true" />
     <property name="cmake.loaded.for.project" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/WizardTest/assets/SamuraiHelmet/textures" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardTest\assets\SamuraiHelmet\textures" />
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardTest\assets" />
       <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardTest" />
       <recent name="C:\Users\Lenovo\CLionProjects\WizardEngine\WizardTest" />
       <recent name="C:\Users\Lenovo\CLionProjects\WizardEngine\WizardStudio" />
-      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\project_template\assets\materials" />
-      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\project_template\assets\model" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardTest\assets\CerberusGun\Textures" />
       <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\src\cpp\visual" />
       <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\src\include\visual" />
       <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine" />
       <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\lib" />
-      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\vendor\bin" />
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.WizardTest">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Continuous" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="Continuous" CONFIG_NAME="debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -328,11 +345,6 @@
       </method>
     </configuration>
     <configuration name="WizardTest" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="WizardTest" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="WizardTest">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -1025,41 +1037,8 @@
       <workItem from="1669139144206" duration="2068000" />
       <workItem from="1669412798010" duration="5870000" />
       <workItem from="1669450064900" duration="2779000" />
-    </task>
-    <task id="LOCAL-00154" summary="TCP server init">
-      <created>1650827256272</created>
-      <option name="number" value="00154" />
-      <option name="presentableId" value="LOCAL-00154" />
-      <option name="project" value="LOCAL" />
-      <updated>1650827256272</updated>
-    </task>
-    <task id="LOCAL-00155" summary="Network core, TCP Client/Server using localhost connection.&#10;For now, just transfers &quot;Hello world&quot; data to each other.">
-      <created>1650876872833</created>
-      <option name="number" value="00155" />
-      <option name="presentableId" value="LOCAL-00155" />
-      <option name="project" value="LOCAL" />
-      <updated>1650876872833</updated>
-    </task>
-    <task id="LOCAL-00156" summary="Added WizardServer which represents TCP/UDP network server as second machine for managing TCP/UDP network clients data.">
-      <created>1650888288165</created>
-      <option name="number" value="00156" />
-      <option name="presentableId" value="LOCAL-00156" />
-      <option name="project" value="LOCAL" />
-      <updated>1650888288165</updated>
-    </task>
-    <task id="LOCAL-00157" summary="Audio recorder with OpenAL implementation.">
-      <created>1652087410660</created>
-      <option name="number" value="00157" />
-      <option name="presentableId" value="LOCAL-00157" />
-      <option name="project" value="LOCAL" />
-      <updated>1652087410661</updated>
-    </task>
-    <task id="LOCAL-00158" summary="Add prebuild for Windows&#10;Fix uncaught exception issues for network system.">
-      <created>1652634689548</created>
-      <option name="number" value="00158" />
-      <option name="presentableId" value="LOCAL-00158" />
-      <option name="project" value="LOCAL" />
-      <updated>1652634689548</updated>
+      <workItem from="1669878698270" duration="21875000" />
+      <workItem from="1669923188536" duration="23176000" />
     </task>
     <task id="LOCAL-00159" summary="YAML parser, Scene Serialization.">
       <created>1652779792400</created>
@@ -1369,7 +1348,42 @@
       <option name="project" value="LOCAL" />
       <updated>1669421360364</updated>
     </task>
-    <option name="localTasksCounter" value="203" />
+    <task id="LOCAL-00203" summary="Fixing compilation failure in material shader">
+      <created>1669883205074</created>
+      <option name="number" value="00203" />
+      <option name="presentableId" value="LOCAL-00203" />
+      <option name="project" value="LOCAL" />
+      <updated>1669883205074</updated>
+    </task>
+    <task id="LOCAL-00204" summary="Fixing model importing">
+      <created>1669895832666</created>
+      <option name="number" value="00204" />
+      <option name="presentableId" value="LOCAL-00204" />
+      <option name="project" value="LOCAL" />
+      <updated>1669895832666</updated>
+    </task>
+    <task id="LOCAL-00205" summary="Fixing model importing">
+      <created>1669897761244</created>
+      <option name="number" value="00205" />
+      <option name="presentableId" value="LOCAL-00205" />
+      <option name="project" value="LOCAL" />
+      <updated>1669897761244</updated>
+    </task>
+    <task id="LOCAL-00206" summary="Fixing model importing">
+      <created>1669899757983</created>
+      <option name="number" value="00206" />
+      <option name="presentableId" value="LOCAL-00206" />
+      <option name="project" value="LOCAL" />
+      <updated>1669899757983</updated>
+    </task>
+    <task id="LOCAL-00207" summary="Fixing model importing">
+      <created>1669902816003</created>
+      <option name="number" value="00207" />
+      <option name="presentableId" value="LOCAL-00207" />
+      <option name="project" value="LOCAL" />
+      <updated>1669902816003</updated>
+    </task>
+    <option name="localTasksCounter" value="208" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1410,8 +1424,6 @@
       <path value="$PROJECT_DIR$/ScriptDLL/engine/spdlog" />
       <path value="$PROJECT_DIR$/ScriptDLL/engine/stb/stb" />
     </ignored-roots>
-    <MESSAGE value="UUID component for identifying loaded/saved world" />
-    <MESSAGE value="Loading/Saving world into Server" />
     <MESSAGE value="AssetManager for loading/saving scenes locally and remotely. GDResponse and status codes for handling response state. Updated scene and GDP serialization" />
     <MESSAGE value="Fixed crash of deleting serialized component.&#10;Added WizardSamples project for unit testing of WizardEngine details.&#10;SceneService for dispatching and processing scene requests on server side." />
     <MESSAGE value="Updated serialization : Uniform, all matrices, Text, Outline, Light, Transform, AudioListener, AudioSource." />
@@ -1435,7 +1447,9 @@
     <MESSAGE value="Added Visual file for UI init" />
     <MESSAGE value="Fixed Material Rendering" />
     <MESSAGE value="Added PBR support" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added PBR support" />
+    <MESSAGE value="Fixing compilation failure in material shader" />
+    <MESSAGE value="Fixing model importing" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixing model importing" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1507,8 +1521,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/WizardEngine/src/cpp/visual/Log.cpp</url>
-          <line>79</line>
+          <line>78</line>
           <option name="timeStamp" value="70" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/WizardEngine/src/cpp/graphics/material/Material.cpp</url>
+          <line>148</line>
+          <option name="timeStamp" value="81" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

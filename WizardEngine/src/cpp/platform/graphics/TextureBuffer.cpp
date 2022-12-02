@@ -211,6 +211,7 @@ namespace engine::graphics {
         } else {
             switch (channels) {
                 case CHANNEL_RED:
+                    ENGINE_INFO("TextureBuffer::load(): format RED");
                     internalFormat = GL_RED;
                     dataFormat = GL_RED;
                     break;

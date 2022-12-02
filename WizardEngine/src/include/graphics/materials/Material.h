@@ -9,6 +9,8 @@
 #include <platform/graphics/TextureBuffer.h>
 #include <platform/graphics/tools/VideoStats.h>
 
+#define MATERIAL_TEXTURES_COUNT 8
+
 namespace engine::graphics {
 
     using namespace shader;
@@ -17,7 +19,7 @@ namespace engine::graphics {
     serialize_component(Material) {
         const char* name = "material";
         const char* title = "Untitled";
-        Vec4fUniform color = { "color", { 0.5, 0.5, 0.5, 1 } };
+        Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
         FloatUniform ambient = { "ambient", 1 };
         FloatUniform diffuse = { "diffuse", 1 };
         FloatUniform specular = { "specular", 1 };
@@ -33,7 +35,7 @@ namespace engine::graphics {
         BoolUniform enableAlbedoMap = { "enableAlbedoMap", false };
         BoolUniform enableDiffuseMap = { "enableDiffuseMap", false };
         BoolUniform enableSpecularMap = { "enableSpecularMap", false };
-        BoolUniform enableBlinn = { "enableBlinn", false };
+        BoolUniform enableBlinn = { "enableBlinn", true };
         BoolUniform enableNormalMap = { "enableNormalMap", false };
         BoolUniform enableParallaxMap = { "enableParallaxMap", false };
         BoolUniform enableMetallicMap = { "enableMetallicMap", false };

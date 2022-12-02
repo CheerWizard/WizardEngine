@@ -17,6 +17,7 @@ namespace engine::visual {
         Slider::draw(material.ambient, { 0, 1 });
         Checkbox::draw(material.enableAlbedoMap);
         Slider::draw(material.diffuse, { 0, 1 });
+        Checkbox::draw(material.enableNormalMap);
         Checkbox::draw(material.enableDiffuseMap);
         Slider::draw(material.specular, { 0, 1 });
         Slider::draw(material.shiny, { 0, 32 });

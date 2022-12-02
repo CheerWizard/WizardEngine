@@ -6,7 +6,9 @@
 
 #include <core/filesystem.h>
 #include <core/Mappers.h>
+
 #include <graphics/core/geometry/Mesh.h>
+#include <graphics/materials/Material.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -16,6 +18,7 @@
 namespace engine::io {
 
     using namespace math;
+    using namespace graphics;
 
     struct ENGINE_API Face {
         int posIndex;
@@ -31,21 +34,12 @@ namespace engine::io {
         vec3f bitangent = { 0, 0, 0 };
     };
 
-    struct ENGINE_API ModelTexture {
-        uint32_t id;
-        aiTextureType type;
-        std::string path;
+    struct ENGINE_API ModelMesh : BaseMesh<ModelVertex> {
+        Material material;
     };
-
-    struct ENGINE_API ModelMaterial {
-        std::vector<ModelTexture> textures;
-    };
-
-    typedef graphics::BaseMesh<ModelVertex> ModelMesh;
 
     struct ENGINE_API Model {
         std::vector<ModelMesh> meshes;
-        std::vector<ModelMaterial> materials;
     };
 
     // const container of aiTextureType and actual const string naming
@@ -103,21 +97,27 @@ namespace engine::io {
         typedef std::unordered_map<std::string, Model> ModelMap;
 
     public:
-        static void read(const std::string &filepath, const ModelFileListener<T>& listener, const ModelFileOptions& options = ModelFileOptions());
+        static void read(const std::string &filepath, const std::string& texturesFilePath, const ModelFileListener<T>& listener, const ModelFileOptions& options = ModelFileOptions());
 
     private:
-        static Model read(const std::string &filePath, const ModelFileOptions& options);
+        static Model read(const std::string &filePath, const std::string& texturesFilePath, const ModelFileOptions& options);
         static bool exists(const std::string &filepath);
         static void clear();
         static void extractNodes(
+                const std::string& texturesFilePath,
                 aiNode *node,
                 const aiScene *scene,
-                std::vector<ModelMesh>& meshes,
-                std::vector<ModelMaterial>& materials
+                std::vector<ModelMesh>& meshes
         );
         static ModelMesh extractMesh(aiMesh *mesh);
-        static ModelMaterial extractMaterial(aiMesh *mesh, const aiScene *scene);
-        static void extractTextures(std::vector<ModelTexture>& textures, aiMaterial *mat, const aiTextureType& type);
+        static Material extractMaterial(const std::string& texturesPath, aiMesh *mesh, const aiScene *scene);
+        static u32 extractTexture(
+                const std::string& texturesPath,
+                aiMaterial* material,
+                aiTextureType textureType,
+                bool& enableTexture
+        );
+
         static Model getFromMemory(const std::string& filepath);
         static Model copyFromMemory(const std::string& filepath);
 
@@ -129,7 +129,7 @@ namespace engine::io {
     std::unordered_map<std::string, Model> ModelFile<T>::modelMap;
 
     template<typename T>
-    Model ModelFile<T>::read(const std::string &filePath, const ModelFileOptions& options) {
+    Model ModelFile<T>::read(const std::string &filePath, const std::string& texturesFilePath, const ModelFileOptions& options) {
         Assimp::Importer import;
         const aiScene *scene = import.ReadFile(filePath, options.getFlag());
 
@@ -139,28 +139,28 @@ namespace engine::io {
         }
 
         std::vector<ModelMesh> meshes;
-        std::vector<ModelMaterial> materials;
-        extractNodes(scene->mRootNode, scene, meshes, materials);
-
-        return { meshes, materials };
+        extractNodes(texturesFilePath, scene->mRootNode, scene, meshes);
+        meshes = { meshes[2] };
+        return { meshes };
     }
 
     template<typename T>
     void ModelFile<T>::extractNodes(
+            const std::string& texturesFilePath,
             aiNode *node,
             const aiScene *scene,
-            std::vector<ModelMesh>& meshes,
-            std::vector<ModelMaterial>& materials
+            std::vector<ModelMesh>& meshes
     ) {
         // extract all meshes and materials of node
         for (uint32_t i = 0; i < node->mNumMeshes; i++) {
             aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-            meshes.push_back(extractMesh(mesh));
-            materials.push_back(extractMaterial(mesh, scene));
+            ModelMesh modelMesh = extractMesh(mesh);
+            modelMesh.material = extractMaterial(texturesFilePath, mesh, scene);
+            meshes.push_back(modelMesh);
         }
         // recursively extract node's children
         for (uint32_t i = 0; i < node->mNumChildren; i++) {
-            extractNodes(node->mChildren[i], scene, meshes, materials);
+            extractNodes(texturesFilePath, node->mChildren[i], scene, meshes);
         }
     }
 
@@ -225,38 +225,83 @@ namespace engine::io {
     }
 
     template<typename T>
-    ModelMaterial ModelFile<T>::extractMaterial(aiMesh *mesh, const aiScene* scene) {
-        std::vector<ModelTexture> textures;
+    Material ModelFile<T>::extractMaterial(const std::string& texturesPath, aiMesh *mesh, const aiScene* scene) {
         // check if material exist for mesh
+        Material material;
         if (mesh->mMaterialIndex >= 0) {
-            aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-            extractTextures(textures, material, aiTextureType_DIFFUSE);
-            extractTextures(textures, material, aiTextureType_SPECULAR);
-            extractTextures(textures, material, aiTextureType_SPECULAR);
+            aiMaterial* modelMaterial = scene->mMaterials[mesh->mMaterialIndex];
+
+            material.albedoSlot.textureId = extractTexture(
+                    texturesPath,
+                    modelMaterial,
+                    aiTextureType_BASE_COLOR,
+                    material.enableAlbedoMap.value
+            );
+            material.diffuseSlot.textureId = extractTexture(
+                    texturesPath,
+                    modelMaterial,
+                    aiTextureType_DIFFUSE,
+                    material.enableDiffuseMap.value
+            );
+            material.specularSlot.textureId = extractTexture(
+                    texturesPath,
+                    modelMaterial,
+                    aiTextureType_SPECULAR,
+                    material.enableSpecularMap.value
+            );
+            material.normalSlot.textureId = extractTexture(
+                    texturesPath,
+                    modelMaterial,
+                    aiTextureType_NORMALS,
+                    material.enableNormalMap.value
+            );
+            material.depthSlot.textureId = extractTexture(
+                    texturesPath,
+                    modelMaterial,
+                    aiTextureType_DISPLACEMENT,
+                    material.enableParallaxMap.value
+            );
+            material.aoSlot.textureId = extractTexture(
+                    texturesPath,
+                    modelMaterial,
+                    aiTextureType_AMBIENT_OCCLUSION,
+                    material.enableAOMap.value
+            );
+            material.metallicSlot.textureId = extractTexture(
+                    texturesPath,
+                    modelMaterial,
+                    aiTextureType_METALNESS,
+                    material.enableMetallicMap.value
+            );
+            material.roughnessSlot.textureId = extractTexture(
+                    texturesPath,
+                    modelMaterial,
+                    aiTextureType_DIFFUSE_ROUGHNESS,
+                    material.enableRoughnessMap.value
+            );
         }
-        return { textures };
+
+        return material;
     }
 
     template<typename T>
-    void ModelFile<T>::extractTextures(
-            std::vector<ModelTexture>& textures,
-            aiMaterial *mat,
-            const aiTextureType& type
-    ) {
-        for (uint32_t i = 0; i < mat->GetTextureCount(type); i++) {
-            aiString filePath;
-            mat->GetTexture(type, i, &filePath);
-            ModelTexture texture {
-                    0,
-                    type,
-                    std::string(filePath.data)
-            };
-            textures.push_back(texture);
+    u32 ModelFile<T>::extractTexture(const std::string& texturesPath, aiMaterial* material, aiTextureType textureType, bool& enableTexture) {
+        aiString textureOldPath;
+        for (u32 i = 0; i < material->GetTextureCount(textureType); i++) {
+            material->GetTexture(textureType, i, &textureOldPath);
+            ENGINE_INFO("extractTexture(): {0}", textureOldPath.data);
         }
+        std::string textureName = engine::filesystem::getFileNameWithExtension(textureOldPath.data);
+        std::stringstream ss;
+        ss << texturesPath << "/" << textureName;
+        std::string textureFullPath = ss.str();
+        u32 textureId = TextureBuffer::load(textureFullPath.c_str());
+        enableTexture = textureId != invalidTextureId;
+        return textureId;
     }
 
     template<typename T>
-    void ModelFile<T>::read(const std::string &filepath, const ModelFileListener<T> &listener, const ModelFileOptions& options) {
+    void ModelFile<T>::read(const std::string &filepath, const std::string& texturesFilePath, const ModelFileListener<T> &listener, const ModelFileOptions& options) {
         ENGINE_INFO("ModelFile: read='{0}'", filepath);
         // get a copy of mesh that's already loaded from a model file
         if (exists(filepath)) {
@@ -265,7 +310,7 @@ namespace engine::io {
         }
         // load new mesh from model file
         try {
-            auto model = read(filepath, options);
+            auto model = read(filepath, texturesFilePath, options);
             modelMap.insert({ filepath, model });
             listener.success(model);
         } catch (const file_not_found& ex) {

@@ -6,7 +6,7 @@
 
 #include <graphics/core/shader/BaseShader.h>
 
-#define CHANNEL_RED 0
+#define CHANNEL_RED 1
 #define CHANNEL_RGB 3
 #define CHANNEL_RGBA 4
 
