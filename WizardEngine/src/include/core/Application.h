@@ -78,6 +78,7 @@ using namespace engine::scripting;
 #include <visual/Log.h>
 #include <visual/ImageLayout.h>
 #include <visual/MaterialPanel.h>
+#include <visual/LightPanel.h>
 
 using namespace engine::visual;
 #endif

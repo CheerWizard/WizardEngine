@@ -134,35 +134,55 @@ namespace test {
                                 0
                         };
                     });
-                    Batch3d newEntity = Batch3d(&"Entity"[i], scene.get());
+                    std::stringstream ss;
+                    ss << "Entity_" << i;
+                    Batch3d newEntity = Batch3d(scene.get());
+                    newEntity.get<TagComponent>()->tag = ss.str();
                     newEntity.getTransform().position = { 1, 1, 1 };
                     newEntity.applyTransform();
                     newEntity.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(meshComponent);
 
-                    switch (i) {
-                        case 5:
-                        modelMesh.material.albedoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/T_Dust.png");
-                        modelMesh.material.enableAlbedoMap.value = true;
-                        break;
-
-                        case 1:
-                        modelMesh.material.aoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/PillarAO.png");
-                        modelMesh.material.enableAOMap.value = true;
-                        break;
-
-                        case 0:
-                        modelMesh.material.albedoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/BaseColor.png");
-                        modelMesh.material.enableAlbedoMap.value = true;
-                        modelMesh.material.normalSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/NormalMap.png");
-                        modelMesh.material.enableNormalMap.value = true;
-                        modelMesh.material.aoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/AOMap.png");
-                        modelMesh.material.enableAOMap.value = true;
-                        modelMesh.material.metallicSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/Metalness.png");
-                        modelMesh.material.enableMetallicMap.value = true;
-                        modelMesh.material.roughnessSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/Roughness.png");
-                        modelMesh.material.enableRoughnessMap.value = true;
-                        break;
-                    }
+//                    switch (i) {
+//                        case 0:
+//                        modelMesh.material.albedoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/T_Dust.png");
+//                        modelMesh.material.enableAlbedoMap.value = true;
+//                        modelMesh.material.enableDiffuseMap.value = false;
+//                        modelMesh.material.enableSpecularMap.value = false;
+//                        modelMesh.material.enableParallaxMap.value = false;
+//                        modelMesh.material.enableNormalMap.value = false;
+//                        modelMesh.material.enableAOMap.value = false;
+//                        modelMesh.material.enableMetallicMap.value = false;
+//                        modelMesh.material.enableRoughnessMap.value = false;
+//                        break;
+//
+//                        case 1:
+//                        modelMesh.material.enableAlbedoMap.value = false;
+//                        modelMesh.material.enableDiffuseMap.value = false;
+//                        modelMesh.material.enableSpecularMap.value = false;
+//                        modelMesh.material.enableParallaxMap.value = false;
+//                        modelMesh.material.enableNormalMap.value = false;
+//                        modelMesh.material.aoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/PillarAO.png");
+//                        modelMesh.material.enableAOMap.value = true;
+//                        modelMesh.material.enableMetallicMap.value = false;
+//                        modelMesh.material.enableRoughnessMap.value = false;
+//                        break;
+//
+//                        case 2:
+//                        modelMesh.material.albedoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/BaseColor.png");
+//                        modelMesh.material.enableAlbedoMap.value = true;
+//                        modelMesh.material.enableDiffuseMap.value = false;
+//                        modelMesh.material.enableSpecularMap.value = false;
+//                        modelMesh.material.enableParallaxMap.value = false;
+//                        modelMesh.material.normalSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/NormalMap.png");
+//                        modelMesh.material.enableNormalMap.value = true;
+//                        modelMesh.material.aoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/AOMap.png");
+//                        modelMesh.material.enableAOMap.value = true;
+//                        modelMesh.material.metallicSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/Metalness.png");
+//                        modelMesh.material.enableMetallicMap.value = true;
+//                        modelMesh.material.roughnessSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/Roughness.png");
+//                        modelMesh.material.enableRoughnessMap.value = true;
+//                        break;
+//                    }
 
                     newEntity.add<Material>(modelMesh.material);
                     packs.emplace_back(newEntity);
@@ -256,10 +276,10 @@ namespace test {
         lights.emplace_back("L_Sun_2", scene.get());
         lights.emplace_back("L_Sun_3", scene.get());
         lights.emplace_back("L_Sun_4", scene.get());
-        lights[0].getPosition() = { 0, 100, 0 };
-        lights[1].getPosition() = { 100, 100, 0 };
-        lights[2].getPosition() = { 0, 100, 100 };
-        lights[3].getPosition() = { 100, 100, 100 };
+        lights[0].getPosition() = { -10, 10, -10 };
+        lights[1].getPosition() = { 10, 10, 10 };
+        lights[2].getPosition() = { -10, 10, 10 };
+        lights[3].getPosition() = { 10, 10, -10 };
 
         bool tcpClientCreated = tcp::Client::init(this, this, this);
         if (tcpClientCreated) {
@@ -706,24 +726,13 @@ namespace test {
             Gizmo::drawTranslate(mainCamera, *selectedTransform, { xPos, yPos }, windowSize);
         }
 
-        ProjectsPanel::draw("Project Manager", { 800, 600 }, [this](const Project& openedProject) {
-        });
+//        ProjectsPanel::draw("Project Manager", { 800, 600 }, [this](const Project& openedProject) {});
 
+        MaterialPanel::draw(packs[2]);
+//        LightsPanel::draw(lights);
         AssetBrowser::draw(dt);
 //        Log::draw("Log");
         sceneViewport.setId(RenderSystem::finalRenderTargetId);
         sceneViewport.onUpdate(dt);
-
-        Material* currentMaterial = packs[0].get<Material>();
-        if (currentMaterial) {
-            MaterialPanel::draw(*currentMaterial);
-        }
-
-//        for (const auto& light : lights) {
-//            Panel::begin(light.get<TagComponent>()->tag.c_str(), { 800, 600 });
-//            ColorPicker::draw(light.get<PhongLightComponent>()->color);
-//            Controller::draw(light.get<PhongLightComponent>()->position, 0, 400);
-//            Panel::end();
-//        }
      }
 }

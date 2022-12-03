@@ -70,15 +70,15 @@ namespace engine::io {
     };
 
     enum ModelFileOption {
-        triangulate = aiProcess_Triangulate,
-        flip_uv = aiProcess_FlipUVs,
+        triangulate = aiProcess_Triangulate, // divide complex polygons into triangles
+        flip_uv = aiProcess_FlipUVs, // we can simply flip stbi_image instead
         calc_tang_space = aiProcess_CalcTangentSpace,
         texture_invert = aiTextureFlags_Invert,
-        embed_textures = aiProcess_EmbedTextures
+        embed_textures = aiProcess_EmbedTextures // read embedded textures from .fbx, .gltf
     };
 
     struct ENGINE_API ModelFileOptions {
-        vector<ModelFileOption> flags = { embed_textures, calc_tang_space, triangulate };
+        vector<ModelFileOption> flags = { triangulate, calc_tang_space, embed_textures };
 
         [[nodiscard]] u32 getFlag() const {
             if (flags.empty()) return 0;
@@ -140,7 +140,6 @@ namespace engine::io {
 
         std::vector<ModelMesh> meshes;
         extractNodes(texturesFilePath, scene->mRootNode, scene, meshes);
-        meshes = { meshes[2] };
         return { meshes };
     }
 
@@ -228,70 +227,72 @@ namespace engine::io {
     Material ModelFile<T>::extractMaterial(const std::string& texturesPath, aiMesh *mesh, const aiScene* scene) {
         // check if material exist for mesh
         Material material;
-        if (mesh->mMaterialIndex >= 0) {
-            aiMaterial* modelMaterial = scene->mMaterials[mesh->mMaterialIndex];
+//        if (mesh->mMaterialIndex >= 0) {
+//            aiMaterial* modelMaterial = scene->mMaterials[mesh->mMaterialIndex];
 
-            material.albedoSlot.textureId = extractTexture(
-                    texturesPath,
-                    modelMaterial,
-                    aiTextureType_BASE_COLOR,
-                    material.enableAlbedoMap.value
-            );
-            material.diffuseSlot.textureId = extractTexture(
-                    texturesPath,
-                    modelMaterial,
-                    aiTextureType_DIFFUSE,
-                    material.enableDiffuseMap.value
-            );
-            material.specularSlot.textureId = extractTexture(
-                    texturesPath,
-                    modelMaterial,
-                    aiTextureType_SPECULAR,
-                    material.enableSpecularMap.value
-            );
-            material.normalSlot.textureId = extractTexture(
-                    texturesPath,
-                    modelMaterial,
-                    aiTextureType_NORMALS,
-                    material.enableNormalMap.value
-            );
-            material.depthSlot.textureId = extractTexture(
-                    texturesPath,
-                    modelMaterial,
-                    aiTextureType_DISPLACEMENT,
-                    material.enableParallaxMap.value
-            );
-            material.aoSlot.textureId = extractTexture(
-                    texturesPath,
-                    modelMaterial,
-                    aiTextureType_AMBIENT_OCCLUSION,
-                    material.enableAOMap.value
-            );
-            material.metallicSlot.textureId = extractTexture(
-                    texturesPath,
-                    modelMaterial,
-                    aiTextureType_METALNESS,
-                    material.enableMetallicMap.value
-            );
-            material.roughnessSlot.textureId = extractTexture(
-                    texturesPath,
-                    modelMaterial,
-                    aiTextureType_DIFFUSE_ROUGHNESS,
-                    material.enableRoughnessMap.value
-            );
-        }
+            // todo assimp is not getting textures by texture_type correctly.
+            //      for example aiTextureType_DIFFUSE returns path to base color or to AO map
+//            material.albedoSlot.textureId = extractTexture(
+//                    texturesPath,
+//                    modelMaterial,
+//                    aiTextureType_BASE_COLOR,
+//                    material.enableAlbedoMap.value
+//            );
+//            material.diffuseSlot.textureId = extractTexture(
+//                    texturesPath,
+//                    modelMaterial,
+//                    aiTextureType_DIFFUSE,
+//                    material.enableDiffuseMap.value
+//            );
+//            material.specularSlot.textureId = extractTexture(
+//                    texturesPath,
+//                    modelMaterial,
+//                    aiTextureType_SPECULAR,
+//                    material.enableSpecularMap.value
+//            );
+//            material.normalSlot.textureId = extractTexture(
+//                    texturesPath,
+//                    modelMaterial,
+//                    aiTextureType_NORMALS,
+//                    material.enableNormalMap.value
+//            );
+//            material.depthSlot.textureId = extractTexture(
+//                    texturesPath,
+//                    modelMaterial,
+//                    aiTextureType_DISPLACEMENT,
+//                    material.enableParallaxMap.value
+//            );
+//            material.aoSlot.textureId = extractTexture(
+//                    texturesPath,
+//                    modelMaterial,
+//                    aiTextureType_AMBIENT_OCCLUSION,
+//                    material.enableAOMap.value
+//            );
+//            material.metallicSlot.textureId = extractTexture(
+//                    texturesPath,
+//                    modelMaterial,
+//                    aiTextureType_METALNESS,
+//                    material.enableMetallicMap.value
+//            );
+//            material.roughnessSlot.textureId = extractTexture(
+//                    texturesPath,
+//                    modelMaterial,
+//                    aiTextureType_DIFFUSE_ROUGHNESS,
+//                    material.enableRoughnessMap.value
+//            );
+//        }
 
         return material;
     }
 
     template<typename T>
-    u32 ModelFile<T>::extractTexture(const std::string& texturesPath, aiMaterial* material, aiTextureType textureType, bool& enableTexture) {
-        aiString textureOldPath;
-        for (u32 i = 0; i < material->GetTextureCount(textureType); i++) {
-            material->GetTexture(textureType, i, &textureOldPath);
-            ENGINE_INFO("extractTexture(): {0}", textureOldPath.data);
-        }
-        std::string textureName = engine::filesystem::getFileNameWithExtension(textureOldPath.data);
+    u32 ModelFile<T>::extractTexture(const std::string& texturesPath,
+                                     aiMaterial* material,
+                                     aiTextureType textureType, bool& enableTexture) {
+        aiString texture_file;
+        material->Get(AI_MATKEY_TEXTURE(textureType, 0), texture_file);
+//        if(auto texture = scene->GetEmbeddedTexture(texture_file.C_Str())) {
+        std::string textureName = engine::filesystem::getFileNameWithExtension(texture_file.data);
         std::stringstream ss;
         ss << texturesPath << "/" << textureName;
         std::string textureFullPath = ss.str();

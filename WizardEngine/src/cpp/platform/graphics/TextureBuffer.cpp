@@ -195,18 +195,20 @@ namespace engine::graphics {
     }
 
     void TextureBuffer::load(const u32& id, const io::TextureData &textureData) {
-        GLenum internalFormat = GL_RED, dataFormat = GL_RED;
+        GLint internalFormat = GL_RED;
+        GLenum dataFormat = GL_RED;
         int channels = textureData.channels, width = textureData.width, height = textureData.height;
 
         if (textureData.hdr) {
             internalFormat = GL_RGB16F;
             dataFormat = GL_RGB;
-            glTextureStorage2D(id, 1, internalFormat, width, height);
-            glTextureSubImage2D(id, 0, 0, 0, width, height, dataFormat, GL_FLOAT, textureData.data);
+            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//            glTextureStorage2D(id, 1, internalFormat, width, height);
+//            glTextureSubImage2D(id, 0, 0, 0, width, height, dataFormat, GL_FLOAT, textureData.data);
             return;
         } else {
             switch (channels) {
@@ -216,10 +218,12 @@ namespace engine::graphics {
                     dataFormat = GL_RED;
                     break;
                 case CHANNEL_RGB:
+                    ENGINE_INFO("TextureBuffer::load(): format RGB");
                     internalFormat = GL_RGB8;
                     dataFormat = GL_RGB;
                     break;
                 case CHANNEL_RGBA:
+                    ENGINE_INFO("TextureBuffer::load(): format RGBA");
                     internalFormat = GL_RGBA8;
                     dataFormat = GL_RGBA;
                     break;
@@ -235,10 +239,17 @@ namespace engine::graphics {
                     internalFormat,
                     dataFormat
             );
+            return;
         }
 
-        glTextureStorage2D(id, 1, internalFormat, width, height);
-        glTextureSubImage2D(id, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//        glTextureStorage2D(id, 1, internalFormat, width, height);
+//        glTextureSubImage2D(id, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
     }
 
     void TextureBuffer::loadArray(const u32 &id, const io::TextureArrayData& textureArrayData) {

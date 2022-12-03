@@ -5,6 +5,7 @@
 
 layout(location = 1) out vec4 brightColor;
 layout(location = 2) out int uuid;
+layout(location = 3) out vec4 pbrColor;
 
 const uint LIGHT_COUNT = 4;
 uniform PhongLight phongLight[LIGHT_COUNT];
@@ -149,6 +150,8 @@ void main() {
     vec3 color = amb + Lo;
     color = color / (color + vec3(1.0));
     fragment = vec4(gamma(color, material[getId()].gamma), material[getId()].color.w);
+
+    pbrColor = vec4(metallic, roughness, ao, 1); // for troubleshooting
 
     float brightness = dot(fragment.rgb, vec3(0.2126, 0.7152, 0.0722));
     if (brightness > material[getId()].brightness) {
