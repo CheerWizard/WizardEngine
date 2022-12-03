@@ -32,6 +32,8 @@ namespace engine::filesystem {
     ENGINE_API std::string readWithIncludes(const std::string &fullPath, const std::string &includeToken);
     ENGINE_API std::string getFileName(const std::string &filePath);
     ENGINE_API std::string getFileName(const fpath &filePath);
+    ENGINE_API std::string getFileName(char* filepath);
+    ENGINE_API std::string getFileNameWithExtension(char* filepath);
     ENGINE_API void newFile(const fpath &filePath);
     ENGINE_API std::filesystem::path toPath(const wchar_t* path);
     ENGINE_API error move(const fpath& oldPath, const fpath& newPath);

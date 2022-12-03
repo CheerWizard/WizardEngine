@@ -43,9 +43,9 @@ namespace engine::visual {
 
     class ENGINE_API Text final {
     public:
-        static void label(const char* text, const vec2f& padding = {0,0});
+        static void label(const char* text, const vec2f& padding = { 1, 1 });
         static bool field(const char* id, const char* title, std::string* text,
-                          const vec2f& padding = {0, 0}, bool alignLeft = true);
+                          const vec2f& padding = { 1, 1 }, bool alignLeft = true);
         static void centered(const char* text, float maxWidth, int lineId = 0, bool separator = false);
     };
 

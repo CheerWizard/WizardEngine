@@ -92,15 +92,13 @@ namespace test {
         vector<Batch3d> packs;
         vector<Instance3d> instancedPacks;
         bool msaaEnabled = false;
-        PhongLight light;
+        vector<PhongLight> lights;
         bool showGizmo = false;
         ImageLayout sceneViewport {
             "Scene",
                     512,
                     512
         };
-        MaterialPanel materialPanel;
-        Batch3d currentEntity;
     };
 
 }

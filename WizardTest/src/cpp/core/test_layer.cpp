@@ -88,91 +88,145 @@ namespace test {
 //        });
 
         // spawn random objects
-        math::random(-10, 10, 1, [this, &scene](int i, f32 r) {
-            Batch3d pack = Batch3d(&"SurvivalBackPack"[i], scene.get());
-            pack.getTransform().position = { r * i, r * i, r * i };
-            pack.getTransform().rotation = { r * i, r * i, r * i };
-            pack.applyTransform();
+//        math::random(-10, 10, 1, [this, &scene](int i, f32 r) {
+//            Batch3d pack = Batch3d(&"SurvivalBackPack"[i], scene.get());
+//            pack.getTransform().position = { r * i, r * i, r * i };
+//            pack.getTransform().rotation = { r * i, r * i, r * i };
+//            pack.applyTransform();
 //            vec3f velocity = { 0.0005f, 0.0005f, 0.0005f };
 //            velocity *= i%2 == 0 ? 1 : -1;
 //            pack.add<Velocity>(velocity);
-            pack.add<SphereCollider>(pack.getTransform().position, 3.0f);
-            packs.emplace_back(pack);
-        });
+//            pack.add<SphereCollider>(pack.getTransform().position, 3.0f);
+//            packs.emplace_back(pack);
+//        });
 
-        packs[0].getTransform().position = { 1, 1, 1 };
-        packs[0].applyTransform();
-
-        math::random(-10, 10, 0, [this, &scene](int i, f32 r) {
-            Instance3d pack = Instance3d(&"SurvivalBackPackInstanced"[i], scene.get());
-            pack.getTransform().position = { r * i, r * i, r * i };
-            pack.getTransform().rotation = { r * i, r * i, r * i };
-            pack.applyTransform();
+//        math::random(-10, 10, 0, [this, &scene](int i, f32 r) {
+//            Instance3d pack = Instance3d(&"SurvivalBackPackInstanced"[i], scene.get());
+//            pack.getTransform().position = { r * i, r * i, r * i };
+//            pack.getTransform().rotation = { r * i, r * i, r * i };
+//            pack.applyTransform();
 //            vec3f velocity = { 0.0005f, 0.0005f, 0.0005f };
 //            velocity *= i%2 == 0 ? 1 : -1;
 //            pack.add<Velocity>(velocity);
-            pack.add<SphereCollider>(pack.getTransform().position, 3.0f);
-            instancedPacks.emplace_back(pack);
-        });
+//            pack.add<SphereCollider>(pack.getTransform().position, 3.0f);
+//            instancedPacks.emplace_back(pack);
+//        });
 
-        RenderSystem::sceneRenderers[0]->getShader().setInstancesPerDraw(6);
+        RenderSystem::sceneRenderers[0]->getShader().setInstancesPerDraw(4);
 
-        io::ModelFile<BatchVertex<Vertex3d>>::read("assets/model/survival_pack.obj", {
-            [this](const BaseMeshComponent<BatchVertex<Vertex3d>>& mesh) {
+        // we need to flip textures as they will be loaded vice versa
+        io::TextureFile::setFlipTexture(true);
+        io::ModelFile<BatchVertex<Vertex3d>>::read(
+                "assets/SamuraiHelmet/source/SamuraiHelmet.fbx.fbx",
+                "assets/SamuraiHelmet/textures", {
+            [this, &scene](const io::Model& model) {
                 RUNTIME_INFO("ModelFile read: onSuccess");
-                for (auto pack : packs) {
-                    auto m = mesh.copy();
-                    pack.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(m);
+                for (int i = 0; i < model.meshes.size(); i++) {
+                    auto modelMesh = model.meshes[i];
+                    BaseMeshComponent<BatchVertex<Vertex3d>> meshComponent;
+                    meshComponent.mesh = modelMesh.toMesh<BatchVertex<Vertex3d>>([](const io::ModelVertex& modelVertex) {
+                        return BatchVertex<Vertex3d> {
+                                modelVertex.position,
+                                modelVertex.uv,
+                                modelVertex.normal,
+                                modelVertex.tangent,
+                                modelVertex.bitangent,
+                                0
+                        };
+                    });
+                    std::stringstream ss;
+                    ss << "Entity_" << i;
+                    Batch3d newEntity = Batch3d(scene.get());
+                    newEntity.get<TagComponent>()->tag = ss.str();
+                    newEntity.getTransform().position = { 1, 1, 1 };
+                    newEntity.applyTransform();
+                    newEntity.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(meshComponent);
+
+//                    switch (i) {
+//                        case 0:
+//                        modelMesh.material.albedoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/T_Dust.png");
+//                        modelMesh.material.enableAlbedoMap.value = true;
+//                        modelMesh.material.enableDiffuseMap.value = false;
+//                        modelMesh.material.enableSpecularMap.value = false;
+//                        modelMesh.material.enableParallaxMap.value = false;
+//                        modelMesh.material.enableNormalMap.value = false;
+//                        modelMesh.material.enableAOMap.value = false;
+//                        modelMesh.material.enableMetallicMap.value = false;
+//                        modelMesh.material.enableRoughnessMap.value = false;
+//                        break;
+//
+//                        case 1:
+//                        modelMesh.material.enableAlbedoMap.value = false;
+//                        modelMesh.material.enableDiffuseMap.value = false;
+//                        modelMesh.material.enableSpecularMap.value = false;
+//                        modelMesh.material.enableParallaxMap.value = false;
+//                        modelMesh.material.enableNormalMap.value = false;
+//                        modelMesh.material.aoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/PillarAO.png");
+//                        modelMesh.material.enableAOMap.value = true;
+//                        modelMesh.material.enableMetallicMap.value = false;
+//                        modelMesh.material.enableRoughnessMap.value = false;
+//                        break;
+//
+//                        case 2:
+//                        modelMesh.material.albedoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/BaseColor.png");
+//                        modelMesh.material.enableAlbedoMap.value = true;
+//                        modelMesh.material.enableDiffuseMap.value = false;
+//                        modelMesh.material.enableSpecularMap.value = false;
+//                        modelMesh.material.enableParallaxMap.value = false;
+//                        modelMesh.material.normalSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/NormalMap.png");
+//                        modelMesh.material.enableNormalMap.value = true;
+//                        modelMesh.material.aoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/AOMap.png");
+//                        modelMesh.material.enableAOMap.value = true;
+//                        modelMesh.material.metallicSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/Metalness.png");
+//                        modelMesh.material.enableMetallicMap.value = true;
+//                        modelMesh.material.roughnessSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/Roughness.png");
+//                        modelMesh.material.enableRoughnessMap.value = true;
+//                        break;
+//                    }
+
+                    newEntity.add<Material>(modelMesh.material);
+                    packs.emplace_back(newEntity);
                 }
                 RenderSystem::sceneRenderers[0]->createVIRenderModel(packs);
             },
             [](const exception& exception) {
                 RUNTIME_INFO("ModelFile read: onError");
                 RUNTIME_EXCEPT(exception);
-            },
-            [](const io::ModelVertex& modelVertex) {
-                return BatchVertex<Vertex3d> {
-                    modelVertex.position,
-                    modelVertex.uv,
-                    modelVertex.normal,
-                    modelVertex.tangent,
-                    modelVertex.bitangent,
-                    0
-                };
             }
         });
 
-        RenderSystem::sceneRenderers[1]->getShader().setInstancesPerDraw(6);
+        RenderSystem::sceneRenderers[1]->getShader().setInstancesPerDraw(4);
 
-        io::ModelFile<InstanceVertex<Vertex3d>>::read("assets/model/survival_pack.obj", {
-                [this](const BaseMeshComponent<InstanceVertex<Vertex3d>>& mesh) {
-                    RUNTIME_INFO("ModelFile read: onSuccess");
-                    if (instancedPacks.empty()) return;
-                    instancedPacks[0].add<BaseMeshComponent<InstanceVertex<Vertex3d>>>(mesh.copy());
-                    RenderSystem::sceneRenderers[1]->createVIRenderModelInstanced(instancedPacks[0], instancedPacks);
-                },
-                [](const exception& exception) {
-                    RUNTIME_INFO("ModelFile read: onError");
-                    RUNTIME_EXCEPT(exception);
-                },
-                [](const io::ModelVertex& modelVertex) {
-                    return InstanceVertex<Vertex3d> {
-                            modelVertex.position,
-                            modelVertex.uv,
-                            modelVertex.normal,
-                            modelVertex.tangent,
-                            modelVertex.bitangent
-                    };
-                }
-        });
-
-//        SolidPhong carSolidPhong;
-//        carSolidPhong.color.value = { 0.5, 0, 0, 1 };
-//        carSolidPhong.ambient.value = 1;
-//        carSolidPhong.diffuse.value = 0.8;
-//        carSolidPhong.specular.value = 0.2;
-//        carSolidPhong.shiny.value = 16;
-//        car.add<SolidPhong>(carSolidPhong);
+//        io::ModelFile<InstanceVertex<Vertex3d>>::read("assets/SamuraiHelmet/source/SamuraiHelmet.fbx.fbx", {
+//                [this, &scene](const io::Model& model) {
+//                    RUNTIME_INFO("ModelFile read: onSuccess");
+//                    for (int i = 0; i < model.meshes.size(); i++) {
+//                        auto modelMesh = model.meshes[i];
+//                        BaseMeshComponent<InstanceVertex<Vertex3d>> meshComponent;
+//                        meshComponent.mesh = modelMesh.toMesh<InstanceVertex<Vertex3d>>([](const io::ModelVertex& modelVertex) {
+//                            return InstanceVertex<Vertex3d> {
+//                                    modelVertex.position,
+//                                    modelVertex.uv,
+//                                    modelVertex.normal,
+//                                    modelVertex.tangent,
+//                                    modelVertex.bitangent
+//                            };
+//                        });
+//                        Instance3d newEntity = Instance3d(&"Instanced_Entity"[i], scene.get());
+//                        newEntity.getTransform().position = { 1, 1, 1 };
+//                        newEntity.applyTransform();
+//                        newEntity.add<BaseMeshComponent<InstanceVertex<Vertex3d>>>(meshComponent);
+//                        newEntity.add<Material>(modelMesh.material);
+//
+//                        instancedPacks.emplace_back(newEntity);
+//                    }
+//                    RenderSystem::sceneRenderers[1]->createVIRenderModelInstanced(instancedPacks[0], instancedPacks);
+//                },
+//                [](const exception& exception) {
+//                    RUNTIME_INFO("ModelFile read: onError");
+//                    RUNTIME_EXCEPT(exception);
+//                }
+//        });
 
 //        u32 materialTextures = TextureBuffer::loadArray({
 //            "assets/materials/survival_pack/1001_albedo.jpg",
@@ -196,54 +250,8 @@ namespace test {
 //        batchRenderer->getShader().addScript(shaderScript);
 //        instanceRenderer->getShader().addScript(shaderScript);
 
-        u32 albedoSlot = TextureBuffer::load("assets/materials/survival_pack/1001_albedo.jpg");
-        u32 aoSlot = TextureBuffer::load("assets/materials/survival_pack/1001_AO.jpg");
-        u32 metallicSlot = TextureBuffer::load("assets/materials/survival_pack/1001_metallic.jpg");
-        u32 normalSlot = TextureBuffer::load("assets/materials/survival_pack/1001_normal.png");
-        u32 roughnessSlot = TextureBuffer::load("assets/materials/survival_pack/1001_roughness.jpg");
-
         // setup HDR env
         Application::get().setHdrEnvCube(scene, "assets/hdr/ice_lake.hdr");
-
-        // setup material
-        Material material;
-        material.title = "M_SurvivalPack";
-
-        material.color.value = { 0, 0, 0, 1 };
-
-        material.ambient.value = 1.0;
-        material.diffuse.value = 0.8;
-        material.specular.value = 0.5;
-        material.shiny.value = 1;
-        material.gamma.value = 2.2;
-        material.heightScale.value = 0.5;
-        material.brightness.value = 10;
-
-        material.enableBlinn.value = true;
-        material.enableAlbedoMap.value = true;
-        material.enableDiffuseMap.value = false;
-        material.enableSpecularMap.value = false;
-        material.enableNormalMap.value = true;
-        material.enableParallaxMap.value = false;
-        material.enableMetallicMap.value = true;
-        material.enableRoughnessMap.value = true;
-        material.enableAOMap.value = true;
-
-        material.albedoSlot.textureId = albedoSlot;
-        material.aoSlot.textureId = aoSlot;
-        material.metallicSlot.textureId = metallicSlot;
-        material.normalSlot.textureId = normalSlot;
-        material.roughnessSlot.textureId = roughnessSlot;
-
-        for (auto pack : packs) {
-            pack.add<Material>(material);
-        }
-
-        for (auto instancePack : instancedPacks) {
-            instancePack.add<Material>(material);
-        }
-
-        currentEntity = packs[0];
 
         graphics::enableSRGB();
 
@@ -264,8 +272,14 @@ namespace test {
 //                }
 //        );
 
-        light = PhongLight("L_Sun", scene.get());
-        light.getPosition() = { 0, 100, 10 };
+        lights.emplace_back("L_Sun_1", scene.get());
+        lights.emplace_back("L_Sun_2", scene.get());
+        lights.emplace_back("L_Sun_3", scene.get());
+        lights.emplace_back("L_Sun_4", scene.get());
+        lights[0].getPosition() = { -10, 10, -10 };
+        lights[1].getPosition() = { 10, 10, 10 };
+        lights[2].getPosition() = { -10, 10, 10 };
+        lights[3].getPosition() = { 10, 10, -10 };
 
         bool tcpClientCreated = tcp::Client::init(this, this, this);
         if (tcpClientCreated) {
@@ -608,7 +622,7 @@ namespace test {
         mouseWorldPos[1] *= -10;
         mouseWorldPos[2] *= 10;
 
-        light.getPosition() = mouseWorldPos;
+        lights[0].getPosition() = mouseWorldPos;
     }
 
     void TestLayer::switchMSAA() {
@@ -712,22 +726,13 @@ namespace test {
             Gizmo::drawTranslate(mainCamera, *selectedTransform, { xPos, yPos }, windowSize);
         }
 
-        ProjectsPanel::draw("Project Manager", { 800, 600 }, [this](const Project& openedProject) {
-        });
+//        ProjectsPanel::draw("Project Manager", { 800, 600 }, [this](const Project& openedProject) {});
 
+        MaterialPanel::draw(packs[2]);
+//        LightsPanel::draw(lights);
         AssetBrowser::draw(dt);
 //        Log::draw("Log");
         sceneViewport.setId(RenderSystem::finalRenderTargetId);
         sceneViewport.onUpdate(dt);
-
-        Material* currentMaterial = currentEntity.get<Material>();
-        if (currentMaterial) {
-            materialPanel.draw(*currentMaterial);
-        }
-
-        Panel::begin(light.get<TagComponent>()->tag.c_str(), { 800, 600 });
-        Controller::draw(light.get<PhongLightComponent>()->position, 0, 100);
-        ColorPicker::draw(light.get<PhongLightComponent>()->color);
-        Panel::end();
      }
 }

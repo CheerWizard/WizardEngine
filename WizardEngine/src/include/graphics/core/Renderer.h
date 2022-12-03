@@ -104,11 +104,6 @@ namespace engine::graphics {
         VRenderModel& createRenderModel(const uint32_t& vertexCount);
         VIRenderModel& createRenderModel(const uint32_t& vertexCount, const uint32_t& indexCount);
 
-//        template<typename T>
-//        bool validate(VertexDataComponent<T>& vertexDataComponent);
-//        template<typename T>
-//        bool validate(BaseMeshComponent<T>& meshComponent, u32& meshIndex);
-
         void handleEntity(ecs::Registry& registry, ecs::entity_id entityId, u32 index);
 
     protected:
@@ -485,13 +480,13 @@ namespace engine::graphics {
         upload(*mesh);
         uploadTransform<Transform3dComponent>(entity);
 
-        end(mesh->drawType, mesh->totalIndexCount);
+        end(mesh->drawType, mesh->totalIndexCount());
     }
 
     template<typename Vertex>
     void VIRenderer<Vertex>::upload(BaseMeshComponent<Vertex> &meshComponent) {
         if (!viRenderModel.hasCapacity(meshComponent)) {
-            viRenderModel = { 0, meshComponent.totalVertexCount, meshComponent.totalIndexCount };
+            viRenderModel = { 0, meshComponent.totalVertexCount(), meshComponent.totalIndexCount() };
             viRenderModel.vao.bind();
             viRenderModel.vbo.setFormat(shaderProgram.getVertexFormat());
             viRenderModel.ibo.bind();
@@ -513,43 +508,6 @@ namespace engine::graphics {
             shaderProgram.setUniform(transform->modelMatrix);
         }
     }
-
-//    template<typename T>
-//    bool Renderer::validate(VertexDataComponent<T>& vertexDataComponent) {
-//        if (vRenderModels.empty() || !vRenderModels[vertexDataComponent.renderModelId].hasCapacity(vertexDataComponent)) {
-//            auto vertexCount = vertexDataComponent.vertexData.size > DEFAULT_VERTEX_COUNT
-//                               ? vertexDataComponent.vertexData.size * 3 : DEFAULT_VERTEX_COUNT;
-//            auto& newRenderModel = createRenderModel(vertexCount);
-//            vertexDataComponent.renderModelId = newRenderModel.id;
-//            newRenderModel.increaseCounts(vertexDataComponent);
-//            return false;
-//        }
-//
-//        vRenderModels[vertexDataComponent.renderModelId].increaseCounts(vertexDataComponent);
-//        return true;
-//    }
-
-//    template<typename T>
-//    bool Renderer::validate(BaseMeshComponent<T>& meshComponent, u32& meshIndex) {
-//        bool shaderHasCapacity = meshIndex < shaderProgram.getInstancesPerDraw();
-//        meshIndex = shaderHasCapacity ? meshIndex + 1 : 0; // increment or reset meshIndex
-//
-//        if (viRenderModels.empty() || !shaderHasCapacity) {
-//            auto vertexCount = meshComponent.totalVertexCount > DEFAULT_VERTEX_COUNT
-//                    ? meshComponent.totalVertexCount * 3 : DEFAULT_VERTEX_COUNT;
-//
-//            auto indexCount = meshComponent.totalIndexCount > DEFAULT_INDEX_COUNT
-//                    ? meshComponent.totalIndexCount * 3 : DEFAULT_INDEX_COUNT;
-//
-//            auto& newRenderModel = createRenderModel(vertexCount, indexCount);
-//            meshComponent.renderModelId = newRenderModel.id;
-//            newRenderModel.increaseCounts(meshComponent);
-//            return false;
-//        }
-//
-//        viRenderModels[meshComponent.renderModelId].increaseCounts(meshComponent);
-//        return true;
-//    }
 
     template<typename Vertex>
     void VRenderer<Vertex>::release() {
@@ -599,7 +557,7 @@ namespace engine::graphics {
 
     template<typename T>
     void Renderer::createRenderModel(BaseMeshComponent<T> &baseMeshComponent) {
-        VIRenderModel& newRenderModel = createRenderModel(baseMeshComponent.totalVertexCount, baseMeshComponent.totalIndexCount);
+        VIRenderModel& newRenderModel = createRenderModel(baseMeshComponent.totalVertexCount(), baseMeshComponent.totalIndexCount());
         baseMeshComponent.renderModelId = newRenderModel.id;
     }
 
@@ -617,8 +575,8 @@ namespace engine::graphics {
         u32 vertexCount = 0;
         u32 indexCount = 0;
         for (const auto& meshComponent : baseMeshComponents) {
-            vertexCount += meshComponent.totalVertexCount;
-            indexCount += meshComponent.totalIndexCount;
+            vertexCount += meshComponent.totalVertexCount();
+            indexCount += meshComponent.totalIndexCount();
         }
         return createRenderModel(vertexCount, indexCount);
     }
@@ -685,8 +643,8 @@ namespace engine::graphics {
             u32 indexCount = 0;
             for (Object<T>& object : objects) {
                 BaseMeshComponent<T>* mesh = object.get<BaseMeshComponent<T>>();
-                vertexCount += mesh->totalVertexCount;
-                indexCount += mesh->totalIndexCount;
+                vertexCount += mesh->totalVertexCount();
+                indexCount += mesh->totalIndexCount();
             }
 
             VIRenderModel& renderModel = createRenderModel(vertexCount, indexCount);
@@ -706,8 +664,8 @@ namespace engine::graphics {
                 u32 objectIndex = i * instancesPerDraw + j;
                 BaseMeshComponent<T>* mesh = objects.at(objectIndex).get<BaseMeshComponent<T>>();
                 meshes.emplace_back(*mesh);
-                vertexCount += mesh->totalVertexCount;
-                indexCount += mesh->totalIndexCount;
+                vertexCount += mesh->totalVertexCount();
+                indexCount += mesh->totalIndexCount();
             }
 
             VIRenderModel& renderModel = createRenderModel(vertexCount, indexCount);
@@ -740,7 +698,7 @@ namespace engine::graphics {
     void Renderer::createVIRenderModelInstanced(Object<T> &object, const vector<Object<T>> &objects) {
         BaseMeshComponent<T>* mesh = object.get<BaseMeshComponent<T>>();
         if (mesh) {
-            VIRenderModel& renderModel = createRenderModel(mesh->totalVertexCount, mesh->totalIndexCount);
+            VIRenderModel& renderModel = createRenderModel(mesh->totalVertexCount(), mesh->totalIndexCount());
             renderModel.mesh = object.getId();
             mesh->renderModelId = renderModel.id;
             for (const Object<T>& obj : objects) {

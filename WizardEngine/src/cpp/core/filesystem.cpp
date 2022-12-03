@@ -153,6 +153,18 @@ namespace engine::filesystem {
         return getFileName(filePath.string());
     }
 
+    std::string getFileName(char* filepath) {
+        std::string strFilepath(filepath);
+        return getFileName(strFilepath);
+    }
+
+    std::string getFileNameWithExtension(char* filepath) {
+        std::string strFilepath(filepath);
+        uint32_t lastSlash = strFilepath.find_last_of("/\\");
+        lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+        return strFilepath.substr(lastSlash, strFilepath.size() - lastSlash);
+    }
+
     void newFile(const fpath &filePath) {
         write(filePath, " ");
     }

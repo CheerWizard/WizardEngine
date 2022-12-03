@@ -4,7 +4,9 @@
 
 #include <graphics/core/io/TextureFile.h>
 
+#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+
 #include <sstream>
 
 namespace engine::io {
@@ -58,4 +60,9 @@ namespace engine::io {
             free(textureData.data);
         }
     }
+
+    void TextureFile::setFlipTexture(bool flipEnabled) {
+        stbi_set_flip_vertically_on_load(flipEnabled);
+    }
+
 }

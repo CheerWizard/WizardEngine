@@ -1,6 +1,6 @@
 [Window][Test]
 Pos=0,0
-Size=1366,768
+Size=1600,900
 Collapsed=0
 
 [Window][Debug##Default]
@@ -9,21 +9,21 @@ Size=900,430
 Collapsed=0
 
 [Window][ Projects]
-ViewportPos=861,371
+ViewportPos=-458,1011
 ViewportId=0x2C4A0DB9
 Size=928,687
 Collapsed=0
 
 [Window][ Assets]
-ViewportPos=291,226
-ViewportId=0xA4D966FE
+ViewportPos=1438,1011
+ViewportId=0xBB342063
 Size=807,584
 Collapsed=0
 DockId=0x00000001,0
 
 [Window][Scene]
 Pos=0,26
-Size=1366,742
+Size=1600,874
 Collapsed=0
 DockId=0xB52D7659,0
 
@@ -47,6 +47,6 @@ Size=800,600
 Collapsed=0
 
 [Docking][Data]
-DockNode  ID=0x00000001 Pos=291,226 Size=807,584 Selected=0xAD88028E
-DockSpace ID=0xB52D7659 Window=0x784DD132 Pos=445,263 Size=1366,742 CentralNode=1 Selected=0xE192E354
+DockNode  ID=0x00000001 Pos=1438,1011 Size=807,584 Selected=0xAD88028E
+DockSpace ID=0xB52D7659 Window=0x784DD132 Pos=221,129 Size=1600,874 CentralNode=1 Selected=0xE192E354
 

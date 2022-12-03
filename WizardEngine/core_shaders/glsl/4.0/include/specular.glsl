@@ -1,5 +1,5 @@
 const float shinyMax = 32;
-const float PI = 3.14159265;
+const float PI = 3.14159265359;
 
 vec3 spec(vec3 lightColor, vec3 lightDir, vec3 normal, vec3 viewDir, float shiny) {
     float energyConserve = ( 2.0 + shiny ) / ( 2.0 * PI );

@@ -27,7 +27,6 @@ namespace engine::graphics {
                 ecs::EntityContainer* container
         ) : Entity("GraphicsObject", container) {
             add<Transform3dComponent>(Transform3dComponent());
-            add<BaseMeshComponent<T>>();
         }
 
         Object(

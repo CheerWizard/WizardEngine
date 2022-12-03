@@ -26,6 +26,7 @@ namespace engine::core {
         std::string icon = "";
         std::string launcher = "";
         WindowProps windowProps = { "Untitled" };
+        bool fullscreen = false;
 
         ProjectProps() = default;
 
