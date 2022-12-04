@@ -1,6 +1,11 @@
 ![WizardGE_post](https://user-images.githubusercontent.com/37471793/159553487-0ee2a6bb-04d0-4c68-b0bb-bab22804a3ca.png) 
 # Wizard Engine
 
+## Showcases
+
+### Rendering Samurai Helmet (PBR, Lighting, Materials, HDR, Blur, other post effects, no MSAA).
+![wizard_engine_showcase_preview_1](https://user-images.githubusercontent.com/37471793/205491367-1858ca4d-78f9-415d-a8d2-e15b8751f06f.png)
+
 ## Manual build instructions
 
 ### Install CMake
