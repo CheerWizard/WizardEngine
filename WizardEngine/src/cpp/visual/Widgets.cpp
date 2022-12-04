@@ -335,7 +335,11 @@ namespace engine::visual {
     }
 
     void Line::draw(int id) {
-        std::string newId = "draw_line_" + std::to_string(id);
+        draw(std::to_string(id));
+    }
+
+    void Line::draw(const std::string &id) {
+        std::string newId = "draw_line_" + id;
         ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(0, 0, 0, 0));
 
         ImGui::BeginChild(newId.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 1), false);

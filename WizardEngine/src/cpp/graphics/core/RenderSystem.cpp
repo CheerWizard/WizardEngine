@@ -11,6 +11,7 @@ namespace engine::graphics {
     // frames
     Ref<Scene> RenderSystem::activeScene;
     Ref<FrameBuffer> RenderSystem::sceneFrame;
+    Ref<FrameBuffer> RenderSystem::msaaFrame;
     // screen
     ScreenRenderer RenderSystem::screenRenderer;
     bool RenderSystem::enableScreenRenderer = true;
@@ -60,7 +61,11 @@ namespace engine::graphics {
     void RenderSystem::onUpdate() {
         PROFILE_FUNCTION();
 
-        sceneFrame->bind();
+        if (msaaFrame->getFormat().samples > 1) {
+            msaaFrame->bind();
+        } else {
+            sceneFrame->bind();
+        }
 
         clearDepthBuffer();
         setDepthTest(true);
@@ -114,8 +119,11 @@ namespace engine::graphics {
         if (callback != nullptr) {
             callback->onFrameEnd(sceneFrame);
         }
-        // read/write from scene frame into screen frame
-//        FrameBuffer::readWriteFrameBuffers(*sceneFrame.get(), *screenFrame.get());
+
+        if (msaaFrame->getFormat().samples > 1) {
+            // read/write from MSAA frame into scene frame
+            FrameBuffer::readWriteFrameBuffers(*msaaFrame.get(), *sceneFrame.get());
+        }
 
         // post-processing effects
         vector<u32> postProcessedTextures;

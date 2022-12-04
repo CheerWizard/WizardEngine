@@ -78,14 +78,16 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Fixing model importing">
+    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Working on material and light panels.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/scene_phong.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/core_shaders/glsl/4.0/scene_phong.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/graphics/TextureBuffer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/graphics/TextureBuffer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/core/Application.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/core/Application.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/RenderSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/RenderSystem.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/tools/FileDialog.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/tools/FileDialog.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/MaterialPanel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/MaterialPanel.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/Widgets.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/Widgets.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/core/Application.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/core/Application.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/GraphicsObject.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/GraphicsObject.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/io/ModelFile.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/io/ModelFile.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/RenderSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/RenderSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/platform/tools/FileDialog.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/platform/tools/FileDialog.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/visual/MaterialPanel.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/visual/MaterialPanel.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/visual/Widgets.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/visual/Widgets.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/assimp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/assimp" afterDir="false" />
@@ -94,6 +96,7 @@
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardTest/properties.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/properties.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardTest/src/cpp/core/test_layer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/src/cpp/core/test_layer.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -190,6 +193,11 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.WizardTest">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Continuous" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="Continuous" CONFIG_NAME="debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -336,11 +344,6 @@
       </method>
     </configuration>
     <configuration name="WizardTest" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="WizardTest" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="WizardTest">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -1038,14 +1041,8 @@
       <workItem from="1669972383068" duration="5729000" />
       <workItem from="1670003442000" duration="2509000" />
       <workItem from="1670012178588" duration="4873000" />
-      <workItem from="1670074441356" duration="13689000" />
-    </task>
-    <task id="LOCAL-00160" summary="Studio refactoring">
-      <created>1652874420037</created>
-      <option name="number" value="00160" />
-      <option name="presentableId" value="LOCAL-00160" />
-      <option name="project" value="LOCAL" />
-      <updated>1652874420037</updated>
+      <workItem from="1670074441356" duration="14231000" />
+      <workItem from="1670144579662" duration="11447000" />
     </task>
     <task id="LOCAL-00161" summary="Linux Socket support merge">
       <created>1652961044065</created>
@@ -1383,7 +1380,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669947499524</updated>
     </task>
-    <option name="localTasksCounter" value="209" />
+    <task id="LOCAL-00209" summary="Working on material and light panels.">
+      <created>1670090532677</created>
+      <option name="number" value="00209" />
+      <option name="presentableId" value="LOCAL-00209" />
+      <option name="project" value="LOCAL" />
+      <updated>1670090532677</updated>
+    </task>
+    <option name="localTasksCounter" value="210" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1424,7 +1428,6 @@
       <path value="$PROJECT_DIR$/ScriptDLL/engine/spdlog" />
       <path value="$PROJECT_DIR$/ScriptDLL/engine/stb/stb" />
     </ignored-roots>
-    <MESSAGE value="AssetManager for loading/saving scenes locally and remotely. GDResponse and status codes for handling response state. Updated scene and GDP serialization" />
     <MESSAGE value="Fixed crash of deleting serialized component.&#10;Added WizardSamples project for unit testing of WizardEngine details.&#10;SceneService for dispatching and processing scene requests on server side." />
     <MESSAGE value="Updated serialization : Uniform, all matrices, Text, Outline, Light, Transform, AudioListener, AudioSource." />
     <MESSAGE value="Updated serialization : array, IndexData, VertexData, Lines, Texture, Text, Circle." />
@@ -1449,7 +1452,8 @@
     <MESSAGE value="Added PBR support" />
     <MESSAGE value="Fixing compilation failure in material shader" />
     <MESSAGE value="Fixing model importing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing model importing" />
+    <MESSAGE value="Working on material and light panels." />
+    <option name="LAST_COMMIT_MESSAGE" value="Working on material and light panels." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

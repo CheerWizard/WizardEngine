@@ -185,6 +185,7 @@ namespace engine::core {
         std::vector<Ref<Scene>> scenes;
         Ref<Scene> activeScene;
         Ref<FrameBuffer> activeSceneFrame;
+        Ref<FrameBuffer> msaaFrame;
         time::Time dt = 6;
         bool isJoystickConnected = false;
         // hover entity with mouse cursor

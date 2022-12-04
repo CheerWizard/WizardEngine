@@ -141,49 +141,6 @@ namespace test {
                     newEntity.getTransform().position = { 1, 1, 1 };
                     newEntity.applyTransform();
                     newEntity.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(meshComponent);
-
-//                    switch (i) {
-//                        case 0:
-//                        modelMesh.material.albedoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/T_Dust.png");
-//                        modelMesh.material.enableAlbedoMap.value = true;
-//                        modelMesh.material.enableDiffuseMap.value = false;
-//                        modelMesh.material.enableSpecularMap.value = false;
-//                        modelMesh.material.enableParallaxMap.value = false;
-//                        modelMesh.material.enableNormalMap.value = false;
-//                        modelMesh.material.enableAOMap.value = false;
-//                        modelMesh.material.enableMetallicMap.value = false;
-//                        modelMesh.material.enableRoughnessMap.value = false;
-//                        break;
-//
-//                        case 1:
-//                        modelMesh.material.enableAlbedoMap.value = false;
-//                        modelMesh.material.enableDiffuseMap.value = false;
-//                        modelMesh.material.enableSpecularMap.value = false;
-//                        modelMesh.material.enableParallaxMap.value = false;
-//                        modelMesh.material.enableNormalMap.value = false;
-//                        modelMesh.material.aoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/PillarAO.png");
-//                        modelMesh.material.enableAOMap.value = true;
-//                        modelMesh.material.enableMetallicMap.value = false;
-//                        modelMesh.material.enableRoughnessMap.value = false;
-//                        break;
-//
-//                        case 2:
-//                        modelMesh.material.albedoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/BaseColor.png");
-//                        modelMesh.material.enableAlbedoMap.value = true;
-//                        modelMesh.material.enableDiffuseMap.value = false;
-//                        modelMesh.material.enableSpecularMap.value = false;
-//                        modelMesh.material.enableParallaxMap.value = false;
-//                        modelMesh.material.normalSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/NormalMap.png");
-//                        modelMesh.material.enableNormalMap.value = true;
-//                        modelMesh.material.aoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/AOMap.png");
-//                        modelMesh.material.enableAOMap.value = true;
-//                        modelMesh.material.metallicSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/Metalness.png");
-//                        modelMesh.material.enableMetallicMap.value = true;
-//                        modelMesh.material.roughnessSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/Roughness.png");
-//                        modelMesh.material.enableRoughnessMap.value = true;
-//                        break;
-//                    }
-
                     newEntity.add<Material>(modelMesh.material);
                     packs.emplace_back(newEntity);
                 }
@@ -299,6 +256,7 @@ namespace test {
 
         ProjectsPanel::init();
         AssetBrowser::create(app.getNativeWindow(), { "AssetBrowser" });
+        MaterialPanel::create(app.getNativeWindow());
 
         sceneViewport.show();
     }

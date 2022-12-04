@@ -5,6 +5,7 @@
 #pragma once
 
 #include <core/String.h>
+#include <core/filesystem.h>
 
 namespace engine::tools {
 
@@ -18,8 +19,8 @@ namespace engine::tools {
         }
 
     public:
-        std::string getImportPath(const char* filter);
-        std::string getExportPath(const char* filter);
+        std::string getImportPath(const char* filter, const char* initialDir = CURRENT_WORKING_DIR.c_str());
+        std::string getExportPath(const char* filter, const char* initialDir = CURRENT_WORKING_DIR.c_str());
 
     private:
         void* nativeWindow;

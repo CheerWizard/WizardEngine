@@ -64,7 +64,7 @@ namespace engine::core {
         PROFILE_FUNCTION();
         _window->onPrepare();
         _window->setInCenter();
-        setSampleSize(1);
+        setSampleSize(projectProps.windowProps.sampleSize);
         _layerStack.onPrepare();
         loadGamepadMappings("assets/mappings/game_controller.txt");
         ENGINE_INFO("screenRenderer.onWindowResized");
@@ -306,7 +306,7 @@ namespace engine::core {
 
     void Application::setSampleSize(const uint32_t& samples) {
         _window->setSampleSize(samples);
-        // update active scene fbo
+        // update active scene frame format
         FrameBufferFormat activeSceneFrameFormat;
         activeSceneFrameFormat.colorAttachments = {
                 { ColorFormat::RGBA8 },
@@ -316,8 +316,12 @@ namespace engine::core {
         activeSceneFrameFormat.renderBufferAttachment = { DepthStencilFormat::DEPTH24STENCIL8 };
         activeSceneFrameFormat.width = _window->getWidth();
         activeSceneFrameFormat.height = _window->getHeight();
-        activeSceneFrameFormat.samples = samples;
+        activeSceneFrameFormat.samples = 1;
         activeSceneFrame->updateFormat(activeSceneFrameFormat);
+        // update msaa frame format
+        FrameBufferFormat msaaFormat(activeSceneFrameFormat);
+        msaaFormat.samples = samples;
+        msaaFrame->updateFormat(msaaFormat);
         // resolve size issue
         onWindowResized(_window->getWidth(), _window->getHeight());
     }
@@ -326,7 +330,9 @@ namespace engine::core {
         graphics::initContext(_window->getNativeWindow());
         setClearColor({0, 0, 0, 1});
         activeSceneFrame = createRef<FrameBuffer>();
+        msaaFrame = createRef<FrameBuffer>();
         RenderSystem::sceneFrame = activeSceneFrame;
+        RenderSystem::msaaFrame = msaaFrame;
         RenderSystem::setRenderSystemCallback(this);
         RenderSystem::screenRenderer.init();
         RenderSystem::skyboxRenderer.init();

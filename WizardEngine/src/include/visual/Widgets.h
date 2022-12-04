@@ -52,6 +52,7 @@ namespace engine::visual {
     class ENGINE_API Line final {
     public:
         static void draw(int id);
+        static void draw(const std::string& id);
     };
 
     class ENGINE_API Button final {
