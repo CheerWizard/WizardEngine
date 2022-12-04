@@ -115,8 +115,9 @@ namespace engine::graphics {
             renderModel.vao.bind();
             drawV(hdrEnv->geometry.drawType, hdrEnv->geometry.vertexData.size);
         }
-        FrameBuffer::bindDefault();
         generateCubemapShader.stop();
+
+        FrameBuffer::bindDefault();
     }
 
     void HdrEnvRenderer::render(const ecs::Entity& entity, Camera3D& camera) {

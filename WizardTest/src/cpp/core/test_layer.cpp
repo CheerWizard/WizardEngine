@@ -294,6 +294,8 @@ namespace test {
         KEY_PRESSED(D4, switchEdgeDetection(););
         KEY_PRESSED(D5, switchBloom(););
 
+        KEY_PRESSED(M, switchMSAA(););
+
         KEY_PRESSED(D9, Application::get().activeSceneFrame->setRenderTargetIndex(0););
         KEY_PRESSED(D0, Application::get().activeSceneFrame->setRenderTargetIndex(1););
 
@@ -654,8 +656,6 @@ namespace test {
 //        Panel::end();
         // Console
 //        Console::draw("Console", { 800, 600 });
-        // demo
-//        ImGui::ShowDemoWindow();
         // Troubleshoot
 //        ProfilerMenu::draw("Profiler Menu", { 800, 600 });
 
