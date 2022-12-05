@@ -3,7 +3,7 @@
 
 ## Showcases
 
-### Rendering Samurai Helmet (PBR, Lighting, Materials, HDR, Blur, other post effects, no MSAA).
+### Rendering Samurai Helmet (PBR, Lighting, Materials, no Post Effects, no MSAA).
 ![wizard_engine_showcase_preview_1](https://user-images.githubusercontent.com/37471793/205491367-1858ca4d-78f9-415d-a8d2-e15b8751f06f.png)
 
 ## Manual build instructions
