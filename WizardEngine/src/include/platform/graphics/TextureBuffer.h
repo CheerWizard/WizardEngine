@@ -15,7 +15,7 @@ namespace engine::graphics {
 
     public:
         TextureBuffer() = default;
-        TextureBuffer(const TextureType& type) {
+        TextureBuffer(u32 type) {
             create(type);
         }
         ~TextureBuffer() = default;
@@ -30,36 +30,33 @@ namespace engine::graphics {
         }
 
     public:
-        void create(const TextureType& textureType);
+        void create(u32 textureType);
         void bind() const;
         void unbind() const;
         void setParams(const vector<TextureParam>& params) const;
 
     public:
-        static u32 createFrom(const TextureType& textureType);
-        static u32 recreate(const u32& id, const u32& typeId);
-        static void destroy(const u32& id);
+        static u32 createFrom(u32 type);
+        static u32 recreate(u32 id, u32 typeId);
+        static void destroy(u32 id);
 
-        static void bind(const u32& id, const u32& typeId);
-        static void unbind(const TextureType& type);
+        static void bind(u32 id, u32 type);
+        static void unbind(u32 type);
 
-        static void activate(const u32& slot);
-        static void setParams(const u32& id, const vector<TextureParam>& params);
-        static void setDefaultParamsCubeMap(const u32& id);
+        static void activate(u32 slot);
+        static void setParams(u32 id, const vector<TextureParam>& params);
+        static void setDefaultParamsCubeMap(u32 id);
         static void disableByteAlignment();
         // read from file and load into texture buffer
-        static u32 load(const char* filePath, bool hdrEnabled = false);
-        static u32 load(const vector<TextureFace>& faces);
-        static u32 loadArray(const vector<std::string>& filepaths);
-        static u32 generateCubeMap(u32 width, u32 height,
-                                   ColorFormat internalFormat, ColorFormat dataFormat, PixelsType pixelsType);
+        static u32 load(const char* filePath, io::Spectrum spectrum = io::Spectrum::NONE);
+        static u32 load(const vector<TextureFace>& faces, io::Spectrum spectrum = io::Spectrum::NONE);
+        static u32 loadArray(const vector<std::string>& filepaths, io::Spectrum spectrum = io::Spectrum::NONE);
+        static u32 generateCubeMap(int width, int height,
+                                   int internalFormat, u32 dataFormat, u32 pixelsType);
         // load texture data into texture buffer
-        static void load(const u32& id, const io::TextureData &textureData);
-        static void load(const u32& id, const TextureFaceType& faceType, const io::TextureData& textureData);
-        static void loadArray(const u32& id, const io::TextureArrayData& textureArrayData);
-
-        static u32 getTypeId(const TextureType& textureType);
-
+        static void load(const io::TextureData &textureData);
+        static void loadFace(u32 type, const io::TextureData& textureData);
+        static void loadArray(const io::TextureArrayData& textureArrayData);
         static bool exists(const char* filepath);
         static void clearTextureIdCache();
         static u32 getTextureId(const char* filepath);

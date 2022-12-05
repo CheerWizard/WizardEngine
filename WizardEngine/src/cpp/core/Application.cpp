@@ -62,6 +62,7 @@ namespace engine::core {
 
     void Application::onPrepare() {
         PROFILE_FUNCTION();
+        graphics::enableSRGB();
         _window->onPrepare();
         _window->setInCenter();
         setSampleSize(projectProps.windowProps.sampleSize);
@@ -80,7 +81,7 @@ namespace engine::core {
         setSkybox(scene, SkyboxCube(
                 skyboxName,
                 scene.get(),
-                CubeMapTextureComponent(skyboxId, TextureBuffer::getTypeId(TextureType::CUBE_MAP))
+                CubeMapTextureComponent(skyboxId, TextureType::CUBE_MAP)
         ));
     }
 
@@ -102,8 +103,8 @@ namespace engine::core {
                         "HdrEnvCube",
                         scene.get(),
                         TextureComponent(
-                                TextureBuffer::load(filepath, true),
-                                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
+                                TextureBuffer::load(filepath, io::Spectrum::HDR),
+                                TextureType::TEXTURE_2D,
                                 IntUniform { "hdrEnv", 0 }
                         )
                 )
@@ -270,7 +271,7 @@ namespace engine::core {
         RenderSystem::onUpdate();
     }
 
-    void Application::setActiveScene(const u32 &sceneIndex) {
+    void Application::setActiveScene(u32 sceneIndex) {
         PROFILE_FUNCTION();
         setActiveScene(scenes.at(sceneIndex));
     }
@@ -280,15 +281,15 @@ namespace engine::core {
         onCreate();
     }
 
-    const uint32_t &Application::getWindowWidth() {
+    int Application::getWindowWidth() {
         return _window->getWidth();
     }
 
-    const uint32_t &Application::getWindowHeight() {
+    int Application::getWindowHeight() {
         return _window->getHeight();
     }
 
-    uint32_t Application::getRefreshRate() {
+    int Application::getRefreshRate() {
         return _window->getRefreshRate();
     }
 
@@ -304,14 +305,14 @@ namespace engine::core {
         return createRef<tools::FileDialog>(_window->getNativeWindow());
     }
 
-    void Application::setSampleSize(const uint32_t& samples) {
+    void Application::setSampleSize(int samples) {
         _window->setSampleSize(samples);
         // update active scene frame format
         FrameBufferFormat activeSceneFrameFormat;
         activeSceneFrameFormat.colorAttachments = {
-                { ColorFormat::RGBA8 },
-                { ColorFormat::RGBA8 },
-                { ColorFormat::RED_INTEGER }
+                { ColorFormat::RGBA8, ColorFormat::RGBA },
+                { ColorFormat::RGBA8, ColorFormat::RGBA },
+                { ColorFormat::RED_I32, ColorFormat::RED_INTEGER }
         };
         activeSceneFrameFormat.renderBufferAttachment = { DepthStencilFormat::DEPTH24STENCIL8 };
         activeSceneFrameFormat.width = _window->getWidth();
@@ -447,7 +448,7 @@ namespace engine::core {
     void Application::initHDR() {
         FrameBufferFormat hdrFrameFormat;
         hdrFrameFormat.colorAttachments = {
-                { ColorFormat::RGBA16F },
+                { ColorFormat::RGBA16F, ColorFormat::RGBA, PixelsType::FLOAT },
         };
         hdrFrameFormat.width = _window->getWidth();
         hdrFrameFormat.height = _window->getHeight();
@@ -458,7 +459,7 @@ namespace engine::core {
     void Application::initBlur() {
         FrameBufferFormat blurFrameFormat;
         blurFrameFormat.colorAttachments = {
-                { ColorFormat::RGBA8 },
+                { ColorFormat::RGBA8, ColorFormat::RGBA },
         };
         blurFrameFormat.width = _window->getWidth();
         blurFrameFormat.height = _window->getHeight();
@@ -470,7 +471,7 @@ namespace engine::core {
     void Application::initSharpen() {
         FrameBufferFormat sharpenFrameFormat;
         sharpenFrameFormat.colorAttachments = {
-                { ColorFormat::RGBA8 },
+                { ColorFormat::RGBA8, ColorFormat::RGBA },
         };
         sharpenFrameFormat.width = _window->getWidth();
         sharpenFrameFormat.height = _window->getHeight();
@@ -482,7 +483,7 @@ namespace engine::core {
     void Application::initEdgeDetection() {
         FrameBufferFormat edgeDetectionFrameFormat;
         edgeDetectionFrameFormat.colorAttachments = {
-                { ColorFormat::RGBA8 },
+                { ColorFormat::RGBA8, ColorFormat::RGBA },
         };
         edgeDetectionFrameFormat.width = _window->getWidth();
         edgeDetectionFrameFormat.height = _window->getHeight();
@@ -494,19 +495,19 @@ namespace engine::core {
     void Application::initGaussianBlur() {
         FrameBufferFormat gaussianBlurFrameFormat;
         gaussianBlurFrameFormat.colorAttachments = {
-                { ColorFormat::RGBA8 },
+                { ColorFormat::RGBA8, ColorFormat::RGBA },
         };
         gaussianBlurFrameFormat.width = _window->getWidth();
         gaussianBlurFrameFormat.height = _window->getHeight();
         GaussianBlurEffectRenderer gaussianBlurEffectRenderer(gaussianBlurFrameFormat);
-        RenderSystem::gaussianBlurRenderer = { gaussianBlurFrameFormat };
         gaussianBlurEffect = gaussianBlurEffectRenderer.getGaussianBlurEffect();
+        RenderSystem::gaussianBlurRenderer = gaussianBlurEffectRenderer;
     }
 
     void Application::initTextureMixer() {
         FrameBufferFormat textureMixerFrameFormat;
         textureMixerFrameFormat.colorAttachments = {
-                { ColorFormat::RGBA8 },
+                { ColorFormat::RGBA8, ColorFormat::RGBA },
         };
         textureMixerFrameFormat.width = _window->getWidth();
         textureMixerFrameFormat.height = _window->getHeight();

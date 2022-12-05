@@ -14,16 +14,16 @@ namespace engine::core {
 
     struct ENGINE_API WindowProps {
         std::string title;
-        uint32_t width;
-        uint32_t height;
+        int width;
+        int height;
         bool vSyncEnabled;
-        uint32_t sampleSize;
+        int sampleSize;
         bool fullscreen;
 
         WindowProps(
                 const std::string& title = "Wizard Engine",
-                uint32_t width = DEFAULT_WINDOW_WIDTH,
-                uint32_t height = DEFAULT_WINDOW_HEIGHT,
+                int width = DEFAULT_WINDOW_WIDTH,
+                int height = DEFAULT_WINDOW_HEIGHT,
                 bool vSyncEnabled = false,
                 uint32_t sampleSize = 4,
                 bool fullscreen = false
@@ -50,14 +50,14 @@ namespace engine::core {
         void onUpdate();
         void onClose();
 
-        static uint32_t getRefreshRate();
+        static int getRefreshRate();
 
         void setWindowIcon(const std::string &filePath);
         void disableFullScreen();
         void enableFullScreen();
-        void setSampleSize(const uint32_t &size);
-        void setPosition(const uint32_t &x, const uint32_t &y);
-        void getPosition(float x, float y);
+        void setSampleSize(int size);
+        void setPosition(int x, int y);
+        void getPosition(int& x, int& y);
 
     public:
         void toggleFullScreen();
@@ -75,15 +75,15 @@ namespace engine::core {
             return windowProps;
         }
 
-        [[nodiscard]] inline const uint32_t& getWidth() const {
+        [[nodiscard]] inline int getWidth() const {
             return windowProps.width;
         }
 
-        [[nodiscard]] inline const uint32_t& getHeight() const {
+        [[nodiscard]] inline int getHeight() const {
             return windowProps.height;
         }
 
-        [[nodiscard]] inline const uint32_t& getSampleSize() const {
+        [[nodiscard]] inline int getSampleSize() const {
             return windowProps.sampleSize;
         }
 
@@ -99,7 +99,7 @@ namespace engine::core {
         void create();
         void destroy();
         static void handleError(int error, const char *description);
-        static void onWindowResized(const uint32_t& width, const uint32_t& height);
+        static void onWindowResized(int width, int height);
 
     protected:
         void* window;

@@ -130,7 +130,7 @@ namespace engine::graphics {
         IntUniform cubemapSampler { "cubemap", 0 };
         cubemapShader.setUniform(cubemapSampler);
         TextureBuffer::activate(0);
-        TextureBuffer::bind(cubemap, TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
+        TextureBuffer::bind(cubemap, TextureType::TEXTURE_2D);
         // update VP
         cubemapShader.setUniform(camera.getPerspective());
         cubemapShader.setUniform(camera.getView());

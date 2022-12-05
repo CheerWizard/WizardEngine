@@ -14,7 +14,7 @@
 namespace engine::core {
 
     void Window::create() {
-        ENGINE_INFO("Creating window {0} ({1}, {2})", windowProps.title, windowProps.width, windowProps.height);
+        ENGINE_INFO("Creating window {0} ({1}, {2})", windowProps.title.c_str(), windowProps.width, windowProps.height);
 
         if (!isInitialized) {
             isInitialized = glfwInit() != 0;
@@ -25,8 +25,8 @@ namespace engine::core {
         setSampleSize(windowProps.sampleSize);
 
         window = glfwCreateWindow(
-                (int)windowProps.width,
-                (int)windowProps.height,
+                windowProps.width,
+                windowProps.height,
                 windowProps.title.c_str(),
                 nullptr,
                 nullptr);
@@ -67,7 +67,7 @@ namespace engine::core {
         glfwTerminate();
     }
 
-    uint32_t Window::getRefreshRate() {
+    int Window::getRefreshRate() {
         return glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate;
     }
 
@@ -176,23 +176,23 @@ namespace engine::core {
         stbi_image_free(images[0].pixels);
     }
 
-    void Window::setSampleSize(const uint32_t &size) {
+    void Window::setSampleSize(int size) {
         windowProps.sampleSize = size;
         glfwWindowHint(GLFW_SAMPLES, size);
     }
 
-    void Window::setPosition(const uint32_t &x, const uint32_t &y) {
+    void Window::setPosition(int x, int y) {
         xPos = x;
         yPos = y;
-        glfwSetWindowPos(NATIVE_WINDOW, xPos, yPos);
+        glfwSetWindowPos(NATIVE_WINDOW, x, y);
     }
 
-    void Window::getPosition(float x, float y) {
-        x = static_cast<float>(xPos);
-        y = static_cast<float>(yPos);
+    void Window::getPosition(int& x, int& y) {
+        x = xPos;
+        y = yPos;
     }
 
-    void Window::onWindowResized(const uint32_t& width, const uint32_t& height) {
+    void Window::onWindowResized(int width, int height) {
         Application::get().onWindowResized(width, height);
     }
 

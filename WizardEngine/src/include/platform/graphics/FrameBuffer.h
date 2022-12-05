@@ -10,22 +10,24 @@
 namespace engine::graphics {
 
     struct ENGINE_API ColorAttachment {
-        ColorFormat format = ColorFormat::NONE;
+        int internalFormat = ColorFormat::RED_I32;
+        u32 dataFormat = ColorFormat::U_RED;
+        u32 pixelsType = PixelsType::U_BYTE;
         u32 id = 0;
     };
 
     struct ENGINE_API DepthStencilAttachment {
-        DepthStencilFormat format = DepthStencilFormat::NONE;
+        u32 internalFormat = DepthStencilFormat::NONE;
         u32 id = 0;
     };
 
     struct ENGINE_API RenderBufferAttachment {
-        DepthStencilFormat format = DepthStencilFormat::NONE;
+        u32 internalFormat = DepthStencilFormat::NONE;
         u32 id = 0;
     };
 
     struct ENGINE_API FrameBufferFormat {
-        u32 width = 0, height = 0, samples = 1;
+        int width = 0, height = 0, samples = 1;
         std::vector<ColorAttachment> colorAttachments;
         DepthStencilAttachment depthStencilAttachment;
         RenderBufferAttachment renderBufferAttachment;
@@ -101,7 +103,7 @@ namespace engine::graphics {
         void loadAttachments();
         const std::vector<ColorAttachment>& updateFormat(const FrameBufferFormat &format);
         void setViewPort() const;
-        void resize(u32 width, u32 height);
+        void resize(int width, int height);
         int readPixel(u32 attachmentIndex, s32 x, s32 y) const;
         void removeAttachment(u32 attachmentIndex, s32 value);
         void attachCubeMap(u32 i, u32 textureId);
@@ -112,7 +114,7 @@ namespace engine::graphics {
         void attachDepthStencil();
         void attachRbo();
         void createDrawBuffers() const;
-        void bindTexture(const u32 &attachmentId);
+        void bindTexture(u32 attachmentId);
 
     private:
         u32 id = 0;

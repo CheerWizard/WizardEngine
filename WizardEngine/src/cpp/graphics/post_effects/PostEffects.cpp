@@ -120,7 +120,7 @@ namespace engine::graphics {
 
         horizontalFrameBuffer->bind();
         TextureBuffer::activate(0);
-        TextureBuffer::bind(textureId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
+        TextureBuffer::bind(textureId, TextureType::TEXTURE_2D);
         BoolUniform horizontalUniform = { "horizontal", true };
         shaderProgram.setUniform(horizontalUniform);
         drawV(DrawType::TRIANGLE_STRIP, 4);
@@ -135,7 +135,7 @@ namespace engine::graphics {
             Ref<FrameBuffer> fbo = horizontalUniform.value ? horizontalFrameBuffer : frameBuffer;
             fbo->bind();
             TextureBuffer::activate(0);
-            TextureBuffer::bind(textureId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
+            TextureBuffer::bind(textureId, TextureType::TEXTURE_2D);
             shaderProgram.setUniform(horizontalUniform);
             drawV(DrawType::TRIANGLE_STRIP, 4);
             horizontalUniform.value = !horizontalUniform.value;

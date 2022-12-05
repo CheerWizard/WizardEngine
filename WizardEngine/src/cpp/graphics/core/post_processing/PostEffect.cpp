@@ -16,7 +16,7 @@ namespace engine::graphics {
         shaderProgram.start();
 
         TextureBuffer::activate(0);
-        TextureBuffer::bind(textureId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
+        TextureBuffer::bind(textureId, TextureType::TEXTURE_2D);
         updatePostEffect();
         drawV(DrawType::TRIANGLE_STRIP, 4);
 

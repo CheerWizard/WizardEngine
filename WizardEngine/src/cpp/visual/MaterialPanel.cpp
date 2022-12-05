@@ -61,11 +61,11 @@ namespace engine::visual {
         Slider::draw(material.brightness, { -1, 1 });
         Checkbox::draw(material.enableBlinn);
         Slider::draw(material.ambient, { -5, 5 });
-        drawTextureMap(0, &materialTextures.albedoPath, "Albedo", material.albedoSlot.textureId, material.enableAlbedoMap);
+        drawTextureMap(0, &materialTextures.albedoPath, "Albedo", material.albedoSlot.textureId, material.enableAlbedoMap, io::Spectrum::SRGB);
         // normals
         drawTextureMap(1, &materialTextures.normalPath, "Normals", material.normalSlot.textureId, material.enableNormalMap);
         // diffuse
-        drawTextureMap(2, &materialTextures.diffusePath, "Diffuse", material.diffuseSlot.textureId, material.enableDiffuseMap);
+        drawTextureMap(2, &materialTextures.diffusePath, "Diffuse", material.diffuseSlot.textureId, material.enableDiffuseMap, io::Spectrum::SRGB);
         Slider::draw(material.diffuse, { -5, 5 });
         // specular
         drawTextureMap(3, &materialTextures.specularPath, "Specular", material.specularSlot.textureId, material.enableSpecularMap);
@@ -96,7 +96,7 @@ namespace engine::visual {
 
     void MaterialPanel::drawTextureMap(int index, std::string* filepath,
                                        const char* title,
-                                       u32 &textureId, BoolUniform& textureEnabled) {
+                                       u32 &textureId, BoolUniform& textureEnabled, io::Spectrum spectrum) {
 
         Line::draw(title);
         Checkbox::draw(title, textureEnabled.value);
@@ -111,7 +111,7 @@ namespace engine::visual {
                                  "JPG image (*.jpg)\0*.jpg\0"
                                  "TGA image (*.tga)\0*.tga\0";
             *filepath = fileDialog->getImportPath(filter);
-            textureId = TextureBuffer::load(filepath->c_str());
+            textureId = TextureBuffer::load(filepath->c_str(), spectrum);
         }
         ImGui::PopID();
     }

@@ -135,15 +135,15 @@ namespace engine::core {
 
     public:
         [[nodiscard]] float getAspectRatio() const;
-        const uint32_t& getWindowWidth();
-        const uint32_t& getWindowHeight();
-        uint32_t getRefreshRate();
+        int getWindowWidth();
+        int getWindowHeight();
+        int getRefreshRate();
         void* getNativeWindow();
         void setWindowIcon(const std::string &filePath);
         Ref<tools::FileDialog> createFileDialog();
-        void setSampleSize(const uint32_t& samples);
+        void setSampleSize(int samples);
         void setActiveScene(const Ref<Scene>& activeScene);
-        void setActiveScene(const uint32_t& activeSceneId);
+        void setActiveScene(u32 activeSceneId);
         void pushScenes(const vector<Ref<Scene>>& scenes);
         void loadGamepadMappings(const char* mappingsFilePath);
         void setSkybox(Ref<Scene>& scene, const Entity& skybox) const;

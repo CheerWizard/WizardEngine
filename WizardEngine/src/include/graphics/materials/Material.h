@@ -42,35 +42,35 @@ namespace engine::graphics {
         BoolUniform enableRoughnessMap = { "enableRoughnessMap", false };
         BoolUniform enableAOMap = { "enableAOMap", false };
         TextureComponent albedoSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
+                TextureType::TEXTURE_2D,
                 IntUniform { "albedoSlot", 0 }
         };
         TextureComponent diffuseSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
+                TextureType::TEXTURE_2D,
                 IntUniform { "diffuseSlot", 1 }
         };
         TextureComponent specularSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
+                TextureType::TEXTURE_2D,
                 IntUniform { "specularSlot", 2 }
         };
         TextureComponent normalSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
+                TextureType::TEXTURE_2D,
                 IntUniform { "normalSlot", 3 }
         };
         TextureComponent depthSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
+                TextureType::TEXTURE_2D,
                 IntUniform { "depthSlot", 4 }
         };
         TextureComponent metallicSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
+                TextureType::TEXTURE_2D,
                 IntUniform { "metallicSlot", 5 }
         };
         TextureComponent roughnessSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
+                TextureType::TEXTURE_2D,
                 IntUniform { "roughnessSlot", 6 }
         };
         TextureComponent aoSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
+                TextureType::TEXTURE_2D,
                 IntUniform { "aoSlot", 7 }
         };
 

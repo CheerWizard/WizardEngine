@@ -210,8 +210,6 @@ namespace test {
         // setup HDR env
         Application::get().setHdrEnvCube(scene, "assets/hdr/ice_lake.hdr");
 
-        graphics::enableSRGB();
-
 //        Cube<BatchVertex<Vertex3d>> cube;
 //        Object<BatchVertex<Vertex3d>> cubeObj {
 //            "Cube", scene.get()
@@ -678,10 +676,12 @@ namespace test {
                     static_cast<float>(app.getWindowWidth()),
                     static_cast<float>(app.getWindowHeight())
             };
-            float xPos = 0, yPos = 0;
+            int xPos = 0, yPos = 0;
             app.getWindow()->getPosition(xPos, yPos);
             // draw translation gizmo
-            Gizmo::drawTranslate(mainCamera, *selectedTransform, { xPos, yPos }, windowSize);
+            Gizmo::drawTranslate(mainCamera, *selectedTransform,
+                                 { static_cast<float>(xPos), static_cast<float>(yPos) },
+                                 windowSize);
         }
 
 //        ProjectsPanel::draw("Project Manager", { 800, 600 }, [this](const Project& openedProject) {});

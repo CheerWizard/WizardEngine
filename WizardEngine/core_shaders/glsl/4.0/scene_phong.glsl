@@ -73,7 +73,6 @@ void main() {
     vec3 diffMap = vec3(1);
     if (material[getId()].enableDiffuseMap) {
         diffMap = texture(material[getId()].diffuseSlot, uv).rgb;
-        amb *= diffMap;
     }
 
     vec3 specMap = vec3(1);
@@ -146,7 +145,7 @@ void main() {
         Lo += (kD * albedo / PI + specular) * radiance * NdotL;
     }
 
-    amb *= vec3(0.03) * albedo * ao;
+    amb *= diffMap * vec3(0.03) * albedo * ao;
     vec3 color = amb + Lo;
     color = color / (color + vec3(1.0));
     fragment = vec4(gamma(color, material[getId()].gamma), material[getId()].color.w);

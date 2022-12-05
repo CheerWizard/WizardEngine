@@ -111,10 +111,10 @@ namespace engine::graphics {
         setStencilTestOperator(ALWAYS, 0, false);
         setDepthTest(true);
         // skybox and HDR env
-        setDepthTestOperator(LESS_EQUAL); // we need to pass depth test for some skybox pixels
+//        setDepthTestOperator(LESS_EQUAL); // we need to pass depth test for some skybox pixels
         hdrEnvRenderer.render(activeScene->getHdrEnv(), activeScene->getCamera());
-        skyboxRenderer.render(activeScene->getSkybox(), activeScene->getCamera());
-        setDepthTestOperator(LESS);
+//        skyboxRenderer.render(activeScene->getSkybox(), activeScene->getCamera());
+//        setDepthTestOperator(LESS);
         // notify that scene frame end drawing
         if (callback != nullptr) {
             callback->onFrameEnd(sceneFrame);

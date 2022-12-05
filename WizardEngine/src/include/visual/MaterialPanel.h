@@ -34,7 +34,7 @@ namespace engine::visual {
         static void drawInternal(Material& material);
         static void drawTextureMap(int id, std::string* filepath,
                                    const char* title,
-                                   u32& textureId, BoolUniform& textureEnabled);
+                                   u32& textureId, BoolUniform& textureEnabled, io::Spectrum spectrum = io::Spectrum::NONE);
 
     private:
         static MaterialTextures materialTextures;
