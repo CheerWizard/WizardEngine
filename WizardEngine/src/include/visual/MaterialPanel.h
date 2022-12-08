@@ -30,8 +30,10 @@ namespace engine::visual {
         static void draw(const vector<Batch3d>& entities);
         static void draw(const Batch3d& entity);
 
+    public:
+        static void drawMaterial(Material& material);
+
     private:
-        static void drawInternal(Material& material);
         static void drawTextureMap(int id, std::string* filepath,
                                    const char* title,
                                    u32& textureId, BoolUniform& textureEnabled, io::Spectrum spectrum = io::Spectrum::NONE);

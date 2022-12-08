@@ -67,26 +67,30 @@ namespace engine::visual {
 
         _frame->bind();
         // enables transparency
-        graphics::setBlendMode(true);
-        graphics::setBlendFunction(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
+        graphics::enableBlendMode();
+        graphics::setBlendFunction(BlendFactor::SRC_ALPHA, BlendFactor::ONE_MINUS_SRC_ALPHA);
         // write to stencil buffer
-        graphics::setClearColor({0.2, 0.2, 0.2, 1});
-        graphics::setDepthTest(true);
-        graphics::setStencilTest(true);
-        graphics::setStencilTestActions({ KEEP, KEEP, REPLACE });
-        graphics::clearStencilBuffer();
-        graphics::setStencilTestOperator(ALWAYS, 1, false);
+        graphics::setClearColor(0.2, 0.2, 0.2, 1);
+        graphics::enableDepthTest();
+        graphics::enableStencilTest();
+        graphics::setStencilTestActions({
+            TestAction::KEEP,
+            TestAction::KEEP,
+            TestAction::REPLACE
+        });
+        graphics::clearBuffer(BufferBit::COLOR | BufferBit::DEPTH | BufferBit::STENCIL);
+        graphics::setStencilTestOperator(TestOperator::ALWAYS, 1, false);
         graphics::stencilMask(false);
 
         _renderer->render(_entity);
 
         // stop write to stencil buffer
-        graphics::setStencilTestOperator(NOT_EQUAL, 1, false);
+        graphics::setStencilTestOperator(TestOperator::NOT_EQUAL, 1, false);
         graphics::stencilMask(true);
-        graphics::setDepthTest(false);
+        disableDepthTest();
 
         graphics::FrameBuffer::bindDefault();
-        graphics::clearColorBuffer();
+        graphics::clearBuffer(BufferBit::COLOR);
 
         if (ImGui::Button("Auto-Rotate", { 120, 36 })) {
             setRotateEntity(!_shouldRotateEntity);

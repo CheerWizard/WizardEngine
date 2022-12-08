@@ -16,7 +16,7 @@ namespace engine::visual {
             ImGui::End();
             return;
         }
-        drawInternal(material);
+        drawMaterial(material);
         ImGui::End();
     }
 
@@ -30,7 +30,7 @@ namespace engine::visual {
         for (auto entity : entities) {
             Material* material = entity.get<Material>();
             if (material) {
-                drawInternal(*material);
+                drawMaterial(*material);
             }
         }
 
@@ -47,30 +47,21 @@ namespace engine::visual {
         for (auto entity : entities) {
             Material* material = entity.get<Material>();
             if (material) {
-                drawInternal(*material);
+                drawMaterial(*material);
             }
         }
 
         ImGui::End();
     }
 
-    void MaterialPanel::drawInternal(Material &material) {
+    void MaterialPanel::drawMaterial(Material &material) {
         // base color
         ColorPicker::draw(material.color);
         Slider::draw(material.gamma, { -5, 5 });
         Slider::draw(material.brightness, { -1, 1 });
-        Checkbox::draw(material.enableBlinn);
-        Slider::draw(material.ambient, { -5, 5 });
-        drawTextureMap(0, &materialTextures.albedoPath, "Albedo", material.albedoSlot.textureId, material.enableAlbedoMap, io::Spectrum::SRGB);
+        drawTextureMap(0, &materialTextures.albedoPath, "Albedo", material.albedoSlot.textureId, material.enableAlbedoMap);
         // normals
         drawTextureMap(1, &materialTextures.normalPath, "Normals", material.normalSlot.textureId, material.enableNormalMap);
-        // diffuse
-        drawTextureMap(2, &materialTextures.diffusePath, "Diffuse", material.diffuseSlot.textureId, material.enableDiffuseMap, io::Spectrum::SRGB);
-        Slider::draw(material.diffuse, { -5, 5 });
-        // specular
-        drawTextureMap(3, &materialTextures.specularPath, "Specular", material.specularSlot.textureId, material.enableSpecularMap);
-        Slider::draw(material.specular, { -5, 5 });
-        Slider::draw(material.shiny, { -100, 100 });
         // parallax/depth
         drawTextureMap(4, &materialTextures.parallaxPath, "Parallax", material.depthSlot.textureId, material.enableParallaxMap);
         Slider::draw(material.heightScale, { 0, 10 });
@@ -90,7 +81,7 @@ namespace engine::visual {
     void MaterialPanel::draw(const Batch3d &entity) {
         Material* material = entity.get<Material>();
         if (material) {
-            draw(*material);
+            drawMaterial(*material);
         }
     }
 

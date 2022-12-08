@@ -79,6 +79,7 @@ using namespace engine::scripting;
 #include <visual/ImageLayout.h>
 #include <visual/MaterialPanel.h>
 #include <visual/LightPanel.h>
+#include <visual/SceneHierarchy.h>
 
 using namespace engine::visual;
 #endif
@@ -186,6 +187,7 @@ namespace engine::core {
         Ref<Scene> activeScene;
         Ref<FrameBuffer> activeSceneFrame;
         Ref<FrameBuffer> msaaFrame;
+        Ref<FrameBuffer> shadowsFrame;
         time::Time dt = 6;
         bool isJoystickConnected = false;
         // hover entity with mouse cursor

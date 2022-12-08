@@ -51,7 +51,7 @@ namespace engine::graphics {
 
         frameBuffer = createRef<FrameBuffer>();
         FrameBufferFormat frameBufferFormat { 512, 512, 1 };
-        frameBufferFormat.renderBufferAttachment = { DepthStencilFormat::DEPTH24 };
+        frameBufferFormat.renderBufferAttachment = { DepthFormat::DEPTH24 };
         frameBuffer->updateFormat(frameBufferFormat);
         u32 cubemap = TextureBuffer::generateCubeMap(
                 512, 512,
@@ -110,7 +110,7 @@ namespace engine::graphics {
             GLMMat4fUniform viewUniform("view", captureViews[i]);
             generateCubemapShader.setUniform(viewUniform);
             frameBuffer->attachCubeMap(i, cubemap);
-            graphics::clearDepthBuffer();
+            graphics::clearBuffer(BufferBit::COLOR | BufferBit::DEPTH);
             // draw call
             renderModel.vao.bind();
             drawV(hdrEnv->geometry.drawType, hdrEnv->geometry.vertexData.size);

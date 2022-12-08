@@ -6,6 +6,44 @@
 
 namespace engine::graphics {
 
+    void LightComponent::serialize(YAML::Emitter &out) {
+        out << YAML::BeginMap;
+        out << YAML::Key << "LightComponent";
+        yaml::serialize(out, "name", name);
+        yaml::serialize(out, "position", position);
+        yaml::serialize(out, "color", color);
+        out << YAML::EndMap;
+    }
+
+    void LightComponent::deserialize(const YAML::Node &parent) {
+        auto root = parent["LightComponent"];
+        if (root) {
+            yaml::deserialize(root, "name", name);
+            yaml::deserialize(root, "position", position);
+            yaml::deserialize(root, "color", color);
+        }
+    }
+
+    ShaderScript lightScript() {
+        auto script = ShaderScript();
+        script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry& registry) {
+            u32 i = 0;
+            registry.each<LightComponent>([&shader, &i](LightComponent* light) {
+                shader.setUniformArrayStructField(i, light->name, light->position);
+                shader.setUniformArrayStructField(i, light->name, light->color);
+                i++;
+            });
+        };
+        script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
+            auto light = entity.get<LightComponent>();
+            if (light) {
+                shader.setUniformStructField(light->name, light->position);
+                shader.setUniformStructField(light->name, light->color);
+            }
+        };
+        return script;
+    }
+
     ShaderScript phongLightScript() {
         auto script = ShaderScript();
 

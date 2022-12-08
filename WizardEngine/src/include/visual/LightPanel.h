@@ -14,6 +14,7 @@ namespace engine::visual {
     class ENGINE_API LightsPanel final {
     public:
         static void draw(const vector<PhongLight>& lights);
+        static void draw(const vector<Light>& lights);
     };
 
 }

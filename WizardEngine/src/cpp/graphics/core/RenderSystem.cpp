@@ -12,6 +12,7 @@ namespace engine::graphics {
     Ref<Scene> RenderSystem::activeScene;
     Ref<FrameBuffer> RenderSystem::sceneFrame;
     Ref<FrameBuffer> RenderSystem::msaaFrame;
+    Ref<FrameBuffer> RenderSystem::shadowsFrame;
     // screen
     ScreenRenderer RenderSystem::screenRenderer;
     bool RenderSystem::enableScreenRenderer = true;
@@ -61,14 +62,18 @@ namespace engine::graphics {
     void RenderSystem::onUpdate() {
         PROFILE_FUNCTION();
 
+//        shadowsFrame->setViewPort();
+//        shadowsFrame->bind();
+//        clearBuffer(BufferBit::DEPTH);
+
         if (msaaFrame->getFormat().samples > 1) {
             msaaFrame->bind();
         } else {
             sceneFrame->bind();
         }
 
-        clearDepthBuffer();
-        setDepthTest(true);
+        clearBuffer(BufferBit::COLOR | BufferBit::DEPTH);
+        enableDepthTest();
 
         // notify that scene frame begin drawing
         if (callback != nullptr) {
@@ -76,14 +81,18 @@ namespace engine::graphics {
         }
 
         // enables transparency
-        setBlendMode(true);
-        setBlendFunction(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
+        enableBlendMode();
+        setBlendFunction(BlendFactor::SRC_ALPHA, BlendFactor::ONE_MINUS_SRC_ALPHA);
         // write to stencil buffer
-        setStencilTest(true);
-        setStencilTestActions({ KEEP, KEEP, REPLACE });
-        clearStencilBuffer();
-        setStencilTestOperator(ALWAYS, 1, false);
-        stencilMask(false);
+        enableStencilTest();
+        setStencilTestActions({
+            TestAction::KEEP,
+            TestAction::KEEP,
+            TestAction::REPLACE
+        });
+        clearBuffer(BufferBit::COLOR | BufferBit::DEPTH | BufferBit::STENCIL);
+        setStencilTestOperator(TestOperator::ALWAYS, 1, false);
+        setStencilMask(0xFF);
 
         auto& registry = activeScene->getRegistry();
         // scene
@@ -100,16 +109,16 @@ namespace engine::graphics {
 //        });
         // outlining
         // stop write to stencil buffer
-        setStencilTestOperator(NOT_EQUAL, 1, false);
+        setStencilTestOperator(TestOperator::NOT_EQUAL, 1, false);
         stencilMask(true);
-        setDepthTest(false);
+        disableDepthTest();
         for (const auto& outlineRenderer : outlineRenderers) {
             outlineRenderer->render(registry);
         }
         // write to stencil buffer
-        stencilMask(false);
-        setStencilTestOperator(ALWAYS, 0, false);
-        setDepthTest(true);
+        setStencilMask(0xFF);
+        setStencilTestOperator(TestOperator::ALWAYS, 0, false);
+        enableDepthTest();
         // skybox and HDR env
 //        setDepthTestOperator(LESS_EQUAL); // we need to pass depth test for some skybox pixels
         hdrEnvRenderer.render(activeScene->getHdrEnv(), activeScene->getCamera());
@@ -149,7 +158,7 @@ namespace engine::graphics {
         finalRenderTargetId = hdrEffectRenderer.render(mixedTexture);
 
         // bind to window default frame buffer and draw screen
-        setDepthTest(false);
+        disableDepthTest();
         FrameBuffer::bindDefault();
         if (enableScreenRenderer) {
             screenRenderer.renderQuad(finalRenderTargetId);

@@ -20,7 +20,7 @@ namespace test {
                 },
                 BaseShader(),
                 BaseShader(),
-                { camera3dUboScript(), phongLightScript() }
+                { camera3dUboScript(), lightScript() }
         );
 
         auto instanceShader = shader::BaseShaderProgram(
@@ -32,7 +32,7 @@ namespace test {
                 },
                 BaseShader(),
                 BaseShader(),
-                { camera3dUboScript(), phongLightScript() }
+                { camera3dUboScript(), lightScript() }
         );
 
         Ref<Renderer> batchRenderer = createRef<BatchRenderer<Vertex3d>>(batchShader);
@@ -255,6 +255,7 @@ namespace test {
         ProjectsPanel::init();
         AssetBrowser::create(app.getNativeWindow(), { "AssetBrowser" });
         MaterialPanel::create(app.getNativeWindow());
+        sceneHierarchy = SceneHierarchy(scene);
 
         sceneViewport.show();
     }
@@ -657,40 +658,38 @@ namespace test {
         // Troubleshoot
 //        ProfilerMenu::draw("Profiler Menu", { 800, 600 });
 
-        if (EventRegistry::keyHold(KeyCode::LeftControl) && Input::isMousePressed(MouseCode::ButtonLeft)) {
-            Entity selectedEntity = Application::get().hoveredEntity;
-            auto* selectedTransform = selectedEntity.get<Transform3dComponent>();
-            if (selectedTransform) {
-                Application::get().selectedEntity = selectedEntity;
-                showGizmo = !showGizmo;
-            }
-        }
+//        if (EventRegistry::keyHold(KeyCode::LeftControl) && Input::isMousePressed(MouseCode::ButtonLeft)) {
+//            Entity selectedEntity = Application::get().hoveredEntity;
+//            auto* selectedTransform = selectedEntity.get<Transform3dComponent>();
+//            if (selectedTransform) {
+//                Application::get().selectedEntity = selectedEntity;
+//                showGizmo = !showGizmo;
+//            }
+//        }
 
-        if (showGizmo) {
-            // get selected entity transform
-            auto& app = Application::get();
-            Entity selectedEntity = app.selectedEntity;
-            auto* selectedTransform = selectedEntity.get<Transform3dComponent>();
-            // get window position and size
-            vec2f windowSize = {
-                    static_cast<float>(app.getWindowWidth()),
-                    static_cast<float>(app.getWindowHeight())
-            };
-            int xPos = 0, yPos = 0;
-            app.getWindow()->getPosition(xPos, yPos);
-            // draw translation gizmo
-            Gizmo::drawTranslate(mainCamera, *selectedTransform,
-                                 { static_cast<float>(xPos), static_cast<float>(yPos) },
-                                 windowSize);
-        }
+//        if (showGizmo) {
+//            // get selected entity transform
+//            auto& app = Application::get();
+//            Entity selectedEntity = app.selectedEntity;
+//            auto* selectedTransform = selectedEntity.get<Transform3dComponent>();
+//            // get window position and size
+//            vec2f windowSize = {
+//                    static_cast<float>(app.getWindowWidth()),
+//                    static_cast<float>(app.getWindowHeight())
+//            };
+//            int xPos = 0, yPos = 0;
+//            app.getWindow()->getPosition(xPos, yPos);
+//            // draw translation gizmo
+//            Gizmo::drawTranslate(mainCamera, *selectedTransform,
+//                                 { static_cast<float>(xPos), static_cast<float>(yPos) },
+//                                 windowSize);
+//        }
 
 //        ProjectsPanel::draw("Project Manager", { 800, 600 }, [this](const Project& openedProject) {});
-
-        MaterialPanel::draw(packs[2]);
-//        LightsPanel::draw(lights);
         AssetBrowser::draw(dt);
-//        Log::draw("Log");
+        Log::draw("Log");
         sceneViewport.setId(RenderSystem::finalRenderTargetId);
         sceneViewport.onUpdate(dt);
+        sceneHierarchy.onUpdate(dt);
      }
 }

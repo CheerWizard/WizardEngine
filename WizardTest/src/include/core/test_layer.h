@@ -92,13 +92,14 @@ namespace test {
         vector<Batch3d> packs;
         vector<Instance3d> instancedPacks;
         bool msaaEnabled = false;
-        vector<PhongLight> lights;
+        vector<Light> lights;
         bool showGizmo = false;
         ImageLayout sceneViewport {
             "Scene",
                     512,
                     512
         };
+        SceneHierarchy sceneHierarchy;
     };
 
 }

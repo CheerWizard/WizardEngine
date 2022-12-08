@@ -14,6 +14,7 @@ namespace engine::graphics {
     // texture format for color buffer
     struct ENGINE_API ColorFormat final {
         static u32 NONE;
+        static int R8;
         static int RED_I32;
         static u32 RED_INTEGER;
         static u32 GREEN_INTEGER;
@@ -42,16 +43,24 @@ namespace engine::graphics {
         static u32 U_BYTE;
         static u32 FLOAT;
         static u32 INT;
+        static u32 HALF_FLOAT;
     };
 
-    // texture format for depth and stencil buffers
+    // texture format for depth-stencil buffers
     struct ENGINE_API DepthStencilFormat final {
         static u32 NONE;
-        static u32 DEPTH16;
         static u32 DEPTH24STENCIL8;
+        static u32 DEPTH32STENCIL8;
+    };
+
+    // texture format for depth buffers
+    struct ENGINE_API DepthFormat final {
+        static u32 NONE;
+        static int DEPTH;
+        static u32 U_DEPTH;
+        static u32 DEPTH16;
         static u32 DEPTH24;
         static u32 DEPTH32;
-        static u32 DEPTH32STENCIL8;
     };
 
     // texture filter names

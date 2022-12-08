@@ -156,7 +156,7 @@ namespace engine::visual {
 
                 ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
                 ImGui::PushItemWidth(128);
-                ImGui::Combo("##projection_versions", &selectedProjectVersion, projectVersions,
+                ImGui::Combo("##project_versions", &selectedProjectVersion, projectVersions,
                              IM_ARRAYSIZE(projectVersions));
                 ImGui::PopItemWidth();
                 ImGui::PopStyleVar();
@@ -318,7 +318,8 @@ namespace engine::visual {
         SWITCH(assetDirName.c_str()) {
             CASE("textures"):
                 filter = "PNG image (*.png)\0*.png\0"
-                         "JPG image (*.jpg)\0*.jpg\0";
+                         "JPG image (*.jpg)\0*.jpg\0"
+                         "TGA image (*.tga)\0*.tga\0";
                 break;
                 CASE("shaders"):
                 filter = "GLSL shader (*.glsl)\0*.glsl\0";

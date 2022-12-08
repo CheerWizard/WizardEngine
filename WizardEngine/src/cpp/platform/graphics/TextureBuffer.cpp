@@ -9,6 +9,8 @@ namespace engine::graphics {
 
     u32 ColorFormat::NONE = GL_NONE;
 
+    int ColorFormat::R8 = GL_R8;
+
     int ColorFormat::RED_I32 = GL_R32I;
 
     u32 ColorFormat::RED_INTEGER = GL_RED_INTEGER;
@@ -64,13 +66,18 @@ namespace engine::graphics {
     u32 PixelsType::FLOAT = GL_FLOAT;
     u32 PixelsType::U_BYTE = GL_UNSIGNED_BYTE;
     u32 PixelsType::INT = GL_INT;
+    u32 PixelsType::HALF_FLOAT = GL_HALF_FLOAT;
 
     u32 DepthStencilFormat::NONE = GL_NONE;
-    u32 DepthStencilFormat::DEPTH16 = GL_DEPTH_COMPONENT16;
     u32 DepthStencilFormat::DEPTH24STENCIL8 = GL_DEPTH24_STENCIL8;
-    u32 DepthStencilFormat::DEPTH24 = GL_DEPTH_COMPONENT24;
-    u32 DepthStencilFormat::DEPTH32 = GL_DEPTH_COMPONENT32;
     u32 DepthStencilFormat::DEPTH32STENCIL8 = GL_DEPTH32F_STENCIL8;
+
+    u32 DepthFormat::NONE = GL_NONE;
+    int DepthFormat::DEPTH = GL_DEPTH_COMPONENT;
+    u32 DepthFormat::U_DEPTH = GL_DEPTH_COMPONENT;
+    u32 DepthFormat::DEPTH16 = GL_DEPTH_COMPONENT16;
+    u32 DepthFormat::DEPTH24 = GL_DEPTH_COMPONENT24;
+    u32 DepthFormat::DEPTH32 = GL_DEPTH_COMPONENT32;
 
     void TextureBuffer::create(u32 type) {
         this->type = type;

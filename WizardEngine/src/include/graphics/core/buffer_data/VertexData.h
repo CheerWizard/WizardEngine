@@ -4,7 +4,9 @@
 
 #pragma once
 
+#include <platform/graphics/RenderCommands.h>
 #include <ecs/ecs.h>
+
 #include <algorithm>
 #include <functional>
 
@@ -25,17 +27,11 @@ namespace engine::graphics {
         V vertex;
     };
 
-    enum class DrawType : u16 {
-        QUAD = 0, TRIANGLE = 1, TRIANGLE_STRIP = 2,
-        LINE = 3, LINE_STRIP = 4, LINE_LOOP = 5,
-        POINTS = 6
-    };
-
     template_component(VertexDataComponent, T) {
         array<T> vertexData;
         bool isUpdated = true;
         u8 renderModelId = 0;
-        DrawType drawType = DrawType::QUAD;
+        u32 drawType = DrawType::QUAD;
 
         VertexDataComponent<T> copy();
 

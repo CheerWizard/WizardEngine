@@ -323,17 +323,25 @@ namespace engine::core {
         FrameBufferFormat msaaFormat(activeSceneFrameFormat);
         msaaFormat.samples = samples;
         msaaFrame->updateFormat(msaaFormat);
+        // update shadows frame format
+        FrameBufferFormat shadowsFormat;
+        shadowsFormat.depthAttachment = { DepthFormat::DEPTH, DepthFormat::U_DEPTH };
+        shadowsFormat.width = 1024;
+        shadowsFormat.height = 1024;
+        shadowsFrame->updateFormat(shadowsFormat);
         // resolve size issue
         onWindowResized(_window->getWidth(), _window->getHeight());
     }
 
     void Application::createGraphics() {
         graphics::initContext(_window->getNativeWindow());
-        setClearColor({0, 0, 0, 1});
+        setClearColor(0, 0, 0, 1);
         activeSceneFrame = createRef<FrameBuffer>();
         msaaFrame = createRef<FrameBuffer>();
+        shadowsFrame = createRef<FrameBuffer>();
         RenderSystem::sceneFrame = activeSceneFrame;
         RenderSystem::msaaFrame = msaaFrame;
+        RenderSystem::shadowsFrame = shadowsFrame;
         RenderSystem::setRenderSystemCallback(this);
         RenderSystem::screenRenderer.init();
         RenderSystem::skyboxRenderer.init();

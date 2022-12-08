@@ -52,7 +52,7 @@ namespace engine::graphics {
         Renderer() = default;
         explicit Renderer(
                 const BaseShaderProgram& shaderProgram,
-                const DrawType& drawType = DrawType::TRIANGLE,
+                u32 drawType = DrawType::TRIANGLE,
                 const AttributeCategory& attributeCategory = VERTEX
         ) : shaderProgram(shaderProgram), drawType(drawType) {
             create(attributeCategory);
@@ -60,7 +60,7 @@ namespace engine::graphics {
         ~Renderer() = default;
 
     public:
-        inline void setDrawType(const DrawType& drawType) {
+        inline void setDrawType(u32 drawType) {
             this->drawType = drawType;
         }
 
@@ -110,7 +110,7 @@ namespace engine::graphics {
         vector<VRenderModel> vRenderModels;
         vector<VIRenderModel> viRenderModels;
         BaseShaderProgram shaderProgram;
-        DrawType drawType = DrawType::TRIANGLE;
+        u32 drawType = DrawType::TRIANGLE;
         vector<EntityHandler> entityHandlers;
     };
 
@@ -121,7 +121,7 @@ namespace engine::graphics {
         BatchRenderer() : Renderer() {}
         BatchRenderer(
                 const BaseShaderProgram& shaderProgram,
-                const DrawType& drawType = DrawType::TRIANGLE,
+                u32 drawType = DrawType::TRIANGLE,
                 const AttributeCategory& attributeCategory = VERTEX
         ) : Renderer(shaderProgram, drawType, attributeCategory) {}
 
@@ -139,7 +139,7 @@ namespace engine::graphics {
         InstanceRenderer() : Renderer() {}
         InstanceRenderer(
                 const BaseShaderProgram& shaderProgram,
-                const DrawType& drawType = DrawType::TRIANGLE,
+                u32 drawType = DrawType::TRIANGLE,
                 const AttributeCategory& attributeCategory = VERTEX
         ) : Renderer(shaderProgram, drawType, attributeCategory) {}
 
@@ -202,7 +202,7 @@ namespace engine::graphics {
         void init();
 
         void begin(const ecs::Entity& entity);
-        void end(const DrawType& drawType, const u32& indexCount) const;
+        void end(u32 drawType, u32 indexCount) const;
 
         template<typename Transform>
         void uploadTransform(const ecs::Entity& entity);
@@ -429,7 +429,7 @@ namespace engine::graphics {
 
         upload(vertexDataComponent);
         TextureBuffer::activate(0);
-        TextureBuffer::bind(textureId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
+        TextureBuffer::bind(textureId, TextureType::TEXTURE_2D);
 
         vRenderModel.vao.bind();
         drawV(vertexDataComponent.drawType, vertexDataComponent.vertexData.size);
@@ -543,7 +543,7 @@ namespace engine::graphics {
     }
 
     template<typename Vertex>
-    void VIRenderer<Vertex>::end(const DrawType& drawType, const u32& indexCount) const {
+    void VIRenderer<Vertex>::end(u32 drawType, u32 indexCount) const {
         viRenderModel.vao.bind();
         drawVI(drawType, indexCount);
         ShaderProgram::stop();

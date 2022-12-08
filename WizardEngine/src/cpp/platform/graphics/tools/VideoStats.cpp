@@ -7,10 +7,10 @@
 
 namespace engine::graphics {
 
-    int VideoStats::getMaxSlots() {
-        GLint slots;
-        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &slots);
-        return slots;
+    int VideoStats::getMaxTextureUnits() {
+        GLint max;
+        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max);
+        return max;
     }
 
     const char* VideoStats::getAPIName() {

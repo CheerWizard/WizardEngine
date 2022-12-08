@@ -29,6 +29,7 @@ namespace engine::graphics {
         bind();
 
         attachColors();
+        attachDepth();
         attachDepthStencil();
         attachRbo();
         createDrawBuffers();
@@ -91,7 +92,8 @@ namespace engine::graphics {
     }
 
     void FrameBuffer::attachColors() {
-        if (format.colorAttachments.empty()) return;
+        auto size = format.colorAttachments.size();
+        ENGINE_ASSERT(size <= getMaxColorAttachments(), "FrameBuffer: size > maximum color attachments per frame buffer!");
 
         for (int i = 0 ; i < format.colorAttachments.size() ; i++) {
             auto& colorAttachment = format.colorAttachments[i];
@@ -181,6 +183,44 @@ namespace engine::graphics {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, textureTarget, depthStencilAttachment.id, 0);
     }
 
+    void FrameBuffer::attachDepth() {
+        if (format.depthAttachment.internalFormat == DepthFormat::NONE) return;
+
+        auto& depthAttachment = format.depthAttachment;
+        glCreateTextures(textureTarget, 1, &depthAttachment.id);
+        bindTexture(depthAttachment.id);
+
+        if (format.samples > 1) {
+            glTexImage2DMultisample(
+                    GL_TEXTURE_2D_MULTISAMPLE,
+                    format.samples,
+                    depthAttachment.internalFormat,
+                    format.width,
+                    format.height,
+                    GL_TRUE
+            );
+            glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        } else {
+            glTexImage2D(GL_TEXTURE_2D, 0,
+                         depthAttachment.internalFormat,
+                         format.width, format.height, 0,
+                         depthAttachment.dataFormat,
+                         depthAttachment.pixelsType, NULL);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        }
+
+        bindTexture(0);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, textureTarget, depthAttachment.id, 0);
+    }
+
     void FrameBuffer::attachRbo() {
         if (format.renderBufferAttachment.internalFormat == DepthStencilFormat::NONE) return;
 
@@ -218,18 +258,18 @@ namespace engine::graphics {
         if (format.colorAttachments.empty()) {
             // Only depth-pass
             glDrawBuffer(GL_NONE);
+            glReadBuffer(GL_NONE);
             return;
         }
 
-        auto colorsSize = format.colorAttachments.size();
-        if (colorsSize > 1) {
-            ENGINE_ASSERT(colorsSize <= 4, "createDrawBuffers()");
-            GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
-            glDrawBuffers((GLsizei) colorsSize, buffers);
-        } else {
-            GLenum buffer[1] = { GL_COLOR_ATTACHMENT0 };
-            glDrawBuffers(1, buffer);
+        GLsizei size = format.colorAttachments.size();
+        ENGINE_ASSERT(size <= getMaxDrawBuffers(), "FrameBuffer: size > maximum draw buffers per frame buffer!");
+        GLenum* drawBuffers = new GLenum[size];
+        for (int i = 0; i < size; i++) {
+            drawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
         }
+        glDrawBuffers(size, drawBuffers);
+        delete[] drawBuffers;
     }
 
     void FrameBuffer::bindTexture(u32 attachmentId) {
@@ -300,6 +340,18 @@ namespace engine::graphics {
                 0, 0, targetFormat.width, targetFormat.height,
                 GL_COLOR_BUFFER_BIT, GL_NEAREST
         );
+    }
+
+    int FrameBuffer::getMaxColorAttachments() {
+        GLint max = 0;
+        glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &max);
+        return max;
+    }
+
+    int FrameBuffer::getMaxDrawBuffers() {
+        GLint max = 0;
+        glGetIntegerv(GL_MAX_DRAW_BUFFERS, &max);
+        return max;
     }
 
 }

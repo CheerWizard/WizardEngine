@@ -9,28 +9,36 @@
 
 namespace engine::graphics {
 
-    struct ENGINE_API ColorAttachment {
+    struct ENGINE_API ColorAttachment final {
         int internalFormat = ColorFormat::RED_I32;
         u32 dataFormat = ColorFormat::U_RED;
         u32 pixelsType = PixelsType::U_BYTE;
         u32 id = 0;
     };
 
-    struct ENGINE_API DepthStencilAttachment {
+    struct ENGINE_API DepthStencilAttachment final {
         u32 internalFormat = DepthStencilFormat::NONE;
         u32 id = 0;
     };
 
-    struct ENGINE_API RenderBufferAttachment {
+    struct ENGINE_API RenderBufferAttachment final {
         u32 internalFormat = DepthStencilFormat::NONE;
         u32 id = 0;
     };
 
-    struct ENGINE_API FrameBufferFormat {
+    struct ENGINE_API DepthAttachment final {
+        int internalFormat = 0;
+        u32 dataFormat = DepthFormat::NONE;
+        u32 pixelsType = PixelsType::FLOAT;
+        u32 id = 0;
+    };
+
+    struct ENGINE_API FrameBufferFormat final {
         int width = 0, height = 0, samples = 1;
         std::vector<ColorAttachment> colorAttachments;
         DepthStencilAttachment depthStencilAttachment;
         RenderBufferAttachment renderBufferAttachment;
+        DepthAttachment depthAttachment;
     };
 
     class ENGINE_API FrameBuffer final {
@@ -112,6 +120,7 @@ namespace engine::graphics {
         bool isCompleted();
         void attachColors();
         void attachDepthStencil();
+        void attachDepth();
         void attachRbo();
         void createDrawBuffers() const;
         void bindTexture(u32 attachmentId);
@@ -125,6 +134,8 @@ namespace engine::graphics {
     public:
         static void bindDefault();
         static void readWriteFrameBuffers(FrameBuffer& src, FrameBuffer& target);
+        static int getMaxColorAttachments();
+        static int getMaxDrawBuffers();
     };
 
 }

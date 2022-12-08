@@ -299,8 +299,9 @@ namespace engine::visual {
     }
 
     void Visual::endDockspace() {
-        if (!openDockspace) return;
-        ImGui::End();
+        if (openDockspace) {
+            ImGui::End();
+        }
     }
 
     void Visual::onKeyPressed(event::KeyCode keyCode) {
