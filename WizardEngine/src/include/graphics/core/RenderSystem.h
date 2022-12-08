@@ -46,6 +46,8 @@ namespace engine::graphics {
         // frames
         static Ref<Scene> activeScene;
         static Ref<FrameBuffer> sceneFrame;
+        static Ref<FrameBuffer> msaaFrame;
+        static Ref<FrameBuffer> shadowsFrame;
         // screen
         static ScreenRenderer screenRenderer;
         static bool enableScreenRenderer;

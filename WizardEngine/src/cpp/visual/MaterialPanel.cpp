@@ -4,6 +4,11 @@
 namespace engine::visual {
 
     MaterialTextures MaterialPanel::materialTextures;
+    Ref<FileDialog> MaterialPanel::fileDialog;
+
+    void MaterialPanel::create(void* nativeWindow) {
+        fileDialog = createRef<FileDialog>(nativeWindow);
+    }
 
     void MaterialPanel::draw(Material& material) {
         static bool open = true;
@@ -11,7 +16,7 @@ namespace engine::visual {
             ImGui::End();
             return;
         }
-        drawInternal(material);
+        drawMaterial(material);
         ImGui::End();
     }
 
@@ -25,7 +30,7 @@ namespace engine::visual {
         for (auto entity : entities) {
             Material* material = entity.get<Material>();
             if (material) {
-                drawInternal(*material);
+                drawMaterial(*material);
             }
         }
 
@@ -42,69 +47,64 @@ namespace engine::visual {
         for (auto entity : entities) {
             Material* material = entity.get<Material>();
             if (material) {
-                drawInternal(*material);
+                drawMaterial(*material);
             }
         }
 
         ImGui::End();
     }
 
-    void MaterialPanel::drawInternal(Material &material) {
+    void MaterialPanel::drawMaterial(Material &material) {
         // base color
         ColorPicker::draw(material.color);
         Slider::draw(material.gamma, { -5, 5 });
         Slider::draw(material.brightness, { -1, 1 });
-        Checkbox::draw(material.enableBlinn);
-        Slider::draw(material.ambient, { -5, 5 });
-        drawTextureMap(&materialTextures.albedoPath, "albedo_path_field", "Albedo Map", material.albedoSlot.textureId, material.enableAlbedoMap);
+        drawTextureMap(0, &materialTextures.albedoPath, "Albedo", material.albedoSlot.textureId, material.enableAlbedoMap);
         // normals
-        drawTextureMap(&materialTextures.normalPath, "normal_path_field", "Normal Map", material.normalSlot.textureId, material.enableNormalMap);
-        // diffuse
-        drawTextureMap(&materialTextures.diffusePath, "diffuse_path_field", "Diffuse Map", material.diffuseSlot.textureId, material.enableDiffuseMap);
-        Slider::draw(material.diffuse, { -5, 5 });
-        // specular
-        drawTextureMap(&materialTextures.specularPath, "specular_path_field", "Specular Map", material.specularSlot.textureId, material.enableSpecularMap);
-        Slider::draw(material.specular, { -5, 5 });
-        Slider::draw(material.shiny, { -100, 100 });
+        drawTextureMap(1, &materialTextures.normalPath, "Normals", material.normalSlot.textureId, material.enableNormalMap);
         // parallax/depth
-        drawTextureMap(&materialTextures.parallaxPath, "parallax_path_field", "Parallax Map", material.depthSlot.textureId, material.enableParallaxMap);
+        drawTextureMap(4, &materialTextures.parallaxPath, "Parallax", material.depthSlot.textureId, material.enableParallaxMap);
         Slider::draw(material.heightScale, { 0, 10 });
         Slider::draw(material.minLayers, { 0, 10 });
         Slider::draw(material.maxLayers, { 10, 20 });
         // metallic
-        drawTextureMap(&materialTextures.metallicPath, "metallic_path_field", "Metallic Map", material.metallicSlot.textureId, material.enableMetallicMap);
+        drawTextureMap(5, &materialTextures.metallicPath, "Metallic", material.metallicSlot.textureId, material.enableMetallicMap);
         Slider::draw(material.metallic, { -5, 5 });
         // roughness
-        drawTextureMap(&materialTextures.roughnessPath, "roughness_path_field", "Roughness Map", material.roughnessSlot.textureId, material.enableRoughnessMap);
+        drawTextureMap(6, &materialTextures.roughnessPath, "Roughness", material.roughnessSlot.textureId, material.enableRoughnessMap);
         Slider::draw(material.roughness, { -5, 5 });
         // AO
-        drawTextureMap(&materialTextures.aoPath, "ao_path_field", "AO Map", material.aoSlot.textureId, material.enableAOMap);
+        drawTextureMap(7, &materialTextures.aoPath, "Ambient Occlusion", material.aoSlot.textureId, material.enableAOMap);
         Slider::draw(material.ao, { -5, 5 });
     }
 
     void MaterialPanel::draw(const Batch3d &entity) {
         Material* material = entity.get<Material>();
         if (material) {
-            draw(*material);
+            drawMaterial(*material);
         }
     }
 
-    void MaterialPanel::drawTextureMap(std::string* filepath,
-                                       const char* field_id,
+    void MaterialPanel::drawTextureMap(int index, std::string* filepath,
                                        const char* title,
-                                       u32 &textureId, BoolUniform& textureEnabled) {
+                                       u32 &textureId, BoolUniform& textureEnabled, io::Spectrum spectrum) {
+
+        Line::draw(title);
+        Checkbox::draw(title, textureEnabled.value);
+        ImGui::PushID(index);
         if (ImGui::ImageButton(
                 reinterpret_cast<ImTextureID>(textureId),
-                {32, 32 },
+                { 128, 128 },
                 { 1, 1 },
                 { 0, 0 })
         ) {
-            textureId = TextureBuffer::load(filepath->c_str());
+            const char* filter = "PNG image (*.png)\0*.png\0"
+                                 "JPG image (*.jpg)\0*.jpg\0"
+                                 "TGA image (*.tga)\0*.tga\0";
+            *filepath = fileDialog->getImportPath(filter);
+            textureId = TextureBuffer::load(filepath->c_str(), spectrum);
         }
-        ImGui::SameLine();
-        Text::field(field_id, title, filepath);
-        ImGui::SameLine();
-        Checkbox::draw(textureEnabled);
+        ImGui::PopID();
     }
 
 }

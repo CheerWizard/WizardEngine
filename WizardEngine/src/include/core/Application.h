@@ -79,6 +79,7 @@ using namespace engine::scripting;
 #include <visual/ImageLayout.h>
 #include <visual/MaterialPanel.h>
 #include <visual/LightPanel.h>
+#include <visual/SceneHierarchy.h>
 
 using namespace engine::visual;
 #endif
@@ -135,15 +136,15 @@ namespace engine::core {
 
     public:
         [[nodiscard]] float getAspectRatio() const;
-        const uint32_t& getWindowWidth();
-        const uint32_t& getWindowHeight();
-        uint32_t getRefreshRate();
+        int getWindowWidth();
+        int getWindowHeight();
+        int getRefreshRate();
         void* getNativeWindow();
         void setWindowIcon(const std::string &filePath);
         Ref<tools::FileDialog> createFileDialog();
-        void setSampleSize(const uint32_t& samples);
+        void setSampleSize(int samples);
         void setActiveScene(const Ref<Scene>& activeScene);
-        void setActiveScene(const uint32_t& activeSceneId);
+        void setActiveScene(u32 activeSceneId);
         void pushScenes(const vector<Ref<Scene>>& scenes);
         void loadGamepadMappings(const char* mappingsFilePath);
         void setSkybox(Ref<Scene>& scene, const Entity& skybox) const;
@@ -185,6 +186,8 @@ namespace engine::core {
         std::vector<Ref<Scene>> scenes;
         Ref<Scene> activeScene;
         Ref<FrameBuffer> activeSceneFrame;
+        Ref<FrameBuffer> msaaFrame;
+        Ref<FrameBuffer> shadowsFrame;
         time::Time dt = 6;
         bool isJoystickConnected = false;
         // hover entity with mouse cursor

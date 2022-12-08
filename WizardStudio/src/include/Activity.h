@@ -5,7 +5,7 @@
 #pragma once
 
 #include <visual/ImageLayout.h>
-#include <gui/SceneHierarchy.h>
+#include <visual/SceneHierarchy.h>
 #include <gui/MeshLayout.h>
 
 #include <graphics/camera/Camera.h>

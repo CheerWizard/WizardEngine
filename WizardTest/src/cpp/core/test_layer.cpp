@@ -20,7 +20,7 @@ namespace test {
                 },
                 BaseShader(),
                 BaseShader(),
-                { camera3dUboScript(), phongLightScript() }
+                { camera3dUboScript(), lightScript() }
         );
 
         auto instanceShader = shader::BaseShaderProgram(
@@ -32,7 +32,7 @@ namespace test {
                 },
                 BaseShader(),
                 BaseShader(),
-                { camera3dUboScript(), phongLightScript() }
+                { camera3dUboScript(), lightScript() }
         );
 
         Ref<Renderer> batchRenderer = createRef<BatchRenderer<Vertex3d>>(batchShader);
@@ -141,49 +141,6 @@ namespace test {
                     newEntity.getTransform().position = { 1, 1, 1 };
                     newEntity.applyTransform();
                     newEntity.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(meshComponent);
-
-//                    switch (i) {
-//                        case 0:
-//                        modelMesh.material.albedoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/T_Dust.png");
-//                        modelMesh.material.enableAlbedoMap.value = true;
-//                        modelMesh.material.enableDiffuseMap.value = false;
-//                        modelMesh.material.enableSpecularMap.value = false;
-//                        modelMesh.material.enableParallaxMap.value = false;
-//                        modelMesh.material.enableNormalMap.value = false;
-//                        modelMesh.material.enableAOMap.value = false;
-//                        modelMesh.material.enableMetallicMap.value = false;
-//                        modelMesh.material.enableRoughnessMap.value = false;
-//                        break;
-//
-//                        case 1:
-//                        modelMesh.material.enableAlbedoMap.value = false;
-//                        modelMesh.material.enableDiffuseMap.value = false;
-//                        modelMesh.material.enableSpecularMap.value = false;
-//                        modelMesh.material.enableParallaxMap.value = false;
-//                        modelMesh.material.enableNormalMap.value = false;
-//                        modelMesh.material.aoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/PillarAO.png");
-//                        modelMesh.material.enableAOMap.value = true;
-//                        modelMesh.material.enableMetallicMap.value = false;
-//                        modelMesh.material.enableRoughnessMap.value = false;
-//                        break;
-//
-//                        case 2:
-//                        modelMesh.material.albedoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/BaseColor.png");
-//                        modelMesh.material.enableAlbedoMap.value = true;
-//                        modelMesh.material.enableDiffuseMap.value = false;
-//                        modelMesh.material.enableSpecularMap.value = false;
-//                        modelMesh.material.enableParallaxMap.value = false;
-//                        modelMesh.material.normalSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/NormalMap.png");
-//                        modelMesh.material.enableNormalMap.value = true;
-//                        modelMesh.material.aoSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/AOMap.png");
-//                        modelMesh.material.enableAOMap.value = true;
-//                        modelMesh.material.metallicSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/Metalness.png");
-//                        modelMesh.material.enableMetallicMap.value = true;
-//                        modelMesh.material.roughnessSlot.textureId = TextureBuffer::load("assets/SamuraiHelmet/textures/Roughness.png");
-//                        modelMesh.material.enableRoughnessMap.value = true;
-//                        break;
-//                    }
-
                     newEntity.add<Material>(modelMesh.material);
                     packs.emplace_back(newEntity);
                 }
@@ -253,8 +210,6 @@ namespace test {
         // setup HDR env
         Application::get().setHdrEnvCube(scene, "assets/hdr/ice_lake.hdr");
 
-        graphics::enableSRGB();
-
 //        Cube<BatchVertex<Vertex3d>> cube;
 //        Object<BatchVertex<Vertex3d>> cubeObj {
 //            "Cube", scene.get()
@@ -299,6 +254,8 @@ namespace test {
 
         ProjectsPanel::init();
         AssetBrowser::create(app.getNativeWindow(), { "AssetBrowser" });
+        MaterialPanel::create(app.getNativeWindow());
+        sceneHierarchy = SceneHierarchy(scene);
 
         sceneViewport.show();
     }
@@ -335,6 +292,8 @@ namespace test {
         KEY_PRESSED(D3, switchSharpen(););
         KEY_PRESSED(D4, switchEdgeDetection(););
         KEY_PRESSED(D5, switchBloom(););
+
+        KEY_PRESSED(M, switchMSAA(););
 
         KEY_PRESSED(D9, Application::get().activeSceneFrame->setRenderTargetIndex(0););
         KEY_PRESSED(D0, Application::get().activeSceneFrame->setRenderTargetIndex(1););
@@ -696,43 +655,41 @@ namespace test {
 //        Panel::end();
         // Console
 //        Console::draw("Console", { 800, 600 });
-        // demo
-//        ImGui::ShowDemoWindow();
         // Troubleshoot
 //        ProfilerMenu::draw("Profiler Menu", { 800, 600 });
 
-        if (EventRegistry::keyHold(KeyCode::LeftControl) && Input::isMousePressed(MouseCode::ButtonLeft)) {
-            Entity selectedEntity = Application::get().hoveredEntity;
-            auto* selectedTransform = selectedEntity.get<Transform3dComponent>();
-            if (selectedTransform) {
-                Application::get().selectedEntity = selectedEntity;
-                showGizmo = !showGizmo;
-            }
-        }
+//        if (EventRegistry::keyHold(KeyCode::LeftControl) && Input::isMousePressed(MouseCode::ButtonLeft)) {
+//            Entity selectedEntity = Application::get().hoveredEntity;
+//            auto* selectedTransform = selectedEntity.get<Transform3dComponent>();
+//            if (selectedTransform) {
+//                Application::get().selectedEntity = selectedEntity;
+//                showGizmo = !showGizmo;
+//            }
+//        }
 
-        if (showGizmo) {
-            // get selected entity transform
-            auto& app = Application::get();
-            Entity selectedEntity = app.selectedEntity;
-            auto* selectedTransform = selectedEntity.get<Transform3dComponent>();
-            // get window position and size
-            vec2f windowSize = {
-                    static_cast<float>(app.getWindowWidth()),
-                    static_cast<float>(app.getWindowHeight())
-            };
-            float xPos = 0, yPos = 0;
-            app.getWindow()->getPosition(xPos, yPos);
-            // draw translation gizmo
-            Gizmo::drawTranslate(mainCamera, *selectedTransform, { xPos, yPos }, windowSize);
-        }
+//        if (showGizmo) {
+//            // get selected entity transform
+//            auto& app = Application::get();
+//            Entity selectedEntity = app.selectedEntity;
+//            auto* selectedTransform = selectedEntity.get<Transform3dComponent>();
+//            // get window position and size
+//            vec2f windowSize = {
+//                    static_cast<float>(app.getWindowWidth()),
+//                    static_cast<float>(app.getWindowHeight())
+//            };
+//            int xPos = 0, yPos = 0;
+//            app.getWindow()->getPosition(xPos, yPos);
+//            // draw translation gizmo
+//            Gizmo::drawTranslate(mainCamera, *selectedTransform,
+//                                 { static_cast<float>(xPos), static_cast<float>(yPos) },
+//                                 windowSize);
+//        }
 
 //        ProjectsPanel::draw("Project Manager", { 800, 600 }, [this](const Project& openedProject) {});
-
-        MaterialPanel::draw(packs[2]);
-//        LightsPanel::draw(lights);
         AssetBrowser::draw(dt);
-//        Log::draw("Log");
+        Log::draw("Log");
         sceneViewport.setId(RenderSystem::finalRenderTargetId);
         sceneViewport.onUpdate(dt);
+        sceneHierarchy.onUpdate(dt);
      }
 }

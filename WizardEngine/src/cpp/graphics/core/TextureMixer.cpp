@@ -29,7 +29,7 @@ namespace engine::graphics {
 
         for (u32 i = 0; i < textures.size(); i++) {
             TextureBuffer::activate(i);
-            TextureBuffer::bind(textures[i], TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
+            TextureBuffer::bind(textures[i], TextureType::TEXTURE_2D);
             IntUniform sampler = IntUniform("textures", (int)i);
             BoolUniform enabled = BoolUniform("enabled", true);
             shaderProgram.setUniformArrayElement(i, sampler);
@@ -38,6 +38,7 @@ namespace engine::graphics {
         drawV(DrawType::TRIANGLE_STRIP, 4);
 
         shaderProgram.stop();
+
         ColorAttachment mixedTexture;
         frameBuffer->getColorAttachment(0, mixedTexture);
         return mixedTexture.id;

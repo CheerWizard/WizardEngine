@@ -9,7 +9,7 @@
 #include <ecs/Scene.h>
 #include <graphics/text/Text.h>
 
-namespace engine::gui {
+namespace engine::visual {
 
     struct ENGINE_API SceneHierarchyProps {
         const char* name = "Scene Hierarchy";
@@ -21,6 +21,20 @@ namespace engine::gui {
 
     public:
         virtual void onEntityRemoved(const ecs::Entity &entity) = 0;
+    };
+
+    struct ENGINE_API UIPolygonMode final {
+        const char* modes[3] { "Fill", "Points", "Lines" };
+        const char* faceTypes[3] { "Back", "Front", "Front/Back" };
+        int modeIndex = 0;
+        int faceTypeIndex = 0;
+    };
+
+    struct ENGINE_API UICulling final {
+        const char* faceTypes[3] { "Back", "Front", "Front/Back" };
+        const char* frontFaceTypes[2] { "Clock Wise", "Counter-Clock Wise" };
+        int faceTypeIndex = 0;
+        int frontFaceTypeIndex = 0;
     };
 
     class ENGINE_API SceneHierarchy {
@@ -73,7 +87,6 @@ namespace engine::gui {
         core::Ref<ecs::Scene> _scene;
         ecs::Entity _selectedEntity;
         SceneHierarchyCallback* _callback = nullptr;
-
     };
 
     template<typename T>

@@ -6,6 +6,18 @@
 
 namespace engine::graphics {
 
+    void Light::create() {
+        add<LightComponent>(LightComponent());
+    }
+
+    vec3f& Light::getPosition() {
+        return get<LightComponent>()->position.value;
+    }
+
+    vec4f &Light::getColor() {
+        return get<LightComponent>()->color.value;
+    }
+
     void PhongLight::create() {
         add<PhongLightComponent>(PhongLightComponent());
     }

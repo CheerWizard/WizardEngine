@@ -70,7 +70,6 @@ namespace engine::physics {
     };
 
     class ENGINE_API Intersections final {
-
     public:
         static IntersectData intersect(const AABBCollider& aabb1, const AABBCollider& aabb2);
         static IntersectData intersect(const AABBCollider& aabb, const SphereCollider& sphere);

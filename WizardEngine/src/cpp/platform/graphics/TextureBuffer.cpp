@@ -7,73 +7,97 @@
 
 namespace engine::graphics {
 
-    void toGLTextureType(const TextureType& textureType, GLenum& glTextureType) {
-        switch (textureType) {
-            case TextureType::TEXTURE_2D:
-                glTextureType = GL_TEXTURE_2D;
-                break;
-            case TextureType::CUBE_MAP:
-                glTextureType = GL_TEXTURE_CUBE_MAP;
-                break;
-            case TextureType::TEXTURE_2D_ARRAY:
-                glTextureType = GL_TEXTURE_2D_ARRAY;
-                break;
-            default:
-                glTextureType = GL_TEXTURE_2D;
-                break;
-        }
-    }
+    u32 ColorFormat::NONE = GL_NONE;
 
-    GLenum toGLTextureFaceType(const TextureFaceType& faceType) {
-        switch (faceType) {
-            case TextureFaceType::RIGHT: return GL_TEXTURE_CUBE_MAP_POSITIVE_X;
-            case TextureFaceType::LEFT: return GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
-            case TextureFaceType::TOP: return GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
-            case TextureFaceType::BOTTOM: return GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
-            case TextureFaceType::BACK: return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
-            case TextureFaceType::FRONT: return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
-        }
-    }
+    int ColorFormat::R8 = GL_R8;
 
-    GLenum toGLTextureParamName(const TextureParamName& textureParamName) {
-        switch (textureParamName) {
-            case TextureParamName::MAG_FILTER: return GL_TEXTURE_MAG_FILTER;
-            case TextureParamName::MIN_FILTER: return GL_TEXTURE_MIN_FILTER;
-            case TextureParamName::WRAP_R: return GL_TEXTURE_WRAP_R;
-            case TextureParamName::WRAP_S: return GL_TEXTURE_WRAP_S;
-            case TextureParamName::WRAP_T: return GL_TEXTURE_WRAP_T;
-        }
-    }
+    int ColorFormat::RED_I32 = GL_R32I;
 
-    GLint toGLTextureParamValue(const TextureParamValue& textureParamValue) {
-        switch (textureParamValue) {
-            case TextureParamValue::CLAMP_TO_EDGE: return GL_CLAMP_TO_EDGE;
-            case TextureParamValue::LINEAR: return GL_LINEAR;
-            case TextureParamValue::REPEAT: return GL_REPEAT;
-        }
-    }
+    u32 ColorFormat::RED_INTEGER = GL_RED_INTEGER;
+    u32 ColorFormat::GREEN_INTEGER = GL_GREEN_INTEGER;
+    u32 ColorFormat::BLUE_INTEGER = GL_BLUE_INTEGER;
 
-    void TextureBuffer::create(const TextureType& textureType) {
-        toGLTextureType(textureType, type);
+    int ColorFormat::RED = GL_RED;
+    int ColorFormat::GREEN = GL_GREEN;
+    int ColorFormat::BLUE = GL_BLUE;
+
+    u32 ColorFormat::U_RED = GL_RED;
+    u32 ColorFormat::U_GREEN = GL_GREEN;
+    u32 ColorFormat::U_BLUE = GL_BLUE;
+
+    u32 ColorFormat::RGB = GL_RGB;
+    u32 ColorFormat::RGBA = GL_RGBA;
+
+    int ColorFormat::RGB8 = GL_RGB8;
+    int ColorFormat::RGBA8 = GL_RGBA8;
+
+    int ColorFormat::R16F = GL_R16F;
+    int ColorFormat::RGB16F = GL_RGB16F;
+    int ColorFormat::RGBA16F = GL_RGBA16F;
+
+    int ColorFormat::RGB32F = GL_RGB32F;
+    int ColorFormat::RGBA32F = GL_RGBA32F;
+
+    int ColorFormat::SRGB = GL_SRGB;
+    int ColorFormat::SRGBA = GL_SRGB_ALPHA;
+
+    u32 TextureType::TEXTURE_2D = GL_TEXTURE_2D;
+    u32 TextureType::CUBE_MAP = GL_TEXTURE_CUBE_MAP;
+    u32 TextureType::TEXTURE_2D_MULTISAMPLE = GL_TEXTURE_2D_MULTISAMPLE;
+    u32 TextureType::TEXTURE_2D_ARRAY = GL_TEXTURE_2D_ARRAY;
+
+    u32 TextureFaceType::FRONT = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+    u32 TextureFaceType::BACK = GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+    u32 TextureFaceType::LEFT = GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+    u32 TextureFaceType::RIGHT = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+    u32 TextureFaceType::TOP = GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+    u32 TextureFaceType::BOTTOM = GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+
+    u32 TextureParamName::MIN_FILTER = GL_TEXTURE_MIN_FILTER;
+    u32 TextureParamName::MAG_FILTER = GL_TEXTURE_MAG_FILTER;
+    u32 TextureParamName::WRAP_S = GL_TEXTURE_WRAP_S;
+    u32 TextureParamName::WRAP_T = GL_TEXTURE_WRAP_T;
+    u32 TextureParamName::WRAP_R = GL_TEXTURE_WRAP_R;
+
+    int TextureParamValue::LINEAR = GL_LINEAR;
+    int TextureParamValue::REPEAT = GL_REPEAT;
+    int TextureParamValue::CLAMP_TO_EDGE = GL_CLAMP_TO_EDGE;
+
+    u32 PixelsType::FLOAT = GL_FLOAT;
+    u32 PixelsType::U_BYTE = GL_UNSIGNED_BYTE;
+    u32 PixelsType::INT = GL_INT;
+    u32 PixelsType::HALF_FLOAT = GL_HALF_FLOAT;
+
+    u32 DepthStencilFormat::NONE = GL_NONE;
+    u32 DepthStencilFormat::DEPTH24STENCIL8 = GL_DEPTH24_STENCIL8;
+    u32 DepthStencilFormat::DEPTH32STENCIL8 = GL_DEPTH32F_STENCIL8;
+
+    u32 DepthFormat::NONE = GL_NONE;
+    int DepthFormat::DEPTH = GL_DEPTH_COMPONENT;
+    u32 DepthFormat::U_DEPTH = GL_DEPTH_COMPONENT;
+    u32 DepthFormat::DEPTH16 = GL_DEPTH_COMPONENT16;
+    u32 DepthFormat::DEPTH24 = GL_DEPTH_COMPONENT24;
+    u32 DepthFormat::DEPTH32 = GL_DEPTH_COMPONENT32;
+
+    void TextureBuffer::create(u32 type) {
+        this->type = type;
         glCreateTextures(type, 1, &id);
     }
 
-    u32 TextureBuffer::createFrom(const TextureType& textureType) {
-        GLenum type;
+    u32 TextureBuffer::createFrom(u32 type) {
         GLuint id;
-        toGLTextureType(textureType, type);
         glCreateTextures(type, 1, &id);
         return id;
     }
 
-    void TextureBuffer::destroy(const u32& id) {
+    void TextureBuffer::destroy(u32 id) {
         glDeleteTextures(1, &id);
     }
 
-    u32 TextureBuffer::recreate(const u32& id, const u32& typeId) {
+    u32 TextureBuffer::recreate(u32 id, u32 type) {
         destroy(id);
         u32 newId;
-        glCreateTextures(typeId, 1, &newId);
+        glCreateTextures(type, 1, &newId);
         return newId;
     }
 
@@ -87,51 +111,49 @@ namespace engine::graphics {
 
     void TextureBuffer::setParams(const std::vector<TextureParam>& params) const {
         for (auto& param : params) {
-            glTextureParameteri(id, toGLTextureParamName(param.name), toGLTextureParamValue(param.value));
+            glTextureParameteri(id, param.name, param.value);
         }
     }
 
-    void TextureBuffer::bind(const u32& id, const u32& typeId) {
-        glBindTexture(typeId, id);
+    void TextureBuffer::bind(u32 id, u32 type) {
+        glBindTexture(type, id);
     }
 
-    void TextureBuffer::unbind(const TextureType& type) {
-        GLenum textureType;
-        toGLTextureType(type, textureType);
-        glBindTexture(textureType, 0);
+    void TextureBuffer::unbind(u32 type) {
+        glBindTexture(type, 0);
     }
 
-    void TextureBuffer::activate(const u32 &slot) {
+    void TextureBuffer::activate(u32 slot) {
         glActiveTexture(GL_TEXTURE0 + slot);
     }
 
-    u32 TextureBuffer::load(const char* filePath, bool hdrEnabled) {
+    u32 TextureBuffer::load(const char* filePath, io::Spectrum spectrum) {
         if (exists(filePath)) {
             return textureIdCache.at(filePath);
         }
 
         TextureBuffer textureBuffer;
-        auto textureData = io::TextureFile::read(filePath, hdrEnabled);
-        if (textureData.data == nullptr) {
-            ENGINE_WARN("Can't stream texture {0} from NULL data!", filePath);
-        } else {
+        auto textureData = io::TextureFile::read(filePath, spectrum);
+        if (textureData.pixels) {
             textureBuffer.create(TextureType::TEXTURE_2D);
             textureBuffer.bind();
-            load(textureBuffer.id, textureData);
+            load(textureData);
             textureBuffer.unbind();
+        } else {
+            ENGINE_WARN("Can't load NULL pixels into texture!");
         }
-        io::TextureFile::free(textureData.data);
+        io::TextureFile::free(textureData.pixels);
 
         textureIdCache.insert(std::pair<const char*, u32>(filePath, textureBuffer.id));
         return textureBuffer.id;
     }
 
-    u32 TextureBuffer::loadArray(const vector<std::string> &filepaths) {
-        io::TextureArrayData textureArrayData = io::TextureFile::read(filepaths);
+    u32 TextureBuffer::loadArray(const vector<std::string> &filepaths, io::Spectrum spectrum) {
+        io::TextureArrayData textureArrayData = io::TextureFile::read(filepaths, spectrum);
 
         TextureBuffer textureBuffer(TextureType::TEXTURE_2D_ARRAY);
         textureBuffer.bind();
-        loadArray(textureBuffer.id, textureArrayData);
+        loadArray(textureArrayData);
         textureBuffer.unbind();
 
         io::TextureFile::free(textureArrayData);
@@ -139,20 +161,20 @@ namespace engine::graphics {
         return textureBuffer.id;
     }
 
-    u32 TextureBuffer::load(const std::vector<TextureFace>& faces) {
+    u32 TextureBuffer::load(const std::vector<TextureFace>& faces, io::Spectrum spectrum) {
         TextureBuffer textureBuffer(TextureType::CUBE_MAP);
         textureBuffer.bind();
 
         for (auto& face : faces) {
-            auto textureData = io::TextureFile::read(face.filePath);
+            auto textureData = io::TextureFile::read(face.filePath, spectrum);
 
-            if (textureData.data == nullptr) {
-                ENGINE_WARN("Can't stream texture {0} from NULL data!", face.filePath);
+            if (textureData.pixels) {
+                loadFace(face.type, textureData);
             } else {
-                load(textureBuffer.id, face.type, textureData);
+                ENGINE_WARN("Can't load NULL pixels into texture!");
             }
 
-            io::TextureFile::free(textureData.data);
+            io::TextureFile::free(textureData.pixels);
         }
 
         textureBuffer.unbind();
@@ -160,198 +182,84 @@ namespace engine::graphics {
     }
 
     u32 TextureBuffer::generateCubeMap(
-            u32 width, u32 height,
-            ColorFormat internalFormat, ColorFormat dataFormat,
-            PixelsType pixelsType
+            int width, int height,
+            int internalFormat, u32 dataFormat,
+            u32 pixelsType
     ) {
         TextureBuffer textureBuffer(TextureType::CUBE_MAP);
         textureBuffer.bind();
         for (u32 i = 0 ; i < 6 ; i++) {
-            GLint internalF;
-            GLenum dataF;
-            GLenum pixelsT;
-            switch (internalFormat) {
-                case ColorFormat::RGB16F:
-                    internalF = GL_RGB16F;
-                    break;
-            }
-            switch (dataFormat) {
-                case ColorFormat::RGB:
-                    dataF = GL_RGB;
-                    break;
-            }
-            switch (pixelsType) {
-                case PixelsType::FLOAT:
-                    pixelsT = GL_FLOAT;
-                    break;
-                case PixelsType::U_BYTE:
-                    pixelsT = GL_UNSIGNED_BYTE;
-                    break;
-            }
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalF, width, height, 0, dataF, pixelsT, nullptr);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
+                         internalFormat,
+                         width, height, 0,
+                         dataFormat,
+                         pixelsType, nullptr);
         }
         textureBuffer.unbind();
         return textureBuffer.id;
     }
 
-    void TextureBuffer::load(const u32& id, const io::TextureData &textureData) {
-        GLint internalFormat = GL_RED;
-        GLenum dataFormat = GL_RED;
-        int channels = textureData.channels, width = textureData.width, height = textureData.height;
-
-        if (textureData.hdr) {
-            internalFormat = GL_RGB16F;
-            dataFormat = GL_RGB;
-            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
+    void TextureBuffer::load(const io::TextureData &textureData) {
+        glTexImage2D(GL_TEXTURE_2D, 0,
+                     textureData.internalFormat,
+                     textureData.width, textureData.height, 0,
+                     textureData.dataFormat,
+                     textureData.pixelsType, textureData.pixels);
+        if (textureData.spectrum == io::Spectrum::HDR) {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//            glTextureStorage2D(id, 1, internalFormat, width, height);
-//            glTextureSubImage2D(id, 0, 0, 0, width, height, dataFormat, GL_FLOAT, textureData.data);
-            return;
         } else {
-            switch (channels) {
-                case CHANNEL_RED:
-                    ENGINE_INFO("TextureBuffer::load(): format RED");
-                    internalFormat = GL_RED;
-                    dataFormat = GL_RED;
-                    break;
-                case CHANNEL_RGB:
-                    ENGINE_INFO("TextureBuffer::load(): format RGB");
-                    internalFormat = GL_RGB8;
-                    dataFormat = GL_RGB;
-                    break;
-                case CHANNEL_RGBA:
-                    ENGINE_INFO("TextureBuffer::load(): format RGBA");
-                    internalFormat = GL_RGBA8;
-                    dataFormat = GL_RGBA;
-                    break;
-                default: break;
-            }
+            glGenerateMipmap(GL_TEXTURE_2D);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         }
-
-        bool formatSupported = internalFormat & dataFormat;
-        if (!formatSupported) {
-            ENGINE_WARN(
-                    "TextureBuffer {0} does not support format! internalFormat: {1}, dataFormat: {2}",
-                    id,
-                    internalFormat,
-                    dataFormat
-            );
-            return;
-        }
-
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//        glTextureStorage2D(id, 1, internalFormat, width, height);
-//        glTextureSubImage2D(id, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
     }
 
-    void TextureBuffer::loadArray(const u32 &id, const io::TextureArrayData& textureArrayData) {
-        GLint internalFormat = 0;
-        GLenum dataFormat = 0;
-        int width = textureArrayData.width, height = textureArrayData.height;
-
-        switch (textureArrayData.channels) {
-            case CHANNEL_RED:
-                internalFormat = GL_RED;
-                dataFormat = GL_RED;
-                break;
-            case CHANNEL_RGB:
-                internalFormat = GL_RGB8;
-                dataFormat = GL_RGB;
-                break;
-            case CHANNEL_RGBA:
-                internalFormat = GL_RGBA8;
-                dataFormat = GL_RGBA;
-                break;
-            default:
-                internalFormat = GL_RGB8;
-                dataFormat = GL_RGB;
-                break;
-        }
-
-        bool formatSupported = internalFormat & dataFormat;
-        if (!formatSupported) {
-            ENGINE_WARN(
-                    "TextureBuffer {0} does not support format! internalFormat: {1}, dataFormat: {2}",
-                    id,
-                    internalFormat,
-                    dataFormat
-            );
-        }
-
-        glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, width, height,
+    void TextureBuffer::loadArray(const io::TextureArrayData& textureArrayData) {
+        glTexImage3D(GL_TEXTURE_2D_ARRAY, 0,
+                     textureArrayData.internalFormat,
+                     textureArrayData.width, textureArrayData.height,
                      textureArrayData.textureData.size(), 0,
-                     dataFormat, GL_UNSIGNED_BYTE, nullptr);
+                     textureArrayData.dataFormat,
+                     textureArrayData.pixelsType,
+                     nullptr);
 
         for (int i = 0 ; i < textureArrayData.textureData.size() ; i++) {
             const auto& textureData = textureArrayData.textureData[i];
-            int sizeX = textureData.width;
-            int sizeY = textureData.height;
-            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, 1000, 1000, 1,
-                            GL_RGBA, GL_UNSIGNED_BYTE, textureData.data);
+            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i,
+                            textureData.width, textureData.height, 1,
+                            textureData.dataFormat,
+                            textureData.pixelsType, textureData.pixels);
         }
 
         glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
 
-    void TextureBuffer::load(const u32& id, const TextureFaceType &faceType, const io::TextureData &textureData) {
-        GLint internalFormat = 0, dataFormat = 0;
-        int channels = textureData.channels, width = textureData.width, height = textureData.height;
-
-        switch (channels) {
-            case CHANNEL_RED:
-                internalFormat = GL_RED;
-                dataFormat = GL_RED;
-                break;
-            case CHANNEL_RGB:
-                internalFormat = GL_RGB8;
-                dataFormat = GL_RGB;
-                break;
-            case CHANNEL_RGBA:
-                internalFormat = GL_RGBA8;
-                dataFormat = GL_RGBA;
-                break;
-            default:
-                break;
-        }
-        // we can load texture as sRGB type
-        if (textureData.sRGB) {
-            internalFormat = GL_SRGB;
-            dataFormat = GL_RGB;
-        }
-
-        bool formatSupported = internalFormat & dataFormat;
-        if (!formatSupported) {
-            ENGINE_WARN(
-                    "TextureBuffer {0} does not support format! internalFormat: {1}, dataFormat: {2}",
-                    id,
-                    internalFormat,
-                    dataFormat
-            );
-        }
-
-        glTexImage2D(toGLTextureFaceType(faceType), 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, textureData.data);
+    void TextureBuffer::loadFace(u32 type, const io::TextureData &textureData) {
+        glTexImage2D(type, 0,
+                     textureData.internalFormat,
+                     textureData.width, textureData.height,
+                     0,
+                     textureData.dataFormat,
+                     textureData.pixelsType, textureData.pixels);
     }
 
     void TextureBuffer::disableByteAlignment() {
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     }
 
-    void TextureBuffer::setParams(const u32& id, const std::vector<TextureParam>& params) {
+    void TextureBuffer::setParams(u32 id, const std::vector<TextureParam>& params) {
         for (auto& param : params) {
-            glTextureParameteri(id, toGLTextureParamName(param.name), toGLTextureParamValue(param.value));
+            glTextureParameteri(id, param.name, param.value);
         }
     }
 
-    void TextureBuffer::setDefaultParamsCubeMap(const u32& id) {
+    void TextureBuffer::setDefaultParamsCubeMap(u32 id) {
         setParams(id, {
             { TextureParamName::MAG_FILTER, TextureParamValue::LINEAR },
             { TextureParamName::MIN_FILTER, TextureParamValue::LINEAR },
@@ -359,12 +267,6 @@ namespace engine::graphics {
             { TextureParamName::WRAP_T, TextureParamValue::CLAMP_TO_EDGE },
             { TextureParamName::WRAP_R, TextureParamValue::CLAMP_TO_EDGE },
         });
-    }
-
-    u32 TextureBuffer::getTypeId(const TextureType &textureType) {
-        u32 typeId;
-        toGLTextureType(textureType, typeId);
-        return typeId;
     }
 
     unordered_map<const char*, u32> TextureBuffer::textureIdCache;

@@ -10,7 +10,7 @@ namespace engine::graphics {
 
     class ENGINE_API VideoStats final {
     public:
-        static int getMaxSlots();
+        static int getMaxTextureUnits();
         static const char* getAPIName();
         static const unsigned char * getVendorName();
         static const unsigned char* getRendererName();

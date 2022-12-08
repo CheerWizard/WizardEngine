@@ -57,7 +57,7 @@ namespace engine::graphics {
         u32 indexStart = 0;
         bool isUpdated = true;
         u32 renderModelId = 0;
-        DrawType drawType = DrawType::TRIANGLE;
+        u32 drawType = DrawType::TRIANGLE;
 
         BaseMeshComponent() = default;
         BaseMeshComponent(const BaseMesh<T>& mesh) : mesh(mesh) {}

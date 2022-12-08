@@ -11,6 +11,17 @@ namespace engine::graphics {
 
     using namespace shader;
 
+    serialize_component(LightComponent) {
+        const char* name = "light";
+        Vec3fUniform position = { "position", { 0.5f, 0.5f, 0.5f } };
+        Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
+
+        ENGINE_API void serialize(YAML::Emitter &out) override;
+        ENGINE_API void deserialize(const YAML::Node &parent) override;
+    };
+
+    ENGINE_API ShaderScript lightScript();
+
     serialize_component(PhongLightComponent) {
         const char* name = "phongLight";
         Vec3fUniform position = { "position", { 0.5f, 0.5f, 0.5f } };

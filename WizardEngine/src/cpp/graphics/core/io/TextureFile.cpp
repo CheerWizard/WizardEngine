@@ -11,36 +11,96 @@
 
 namespace engine::io {
 
-    TextureData TextureFile::read(const char* filePath, bool hdrEnabled) {
+    TextureData TextureFile::read(const char* filePath, Spectrum spectrum) {
         ENGINE_INFO("Reading texture from '{0}'", filePath);
         int width, height, channels;
-        void* data;
-        if (hdrEnabled) {
-            data = stbi_loadf(filePath, &width, &height, &channels, 0);
+        void* pixels;
+
+        if (spectrum == HDR) {
+            pixels = stbi_loadf(filePath, &width, &height, &channels, 0);
         } else {
-            data = stbi_load(filePath, &width, &height, &channels, 0);
+            pixels = stbi_load(filePath, &width, &height, &channels, 0);
         }
 
-        if (data == nullptr) {
+        if (!pixels) {
             if (stbi_failure_reason()) {
                 ENGINE_ERR("Error occurs when loading texture from '{0}'", filePath);
                 ENGINE_ERR("stbi failure reason : {0}", stbi_failure_reason());
             }
-            return { width, height, channels };
+            return { width, height, spectrum };
         }
 
-        return { width, height, channels, false, hdrEnabled, data };
+        TextureData textureData;
+        textureData.width = width;
+        textureData.height = height;
+        textureData.pixels = pixels;
+
+        switch (spectrum) {
+            case HDR:
+                switch (channels) {
+                    case CHANNEL_RGB:
+                        textureData.internalFormat = ColorFormat::RGB16F;
+                        textureData.dataFormat = ColorFormat::RGB;
+                        break;
+                    case CHANNEL_RGBA:
+                        textureData.internalFormat = ColorFormat::RGBA16F;
+                        textureData.dataFormat = ColorFormat::RGBA;
+                        break;
+                    default:
+                        textureData.internalFormat = ColorFormat::R16F;
+                        textureData.dataFormat = ColorFormat::U_RED;
+                        break;
+                }
+                textureData.pixelsType = PixelsType::FLOAT;
+                break;
+            case SRGB:
+                switch (channels) {
+                    case CHANNEL_RGB:
+                        textureData.internalFormat = ColorFormat::SRGB;
+                        textureData.dataFormat = ColorFormat::RGB;
+                        break;
+                    case CHANNEL_RGBA:
+                        textureData.internalFormat = ColorFormat::SRGBA;
+                        textureData.dataFormat = ColorFormat::RGBA;
+                        break;
+                    default:
+                        textureData.internalFormat = ColorFormat::RED;
+                        textureData.dataFormat = ColorFormat::U_RED;
+                        break;
+                }
+                textureData.pixelsType = PixelsType::U_BYTE;
+                break;
+            default:
+                switch (channels) {
+                    case CHANNEL_RGB:
+                        textureData.internalFormat = ColorFormat::RGB8;
+                        textureData.dataFormat = ColorFormat::RGB;
+                        break;
+                    case CHANNEL_RGBA:
+                        textureData.internalFormat = ColorFormat::RGBA8;
+                        textureData.dataFormat = ColorFormat::RGBA;
+                        break;
+                    default:
+                        textureData.internalFormat = ColorFormat::RED;
+                        textureData.dataFormat = ColorFormat::U_RED;
+                        break;
+                }
+                textureData.pixelsType = PixelsType::U_BYTE;
+                break;
+        }
+
+        return textureData;
     }
 
-    void TextureFile::free(void *data) {
-        stbi_image_free(data);
+    void TextureFile::free(void *pixels) {
+        stbi_image_free(pixels);
     }
 
-    TextureArrayData TextureFile::read(const vector<std::string> &filepaths) {
+    TextureArrayData TextureFile::read(const vector<std::string> &filepaths, Spectrum spectrum) {
         TextureArrayData textureArrayData;
         for (const auto& filepath : filepaths) {
             TextureData textureData = read(filepath.c_str());
-            if (textureData.data != nullptr) {
+            if (textureData.pixels) {
                 textureArrayData.textureData.emplace_back(textureData);
             }
         }
@@ -49,7 +109,10 @@ namespace engine::io {
             TextureData& textureData = textureArrayData.textureData[0];
             textureArrayData.width = textureData.width;
             textureArrayData.height = textureData.height;
-            textureArrayData.channels = textureData.channels;
+            textureArrayData.spectrum = spectrum;
+            textureArrayData.internalFormat = textureData.internalFormat;
+            textureArrayData.dataFormat = textureData.dataFormat;
+            textureArrayData.pixelsType = textureData.pixelsType;
         }
 
         return textureArrayData;
@@ -57,7 +120,7 @@ namespace engine::io {
 
     void TextureFile::free(const TextureArrayData &textureArrayData) {
         for (const auto& textureData : textureArrayData.textureData) {
-            free(textureData.data);
+            free(textureData.pixels);
         }
     }
 

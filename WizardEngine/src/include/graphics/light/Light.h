@@ -11,6 +11,30 @@ namespace engine::graphics {
 
     using namespace math;
 
+    class ENGINE_API Light : public ecs::Entity {
+
+    public:
+        Light() = default;
+
+        Light(const std::string &tag, ecs::EntityContainer* container) : Entity(tag, container) {
+            create();
+        }
+
+        Light(ecs::EntityContainer* container) : Entity("Light", container) {
+            create();
+        }
+
+        ~Light() = default;
+
+    public:
+        vec3f& getPosition();
+        vec4f& getColor();
+
+    private:
+        void create();
+
+    };
+
     class ENGINE_API PhongLight : public ecs::Entity {
 
     public:

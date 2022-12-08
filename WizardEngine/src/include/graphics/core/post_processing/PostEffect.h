@@ -29,7 +29,7 @@ namespace engine::graphics {
         PostEffect(const char* name) : name(name) {}
 
         [[nodiscard]] size_t getLimit() const {
-            return VideoStats::getMaxSlots() / textures.size();
+            return VideoStats::getMaxTextureUnits() / textures.size();
         }
     };
 

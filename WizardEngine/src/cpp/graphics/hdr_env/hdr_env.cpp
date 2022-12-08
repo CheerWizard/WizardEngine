@@ -51,7 +51,7 @@ namespace engine::graphics {
 
         frameBuffer = createRef<FrameBuffer>();
         FrameBufferFormat frameBufferFormat { 512, 512, 1 };
-        frameBufferFormat.renderBufferAttachment = { DepthStencilFormat::DEPTH24 };
+        frameBufferFormat.renderBufferAttachment = { DepthFormat::DEPTH24 };
         frameBuffer->updateFormat(frameBufferFormat);
         u32 cubemap = TextureBuffer::generateCubeMap(
                 512, 512,
@@ -110,13 +110,14 @@ namespace engine::graphics {
             GLMMat4fUniform viewUniform("view", captureViews[i]);
             generateCubemapShader.setUniform(viewUniform);
             frameBuffer->attachCubeMap(i, cubemap);
-            graphics::clearDepthBuffer();
+            graphics::clearBuffer(BufferBit::COLOR | BufferBit::DEPTH);
             // draw call
             renderModel.vao.bind();
             drawV(hdrEnv->geometry.drawType, hdrEnv->geometry.vertexData.size);
         }
-        FrameBuffer::bindDefault();
         generateCubemapShader.stop();
+
+        FrameBuffer::bindDefault();
     }
 
     void HdrEnvRenderer::render(const ecs::Entity& entity, Camera3D& camera) {
@@ -129,7 +130,7 @@ namespace engine::graphics {
         IntUniform cubemapSampler { "cubemap", 0 };
         cubemapShader.setUniform(cubemapSampler);
         TextureBuffer::activate(0);
-        TextureBuffer::bind(cubemap, TextureBuffer::getTypeId(TextureType::TEXTURE_2D));
+        TextureBuffer::bind(cubemap, TextureType::TEXTURE_2D);
         // update VP
         cubemapShader.setUniform(camera.getPerspective());
         cubemapShader.setUniform(camera.getView());

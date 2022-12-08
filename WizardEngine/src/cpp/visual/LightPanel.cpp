@@ -25,4 +25,33 @@ namespace engine::visual {
         ImGui::End();
     }
 
+    void LightsPanel::draw(const vector<Light> &lights) {
+        static bool open = true;
+        if (!ImGui::Begin("LightsPanel", &open)) {
+            ImGui::End();
+            return;
+        }
+
+        for (const auto& light : lights) {
+            LightComponent* lightComponent = light.get<LightComponent>();
+            if (lightComponent) {
+                ColorPicker::draw(lightComponent->color);
+                // X axis
+                Text::label("X");
+                ImGui::SameLine();
+                Slider::draw("##X", lightComponent->position.value.v[0], { -100, 100 });
+                // Y axis
+                Text::label("Y");
+                ImGui::SameLine();
+                Slider::draw("##Y", lightComponent->position.value.v[1], { -100, 100 });
+                // Z axis
+                Text::label("Z");
+                ImGui::SameLine();
+                Slider::draw("##Z", lightComponent->position.value.v[2], { -100, 100 });
+            }
+        }
+
+        ImGui::End();
+    }
+
 }

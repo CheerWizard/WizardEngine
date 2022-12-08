@@ -9,7 +9,7 @@
 #include <platform/graphics/TextureBuffer.h>
 #include <platform/graphics/tools/VideoStats.h>
 
-#define MATERIAL_TEXTURES_COUNT 8
+#define MATERIAL_TEXTURES_COUNT 6
 
 namespace engine::graphics {
 
@@ -20,58 +20,43 @@ namespace engine::graphics {
         const char* name = "material";
         const char* title = "Untitled";
         Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
-        FloatUniform ambient = { "ambient", 1 };
-        FloatUniform diffuse = { "diffuse", 1 };
-        FloatUniform specular = { "specular", 1 };
-        FloatUniform shiny = { "shiny", 1 };
+        FloatUniform brightness = { "brightness", 1 };
         FloatUniform gamma = { "gamma", 2.2 };
         FloatUniform heightScale = { "heightScale", 0.1 };
         FloatUniform minLayers = { "minLayers", 8 };
         FloatUniform maxLayers = { "maxLayers", 32 };
-        FloatUniform brightness = { "brightness", 1 };
         FloatUniform metallic = { "metallic", 0.5 };
         FloatUniform roughness = { "roughness", 0.5 };
         FloatUniform ao = { "ao", 0.5 };
         BoolUniform enableAlbedoMap = { "enableAlbedoMap", false };
-        BoolUniform enableDiffuseMap = { "enableDiffuseMap", false };
-        BoolUniform enableSpecularMap = { "enableSpecularMap", false };
-        BoolUniform enableBlinn = { "enableBlinn", true };
         BoolUniform enableNormalMap = { "enableNormalMap", false };
         BoolUniform enableParallaxMap = { "enableParallaxMap", false };
         BoolUniform enableMetallicMap = { "enableMetallicMap", false };
         BoolUniform enableRoughnessMap = { "enableRoughnessMap", false };
         BoolUniform enableAOMap = { "enableAOMap", false };
         TextureComponent albedoSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
+                TextureType::TEXTURE_2D,
                 IntUniform { "albedoSlot", 0 }
         };
-        TextureComponent diffuseSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
-                IntUniform { "diffuseSlot", 1 }
-        };
-        TextureComponent specularSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
-                IntUniform { "specularSlot", 2 }
-        };
         TextureComponent normalSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
-                IntUniform { "normalSlot", 3 }
+                TextureType::TEXTURE_2D,
+                IntUniform { "normalSlot", 1 }
         };
         TextureComponent depthSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
-                IntUniform { "depthSlot", 4 }
+                TextureType::TEXTURE_2D,
+                IntUniform { "depthSlot", 2 }
         };
         TextureComponent metallicSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
-                IntUniform { "metallicSlot", 5 }
+                TextureType::TEXTURE_2D,
+                IntUniform { "metallicSlot", 3 }
         };
         TextureComponent roughnessSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
-                IntUniform { "roughnessSlot", 6 }
+                TextureType::TEXTURE_2D,
+                IntUniform { "roughnessSlot", 4 }
         };
         TextureComponent aoSlot = {
-                TextureBuffer::getTypeId(TextureType::TEXTURE_2D),
-                IntUniform { "aoSlot", 7 }
+                TextureType::TEXTURE_2D,
+                IntUniform { "aoSlot", 5 }
         };
 
         ENGINE_API void serialize(YAML::Emitter &out) override;

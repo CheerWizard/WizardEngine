@@ -37,7 +37,7 @@ namespace engine::graphics {
                 const float& paddingY = 0,
                 const float& whiteSpaceWidth = 0.02f,
                 const float& transparency = 0.5f
-        ) : text(text), bitmap({ textureId, TextureBuffer::getTypeId(TextureType::TEXTURE_2D), { "bitmap", 0 } }),
+        ) : text(text), bitmap({ textureId, TextureType::TEXTURE_2D, { "bitmap", 0 } }),
         transform(transform), color({ "color", color }),
         paddingX(paddingX), paddingY(paddingY),
         whiteSpaceWidth(whiteSpaceWidth), transparency({ "transparency", 0.5f }) {}

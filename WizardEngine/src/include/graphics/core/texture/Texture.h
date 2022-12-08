@@ -6,70 +6,107 @@
 
 #include <graphics/core/shader/BaseShader.h>
 
-#define CHANNEL_RED 1
-#define CHANNEL_RGB 3
-#define CHANNEL_RGBA 4
-
 namespace engine::graphics {
 
     using namespace core;
     using namespace shader;
 
     // texture format for color buffer
-    enum class ColorFormat {
-        NONE = 0,
-        RGBA8,
-        RED_INTEGER,
-        RGB16F, RGBA16F,
-        RGB32F, RGBA32F,
-        RGB
+    struct ENGINE_API ColorFormat final {
+        static u32 NONE;
+        static int R8;
+        static int RED_I32;
+        static u32 RED_INTEGER;
+        static u32 GREEN_INTEGER;
+        static u32 BLUE_INTEGER;
+        static int RED;
+        static int GREEN;
+        static int BLUE;
+        static u32 U_RED;
+        static u32 U_GREEN;
+        static u32 U_BLUE;
+        static u32 RGB;
+        static u32 RGBA;
+        static int RGB8;
+        static int RGBA8;
+        static int R16F;
+        static int RGB16F;
+        static int RGBA16F;
+        static int RGB32F;
+        static int RGBA32F;
+        static int SRGB;
+        static int SRGBA;
     };
 
-    enum class PixelsType {
-        U_BYTE,
-        FLOAT
+    // color pixels type
+    struct ENGINE_API PixelsType final {
+        static u32 U_BYTE;
+        static u32 FLOAT;
+        static u32 INT;
+        static u32 HALF_FLOAT;
     };
 
-    // texture format for depth and stencil buffers
-    enum class DepthStencilFormat {
-        NONE = 0,
-        DEPTH16,
-        DEPTH24PAD8,
-        DEPTH24STENCIL8,
-        DEPTH24,
-        DEPTH32,
-        DEPTH32STENCIL8
+    // texture format for depth-stencil buffers
+    struct ENGINE_API DepthStencilFormat final {
+        static u32 NONE;
+        static u32 DEPTH24STENCIL8;
+        static u32 DEPTH32STENCIL8;
     };
 
-    enum class TextureParamName {
-        MIN_FILTER, MAG_FILTER,
-        WRAP_S, WRAP_T, WRAP_R
+    // texture format for depth buffers
+    struct ENGINE_API DepthFormat final {
+        static u32 NONE;
+        static int DEPTH;
+        static u32 U_DEPTH;
+        static u32 DEPTH16;
+        static u32 DEPTH24;
+        static u32 DEPTH32;
     };
 
-    enum class TextureParamValue {
-        LINEAR, REPEAT, CLAMP_TO_EDGE
+    // texture filter names
+    struct ENGINE_API TextureParamName final {
+        static u32 MIN_FILTER;
+        static u32 MAG_FILTER;
+        static u32 WRAP_S;
+        static u32 WRAP_T;
+        static u32 WRAP_R;
+    };
+
+    // texture filter values
+    struct ENGINE_API TextureParamValue final {
+        static int LINEAR;
+        static int REPEAT;
+        static int CLAMP_TO_EDGE;
     };
 
     struct ENGINE_API TextureParam {
-        TextureParamName name;
-        TextureParamValue value;
+        u32 name;
+        int value;
     };
 
-    enum class TextureType : u32 {
-        TEXTURE_2D = 0, CUBE_MAP = 1, TEXTURE_2D_MULTISAMPLE = 2, TEXTURE_2D_ARRAY = 3
+    // texture types
+    struct ENGINE_API TextureType final {
+        static u32 TEXTURE_2D;
+        static u32 CUBE_MAP;
+        static u32 TEXTURE_2D_MULTISAMPLE;
+        static u32 TEXTURE_2D_ARRAY;
     };
 
-    enum class TextureFaceType {
-        FRONT, BACK,
-        LEFT, RIGHT,
-        TOP, BOTTOM
+    // texture face types
+    struct ENGINE_API TextureFaceType final {
+        static u32 FRONT;
+        static u32 BACK;
+        static u32 LEFT;
+        static u32 RIGHT;
+        static u32 TOP;
+        static u32 BOTTOM;
     };
 
     struct ENGINE_API TextureFace {
         const char* filePath;
-        TextureFaceType type;
+        u32 type;
 
-        TextureFace(const char* filePath, const TextureFaceType& type)
+        TextureFace(const char* filePath, u32 type)
         : filePath(filePath), type(type) {}
     };
 
