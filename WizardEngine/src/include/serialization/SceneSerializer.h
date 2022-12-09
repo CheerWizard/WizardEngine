@@ -17,15 +17,15 @@
 
 namespace engine::io {
 
-    class ENGINE_API SceneSerializable : public Serializable {
+    class ENGINE_API SceneSerializable {
 
     public:
         SceneSerializable() = default;
         SceneSerializable(const Ref<ecs::Scene>& scene) : scene(scene) {}
 
     public:
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        void serialize(YAML::Emitter &out);
+        void deserialize(const YAML::Node &parent);
 
     private:
         Ref<ecs::Scene> scene;

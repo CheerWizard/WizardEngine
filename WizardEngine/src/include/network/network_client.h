@@ -17,6 +17,7 @@ namespace engine::network {
 
     public:
         void push(const NetworkData& networkData);
+        template<typename GDBody>
         void push(GDHeader& header, GDBody& body);
         void pop();
         [[nodiscard]] const NetworkData& front() const;
@@ -25,6 +26,11 @@ namespace engine::network {
     private:
         queue<NetworkData> _queue;
     };
+
+    template<typename GDBody>
+    void RequestQueue::push(GDHeader &header, GDBody &body) {
+        push(GDSerializer::serialize(header, body));
+    }
 
     namespace tcp {
 

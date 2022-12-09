@@ -15,14 +15,14 @@
 
 namespace engine::io {
 
-    class ENGINE_API EntitySerializable : public Serializable {
+    class ENGINE_API EntitySerializable {
 
     public:
         EntitySerializable(const ecs::Entity& entity) : entity(entity) {}
 
     public:
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
+        void serialize(YAML::Emitter &out);
+        void deserialize(const YAML::Node &parent);
 
     private:
         void serializeComponents(YAML::Emitter& out);
@@ -37,13 +37,19 @@ namespace engine::io {
 
     template<typename T>
     void EntitySerializable::deserializeComponent(const YAML::Node &entityNode) {
-        // todo works only if entity has no T component yet
-        entity.add<T>(deserialize_from(T, entityNode));
+        T* component = entity.get<T>();
+        if (component) {
+            component->deserialize(entityNode);
+        } else {
+            entity.add<T>(); // generates + adds new T component
+            T* newComponent = entity.get<T>();
+            newComponent->deserialize(entityNode);
+        }
     }
 
     template<typename T>
     void EntitySerializable::serializeComponent(YAML::Emitter &out) {
-        T* component = entity.template get<T>();
+        T* component = entity.get<T>();
         if (component) {
             component->serialize(out);
         }

@@ -35,7 +35,7 @@ namespace engine::graphics {
         float advance = 0;
     };
 
-    typedef std::unordered_map<char, Character> Characters;
+    typedef unordered_map<char, Character> Characters;
 }
 
 namespace engine::io {
@@ -74,7 +74,7 @@ namespace engine::io {
     private:
         // key - font texture buffer id
         // value - font characters map
-        std::unordered_map<u32, graphics::Characters> fonts;
+        unordered_map<u32, graphics::Characters> fonts;
     };
 
 }

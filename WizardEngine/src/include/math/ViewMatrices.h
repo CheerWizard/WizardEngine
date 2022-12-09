@@ -24,10 +24,10 @@ namespace engine::math {
             name = "view";
         }
 
-        glm::quat orientation() const;
-        vec3f forwardDirection() const;
-        vec3f upDirection() const;
-        vec3f rightDirection() const;
+        [[nodiscard]] glm::quat orientation() const;
+        [[nodiscard]] vec3f forwardDirection() const;
+        [[nodiscard]] vec3f upDirection() const;
+        [[nodiscard]] vec3f rightDirection() const;
 
         void apply();
     };

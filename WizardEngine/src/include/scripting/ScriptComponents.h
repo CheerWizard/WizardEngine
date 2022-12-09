@@ -32,7 +32,8 @@ namespace engine::scripting {
         }
     };
 
-    serialize_component(CppScript) {
+    component(CppScript) {
+        serializable()
         const char* cppName = nullptr;
         Scriptable* scriptable = nullptr;
 
@@ -40,8 +41,5 @@ namespace engine::scripting {
 
         CppScript(const char* cppName, Scriptable* scriptable)
         : scriptable(scriptable), cppName(cppName) {}
-
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
     };
 }

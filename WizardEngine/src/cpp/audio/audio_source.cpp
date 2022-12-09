@@ -4,10 +4,20 @@
 
 #include <audio/audio_source.h>
 #include <audio/audio_core.h>
+#include <io/AudioFile.h>
 
 namespace engine::audio {
 
     using namespace math;
+
+    int Attenuation::NONE = AL_NONE;
+    int Attenuation::INVERSE_DISTANCE = AL_INVERSE_DISTANCE;
+    int Attenuation::INVERSE_DISTANCE_CLAMPED = AL_INVERSE_DISTANCE_CLAMPED;
+    int Attenuation::LINEAR_DISTANCE =  AL_LINEAR_DISTANCE;
+    int Attenuation::LINEAR_DISTANCE_CLAMPED = AL_LINEAR_DISTANCE_CLAMPED;
+    int Attenuation::EXPONENT_DISTANCE = AL_EXPONENT_DISTANCE;
+    int Attenuation::EXPONENT_DISTANCE_CLAMPED = AL_EXPONENT_DISTANCE_CLAMPED;
+    int Attenuation::DEFAULT = EXPONENT_DISTANCE_CLAMPED;
 
     void AudioSourceComponent::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap;
@@ -91,7 +101,7 @@ namespace engine::audio {
         alCall(alSourcei, id, AL_LOOPING, enabled);
     }
 
-    void Source::load(const io::AudioData &audioData) {
+    void Source::load(const AudioData &audioData) {
         for (auto buffer : buffers) {
             buffer.load(audioData);
         }
@@ -105,7 +115,7 @@ namespace engine::audio {
         alCall(alSourceQueueBuffers, id, buffers.size(), &buffers[0].get());
     }
 
-    void Source::load(const u32 &bufferIndex, const io::AudioData &audioData) {
+    void Source::load(const u32 &bufferIndex, const AudioData &audioData) {
         buffers[bufferIndex].load(audioData);
     }
 
@@ -120,7 +130,7 @@ namespace engine::audio {
 
         for (u32 i = 0 ; i < buffers.size() ; i++) {
             char* data = io::AudioFile::streamWav((s64) (i * cursor.bufferSize), (s64) cursor.bufferSize);
-            io::AudioData subData {
+            AudioData subData {
                 {static_cast<s32>(cursor.bufferSize), format.frequency, format.channels },
                 data,
             };
@@ -175,7 +185,10 @@ namespace engine::audio {
             }
 
             char* data = io::AudioFile::streamWav((s64) (currentBufferIndex * bufferSize), (s64) bufferSize);
-            io::AudioData audioSubData { { bufferSize, format.frequency, format.channels }, data };
+            AudioData audioSubData {
+                { bufferSize, format.frequency, format.channels },
+                data
+            };
             Buffer::load(buffer, audioSubData);
             delete[] data;
 
@@ -228,20 +241,8 @@ namespace engine::audio {
         setRolloffFactor(component.rollOffFactor);
     }
 
-    ALenum convertAttenuation(const Attenuation &attenuation) {
-        switch (attenuation) {
-            case Attenuation::NONE: return AL_NONE;
-            case Attenuation::INVERSE_DISTANCE: return AL_INVERSE_DISTANCE;
-            case Attenuation::INVERSE_DISTANCE_CLAMPED: return AL_INVERSE_DISTANCE_CLAMPED;
-            case Attenuation::LINEAR_DISTANCE: return AL_LINEAR_DISTANCE;
-            case Attenuation::LINEAR_DISTANCE_CLAMPED: return AL_LINEAR_DISTANCE_CLAMPED;
-            case Attenuation::EXPONENT_DISTANCE: return AL_EXPONENT_DISTANCE;
-            case Attenuation::EXPONENT_DISTANCE_CLAMPED: return AL_EXPONENT_DISTANCE_CLAMPED;
-        }
-    }
-
-    void Source::setAttenuation(const Attenuation &attenuation) {
-        alCall(alDistanceModel, convertAttenuation(attenuation));
+    void Source::setAttenuation(int attenuation) {
+        alCall(alDistanceModel, attenuation);
     }
 
     void Source::setRefDistance(f32 refDistance) const {

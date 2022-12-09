@@ -12,19 +12,18 @@ namespace engine::graphics {
     using namespace core;
     using namespace math;
 
-    serialize_component(Transform2dComponent) {
+    component(Transform2dComponent) {
+        serializable()
         math::ModelMatrix2d modelMatrix;
 
         Transform2dComponent() {
             modelMatrix = math::ModelMatrix2d();
             modelMatrix.name = "transform";
         }
-
-        ENGINE_API void serialize(YAML::Emitter &out) override;
-        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
-    serialize_component(Transform3dComponent) {
+    component(Transform3dComponent) {
+        serializable()
         math::ModelMatrix3d modelMatrix;
 
         Transform3dComponent() {
@@ -42,8 +41,5 @@ namespace engine::graphics {
             modelMatrix.scale = scale;
             modelMatrix.name = "transform";
         }
-
-        ENGINE_API void serialize(YAML::Emitter &out) override;
-        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 }

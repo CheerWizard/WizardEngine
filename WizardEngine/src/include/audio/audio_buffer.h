@@ -4,16 +4,36 @@
 
 #pragma once
 
+#include <core/core.h>
 #include <core/vector.h>
 #include <core/Memory.h>
 #include <core/primitives.h>
-#include <core/core.h>
-
-#include <io/AudioFile.h>
+#include <core/exception.h>
 
 namespace engine::audio {
 
     using namespace core;
+
+    decl_exception(audio_format_exception)
+
+    struct ENGINE_API Channels final {
+        static int MONO_8;
+        static int MONO_16;
+        static int STEREO_8;
+        static int STEREO_16;
+        static int DEFAULT;
+    };
+
+    struct ENGINE_API AudioFormat {
+        s32 size = 0;
+        s32 frequency = 0;
+        int channels = Channels::DEFAULT;
+    };
+
+    struct ENGINE_API AudioData {
+        AudioFormat format;
+        char* data = nullptr;
+    };
 
     class ENGINE_API Buffer final {
 
@@ -29,8 +49,8 @@ namespace engine::audio {
         static void destroy(u32* ids, u8 count);
         void recreate();
 
-        void load(const io::AudioData &audioData) const;
-        static void load(const u32& id, const io::AudioData &audioData);
+        void load(const AudioData &audioData) const;
+        static void load(const u32& id, const AudioData &audioData);
 
     public:
         [[nodiscard]] inline const u32& get() const {

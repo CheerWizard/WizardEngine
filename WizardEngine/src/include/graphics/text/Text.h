@@ -15,7 +15,8 @@ namespace engine::graphics {
 
     using namespace math;
 
-    serialize_template_component(TextComponent, T) {
+    template_component(TextComponent, T) {
+        decl_serializable()
         std::string text;
         Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
         Transform3dComponent transform;
@@ -41,9 +42,6 @@ namespace engine::graphics {
         transform(transform), color({ "color", color }),
         paddingX(paddingX), paddingY(paddingY),
         whiteSpaceWidth(whiteSpaceWidth), transparency({ "transparency", 0.5f }) {}
-
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
     };
 
     template<typename T>
@@ -102,14 +100,12 @@ namespace engine::graphics {
         ) : TextComponent<Text3d>(textureId, text, transform, color, paddingX, paddingY, whiteSpaceWidth, transparency) {}
     };
 
-    serialize_component(TextProjection) {
+    component(TextProjection) {
+        serializable()
         math::ViewProjection3d viewProjection;
         TextProjection(float aspectRatio) {
             viewProjection = math::ViewProjection3d(aspectRatio);
         }
-
-        ENGINE_API void serialize(YAML::Emitter &out) override;
-        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
     class Text2dView : public ecs::Entity {

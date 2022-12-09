@@ -34,16 +34,14 @@ namespace engine::graphics {
         }
     };
 
-    serialize_component(BatchLineSerializable) {
+    component(BatchLineSerializable) {
+        serializable()
         BatchLine line;
-        ENGINE_API void serialize(YAML::Emitter &out) override;
-        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
-    serialize_component(InstanceLineSerializable) {
+    component(InstanceLineSerializable) {
+        serializable()
         InstanceLine line;
-        ENGINE_API void serialize(YAML::Emitter &out) override;
-        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
 }

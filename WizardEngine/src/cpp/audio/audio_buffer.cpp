@@ -4,8 +4,15 @@
 
 #include <audio/audio_buffer.h>
 #include <audio/audio_core.h>
+#include <io/Logger.h>
 
 namespace engine::audio {
+
+    int Channels::MONO_8 = AL_FORMAT_MONO8;
+    int Channels::MONO_16 = AL_FORMAT_MONO16;
+    int Channels::STEREO_8 = AL_FORMAT_STEREO8;
+    int Channels::STEREO_16 = AL_FORMAT_STEREO16;
+    int Channels::DEFAULT = MONO_8;
 
     void Buffer::create() {
         alCall(alGenBuffers, 1, &id);
@@ -28,24 +35,15 @@ namespace engine::audio {
         create();
     }
 
-    u32 convertChannels(const io::Channels& channels) {
-        switch (channels) {
-            case io::Channels::MONO_8: return AL_FORMAT_MONO8;
-            case io::Channels::MONO_16: return AL_FORMAT_MONO16;
-            case io::Channels::STEREO_8: return AL_FORMAT_STEREO8;
-            case io::Channels::STEREO_16: return AL_FORMAT_STEREO16;
-        }
-    }
-
-    void Buffer::load(const io::AudioData &audioData) const {
+    void Buffer::load(const AudioData &audioData) const {
         ENGINE_INFO("Audio buffer[id={0}] load()", id);
-        alCall(alBufferData, id, convertChannels(audioData.format.channels),
+        alCall(alBufferData, id, audioData.format.channels,
                audioData.data, audioData.format.size, audioData.format.frequency);
     }
 
-    void Buffer::load(const u32 &id, const io::AudioData &audioData) {
+    void Buffer::load(const u32 &id, const AudioData &audioData) {
         ENGINE_INFO("Audio buffer[id={0}] load()", id);
-        alCall(alBufferData, id, convertChannels(audioData.format.channels),
+        alCall(alBufferData, id, audioData.format.channels,
                audioData.data, audioData.format.size, audioData.format.frequency);
     }
 }

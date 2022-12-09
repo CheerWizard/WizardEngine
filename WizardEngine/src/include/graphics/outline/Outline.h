@@ -18,7 +18,8 @@ namespace engine::graphics {
         vec3f normal = { 0.5, 0.5, 0.5 };
     };
 
-    serialize_component(OutlineComponent) {
+    component(OutlineComponent) {
+        serializable()
         const char* name = "outline";
         Vec4fUniform color = { "color", { 0, 1, 0, 1 } };
         FloatUniform thickness = { "thickness", 0.05 };
@@ -28,9 +29,6 @@ namespace engine::graphics {
         : color({ "color", color }), thickness({ "thickness", thickness }) {}
         OutlineComponent(const char* name, const Vec4fUniform& color, const FloatUniform& thickness)
         : name(name), color(color), thickness(thickness) {}
-
-        ENGINE_API void serialize(YAML::Emitter &out) override;
-        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
     typedef BaseMeshComponent<InstanceVertex<OutlineVertex>> OutlineInstanceMesh;

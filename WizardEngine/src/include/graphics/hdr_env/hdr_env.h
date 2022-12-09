@@ -19,7 +19,8 @@ namespace engine::graphics {
         math::vec3f position = { 0.5, 0.5 , 0.5 };
     };
 
-    serialize_component(HdrEnv) {
+    component(HdrEnv) {
+        serializable()
         HdrEnvType type = HdrEnvType::CUBE;
         VertexDataComponent<HdrEnvVertex> geometry;
         TextureComponent texture;
@@ -39,10 +40,6 @@ namespace engine::graphics {
             init();
         }
 
-        ENGINE_API void serialize(YAML::Emitter &out) override;
-        ENGINE_API void deserialize(const YAML::Node &parent) override;
-
-    public:
         void rotate(const vec3f& rotation) {
             transform.modelMatrix.rotation += rotation;
             transform.modelMatrix.apply();
