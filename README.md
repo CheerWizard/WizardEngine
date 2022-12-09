@@ -67,12 +67,12 @@ Build project with **CLion IDEA** is much easier. If you already cloned Git repo
 - **WizardTest|Debug** or **WizardTest|Release** for building game test .exe program
 4. Press on build hammer (Ctrl+F9) to build configuration you want to 
 
-## WizardEngine website and support
-Project website link : https://cheerwizard.github.io/WizardEngine/
+## Documentation website and support
+https://cheerwizard.github.io/WizardEngine/
 
 ## Resources and references
 Thanks to all these resources for giving a lot of knowledge for creating this project.
-Below will be the list of channels and websites where I am getting my knowledge.
+Below is list of resources I am using.
 ### YouTube channels
 - https://www.youtube.com/c/TheChernoProject
 - https://www.youtube.com/c/GameEngineSeries
