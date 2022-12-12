@@ -5,13 +5,14 @@
 #include <visual/Troubleshoot.h>
 #include <visual/Visual.h>
 #include <visual/Widgets.h>
+#include <visual/FontAwesome4.h>
 #include <profiler/Profiler.h>
 #include <imgui.h>
 
 namespace engine::visual {
 
-    void ProfilerMenu::draw(const char *title, const vec2f& size) {
-        Panel::begin(title, size);
+    void ProfilerMenu::draw(float&& width, float&& height) {
+        Panel::begin(ICON_FA_CLOCK_O "Profiler", { width, height });
 
         Slider::draw("FrameCount", profiler::Profiler::getExpectedFrames(), { 0, 1000 });
         bool& enableProfiler = profiler::Profiler::isEnabled();

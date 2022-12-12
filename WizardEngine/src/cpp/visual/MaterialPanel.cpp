@@ -6,8 +6,8 @@ namespace engine::visual {
     MaterialTextures MaterialPanel::materialTextures;
     Ref<FileDialog> MaterialPanel::fileDialog;
 
-    void MaterialPanel::create(void* nativeWindow) {
-        fileDialog = createRef<FileDialog>(nativeWindow);
+    void MaterialPanel::create(const Ref<FileDialog>& fileDialog) {
+        MaterialPanel::fileDialog = fileDialog;
     }
 
     void MaterialPanel::draw(Material& material) {

@@ -13,8 +13,9 @@
 
 namespace engine::core {
 
-    void Window::create() {
+    Window::Window(const WindowProps &windowProps) {
         ENGINE_INFO("Creating window {0} ({1}, {2})", windowProps.title.c_str(), windowProps.width, windowProps.height);
+        this->windowProps = windowProps;
 
         if (!isInitialized) {
             isInitialized = glfwInit() != 0;
@@ -32,6 +33,12 @@ namespace engine::core {
                 nullptr);
 
         windowProps.fullscreen ? enableFullScreen() : disableFullScreen();
+    }
+
+    Window::~Window() {
+        glfwSetErrorCallback(nullptr);
+        glfwDestroyWindow(NATIVE_WINDOW);
+        glfwTerminate();
     }
 
     void Window::enableFullScreen() {
@@ -58,13 +65,6 @@ namespace engine::core {
         glfwSetWindowMonitor(NATIVE_WINDOW, nullptr, 0, 0, windowProps.width, windowProps.height, refreshRate);
         onWindowResized(windowProps.width, windowProps.height);
         setInCenter();
-    }
-
-    void Window::destroy() {
-        glfwSetErrorCallback(nullptr);
-        glfwDestroyWindow(NATIVE_WINDOW);
-        window = nullptr;
-        glfwTerminate();
     }
 
     int Window::getRefreshRate() {

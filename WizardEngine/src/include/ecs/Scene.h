@@ -9,6 +9,10 @@
 
 namespace engine::ecs {
 
+    enum SceneState {
+        EDIT, PLAY, SIMULATE
+    };
+
     class ENGINE_API Scene : public EntityContainer {
 
     public:
@@ -21,6 +25,10 @@ namespace engine::ecs {
         ~Scene();
 
     public:
+        Entity findEntity(const uuid& uuid);
+        Entity findEntity(const UUIDComponent& uuid);
+        Entity findEntity(int uuid);
+
         inline void setSkybox(const Entity& skybox) {
             this->skybox = skybox;
         }
@@ -53,16 +61,27 @@ namespace engine::ecs {
             return hdrEnv;
         }
 
-    public:
-        Entity findEntity(const uuid& uuid);
-        Entity findEntity(const UUIDComponent& uuid);
-        Entity findEntity(int uuid);
-
     private:
         std::string name;
         Entity skybox;
         Entity hdrEnv;
         graphics::Camera3D camera;
+
+        // ------------------ Visual Scene for apps ---------------- //
+#ifdef VISUAL
+    public:
+        [[nodiscard]] inline const SceneState& getState() const {
+            return state;
+        }
+
+        bool isPaused = false;
+
+        glm::vec2 viewportSize = { 0.0f, 0.0f };
+        glm::vec2 viewportBounds[2];
+
+    private:
+        SceneState state = EDIT;
+#endif
     };
 
 }

@@ -13,7 +13,7 @@ namespace engine::visual {
     class ENGINE_API ProfilerMenu final {
 
     public:
-        static void draw(const char* title, const vec2f& size);
+        static void draw(float&& width, float&& height);
     };
 
 }

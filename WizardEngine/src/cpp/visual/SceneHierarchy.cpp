@@ -568,14 +568,12 @@ namespace engine::visual {
     }
 
     void SceneHierarchy::onUpdate(time::Time dt) {
+        // ----- hierarchy panel -----
         ImGui::Begin(_props.name);
-
         draw(_scene->getRegistry());
-
         if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) {
             _selectedEntity = {};
         }
-
         // Right-click on blank space
         if (ImGui::BeginPopupContextWindow(nullptr, 1, false)) {
             if (ImGui::MenuItem("Create Empty Entity")) {
@@ -583,14 +581,12 @@ namespace engine::visual {
             }
             ImGui::EndPopup();
         }
-
         ImGui::End();
-
+        // ----- components panel -----
         ImGui::Begin("Properties");
         if (_selectedEntity) {
             drawComponents(_selectedEntity);
         }
-
         ImGui::End();
     }
 

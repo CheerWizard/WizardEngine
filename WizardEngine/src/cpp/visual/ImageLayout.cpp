@@ -3,38 +3,35 @@
 //
 
 #include <visual/ImageLayout.h>
+#include <visual/Visual.h>
+#include <core/Application.h>
 #include <imgui.h>
 
 namespace engine::visual {
 
     void ImageLayout::onUpdate(time::Time dt) {
-        if (!_isVisible) return;
+        ImGui::Begin("Viewport");
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2 {0 , 0});
+        auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+        auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+        auto viewportOffset = ImGui::GetWindowPos();
 
-        // end updating if window can't be created!
-        if (!ImGui::Begin(props.title, &_isVisible)) {
-            end();
-            return;
-        }
+        scene->viewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+        scene->viewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
-        _isFocused = ImGui::IsWindowFocused();
-        ENGINE_INFO("{0} is focused = {1}", props.title, _isFocused);
+        viewportFocused = ImGui::IsWindowFocused();
+        viewportHovered = ImGui::IsWindowHovered();
 
-        ImVec2 imageSize = ImGui::GetContentRegionAvail();
+        Visual::blockEvents = !viewportHovered;
 
-        if (_isFocused && (imageSize.x != (float) props.width || imageSize.y != (float) props.height)) {
-            // we will resize image content only if user stopped holding mouse!
-            props.width = (uint32_t) imageSize.x;
-            props.height = (uint32_t) imageSize.y;
-            if (_callback != nullptr) {
-                _callback->onImageResized(props.width, props.height);
-            }
-        }
+        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+        scene->viewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-        ImGui::Image((void*)id, imageSize, { 1, 1 }, { 0, 0 });
-        onRender(dt);
-        end();
+        ImGui::Image((ImTextureID)(id),
+                     ImVec2{ scene->viewportSize.x, scene->viewportSize.y },
+                     ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+        ImGui::End();
     }
 
     void ImageLayout::destroy() {

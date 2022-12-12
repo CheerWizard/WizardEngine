@@ -80,6 +80,7 @@ using namespace engine::scripting;
 #include <visual/MaterialPanel.h>
 #include <visual/LightPanel.h>
 #include <visual/SceneHierarchy.h>
+#include <visual/Toolbar.h>
 
 using namespace engine::visual;
 #endif

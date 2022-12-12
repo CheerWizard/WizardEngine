@@ -6,7 +6,6 @@
 
 #include <visual/Widgets.h>
 #include <core/ProjectManager.h>
-#include <functional>
 
 namespace engine::visual {
 
@@ -22,7 +21,7 @@ namespace engine::visual {
     public:
         static void init();
         static void setTheme();
-        static void draw(const char* title, const vec2f& size, const std::function<void(const Project&)>& onProjectOpen);
+        static void draw();
         static void destroy();
 
     private:

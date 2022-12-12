@@ -47,7 +47,7 @@ namespace engine::visual {
 
     public:
         static void create(
-                void* nativeWindow,
+                const Ref<FileDialog>& fileDialog,
                 const AssetBrowserProps& props
         );
         static void destroy();

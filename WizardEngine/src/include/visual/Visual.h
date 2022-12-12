@@ -18,22 +18,14 @@ namespace engine::visual {
     using namespace shader;
     using namespace math;
 
-    struct ENGINE_API VisualProps {
-        f32 width = 0, height = 0;
-    };
-
     class ENGINE_API Visual final {
 
     public:
         // core lifecycle
-        static void init(void* nativeWindow, const VisualProps& props);
+        static void init(void* nativeWindow);
         static void begin();
         static void end();
         static void release();
-        // docking space
-        static void beginDockspace(const char* name);
-        static void setDockspace();
-        static void endDockspace();
         // fonts
         static u32 addFont(const char* filepath, f32 fontSize);
         static void setDefaultFont(u32 fontIndex);
@@ -54,21 +46,27 @@ namespace engine::visual {
 
         static void sameLine();
         static void separator();
+        static void showDemoWindow();
 
     public:
-        static VisualProps props;
-        static vector<ImFont*> fonts;
         static bool fullScreen;
         static bool openDockspace;
+        static bool blockEvents;
+
+    private:
+        // docking space
+        static void beginDockspace();
+        static void setDockspace();
+        static void endDockspace();
+
+        static vector<ImFont*> fonts;
         static int windowFlags;
         static int dockspaceFlags;
-
     };
 
     using namespace graphics;
 
     class ENGINE_API Gizmo final {
-
     public:
         static void drawTranslate(Camera3D& camera, Transform3dComponent& transform,
                                   const vec2f& windowPosition,
@@ -81,11 +79,9 @@ namespace engine::visual {
     };
 
     class ENGINE_API Panel final {
-
     public:
         static void begin(const char* title, const vec2f& size);
         static void end();
-
         static bool isFocused(ImGuiFocusedFlags flags = 0);
     };
 

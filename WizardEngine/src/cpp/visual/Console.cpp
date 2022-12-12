@@ -3,12 +3,13 @@
 //
 
 #include <visual/Console.h>
+#include <visual/FontAwesome4.h>
 #include <imgui_stdlib.h>
 #include <core/String.h>
 
 namespace engine::visual {
 
-    void ConsoleData::init() {
+    Console::Console() {
         clearLog();
         memset(InputBuf, 0, sizeof(InputBuf));
         HistoryPos = -1;
@@ -20,13 +21,13 @@ namespace engine::visual {
         ScrollToBottom = false;
     }
 
-    void ConsoleData::release() {
+    Console::~Console() {
         clearLog();
         for (int i = 0; i < History.Size; i++)
             free(History[i]);
     }
 
-    int ConsoleData::Stricmp(const char* s1, const char* s2) {
+    int Console::Stricmp(const char* s1, const char* s2) {
         int d;
         while ((d = toupper(*s2) - toupper(*s1)) == 0 && *s1) {
             s1++; s2++;
@@ -34,7 +35,7 @@ namespace engine::visual {
         return d;
     }
 
-    int ConsoleData::Strnicmp(const char* s1, const char* s2, int n) {
+    int Console::Strnicmp(const char* s1, const char* s2, int n) {
         int d = 0;
         while (n > 0 && (d = toupper(*s2) - toupper(*s1)) == 0 && *s1) {
             s1++; s2++; n--;
@@ -42,7 +43,7 @@ namespace engine::visual {
         return d;
     }
 
-    char* ConsoleData::Strdup(const char* s) {
+    char* Console::Strdup(const char* s) {
         IM_ASSERT(s);
         size_t len = strlen(s) + 1;
         void* buf = malloc(len);
@@ -50,18 +51,18 @@ namespace engine::visual {
         return (char*) memcpy(buf, (const void*)s, len);
     }
 
-    void ConsoleData::Strtrim(char* s) {
+    void Console::Strtrim(char* s) {
         char* str_end = s + strlen(s);
         while (str_end > s && str_end[-1] == ' ') str_end--; *str_end = 0;
     }
 
-    void ConsoleData::clearLog() {
+    void Console::clearLog() {
         for (int i = 0; i < Items.Size; i++)
             free(Items[i]);
         Items.clear();
     }
 
-    void ConsoleData::addLog(const char* fmt, ...) {
+    void Console::addLog(const char* fmt, ...) {
         // FIXME-OPT
         char buf[1024];
         va_list args;
@@ -72,11 +73,13 @@ namespace engine::visual {
         Items.push_back(Strdup(buf));
     }
 
-    void ConsoleData::draw(const char* title, const ConsoleProps& props) {
-        this->props = props;
-        ImGui::SetNextWindowSize(ImVec2(props.width, props.height), ImGuiCond_FirstUseEver);
+    void Console::draw(float&& in_width, float&& in_height) {
+        this->width = in_width;
+        this->height = in_height;
+
+        ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_FirstUseEver);
         static bool open = true;
-        if (!ImGui::Begin(title, &open)) {
+        if (!ImGui::Begin(ICON_FA_TERMINAL "Console", &open)) {
             ImGui::End();
             return;
         }
@@ -177,7 +180,7 @@ namespace engine::visual {
         ImGui::End();
     }
 
-    void ConsoleData::execCommand(const char* command_line) {
+    void Console::execCommand(const char* command_line) {
         addLog("# %s\n", command_line);
         // Insert into history. First find match and delete it so it can be pushed to the back.
         // This isn't trying to be smart or optimal.
@@ -211,12 +214,12 @@ namespace engine::visual {
     }
 
     // In C++11 you'd be better off using lambdas for this sort of forwarding callbacks
-    int ConsoleData::textEditCallbackStub(ImGuiInputTextCallbackData* data) {
-        auto* consoleData = (ConsoleData*)data->UserData;
+    int Console::textEditCallbackStub(ImGuiInputTextCallbackData* data) {
+        auto* consoleData = (Console*)data->UserData;
         return consoleData->textEditCallback(data);
     }
 
-    int ConsoleData::textEditCallback(ImGuiInputTextCallbackData* data) {
+    int Console::textEditCallback(ImGuiInputTextCallbackData* data) {
         //AddLog("cursor: %d, selection: %d-%d", data->CursorPos, data->SelectionStart, data->SelectionEnd);
         switch (data->EventFlag) {
 
@@ -297,19 +300,5 @@ namespace engine::visual {
             }
         }
         return 0;
-    }
-
-    ConsoleData Console::data;
-
-    void Console::init() {
-        data.init();
-    }
-
-    void Console::release() {
-        data.release();
-    }
-
-    void Console::draw(const char *title, const ConsoleProps &props) {
-        data.draw(title, props);
     }
 };
