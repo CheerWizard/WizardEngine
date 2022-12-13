@@ -26,7 +26,7 @@ namespace engine::visual {
         levels.clear();
     }
 
-    void Log::draw(const char *title) {
+    void Log::draw() {
         static bool open = true;
         if (!ImGui::Begin(ICON_FA_TERMINAL" Logs", &open)) {
             ImGui::End();

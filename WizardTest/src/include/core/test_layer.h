@@ -87,6 +87,8 @@ namespace test {
         void onGamepadRollLeft(const GamepadRoll& roll);
         void onGamepadRollRight(const GamepadRoll& roll);
 
+        void updateGizmo();
+
     private:
         Camera3D mainCamera;
         vector<Batch3d> packs;

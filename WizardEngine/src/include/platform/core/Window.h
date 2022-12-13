@@ -19,6 +19,7 @@ namespace engine::core {
         bool vSyncEnabled;
         int sampleSize;
         bool fullscreen;
+        bool dockspace = false;
 
         WindowProps(
                 const std::string& title = "Wizard Engine",
@@ -34,12 +35,8 @@ namespace engine::core {
     class ENGINE_API Window {
 
     public:
-        Window(const WindowProps &windowProps = WindowProps()) : windowProps(windowProps) {
-            create();
-        }
-        ~Window() {
-            destroy();
-        }
+        Window(const WindowProps &windowProps = WindowProps());
+        ~Window();
 
     public:
         [[nodiscard]] inline void* getNativeWindow() const {
@@ -96,8 +93,6 @@ namespace engine::core {
         }
 
     private:
-        void create();
-        void destroy();
         static void handleError(int error, const char *description);
         static void onWindowResized(int width, int height);
 

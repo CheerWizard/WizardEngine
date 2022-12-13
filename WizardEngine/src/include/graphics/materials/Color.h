@@ -12,6 +12,7 @@ namespace engine::graphics {
     using namespace math;
 
     component(ColorComponent) {
+        serializable()
         Vec4fUniform color = { "color", { 0.5, 0.5, 0.5, 1 } };
 
         ColorComponent() = default;

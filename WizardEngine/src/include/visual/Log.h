@@ -23,7 +23,7 @@ namespace engine::visual {
 
     public:
         static void clear();
-        static void draw(const char* title);
+        static void draw();
 
         static void add(LogLevel logLevel, const std::string& fmt, ...);
 

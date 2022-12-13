@@ -36,12 +36,11 @@ namespace engine::core {
         Input::create(_window->getNativeWindow());
 
 #ifdef VISUAL
-        Visual::init(getNativeWindow(), {
-            static_cast<float>(getWindowWidth()),
-            static_cast<float>(getWindowHeight())
-        });
+        Visual::init(getNativeWindow());
+        Visual::fullScreen = projectProps.windowProps.fullscreen;
+        Visual::openDockspace = projectProps.windowProps.dockspace;
 #endif
-
+        // init audio
         audio::DeviceManager::createContext();
         // init default post effect renderers
         initHDR();
@@ -127,21 +126,19 @@ namespace engine::core {
         PROFILE_FUNCTION();
         // measure dt time
         Timer timer("Application::onUpdate()", 30);
-
-        onEventUpdate();
+        // update runtime system
         onRuntimeUpdate(dt);
+        // update tools system
 #ifdef VISUAL
         Visual::begin();
-        onVisualDraw(dt);
         _layerStack.onVisualDraw(dt);
         Visual::end();
 #endif
-        // draw editor/tools
-        _layerStack.onUpdate(dt);
         // poll events + swap chain
         if (enableMouseCursor) {
             Input::updateMousePosition();
         }
+        onEventUpdate();
         _window->onUpdate();
 
         dt = timer.stop();
@@ -352,6 +349,7 @@ namespace engine::core {
             Physics::onUpdate(dt);
             ScriptSystem::onUpdate(dt);
             RenderSystem::onUpdate();
+            _layerStack.onUpdate(dt);
         } else {
             ENGINE_WARN("Active scene is empty!");
         }
@@ -440,17 +438,23 @@ namespace engine::core {
         if (!enableMouseHovering) return;
 
         ENGINE_INFO("Application::onFrameEnd()");
-        auto mousePos = Input::getMousePosition();
-        auto xPos = mousePos.x;
-        auto yPos = mousePos.y;
 
-        int uuid = frameBuffer->readPixel(
-                frameBuffer->getColorAttachmentsSize() - 1,
-                static_cast<int>(xPos),
-                static_cast<int>(yPos)
-        );
-        RUNTIME_INFO("readPixel: {0}", uuid);
-        hoveredEntity = activeScene->findEntity(uuid);
+        auto[mx, my] = ImGui::GetMousePos();
+        auto& viewportBound = activeScene->viewportBounds;
+        mx -= viewportBound[0].x;
+        my -= viewportBound[0].y;
+        glm::vec2 viewportSize = viewportBound[1] - viewportBound[0];
+        my = viewportSize.y - my;
+        int mouseX = (int)mx;
+        int mouseY = (int)my;
+
+        if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y) {
+            int uuid = frameBuffer->readPixel(
+                    frameBuffer->getColorAttachmentsSize() - 1,
+                    mouseX, mouseY
+            );
+            hoveredEntity = activeScene->findEntity(uuid);
+        }
     }
 
     void Application::initHDR() {

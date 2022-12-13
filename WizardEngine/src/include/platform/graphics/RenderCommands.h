@@ -141,15 +141,13 @@ namespace engine::graphics {
     ENGINE_API void setCullFace(u32 faceType);
     ENGINE_API void setFrontFace(u32 frontFaceType);
 
-    serialize_component(CullingComponent) {
+    component(CullingComponent) {
+        serializable()
         bool enabled = false;
         u32 faceType = FaceType::BACK;
         u32 frontFaceType = FrontFaceType::CLOCK_WISE;
         CullingComponent() = default;
         CullingComponent(bool enabled) : enabled(enabled) {}
-
-        ENGINE_API void serialize(YAML::Emitter &out) override;
-        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
     class ENGINE_API Culling final {
@@ -165,14 +163,12 @@ namespace engine::graphics {
         static bool isCullingEnabled;
     };
 
-    serialize_component(PolygonModeComponent) {
+    component(PolygonModeComponent) {
+        serializable()
         u32 face = FaceType::FRONT_AND_BACK;
         u32 mode = PolygonMode::FILL;
         PolygonModeComponent() = default;
         PolygonModeComponent(u32 face, u32 mode) : face(face), mode(mode) {}
-
-        ENGINE_API void serialize(YAML::Emitter &out) override;
-        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
     class ENGINE_API PolygonModes final {

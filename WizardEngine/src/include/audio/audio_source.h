@@ -11,7 +11,7 @@ namespace engine::audio {
 
     using namespace core;
 
-    struct ENGINE_API Cursor {
+    struct ENGINE_API Cursor final {
         u8 bufferCount = 0;
         size_t bufferSize = 0;
 
@@ -20,7 +20,19 @@ namespace engine::audio {
         }
     };
 
-    serialize_component(AudioSourceComponent) {
+    struct ENGINE_API Attenuation final {
+        static int NONE;
+        static int INVERSE_DISTANCE;
+        static int INVERSE_DISTANCE_CLAMPED;
+        static int LINEAR_DISTANCE;
+        static int LINEAR_DISTANCE_CLAMPED;
+        static int EXPONENT_DISTANCE;
+        static int EXPONENT_DISTANCE_CLAMPED;
+        static int DEFAULT;
+    };
+
+    component(AudioSourceComponent) {
+        serializable()
         u32 sourceId = 0;
         math::vec3f position = { 0, 0, 0 };
         math::vec3f velocity = { 0, 0, 0 };
@@ -30,17 +42,7 @@ namespace engine::audio {
         f32 refDistance = 1;
         f32 maxDistance = max_f32;
         f32 rollOffFactor = 1;
-
-        ENGINE_API void serialize(YAML::Emitter &out) override;
-        ENGINE_API void deserialize(const YAML::Node &parent) override;
-    };
-
-    enum Attenuation {
-        NONE,
-        INVERSE_DISTANCE, INVERSE_DISTANCE_CLAMPED,
-        LINEAR_DISTANCE, LINEAR_DISTANCE_CLAMPED,
-        EXPONENT_DISTANCE, EXPONENT_DISTANCE_CLAMPED,
-        DEFAULT = INVERSE_DISTANCE_CLAMPED
+        int attenuation = Attenuation::DEFAULT;
     };
 
     class ENGINE_API Source final {
@@ -54,8 +56,8 @@ namespace engine::audio {
         void destroy();
         void recreate();
 
-        void load(const io::AudioData& audioData);
-        void load(const u32& bufferIndex, const io::AudioData& audioData);
+        void load(const AudioData& audioData);
+        void load(const u32& bufferIndex, const AudioData& audioData);
         void loadStream(const std::string& filepath);
         void updateStream();
 
@@ -69,7 +71,7 @@ namespace engine::audio {
         void setRolloffFactor(f32 rolloffFactor) const;
         void setComponent(const AudioSourceComponent& component) const;
 
-        static void setAttenuation(const Attenuation& attenuation);
+        static void setAttenuation(int attenuation);
 
         void setBuffer(const u32& bufferIndex) const;
         void queueBuffers() const;
@@ -96,7 +98,7 @@ namespace engine::audio {
         u32 id = 0;
         vector<Buffer> buffers;
         Cursor cursor;
-        io::AudioFormat format;
+        AudioFormat format;
         u8 currentBufferIndex = 0;
     };
 

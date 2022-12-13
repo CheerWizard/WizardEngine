@@ -24,27 +24,19 @@ namespace engine::visual {
     }
 
     void MeshLayout::onKeyPressed(event::KeyCode keyCode) {
-        if (_isFocused) {
 //            _camera3D->onKeyPressed(keyCode);
-        }
     }
 
     void MeshLayout::onKeyHold(event::KeyCode keyCode) {
-        if (_isFocused) {
 //            _camera3D->onKeyHold(keyCode);
-        }
     }
 
     void MeshLayout::onKeyReleased(event::KeyCode keyCode) {
-        if (_isFocused) {
 //            _camera3D->onKeyReleased(keyCode);
-        }
     }
 
     void MeshLayout::onKeyTyped(event::KeyCode keyCode) {
-        if (_isFocused) {
 //            _camera3D->onKeyTyped(keyCode);
-        }
     }
 
     void MeshLayout::rotateEntity(const time::Time &dt) {
@@ -56,7 +48,6 @@ namespace engine::visual {
     void MeshLayout::onRender(const time::Time &dt) {
         ColorAttachment texture;
         if (_frame->getColorAttachment(0, texture)) {
-            id = texture.id;
         }
 
         _camera3D->onUpdate(dt);

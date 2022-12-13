@@ -9,15 +9,17 @@
 using namespace engine::ecs;
 using namespace engine::time;
 
-class Scriptable : public engine::io::Serializable {
+class Scriptable {
 
 public:
     virtual ~Scriptable() = default;
 
 public:
-    virtual void onCreate() = 0;
-    virtual void onUpdate(Time dt) = 0;
-    virtual void onDestroy() = 0;
+    virtual void onCreate() {}
+    virtual void onUpdate(Time dt) {}
+    virtual void onDestroy() {}
+    virtual void serialize(YAML::Emitter& out) {}
+    virtual void deserialize(const YAML::Node& parent) {}
 
 public:
     Entity root;

@@ -9,3 +9,4 @@ properties:
     height: 900
     samples: 1
     fullscreen: false
+    dockspace: true

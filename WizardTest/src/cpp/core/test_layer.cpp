@@ -246,17 +246,17 @@ namespace test {
             udp::Client::connect("192.168.1.101", 54000);
         }
 
-        Visual::openDockspace = true;
-        Visual::fullScreen = true;
-
         // disable screen rendering as we are using ImGui for scene rendering
         RenderSystem::enableScreenRenderer = false;
 
         ProjectsPanel::init();
-        AssetBrowser::create(app.getNativeWindow(), { "AssetBrowser" });
-        MaterialPanel::create(app.getNativeWindow());
-        sceneHierarchy = SceneHierarchy(scene);
 
+        Ref<FileDialog> fileDialog = createRef<FileDialog>(app.getNativeWindow());
+        AssetBrowser::create(fileDialog, { "AssetBrowser" });
+        MaterialPanel::create(fileDialog);
+
+        sceneHierarchy = SceneHierarchy(scene);
+        sceneViewport.setScene(scene);
         sceneViewport.show();
     }
 
@@ -615,49 +615,27 @@ namespace test {
     }
 
     void TestLayer::onVisualDraw(time::Time dt) {
-        // dock space
-        Visual::beginDockspace("Test");
-        Visual::endDockspace();
-        // scene panel
-//        Panel::begin("Scene", { 800, 600 });
-        // physics
-//        Checkbox::draw("enablePhysics", Physics::isEnabled);
-//        // entity hovering
-//        // draw tag of hovered entity
-//        auto* tag = Application::get().hoveredEntity.get<TagComponent>();
-//        if (tag) {
-//            Text::draw(tag->tag.c_str());
-//        }
-//        // checkbox to switch mouse hovering
-//        Checkbox::draw("enableMouseHovering", Application::get().enableMouseHovering);
-//        // post effects
-//        Checkbox::draw("enabled", Application::get().gaussianBlurEffect->enabled);
-//        Slider::draw("amount", Application::get().gaussianBlurEffect->amount, { 1, 20 });
-//        // objects
-//        for (auto& pack : packs) {
-//            Slider::draw("brightness", pack.get<Phong>()->brightness(), { 0, 100 });
-//            auto& transform = pack.getTransform();
-//            auto v = pack.get<Velocity>();
-//            Vec3fUniform position = { "position", transform.position };
-//            Vec3fUniform rotation = { "rotation", transform.rotation };
-//            Vec3fUniform scale = { "scale", transform.scale };
-//            Vec3fUniform velocity = { "velocity", v->velocity };
-//            Controller::draw(position, 0, 10);
-//            Controller::draw(scale, 0, 10);
-//            Controller::draw(rotation, 0, 10);
-//            Controller::draw(velocity, 0, 10);
-//            transform.position = position.value;
-//            transform.rotation = rotation.value;
-//            transform.scale = scale.value;
-//            v->velocity = velocity.value;
-//        }
+        Visual::showDemoWindow();
+        // toolbar
+        Toolbar::get().draw();
+//        // Scene hierarchy and properties
+        sceneHierarchy.onUpdate(dt);
+//        // Scene view port
+        sceneViewport.setId(RenderSystem::finalRenderTargetId);
+        sceneViewport.onUpdate(dt);
+//        // Console
+        Console::get().draw(1024, 768);
+//        // Troubleshoot
+        ProfilerMenu::draw(1024, 768);
+//        // Projects storage
+        ProjectsPanel::draw();
+//        // Assets explorer
+        AssetBrowser::draw(dt);
+//        // Logger
+        Log::draw();
+     }
 
-//        Panel::end();
-        // Console
-//        Console::draw("Console", { 800, 600 });
-        // Troubleshoot
-//        ProfilerMenu::draw("Profiler Menu", { 800, 600 });
-
+    void TestLayer::updateGizmo() {
 //        if (EventRegistry::keyHold(KeyCode::LeftControl) && Input::isMousePressed(MouseCode::ButtonLeft)) {
 //            Entity selectedEntity = Application::get().hoveredEntity;
 //            auto* selectedTransform = selectedEntity.get<Transform3dComponent>();
@@ -666,7 +644,7 @@ namespace test {
 //                showGizmo = !showGizmo;
 //            }
 //        }
-
+//
 //        if (showGizmo) {
 //            // get selected entity transform
 //            auto& app = Application::get();
@@ -684,12 +662,5 @@ namespace test {
 //                                 { static_cast<float>(xPos), static_cast<float>(yPos) },
 //                                 windowSize);
 //        }
-
-//        ProjectsPanel::draw("Project Manager", { 800, 600 }, [this](const Project& openedProject) {});
-        AssetBrowser::draw(dt);
-        Log::draw("Log");
-        sceneViewport.setId(RenderSystem::finalRenderTargetId);
-        sceneViewport.onUpdate(dt);
-        sceneHierarchy.onUpdate(dt);
-     }
+    }
 }

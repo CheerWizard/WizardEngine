@@ -17,13 +17,11 @@ namespace engine::ecs {
         bool operator ==(const UUIDComponent& other) const { return uuid == other.uuid; }
     };
 
-    serialize_component(TagComponent) {
+    component(TagComponent) {
+        serializable()
         std::string tag;
         TagComponent() = default;
         TagComponent(const std::string &tag) : tag(tag) {}
-
-        ENGINE_API void serialize(YAML::Emitter &out) override;
-        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
 }

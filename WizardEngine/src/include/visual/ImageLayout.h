@@ -10,6 +10,8 @@
 
 namespace engine::visual {
 
+    using namespace ecs;
+
     struct ENGINE_API ImageLayoutProps {
         const char* title;
         uint32_t width, height;
@@ -68,18 +70,24 @@ namespace engine::visual {
         virtual void onMouseRelease(event::MouseCode mouseCode);
         virtual void onMouseScrolled(double xOffset, double yOffset);
 
+        inline void setScene(const Ref<Scene>& actualScene) {
+            scene = actualScene;
+        }
+
     protected:
         void end();
         void destroy();
 
-    public:
+    private:
+        Ref<Scene> scene;
         ImageLayoutProps props;
         ImageLayoutCallback* _callback = nullptr;
         uint32_t id = 0;
+        bool viewportHovered = false;
+        bool viewportFocused = false;
         bool _isHoldingMouse = false;
         bool _isVisible = true;
         bool _isFocused = false;
-
     };
 
 }

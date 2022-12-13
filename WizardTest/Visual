@@ -1,52 +1,76 @@
-[Window][Test]
+[Window][DockSpace Demo]
 Pos=0,0
-Size=1600,900
+Size=1920,1017
 Collapsed=0
 
 [Window][Debug##Default]
-Pos=60,60
-Size=900,430
+ViewportPos=1759,229
+ViewportId=0x9F5F46A1
+Size=400,400
+Collapsed=1
+
+[Window][Toolbar]
+Pos=290,26
+Size=1260,32
 Collapsed=0
+DockId=0x00000007,0
+
+[Window][Scene Hierarchy]
+Pos=0,26
+Size=288,860
+Collapsed=0
+DockId=0x00000003,0
+
+[Window][Properties]
+Pos=1552,26
+Size=368,991
+Collapsed=0
+DockId=0x00000006,0
+
+[Window][Viewport]
+Pos=290,60
+Size=1260,826
+Collapsed=0
+DockId=0x00000008,0
+
+[Window][Profiler]
+Pos=0,888
+Size=1550,129
+Collapsed=0
+DockId=0x00000002,3
 
 [Window][ Projects]
-ViewportPos=-458,1011
-ViewportId=0x2C4A0DB9
-Size=928,687
+Pos=0,26
+Size=288,860
 Collapsed=0
+DockId=0x00000003,1
 
 [Window][ Assets]
-ViewportPos=1438,1011
-ViewportId=0xBB342063
-Size=807,584
+Pos=0,888
+Size=1550,129
 Collapsed=0
-DockId=0x00000001,0
-
-[Window][Scene]
-Pos=0,26
-Size=1600,874
-Collapsed=0
-DockId=0xB52D7659,0
+DockId=0x00000002,0
 
 [Window][ Logs]
-ViewportPos=291,226
-ViewportId=0xA4D966FE
-Size=807,584
+Pos=0,888
+Size=1550,129
 Collapsed=0
-DockId=0x00000001,1
+DockId=0x00000002,2
 
-[Window][M_SurvivalPack]
-ViewportPos=625,65
-ViewportId=0x7549B3AD
-Size=524,914
+[Window][Console]
+Pos=0,888
+Size=1550,129
 Collapsed=0
-
-[Window][L_Sun]
-ViewportPos=-86,422
-ViewportId=0x5EF70CA4
-Size=800,600
-Collapsed=0
+DockId=0x00000002,1
 
 [Docking][Data]
-DockNode  ID=0x00000001 Pos=1438,1011 Size=807,584 Selected=0xAD88028E
-DockSpace ID=0xB52D7659 Window=0x784DD132 Pos=221,129 Size=1600,874 CentralNode=1 Selected=0xE192E354
+DockSpace         ID=0x3BC79352 Window=0x4647B76E Pos=0,49 Size=1920,991 Split=X
+  DockNode        ID=0x00000005 Parent=0x3BC79352 SizeRef=1550,991 Split=Y
+    DockNode      ID=0x00000001 Parent=0x00000005 SizeRef=1600,807 Split=X
+      DockNode    ID=0x00000003 Parent=0x00000001 SizeRef=288,439 Selected=0x2E9237F7
+      DockNode    ID=0x00000004 Parent=0x00000001 SizeRef=1260,439 Split=Y Selected=0x13926F0B
+        DockNode  ID=0x00000007 Parent=0x00000004 SizeRef=1324,32 HiddenTabBar=1 Selected=0x738351EE
+        DockNode  ID=0x00000008 Parent=0x00000004 SizeRef=1324,826 CentralNode=1 Selected=0x13926F0B
+    DockNode      ID=0x00000002 Parent=0x00000005 SizeRef=1600,129 Selected=0x7F8180A6
+  DockNode        ID=0x00000006 Parent=0x3BC79352 SizeRef=368,991 Selected=0x199AB496
 

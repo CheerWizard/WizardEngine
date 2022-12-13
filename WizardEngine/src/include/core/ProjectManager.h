@@ -18,10 +18,7 @@ namespace engine::core {
         V_RELEASE, V_DEBUG, V_VISUAL, V_PROFILING
     };
 
-    struct ENGINE_API ProjectProps : io::Serializable {
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
-
+    struct ENGINE_API ProjectProps {
         std::string title = "Untitled";
         std::string icon = "";
         std::string launcher = "";
@@ -30,7 +27,8 @@ namespace engine::core {
 
         ProjectProps() = default;
 
-    public:
+        void serialize(YAML::Emitter &out);
+        void deserialize(const YAML::Node &parent);
         void save(const char* filepath);
         static bool createFromFile(const char* filepath, ProjectProps& props);
     };

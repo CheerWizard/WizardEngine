@@ -30,6 +30,7 @@ namespace engine::core {
         yaml::serialize(out, "height", windowProps.height);
         yaml::serialize(out, "samples", windowProps.sampleSize);
         yaml::serialize(out, "fullscreen", windowProps.fullscreen);
+        yaml::serialize(out, "dockspace", windowProps.dockspace);
         out << YAML::EndMap;
 
         out << YAML::EndMap;
@@ -50,6 +51,7 @@ namespace engine::core {
                 yaml::deserialize(window, "height", windowProps.height);
                 yaml::deserialize(window, "samples", windowProps.sampleSize);
                 yaml::deserialize(window, "fullscreen", windowProps.fullscreen);
+                yaml::deserialize(window, "dockspace", windowProps.dockspace);
             }
         }
     }

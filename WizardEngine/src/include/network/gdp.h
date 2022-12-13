@@ -38,34 +38,28 @@ namespace engine::network {
     constexpr u32 SERVER_SUCCESS = 1;
     constexpr u32 SERVER_ERROR = 2;
 
-    struct ENGINE_API GDHeader : io::Serializable {
+    struct GDHeader {
+        serializable()
         u32 address;
         u32 type;
 
         GDHeader() = default;
         GDHeader(u32 address, u32 type) : address(address), type(type) {}
-
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
     };
-
-    typedef io::Serializable GDBody;
 
     class ENGINE_API GDSerializer final {
     public:
+        template<typename GDBody>
         static NetworkData serialize(GDHeader& header, GDBody& body);
         static bool deserialize(char* gameData, std::pair<YAML::Node, GDHeader>& gdNodeHeader);
     };
 
     template<class V>
-    struct GDPrimitive : GDBody {
+    struct GDPrimitive {
+        decl_serializable()
         V value;
-
         GDPrimitive() = default;
         GDPrimitive(const V& value) : value(value) {}
-
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
     };
 
     template<class V>
@@ -99,14 +93,31 @@ namespace engine::network {
     typedef GDPrimitive<std::string> GDString;
 
     template<class V>
-    struct GDPrimitives : GDBody {
+    struct GDPrimitives {
+        decl_serializable()
         vector<V> values;
-
         GDPrimitives(const std::initializer_list<V>& values) : values(values) {}
-
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
     };
+
+    template<typename GDBody>
+    NetworkData GDSerializer::serialize(GDHeader &header, GDBody &body) {
+        YAML::Emitter emitter;
+        emitter << YAML::BeginMap;
+
+        emitter << YAML::Key << "GameData";
+        emitter << YAML::BeginMap;
+        emitter << YAML::Key << "header";
+        header.serialize(emitter);
+        emitter << YAML::Key << "body";
+        body.serialize(emitter);
+        emitter << YAML::EndMap;
+
+        emitter << YAML::EndMap;
+        // need to duplicate emitter c_str into network data, because emitter lives only in scopes of stack function
+        NetworkData networkData(strdup(emitter.c_str()), emitter.size());
+        ENGINE_INFO("GDSerializer: serialized NetworkData: \n{0}", networkData.data);
+        return networkData;
+    }
 
     template<class V>
     void GDPrimitives<V>::serialize(YAML::Emitter &out) {
@@ -129,13 +140,10 @@ namespace engine::network {
      * V - class/struct, which should have implemented Serializable interface. Otherwise it won't compile!
      * */
     template<class V>
-    struct GDSerializables : GDBody {
+    struct GDSerializables {
+        decl_serializable()
         vector<V> serializables;
-
         GDSerializables(const std::initializer_list<V>& serializables) : serializables(serializables) {}
-
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
     };
 
     template<class V>
@@ -161,15 +169,12 @@ namespace engine::network {
     constexpr u16 GD_CODE_200 = 200;
     constexpr u16 GD_CODE_404 = 404;
 
-    struct ENGINE_API GDResponse : GDBody {
+    struct GDResponse {
+        serializable()
         u16 statusCode = GD_CODE_200;
         const char* message = "";
-
         GDResponse() = default;
         GDResponse(const char* message) : message(message) {}
         GDResponse(u32 statusCode, const char* message) : statusCode(statusCode), message(message) {}
-
-        void serialize(YAML::Emitter &out) override;
-        void deserialize(const YAML::Node &parent) override;
     };
 }

@@ -4,7 +4,6 @@
 
 #include <visual/ProjectsPanel.h>
 #include <visual/Visual.h>
-#include <visual/Theme.h>
 #include <visual/FontAwesome4.h>
 #include <visual/AssetBrowser.h>
 
@@ -22,7 +21,7 @@ namespace engine::visual {
     Project ProjectsPanel::selectedProject;
     bool ProjectsPanel::isProjectSelected = false;
 
-    void ProjectsPanel::draw(const char *title, const vec2f &size, const std::function<void(const Project&)>& onProjectOpen) {
+    void ProjectsPanel::draw() {
         static bool open = true;
         if (!ImGui::Begin(ICON_FA_MAGIC" Projects", &open)) {
             ImGui::End();
@@ -126,7 +125,6 @@ namespace engine::visual {
                         Application::get().pushScenes(selectedProject.scenes);
                         ProjectManager::setCurrentProject(selectedProject);
                         AssetBrowser::setProject(selectedProject);
-                        onProjectOpen(selectedProject);
                     }
 
                     Visual::sameLine();

@@ -16,7 +16,8 @@ namespace engine::graphics {
     using namespace shader;
     using namespace math;
 
-    serialize_component(Material) {
+    component(Material) {
+        serializable()
         const char* name = "material";
         const char* title = "Untitled";
         Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
@@ -58,9 +59,6 @@ namespace engine::graphics {
                 TextureType::TEXTURE_2D,
                 IntUniform { "aoSlot", 5 }
         };
-
-        ENGINE_API void serialize(YAML::Emitter &out) override;
-        ENGINE_API void deserialize(const YAML::Node &parent) override;
     };
 
     class ENGINE_API MaterialShader final {

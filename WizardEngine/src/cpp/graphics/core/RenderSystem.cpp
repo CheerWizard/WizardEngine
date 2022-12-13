@@ -72,6 +72,7 @@ namespace engine::graphics {
             sceneFrame->bind();
         }
 
+        setClearColor(0.5, 0.5, 0.5, 1);
         clearBuffer(BufferBit::COLOR | BufferBit::DEPTH);
         enableDepthTest();
 
@@ -162,6 +163,9 @@ namespace engine::graphics {
         FrameBuffer::bindDefault();
         if (enableScreenRenderer) {
             screenRenderer.renderQuad(finalRenderTargetId);
+        } else {
+            setClearColor(0.5, 0.5, 0.5, 1);
+            clearBuffer(BufferBit::COLOR | BufferBit::DEPTH);
         }
     }
 

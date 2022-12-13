@@ -46,9 +46,9 @@ namespace engine::visual {
     int AssetBrowser::selectedProjectVersion = 0;
     bool AssetBrowser::autoSync = true;
 
-    void AssetBrowser::create(void* nativeWindow, const AssetBrowserProps &props) {
+    void AssetBrowser::create(const Ref<FileDialog>& fileDialog, const AssetBrowserProps &props) {
         _props = props;
-        _fileDialog = createRef<FileDialog>(nativeWindow);
+        _fileDialog = fileDialog;
 
         auto dirItem = AssetBrowserItem {
                 "",

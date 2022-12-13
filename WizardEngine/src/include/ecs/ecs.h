@@ -26,7 +26,7 @@ namespace engine::ecs {
     typedef u32 (*ComponentCreateFunction)(component_data& data, entity_id entityId, BaseComponent* component);
     typedef void (*ComponentDestroyFunction)(BaseComponent* component);
 
-    // dynamic component type system
+    // meta-data of any "component" type
     struct ComponentType {
         ComponentCreateFunction createFunction;
         ComponentDestroyFunction destroyFunction;
@@ -118,12 +118,6 @@ namespace engine::ecs {
 #define template_component(component_type, template_type) \
 template<typename template_type>                          \
 struct component_type : engine::ecs::Component<component_type<template_type>>
-    /**
-     * Serializable components
-     * */
-#define serialize_component(type) component(type), engine::io::Serializable
-#define serialize_template_component(component_type, template_type) \
-template_component(component_type, template_type), engine::io::Serializable
 
     template<class Component>
     u32 createComponent(component_data& data, entity_id entityId, BaseComponent* component) {
@@ -225,7 +219,7 @@ template_component(component_type, template_type), engine::io::Serializable
         void removeComponentInternal(component_id componentId, u32 componentIndex);
 
     private:
-        std::map<component_id, component_data> components;
+        std::unordered_map<component_id, component_data> components;
         vector<entity*> entities;
     };
 

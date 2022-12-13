@@ -19,25 +19,6 @@ namespace engine::network {
         type = parent["type"].as<u32>();
     }
 
-    NetworkData GDSerializer::serialize(GDHeader &header, GDBody &body) {
-        YAML::Emitter emitter;
-        emitter << YAML::BeginMap;
-
-        emitter << YAML::Key << "GameData";
-        emitter << YAML::BeginMap;
-        emitter << YAML::Key << "header";
-        header.serialize(emitter);
-        emitter << YAML::Key << "body";
-        body.serialize(emitter);
-        emitter << YAML::EndMap;
-
-        emitter << YAML::EndMap;
-        // need to duplicate emitter c_str into network data, because emitter lives only in scopes of stack function
-        NetworkData networkData(strdup(emitter.c_str()), emitter.size());
-        ENGINE_INFO("GDSerializer: serialized NetworkData: \n{0}", networkData.data);
-        return networkData;
-    }
-
     bool GDSerializer::deserialize(char *gameData, std::pair<YAML::Node, GDHeader>& gdNodeHeader) {
         try {
             YAML::Node gdNode = YAML::Load(gameData)["GameData"];

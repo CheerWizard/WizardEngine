@@ -12,7 +12,7 @@ namespace engine::io {
         s32 result = 0;
 
         if (endian::native == endian::little) {
-            std::memcpy(&result, buffer, length);
+            memcpy(&result, buffer, length);
         } else {
             for(size_t i = 0; i < length; ++i) {
                 reinterpret_cast<char*>(&result)[3 - i] = buffer[i];
@@ -166,16 +166,16 @@ namespace engine::io {
             ENGINE_THROW(file_not_found(filepath));
         }
 
-        Channels channels;
+        int channels;
 
         if (channelCount == 1 && bitsPerSample == 8) {
-            channels = MONO_8;
+            channels = Channels::MONO_8;
         } else if (channelCount == 1 && bitsPerSample == 16) {
-            channels = MONO_16;
+            channels = Channels::MONO_16;
         } else if (channelCount == 2 && bitsPerSample == 8) {
-            channels = STEREO_8;
+            channels = Channels::STEREO_8;
         } else if (channelCount == 2 && bitsPerSample == 16) {
-            channels = STEREO_16;
+            channels = Channels::STEREO_16;
         } else {
             std::stringstream ss;
             ss << "Unsupported format exception : channels=" << channelCount << ", bps=" << bitsPerSample;

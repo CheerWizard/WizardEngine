@@ -8,29 +8,12 @@
 #include <fstream>
 #include <sstream>
 #include <io/Logger.h>
+#include <audio/audio_buffer.h>
 
 namespace engine::io {
 
     using namespace core;
-
-    decl_exception(audio_format_exception)
-
-    enum Channels {
-        MONO_8, MONO_16,
-        STEREO_8, STEREO_16,
-        DEFAULT = MONO_8
-    };
-
-    struct ENGINE_API AudioFormat {
-        s32 size = 0;
-        s32 frequency = 0;
-        Channels channels = DEFAULT;
-    };
-
-    struct ENGINE_API AudioData {
-        AudioFormat format;
-        char* data = nullptr;
-    };
+    using namespace audio;
 
     class ENGINE_API AudioFile final {
 

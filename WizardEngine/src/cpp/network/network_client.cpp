@@ -12,10 +12,6 @@ namespace engine::network {
         _queue.push(networkData);
     }
 
-    void RequestQueue::push(GDHeader &header, GDBody &body) {
-        push(GDSerializer::serialize(header, body));
-    }
-
     void RequestQueue::pop() {
         _queue.pop();
     }

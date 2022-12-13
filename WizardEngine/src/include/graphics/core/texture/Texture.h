@@ -112,7 +112,8 @@ namespace engine::graphics {
 
     constexpr u32 invalidTextureId = 0;
 
-    serialize_component(TextureComponent) {
+    component(TextureComponent) {
+        serializable()
         u32 textureId = invalidTextureId;
         u32 typeId = 0;
         IntUniform sampler = { "texture", 0 };
@@ -130,13 +131,11 @@ namespace engine::graphics {
 
         TextureComponent(const IntUniform& sampler) : sampler(sampler) {}
 
-        ENGINE_API void serialize(YAML::Emitter &out) override;
-        ENGINE_API void deserialize(const YAML::Node &parent) override;
-
-        inline bool isValid() const { return textureId != invalidTextureId; }
+        [[nodiscard]] inline bool isValid() const { return textureId != invalidTextureId; }
     };
 
-    serialize_component(CubeMapTextureComponent) {
+    component(CubeMapTextureComponent) {
+        serializable()
         u32 textureId = invalidTextureId;
         u32 typeId = 0;
         IntUniform sampler = { "cubeMap", 0 };
@@ -152,10 +151,7 @@ namespace engine::graphics {
         CubeMapTextureComponent(const u32& textureId, const u32& typeId, const s32& samplerSlot)
         : textureId(textureId), typeId(typeId), sampler({ "cubeMap", samplerSlot }) {}
 
-        ENGINE_API void serialize(YAML::Emitter &out) override;
-        ENGINE_API void deserialize(const YAML::Node &parent) override;
-
-        inline bool isValid() const { return textureId != invalidTextureId; }
+        [[nodiscard]] inline bool isValid() const { return textureId != invalidTextureId; }
     };
 
     using namespace shader;
