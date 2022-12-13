@@ -617,7 +617,7 @@ namespace test {
     void TestLayer::onVisualDraw(time::Time dt) {
         Visual::showDemoWindow();
         // toolbar
-//        Toolbar::get().draw();
+        Toolbar::get().draw();
 //        // Scene hierarchy and properties
         sceneHierarchy.onUpdate(dt);
 //        // Scene view port
@@ -628,7 +628,7 @@ namespace test {
 //        // Troubleshoot
         ProfilerMenu::draw(1024, 768);
 //        // Projects storage
-//        ProjectsPanel::draw();
+        ProjectsPanel::draw();
 //        // Assets explorer
         AssetBrowser::draw(dt);
 //        // Logger

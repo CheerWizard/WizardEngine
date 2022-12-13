@@ -12,7 +12,11 @@
 namespace engine::visual {
 
     void ProfilerMenu::draw(float&& width, float&& height) {
-        Panel::begin(ICON_FA_CLOCK_O "Profiler", { width, height });
+        static bool open = true;
+        if (!ImGui::Begin(ICON_FA_CLOCK_O " Profiler", &open)) {
+            ImGui::End();
+            return;
+        }
 
         Slider::draw("FrameCount", profiler::Profiler::getExpectedFrames(), { 0, 1000 });
         bool& enableProfiler = profiler::Profiler::isEnabled();
@@ -24,7 +28,7 @@ namespace engine::visual {
             enableProfiler = ImGui::Button("Start", { 80, 20 });
         }
 
-        Panel::end();
+        ImGui::End();
     }
 
 }
