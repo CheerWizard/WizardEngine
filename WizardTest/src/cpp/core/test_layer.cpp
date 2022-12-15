@@ -78,14 +78,14 @@ namespace test {
         scene->setCamera(mainCamera);
 
         // setup skybox
-//        app.setSkyCube(scene, "Skybox", {
-//                { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
-//                { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
-//                { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
-//                { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
-//                { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
-//                { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
-//        });
+        app.setSkyCube(scene, "Skybox", {
+                { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
+                { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
+                { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
+                { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
+                { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
+                { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
+        });
 
         // spawn random objects
 //        math::random(-10, 10, 1, [this, &scene](int i, f32 r) {

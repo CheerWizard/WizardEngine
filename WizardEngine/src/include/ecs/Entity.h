@@ -112,6 +112,10 @@ namespace engine::ecs {
             return id;
         }
 
+        inline void setId(entity_id newId) {
+            id = newId;
+        }
+
         [[nodiscard]] inline EntityContainer* getContainer() const {
             return container;
         }

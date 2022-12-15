@@ -24,14 +24,8 @@ namespace engine::visual {
                 const Ref<VIRenderer<io::ModelVertex>> &renderer,
                 const Ref<FrameBuffer> &frame,
                 const Ref<Camera3D> &camera3D
-        ) : ImageLayout(props),
-        _renderer(renderer), _frame(frame), _camera3D(camera3D) {
-            create();
-        }
-
-        ~MeshLayout() override {
-            destroy();
-        }
+        );
+        ~MeshLayout() override;
 
     public:
         void onRender(const time::Time &dt) override;
@@ -55,15 +49,12 @@ namespace engine::visual {
 
     public:
         void onImageResized(const uint32_t &width, const uint32_t &height) override;
-
         void onKeyPressed(event::KeyCode keyCode);
         void onKeyHold(event::KeyCode keyCode);
         void onKeyReleased(event::KeyCode keyCode);
         void onKeyTyped(event::KeyCode keyCode);
 
     private:
-        void create();
-        void destroy();
         void rotateEntity(const time::Time &dt);
 
     private:

@@ -133,7 +133,7 @@ namespace engine::visual {
 
                     if (ImGui::Button(ICON_FA_FOLDER_OPEN" Open", { 205, 34 })) {
                         selectedProject.loadScenes();
-                        Application::get().pushScenes(selectedProject.scenes);
+                        Application::get().addScenes(selectedProject.scenes);
                         ProjectManager::setCurrentProject(selectedProject);
                         AssetBrowser::setProject(selectedProject);
                     }

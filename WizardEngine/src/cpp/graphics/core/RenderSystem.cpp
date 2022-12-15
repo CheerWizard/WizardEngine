@@ -121,20 +121,18 @@ namespace engine::graphics {
         setStencilTestOperator(TestOperator::ALWAYS, 0, false);
         enableDepthTest();
         // skybox and HDR env
-//        setDepthTestOperator(LESS_EQUAL); // we need to pass depth test for some skybox pixels
+        setDepthTestOperator(TestOperator::LESS_EQUAL); // we need to pass depth test for some skybox pixels
         hdrEnvRenderer.render(activeScene->getHdrEnv(), activeScene->getCamera());
-//        skyboxRenderer.render(activeScene->getSkybox(), activeScene->getCamera());
-//        setDepthTestOperator(LESS);
+        skyboxRenderer.render(activeScene->getSkybox(), activeScene->getCamera());
+        setDepthTestOperator(TestOperator::LESS);
         // notify that scene frame end drawing
         if (callback != nullptr) {
             callback->onFrameEnd(sceneFrame);
         }
-
         if (msaaFrame->getFormat().samples > 1) {
             // read/write from MSAA frame into scene frame
             FrameBuffer::readWriteFrameBuffers(*msaaFrame.get(), *sceneFrame.get());
         }
-
         // post-processing effects
         vector<u32> postProcessedTextures;
         // render target 1 without post effects

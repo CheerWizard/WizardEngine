@@ -9,7 +9,12 @@
 
 namespace engine::visual {
 
+    ImageLayout::~ImageLayout() {
+        removeCallback();
+    }
+
     void ImageLayout::onUpdate(time::Time dt) {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
         ImGui::Begin("Viewport");
 
         auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
@@ -32,10 +37,7 @@ namespace engine::visual {
                      ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
         ImGui::End();
-    }
-
-    void ImageLayout::destroy() {
-        removeCallback();
+        ImGui::PopStyleVar();
     }
 
     void ImageLayout::onMousePressed(event::MouseCode mouseCode) {

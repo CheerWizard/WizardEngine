@@ -8,11 +8,16 @@
 
 namespace engine::visual {
 
-    void MeshLayout::create() {
+    MeshLayout::MeshLayout(
+            const ImageLayoutProps &props,
+            const Ref<VIRenderer<io::ModelVertex>> &renderer,
+            const Ref<FrameBuffer> &frame,
+            const Ref<Camera3D> &camera3D
+    ) : ImageLayout(props), _renderer(renderer), _frame(frame), _camera3D(camera3D) {
         setCallback(this);
     }
 
-    void MeshLayout::destroy() {
+    MeshLayout::~MeshLayout() {
         removeCallback();
     }
 

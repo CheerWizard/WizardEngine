@@ -261,16 +261,14 @@ namespace engine::core {
 
     void Application::setActiveScene(const Ref<Scene>& scene) {
         PROFILE_FUNCTION();
+        scenes[scene->getName()] = scene;
         activeScene = scene;
+        selectedEntity = Entity(activeScene.get());
+        hoveredEntity = Entity(activeScene.get());
         RenderSystem::activeScene = activeScene;
         ScriptSystem::activeScene = activeScene;
         Physics::activeScene = activeScene;
         RenderSystem::onUpdate();
-    }
-
-    void Application::setActiveScene(u32 sceneIndex) {
-        PROFILE_FUNCTION();
-        setActiveScene(scenes.at(sceneIndex));
     }
 
     void Application::restart() {
@@ -453,7 +451,7 @@ namespace engine::core {
                     frameBuffer->getColorAttachmentsSize() - 1,
                     mouseX, mouseY
             );
-            hoveredEntity = activeScene->findEntity(uuid);
+            activeScene->findEntity(uuid, hoveredEntity);
         }
     }
 
@@ -530,11 +528,22 @@ namespace engine::core {
         // this method will be called only from derived class that defines VISUAL macro
     }
 
-    void Application::pushScenes(const vector<Ref<Scene>> &scenes) {
-        if (scenes.empty()) return;
-        this->scenes.clear();
-        this->scenes = scenes;
-        setActiveScene(0);
+    void Application::addScene(const Ref<Scene>& scene) {
+        scenes[scene->getName()] = scene;
+    }
+
+    void Application::removeScene(const std::string& name) {
+        scenes.erase(name);
+    }
+
+    void Application::clearScenes() {
+        scenes.clear();
+    }
+
+    void Application::addScenes(const vector<Ref<Scene>> &newScenes) {
+        for (const auto& newScene : newScenes) {
+            scenes[newScene->getName()] = newScene;
+        }
     }
 }
 

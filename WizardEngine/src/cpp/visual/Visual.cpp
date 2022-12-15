@@ -257,15 +257,15 @@ namespace engine::visual {
     }
 
     void Visual::onKeyPressed(event::KeyCode keyCode) {
-        IO.KeysDown[keyCode] = true;
+//        IO.KeysDown[keyCode] = true;
     }
 
     void Visual::onKeyHold(event::KeyCode keyCode) {
-        IO.KeysDown[keyCode] = true;
+//        IO.KeysDown[keyCode] = true;
     }
 
     void Visual::onKeyReleased(event::KeyCode keyCode) {
-        IO.KeysDown[keyCode] = false;
+//        IO.KeysDown[keyCode] = false;
     }
 
     void Visual::onKeyTyped(event::KeyCode keyCode) {
