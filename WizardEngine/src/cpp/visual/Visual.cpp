@@ -3,19 +3,15 @@
 //
 
 #include <visual/Visual.h>
-#include <visual/Theme.h>
 #include <visual/FontAwesome4.h>
+#include <visual/ProjectsPanel.h>
+#include <profiler/Profiler.h>
 
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <GLFW/glfw3.h>
-#include <platform/graphics/tools/ShaderPath.h>
 #include <imgui_internal.h>
 #include <ImGuizmo.h>
-#include <imconfig.h>
-#include <imgui_stdlib.h>
-#include <visual/GoogleMaterialIcons.h>
-#include <profiler/Profiler.h>
 
 #include <core/Application.h>
 
@@ -260,72 +256,16 @@ namespace engine::visual {
         ImGui::DestroyContext();
     }
 
-    void Visual::beginDockspace() {
-        if (!openDockspace) return;
-
-        setDockspace();
-        const auto& window = Application::get().getWindow();
-        static bool open = openDockspace;
-        ImGui::PushStyleVar(
-                ImGuiStyleVar_WindowPadding,
-                ImVec2(window->getWidth(), window->getHeight())
-        );
-        ImGui::Begin("Docking", &open, windowFlags);
-        ImGui::PopStyleVar();
-
-        if (fullScreen) {
-            ImGui::PopStyleVar(2);
-        }
-
-        ImGuiIO& io = ImGui::GetIO();
-        if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
-            ImGuiID dockspace_id = ImGui::GetID("Docking");
-            ImGui::DockSpace(
-                    dockspace_id,
-                    ImVec2(window->getWidth(), window->getHeight()),
-                    dockspaceFlags
-            );
-        }
-    }
-
-    void Visual::setDockspace() {
-        dockspaceFlags = ImGuiDockNodeFlags_None;
-        windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-
-        if (fullScreen) {
-            const ImGuiViewport* viewport = ImGui::GetMainViewport();
-            ImGui::SetNextWindowPos(viewport->WorkPos);
-            ImGui::SetNextWindowSize(viewport->WorkSize);
-            ImGui::SetNextWindowViewport(viewport->ID);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-            windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-            windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-        } else {
-            dockspaceFlags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-        }
-
-        if (dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode) {
-            windowFlags |= ImGuiWindowFlags_NoBackground;
-        }
-    }
-
-    void Visual::endDockspace() {
-        if (openDockspace) {
-            ImGui::End();
-        }
-    }
-
     void Visual::onKeyPressed(event::KeyCode keyCode) {
-//        IO.KeysDown[keyCode] = true;
+        IO.KeysDown[keyCode] = true;
     }
 
     void Visual::onKeyHold(event::KeyCode keyCode) {
-//        IO.KeysDown[keyCode] = true;
+        IO.KeysDown[keyCode] = true;
     }
 
     void Visual::onKeyReleased(event::KeyCode keyCode) {
-//        IO.KeysDown[keyCode] = false;
+        IO.KeysDown[keyCode] = false;
     }
 
     void Visual::onKeyTyped(event::KeyCode keyCode) {
@@ -365,31 +305,13 @@ namespace engine::visual {
         ImGui::Separator();
     }
 
-    void Visual::showDemoWindow() {
+    void Visual::drawDockspace() {
         static bool open = true;
-
-        // If you strip some features of, this demo is pretty much equivalent to calling DockSpaceOverViewport()!
-        // In most cases you should be able to just call DockSpaceOverViewport() and ignore all the code below!
-        // In this specific demo, we are not using DockSpaceOverViewport() because:
-        // - we allow the host window to be floating/moveable instead of filling the viewport (when opt_fullscreen == false)
-        // - we allow the host window to have padding (when opt_padding == true)
-        // - we have a local menu bar in the host window (vs. you could use BeginMainMenuBar() + DockSpaceOverViewport() in your code!)
-        // TL;DR; this demo is more complicated than what you would normally use.
-        // If we removed all the options we are showcasing, this demo would become:
-        //     void ShowExampleAppDockSpace()
-        //     {
-        //         ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
-        //     }
-
         static bool opt_fullscreen = true;
         static bool opt_padding = false;
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
-        // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-        // because it would be confusing to have two docking targets within each others.
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-        if (opt_fullscreen)
-        {
+        if (opt_fullscreen) {
             const ImGuiViewport* viewport = ImGui::GetMainViewport();
             ImGui::SetNextWindowPos(viewport->WorkPos);
             ImGui::SetNextWindowSize(viewport->WorkSize);
@@ -398,60 +320,74 @@ namespace engine::visual {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
             window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
             window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-        }
-        else
-        {
+        } else {
             dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
         }
 
-        // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-        // and handle the pass-thru hole, so we ask Begin() to not render a background.
         if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
             window_flags |= ImGuiWindowFlags_NoBackground;
 
-        // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-        // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-        // all active windows docked into it will lose their parent and become undocked.
-        // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-        // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
         if (!opt_padding)
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("DockSpace Demo", &open, window_flags);
+        ImGui::Begin("Wizard Dockspace", &open, window_flags);
         if (!opt_padding)
             ImGui::PopStyleVar();
 
         if (opt_fullscreen)
             ImGui::PopStyleVar(2);
 
-        // Submit the DockSpace
         ImGuiIO& io = ImGui::GetIO();
         if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
             ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
-
-        if (ImGui::BeginMenuBar())
-        {
-            if (ImGui::BeginMenu("Options"))
-            {
-                // Disabling fullscreen would allow the window to be moved to the front of other windows,
-                // which we can't undo at the moment without finer window depth/z control.
-                ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-                ImGui::MenuItem("Padding", NULL, &opt_padding);
-                ImGui::Separator();
-
-                if (ImGui::MenuItem("Flag: NoSplit",                "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))                 { dockspace_flags ^= ImGuiDockNodeFlags_NoSplit; }
-                if (ImGui::MenuItem("Flag: NoResize",               "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0))                { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
-                if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0))  { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
-                if (ImGui::MenuItem("Flag: AutoHideTabBar",         "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0))          { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
-                if (ImGui::MenuItem("Flag: PassthruCentralNode",    "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
-                ImGui::Separator();
-
-                if (ImGui::MenuItem("Close", NULL, false, open != NULL)) {
-                    open = false;
+        // Menu Bar
+        if (ImGui::BeginMenuBar()) {
+            // Scene Menu
+            if (ImGui::BeginMenu("Scene")) {
+                if (ImGui::MenuItem("New", "Ctrl+N")) {
+                    //todo: create new template scene
                 }
+
+                if (ImGui::MenuItem("Open...", "Ctrl+O")) {
+                    //todo: import scene using file dialog
+                }
+
+                if (ImGui::MenuItem("Save", "Ctrl+S")) {
+                    //todo: serialize into assets/scenes directory using .yaml or binary
+                }
+
+                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) {
+                    //todo: serialize into .yaml or binary file and export out using file dialog
+                }
+
                 ImGui::EndMenu();
             }
+            // Projects Menu
+            if (ImGui::BeginMenu("Projects")) {
+                if (ImGui::MenuItem("Panel", "Ctrl+P")) {
+                    ProjectsPanel::get().enableDraw = true;
+                }
+
+                if (ImGui::MenuItem("New", "Ctrl+N")) {
+                    ProjectsPanel::get().enableDraw = true;
+                }
+
+                if (ImGui::MenuItem("Open...", "Ctrl+O")) {
+                    ProjectsPanel::get().enableDraw = true;
+                }
+
+                if (ImGui::MenuItem("Save", "Ctrl+S")) {
+                    ProjectsPanel::get().enableDraw = true;
+                }
+
+                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) {
+                    ProjectsPanel::get().enableDraw = true;
+                }
+
+                ImGui::EndMenu();
+            }
+            // Menu Bar
             ImGui::EndMenuBar();
         }
 

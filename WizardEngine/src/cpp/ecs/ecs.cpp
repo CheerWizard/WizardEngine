@@ -43,7 +43,7 @@ namespace engine::ecs {
     }
 
     void Registry::deleteEntity(entity_id& entityId) {
-        validate_entity("deleteEntity()", entityId,)
+        ENGINE_ASSERT(entityId != invalid_entity_id, "deleteEntity() failed -> invalid entity id!");
         // remove component ids and indexes
         auto& entityData = toEntityData(entityId);
         for (const auto& componentIdAndIndex : entityData) {
@@ -71,7 +71,7 @@ namespace engine::ecs {
         destroyFunction(destComponent);
 
         if (componentIndex == srcIndex) {
-            data.resize(srcIndex);
+            free(&data[srcIndex]);
             return;
         }
 

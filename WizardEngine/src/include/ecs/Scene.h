@@ -74,6 +74,10 @@ namespace engine::ecs {
             return state;
         }
 
+        inline void setState(const SceneState& newState) {
+            state = newState;
+        }
+
         bool isPaused = false;
 
         glm::vec2 viewportSize = { 0.0f, 0.0f };

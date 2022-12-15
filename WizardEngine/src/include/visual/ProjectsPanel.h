@@ -18,18 +18,23 @@ namespace engine::visual {
 
     class ENGINE_API ProjectsPanel final {
 
+    private:
+        ProjectsPanel();
+        ~ProjectsPanel();
+
     public:
-        static void init();
-        static void setTheme();
-        static void draw();
-        static void destroy();
+        static ProjectsPanel& get();
+        void draw();
+
+    public:
+        bool enableDraw = false;
 
     private:
-        static ProjectOptionTab tab;
-        static std::string newProjectName;
-        static std::string newWorkspace;
-        static Project selectedProject;
-        static bool isProjectSelected;
+        ProjectOptionTab tab = TAB_NEW_PROJECT;
+        std::string newProjectName = "Untitled";
+        std::string newWorkspace = "projects";
+        Project selectedProject;
+        bool isProjectSelected = false;
     };
 
 }

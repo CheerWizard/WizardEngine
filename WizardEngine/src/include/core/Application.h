@@ -207,8 +207,6 @@ namespace engine::core {
 
     private:
         static Application* instance;
-
-    private:
         bool _isRunning = true;
         // core systems
         LayerStack _layerStack;

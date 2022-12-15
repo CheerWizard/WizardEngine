@@ -15,16 +15,27 @@
 
 namespace engine::visual {
 
-    ProjectOptionTab ProjectsPanel::tab = TAB_NEW_PROJECT;
-    std::string ProjectsPanel::newProjectName = "Untitled";
-    std::string ProjectsPanel::newWorkspace = "projects";
-    Project ProjectsPanel::selectedProject;
-    bool ProjectsPanel::isProjectSelected = false;
+    ProjectsPanel &ProjectsPanel::get() {
+        static ProjectsPanel instance;
+        return instance;
+    }
+
+    ProjectsPanel::ProjectsPanel() {
+        ProjectManager::loadProjects();
+    }
+
+    ProjectsPanel::~ProjectsPanel() {
+        ProjectManager::saveProjects();
+    }
 
     void ProjectsPanel::draw() {
+        if (!enableDraw)
+            return;
+
         static bool open = true;
         if (!ImGui::Begin(ICON_FA_MAGIC" Projects", &open)) {
             ImGui::End();
+            enableDraw = false;
             return;
         }
 
@@ -149,49 +160,6 @@ namespace engine::visual {
         }
 
         ImGui::End();
-    }
-
-    void ProjectsPanel::setTheme() {
-//        ImGuiStyle* style = &ImGui::GetStyle();
-//
-//        style->WindowBorderSize = 0;
-//        style->WindowTitleAlign = ImVec2(0.5, 0.5);
-//        style->WindowMinSize = ImVec2(20, 20);
-//
-//        style->FramePadding = ImVec2(8, 2);
-//
-//        static ImVec4 active = { 0 / 255.0, 0 / 255.0, 0 / 255.0, 255.0 / 255.0 };
-//        static ImVec4 inactive = { 255 / 255.0, 255 / 255.0, 255 / 255.0, 255 / 255.0 };
-//
-//        style->Colors[ImGuiCol_TitleBg] = active;
-//        style->Colors[ImGuiCol_TitleBgActive] = active;
-//        style->Colors[ImGuiCol_TitleBgCollapsed] = inactive;
-//        style->Colors[ImGuiCol_TextSelectedBg] = inactive;
-//
-//        style->Colors[ImGuiCol_Button] = ImColor(31, 30, 31, 255);
-//        style->Colors[ImGuiCol_ButtonActive] = ImColor(41, 40, 41, 255);
-//        style->Colors[ImGuiCol_ButtonHovered] = ImColor(41, 40, 41, 255);
-//
-//        style->Colors[ImGuiCol_Separator] = ImColor(70, 70, 70, 255);
-//        style->Colors[ImGuiCol_SeparatorActive] = ImColor(76, 76, 76, 255);
-//        style->Colors[ImGuiCol_SeparatorHovered] = ImColor(76, 76, 76, 255);
-//
-//        style->Colors[ImGuiCol_FrameBg] = ImColor(37, 36, 37, 255);
-//        style->Colors[ImGuiCol_FrameBgActive] = ImColor(37, 36, 37, 255);
-//        style->Colors[ImGuiCol_FrameBgHovered] = ImColor(37, 36, 37, 255);
-//
-//        style->Colors[ImGuiCol_Header] = ImColor(0, 0, 0, 0);
-//        style->Colors[ImGuiCol_HeaderActive] = ImColor(0, 0, 0, 0);
-//        style->Colors[ImGuiCol_HeaderHovered] = ImColor(46, 46, 46, 255);
-    }
-
-    void ProjectsPanel::init() {
-        ProjectManager::loadProjects();
-        setTheme();
-    }
-
-    void ProjectsPanel::destroy() {
-        ProjectManager::saveProjects();
     }
 
 }
