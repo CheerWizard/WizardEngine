@@ -6,6 +6,15 @@
 ### Rendering Samurai Helmet (PBR, Lighting, Materials, no Post Effects, no MSAA).
 ![wizard_engine_showcase_preview_1](https://user-images.githubusercontent.com/37471793/205491367-1858ca4d-78f9-415d-a8d2-e15b8751f06f.png)
 
+## Upcoming features
+1. Shadow mapping, point shadows, cascaded shadow mapping.
+2. SSAO, fixing existing MSAA.
+3. Ray tracing both CPU and GPU based.
+4. Skeletal/skin animation import and processing.
+5. Fixing existing light sources like direction, point, flash, HDR env.
+6. UI menubar with "Scene" and "Project" menu navigation features.
+7. Fixing rest of UI issues.
+
 ## Manual build instructions
 
 ### Install CMake
