@@ -86,16 +86,6 @@ namespace engine::ecs {
         static vector<ComponentType>* componentTypes;
     };
 
-#define validate_entity(tag, entityId, result) if ((entityId) == invalid_entity_id) { \
-        ENGINE_WARN("{0}: entity is invalid!", tag);                 \
-        return result;                                                             \
-}
-
-#define validate_component(tag, Component, result) if (!BaseComponent::isValid<Component>()) {   \
-        ENGINE_WARN("{0}: component type with id {1} is invalid!", tag, Component::ID); \
-        return result;                                                            \
-}
-
     // Component
 
     // used to statically register Component type for further runtime usage
@@ -225,7 +215,7 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
 
     template<class Component, typename... Args>
     entity_id Registry::createEntity(Args&&... componentArgs) {
-        validate_component("createEntity()", Component, invalid_entity_id);
+        ENGINE_ASSERT(BaseComponent::isValid<Component>(), "BaseComponent::isValid failed -> invalid component id!");
 
         entity_id newEntityId = createEntity();
         addComponent<Component>(newEntityId, std::forward<Args>(componentArgs)...);
@@ -234,8 +224,8 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
 
     template<class Component, typename... Args>
     bool Registry::addComponent(entity_id entityId, Args&&... componentArgs) {
-        validate_entity("addComponent()", entityId, false);
-        validate_component("addComponent", Component, false);
+        ENGINE_ASSERT(entityId != invalid_entity_id, "addComponent() failed -> invalid entity id!");
+        ENGINE_ASSERT(BaseComponent::isValid<Component>(), "BaseComponent::isValid failed -> invalid component id!");
 
         auto component = Component { std::forward<Args>(componentArgs)... };
         component_id componentId = Component::ID;
@@ -256,8 +246,8 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
 
     template<class Component>
     bool Registry::removeComponent(entity_id entityId) {
-        validate_entity("removeComponent()", entityId, false);
-        validate_component("removeComponent()", Component, false);
+        ENGINE_ASSERT(entityId != invalid_entity_id, "addComponent() failed -> invalid entity id!");
+        ENGINE_ASSERT(BaseComponent::isValid<Component>(), "BaseComponent::isValid failed -> invalid component id!");
 
         component_id componentId = Component::ID;
         auto& entityData = toEntityData(entityId);
@@ -279,8 +269,8 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
 
     template<class Component>
     Component* Registry::getComponent(entity_id entityId) {
-        validate_entity("getComponent()", entityId, invalid_entity_id);
-        validate_component("getComponent()", Component, nullptr);
+        ENGINE_ASSERT(entityId != invalid_entity_id, "getComponent() failed -> invalid entity id!");
+        ENGINE_ASSERT(BaseComponent::isValid<Component>(), "getComponent failed -> invalid component id!");
 
         auto& entityData = toEntityData(entityId);
         component_id componentId = Component::ID;
@@ -303,7 +293,7 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
 
     template<class Component, typename Function>
     void Registry::each(const Function& function) {
-        validate_component("each()", Component, );
+        ENGINE_ASSERT(BaseComponent::isValid<Component>(), "BaseComponent::isValid failed -> invalid component id!");
 
         component_data& componentData = components[Component::ID];
         for (u32 i = 0 ; i < componentData.size() ; i += Component::TYPE_SIZE) {
@@ -314,8 +304,8 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
 
     template<class Component1, class Component2, typename Function>
     void Registry::each(const Function& function) {
-        validate_component("each()", Component1, );
-        validate_component("each()", Component2, );
+        ENGINE_ASSERT(BaseComponent::isValid<Component1>(), "BaseComponent::isValid failed -> invalid Component1 id!");
+        ENGINE_ASSERT(BaseComponent::isValid<Component2>(), "BaseComponent::isValid failed -> invalid Component2 id!");
 
         component_data& componentData1 = components[Component1::ID];
         for (u32 i = 0 ; i < componentData1.size() ; i += Component1::TYPE_SIZE) {
@@ -330,9 +320,9 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
 
     template<class Component1, class Component2, class Component3, typename Function>
     void Registry::each(const Function& function) {
-        validate_component("each()", Component1, );
-        validate_component("each()", Component2, );
-        validate_component("each()", Component3, );
+        ENGINE_ASSERT(BaseComponent::isValid<Component1>(), "BaseComponent::isValid failed -> invalid Component1 id!");
+        ENGINE_ASSERT(BaseComponent::isValid<Component2>(), "BaseComponent::isValid failed -> invalid Component2 id!");
+        ENGINE_ASSERT(BaseComponent::isValid<Component3>(), "BaseComponent::isValid failed -> invalid Component3 id!");
 
         component_data& componentData1 = components[Component1::ID];
         for (u32 i = 0 ; i < componentData1.size() ; i += Component1::TYPE_SIZE) {
@@ -358,7 +348,7 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
 
     template<class ByComponent>
     entity_id Registry::findEntity(const std::function<bool(ByComponent*)> &condition) {
-        validate_component("findEntity()", ByComponent, invalid_entity_id);
+        ENGINE_ASSERT(BaseComponent::isValid<ByComponent>(), "BaseComponent::isValid failed -> invalid ByComponent id!");
 
         component_data& componentData = components[ByComponent::ID];
         for (u32 i = 0 ; i < componentData.size() ; i += ByComponent::TYPE_SIZE) {
@@ -373,8 +363,8 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
 
     template<class ByComponent, class ResultComponent>
     ResultComponent *Registry::findComponent(const std::function<bool(ByComponent*)> &condition) {
-        validate_component("find()", ByComponent, );
-        validate_component("find()", ResultComponent, );
+        ENGINE_ASSERT(BaseComponent::isValid<ByComponent>(), "BaseComponent::isValid failed -> invalid ByComponent id!");
+        ENGINE_ASSERT(BaseComponent::isValid<ResultComponent>(), "BaseComponent::isValid failed -> invalid ResultComponent id!");
 
         component_data& componentData = components[ByComponent::ID];
         for (u32 i = 0 ; i < componentData.size() ; i += ByComponent::TYPE_SIZE) {
@@ -387,7 +377,7 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
 
     template<class Component, typename Function>
     void Registry::eachPair(const Function &function) {
-        validate_component("eahcCompare()", Component, );
+        ENGINE_ASSERT(BaseComponent::isValid<Component>(), "eachPair failed -> invalid Component id!");
 
         u32 typeSize = Component::TYPE_SIZE;
         component_data& componentData = components[Component::ID];
@@ -402,8 +392,8 @@ struct component_type : engine::ecs::Component<component_type<template_type>>
 
     template<class Component1, class Component2, typename Function>
     void Registry::eachPair(const Function &function) {
-        validate_component("eachCompare()", Component1, );
-        validate_component("eachCompare()", Component2, );
+        ENGINE_ASSERT(BaseComponent::isValid<Component1>(), "eachPair failed -> invalid Component1 id!");
+        ENGINE_ASSERT(BaseComponent::isValid<Component2>(), "eachPair failed -> invalid Component2 id!");
 
         u32 typeSize1 = Component1::TYPE_SIZE;
         u32 typeSize2 = Component2::TYPE_SIZE;

@@ -145,8 +145,10 @@ namespace engine::core {
         Ref<tools::FileDialog> createFileDialog();
         void setSampleSize(int samples);
         void setActiveScene(const Ref<Scene>& activeScene);
-        void setActiveScene(u32 activeSceneId);
-        void pushScenes(const vector<Ref<Scene>>& scenes);
+        void addScene(const Ref<Scene>& scene);
+        void addScenes(const vector<Ref<Scene>>& scenes);
+        void removeScene(const std::string& name);
+        void clearScenes();
         void loadGamepadMappings(const char* mappingsFilePath);
         void setSkybox(Ref<Scene>& scene, const Entity& skybox) const;
         void setSkyCube(
@@ -184,7 +186,6 @@ namespace engine::core {
         void initTextureMixer();
 
     public:
-        std::vector<Ref<Scene>> scenes;
         Ref<Scene> activeScene;
         Ref<FrameBuffer> activeSceneFrame;
         Ref<FrameBuffer> msaaFrame;
@@ -207,12 +208,11 @@ namespace engine::core {
 
     private:
         static Application* instance;
-
-    private:
         bool _isRunning = true;
         // core systems
         LayerStack _layerStack;
         Scope<Window> _window;
+        unordered_map<std::string, Ref<Scene>> scenes;
     };
 
     Application* createApplication();

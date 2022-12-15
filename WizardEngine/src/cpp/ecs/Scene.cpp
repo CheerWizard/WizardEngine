@@ -33,4 +33,19 @@ namespace engine::ecs {
         return { this, entityId };
     }
 
+    void Scene::findEntity(int uuid, Entity& entity) {
+        UUIDComponent uuidComponent((engine::uuid(uuid)));
+        entity_id entityId = registry.findEntity<UUIDComponent>([&uuidComponent](UUIDComponent* found) {
+            return *found == uuidComponent;
+        });
+        if (entityId != invalid_entity_id) {
+            entity.setId(entityId);
+        }
+    }
+
+    void Scene::init() {
+        skybox = Entity(this);
+        hdrEnv = Entity(this);
+    }
+
 }

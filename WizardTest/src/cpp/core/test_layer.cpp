@@ -78,14 +78,14 @@ namespace test {
         scene->setCamera(mainCamera);
 
         // setup skybox
-//        app.setSkyCube(scene, "Skybox", {
-//                { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
-//                { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
-//                { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
-//                { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
-//                { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
-//                { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
-//        });
+        app.setSkyCube(scene, "Skybox", {
+                { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
+                { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
+                { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
+                { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
+                { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
+                { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
+        });
 
         // spawn random objects
 //        math::random(-10, 10, 1, [this, &scene](int i, f32 r) {
@@ -208,7 +208,8 @@ namespace test {
 //        instanceRenderer->getShader().addScript(shaderScript);
 
         // setup HDR env
-        Application::get().setHdrEnvCube(scene, "assets/hdr/ice_lake.hdr");
+        // todo fix hdr cube map conversion
+//        Application::get().setHdrEnvCube(scene, "assets/hdr/ice_lake.hdr");
 
 //        Cube<BatchVertex<Vertex3d>> cube;
 //        Object<BatchVertex<Vertex3d>> cubeObj {
@@ -249,8 +250,6 @@ namespace test {
         // disable screen rendering as we are using ImGui for scene rendering
         RenderSystem::enableScreenRenderer = false;
 
-        ProjectsPanel::init();
-
         Ref<FileDialog> fileDialog = createRef<FileDialog>(app.getNativeWindow());
         AssetBrowser::create(fileDialog, { "AssetBrowser" });
         MaterialPanel::create(fileDialog);
@@ -262,7 +261,6 @@ namespace test {
 
     TestLayer::~TestLayer() {
         AssetBrowser::destroy();
-        ProjectsPanel::destroy();
         Log::clear();
         tcp::Client::close();
         udp::Client::close();
@@ -615,7 +613,7 @@ namespace test {
     }
 
     void TestLayer::onVisualDraw(time::Time dt) {
-        Visual::showDemoWindow();
+        Visual::drawDockspace();
         // toolbar
         Toolbar::get().draw();
 //        // Scene hierarchy and properties
@@ -628,7 +626,7 @@ namespace test {
 //        // Troubleshoot
         ProfilerMenu::draw(1024, 768);
 //        // Projects storage
-        ProjectsPanel::draw();
+        ProjectsPanel::get().draw();
 //        // Assets explorer
         AssetBrowser::draw(dt);
 //        // Logger

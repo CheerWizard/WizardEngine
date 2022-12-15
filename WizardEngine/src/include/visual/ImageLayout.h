@@ -29,10 +29,7 @@ namespace engine::visual {
     public:
         ImageLayout(const ImageLayoutProps &props) : props(props) {}
         ImageLayout(const char* title, u32 width, u32 height) : props(title, width, height) {}
-
-        virtual ~ImageLayout() {
-            destroy();
-        }
+        virtual ~ImageLayout();
 
     public:
         virtual void onUpdate(time::Time dt);
@@ -76,7 +73,6 @@ namespace engine::visual {
 
     protected:
         void end();
-        void destroy();
 
     private:
         Ref<Scene> scene;

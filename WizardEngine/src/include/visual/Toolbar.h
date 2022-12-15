@@ -24,7 +24,6 @@ namespace engine::visual {
 
     private:
         void onScenePlay();
-        void onScenePause();
         void onSceneStop();
         void onSceneStep();
         void onSceneSimulate();

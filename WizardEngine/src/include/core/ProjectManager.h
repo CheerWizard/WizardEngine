@@ -77,6 +77,7 @@ namespace engine::core {
         static void open(const char* projectName);
         static void openScripts(const char* projectName);
         static void openScripts(const Project& project);
+        static void closeProject();
 
         inline static const Project& getCurrentProject();
         inline static void setCurrentProject(const char* projectName);

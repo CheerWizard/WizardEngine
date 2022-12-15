@@ -46,7 +46,7 @@ namespace engine::visual {
 
         static void sameLine();
         static void separator();
-        static void showDemoWindow();
+        static void drawDockspace();
 
     public:
         static bool fullScreen;
@@ -54,11 +54,6 @@ namespace engine::visual {
         static bool blockEvents;
 
     private:
-        // docking space
-        static void beginDockspace();
-        static void setDockspace();
-        static void endDockspace();
-
         static vector<ImFont*> fonts;
         static int windowFlags;
         static int dockspaceFlags;
