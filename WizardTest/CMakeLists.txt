@@ -23,5 +23,5 @@ replace_dirs(WizardEngine/core_shaders WizardTest/core_shaders)
 replace_dirs(WizardTest/assets WizardTest/assets)
 
 move_to_build(properties.yaml)
-move_to_build(Visual)
+move_to_build(Visual.ini)
 move_to_build(WizardTest.png)

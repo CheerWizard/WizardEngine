@@ -186,4 +186,6 @@ namespace engine::graphics {
     };
 
     ENGINE_API void enableSRGB();
+
+    ENGINE_API void setViewPort(int x, int y, int w, int h);
 }

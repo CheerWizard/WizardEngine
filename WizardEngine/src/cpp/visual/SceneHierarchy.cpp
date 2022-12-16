@@ -625,7 +625,7 @@ namespace engine::visual {
         // ----- hierarchy panel -----
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
         static bool open = true;
-        ImGui::Begin(ICON_FA_TREE " Scene Hierarchy", &open);
+        ImGui::Begin(ICON_FA_OBJECT_GROUP " Scene Hierarchy", &open);
         auto& app = Application::get();
 
         for (auto& [sceneName, scene] : app.getScenes()) {
@@ -649,12 +649,15 @@ namespace engine::visual {
             ImGui::EndPopup();
         }
         ImGui::End();
+        ImGui::PopStyleVar();
         // ----- components panel -----
-        ImGui::Begin("Properties");
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
+        static bool propOpen = true;
+
+        ImGui::Begin(ICON_FA_TABLE" Properties", &propOpen);
         if (_selectedEntity) {
             drawComponents(_selectedEntity);
         }
-
         ImGui::End();
         ImGui::PopStyleVar();
     }

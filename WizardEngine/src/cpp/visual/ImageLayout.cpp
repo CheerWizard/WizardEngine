@@ -4,6 +4,7 @@
 
 #include <visual/ImageLayout.h>
 #include <visual/Visual.h>
+#include <visual/FontAwesome4.h>
 #include <core/Application.h>
 #include <imgui.h>
 
@@ -15,7 +16,8 @@ namespace engine::visual {
 
     void ImageLayout::onUpdate(time::Time dt) {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
-        ImGui::Begin("Viewport");
+        static bool open = true;
+        ImGui::Begin(ICON_FA_TELEVISION" Viewport", &open);
 
         auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
         auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
@@ -23,7 +25,7 @@ namespace engine::visual {
 
         viewportFocused = ImGui::IsWindowFocused();
         viewportHovered = ImGui::IsWindowHovered();
-        Visual::blockEvents = !viewportHovered;
+        Visual::blockEvents = !viewportHovered || !viewportFocused;
 
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 

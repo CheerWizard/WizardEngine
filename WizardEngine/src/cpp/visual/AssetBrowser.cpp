@@ -108,7 +108,7 @@ namespace engine::visual {
 
     void AssetBrowser::draw(Time dt) {
         static bool open = true;
-        if (!ImGui::Begin(ICON_FA_FILTER" Assets", &open)) {
+        if (!ImGui::Begin(ICON_FA_FOLDER" Assets", &open)) {
             ImGui::End();
             return;
         }

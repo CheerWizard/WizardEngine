@@ -136,6 +136,7 @@ namespace engine::core {
         // update tools system
 #ifdef VISUAL
         Visual::begin();
+        Visual::onUpdate(dt);
         _layerStack.onVisualDraw(dt);
         Visual::end();
 #endif
@@ -191,15 +192,22 @@ namespace engine::core {
 
     void Application::onKeyPressed(event::KeyCode keyCode) {
         PROFILE_FUNCTION();
-        _layerStack.onKeyPressed(keyCode);
-        EventRegistry::onKeyPressedMap[keyCode].function(keyCode);
 #ifdef VISUAL
         Visual::onKeyPressed(keyCode);
+        if (Visual::blocksKeyboard())
+            return;
 #endif
+        _layerStack.onKeyPressed(keyCode);
+        EventRegistry::onKeyPressedMap[keyCode].function(keyCode);
     }
 
     void Application::onKeyHold(event::KeyCode keyCode) {
         PROFILE_FUNCTION();
+#ifdef VISUAL
+        Visual::onKeyHold(keyCode);
+        if (Visual::blocksKeyboard())
+            return;
+#endif
         _layerStack.onKeyHold(keyCode);
         if (activeScene) {
             auto& camera = activeScene->getCamera();
@@ -231,65 +239,74 @@ namespace engine::core {
             }
         }
         EventRegistry::onKeyHoldMap[keyCode] = true;
-#ifdef VISUAL
-        Visual::onKeyHold(keyCode);
-#endif
     }
 
     void Application::onKeyReleased(event::KeyCode keyCode) {
         PROFILE_FUNCTION();
+#ifdef VISUAL
+        Visual::onKeyReleased(keyCode);
+        if (Visual::blocksKeyboard())
+            return;
+#endif
         _layerStack.onKeyReleased(keyCode);
         EventRegistry::onKeyReleasedMap[keyCode].function(keyCode);
         EventRegistry::onKeyHoldMap[keyCode] = false;
-#ifdef VISUAL
-        Visual::onKeyReleased(keyCode);
-#endif
     }
 
     void Application::onMousePressed(event::MouseCode mouseCode) {
         PROFILE_FUNCTION();
+#ifdef VISUAL
+        Visual::onMousePressed(mouseCode);
+        if (Visual::blocksMouse())
+            return;
+#endif
         _layerStack.onMousePressed(mouseCode);
         EventRegistry::onMousePressedMap[mouseCode].function(mouseCode);
         EventRegistry::mouseHoldMap[mouseCode] = true;
-#ifdef VISUAL
-        Visual::onMousePressed(mouseCode);
-#endif
     }
 
     void Application::onMouseRelease(event::MouseCode mouseCode) {
         PROFILE_FUNCTION();
+#ifdef VISUAL
+        Visual::onMouseRelease(mouseCode);
+        if (Visual::blocksMouse())
+            return;
+#endif
         _layerStack.onMouseRelease(mouseCode);
         EventRegistry::onMouseReleasedMap[mouseCode].function(mouseCode);
         EventRegistry::mouseHoldMap[mouseCode] = false;
-#ifdef VISUAL
-        Visual::onMouseRelease(mouseCode);
-#endif
     }
 
     void Application::onMouseScrolled(double xOffset, double yOffset) {
         PROFILE_FUNCTION();
-        _layerStack.onMouseScrolled(xOffset, yOffset);
-        EventRegistry::onMouseScrolled.function(xOffset, yOffset);
 #ifdef VISUAL
         Visual::onMouseScrolled(xOffset, yOffset);
+        if (Visual::blocksMouse())
+            return;
 #endif
+        _layerStack.onMouseScrolled(xOffset, yOffset);
+        EventRegistry::onMouseScrolled.function(xOffset, yOffset);
     }
 
     void Application::onCursorMoved(double xPos, double yPos) {
         PROFILE_FUNCTION();
-        _layerStack.onCursorMoved(xPos, yPos);
-        EventRegistry::onCursorMoved.function(xPos, yPos);
 #ifdef VISUAL
         Visual::onCursorMoved(xPos, yPos);
+        if (Visual::blocksMousePos())
+            return;
 #endif
+        _layerStack.onCursorMoved(xPos, yPos);
+        EventRegistry::onCursorMoved.function(xPos, yPos);
     }
 
     void Application::onKeyTyped(event::KeyCode keyCode) {
         PROFILE_FUNCTION();
-        _layerStack.onKeyTyped(keyCode);
 #ifdef VISUAL
         Visual::onKeyTyped(keyCode);
+        if (Visual::blocksTextInput())
+            return;
 #endif
+        _layerStack.onKeyTyped(keyCode);
     }
 
     float Application::getAspectRatio() const {

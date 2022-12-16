@@ -11,16 +11,19 @@
 #include <graphics/core/shader/Uniform.h>
 #include <graphics/camera/Camera.h>
 #include <graphics/transform/TransformComponents.h>
+#include <time/Time.h>
 
 namespace engine::visual {
 
     using namespace core;
     using namespace shader;
     using namespace math;
+    using namespace time;
 
     class ENGINE_API Visual final {
 
     public:
+        static void onUpdate(Time dt);
         // core lifecycle
         static void init(void* nativeWindow);
         static void begin();
@@ -42,11 +45,16 @@ namespace engine::visual {
         static void onMouseRelease(event::MouseCode mouseCode);
         static void onCursorMoved(double xPos, double yPos);
         static void onWindowClosed();
-        static void onWindowResized(const uint32_t &width, const uint32_t &height);
+        static void onWindowResized(u32 width, u32 height);
 
         static void sameLine();
         static void separator();
         static void drawDockspace();
+
+        static bool blocksKeyboard();
+        static bool blocksMouse();
+        static bool blocksTextInput();
+        static bool blocksMousePos();
 
     public:
         static bool fullScreen;
