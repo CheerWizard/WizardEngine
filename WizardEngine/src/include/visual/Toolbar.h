@@ -2,8 +2,11 @@
 
 #include <visual/Visual.h>
 #include <graphics/core/texture/Texture.h>
+#include <ecs/Scene.h>
 
 namespace engine::visual {
+
+    using namespace ecs;
 
     class ENGINE_API Toolbar final {
 
@@ -33,6 +36,8 @@ namespace engine::visual {
         u32 pauseIcon = invalidTextureId;
         u32 simulateIcon = invalidTextureId;
         u32 stepIcon = invalidTextureId;
+        bool isPaused = false;
+        SceneState sceneState = SceneState::EDIT;
     };
 
 }

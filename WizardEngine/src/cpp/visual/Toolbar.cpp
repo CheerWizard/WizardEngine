@@ -40,7 +40,13 @@ namespace engine::visual {
         ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
 
         auto& activeScene = Application::get().activeScene;
-        auto sceneState = activeScene->getState();
+        if (activeScene) {
+            sceneState = activeScene->getState();
+            isPaused = activeScene->isPaused;
+        } else {
+            sceneState = SceneState::EDIT;
+            isPaused = false;
+        }
 
         bool hasPlayButton = sceneState == SceneState::EDIT || sceneState == SceneState::PLAY;
         bool hasSimulateButton = sceneState == SceneState::EDIT || sceneState == SceneState::SIMULATE;
@@ -81,7 +87,6 @@ namespace engine::visual {
         }
 
         if (hasPauseButton) {
-            bool isPaused = activeScene->isPaused;
             ImGui::SameLine();
             {
                 if (ImGui::ImageButton((ImTextureID) pauseIcon,
@@ -90,7 +95,10 @@ namespace engine::visual {
                                        0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
                                        tintColor) && enabled)
                 {
-                    activeScene->isPaused = !isPaused;
+                    isPaused = !isPaused;
+                    if (activeScene) {
+                        activeScene->isPaused = isPaused;
+                    }
                 }
             }
 
@@ -110,21 +118,26 @@ namespace engine::visual {
                 }
             }
         }
+
+        auto& scene = Application::get().activeScene;
+        if (scene) {
+            scene->setState(sceneState);
+            scene->isPaused = isPaused;
+        }
+
         ImGui::PopStyleVar(2);
         ImGui::PopStyleColor(3);
         ImGui::End();
     }
 
     void Toolbar::onScenePlay() {
-        auto& scene = Application::get().activeScene;
-        scene->setState(SceneState::PLAY);
-        scene->isPaused = false;
+        sceneState = SceneState::PLAY;
+        isPaused = false;
     }
 
     void Toolbar::onSceneStop() {
-        auto& scene = Application::get().activeScene;
-        scene->setState(SceneState::EDIT);
-        scene->isPaused = true;
+        sceneState = SceneState::EDIT;
+        isPaused = true;
     }
 
     void Toolbar::onSceneStep() {
@@ -132,8 +145,7 @@ namespace engine::visual {
     }
 
     void Toolbar::onSceneSimulate() {
-        auto& scene = Application::get().activeScene;
-        scene->setState(SceneState::SIMULATE);
-        scene->isPaused = false;
+        sceneState = SceneState::SIMULATE;
+        isPaused = false;
     }
 }

@@ -34,6 +34,7 @@
 #include <graphics/materials/Color.h>
 #include <graphics/materials/Material.h>
 #include <graphics/hdr_env/hdr_env.h>
+#include <graphics/camera/CameraShaderScript.h>
 
 #include <scripting/ScriptSystem.h>
 #include <scripting/ScriptManager.h>
@@ -58,15 +59,15 @@ using namespace engine::ecs;
 using namespace engine::physics;
 using namespace engine::scripting;
 
-#define KEY_PRESSED(key, action) engine::event::EventRegistry::onKeyPressedMap[key] = { [this](KeyCode keyCode) { action } }
-#define KEY_RELEASED(key, action) engine::event::EventRegistry::onKeyReleasedMap[key] = { [this](KeyCode keyCode) { action } }
-#define KEY_TYPED(key, action) engine::event::EventRegistry::onKeyTypedMap[key] = { [this](KeyCode keyCode) { action } }
-#define KEY_HOLD(key, action) engine::event::EventRegistry::onKeyHoldMap[key] = { [this](KeyCode keyCode) { action } }
+#define KEY_PRESSED(key) engine::event::EventRegistry::onKeyPressedMap[key] =
+#define KEY_RELEASED(key) engine::event::EventRegistry::onKeyReleasedMap[key] =
+#define KEY_TYPED(key) engine::event::EventRegistry::onKeyTypedMap[key] =
+#define KEY_HOLD(key) engine::event::EventRegistry::onKeyHoldMap[key] =
 
-#define GAMEPAD_PRESSED(btn, action) engine::event::EventRegistry::onGamepadButtonPressedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
-#define GAMEPAD_RELEASED(btn, action) engine::event::EventRegistry::onGamepadButtonReleasedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
-#define GAMEPAD_ROLL_LEFT(action) engine::event::EventRegistry::onGamepadRollLeft.function = { [this](const GamepadRoll& roll) { action } }
-#define GAMEPAD_ROLL_RIGHT(action) engine::event::EventRegistry::onGamepadRollRight.function = { [this](const GamepadRoll& roll) { action } }
+#define GAMEPAD_PRESSED(btn) engine::event::EventRegistry::onGamepadButtonPressedMap[btn] =
+#define GAMEPAD_RELEASED(btn) engine::event::EventRegistry::onGamepadButtonReleasedMap[btn] =
+#define GAMEPAD_ROLL_LEFT(action) engine::event::EventRegistry::onGamepadRollLeft.function =
+#define GAMEPAD_ROLL_RIGHT(action) engine::event::EventRegistry::onGamepadRollRight.function =
 
 #ifdef VISUAL
 #include <visual/Visual.h>
@@ -105,6 +106,10 @@ namespace engine::core {
 
         inline const Scope<Window>& getWindow() {
             return _window;
+        }
+
+        inline unordered_map<std::string, Ref<Scene>>& getScenes() {
+            return scenes;
         }
 
     public:
@@ -163,6 +168,9 @@ namespace engine::core {
         ) const;
         void setHdrEnv(Ref<Scene>& scene, const Entity& hdrEnv) const;
         void setHdrEnvCube(Ref<Scene>& scene, const char* filepath) const;
+        Ref<Scene> createDefaultScene(const std::string& sceneName);
+        Ref<Renderer> createBatchRenderer();
+        Ref<Renderer> createInstanceRenderer();
 
     protected:
         void pushFront(Layer* layer);
@@ -185,8 +193,17 @@ namespace engine::core {
         void initGaussianBlur();
         void initTextureMixer();
 
+        void bindCamera(Camera3D& camera);
+
+        void onPadA();
+        void onPadB();
+        void onPadX();
+        void onPadY();
+        void onGamepadRollLeft(const GamepadRoll& roll);
+        void onGamepadRollRight(const GamepadRoll& roll);
+
     public:
-        Ref<Scene> activeScene;
+        Ref<Scene> activeScene = nullptr;
         Ref<FrameBuffer> activeSceneFrame;
         Ref<FrameBuffer> msaaFrame;
         Ref<FrameBuffer> shadowsFrame;

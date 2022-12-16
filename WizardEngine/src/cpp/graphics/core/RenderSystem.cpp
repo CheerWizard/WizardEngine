@@ -15,12 +15,13 @@ namespace engine::graphics {
     Ref<FrameBuffer> RenderSystem::shadowsFrame;
     // screen
     ScreenRenderer RenderSystem::screenRenderer;
-    bool RenderSystem::enableScreenRenderer = true;
     // skybox
     SkyboxRenderer RenderSystem::skyboxRenderer;
     // HDR env
     HdrEnvRenderer RenderSystem::hdrEnvRenderer;
     // scene
+    Ref<Renderer> RenderSystem::batchRenderer;
+    Ref<Renderer> RenderSystem::instanceRenderer;
     vector<Ref<Renderer>> RenderSystem::sceneRenderers;
     // outlining
     vector<Ref<Renderer>> RenderSystem::outlineRenderers;
@@ -43,7 +44,8 @@ namespace engine::graphics {
         screenRenderer.release();
         skyboxRenderer.release();
         hdrEnvRenderer.release();
-//        pointRenderer.release();
+        batchRenderer->release();
+        instanceRenderer->release();
         for (const auto& sceneRenderer : sceneRenderers) {
             sceneRenderer->release();
         }
@@ -97,6 +99,8 @@ namespace engine::graphics {
 
         auto& registry = activeScene->getRegistry();
         // scene
+        batchRenderer->render(registry);
+        instanceRenderer->render(registry);
         for (const auto& renderer : sceneRenderers) {
             renderer->render(registry);
         }
@@ -159,12 +163,12 @@ namespace engine::graphics {
         // bind to window default frame buffer and draw screen
         disableDepthTest();
         FrameBuffer::bindDefault();
-        if (enableScreenRenderer) {
-            screenRenderer.renderQuad(finalRenderTargetId);
-        } else {
-            setClearColor(0.5, 0.5, 0.5, 1);
-            clearBuffer(BufferBit::COLOR | BufferBit::DEPTH);
-        }
+#ifdef VISUAL // render into ImGui viewport
+        setClearColor(0.5, 0.5, 0.5, 1);
+        clearBuffer(BufferBit::COLOR | BufferBit::DEPTH);
+#else // render into default viewport
+        screenRenderer.renderQuad(finalRenderTargetId);
+#endif
     }
 
     void RenderSystem::setRenderSystemCallback(RenderSystemCallback* renderSystemCallback) {

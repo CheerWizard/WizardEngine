@@ -50,12 +50,13 @@ namespace engine::graphics {
         static Ref<FrameBuffer> shadowsFrame;
         // screen
         static ScreenRenderer screenRenderer;
-        static bool enableScreenRenderer;
         // skybox
         static SkyboxRenderer skyboxRenderer;
         // HDR env
         static HdrEnvRenderer hdrEnvRenderer;
         // scene
+        static Ref<Renderer> batchRenderer;
+        static Ref<Renderer> instanceRenderer;
         static vector<Ref<Renderer>> sceneRenderers;
         // outlining
         static vector<Ref<Renderer>> outlineRenderers;

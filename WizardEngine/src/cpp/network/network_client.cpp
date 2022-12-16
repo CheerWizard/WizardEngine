@@ -50,14 +50,12 @@ namespace engine::network {
                 if (okStatus == SOCKET_ERROR) {
                     u32 errorCode = socket::getLastError();
                     ENGINE_ERR("TCP_Sender: Send failed, error: {0}", errorCode);
-                    if (listener) {
+                    if (listener)
                         listener->onTCPSenderFailed(request.data, request.size);
-                    }
                 }
 
-                if (listener) {
+                if (listener)
                     listener->onTCPSenderSuccess();
-                }
 
                 requestQueue.pop();
             }
@@ -99,9 +97,8 @@ namespace engine::network {
                 if (receivedSize == SOCKET_ERROR) {
                     u32 errorCode = socket::getLastError();
                     ENGINE_ERR("TCP_Receiver: Receiver Failed. \nError = {0}", errorCode);
-                    if (listener) {
+                    if (listener)
                         listener->onTCPReceiverFailed(data, kb_1);
-                    }
                     continue;
                 }
 
@@ -112,60 +109,44 @@ namespace engine::network {
                     // todo in future we should also support HTTP or other data type
                     std::pair<YAML::Node, GDHeader> gdNodeHeader;
                     GDSerializer::deserialize(data, gdNodeHeader);
-                    if (listener) {
+                    if (listener)
                         listener->onTCPReceiverSuccess(gdNodeHeader.first, gdNodeHeader.second);
-                    }
                 }
             }
         }
 
-        SOCKET Client::clientSocket;
-
-        thread::VoidTask<const std::string&, const s32&> Client::connectionTask = {
-                "TCP_ClientConnection_Task",
-                "TCP_ClientConnection_Thread",
-                connectImpl
-        };
-
-        ClientListener* Client::listener = nullptr;
-
-        Ref<Sender> Client::sender;
-        Ref<Receiver> Client::receiver;
-
-        bool Client::init(
-                ClientListener* clientListener,
-                SenderListener* senderListener,
-                ReceiverListener* receiverListener
-        ) {
-            listener = clientListener;
-            sender = createRef<Sender>(senderListener);
-            receiver = createRef<Receiver>(receiverListener);
+        Client::Client() {
             clientSocket = socket::open(AF_INET, SOCK_STREAM, 0);
-
             if (clientSocket == INVALID_SOCKET) {
                 u32 errorCode = socket::getLastError();
                 ENGINE_ERR("TCP_Client: Unable to create a client socket! Unknown error={0}", errorCode);
-                listener->onTCPSocketClosed();
-                return false;
+                if (listener)
+                    listener->onTCPSocketClosed();
             }
-
-            return true;
         }
 
         void Client::close() {
-            connectionTask.isRunning = false;
+            connecting = false;
             sender->close();
             receiver->close();
             socket::close_socket(clientSocket);
-            listener->onTCPSocketClosed();
+            if (listener)
+                listener->onTCPSocketClosed();
             listener = nullptr;
         }
 
-        void Client::connect(const std::string &ip, const s32 &port) {
-            connectionTask.run(ip, port);
+        void Client::connect(const std::string &ip, int port) {
+            if (connecting)
+                return;
+            connectionTask = std::thread(&Client::connectImpl, this, ip, port);
+            connectionTask.detach();
         }
 
-        void Client::connectImpl(const std::string &ip, const s32 &port) {
+        RequestQueue& Client::getRequestQueue() {
+            return sender->getRequestQueue();
+        }
+
+        void Client::connectImpl(const std::string &ip, int port) {
             ENGINE_INFO("TCP_Client: connecting to a server[ip:{0}, port:{1}]", ip, port);
             s32 connection = socket::connect(clientSocket, AF_INET, ip.c_str(), port);
             // handle connection error and retry to connect!
@@ -173,12 +154,14 @@ namespace engine::network {
                 u32 errorCode = socket::getLastError();
                 switch (errorCode) {
                     case 10038 :
-                        ENGINE_ERR("TCP_Client: Unable to connect to server");
-                        listener->onTCPConnectionFailed();
+                    ENGINE_ERR("TCP_Client: Unable to connect to server");
+                        if (listener)
+                            listener->onTCPConnectionFailed();
                         break;
                     default :
-                        ENGINE_ERR("TCP_Client: Unable to create a connection socket! Unknown error={0}", errorCode);
-                        listener->onTCPConnectionFailed();
+                    ENGINE_ERR("TCP_Client: Unable to create a connection socket! Unknown error={0}", errorCode);
+                        if (listener)
+                            listener->onTCPConnectionFailed();
                         break;
                 }
 
@@ -187,13 +170,8 @@ namespace engine::network {
                 thread::current_sleep(retrySleepMs);
                 connectImpl(ip, port);
             }
-
             sender->run(clientSocket);
             receiver->run(clientSocket);
-        }
-
-        RequestQueue& Client::getRequestQueue() {
-            return sender->getRequestQueue();
         }
     }
 
@@ -299,58 +277,40 @@ namespace engine::network {
             stop();
         }
 
-        SOCKET Client::clientSocket;
-        sockaddr_in Client::server;
-
-        thread::VoidTask<const std::string&, const s32&> Client::connectionTask = {
-                "UDPClientConnection_Task",
-                "UDPClientConnection_Thread",
-                connectImpl
-        };
-
-        ClientListener* Client::listener = nullptr;
-        Ref<Sender> Client::sender;
-        Ref<Receiver> Client::receiver;
-
-        bool Client::init(
-                ClientListener* clientListener,
-                SenderListener* senderListener,
-                ReceiverListener* receiverListener
-        ) {
-            listener = clientListener;
-            sender = createRef<Sender>(senderListener);
-            receiver = createRef<Receiver>(receiverListener);
+        Client::Client() {
             clientSocket = socket::open(AF_INET, SOCK_DGRAM, 0);
-
             if (clientSocket == SOCKET_ERROR) {
                 u32 errorCode = socket::getLastError();
                 ENGINE_ERR("UDP_Client: Unable to create a client socket! Unknown error={0}", errorCode);
-                listener->onUDPSocketClosed();
-                return false;
+                if (listener)
+                    listener->onUDPSocketClosed();
             }
-
-            return true;
         }
 
         void Client::close() {
             sender->close();
             receiver->close();
             socket::close_socket(clientSocket);
-            listener->onUDPSocketClosed();
+            if (listener)
+                listener->onUDPSocketClosed();
             listener = nullptr;
         }
 
-        void Client::connect(const std::string &ip, const s32 &port) {
-            connectionTask.run(ip, port);
+        void Client::connect(const std::string &ip, int port) {
+            if (connecting)
+                return;
+            connecting = true;
+            connectionTask = std::thread(&Client::connectImpl, this, ip, port);
+            connectionTask.detach();
         }
 
-        void Client::connectImpl(const std::string &ip, const s32 &port) {
+        void Client::connectImpl(const std::string &ip, int port) {
             server.sin_family = AF_INET;
             server.sin_port = htons(port);
             inet_pton(AF_INET, ip.c_str(), &server.sin_addr);
-
             sender->run(clientSocket, server);
             receiver->run(clientSocket, server);
+            connecting = false;
         }
 
         RequestQueue& Client::getRequestQueue() {

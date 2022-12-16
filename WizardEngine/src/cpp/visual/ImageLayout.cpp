@@ -21,20 +21,24 @@ namespace engine::visual {
         auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
         auto viewportOffset = ImGui::GetWindowPos();
 
-        scene->viewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
-        scene->viewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
-
         viewportFocused = ImGui::IsWindowFocused();
         viewportHovered = ImGui::IsWindowHovered();
-
         Visual::blockEvents = !viewportHovered;
 
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        scene->viewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-        ImGui::Image((ImTextureID)(id),
-                     ImVec2{ scene->viewportSize.x, scene->viewportSize.y },
-                     ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+        if (scene) {
+            scene->viewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+            scene->viewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+            scene->viewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+        }
+
+        ImGui::Image(
+                (ImTextureID)(id),
+                viewportPanelSize,
+                { 0, 1 },
+                { 1, 0 }
+        );
 
         ImGui::End();
         ImGui::PopStyleVar();

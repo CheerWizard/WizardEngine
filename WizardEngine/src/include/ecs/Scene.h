@@ -64,6 +64,10 @@ namespace engine::ecs {
             return hdrEnv;
         }
 
+        bool operator==(const Scene& scene) const {
+            return name == scene.name;
+        }
+
     private:
         void init();
 

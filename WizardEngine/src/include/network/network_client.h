@@ -13,7 +13,7 @@ namespace engine::network {
 
     using namespace engine::core;
 
-    class ENGINE_API RequestQueue {
+    class ENGINE_API RequestQueue final {
 
     public:
         void push(const NetworkData& networkData);
@@ -40,11 +40,7 @@ namespace engine::network {
             virtual void onTCPSenderSuccess() = 0;
         };
 
-        class ENGINE_API Sender {
-
-        public:
-            Sender(SenderListener* listener) : listener(listener) {}
-            ~Sender() = default;
+        class ENGINE_API Sender final {
 
         public:
             void run(const SOCKET& clientSocket);
@@ -52,12 +48,16 @@ namespace engine::network {
             void close();
             RequestQueue& getRequestQueue();
 
+            inline void setListener(SenderListener* listener) {
+                this->listener = listener;
+            }
+
         private:
             void runImpl();
 
         private:
             SOCKET clientSocket;
-            SenderListener* listener;
+            SenderListener* listener = nullptr;
             thread::VoidTask<> senderTask;
             RequestQueue requestQueue;
         };
@@ -68,25 +68,25 @@ namespace engine::network {
             virtual void onTCPReceiverSuccess(const YAML::Node& gdNode, const GDHeader& header) = 0;
         };
 
-        class ENGINE_API Receiver {
-
-        public:
-            Receiver(ReceiverListener* listener) : listener(listener) {}
+        class ENGINE_API Receiver final {
 
         public:
             void run(const SOCKET& clientSocket);
             void stop();
             void close();
 
+            inline void setListener(ReceiverListener* listener) {
+                this->listener = listener;
+            }
+
         private:
             void runImpl();
 
         private:
             SOCKET clientSocket;
-            ReceiverListener* listener;
+            ReceiverListener* listener = nullptr;
             thread::VoidTask<> receiverTask;
         };
-
 
         class ENGINE_API ClientListener {
         public:
@@ -98,25 +98,40 @@ namespace engine::network {
 
         class ENGINE_API Client final {
 
+        private:
+            Client();
+
         public:
-            static bool init(
-                    ClientListener* clientListener,
-                    SenderListener* senderListener,
-                    ReceiverListener* receiverListener
-            );
-            static void close();
-            static void connect(const std::string& ip, const s32& port);
-            static RequestQueue& getRequestQueue();
+            static Client& get() {
+                static Client instance;
+                return instance;
+            }
+
+            void close();
+            void connect(const std::string& ip, int port);
+            RequestQueue& getRequestQueue();
+
+            inline void setListener(ClientListener* listener) {
+                this->listener = listener;
+            }
+
+            inline void setListener(SenderListener* listener) {
+                sender->setListener(listener);
+            }
+
+            inline void setListener(ReceiverListener* listener) {
+                receiver->setListener(listener);
+            }
 
         private:
-            static void connectImpl(const std::string& ip, const s32& port);
+            void connectImpl(const std::string& ip, int port);
 
-        private:
-            static SOCKET clientSocket;
-            static thread::VoidTask<const std::string&, const s32&> connectionTask;
-            static ClientListener* listener;
-            static Ref<Sender> sender;
-            static Ref<Receiver> receiver;
+            SOCKET clientSocket;
+            std::thread connectionTask;
+            bool connecting = false;
+            ClientListener* listener = nullptr;
+            Ref<Sender> sender = createRef<Sender>();
+            Ref<Receiver> receiver = createRef<Receiver>();
         };
     }
 
@@ -128,11 +143,7 @@ namespace engine::network {
             virtual void onUDPSenderSuccess() = 0;
         };
 
-        class ENGINE_API Sender {
-
-        public:
-            Sender(SenderListener* listener) : listener(listener) {}
-            ~Sender() = default;
+        class ENGINE_API Sender final {
 
         public:
             void run(const SOCKET& clientSocket, const sockaddr_in& server);
@@ -140,13 +151,17 @@ namespace engine::network {
             void close();
             RequestQueue& getRequestQueue();
 
+            inline void setListener(SenderListener* listener) {
+                this->listener = listener;
+            }
+
         private:
             void runImpl();
 
         private:
             SOCKET clientSocket;
             sockaddr_in server;
-            SenderListener* listener;
+            SenderListener* listener = nullptr;
             thread::VoidTask<> senderTask;
             RequestQueue requestQueue;
         };
@@ -157,15 +172,16 @@ namespace engine::network {
             virtual void onUDPReceiverSuccess(const YAML::Node& gdNode, const GDHeader& header) = 0;
         };
 
-        class ENGINE_API Receiver {
-
-        public:
-            Receiver(ReceiverListener* listener) : listener(listener) {}
+        class ENGINE_API Receiver final {
 
         public:
             void run(const SOCKET& clientSocket, const sockaddr_in& server);
             void stop();
             void close();
+
+            inline void setListener(ReceiverListener* listener) {
+                this->listener = listener;
+            }
 
         private:
             void runImpl();
@@ -173,7 +189,7 @@ namespace engine::network {
         private:
             SOCKET clientSocket;
             sockaddr_in server;
-            ReceiverListener* listener;
+            ReceiverListener* listener = nullptr;
             thread::VoidTask<> receiverTask;
         };
 
@@ -185,28 +201,43 @@ namespace engine::network {
 
         class ENGINE_API Client final {
 
+        private:
+            Client();
+
         public:
-            static bool init(
-                    ClientListener* clientListener,
-                    SenderListener* senderListener,
-                    ReceiverListener* receiverListener
-            );
-            static void close();
-            static void connect(const std::string& ip, const s32& port);
-            static RequestQueue& getRequestQueue();
+            static Client& get() {
+                static Client instance;
+                return instance;
+            }
+
+            inline void setListener(ClientListener* listener) {
+                this->listener = listener;
+            }
+
+            inline void setListener(SenderListener* listener) {
+                sender->setListener(listener);
+            }
+
+            inline void setListener(ReceiverListener* listener) {
+                receiver->setListener(listener);
+            }
+
+            void close();
+            void connect(const std::string& ip, int port);
+            RequestQueue& getRequestQueue();
 
         private:
-            static void connectImpl(const std::string& ip, const s32& port);
+            void connectImpl(const std::string& ip, int port);
 
         private:
-            static SOCKET clientSocket;
-            static sockaddr_in server;
-            static thread::VoidTask<const std::string&, const s32&> connectionTask;
-            static ClientListener* listener;
-            static Ref<Sender> sender;
-            static Ref<Receiver> receiver;
+            SOCKET clientSocket;
+            sockaddr_in server;
+            bool connecting = false;
+            std::thread connectionTask;
+            ClientListener* listener = nullptr;
+            Ref<Sender> sender = createRef<Sender>();
+            Ref<Receiver> receiver = createRef<Receiver>();
         };
-
     }
 
 }

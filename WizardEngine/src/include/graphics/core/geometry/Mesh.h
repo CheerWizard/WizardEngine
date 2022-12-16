@@ -7,8 +7,6 @@
 #include <graphics/core/buffer_data/VertexData.h>
 #include <graphics/core/buffer_data/IndexData.h>
 
-#define MIN_MESH_COUNT 1
-
 namespace engine::graphics {
 
     using namespace math;
@@ -56,7 +54,6 @@ namespace engine::graphics {
         u32 vertexStart = 0;
         u32 indexStart = 0;
         bool isUpdated = true;
-        u32 renderModelId = 0;
         u32 drawType = DrawType::TRIANGLE;
 
         BaseMeshComponent() = default;
@@ -87,7 +84,6 @@ namespace engine::graphics {
         meshComponent.vertexStart = vertexStart;
         meshComponent.indexStart = indexStart;
         meshComponent.isUpdated = isUpdated;
-        meshComponent.renderModelId = renderModelId;
         return meshComponent;
     }
 
@@ -106,7 +102,6 @@ namespace engine::graphics {
     template<typename T>
     BaseMeshComponent<T> BaseMeshComponent<T>::copy() const {
         BaseMeshComponent<T> copyMeshComponent;
-        copyMeshComponent.renderModelId = renderModelId;
         copyMeshComponent.isUpdated = isUpdated;
         copyMeshComponent.drawType = drawType;
         copyMeshComponent.indexStart = indexStart;

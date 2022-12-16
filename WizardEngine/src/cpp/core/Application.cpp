@@ -39,6 +39,8 @@ namespace engine::core {
         Visual::init(getNativeWindow());
         Visual::fullScreen = projectProps.windowProps.fullscreen;
         Visual::openDockspace = projectProps.windowProps.dockspace;
+        AssetBrowser::create(getNativeWindow());
+        MaterialPanel::create(getNativeWindow());
 #endif
         // init audio
         audio::DeviceManager::createContext();
@@ -49,6 +51,9 @@ namespace engine::core {
         initEdgeDetection();
         initGaussianBlur();
         initTextureMixer();
+        // setup common scene renderers
+        createBatchRenderer();
+        createInstanceRenderer();
 
         if (projectProps.launcher != "") {
             setActiveScene(io::LocalAssetManager::loadScene(projectProps.launcher.c_str()));
@@ -172,6 +177,9 @@ namespace engine::core {
         if (width == 0 || height == 0) return;
 
         _layerStack.onWindowResized(width, height);
+        if (activeScene) {
+            activeScene->getCamera().setAspectRatio(width, height);
+        }
 //        activeSceneFrame->resize(width, height);
 //        screenFrame->resize(width, height);
         EventRegistry::onWindowResized.function(width, height);
@@ -193,6 +201,35 @@ namespace engine::core {
     void Application::onKeyHold(event::KeyCode keyCode) {
         PROFILE_FUNCTION();
         _layerStack.onKeyHold(keyCode);
+        if (activeScene) {
+            auto& camera = activeScene->getCamera();
+            switch (keyCode) {
+                case W:
+                    camera.applyMove(UP);
+                    break;
+                case A:
+                    camera.applyMove(LEFT);
+                    break;
+                case S:
+                    camera.applyMove(DOWN);
+                    break;
+                case D:
+                    camera.applyMove(RIGHT);
+                    break;
+                case Q:
+                    camera.applyRotate(LEFT_Z);
+                    break;
+                case E:
+                    camera.applyRotate(RIGHT_Z);
+                    break;
+                case Z:
+                    camera.applyZoom(ZOOM_IN);
+                    break;
+                case X:
+                    camera.applyZoom(ZOOM_OUT);
+                    break;
+            }
+        }
         EventRegistry::onKeyHoldMap[keyCode] = true;
 #ifdef VISUAL
         Visual::onKeyHold(keyCode);
@@ -265,6 +302,7 @@ namespace engine::core {
         activeScene = scene;
         selectedEntity = Entity(activeScene.get());
         hoveredEntity = Entity(activeScene.get());
+        bindCamera(activeScene->getCamera());
         RenderSystem::activeScene = activeScene;
         ScriptSystem::activeScene = activeScene;
         Physics::activeScene = activeScene;
@@ -343,11 +381,29 @@ namespace engine::core {
     }
 
     void Application::onRuntimeUpdate(Time dt) {
-        if (!activeScene->isEmpty()) {
+        if (activeScene != nullptr && !activeScene->isEmpty()) {
             Physics::onUpdate(dt);
             ScriptSystem::onUpdate(dt);
             RenderSystem::onUpdate();
             _layerStack.onUpdate(dt);
+
+            auto& camera = activeScene->getCamera();
+            camera.onUpdate(dt);
+
+            if (EventRegistry::mouseHold(ButtonLeft)) {
+                RUNTIME_INFO("mouseHold: button left");
+                camera.applyMouseRotate();
+            }
+
+            if (EventRegistry::mouseHold(ButtonRight)) {
+                RUNTIME_INFO("mouseHold: button right");
+                camera.applyMouseMove();
+            }
+
+            if (EventRegistry::mouseHold(ButtonMiddle)) {
+                RUNTIME_INFO("mouseHold: button middle");
+                camera.applyMouseZoom();
+            }
         } else {
             ENGINE_WARN("Active scene is empty!");
         }
@@ -544,6 +600,240 @@ namespace engine::core {
         for (const auto& newScene : newScenes) {
             scenes[newScene->getName()] = newScene;
         }
+    }
+
+    Ref<Scene> Application::createDefaultScene(const std::string& sceneName) {
+        // setup scene, entities, components
+        auto scene = createRef<Scene>(sceneName);
+        Camera3D mainCamera("NewCamera", getAspectRatio(), scene.get());
+        scene->setCamera(mainCamera);
+        // setup skybox
+        setSkyCube(scene, "NewSkybox", {
+                { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
+                { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
+                { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
+                { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
+                { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
+                { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
+        });
+        // setup light sources
+        PhongLight("L_Sun_1", scene.get()).getPosition() = { -10, 10, -10 };
+        PhongLight("L_Sun_2", scene.get()).getPosition() = { 10, 10, 10 };
+        PhongLight("L_Sun_3", scene.get()).getPosition() = { -10, 10, 10 };
+        PhongLight("L_Sun_4", scene.get()).getPosition() = { 10, 10, -10 };
+        // setup geometry or mesh
+        // we need to flip textures as they will be loaded vice versa
+        io::TextureFile::setFlipTexture(true);
+        io::ModelFile<BatchVertex<Vertex3d>>::read(
+                "assets/SamuraiHelmet/source/SamuraiHelmet.fbx.fbx",
+                "assets/SamuraiHelmet/textures", {
+                        [&scene](const io::Model& model) {
+                            RUNTIME_INFO("ModelFile read: onSuccess");
+                            vector<Batch3d> entities;
+                            for (int i = 0; i < model.meshes.size(); i++) {
+                                auto modelMesh = model.meshes[i];
+                                BaseMeshComponent<BatchVertex<Vertex3d>> meshComponent;
+                                meshComponent.mesh = modelMesh.toMesh<BatchVertex<Vertex3d>>([](const io::ModelVertex& modelVertex) {
+                                    return BatchVertex<Vertex3d> {
+                                            modelVertex.position,
+                                            modelVertex.uv,
+                                            modelVertex.normal,
+                                            modelVertex.tangent,
+                                            modelVertex.bitangent,
+                                            0
+                                    };
+                                });
+                                std::stringstream ss;
+                                ss << "Entity_" << i;
+                                auto newEntity = Batch3d(scene.get());
+                                newEntity.get<TagComponent>()->tag = ss.str();
+                                newEntity.getTransform().position = { 1, 1, 1 };
+                                newEntity.applyTransform();
+                                newEntity.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(meshComponent);
+                                newEntity.add<Material>(modelMesh.material);
+                                entities.emplace_back(newEntity);
+                            }
+                            RenderSystem::batchRenderer->createVIRenderModel(entities);
+                        },
+                        [](const exception& exception) {
+                            RUNTIME_INFO("ModelFile read: onError");
+                            RUNTIME_EXCEPT(exception);
+                        }
+        });
+        return scene;
+    }
+
+    Ref<Renderer> Application::createBatchRenderer() {
+        auto entityHandler = [](
+                ecs::Registry& registry,
+                ecs::entity_id entityId,
+                u32 index,
+                BaseShaderProgram& shader
+        ) {
+            // pass entity id to shader
+            auto* uuid = registry.getComponent<UUIDComponent>(entityId);
+            IntUniform uuidUniform = { "uuids", uuid->uuid };
+            shader.setUniformArrayElement(index, uuidUniform);
+            ENGINE_INFO("UUID: {0}", uuid->uuid);
+            // update single material
+            auto material = registry.getComponent<Material>(entityId);
+            if (material) {
+                MaterialShader(shader).setMaterial(index, material);
+            }
+        };
+        // setup batch and instanced renderers
+        auto batchShader = shader::BaseShaderProgram(
+                io::ShaderProps {
+                        "batch",
+                        "v_batch.glsl",
+                        "scene_phong.glsl",
+                        ENGINE_SHADERS_PATH
+                },
+                BaseShader(),
+                BaseShader(),
+                { camera3dUboScript(), lightScript() }
+        );
+        batchShader.setInstancesPerDraw(4);
+        Ref<Renderer> batchRenderer = createRef<BatchRenderer<Vertex3d>>(batchShader);
+        batchRenderer->addEntityHandler(entityHandler);
+        RenderSystem::batchRenderer = batchRenderer;
+        return batchRenderer;
+    }
+
+    Ref<Renderer> Application::createInstanceRenderer() {
+        auto entityHandler = [](
+                ecs::Registry& registry,
+                ecs::entity_id entityId,
+                u32 index,
+                BaseShaderProgram& shader
+        ) {
+            // pass entity id to shader
+            auto* uuid = registry.getComponent<UUIDComponent>(entityId);
+            IntUniform uuidUniform = { "uuids", uuid->uuid };
+            shader.setUniformArrayElement(index, uuidUniform);
+            ENGINE_INFO("UUID: {0}", uuid->uuid);
+            // update single material
+            auto material = registry.getComponent<Material>(entityId);
+            if (material) {
+                MaterialShader(shader).setMaterial(index, material);
+            }
+        };
+        auto instanceShader = shader::BaseShaderProgram(
+                io::ShaderProps {
+                        "instance",
+                        "v_instance.glsl",
+                        "scene_phong.glsl",
+                        ENGINE_SHADERS_PATH
+                },
+                BaseShader(),
+                BaseShader(),
+                { camera3dUboScript(), lightScript() }
+        );
+        instanceShader.setInstancesPerDraw(4);
+        Ref<Renderer> instanceRenderer = createRef<InstanceRenderer<Vertex3d>>(instanceShader);
+        instanceRenderer->addEntityHandler(entityHandler);
+        RenderSystem::instanceRenderer = instanceRenderer;
+        return instanceRenderer;
+    }
+
+    void Application::bindCamera(Camera3D& camera) {
+        KEY_PRESSED(KeyCode::W) { [&camera](KeyCode keycode) {
+            camera.applyMove(MoveType::UP);
+        }};
+        KEY_PRESSED(KeyCode::A) { [&camera](KeyCode keycode) {
+            camera.applyMove(MoveType::LEFT);
+        }};
+        KEY_PRESSED(KeyCode::S) { [&camera](KeyCode keycode) {
+            camera.applyMove(MoveType::DOWN);
+        }};
+        KEY_PRESSED(KeyCode::D) { [&camera](KeyCode keycode) {
+            camera.applyMove(MoveType::RIGHT);
+        }};
+        KEY_PRESSED(KeyCode::Q) { [&camera](KeyCode keycode) {
+            camera.applyRotate(RotateType::LEFT_Z);
+        }};
+        KEY_PRESSED(KeyCode::E) { [&camera](KeyCode keycode) {
+            camera.applyRotate(RotateType::RIGHT_Z);
+        }};
+        KEY_PRESSED(KeyCode::Z) { [&camera](KeyCode keycode) {
+            camera.applyZoom(ZoomType::ZOOM_IN);
+        }};
+        KEY_PRESSED(KeyCode::X) { [&camera](KeyCode keycode) {
+            camera.applyZoom(ZoomType::ZOOM_OUT);
+        }};
+        camera.zoomSpeed = 10.0f;
+        camera.rotateSpeed = 0.5f;
+        camera.moveSpeed = 0.5f;
+        camera.distance = 10.0f;
+
+        GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_A) { [this](GamepadButtonCode gamepadBtnCode) {
+            onPadA();
+        }};
+        GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_B) { [this](GamepadButtonCode gamepadBtnCode) {
+            onPadB();
+        }};
+        GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_X) { [this](GamepadButtonCode gamepadBtnCode) {
+            onPadX();
+        }};
+        GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_Y) { [this](GamepadButtonCode gamepadBtnCode) {
+            onPadY();
+        }};
+
+        GAMEPAD_ROLL_LEFT() { [this](const GamepadRoll& roll) {
+            onGamepadRollLeft(roll);
+        }};
+        GAMEPAD_ROLL_RIGHT() { [this](const GamepadRoll& roll) {
+            onGamepadRollRight(roll);
+        }};
+    }
+
+    void Application::onPadA() {
+        RUNTIME_INFO("Gamepad button A pressed!");
+        if (activeScene) {
+            auto& camera = activeScene->getCamera();
+            camera.move(DOWN);
+            camera.applyView();
+        }
+    }
+
+    void Application::onPadB() {
+        RUNTIME_INFO("Gamepad button B pressed!");
+        if (activeScene) {
+            auto& camera = activeScene->getCamera();
+            camera.move(RIGHT);
+            camera.applyView();
+        }
+    }
+
+    void Application::onPadX() {
+        RUNTIME_INFO("Gamepad button X pressed!");
+        if (activeScene) {
+            auto& camera = activeScene->getCamera();
+            camera.move(LEFT);
+            camera.applyView();
+        }
+    }
+
+    void Application::onPadY() {
+        RUNTIME_INFO("Gamepad button Y pressed!");
+        if (activeScene) {
+            auto& camera = activeScene->getCamera();
+            camera.move(UP);
+            camera.applyView();
+        }
+    }
+
+    void Application::onGamepadRollLeft(const GamepadRoll& roll) {
+        RUNTIME_INFO("onGamepadRollLeft: (x: {0}, y: {1}, trigger: {2})", roll.x, roll.y, roll.triggered);
+        if (activeScene) {
+            auto& camera = activeScene->getCamera();
+            camera.move({ roll.x, roll.y, 1 });
+            camera.applyView();
+        }
+    }
+
+    void Application::onGamepadRollRight(const GamepadRoll& roll) {
+        RUNTIME_INFO("onGamepadRollRight: (x: {0}, y: {1}, trigger: {2})", roll.x, roll.y, roll.triggered);
     }
 }
 

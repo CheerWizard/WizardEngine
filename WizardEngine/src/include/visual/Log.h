@@ -21,23 +21,31 @@ namespace engine::visual {
 
     class ENGINE_API Log final {
 
-    public:
-        static void clear();
-        static void draw();
-
-        static void add(LogLevel logLevel, const std::string& fmt, ...);
+    private:
+        Log() = default;
+        ~Log();
 
     public:
-        static bool                autoScroll;
-        static bool                enabled;
+        static Log& get() {
+            static Log instance;
+            return instance;
+        }
+
+        void clear();
+        void draw();
+        void add(LogLevel logLevel, const std::string& fmt, ...);
+
+    public:
+        bool autoScroll = false;
+        bool enabled = false;
 
     private:
-        static ImGuiTextBuffer     _buf;
-        static ImGuiTextFilter     filter;
-        static ImVector<int>       lineOffsets;
-        static core::vector<LogLevel> levels;
-        static int maxLines;
-        static std::string maxLinesStr;
+        ImGuiTextBuffer buffer;
+        ImGuiTextFilter filter;
+        ImVector<int> lineOffsets;
+        core::vector<LogLevel> levels;
+        int maxLines = 100;
+        std::string maxLinesStr = "100";
     };
 
 }

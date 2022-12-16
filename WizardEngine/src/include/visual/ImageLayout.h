@@ -54,11 +54,11 @@ namespace engine::visual {
             _isVisible = false;
         }
 
-        inline const bool& isFocused() const {
+        [[nodiscard]] inline bool isFocused() const {
             return _isFocused;
         }
 
-        inline void setId(const uint32_t &id) {
+        inline void setRenderTarget(u32 id) {
             this->id = id;
         }
 
@@ -75,10 +75,10 @@ namespace engine::visual {
         void end();
 
     private:
-        Ref<Scene> scene;
+        Ref<Scene> scene = nullptr;
         ImageLayoutProps props;
         ImageLayoutCallback* _callback = nullptr;
-        uint32_t id = 0;
+        u32 id = 0;
         bool viewportHovered = false;
         bool viewportFocused = false;
         bool _isHoldingMouse = false;

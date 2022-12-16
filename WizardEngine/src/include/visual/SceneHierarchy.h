@@ -11,16 +11,16 @@
 
 namespace engine::visual {
 
-    struct ENGINE_API SceneHierarchyProps {
-        const char* name = "Scene Hierarchy";
-    };
+    using namespace ecs;
 
     class ENGINE_API SceneHierarchyCallback {
     public:
         virtual ~SceneHierarchyCallback() = default;
-
     public:
-        virtual void onEntityRemoved(const ecs::Entity &entity) = 0;
+        virtual void onSceneRemoved(const Ref<Scene>& scene) = 0;
+        virtual void onEntityRemoved(const Entity& entity) = 0;
+        virtual void onSceneSelected(const Ref<Scene>& scene) = 0;
+        virtual void onEntitySelected(const Entity& entity) = 0;
     };
 
     struct ENGINE_API UIPolygonMode final {
@@ -37,13 +37,10 @@ namespace engine::visual {
         int frontFaceTypeIndex = 0;
     };
 
-    class ENGINE_API SceneHierarchy {
+    class ENGINE_API SceneHierarchy final {
 
     public:
-        SceneHierarchy(const SceneHierarchyProps &props = SceneHierarchyProps()) : _props(props) {}
-        SceneHierarchy(const core::Ref<ecs::Scene>& scene, const SceneHierarchyProps &props = SceneHierarchyProps()) :
-        _props(props), _scene(scene) {}
-
+        SceneHierarchy(SceneHierarchyCallback* callback) : _callback(callback) {}
         ~SceneHierarchy() {
             destroy();
         }
@@ -52,15 +49,11 @@ namespace engine::visual {
         void onUpdate(time::Time dt);
 
     public:
-        inline void setScene(const core::Ref<ecs::Scene> &scene) {
-            _scene = scene;
-        }
-
         inline const ecs::Entity& getSelectedEntity() const {
             return _selectedEntity;
         }
 
-        inline void setSelectedEntity(const ecs::Entity& selectedEntity) {
+        inline void setSelectedEntity(const Entity& selectedEntity) {
             _selectedEntity = selectedEntity;
         }
 
@@ -73,9 +66,8 @@ namespace engine::visual {
         }
 
     private:
-        void draw(ecs::Registry& registry);
-        void drawEntityNode(ecs::Entity &entity);
-        static void drawComponents(ecs::Entity &entity);
+        void drawScene(const Ref<Scene>& scene);
+        static void drawComponents(Entity &entity);
         template<typename T>
         static void drawTextComponent(graphics::TextComponent<T>& textComponent);
 
@@ -83,9 +75,8 @@ namespace engine::visual {
         void destroy();
 
     private:
-        SceneHierarchyProps _props;
-        core::Ref<ecs::Scene> _scene;
-        ecs::Entity _selectedEntity;
+        Entity _selectedEntity;
+        Ref<Scene> selectedScene = nullptr;
         SceneHierarchyCallback* _callback = nullptr;
     };
 

@@ -9,18 +9,12 @@
 
 namespace engine::visual {
 
-    ImGuiTextBuffer     Log::_buf;
-    ImGuiTextFilter     Log::filter;
-    ImVector<int>       Log::lineOffsets;
-    core::vector<LogLevel> Log::levels;
-    int Log::maxLines = 100;
-    std::string Log::maxLinesStr = "100";
-
-    bool                Log::autoScroll = false;
-    bool                Log::enabled = false;
+    Log::~Log() {
+        clear();
+    }
 
     void Log::clear() {
-        _buf.clear();
+        buffer.clear();
         lineOffsets.clear();
         lineOffsets.push_back(0);
         levels.clear();
@@ -62,8 +56,8 @@ namespace engine::visual {
 
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-        const char* buf = _buf.begin();
-        const char* buf_end = _buf.end();
+        const char* buf = buffer.begin();
+        const char* buf_end = buffer.end();
         if (filter.IsActive())
         {
             // In this example we don't use the clipper when Filter is enabled.
@@ -218,17 +212,17 @@ namespace engine::visual {
         }
 
         levels.emplace_back(level);
-        int old_size = _buf.size();
+        int old_size = buffer.size();
 
         std::string fmt_str = fmt + "\n";
         const char* fmt_c = fmt_str.c_str();
         va_list args;
         va_start(args, fmt_c);
-        _buf.appendfv(fmt_c, args);
+        buffer.appendfv(fmt_c, args);
         va_end(args);
 
-        for (int new_size = _buf.size(); old_size < new_size; old_size++)
-            if (_buf[old_size] == '\n')
+        for (int new_size = buffer.size(); old_size < new_size; old_size++)
+            if (buffer[old_size] == '\n')
                 lineOffsets.push_back(old_size + 1);
     }
 

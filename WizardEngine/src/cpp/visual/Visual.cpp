@@ -46,7 +46,7 @@ namespace engine::visual {
         setTheme();
         // Setup Platform/Renderer bindings
         ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*) nativeWindow, true);
-        ImGui_ImplOpenGL3_Init("#version 410");
+        ImGui_ImplOpenGL3_Init("#version 400 core");
     }
 
     u32 Visual::addFont(const char *filepath, f32 fontSize) {
@@ -229,12 +229,9 @@ namespace engine::visual {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         ImGuizmo::BeginFrame();
-//        beginDockspace();
     }
 
     void Visual::end() {
-//        endDockspace();
-
         const auto& window = Application::get().getWindow();
         ENGINE_INFO("Visual::end(): width={0}, height={1}", window->getWidth(), window->getHeight());
         IO.DisplaySize = ImVec2((float)window->getWidth(), (float)window->getHeight());
@@ -257,15 +254,15 @@ namespace engine::visual {
     }
 
     void Visual::onKeyPressed(event::KeyCode keyCode) {
-//        IO.KeysDown[keyCode] = true;
+//        IO.AddKeyEvent(keyCode, true);
     }
 
     void Visual::onKeyHold(event::KeyCode keyCode) {
-//        IO.KeysDown[keyCode] = true;
+//        IO.AddKeyEvent(keyCode, true);
     }
 
     void Visual::onKeyReleased(event::KeyCode keyCode) {
-//        IO.KeysDown[keyCode] = false;
+//        IO.AddKeyEvent(keyCode, false);
     }
 
     void Visual::onKeyTyped(event::KeyCode keyCode) {
@@ -273,28 +270,25 @@ namespace engine::visual {
     }
 
     void Visual::onMouseScrolled(double xOffset, double yOffset) {
-        IO.MouseWheelH += xOffset;
-        IO.MouseWheel += yOffset;
+        IO.AddMouseWheelEvent((float)xOffset, (float)yOffset);
     }
 
     void Visual::onMousePressed(event::MouseCode mouseCode) {
-        IO.MouseDown[mouseCode] = true;
+        IO.AddMouseButtonEvent(mouseCode, true);
     }
 
     void Visual::onMouseRelease(event::MouseCode mouseCode) {
-        IO.MouseDown[mouseCode] = false;
+        IO.AddMouseButtonEvent(mouseCode, false);
     }
 
     void Visual::onCursorMoved(double xPos, double yPos) {
-        IO.MousePos = {(float) xPos, (float) yPos};
+        IO.AddMousePosEvent((float)xPos, (float)yPos);
     }
 
     void Visual::onWindowClosed() {
-        ENGINE_INFO("onWindowsClosed()");
     }
 
     void Visual::onWindowResized(const uint32_t &width, const uint32_t &height) {
-        ENGINE_INFO("onWindowResized(width = {0}, height = {1})", width, height);
     }
 
     void Visual::sameLine() {
@@ -346,7 +340,10 @@ namespace engine::visual {
             // Scene Menu
             if (ImGui::BeginMenu("Scene")) {
                 if (ImGui::MenuItem("New", "Ctrl+N")) {
-                    //todo: create new template scene
+                    auto& app = Application::get();
+                    std::stringstream ss;
+                    ss << "New Scene " << app.getScenes().size();
+                    app.addScene(app.createDefaultScene(ss.str()));
                 }
 
                 if (ImGui::MenuItem("Open...", "Ctrl+O")) {

@@ -32,12 +32,6 @@ namespace engine::visual {
         virtual void onAssetRemoved(const std::string &assetPath) = 0;
     };
 
-    struct ENGINE_API AssetBrowserProps {
-        const char* name;
-        float padding = 16.0f;
-        float thumbnailSize = 64.0f;
-    };
-
     struct ENGINE_API AssetBrowserItem {
         const char* extension;
         const uint32_t iconId;
@@ -46,14 +40,9 @@ namespace engine::visual {
     class ENGINE_API AssetBrowser final {
 
     public:
-        static void create(
-                const Ref<FileDialog>& fileDialog,
-                const AssetBrowserProps& props
-        );
+        static void create(void* nativeWindow);
         static void destroy();
         static void setProject(const Project& project);
-
-        static inline const AssetBrowserProps& getProps();
 
         static void draw(Time dt);
 
@@ -69,7 +58,8 @@ namespace engine::visual {
         static AssetBrowserCallback* callback;
 
     private:
-        static AssetBrowserProps _props;
+        static float padding;
+        static float thumbnailSize;
         static vector<AssetBrowserItem> _items;
 
         static Ref<FileDialog> _fileDialog;
