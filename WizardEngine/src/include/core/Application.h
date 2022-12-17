@@ -108,7 +108,7 @@ namespace engine::core {
             return _window;
         }
 
-        inline unordered_map<std::string, Ref<Scene>>& getScenes() {
+        inline unordered_map<uuid, Ref<Scene>>& getScenes() {
             return scenes;
         }
 
@@ -149,11 +149,13 @@ namespace engine::core {
         void setWindowIcon(const std::string &filePath);
         Ref<tools::FileDialog> createFileDialog();
         void setSampleSize(int samples);
+
         void setActiveScene(const Ref<Scene>& activeScene);
         void addScene(const Ref<Scene>& scene);
         void addScenes(const vector<Ref<Scene>>& scenes);
-        void removeScene(const std::string& name);
+        void removeScene(const uuid& sceneId);
         void clearScenes();
+
         void loadGamepadMappings(const char* mappingsFilePath);
         void setSkybox(Ref<Scene>& scene, const Entity& skybox) const;
         void setSkyCube(
@@ -229,7 +231,7 @@ namespace engine::core {
         // core systems
         LayerStack _layerStack;
         Scope<Window> _window;
-        unordered_map<std::string, Ref<Scene>> scenes;
+        unordered_map<uuid, Ref<Scene>> scenes;
     };
 
     Application* createApplication();

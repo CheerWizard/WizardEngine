@@ -10,8 +10,6 @@
 namespace test {
 
     void TestLayer::init() {
-        // todo fix hdr cube map conversion
-//        Application::get().setHdrEnvCube(scene, "assets/hdr/ice_lake.hdr");
     }
 
     TestLayer::~TestLayer() {

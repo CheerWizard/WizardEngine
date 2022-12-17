@@ -315,7 +315,7 @@ namespace engine::core {
 
     void Application::setActiveScene(const Ref<Scene>& scene) {
         PROFILE_FUNCTION();
-        scenes[scene->getName()] = scene;
+        scenes[scene->getId()] = scene;
         activeScene = scene;
         selectedEntity = Entity(activeScene.get());
         hoveredEntity = Entity(activeScene.get());
@@ -602,11 +602,11 @@ namespace engine::core {
     }
 
     void Application::addScene(const Ref<Scene>& scene) {
-        scenes[scene->getName()] = scene;
+        scenes[scene->getId()] = scene;
     }
 
-    void Application::removeScene(const std::string& name) {
-        scenes.erase(name);
+    void Application::removeScene(const uuid& sceneId) {
+        scenes.erase(sceneId);
     }
 
     void Application::clearScenes() {
@@ -615,7 +615,7 @@ namespace engine::core {
 
     void Application::addScenes(const vector<Ref<Scene>> &newScenes) {
         for (const auto& newScene : newScenes) {
-            scenes[newScene->getName()] = newScene;
+            scenes[newScene->getId()] = newScene;
         }
     }
 
@@ -633,6 +633,8 @@ namespace engine::core {
                 { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
                 { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
         });
+        // setup HDR env
+        setHdrEnvCube(scene, "assets/hdr/ice_lake.hdr");
         // setup light sources
         PhongLight("L_Sun_1", scene.get()).getPosition() = { -10, 10, -10 };
         PhongLight("L_Sun_2", scene.get()).getPosition() = { 10, 10, 10 };

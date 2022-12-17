@@ -43,9 +43,7 @@ namespace engine::ecs {
         }
     }
 
-    void Scene::init() {
-        skybox = Entity(this);
-        hdrEnv = Entity(this);
+    Scene::Scene(const std::string& newName) : name(newName) {
     }
 
 }

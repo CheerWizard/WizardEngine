@@ -37,7 +37,7 @@ namespace engine::visual {
         }
         sceneHeaderFlags |= ImGuiTreeNodeFlags_OpenOnArrow;
         sceneHeaderFlags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-        bool sceneHeaderOpened = ImGui::TreeNodeEx(
+        bool sceneOpened = ImGui::TreeNodeEx(
                 scene.get(),
                 sceneHeaderFlags,
                 "%s", scene->getName().c_str()
@@ -48,74 +48,84 @@ namespace engine::visual {
                 _callback->onSceneSelected(selectedScene);
         }
 
-        if (ImGui::BeginPopupContextItem()) {
-
-            if (ImGui::MenuItem("Delete Scene")) {
-                Application::get().removeScene(scene->getName());
-                if (_callback)
-                    _callback->onSceneRemoved(scene);
-                selectedScene = nullptr;
-            }
-
-            ImGui::EndPopup();
-        }
-
-        if (sceneHeaderOpened) {
-            ImGuiTreeNodeFlags bodyTreeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-            bool bodyOpened = ImGui::TreeNodeEx(
-                    (void*)9817239, bodyTreeFlags,
-                    "%s", scene->getName().c_str()
-            );
-            if (bodyOpened) {
-                ImGui::TreePop();
-            }
-            ImGui::TreePop();
-        }
-
-        auto& registry = scene->getRegistry();
-        if (registry.empty_entity()) return;
-        registry.eachEntity([&](ecs::entity_id entityID) {
-            ecs::Entity entity { scene.get(), entityID };
-            auto& tag = entity.get<ecs::TagComponent>()->tag;
-
-            ImGuiTreeNodeFlags headerTreeFlags = 0;
-            if (_selectedEntity == entity) {
-                headerTreeFlags = ImGuiTreeNodeFlags_Selected;
-            }
-            headerTreeFlags |= ImGuiTreeNodeFlags_OpenOnArrow;
-            headerTreeFlags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-            bool headerOpened = ImGui::TreeNodeEx(entity.getId(), headerTreeFlags, "%s", tag.c_str());
-            if (ImGui::IsItemClicked()) {
-                _selectedEntity = entity;
-                _callback->onEntitySelected(_selectedEntity);
-            }
-
+        if (selectedScene) {
             if (ImGui::BeginPopupContextItem()) {
 
-                if (ImGui::MenuItem("Delete Entity")) {
-                    entity.destroy();
+                if (ImGui::MenuItem("Rename")) {
+                    // todo renaming scene
+                }
 
-                    if (_selectedEntity == entity) {
-                        _selectedEntity = {};
-                    }
-
-                    if (_callback != nullptr) {
-                        _callback->onEntityRemoved(entity);
-                    }
+                if (ImGui::MenuItem("Delete Scene")) {
+                    Application::get().removeScene(scene->getId());
+                    if (_callback)
+                        _callback->onSceneRemoved(scene);
+                    selectedScene = nullptr;
                 }
 
                 ImGui::EndPopup();
             }
+        }
 
-            if (headerOpened) {
-                ImGuiTreeNodeFlags bodyTreeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-                bool bodyOpened = ImGui::TreeNodeEx((void*)9817230, bodyTreeFlags, "%s", tag.c_str());
-                if (bodyOpened) {
+        if (sceneOpened) {
+            auto& registry = scene->getRegistry();
+
+            if (registry.empty_entity()) {
+                ImGui::TreePop();
+                return;
+            }
+            // draw entities for opened scene
+            registry.eachEntity([&](ecs::entity_id entityID) {
+                ImGui::Spacing();
+
+                ecs::Entity entity { scene.get(), entityID };
+                auto& tag = entity.get<ecs::TagComponent>()->tag;
+
+                ImGuiTreeNodeFlags headerTreeFlags = 0;
+                if (_selectedEntity == entity) {
+                    headerTreeFlags = ImGuiTreeNodeFlags_Selected;
+                }
+                headerTreeFlags |= ImGuiTreeNodeFlags_OpenOnArrow;
+                headerTreeFlags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+                bool headerOpened = ImGui::TreeNodeEx(entity.getId(), headerTreeFlags, "%s", tag.c_str());
+                if (ImGui::IsItemClicked()) {
+                    _selectedEntity = entity;
+                    _callback->onEntitySelected(_selectedEntity);
+                }
+
+                if (ImGui::BeginPopupContextItem()) {
+
+                    if (ImGui::MenuItem("Rename")) {
+                        // todo entity renaming by tag
+                    }
+
+                    if (ImGui::MenuItem("Delete Entity")) {
+                        entity.destroy();
+
+                        if (_selectedEntity == entity) {
+                            _selectedEntity = {};
+                        }
+
+                        if (_callback != nullptr) {
+                            _callback->onEntityRemoved(entity);
+                        }
+                    }
+
+                    ImGui::EndPopup();
+                }
+
+                if (headerOpened) {
+                    ImGuiTreeNodeFlags bodyTreeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+                    bool bodyOpened = ImGui::TreeNodeEx((void*)9817230, bodyTreeFlags, "%s", tag.c_str());
+                    if (bodyOpened) {
+                        ImGui::TreePop();
+                    }
                     ImGui::TreePop();
                 }
-                ImGui::TreePop();
-            }
-        });
+
+            });
+
+            ImGui::TreePop();
+        }
     }
 
     struct FloatRange {
@@ -628,7 +638,8 @@ namespace engine::visual {
         ImGui::Begin(ICON_FA_OBJECT_GROUP " Scene Hierarchy", &open);
         auto& app = Application::get();
 
-        for (auto& [sceneName, scene] : app.getScenes()) {
+        for (auto& [sceneId, scene] : app.getScenes()) {
+            ImGui::Spacing();
             drawScene(scene);
         }
 
@@ -643,8 +654,12 @@ namespace engine::visual {
                 ss << "New Scene " << app.getScenes().size();
                 app.addScene(app.createDefaultScene(ss.str()));
             }
-            if (ImGui::MenuItem("Create Empty Entity")) {
-                ecs::Entity { app.activeScene.get() };
+            if (selectedScene) {
+                if (ImGui::MenuItem("Create Empty Entity")) {
+                    std::stringstream ss;
+                    ss << "New Entity " << selectedScene->getRegistry().entity_count();
+                    Entity { ss.str(), selectedScene.get() };
+                }
             }
             ImGui::EndPopup();
         }
