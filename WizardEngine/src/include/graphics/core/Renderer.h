@@ -281,8 +281,14 @@ namespace engine::graphics {
 
     template<typename Vertex>
     void BatchRenderer<Vertex>::render(ecs::Registry &registry) {
-        renderV(registry);
-        renderVI(registry);
+        // renders only vertices
+        if (!vRenderModels.empty()) {
+            renderV(registry);
+        }
+        // renders both vertices and indices
+        if (!viRenderModels.empty()) {
+            renderVI(registry);
+        }
     }
 
     template<typename Vertex>
@@ -372,8 +378,14 @@ namespace engine::graphics {
 
     template<typename Vertex>
     void InstanceRenderer<Vertex>::render(ecs::Registry &registry) {
-        renderV(registry);
-        renderVI(registry);
+        // renders only vertices
+        if (!vRenderModels.empty()) {
+            renderV(registry);
+        }
+        // renders both vertices and indices
+        if (!viRenderModels.empty()) {
+            renderVI(registry);
+        }
     }
 
     template<typename Vertex>

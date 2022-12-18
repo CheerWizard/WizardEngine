@@ -22,6 +22,7 @@ namespace engine::visual {
 
     ProjectsPanel::ProjectsPanel() {
         ProjectManager::loadProjects();
+        backgroundImage = TextureBuffer::load("WizardTest.png");
     }
 
     ProjectsPanel::~ProjectsPanel() {
@@ -33,11 +34,15 @@ namespace engine::visual {
             return;
 
         static bool open = true;
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
         if (!ImGui::Begin(ICON_FA_MAGIC" Projects", &open)) {
+            ImGui::PopStyleVar();
             ImGui::End();
             enableDraw = false;
             return;
         }
+
+        ImGui::Image((ImTextureID) backgroundImage, ImGui::GetWindowSize());
 
         ImGui::Columns(2);
         ImGui::SetColumnOffset(1, 230);
@@ -159,6 +164,7 @@ namespace engine::visual {
             }
         }
 
+        ImGui::PopStyleVar();
         ImGui::End();
     }
 

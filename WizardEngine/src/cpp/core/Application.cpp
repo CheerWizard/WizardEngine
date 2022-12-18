@@ -6,6 +6,8 @@
 #include <profiler/Profiler.h>
 #include <time/Timer.h>
 
+#include <future>
+
 namespace engine::core {
 
     void Application::run() {
@@ -619,36 +621,16 @@ namespace engine::core {
         }
     }
 
-    Ref<Scene> Application::createDefaultScene(const std::string& sceneName) {
-        // setup scene, entities, components
-        auto scene = createRef<Scene>(sceneName);
-        Camera3D mainCamera("NewCamera", getAspectRatio(), scene.get());
-        scene->setCamera(mainCamera);
-        // setup skybox
-        setSkyCube(scene, "NewSkybox", {
-                { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
-                { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
-                { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
-                { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
-                { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
-                { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
-        });
-        // setup HDR env
-        setHdrEnvCube(scene, "assets/hdr/ice_lake.hdr");
-        // setup light sources
-        PhongLight("L_Sun_1", scene.get()).getPosition() = { -10, 10, -10 };
-        PhongLight("L_Sun_2", scene.get()).getPosition() = { 10, 10, 10 };
-        PhongLight("L_Sun_3", scene.get()).getPosition() = { -10, 10, 10 };
-        PhongLight("L_Sun_4", scene.get()).getPosition() = { 10, 10, -10 };
-        // setup geometry or mesh
+    void Application::loadModel(const uuid& sceneId) {
         // we need to flip textures as they will be loaded vice versa
         io::TextureFile::setFlipTexture(true);
         io::ModelFile<BatchVertex<Vertex3d>>::read(
                 "assets/SamuraiHelmet/source/SamuraiHelmet.fbx.fbx",
                 "assets/SamuraiHelmet/textures", {
-                        [&scene](const io::Model& model) {
+                        [this, &sceneId](const io::Model& model) {
                             RUNTIME_INFO("ModelFile read: onSuccess");
                             vector<Batch3d> entities;
+                            const auto& scene = scenes.at(sceneId);
                             for (int i = 0; i < model.meshes.size(); i++) {
                                 auto modelMesh = model.meshes[i];
                                 BaseMeshComponent<BatchVertex<Vertex3d>> meshComponent;
@@ -678,7 +660,34 @@ namespace engine::core {
                             RUNTIME_INFO("ModelFile read: onError");
                             RUNTIME_EXCEPT(exception);
                         }
+                });
+    }
+
+    Ref<Scene> Application::newScene(const std::string& sceneName) {
+        // setup scene, entities, components
+        auto scene = createRef<Scene>(sceneName);
+        addScene(scene);
+        // setup scene camera
+        Camera3D mainCamera("NewCamera", getAspectRatio(), scene.get());
+        scene->setCamera(mainCamera);
+        // setup skybox
+        setSkyCube(scene, "NewSkybox", {
+                { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
+                { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
+                { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
+                { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
+                { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
+                { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
         });
+        // setup HDR env
+        setHdrEnvCube(scene, "assets/hdr/ice_lake.hdr");
+        // setup light sources
+        PhongLight("L_Sun_1", scene.get()).getPosition() = { -10, 10, -10 };
+        PhongLight("L_Sun_2", scene.get()).getPosition() = { 10, 10, 10 };
+        PhongLight("L_Sun_3", scene.get()).getPosition() = { -10, 10, 10 };
+        PhongLight("L_Sun_4", scene.get()).getPosition() = { 10, 10, -10 };
+        // setup geometry or mesh
+        loadModelResult = std::async(std::launch::async, &Application::loadModel, this, scene->getId());
         return scene;
     }
 

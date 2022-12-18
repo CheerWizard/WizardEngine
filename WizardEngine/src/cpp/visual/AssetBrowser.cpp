@@ -283,13 +283,13 @@ namespace engine::visual {
                 if (renameMode) {
                     ImGui::InputText("##asset_rename", &newAssetName);
                     if (ImGui::IsKeyPressed(ImGuiKey_Enter)) {
-                        if (SAME(_rightClickedAssetExtension.c_str(), CPP_EXT)) {
+                        if (_rightClickedAssetExtension == CPP_EXT) {
                             ProjectManager::renameScript(_rightClickedAssetPath.string(), newAssetName);
                             if (autoSync) {
                                 ProjectManager::cmakeScripts(_project, getSelectedProjectVersion());
                             }
                         } else {
-                            engine::filesystem::rename(_rightClickedAssetPath, newAssetName + ".cpp");
+                            engine::filesystem::rename(_rightClickedAssetPath, newAssetName + _rightClickedAssetExtension);
                         }
                         renameMode = false;
                         _rightClickedAssetPath = "";

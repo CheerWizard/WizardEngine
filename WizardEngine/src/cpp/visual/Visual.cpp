@@ -292,14 +292,14 @@ namespace engine::visual {
                     auto& app = Application::get();
                     std::stringstream ss;
                     ss << "New Scene " << app.getScenes().size();
-                    app.addScene(app.createDefaultScene(ss.str()));
+                    app.newScene(ss.str());
                 }
 
                 if (ImGui::MenuItem("Open...", "Ctrl+O")) {
                     //todo: import scene using file dialog
                 }
 
-                if (ImGui::MenuItem("Save", "Ctrl+S")) {
+                if (ImGui::MenuItem("Save All", "Ctrl+S")) {
                     //todo: serialize into assets/scenes directory using .yaml or binary
                 }
 

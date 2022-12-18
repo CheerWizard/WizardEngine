@@ -45,6 +45,10 @@ namespace engine::ecs {
             return name;
         }
 
+        inline std::string& editName() {
+            return name;
+        }
+
         inline void setName(const std::string& name) {
             this->name = name;
         }

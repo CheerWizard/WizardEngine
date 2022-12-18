@@ -9,6 +9,8 @@
 #include <network/socket.h>
 #include <network/gdp.h>
 
+#include <future>
+
 namespace engine::network {
 
     using namespace engine::core;
@@ -127,7 +129,6 @@ namespace engine::network {
             void connectImpl(const std::string& ip, int port);
 
             SOCKET clientSocket;
-            std::thread connectionTask;
             bool connecting = false;
             ClientListener* listener = nullptr;
             Ref<Sender> sender = createRef<Sender>();
@@ -233,7 +234,6 @@ namespace engine::network {
             SOCKET clientSocket;
             sockaddr_in server;
             bool connecting = false;
-            std::thread connectionTask;
             ClientListener* listener = nullptr;
             Ref<Sender> sender = createRef<Sender>();
             Ref<Receiver> receiver = createRef<Receiver>();

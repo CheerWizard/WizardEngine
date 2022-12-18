@@ -15,6 +15,7 @@
 #include <physics/Physics.h>
 
 #include <imgui.h>
+#include <imgui_stdlib.h>
 #include <imgui_internal.h>
 
 #include <core/Application.h>
@@ -37,94 +38,109 @@ namespace engine::visual {
         }
         sceneHeaderFlags |= ImGuiTreeNodeFlags_OpenOnArrow;
         sceneHeaderFlags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-        bool sceneOpened = ImGui::TreeNodeEx(
-                scene.get(),
-                sceneHeaderFlags,
-                "%s", scene->getName().c_str()
-        );
-        if (ImGui::IsItemClicked()) {
-            selectedScene = scene;
-            if (_callback)
-                _callback->onSceneSelected(selectedScene);
-        }
 
-        if (selectedScene) {
-            if (ImGui::BeginPopupContextItem()) {
-
-                if (ImGui::MenuItem("Rename")) {
-                    // todo renaming scene
-                }
-
-                if (ImGui::MenuItem("Delete Scene")) {
-                    Application::get().removeScene(scene->getId());
-                    if (_callback)
-                        _callback->onSceneRemoved(scene);
-                    selectedScene = nullptr;
-                }
-
-                ImGui::EndPopup();
+        if (scene == selectedScene && sceneRenameMode) {
+            ImGui::InputText("##scene_rename", &selectedScene->editName());
+            if (ImGui::IsKeyPressed(ImGuiKey_Enter)) {
+                sceneRenameMode = false;
             }
-        }
-
-        if (sceneOpened) {
-            auto& registry = scene->getRegistry();
-
-            if (registry.empty_entity()) {
-                ImGui::TreePop();
-                return;
+        } else {
+            bool sceneOpened = ImGui::TreeNodeEx(
+                    scene.get(),
+                    sceneHeaderFlags,
+                    "%s", scene->getName().c_str()
+            );
+            if (ImGui::IsItemClicked()) {
+                selectedScene = scene;
+                if (_callback)
+                    _callback->onSceneSelected(selectedScene);
             }
-            // draw entities for opened scene
-            registry.eachEntity([&](ecs::entity_id entityID) {
-                ImGui::Spacing();
 
-                ecs::Entity entity { scene.get(), entityID };
-                auto& tag = entity.get<ecs::TagComponent>()->tag;
-
-                ImGuiTreeNodeFlags headerTreeFlags = 0;
-                if (_selectedEntity == entity) {
-                    headerTreeFlags = ImGuiTreeNodeFlags_Selected;
-                }
-                headerTreeFlags |= ImGuiTreeNodeFlags_OpenOnArrow;
-                headerTreeFlags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-                bool headerOpened = ImGui::TreeNodeEx(entity.getId(), headerTreeFlags, "%s", tag.c_str());
-                if (ImGui::IsItemClicked()) {
-                    _selectedEntity = entity;
-                    _callback->onEntitySelected(_selectedEntity);
-                }
-
+            if (selectedScene) {
                 if (ImGui::BeginPopupContextItem()) {
 
                     if (ImGui::MenuItem("Rename")) {
-                        // todo entity renaming by tag
+                        sceneRenameMode = true;
                     }
 
-                    if (ImGui::MenuItem("Delete Entity")) {
-                        entity.destroy();
-
-                        if (_selectedEntity == entity) {
-                            _selectedEntity = {};
-                        }
-
-                        if (_callback != nullptr) {
-                            _callback->onEntityRemoved(entity);
-                        }
+                    if (ImGui::MenuItem("Delete Scene")) {
+                        Application::get().removeScene(scene->getId());
+                        if (_callback)
+                            _callback->onSceneRemoved(scene);
+                        selectedScene = nullptr;
                     }
 
                     ImGui::EndPopup();
                 }
+            }
 
-                if (headerOpened) {
-                    ImGuiTreeNodeFlags bodyTreeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-                    bool bodyOpened = ImGui::TreeNodeEx((void*)9817230, bodyTreeFlags, "%s", tag.c_str());
-                    if (bodyOpened) {
-                        ImGui::TreePop();
-                    }
+            if (sceneOpened) {
+                auto& registry = scene->getRegistry();
+
+                if (registry.empty_entity()) {
                     ImGui::TreePop();
+                    return;
                 }
+                // draw entities for opened scene
+                registry.eachEntity([&](ecs::entity_id entityID) {
+                    ImGui::Spacing();
 
-            });
+                    ecs::Entity entity { scene.get(), entityID };
+                    auto& tag = entity.get<ecs::TagComponent>()->tag;
 
-            ImGui::TreePop();
+                    ImGuiTreeNodeFlags headerTreeFlags = 0;
+                    if (_selectedEntity == entity) {
+                        headerTreeFlags = ImGuiTreeNodeFlags_Selected;
+                    }
+                    headerTreeFlags |= ImGuiTreeNodeFlags_OpenOnArrow;
+                    headerTreeFlags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+
+                    if (_selectedEntity == entity && entityRenameMode) {
+                        auto& entityName = _selectedEntity.get<TagComponent>()->tag;
+                        ImGui::InputText("##entity_rename", &entityName);
+                        if (ImGui::IsKeyPressed(ImGuiKey_Enter))
+                            entityRenameMode = false;
+                    } else {
+                        bool headerOpened = ImGui::TreeNodeEx(entity.getId(), headerTreeFlags, "%s", tag.c_str());
+                        if (ImGui::IsItemClicked()) {
+                            _selectedEntity = entity;
+                            _callback->onEntitySelected(_selectedEntity);
+                        }
+
+                        if (ImGui::BeginPopupContextItem()) {
+
+                            if (ImGui::MenuItem("Rename")) {
+                                entityRenameMode = true;
+                            }
+
+                            if (ImGui::MenuItem("Delete Entity")) {
+                                entity.destroy();
+
+                                if (_selectedEntity == entity) {
+                                    _selectedEntity = {};
+                                }
+
+                                if (_callback != nullptr) {
+                                    _callback->onEntityRemoved(entity);
+                                }
+                            }
+
+                            ImGui::EndPopup();
+                        }
+
+                        if (headerOpened) {
+                            ImGuiTreeNodeFlags bodyTreeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+                            bool bodyOpened = ImGui::TreeNodeEx((void*)9817230, bodyTreeFlags, "%s", tag.c_str());
+                            if (bodyOpened) {
+                                ImGui::TreePop();
+                            }
+                            ImGui::TreePop();
+                        }
+                    }
+                });
+
+                ImGui::TreePop();
+            }
         }
     }
 
@@ -652,7 +668,7 @@ namespace engine::visual {
             if (ImGui::MenuItem("Create Empty Scene")) {
                 std::stringstream ss;
                 ss << "New Scene " << app.getScenes().size();
-                app.addScene(app.createDefaultScene(ss.str()));
+                app.newScene(ss.str());
             }
             if (selectedScene) {
                 if (ImGui::MenuItem("Create Empty Entity")) {

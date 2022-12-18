@@ -136,10 +136,9 @@ namespace engine::network {
         }
 
         void Client::connect(const std::string &ip, int port) {
-            if (connecting)
-                return;
-            connectionTask = std::thread(&Client::connectImpl, this, ip, port);
-            connectionTask.detach();
+            if (!connecting) {
+                std::async(std::launch::async, &Client::connectImpl, this, ip, port);
+            }
         }
 
         RequestQueue& Client::getRequestQueue() {
@@ -148,6 +147,7 @@ namespace engine::network {
 
         void Client::connectImpl(const std::string &ip, int port) {
             ENGINE_INFO("TCP_Client: connecting to a server[ip:{0}, port:{1}]", ip, port);
+            connecting = true;
             s32 connection = socket::connect(clientSocket, AF_INET, ip.c_str(), port);
             // handle connection error and retry to connect!
             if (connection == SOCKET_ERROR) {
@@ -288,6 +288,7 @@ namespace engine::network {
         }
 
         void Client::close() {
+            connecting = false;
             sender->close();
             receiver->close();
             socket::close_socket(clientSocket);
@@ -297,14 +298,13 @@ namespace engine::network {
         }
 
         void Client::connect(const std::string &ip, int port) {
-            if (connecting)
-                return;
-            connecting = true;
-            connectionTask = std::thread(&Client::connectImpl, this, ip, port);
-            connectionTask.detach();
+            if (!connecting) {
+                std::async(std::launch::async, &Client::connectImpl, this, ip, port);
+            }
         }
 
         void Client::connectImpl(const std::string &ip, int port) {
+            connecting = true;
             server.sin_family = AF_INET;
             server.sin_port = htons(port);
             inet_pton(AF_INET, ip.c_str(), &server.sin_addr);

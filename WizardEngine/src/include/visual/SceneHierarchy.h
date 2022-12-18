@@ -78,6 +78,8 @@ namespace engine::visual {
         Entity _selectedEntity;
         Ref<Scene> selectedScene = nullptr;
         SceneHierarchyCallback* _callback = nullptr;
+        bool sceneRenameMode = false;
+        bool entityRenameMode = false;
     };
 
     template<typename T>

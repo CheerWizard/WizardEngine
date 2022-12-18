@@ -50,6 +50,8 @@
 
 #include <physics/Physics.h>
 
+#include <future>
+
 using namespace engine::core;
 using namespace engine::graphics;
 using namespace engine::event;
@@ -170,7 +172,7 @@ namespace engine::core {
         ) const;
         void setHdrEnv(Ref<Scene>& scene, const Entity& hdrEnv) const;
         void setHdrEnvCube(Ref<Scene>& scene, const char* filepath) const;
-        Ref<Scene> createDefaultScene(const std::string& sceneName);
+        Ref<Scene> newScene(const std::string& sceneName);
         Ref<Renderer> createBatchRenderer();
         Ref<Renderer> createInstanceRenderer();
 
@@ -204,6 +206,8 @@ namespace engine::core {
         void onGamepadRollLeft(const GamepadRoll& roll);
         void onGamepadRollRight(const GamepadRoll& roll);
 
+        void loadModel(const uuid& sceneId);
+
     public:
         Ref<Scene> activeScene = nullptr;
         Ref<FrameBuffer> activeSceneFrame;
@@ -232,6 +236,7 @@ namespace engine::core {
         LayerStack _layerStack;
         Scope<Window> _window;
         unordered_map<uuid, Ref<Scene>> scenes;
+        std::future<void> loadModelResult;
     };
 
     Application* createApplication();
