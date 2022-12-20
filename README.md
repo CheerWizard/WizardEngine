@@ -14,6 +14,7 @@
 5. Fixing existing light sources like direction, point, flash, HDR env.
 6. UI menubar with "Scene" and "Project" menu navigation features.
 7. Fixing rest of UI issues.
+8. Job System - concurrency and parallelism.
 
 ## Manual build instructions
 
