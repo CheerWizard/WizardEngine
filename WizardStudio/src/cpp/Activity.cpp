@@ -178,8 +178,8 @@ namespace studio {
         activeCamera->onUpdate(dt);
         ColorAttachment texture;
         app->screenFrame->getColorAttachment(0, texture);
-        sceneViewport.setId(texture.id);
-        screenViewport.setId(texture.id);
+        sceneViewport.setRenderTarget(texture.id);
+        screenViewport.setRenderTarget(texture.id);
     }
 
     void Activity::onKeyPressed(KeyCode keyCode) {
@@ -228,7 +228,7 @@ namespace studio {
 
     void Activity::onImageOpen(const std::string &fileName) {
         EDITOR_INFO("onImageOpen({0})", fileName);
-        _texturePreview.setId(TextureBuffer::load(("assets/textures/" + fileName).c_str()));
+        _texturePreview.setRenderTarget(TextureBuffer::load(("assets/textures/" + fileName).c_str()));
         _texturePreview.show();
     }
 

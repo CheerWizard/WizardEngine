@@ -5,7 +5,10 @@
 #include <visual/Visual.h>
 #include <visual/FontAwesome4.h>
 #include <visual/ProjectsPanel.h>
+
 #include <profiler/Profiler.h>
+
+#include <platform/graphics/RenderCommands.h>
 
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
@@ -24,17 +27,19 @@ namespace engine::visual {
     vector<ImFont*> Visual::fonts;
     bool Visual::fullScreen;
     bool Visual::openDockspace;
-    bool Visual::blockEvents;
+    bool Visual::blockEvents = true;
     int Visual::windowFlags;
     int Visual::dockspaceFlags;
 
     void Visual::init(void* nativeWindow) {
         PROFILE_FUNCTION()
-        // Setup Dear ImGui context
+
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
+        IO.IniFilename = "Visual.ini";
+
         IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-//        IO.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+        IO.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
         IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
         IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
         // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
@@ -42,11 +47,38 @@ namespace engine::visual {
             STYLE.WindowRounding = 0.0f;
             COLORS[ImGuiCol_WindowBg].w = 1.0f;
         }
-        IO.IniFilename = "Visual";
+
+        IO.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+        IO.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
+
+        IO.KeyMap[ImGuiKey_Tab] = KeyCode::Tab;
+        IO.KeyMap[ImGuiKey_LeftArrow] = KeyCode::Left;
+        IO.KeyMap[ImGuiKey_RightArrow] = KeyCode::Right;
+        IO.KeyMap[ImGuiKey_UpArrow] = KeyCode::Up;
+        IO.KeyMap[ImGuiKey_DownArrow] = KeyCode::Down;
+        IO.KeyMap[ImGuiKey_PageUp] = KeyCode::PageUp;
+        IO.KeyMap[ImGuiKey_PageDown] = KeyCode::PageDown;
+        IO.KeyMap[ImGuiKey_Home] = KeyCode::Home;
+        IO.KeyMap[ImGuiKey_End] = KeyCode::End;
+        IO.KeyMap[ImGuiKey_Insert] = KeyCode::Insert;
+        IO.KeyMap[ImGuiKey_Delete] = KeyCode::Delete;
+        IO.KeyMap[ImGuiKey_Backspace] = KeyCode::Backspace;
+        IO.KeyMap[ImGuiKey_Space] = KeyCode::Space;
+        IO.KeyMap[ImGuiKey_Enter] = KeyCode::Enter;
+        IO.KeyMap[ImGuiKey_Escape] = KeyCode::Escape;
+        IO.KeyMap[ImGuiKey_A] = KeyCode::A;
+        IO.KeyMap[ImGuiKey_C] = KeyCode::C;
+        IO.KeyMap[ImGuiKey_V] = KeyCode::V;
+        IO.KeyMap[ImGuiKey_X] = KeyCode::X;
+        IO.KeyMap[ImGuiKey_Y] = KeyCode::Y;
+        IO.KeyMap[ImGuiKey_Z] = KeyCode::Z;
+
+        IO.MouseDrawCursor = true;
+
         setTheme();
         // Setup Platform/Renderer bindings
         ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*) nativeWindow, true);
-        ImGui_ImplOpenGL3_Init("#version 410");
+        ImGui_ImplOpenGL3_Init("#version 400 core");
     }
 
     u32 Visual::addFont(const char *filepath, f32 fontSize) {
@@ -67,88 +99,6 @@ namespace engine::visual {
     }
 
     void Visual::setTheme() {
-//        auto& style = ImGui::GetStyle();
-//        auto& colors = ImGui::GetStyle().Colors;
-//        ImGui::StyleColorsDark(&style);
-//
-//        //========================================================
-//        /// Colours
-//
-//        // Headers
-//        colors[ImGuiCol_Header]				= ImGui::ColorConvertU32ToFloat4(Theme::groupHeader);
-//        colors[ImGuiCol_HeaderHovered]		= ImGui::ColorConvertU32ToFloat4(Theme::groupHeader);
-//        colors[ImGuiCol_HeaderActive]		= ImGui::ColorConvertU32ToFloat4(Theme::groupHeader);
-//
-//        // Buttons
-//        colors[ImGuiCol_Button]				= ImColor(56, 56, 56, 200);
-//        colors[ImGuiCol_ButtonHovered]		= ImColor(70, 70, 70, 255);
-//        colors[ImGuiCol_ButtonActive]		= ImColor(56, 56, 56, 150);
-//
-//        // Frame BG
-//        colors[ImGuiCol_FrameBg]			= ImGui::ColorConvertU32ToFloat4(Theme::propertyField);
-//        colors[ImGuiCol_FrameBgHovered]		= ImGui::ColorConvertU32ToFloat4(Theme::propertyField);
-//        colors[ImGuiCol_FrameBgActive]		= ImGui::ColorConvertU32ToFloat4(Theme::propertyField);
-//
-//        // Tabs
-//        colors[ImGuiCol_Tab]				= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
-//        colors[ImGuiCol_TabHovered]			= ImColor(255, 225, 135, 30);
-//        colors[ImGuiCol_TabActive]			= ImColor(255, 225, 135, 60);
-//        colors[ImGuiCol_TabUnfocused]		= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
-//        colors[ImGuiCol_TabUnfocusedActive] = colors[ImGuiCol_TabHovered];
-//
-//        // Title
-//        colors[ImGuiCol_TitleBg]			= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
-//        colors[ImGuiCol_TitleBgActive]		= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
-//        colors[ImGuiCol_TitleBgCollapsed]	= ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-//
-//        // Resize Grip
-//        colors[ImGuiCol_ResizeGrip]			= ImVec4(0.91f, 0.91f, 0.91f, 0.25f);
-//        colors[ImGuiCol_ResizeGripHovered]	= ImVec4(0.81f, 0.81f, 0.81f, 0.67f);
-//        colors[ImGuiCol_ResizeGripActive]	= ImVec4(0.46f, 0.46f, 0.46f, 0.95f);
-//
-//        // Scrollbar
-//        colors[ImGuiCol_ScrollbarBg]		= ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
-//        colors[ImGuiCol_ScrollbarGrab]		= ImVec4(0.31f, 0.31f, 0.31f, 1.0f);
-//        colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.0f);
-//        colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.0f);
-//
-//        // Check Mark
-//        colors[ImGuiCol_CheckMark]			= ImColor(200, 200, 200, 255);
-//
-//        // Slider
-//        colors[ImGuiCol_SliderGrab]			= ImVec4(0.51f, 0.51f, 0.51f, 0.7f);
-//        colors[ImGuiCol_SliderGrabActive]	= ImVec4(0.66f, 0.66f, 0.66f, 1.0f);
-//
-//        // Text
-//        colors[ImGuiCol_Text]				= ImGui::ColorConvertU32ToFloat4(Theme::text);
-//
-//        // Checkbox
-//        colors[ImGuiCol_CheckMark]			= ImGui::ColorConvertU32ToFloat4(Theme::text);
-//
-//        // Separator
-//        colors[ImGuiCol_Separator]			= ImGui::ColorConvertU32ToFloat4(Theme::backgroundDark);
-//        colors[ImGuiCol_SeparatorActive]	= ImGui::ColorConvertU32ToFloat4(Theme::highlight);
-//        colors[ImGuiCol_SeparatorHovered]	= ImColor(39, 185, 242, 150);
-//
-//        // Window Background
-//        colors[ImGuiCol_WindowBg]			= ImGui::ColorConvertU32ToFloat4(Theme::titlebar);
-//        colors[ImGuiCol_ChildBg]			= ImGui::ColorConvertU32ToFloat4(Theme::background);
-//        colors[ImGuiCol_PopupBg]			= ImGui::ColorConvertU32ToFloat4(Theme::backgroundPopup);
-//        colors[ImGuiCol_Border]				= ImGui::ColorConvertU32ToFloat4(Theme::backgroundDark);
-//
-//        // Tables
-//        colors[ImGuiCol_TableHeaderBg]		= ImGui::ColorConvertU32ToFloat4(Theme::groupHeader);
-//        colors[ImGuiCol_TableBorderLight]	= ImGui::ColorConvertU32ToFloat4(Theme::backgroundDark);
-//
-//        // Menubar
-//        colors[ImGuiCol_MenuBarBg]			= ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f };
-//
-//        //========================================================
-//        /// Style
-//        style.FrameRounding = 2.5f;
-//        style.FrameBorderSize = 1.0f;
-//        style.IndentSpacing = 11.0f;
-
         IO.Fonts->Clear();
         setDefaultFont("assets/fonts/opensans/OpenSans-Regular.ttf", 16);
         // load icon font
@@ -158,13 +108,14 @@ namespace engine::visual {
         icons_config.PixelSnapH = true;
         icons_config.OversampleH = 2.5;
         icons_config.OversampleV = 2.5;
-        IO.Fonts->AddFontFromFileTTF("assets/fonts/font_awesome_4/fontawesome-webfont.ttf", 18,
-                                     &icons_config, icons_ranges);
 
+        IO.Fonts->AddFontFromFileTTF(
+                "assets/fonts/font_awesome_4/fontawesome-webfont.ttf",
+                18,
+                &icons_config, icons_ranges);
         IO.Fonts->Build();
 
         ImGuiStyle* style = &ImGui::GetStyle();
-
         ImGui::StyleColorsLight(style);
 
         style->WindowPadding            = ImVec2(15, 15);
@@ -197,7 +148,6 @@ namespace engine::visual {
         style->Colors[ImGuiCol_ScrollbarGrab]         = ImVec4(0.00f, 0.00f, 0.00f, 0.21f);
         style->Colors[ImGuiCol_ScrollbarGrabHovered]  = ImVec4(0.25, 1.00f, 1.00f, 0.78f);
         style->Colors[ImGuiCol_ScrollbarGrabActive]   = ImVec4(0.25f, 1.00f, 1.00f, 1.00f);
-//        style->Colors[ImGuiCol_ComboBg]               = ImVec4(1.00f, 0.98f, 0.95f, 1.00f);
         style->Colors[ImGuiCol_CheckMark]             = ImVec4(0.25f, 1.00f, 1.00f, 0.80f);
         style->Colors[ImGuiCol_SliderGrab]            = ImVec4(0.00f, 0.00f, 0.00f, 0.14f);
         style->Colors[ImGuiCol_SliderGrabActive]      = ImVec4(0.25f, 1.00f, 1.00f, 1.00f);
@@ -207,15 +157,9 @@ namespace engine::visual {
         style->Colors[ImGuiCol_Header]                = ImVec4(0.25f, 1.00f, 1.00f, 0.76f);
         style->Colors[ImGuiCol_HeaderHovered]         = ImVec4(0.25f, 1.00f, 1.00f, 0.86f);
         style->Colors[ImGuiCol_HeaderActive]          = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-//        style->Colors[ImGuiCol_Column]                = ImVec4(0.00f, 0.00f, 0.00f, 0.32f);
-//        style->Colors[ImGuiCol_ColumnHovered]         = ImVec4(0.25f, 1.00f, 0.00f, 0.78f);
-//        style->Colors[ImGuiCol_ColumnActive]          = ImVec4(0.25f, 1.00f, 0.00f, 1.00f);
         style->Colors[ImGuiCol_ResizeGrip]            = ImVec4(0.00f, 0.00f, 0.00f, 0.04f);
         style->Colors[ImGuiCol_ResizeGripHovered]     = ImVec4(0.25f, 1.00f, 1.00f, 0.78f);
         style->Colors[ImGuiCol_ResizeGripActive]      = ImVec4(0.25f, 1.00f, 1.00f, 1.00f);
-//        style->Colors[ImGuiCol_CloseButton]           = ImVec4(0.40f, 0.39f, 0.38f, 0.16f);
-//        style->Colors[ImGuiCol_CloseButtonHovered]    = ImVec4(0.40f, 0.39f, 0.38f, 0.39f);
-//        style->Colors[ImGuiCol_CloseButtonActive]     = ImVec4(0.40f, 0.39f, 0.38f, 1.00f);
         style->Colors[ImGuiCol_PlotLines]             = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
         style->Colors[ImGuiCol_PlotLinesHovered]      = ImVec4(0.25f, 1.00f, 1.00f, 1.00f);
         style->Colors[ImGuiCol_PlotHistogram]         = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
@@ -225,20 +169,14 @@ namespace engine::visual {
     }
 
     void Visual::begin() {
+        auto& app = Application::get();
+        IO.DisplaySize = { (float)app.getWindowWidth(), (float)app.getWindowHeight() };
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        ImGuizmo::BeginFrame();
-//        beginDockspace();
     }
 
     void Visual::end() {
-//        endDockspace();
-
-        const auto& window = Application::get().getWindow();
-        ENGINE_INFO("Visual::end(): width={0}, height={1}", window->getWidth(), window->getHeight());
-        IO.DisplaySize = ImVec2((float)window->getWidth(), (float)window->getHeight());
-
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -257,24 +195,28 @@ namespace engine::visual {
     }
 
     void Visual::onKeyPressed(event::KeyCode keyCode) {
-//        IO.KeysDown[keyCode] = true;
+        IO.KeysDown[keyCode] = true;
+        IO.KeyCtrl = IO.KeysDown[KeyCode::LeftControl] || IO.KeysDown[KeyCode::RightControl];
+        IO.KeyShift = IO.KeysDown[KeyCode::LeftShift] || IO.KeysDown[KeyCode::RightShift];
+        IO.KeyAlt = IO.KeysDown[KeyCode::LeftAlt] || IO.KeysDown[KeyCode::RightAlt];
+        IO.KeySuper = IO.KeysDown[KeyCode::LeftSuper] || IO.KeysDown[KeyCode::RightSuper];
     }
 
     void Visual::onKeyHold(event::KeyCode keyCode) {
-//        IO.KeysDown[keyCode] = true;
     }
 
     void Visual::onKeyReleased(event::KeyCode keyCode) {
-//        IO.KeysDown[keyCode] = false;
+        IO.KeysDown[keyCode] = false;
     }
 
     void Visual::onKeyTyped(event::KeyCode keyCode) {
-        IO.AddInputCharacter(keyCode);
+        if (keyCode > 0 && keyCode < 0x10000)
+            IO.AddInputCharacter(keyCode);
     }
 
     void Visual::onMouseScrolled(double xOffset, double yOffset) {
-        IO.MouseWheelH += xOffset;
-        IO.MouseWheel += yOffset;
+        IO.MouseWheelH += (float)xOffset;
+        IO.MouseWheel += (float)yOffset;
     }
 
     void Visual::onMousePressed(event::MouseCode mouseCode) {
@@ -286,15 +228,16 @@ namespace engine::visual {
     }
 
     void Visual::onCursorMoved(double xPos, double yPos) {
-        IO.MousePos = {(float) xPos, (float) yPos};
+        IO.MousePos = { (float)xPos, (float)yPos };
     }
 
     void Visual::onWindowClosed() {
-        ENGINE_INFO("onWindowsClosed()");
     }
 
-    void Visual::onWindowResized(const uint32_t &width, const uint32_t &height) {
-        ENGINE_INFO("onWindowResized(width = {0}, height = {1})", width, height);
+    void Visual::onWindowResized(u32 width, u32 height) {
+        IO.DisplaySize = { (float)width, (float)height };
+        IO.DisplayFramebufferScale = { 1, 1 };
+        setViewPort(0, 0, (int)width, (int)height);
     }
 
     void Visual::sameLine() {
@@ -346,14 +289,17 @@ namespace engine::visual {
             // Scene Menu
             if (ImGui::BeginMenu("Scene")) {
                 if (ImGui::MenuItem("New", "Ctrl+N")) {
-                    //todo: create new template scene
+                    auto& app = Application::get();
+                    std::stringstream ss;
+                    ss << "New Scene " << app.getScenes().size();
+                    app.newScene(ss.str());
                 }
 
                 if (ImGui::MenuItem("Open...", "Ctrl+O")) {
                     //todo: import scene using file dialog
                 }
 
-                if (ImGui::MenuItem("Save", "Ctrl+S")) {
+                if (ImGui::MenuItem("Save All", "Ctrl+S")) {
                     //todo: serialize into assets/scenes directory using .yaml or binary
                 }
 
@@ -392,6 +338,26 @@ namespace engine::visual {
         }
 
         ImGui::End();
+    }
+
+    bool Visual::blocksKeyboard() {
+        return IO.WantCaptureKeyboard && blockEvents;
+    }
+
+    bool Visual::blocksMouse() {
+        return IO.WantCaptureMouse && blockEvents;
+    }
+
+    bool Visual::blocksTextInput() {
+        return IO.WantTextInput && blockEvents;
+    }
+
+    bool Visual::blocksMousePos() {
+        return IO.WantSetMousePos && blockEvents;
+    }
+
+    void Visual::onUpdate(Time dt) {
+        IO.DeltaTime = dt.seconds();
     }
 
     void Panel::begin(const char* title, const vec2f& size) {

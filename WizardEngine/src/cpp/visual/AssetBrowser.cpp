@@ -20,9 +20,11 @@ namespace engine::visual {
     using namespace engine::event;
     using namespace engine::graphics;
 
+    float AssetBrowser::padding = 16.0f;
+    float AssetBrowser::thumbnailSize = 64.0f;
+
     AssetBrowserCallback* AssetBrowser::callback = nullptr;
 
-    AssetBrowserProps AssetBrowser::_props;
     vector<AssetBrowserItem> AssetBrowser::_items;
 
     Ref<FileDialog> AssetBrowser::_fileDialog;
@@ -46,9 +48,8 @@ namespace engine::visual {
     int AssetBrowser::selectedProjectVersion = 0;
     bool AssetBrowser::autoSync = true;
 
-    void AssetBrowser::create(const Ref<FileDialog>& fileDialog, const AssetBrowserProps &props) {
-        _props = props;
-        _fileDialog = fileDialog;
+    void AssetBrowser::create(void* nativeWindow) {
+        _fileDialog = createRef<FileDialog>(nativeWindow);
 
         auto dirItem = AssetBrowserItem {
                 "",
@@ -107,7 +108,7 @@ namespace engine::visual {
 
     void AssetBrowser::draw(Time dt) {
         static bool open = true;
-        if (!ImGui::Begin(ICON_FA_FILTER" Assets", &open)) {
+        if (!ImGui::Begin(ICON_FA_FOLDER" Assets", &open)) {
             ImGui::End();
             return;
         }
@@ -184,7 +185,7 @@ namespace engine::visual {
             }
         }
 
-        float cellSize = _props.thumbnailSize + _props.padding;
+        float cellSize = thumbnailSize + padding;
 
         float panelWidth = ImGui::GetContentRegionAvail().x;
         int columnCount = (int)(panelWidth / cellSize);
@@ -221,10 +222,10 @@ namespace engine::visual {
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
                 auto iconClicked = ImGui::ImageButton(
                         (ImTextureID) iconId,
-                        { _props.thumbnailSize, _props.thumbnailSize },
+                        { thumbnailSize, thumbnailSize },
                         { 0, 0 },
                         { 1, 1 },
-                        -static_cast<int>(_props.padding)
+                        -static_cast<int>(padding)
                 );
 
                 if (!isDirectory && iconClicked) {
@@ -282,19 +283,19 @@ namespace engine::visual {
                 if (renameMode) {
                     ImGui::InputText("##asset_rename", &newAssetName);
                     if (ImGui::IsKeyPressed(ImGuiKey_Enter)) {
-                        if (SAME(_rightClickedAssetExtension.c_str(), CPP_EXT)) {
+                        if (_rightClickedAssetExtension == CPP_EXT) {
                             ProjectManager::renameScript(_rightClickedAssetPath.string(), newAssetName);
                             if (autoSync) {
                                 ProjectManager::cmakeScripts(_project, getSelectedProjectVersion());
                             }
                         } else {
-                            engine::filesystem::rename(_rightClickedAssetPath, newAssetName + ".cpp");
+                            engine::filesystem::rename(_rightClickedAssetPath, newAssetName + _rightClickedAssetExtension);
                         }
                         renameMode = false;
                         _rightClickedAssetPath = "";
                     }
                 } else {
-                    Text::centered(rawName.c_str(), _props.thumbnailSize * 1.5, 1, false);
+                    Text::centered(rawName.c_str(), thumbnailSize * 1.5, 1, false);
                 }
 
                 ImGui::NextColumn();
@@ -452,10 +453,6 @@ namespace engine::visual {
 
             ImGui::EndPopup();
         }
-    }
-
-    const AssetBrowserProps& AssetBrowser::getProps() {
-        return _props;
     }
 
     ProjectVersion AssetBrowser::getSelectedProjectVersion() {

@@ -16,14 +16,7 @@ namespace engine::ecs {
     class ENGINE_API Scene : public EntityContainer {
 
     public:
-        Scene() : name("Untitled") {
-            init();
-        }
-
-        Scene(const std::string& name) : name(name) {
-            init();
-        }
-
+        explicit Scene(const std::string& name = "Untitled");
         ~Scene();
 
     public:
@@ -52,6 +45,10 @@ namespace engine::ecs {
             return name;
         }
 
+        inline std::string& editName() {
+            return name;
+        }
+
         inline void setName(const std::string& name) {
             this->name = name;
         }
@@ -64,10 +61,20 @@ namespace engine::ecs {
             return hdrEnv;
         }
 
-    private:
-        void init();
+        bool operator==(const Scene& scene) const {
+            return name == scene.name;
+        }
+
+        [[nodiscard]] inline const uuid& getId() const {
+            return id;
+        }
+
+        inline void setId(const uuid& newId) {
+            id = newId;
+        }
 
     private:
+        uuid id;
         std::string name;
         Entity skybox;
         Entity hdrEnv;

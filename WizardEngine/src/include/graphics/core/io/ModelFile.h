@@ -63,12 +63,6 @@ namespace engine::io {
         };
     };
 
-    template<typename T>
-    struct ModelFileListener {
-        std::function<void(const Model&)> success;
-        std::function<void(const exception&)> failure;
-    };
-
     enum ModelFileOption {
         triangulate = aiProcess_Triangulate, // divide complex polygons into triangles
         flip_uv = aiProcess_FlipUVs, // we can simply flip stbi_image instead
@@ -97,10 +91,10 @@ namespace engine::io {
         typedef std::unordered_map<std::string, Model> ModelMap;
 
     public:
-        static void read(const std::string &filepath, const std::string& texturesFilePath, const ModelFileListener<T>& listener, const ModelFileOptions& options = ModelFileOptions());
+        static Model read(const std::string &filepath, const std::string& texturesFilePath, const ModelFileOptions& options = ModelFileOptions());
 
     private:
-        static Model read(const std::string &filePath, const std::string& texturesFilePath, const ModelFileOptions& options);
+        static Model readInternal(const std::string &filePath, const std::string& texturesFilePath, const ModelFileOptions& options);
         static bool exists(const std::string &filepath);
         static void clear();
         static void extractNodes(
@@ -129,7 +123,7 @@ namespace engine::io {
     std::unordered_map<std::string, Model> ModelFile<T>::modelMap;
 
     template<typename T>
-    Model ModelFile<T>::read(const std::string &filePath, const std::string& texturesFilePath, const ModelFileOptions& options) {
+    Model ModelFile<T>::readInternal(const std::string &filePath, const std::string& texturesFilePath, const ModelFileOptions& options) {
         Assimp::Importer import;
         const aiScene *scene = import.ReadFile(filePath, options.getFlag());
 
@@ -302,21 +296,20 @@ namespace engine::io {
     }
 
     template<typename T>
-    void ModelFile<T>::read(const std::string &filepath, const std::string& texturesFilePath, const ModelFileListener<T> &listener, const ModelFileOptions& options) {
+    Model ModelFile<T>::read(const std::string &filepath, const std::string& texturesFilePath, const ModelFileOptions& options) {
         ENGINE_INFO("ModelFile: read='{0}'", filepath);
         // get a copy of mesh that's already loaded from a model file
         if (exists(filepath)) {
-            listener.success(modelMap.at(filepath));
-            return;
+            return modelMap.at(filepath);
         }
         // load new mesh from model file
         try {
-            auto model = read(filepath, texturesFilePath, options);
+            auto model = readInternal(filepath, texturesFilePath, options);
             modelMap.insert({ filepath, model });
-            listener.success(model);
+            return model;
         } catch (const file_not_found& ex) {
             ENGINE_ERR("ModelFile: Failed to read file '{0}'", filepath);
-            listener.failure(ex);
+            ENGINE_THROW(ex);
         }
     }
 

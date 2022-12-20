@@ -6,11 +6,12 @@
 #include <profiler/Profiler.h>
 #include <time/Timer.h>
 
+#include <future>
+
 namespace engine::core {
 
     void Application::run() {
         onCreate();
-        onPrepare();
         while (_isRunning) {
             onUpdate();
         }
@@ -20,126 +21,112 @@ namespace engine::core {
     void Application::onCreate() {
         PROFILE_FUNCTION();
         ENGINE_INFO("onCreate()");
+        // setup job system
+        auto& jobSystem = JobSystem<>::get();
+        // setup window, input, graphics
+        jobSystem.renderScheduler->execute([this]() {
+            io::TextureFile::setFlipTexture(false);
+            if (!ProjectProps::createFromFile("properties.yaml", projectProps)) {
+                ENGINE_WARN("Application: Unable to create properties from properties.yaml");
+            }
+            _window = createScope<Window>(projectProps.windowProps);
+            loadGamepadMappings("assets/mappings/game_controller.txt");
+            if (projectProps.icon != "") {
+                setWindowIcon(projectProps.icon);
+            }
 
-        io::TextureFile::setFlipTexture(false);
-
-        if (!ProjectProps::createFromFile("properties.yaml", projectProps)) {
-            ENGINE_WARN("Application: Unable to create properties from properties.yaml");
-        }
-
-        _window = createScope<Window>(projectProps.windowProps);
-        if (projectProps.icon != "") {
-            setWindowIcon(projectProps.icon);
-        }
-
-        createGraphics();
-        Input::create(_window->getNativeWindow());
-
+            Input::create(_window->getNativeWindow());
+            createGraphics();
+            initHDR();
+            initBlur();
+            initSharpen();
+            initEdgeDetection();
+            initGaussianBlur();
+            initTextureMixer();
+            // setup common scene renderers
+            createBatchRenderer();
+            createInstanceRenderer();
+            RenderSystem::hdrEnvRenderer.init();
+            // setup ImGui
 #ifdef VISUAL
-        Visual::init(getNativeWindow());
-        Visual::fullScreen = projectProps.windowProps.fullscreen;
-        Visual::openDockspace = projectProps.windowProps.dockspace;
+            Visual::init(getNativeWindow());
+            Visual::fullScreen = projectProps.windowProps.fullscreen;
+            Visual::openDockspace = projectProps.windowProps.dockspace;
+            AssetBrowser::create(getNativeWindow());
+            MaterialPanel::create(getNativeWindow());
 #endif
-        // init audio
-        audio::DeviceManager::createContext();
-        // init default post effect renderers
-        initHDR();
-        initBlur();
-        initSharpen();
-        initEdgeDetection();
-        initGaussianBlur();
-        initTextureMixer();
-
+            _window->onPrepare();
+            _window->setInCenter();
+            setSampleSize(projectProps.windowProps.sampleSize);
+            graphics::enableSRGB();
+            RenderSystem::screenRenderer.onWindowResized(getWindowWidth(), getWindowHeight());
+        });
+        // setup audio
+        jobSystem.audioScheduler->execute([]() {
+            audio::DeviceManager::createContext();
+        });
+        // setup network
+        jobSystem.networkScheduler->execute([]() {
+        });
+        // setup something heavy
+        jobSystem.threadPoolScheduler->execute([]() {
+        });
+        // at least do some job on main thread
         if (projectProps.launcher != "") {
             setActiveScene(io::LocalAssetManager::loadScene(projectProps.launcher.c_str()));
         } else {
             ENGINE_WARN("Application: Launcher scene not specified in properties.yaml!");
         }
-
-        RenderSystem::hdrEnvRenderer.init();
-    }
-
-    void Application::onPrepare() {
-        PROFILE_FUNCTION();
-        graphics::enableSRGB();
-        _window->onPrepare();
-        _window->setInCenter();
-        setSampleSize(projectProps.windowProps.sampleSize);
+        // we must sync with other jobs to continue further.
+        // otherwise, we will cause race conditions and bugs in onPrepare()
+        jobSystem.waitAll();
         _layerStack.onPrepare();
-        loadGamepadMappings("assets/mappings/game_controller.txt");
-        ENGINE_INFO("screenRenderer.onWindowResized");
-        RenderSystem::screenRenderer.onWindowResized(getWindowWidth(), getWindowHeight());
-    }
-
-    void Application::setSkybox(Ref<Scene> &scene, const Entity& skybox) const {
-        scene->setSkybox(skybox);
-        RenderSystem::skyboxRenderer.upload(scene->getSkybox().get<Skybox>());
-    }
-
-    void Application::setSkyCube(Ref<Scene> &scene, const char* skyboxName, u32 skyboxId) const {
-        setSkybox(scene, SkyboxCube(
-                skyboxName,
-                scene.get(),
-                CubeMapTextureComponent(skyboxId, TextureType::CUBE_MAP)
-        ));
-    }
-
-    void Application::setSkyCube(Ref<Scene>& scene, const char* skyboxName, const vector<TextureFace>& skyboxFaces) const {
-        u32 skyboxId = TextureBuffer::load(skyboxFaces);
-        TextureBuffer::setDefaultParamsCubeMap(skyboxId);
-        setSkyCube(scene, skyboxName, skyboxId);
-    }
-
-    void Application::setHdrEnv(Ref<Scene>& scene, const Entity& hdrEnv) const {
-        scene->setHdrEnv(hdrEnv);
-        RenderSystem::hdrEnvRenderer.upload(scene->getHdrEnv().get<HdrEnv>());
-    }
-
-    void Application::setHdrEnvCube(Ref<Scene>& scene, const char* filepath) const {
-        setHdrEnv(
-                scene,
-                HdrEnvCube(
-                        "HdrEnvCube",
-                        scene.get(),
-                        TextureComponent(
-                                TextureBuffer::load(filepath, io::Spectrum::HDR),
-                                TextureType::TEXTURE_2D,
-                                IntUniform { "hdrEnv", 0 }
-                        )
-                )
-        );
     }
 
     void Application::onDestroy() {
         PROFILE_FUNCTION();
         ENGINE_INFO("onDestroy()");
-        RenderSystem::onDestroy();
-        ScriptSystem::onDestroy();
-        audio::MediaPlayer::clear();
-        audio::DeviceManager::clear();
+        JobSystem<>::get().renderScheduler->execute([]() {
+            RenderSystem::onDestroy();
 #ifdef VISUAL
-        Visual::release();
+            Visual::release();
 #endif
+        });
+        JobSystem<>::get().audioScheduler->execute([]() {
+            audio::MediaPlayer::clear();
+            audio::DeviceManager::clear();
+        });
+        ScriptSystem::onDestroy();
+        JobSystem<>::get().renderScheduler->wait();
+        JobSystem<>::get().audioScheduler->wait();
     }
 
     void Application::onUpdate() {
         PROFILE_FUNCTION();
         // measure dt time
         Timer timer("Application::onUpdate()", 30);
-        // update runtime system
-        onRuntimeUpdate(dt);
-        // update tools system
+
+        auto& jobSystem = JobSystem<>::get();
+
+        // update graphics, window, input, tools
+        jobSystem.renderScheduler->execute([this]() {
+            RenderSystem::onUpdate();
 #ifdef VISUAL
-        Visual::begin();
-        _layerStack.onVisualDraw(dt);
-        Visual::end();
+            Visual::begin();
+            Visual::onUpdate(dt);
+            _layerStack.onVisualDraw(dt);
+            Visual::end();
 #endif
-        // poll events + swap chain
-        if (enableMouseCursor) {
-            Input::updateMousePosition();
-        }
-        onEventUpdate();
-        _window->onUpdate();
+            // poll events + swap chain
+            if (enableMouseCursor) {
+                Input::updateMousePosition();
+            }
+            onEventUpdate();
+            _window->onUpdate();
+        });
+        // update simulation systems
+        onSimulationUpdate(dt);
+        jobSystem.renderScheduler->wait();
 
         dt = timer.stop();
 
@@ -172,6 +159,9 @@ namespace engine::core {
         if (width == 0 || height == 0) return;
 
         _layerStack.onWindowResized(width, height);
+        if (activeScene) {
+            activeScene->getCamera().setAspectRatio(width, height);
+        }
 //        activeSceneFrame->resize(width, height);
 //        screenFrame->resize(width, height);
         EventRegistry::onWindowResized.function(width, height);
@@ -183,76 +173,121 @@ namespace engine::core {
 
     void Application::onKeyPressed(event::KeyCode keyCode) {
         PROFILE_FUNCTION();
-        _layerStack.onKeyPressed(keyCode);
-        EventRegistry::onKeyPressedMap[keyCode].function(keyCode);
 #ifdef VISUAL
         Visual::onKeyPressed(keyCode);
+        if (Visual::blocksKeyboard())
+            return;
 #endif
+        _layerStack.onKeyPressed(keyCode);
+        EventRegistry::onKeyPressedMap[keyCode].function(keyCode);
     }
 
     void Application::onKeyHold(event::KeyCode keyCode) {
         PROFILE_FUNCTION();
-        _layerStack.onKeyHold(keyCode);
-        EventRegistry::onKeyHoldMap[keyCode] = true;
 #ifdef VISUAL
         Visual::onKeyHold(keyCode);
+        if (Visual::blocksKeyboard())
+            return;
 #endif
+        _layerStack.onKeyHold(keyCode);
+        if (activeScene) {
+            auto& camera = activeScene->getCamera();
+            switch (keyCode) {
+                case W:
+                    camera.applyMove(UP);
+                    break;
+                case A:
+                    camera.applyMove(LEFT);
+                    break;
+                case S:
+                    camera.applyMove(DOWN);
+                    break;
+                case D:
+                    camera.applyMove(RIGHT);
+                    break;
+                case Q:
+                    camera.applyRotate(LEFT_Z);
+                    break;
+                case E:
+                    camera.applyRotate(RIGHT_Z);
+                    break;
+                case Z:
+                    camera.applyZoom(ZOOM_IN);
+                    break;
+                case X:
+                    camera.applyZoom(ZOOM_OUT);
+                    break;
+            }
+        }
+        EventRegistry::onKeyHoldMap[keyCode] = true;
     }
 
     void Application::onKeyReleased(event::KeyCode keyCode) {
         PROFILE_FUNCTION();
+#ifdef VISUAL
+        Visual::onKeyReleased(keyCode);
+        if (Visual::blocksKeyboard())
+            return;
+#endif
         _layerStack.onKeyReleased(keyCode);
         EventRegistry::onKeyReleasedMap[keyCode].function(keyCode);
         EventRegistry::onKeyHoldMap[keyCode] = false;
-#ifdef VISUAL
-        Visual::onKeyReleased(keyCode);
-#endif
     }
 
     void Application::onMousePressed(event::MouseCode mouseCode) {
         PROFILE_FUNCTION();
+#ifdef VISUAL
+        Visual::onMousePressed(mouseCode);
+        if (Visual::blocksMouse())
+            return;
+#endif
         _layerStack.onMousePressed(mouseCode);
         EventRegistry::onMousePressedMap[mouseCode].function(mouseCode);
         EventRegistry::mouseHoldMap[mouseCode] = true;
-#ifdef VISUAL
-        Visual::onMousePressed(mouseCode);
-#endif
     }
 
     void Application::onMouseRelease(event::MouseCode mouseCode) {
         PROFILE_FUNCTION();
+#ifdef VISUAL
+        Visual::onMouseRelease(mouseCode);
+        if (Visual::blocksMouse())
+            return;
+#endif
         _layerStack.onMouseRelease(mouseCode);
         EventRegistry::onMouseReleasedMap[mouseCode].function(mouseCode);
         EventRegistry::mouseHoldMap[mouseCode] = false;
-#ifdef VISUAL
-        Visual::onMouseRelease(mouseCode);
-#endif
     }
 
     void Application::onMouseScrolled(double xOffset, double yOffset) {
         PROFILE_FUNCTION();
-        _layerStack.onMouseScrolled(xOffset, yOffset);
-        EventRegistry::onMouseScrolled.function(xOffset, yOffset);
 #ifdef VISUAL
         Visual::onMouseScrolled(xOffset, yOffset);
+        if (Visual::blocksMouse())
+            return;
 #endif
+        _layerStack.onMouseScrolled(xOffset, yOffset);
+        EventRegistry::onMouseScrolled.function(xOffset, yOffset);
     }
 
     void Application::onCursorMoved(double xPos, double yPos) {
         PROFILE_FUNCTION();
-        _layerStack.onCursorMoved(xPos, yPos);
-        EventRegistry::onCursorMoved.function(xPos, yPos);
 #ifdef VISUAL
         Visual::onCursorMoved(xPos, yPos);
+        if (Visual::blocksMousePos())
+            return;
 #endif
+        _layerStack.onCursorMoved(xPos, yPos);
+        EventRegistry::onCursorMoved.function(xPos, yPos);
     }
 
     void Application::onKeyTyped(event::KeyCode keyCode) {
         PROFILE_FUNCTION();
-        _layerStack.onKeyTyped(keyCode);
 #ifdef VISUAL
         Visual::onKeyTyped(keyCode);
+        if (Visual::blocksTextInput())
+            return;
 #endif
+        _layerStack.onKeyTyped(keyCode);
     }
 
     float Application::getAspectRatio() const {
@@ -261,10 +296,11 @@ namespace engine::core {
 
     void Application::setActiveScene(const Ref<Scene>& scene) {
         PROFILE_FUNCTION();
-        scenes[scene->getName()] = scene;
+        scenes[scene->getId()] = scene;
         activeScene = scene;
         selectedEntity = Entity(activeScene.get());
         hoveredEntity = Entity(activeScene.get());
+        bindCamera(activeScene->getCamera());
         RenderSystem::activeScene = activeScene;
         ScriptSystem::activeScene = activeScene;
         Physics::activeScene = activeScene;
@@ -342,12 +378,29 @@ namespace engine::core {
         RenderSystem::skyboxRenderer.init();
     }
 
-    void Application::onRuntimeUpdate(Time dt) {
-        if (!activeScene->isEmpty()) {
+    void Application::onSimulationUpdate(Time dt) {
+        if (activeScene != nullptr && !activeScene->isEmpty()) {
             Physics::onUpdate(dt);
             ScriptSystem::onUpdate(dt);
-            RenderSystem::onUpdate();
             _layerStack.onUpdate(dt);
+
+            auto& camera = activeScene->getCamera();
+            camera.onUpdate(dt);
+
+            if (EventRegistry::mouseHold(ButtonLeft)) {
+                RUNTIME_INFO("mouseHold: button left");
+                camera.applyMouseRotate();
+            }
+
+            if (EventRegistry::mouseHold(ButtonRight)) {
+                RUNTIME_INFO("mouseHold: button right");
+                camera.applyMouseMove();
+            }
+
+            if (EventRegistry::mouseHold(ButtonMiddle)) {
+                RUNTIME_INFO("mouseHold: button middle");
+                camera.applyMouseZoom();
+            }
         } else {
             ENGINE_WARN("Active scene is empty!");
         }
@@ -529,11 +582,11 @@ namespace engine::core {
     }
 
     void Application::addScene(const Ref<Scene>& scene) {
-        scenes[scene->getName()] = scene;
+        scenes[scene->getId()] = scene;
     }
 
-    void Application::removeScene(const std::string& name) {
-        scenes.erase(name);
+    void Application::removeScene(const uuid& sceneId) {
+        scenes.erase(sceneId);
     }
 
     void Application::clearScenes() {
@@ -542,8 +595,269 @@ namespace engine::core {
 
     void Application::addScenes(const vector<Ref<Scene>> &newScenes) {
         for (const auto& newScene : newScenes) {
-            scenes[newScene->getName()] = newScene;
+            scenes[newScene->getId()] = newScene;
         }
+    }
+
+    vector<Batch3d> Application::loadModel(const uuid& sceneId) {
+        // we need to flip textures as they will be loaded vice versa
+        io::TextureFile::setFlipTexture(true);
+        io::Model model = io::ModelFile<BatchVertex<Vertex3d>>::read(
+                "assets/SamuraiHelmet/source/SamuraiHelmet.fbx.fbx",
+                "assets/SamuraiHelmet/textures"
+        );
+        RUNTIME_INFO("ModelFile read: onSuccess");
+
+        vector<Batch3d> entities;
+        const auto& scene = scenes.at(sceneId);
+        for (int i = 0; i < model.meshes.size(); i++) {
+            auto modelMesh = model.meshes[i];
+            BaseMeshComponent<BatchVertex<Vertex3d>> meshComponent;
+            meshComponent.mesh = modelMesh.toMesh<BatchVertex<Vertex3d>>([](const io::ModelVertex& modelVertex) {
+                return BatchVertex<Vertex3d> {
+                        modelVertex.position,
+                        modelVertex.uv,
+                        modelVertex.normal,
+                        modelVertex.tangent,
+                        modelVertex.bitangent,
+                        0
+                };
+            });
+            std::stringstream ss;
+            ss << "Entity_" << i;
+            auto newEntity = Batch3d(scene.get());
+            newEntity.get<TagComponent>()->tag = ss.str();
+            newEntity.getTransform().position = { 1, 1, 1 };
+            newEntity.applyTransform();
+            newEntity.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(meshComponent);
+            newEntity.add<Material>(modelMesh.material);
+            entities.emplace_back(newEntity);
+        }
+
+        return entities;
+    }
+
+    Ref<Scene> Application::newScene(const std::string& sceneName) {
+        // setup scene, entities, components
+        auto scene = createRef<Scene>(sceneName);
+        addScene(scene);
+        // setup scene camera
+        Camera3D mainCamera("NewCamera", getAspectRatio(), scene.get());
+        scene->setCamera(mainCamera);
+        // setup skybox
+        u32 skyboxId = TextureBuffer::load({
+            { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
+            { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
+            { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
+            { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
+            { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
+            { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
+        });
+        TextureBuffer::setDefaultParamsCubeMap(skyboxId);
+        auto skybox = SkyboxCube(
+                "NewSkybox",
+                scene.get(),
+                CubeMapTextureComponent(skyboxId, TextureType::CUBE_MAP)
+        );
+        scene->setSkybox(skybox);
+        RenderSystem::skyboxRenderer.upload(skybox.get<Skybox>());
+        // setup HDR env
+        auto hdrEnv = HdrEnvCube(
+                "HdrEnvCube",
+                scene.get(),
+                TextureComponent(
+                        TextureBuffer::load("assets/hdr/ice_lake.hdr", io::Spectrum::HDR),
+                        TextureType::TEXTURE_2D,
+                        IntUniform { "hdrEnv", 0 })
+        );
+        scene->setHdrEnv(hdrEnv);
+        RenderSystem::hdrEnvRenderer.upload(hdrEnv.get<HdrEnv>());
+        // setup light sources
+        PhongLight("L_Sun_1", scene.get()).getPosition() = { -10, 10, -10 };
+        PhongLight("L_Sun_2", scene.get()).getPosition() = { 10, 10, 10 };
+        PhongLight("L_Sun_3", scene.get()).getPosition() = { -10, 10, 10 };
+        PhongLight("L_Sun_4", scene.get()).getPosition() = { 10, 10, -10 };
+        // setup geometry or mesh
+        ThreadPoolScheduler->execute([this, &scene]() {
+            Ref<vector<Batch3d>> batches = createRef<vector<Batch3d>>(loadModel(scene->getId()));
+            RenderScheduler->execute([&batches]() {
+                RenderSystem::batchRenderer->createVIRenderModel(*batches.get());
+            });
+        });
+        return scene;
+    }
+
+    Ref<Renderer> Application::createBatchRenderer() {
+        auto entityHandler = [](
+                ecs::Registry& registry,
+                ecs::entity_id entityId,
+                u32 index,
+                BaseShaderProgram& shader
+        ) {
+            // pass entity id to shader
+            auto* uuid = registry.getComponent<UUIDComponent>(entityId);
+            IntUniform uuidUniform = { "uuids", uuid->uuid };
+            shader.setUniformArrayElement(index, uuidUniform);
+            ENGINE_INFO("UUID: {0}", uuid->uuid);
+            // update single material
+            auto material = registry.getComponent<Material>(entityId);
+            if (material) {
+                MaterialShader(shader).setMaterial(index, material);
+            }
+        };
+        // setup batch and instanced renderers
+        auto batchShader = shader::BaseShaderProgram(
+                io::ShaderProps {
+                        "batch",
+                        "v_batch.glsl",
+                        "scene_phong.glsl",
+                        ENGINE_SHADERS_PATH
+                },
+                BaseShader(),
+                BaseShader(),
+                { camera3dUboScript(), lightScript() }
+        );
+        batchShader.setInstancesPerDraw(4);
+        Ref<Renderer> batchRenderer = createRef<BatchRenderer<Vertex3d>>(batchShader);
+        batchRenderer->addEntityHandler(entityHandler);
+        RenderSystem::batchRenderer = batchRenderer;
+        return batchRenderer;
+    }
+
+    Ref<Renderer> Application::createInstanceRenderer() {
+        auto entityHandler = [](
+                ecs::Registry& registry,
+                ecs::entity_id entityId,
+                u32 index,
+                BaseShaderProgram& shader
+        ) {
+            // pass entity id to shader
+            auto* uuid = registry.getComponent<UUIDComponent>(entityId);
+            IntUniform uuidUniform = { "uuids", uuid->uuid };
+            shader.setUniformArrayElement(index, uuidUniform);
+            ENGINE_INFO("UUID: {0}", uuid->uuid);
+            // update single material
+            auto material = registry.getComponent<Material>(entityId);
+            if (material) {
+                MaterialShader(shader).setMaterial(index, material);
+            }
+        };
+        auto instanceShader = shader::BaseShaderProgram(
+                io::ShaderProps {
+                        "instance",
+                        "v_instance.glsl",
+                        "scene_phong.glsl",
+                        ENGINE_SHADERS_PATH
+                },
+                BaseShader(),
+                BaseShader(),
+                { camera3dUboScript(), lightScript() }
+        );
+        instanceShader.setInstancesPerDraw(4);
+        Ref<Renderer> instanceRenderer = createRef<InstanceRenderer<Vertex3d>>(instanceShader);
+        instanceRenderer->addEntityHandler(entityHandler);
+        RenderSystem::instanceRenderer = instanceRenderer;
+        return instanceRenderer;
+    }
+
+    void Application::bindCamera(Camera3D& camera) {
+        KEY_PRESSED(KeyCode::W) { [&camera](KeyCode keycode) {
+            camera.applyMove(MoveType::UP);
+        }};
+        KEY_PRESSED(KeyCode::A) { [&camera](KeyCode keycode) {
+            camera.applyMove(MoveType::LEFT);
+        }};
+        KEY_PRESSED(KeyCode::S) { [&camera](KeyCode keycode) {
+            camera.applyMove(MoveType::DOWN);
+        }};
+        KEY_PRESSED(KeyCode::D) { [&camera](KeyCode keycode) {
+            camera.applyMove(MoveType::RIGHT);
+        }};
+        KEY_PRESSED(KeyCode::Q) { [&camera](KeyCode keycode) {
+            camera.applyRotate(RotateType::LEFT_Z);
+        }};
+        KEY_PRESSED(KeyCode::E) { [&camera](KeyCode keycode) {
+            camera.applyRotate(RotateType::RIGHT_Z);
+        }};
+        KEY_PRESSED(KeyCode::Z) { [&camera](KeyCode keycode) {
+            camera.applyZoom(ZoomType::ZOOM_IN);
+        }};
+        KEY_PRESSED(KeyCode::X) { [&camera](KeyCode keycode) {
+            camera.applyZoom(ZoomType::ZOOM_OUT);
+        }};
+        camera.zoomSpeed = 10.0f;
+        camera.rotateSpeed = 0.5f;
+        camera.moveSpeed = 0.5f;
+        camera.distance = 10.0f;
+
+        GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_A) { [this](GamepadButtonCode gamepadBtnCode) {
+            onPadA();
+        }};
+        GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_B) { [this](GamepadButtonCode gamepadBtnCode) {
+            onPadB();
+        }};
+        GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_X) { [this](GamepadButtonCode gamepadBtnCode) {
+            onPadX();
+        }};
+        GAMEPAD_PRESSED(GamepadButtonCode::PAD_BTN_Y) { [this](GamepadButtonCode gamepadBtnCode) {
+            onPadY();
+        }};
+
+        GAMEPAD_ROLL_LEFT() { [this](const GamepadRoll& roll) {
+            onGamepadRollLeft(roll);
+        }};
+        GAMEPAD_ROLL_RIGHT() { [this](const GamepadRoll& roll) {
+            onGamepadRollRight(roll);
+        }};
+    }
+
+    void Application::onPadA() {
+        RUNTIME_INFO("Gamepad button A pressed!");
+        if (activeScene) {
+            auto& camera = activeScene->getCamera();
+            camera.move(DOWN);
+            camera.applyView();
+        }
+    }
+
+    void Application::onPadB() {
+        RUNTIME_INFO("Gamepad button B pressed!");
+        if (activeScene) {
+            auto& camera = activeScene->getCamera();
+            camera.move(RIGHT);
+            camera.applyView();
+        }
+    }
+
+    void Application::onPadX() {
+        RUNTIME_INFO("Gamepad button X pressed!");
+        if (activeScene) {
+            auto& camera = activeScene->getCamera();
+            camera.move(LEFT);
+            camera.applyView();
+        }
+    }
+
+    void Application::onPadY() {
+        RUNTIME_INFO("Gamepad button Y pressed!");
+        if (activeScene) {
+            auto& camera = activeScene->getCamera();
+            camera.move(UP);
+            camera.applyView();
+        }
+    }
+
+    void Application::onGamepadRollLeft(const GamepadRoll& roll) {
+        RUNTIME_INFO("onGamepadRollLeft: (x: {0}, y: {1}, trigger: {2})", roll.x, roll.y, roll.triggered);
+        if (activeScene) {
+            auto& camera = activeScene->getCamera();
+            camera.move({ roll.x, roll.y, 1 });
+            camera.applyView();
+        }
+    }
+
+    void Application::onGamepadRollRight(const GamepadRoll& roll) {
+        RUNTIME_INFO("onGamepadRollRight: (x: {0}, y: {1}, trigger: {2})", roll.x, roll.y, roll.triggered);
     }
 }
 

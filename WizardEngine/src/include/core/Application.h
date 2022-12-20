@@ -9,6 +9,7 @@
 #include <core/String.h>
 #include <core/Memory.h>
 #include <core/ProjectManager.h>
+#include <core/job_system.h>
 
 #include <time/Time.h>
 
@@ -34,6 +35,7 @@
 #include <graphics/materials/Color.h>
 #include <graphics/materials/Material.h>
 #include <graphics/hdr_env/hdr_env.h>
+#include <graphics/camera/CameraShaderScript.h>
 
 #include <scripting/ScriptSystem.h>
 #include <scripting/ScriptManager.h>
@@ -49,6 +51,8 @@
 
 #include <physics/Physics.h>
 
+#include <thread/Thread.h>
+
 using namespace engine::core;
 using namespace engine::graphics;
 using namespace engine::event;
@@ -57,16 +61,17 @@ using namespace engine::network;
 using namespace engine::ecs;
 using namespace engine::physics;
 using namespace engine::scripting;
+using namespace engine::thread;
 
-#define KEY_PRESSED(key, action) engine::event::EventRegistry::onKeyPressedMap[key] = { [this](KeyCode keyCode) { action } }
-#define KEY_RELEASED(key, action) engine::event::EventRegistry::onKeyReleasedMap[key] = { [this](KeyCode keyCode) { action } }
-#define KEY_TYPED(key, action) engine::event::EventRegistry::onKeyTypedMap[key] = { [this](KeyCode keyCode) { action } }
-#define KEY_HOLD(key, action) engine::event::EventRegistry::onKeyHoldMap[key] = { [this](KeyCode keyCode) { action } }
+#define KEY_PRESSED(key) engine::event::EventRegistry::onKeyPressedMap[key] =
+#define KEY_RELEASED(key) engine::event::EventRegistry::onKeyReleasedMap[key] =
+#define KEY_TYPED(key) engine::event::EventRegistry::onKeyTypedMap[key] =
+#define KEY_HOLD(key) engine::event::EventRegistry::onKeyHoldMap[key] =
 
-#define GAMEPAD_PRESSED(btn, action) engine::event::EventRegistry::onGamepadButtonPressedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
-#define GAMEPAD_RELEASED(btn, action) engine::event::EventRegistry::onGamepadButtonReleasedMap[btn] = { [this](GamepadButtonCode gamepadBtnCode) { action } }
-#define GAMEPAD_ROLL_LEFT(action) engine::event::EventRegistry::onGamepadRollLeft.function = { [this](const GamepadRoll& roll) { action } }
-#define GAMEPAD_ROLL_RIGHT(action) engine::event::EventRegistry::onGamepadRollRight.function = { [this](const GamepadRoll& roll) { action } }
+#define GAMEPAD_PRESSED(btn) engine::event::EventRegistry::onGamepadButtonPressedMap[btn] =
+#define GAMEPAD_RELEASED(btn) engine::event::EventRegistry::onGamepadButtonReleasedMap[btn] =
+#define GAMEPAD_ROLL_LEFT(action) engine::event::EventRegistry::onGamepadRollLeft.function =
+#define GAMEPAD_ROLL_RIGHT(action) engine::event::EventRegistry::onGamepadRollRight.function =
 
 #ifdef VISUAL
 #include <visual/Visual.h>
@@ -107,6 +112,10 @@ namespace engine::core {
             return _window;
         }
 
+        inline unordered_map<uuid, Ref<Scene>>& getScenes() {
+            return scenes;
+        }
+
     public:
         // window events
         void onWindowClosed();
@@ -131,7 +140,6 @@ namespace engine::core {
 
     protected:
         virtual void onCreate();
-        virtual void onPrepare();
         virtual void onDestroy();
         virtual void onVisualDraw(time::Time dt);
 
@@ -144,25 +152,18 @@ namespace engine::core {
         void setWindowIcon(const std::string &filePath);
         Ref<tools::FileDialog> createFileDialog();
         void setSampleSize(int samples);
+
         void setActiveScene(const Ref<Scene>& activeScene);
         void addScene(const Ref<Scene>& scene);
         void addScenes(const vector<Ref<Scene>>& scenes);
-        void removeScene(const std::string& name);
+        void removeScene(const uuid& sceneId);
         void clearScenes();
+
         void loadGamepadMappings(const char* mappingsFilePath);
-        void setSkybox(Ref<Scene>& scene, const Entity& skybox) const;
-        void setSkyCube(
-                Ref<Scene>& scene,
-                const char* skyboxName,
-                u32 skyboxId
-        ) const;
-        void setSkyCube(
-                Ref<Scene>& scene,
-                const char* skyboxName,
-                const vector<TextureFace>& skyboxFaces
-        ) const;
-        void setHdrEnv(Ref<Scene>& scene, const Entity& hdrEnv) const;
-        void setHdrEnvCube(Ref<Scene>& scene, const char* filepath) const;
+
+        Ref<Scene> newScene(const std::string& sceneName);
+        Ref<Renderer> createBatchRenderer();
+        Ref<Renderer> createInstanceRenderer();
 
     protected:
         void pushFront(Layer* layer);
@@ -173,7 +174,7 @@ namespace engine::core {
         void restart();
 
         void onUpdate();
-        void onRuntimeUpdate(time::Time dt);
+        void onSimulationUpdate(time::Time dt);
         void onEventUpdate();
 
         void createGraphics();
@@ -185,8 +186,19 @@ namespace engine::core {
         void initGaussianBlur();
         void initTextureMixer();
 
+        void bindCamera(Camera3D& camera);
+
+        void onPadA();
+        void onPadB();
+        void onPadX();
+        void onPadY();
+        void onGamepadRollLeft(const GamepadRoll& roll);
+        void onGamepadRollRight(const GamepadRoll& roll);
+
+        vector<Batch3d> loadModel(const uuid& sceneId);
+
     public:
-        Ref<Scene> activeScene;
+        Ref<Scene> activeScene = nullptr;
         Ref<FrameBuffer> activeSceneFrame;
         Ref<FrameBuffer> msaaFrame;
         Ref<FrameBuffer> shadowsFrame;
@@ -212,7 +224,7 @@ namespace engine::core {
         // core systems
         LayerStack _layerStack;
         Scope<Window> _window;
-        unordered_map<std::string, Ref<Scene>> scenes;
+        unordered_map<uuid, Ref<Scene>> scenes;
     };
 
     Application* createApplication();

@@ -33,6 +33,11 @@ namespace engine::core {
                 nullptr);
 
         windowProps.fullscreen ? enableFullScreen() : disableFullScreen();
+
+// ---------- hide main window cursor, use ImGui cursor instead -------------
+#ifdef VISUAL
+        glfwSetInputMode(NATIVE_WINDOW, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+#endif
     }
 
     Window::~Window() {
@@ -102,8 +107,7 @@ namespace engine::core {
         });
 
         glfwSetCharCallback(NATIVE_WINDOW, [](GLFWwindow* window, unsigned int key) {
-            auto keycode = (event::KeyCode) key;
-            Application::get().onKeyTyped(keycode);
+            Application::get().onKeyTyped((event::KeyCode) key);
         });
 
         glfwSetMouseButtonCallback(NATIVE_WINDOW, [](GLFWwindow* window, int button, int action, int mods) {

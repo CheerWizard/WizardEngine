@@ -35,6 +35,7 @@ namespace engine::visual {
         std::string newWorkspace = "projects";
         Project selectedProject;
         bool isProjectSelected = false;
+        u32 backgroundImage = 0;
     };
 
 }

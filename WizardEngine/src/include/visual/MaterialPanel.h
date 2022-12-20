@@ -24,7 +24,7 @@ namespace engine::visual {
 
     class ENGINE_API MaterialPanel final {
     public:
-        static void create(const Ref<FileDialog>& fileDialog);
+        static void create(void* nativeWindow);
         static void draw(Material& material);
         static void draw(const vector<ecs::Entity>& entities);
         static void draw(const vector<Batch3d>& entities);

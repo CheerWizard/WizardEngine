@@ -269,4 +269,8 @@ namespace engine::graphics {
             yaml::deserialize(root, "mode", mode);
         }
     }
+
+    void setViewPort(int x, int y, int w, int h) {
+        glViewport(x, y, w, h);
+    }
 }

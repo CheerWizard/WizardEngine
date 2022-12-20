@@ -22,7 +22,7 @@ namespace engine::io {
     class ENGINE_API Log {
 
     public:
-        Log(const std::string& name);
+        explicit Log(const std::string& name);
 
     public:
         template<typename... Args>
@@ -143,43 +143,43 @@ namespace engine::io {
 
     #define ENGINE_TRACE(...)     \
         ::engine::io::Logger::getEngineLogger()->trace(__VA_ARGS__); \
-        ::engine::visual::Log::add(engine::visual::LogLevel::L_TRACE, __VA_ARGS__)
+        ::engine::visual::Log::get().add(engine::visual::LogLevel::L_TRACE, __VA_ARGS__)
 
     #define ENGINE_INFO(...)      \
         ::engine::io::Logger::getEngineLogger()->info(__VA_ARGS__); \
-        ::engine::visual::Log::add(engine::visual::LogLevel::L_INFO, __VA_ARGS__)
+        ::engine::visual::Log::get().add(engine::visual::LogLevel::L_INFO, __VA_ARGS__)
 
     #define ENGINE_WARN(...)      \
         ::engine::io::Logger::getEngineLogger()->warn(__VA_ARGS__); \
-        ::engine::visual::Log::add(engine::visual::LogLevel::L_WARN, __VA_ARGS__)
+        ::engine::visual::Log::get().add(engine::visual::LogLevel::L_WARN, __VA_ARGS__)
 
     #define ENGINE_ERR(...)       \
         ::engine::io::Logger::getEngineLogger()->error(__VA_ARGS__); \
-        ::engine::visual::Log::add(engine::visual::LogLevel::L_ERROR, __VA_ARGS__)
+        ::engine::visual::Log::get().add(engine::visual::LogLevel::L_ERROR, __VA_ARGS__)
 
     #define ENGINE_CRIT(...)      \
         ::engine::io::Logger::getEngineLogger()->critical(__VA_ARGS__); \
-        ::engine::visual::Log::add(engine::visual::LogLevel::L_CRITICAL, __VA_ARGS__)
+        ::engine::visual::Log::get().add(engine::visual::LogLevel::L_CRITICAL, __VA_ARGS__)
 
     #define RUNTIME_TRACE(...)     \
         ::engine::io::Logger::getRuntimeLogger()->trace(__VA_ARGS__); \
-        ::engine::visual::Log::add(engine::visual::LogLevel::L_TRACE, __VA_ARGS__)
+        ::engine::visual::Log::get().add(engine::visual::LogLevel::L_TRACE, __VA_ARGS__)
 
     #define RUNTIME_INFO(...)      \
         ::engine::io::Logger::getRuntimeLogger()->info(__VA_ARGS__); \
-        ::engine::visual::Log::add(engine::visual::LogLevel::L_INFO, __VA_ARGS__)
+        ::engine::visual::Log::get().add(engine::visual::LogLevel::L_INFO, __VA_ARGS__)
 
     #define RUNTIME_WARN(...)      \
         ::engine::io::Logger::getRuntimeLogger()->warn(__VA_ARGS__); \
-        ::engine::visual::Log::add(engine::visual::LogLevel::L_WARN, __VA_ARGS__)
+        ::engine::visual::Log::get().add(engine::visual::LogLevel::L_WARN, __VA_ARGS__)
 
     #define RUNTIME_ERR(...)       \
         ::engine::io::Logger::getRuntimeLogger()->error(__VA_ARGS__); \
-        ::engine::visual::Log::add(engine::visual::LogLevel::L_ERROR, __VA_ARGS__)
+        ::engine::visual::Log::get().add(engine::visual::LogLevel::L_ERROR, __VA_ARGS__)
 
     #define RUNTIME_CRIT(...)      \
         ::engine::io::Logger::getRuntimeLogger()->critical(__VA_ARGS__); \
-        ::engine::visual::Log::add(engine::visual::LogLevel::L_CRITICAL, __VA_ARGS__)
+        ::engine::visual::Log::get().add(engine::visual::LogLevel::L_CRITICAL, __VA_ARGS__)
 
 #else
 

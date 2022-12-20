@@ -16,7 +16,8 @@ namespace test {
 
     class TestLayer : public Layer,
             tcp::ClientListener, tcp::SenderListener, tcp::ReceiverListener,
-            udp::ClientListener, udp::SenderListener, udp::ReceiverListener {
+            udp::ClientListener, udp::SenderListener, udp::ReceiverListener,
+            SceneHierarchyCallback {
 
     public:
         TestLayer() : Layer() {
@@ -66,15 +67,13 @@ namespace test {
 
         void onVisualDraw(time::Time dt) override;
 
-    private:
-        void bindCamera();
-        void init();
-        void onPadA();
-        void onPadB();
-        void onPadX();
-        void onPadY();
+        void onSceneRemoved(const Ref<Scene> &scene) override;
+        void onEntityRemoved(const Entity &entity) override;
+        void onSceneSelected(const Ref<Scene> &scene) override;
+        void onEntitySelected(const Entity &entity) override;
 
-        void dragLight();
+    private:
+        void init();
 
         void switchMSAA();
         void switchHDR();
@@ -84,24 +83,17 @@ namespace test {
         void switchGaussianBlur();
         void switchBloom();
 
-        void onGamepadRollLeft(const GamepadRoll& roll);
-        void onGamepadRollRight(const GamepadRoll& roll);
-
         void updateGizmo();
 
     private:
-        Camera3D mainCamera;
-        vector<Batch3d> packs;
-        vector<Instance3d> instancedPacks;
         bool msaaEnabled = false;
-        vector<Light> lights;
         bool showGizmo = false;
         ImageLayout sceneViewport {
             "Scene",
                     512,
                     512
         };
-        SceneHierarchy sceneHierarchy;
+        SceneHierarchy sceneHierarchy = SceneHierarchy(this);
     };
 
 }
