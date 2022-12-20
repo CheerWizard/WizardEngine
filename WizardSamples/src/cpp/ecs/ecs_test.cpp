@@ -17,7 +17,7 @@ namespace test::ecs {
     void test_registry_size(size_t expectedSize) {
         Registry registry;
 
-        for (u32 i = 0 ; i < expectedSize ; i++) {
+        for (int i = 0 ; i < expectedSize ; i++) {
             registry.createEntity<TestComponent>();
         }
 
@@ -386,7 +386,11 @@ namespace test::ecs {
     void test_suite() {
         RUNTIME_WARN("test_suite() started!");
 
-        size_t registrySize = 100;
+        size_t registrySize = 0;
+        RUNTIME_WARN("Running test_registry_size({0})", registrySize);
+        test_registry_size(registrySize);
+
+        registrySize = 100;
         RUNTIME_WARN("Running test_registry_size({0})", registrySize);
         test_registry_size(registrySize);
 

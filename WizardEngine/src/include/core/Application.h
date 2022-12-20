@@ -9,6 +9,7 @@
 #include <core/String.h>
 #include <core/Memory.h>
 #include <core/ProjectManager.h>
+#include <core/job_system.h>
 
 #include <time/Time.h>
 
@@ -50,7 +51,7 @@
 
 #include <physics/Physics.h>
 
-#include <future>
+#include <thread/Thread.h>
 
 using namespace engine::core;
 using namespace engine::graphics;
@@ -60,6 +61,7 @@ using namespace engine::network;
 using namespace engine::ecs;
 using namespace engine::physics;
 using namespace engine::scripting;
+using namespace engine::thread;
 
 #define KEY_PRESSED(key) engine::event::EventRegistry::onKeyPressedMap[key] =
 #define KEY_RELEASED(key) engine::event::EventRegistry::onKeyReleasedMap[key] =
@@ -138,7 +140,6 @@ namespace engine::core {
 
     protected:
         virtual void onCreate();
-        virtual void onPrepare();
         virtual void onDestroy();
         virtual void onVisualDraw(time::Time dt);
 
@@ -159,19 +160,7 @@ namespace engine::core {
         void clearScenes();
 
         void loadGamepadMappings(const char* mappingsFilePath);
-        void setSkybox(Ref<Scene>& scene, const Entity& skybox) const;
-        void setSkyCube(
-                Ref<Scene>& scene,
-                const char* skyboxName,
-                u32 skyboxId
-        ) const;
-        void setSkyCube(
-                Ref<Scene>& scene,
-                const char* skyboxName,
-                const vector<TextureFace>& skyboxFaces
-        ) const;
-        void setHdrEnv(Ref<Scene>& scene, const Entity& hdrEnv) const;
-        void setHdrEnvCube(Ref<Scene>& scene, const char* filepath) const;
+
         Ref<Scene> newScene(const std::string& sceneName);
         Ref<Renderer> createBatchRenderer();
         Ref<Renderer> createInstanceRenderer();
@@ -185,7 +174,7 @@ namespace engine::core {
         void restart();
 
         void onUpdate();
-        void onRuntimeUpdate(time::Time dt);
+        void onSimulationUpdate(time::Time dt);
         void onEventUpdate();
 
         void createGraphics();
@@ -206,7 +195,7 @@ namespace engine::core {
         void onGamepadRollLeft(const GamepadRoll& roll);
         void onGamepadRollRight(const GamepadRoll& roll);
 
-        void loadModel(const uuid& sceneId);
+        vector<Batch3d> loadModel(const uuid& sceneId);
 
     public:
         Ref<Scene> activeScene = nullptr;
@@ -236,7 +225,6 @@ namespace engine::core {
         LayerStack _layerStack;
         Scope<Window> _window;
         unordered_map<uuid, Ref<Scene>> scenes;
-        std::future<void> loadModelResult;
     };
 
     Application* createApplication();

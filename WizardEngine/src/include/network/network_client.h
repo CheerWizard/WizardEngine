@@ -9,8 +9,6 @@
 #include <network/socket.h>
 #include <network/gdp.h>
 
-#include <future>
-
 namespace engine::network {
 
     using namespace engine::core;

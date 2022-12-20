@@ -12,7 +12,6 @@ namespace engine::core {
 
     void Application::run() {
         onCreate();
-        onPrepare();
         while (_isRunning) {
             onUpdate();
         }
@@ -22,132 +21,112 @@ namespace engine::core {
     void Application::onCreate() {
         PROFILE_FUNCTION();
         ENGINE_INFO("onCreate()");
+        // setup job system
+        auto& jobSystem = JobSystem<>::get();
+        // setup window, input, graphics
+        jobSystem.renderScheduler->execute([this]() {
+            io::TextureFile::setFlipTexture(false);
+            if (!ProjectProps::createFromFile("properties.yaml", projectProps)) {
+                ENGINE_WARN("Application: Unable to create properties from properties.yaml");
+            }
+            _window = createScope<Window>(projectProps.windowProps);
+            loadGamepadMappings("assets/mappings/game_controller.txt");
+            if (projectProps.icon != "") {
+                setWindowIcon(projectProps.icon);
+            }
 
-        io::TextureFile::setFlipTexture(false);
-
-        if (!ProjectProps::createFromFile("properties.yaml", projectProps)) {
-            ENGINE_WARN("Application: Unable to create properties from properties.yaml");
-        }
-
-        _window = createScope<Window>(projectProps.windowProps);
-        if (projectProps.icon != "") {
-            setWindowIcon(projectProps.icon);
-        }
-
-        createGraphics();
-        Input::create(_window->getNativeWindow());
-
+            Input::create(_window->getNativeWindow());
+            createGraphics();
+            initHDR();
+            initBlur();
+            initSharpen();
+            initEdgeDetection();
+            initGaussianBlur();
+            initTextureMixer();
+            // setup common scene renderers
+            createBatchRenderer();
+            createInstanceRenderer();
+            RenderSystem::hdrEnvRenderer.init();
+            // setup ImGui
 #ifdef VISUAL
-        Visual::init(getNativeWindow());
-        Visual::fullScreen = projectProps.windowProps.fullscreen;
-        Visual::openDockspace = projectProps.windowProps.dockspace;
-        AssetBrowser::create(getNativeWindow());
-        MaterialPanel::create(getNativeWindow());
+            Visual::init(getNativeWindow());
+            Visual::fullScreen = projectProps.windowProps.fullscreen;
+            Visual::openDockspace = projectProps.windowProps.dockspace;
+            AssetBrowser::create(getNativeWindow());
+            MaterialPanel::create(getNativeWindow());
 #endif
-        // init audio
-        audio::DeviceManager::createContext();
-        // init default post effect renderers
-        initHDR();
-        initBlur();
-        initSharpen();
-        initEdgeDetection();
-        initGaussianBlur();
-        initTextureMixer();
-        // setup common scene renderers
-        createBatchRenderer();
-        createInstanceRenderer();
-
+            _window->onPrepare();
+            _window->setInCenter();
+            setSampleSize(projectProps.windowProps.sampleSize);
+            graphics::enableSRGB();
+            RenderSystem::screenRenderer.onWindowResized(getWindowWidth(), getWindowHeight());
+        });
+        // setup audio
+        jobSystem.audioScheduler->execute([]() {
+            audio::DeviceManager::createContext();
+        });
+        // setup network
+        jobSystem.networkScheduler->execute([]() {
+        });
+        // setup something heavy
+        jobSystem.threadPoolScheduler->execute([]() {
+        });
+        // at least do some job on main thread
         if (projectProps.launcher != "") {
             setActiveScene(io::LocalAssetManager::loadScene(projectProps.launcher.c_str()));
         } else {
             ENGINE_WARN("Application: Launcher scene not specified in properties.yaml!");
         }
-
-        RenderSystem::hdrEnvRenderer.init();
-    }
-
-    void Application::onPrepare() {
-        PROFILE_FUNCTION();
-        graphics::enableSRGB();
-        _window->onPrepare();
-        _window->setInCenter();
-        setSampleSize(projectProps.windowProps.sampleSize);
+        // we must sync with other jobs to continue further.
+        // otherwise, we will cause race conditions and bugs in onPrepare()
+        jobSystem.waitAll();
         _layerStack.onPrepare();
-        loadGamepadMappings("assets/mappings/game_controller.txt");
-        ENGINE_INFO("screenRenderer.onWindowResized");
-        RenderSystem::screenRenderer.onWindowResized(getWindowWidth(), getWindowHeight());
-    }
-
-    void Application::setSkybox(Ref<Scene> &scene, const Entity& skybox) const {
-        scene->setSkybox(skybox);
-        RenderSystem::skyboxRenderer.upload(scene->getSkybox().get<Skybox>());
-    }
-
-    void Application::setSkyCube(Ref<Scene> &scene, const char* skyboxName, u32 skyboxId) const {
-        setSkybox(scene, SkyboxCube(
-                skyboxName,
-                scene.get(),
-                CubeMapTextureComponent(skyboxId, TextureType::CUBE_MAP)
-        ));
-    }
-
-    void Application::setSkyCube(Ref<Scene>& scene, const char* skyboxName, const vector<TextureFace>& skyboxFaces) const {
-        u32 skyboxId = TextureBuffer::load(skyboxFaces);
-        TextureBuffer::setDefaultParamsCubeMap(skyboxId);
-        setSkyCube(scene, skyboxName, skyboxId);
-    }
-
-    void Application::setHdrEnv(Ref<Scene>& scene, const Entity& hdrEnv) const {
-        scene->setHdrEnv(hdrEnv);
-        RenderSystem::hdrEnvRenderer.upload(scene->getHdrEnv().get<HdrEnv>());
-    }
-
-    void Application::setHdrEnvCube(Ref<Scene>& scene, const char* filepath) const {
-        setHdrEnv(
-                scene,
-                HdrEnvCube(
-                        "HdrEnvCube",
-                        scene.get(),
-                        TextureComponent(
-                                TextureBuffer::load(filepath, io::Spectrum::HDR),
-                                TextureType::TEXTURE_2D,
-                                IntUniform { "hdrEnv", 0 }
-                        )
-                )
-        );
     }
 
     void Application::onDestroy() {
         PROFILE_FUNCTION();
         ENGINE_INFO("onDestroy()");
-        RenderSystem::onDestroy();
-        ScriptSystem::onDestroy();
-        audio::MediaPlayer::clear();
-        audio::DeviceManager::clear();
+        JobSystem<>::get().renderScheduler->execute([]() {
+            RenderSystem::onDestroy();
 #ifdef VISUAL
-        Visual::release();
+            Visual::release();
 #endif
+        });
+        JobSystem<>::get().audioScheduler->execute([]() {
+            audio::MediaPlayer::clear();
+            audio::DeviceManager::clear();
+        });
+        ScriptSystem::onDestroy();
+        JobSystem<>::get().renderScheduler->wait();
+        JobSystem<>::get().audioScheduler->wait();
     }
 
     void Application::onUpdate() {
         PROFILE_FUNCTION();
         // measure dt time
         Timer timer("Application::onUpdate()", 30);
-        // update runtime system
-        onRuntimeUpdate(dt);
-        // update tools system
+
+        auto& jobSystem = JobSystem<>::get();
+
+        // update graphics, window, input, tools
+        jobSystem.renderScheduler->execute([this]() {
+            RenderSystem::onUpdate();
 #ifdef VISUAL
-        Visual::begin();
-        Visual::onUpdate(dt);
-        _layerStack.onVisualDraw(dt);
-        Visual::end();
+            Visual::begin();
+            Visual::onUpdate(dt);
+            _layerStack.onVisualDraw(dt);
+            Visual::end();
 #endif
-        // poll events + swap chain
-        if (enableMouseCursor) {
-            Input::updateMousePosition();
-        }
-        onEventUpdate();
-        _window->onUpdate();
+            // poll events + swap chain
+            if (enableMouseCursor) {
+                Input::updateMousePosition();
+            }
+            onEventUpdate();
+            _window->onUpdate();
+        });
+        // update simulation systems
+        onSimulationUpdate(dt);
+        jobSystem.renderScheduler->wait();
 
         dt = timer.stop();
 
@@ -399,11 +378,10 @@ namespace engine::core {
         RenderSystem::skyboxRenderer.init();
     }
 
-    void Application::onRuntimeUpdate(Time dt) {
+    void Application::onSimulationUpdate(Time dt) {
         if (activeScene != nullptr && !activeScene->isEmpty()) {
             Physics::onUpdate(dt);
             ScriptSystem::onUpdate(dt);
-            RenderSystem::onUpdate();
             _layerStack.onUpdate(dt);
 
             auto& camera = activeScene->getCamera();
@@ -621,46 +599,42 @@ namespace engine::core {
         }
     }
 
-    void Application::loadModel(const uuid& sceneId) {
+    vector<Batch3d> Application::loadModel(const uuid& sceneId) {
         // we need to flip textures as they will be loaded vice versa
         io::TextureFile::setFlipTexture(true);
-        io::ModelFile<BatchVertex<Vertex3d>>::read(
+        io::Model model = io::ModelFile<BatchVertex<Vertex3d>>::read(
                 "assets/SamuraiHelmet/source/SamuraiHelmet.fbx.fbx",
-                "assets/SamuraiHelmet/textures", {
-                        [this, &sceneId](const io::Model& model) {
-                            RUNTIME_INFO("ModelFile read: onSuccess");
-                            vector<Batch3d> entities;
-                            const auto& scene = scenes.at(sceneId);
-                            for (int i = 0; i < model.meshes.size(); i++) {
-                                auto modelMesh = model.meshes[i];
-                                BaseMeshComponent<BatchVertex<Vertex3d>> meshComponent;
-                                meshComponent.mesh = modelMesh.toMesh<BatchVertex<Vertex3d>>([](const io::ModelVertex& modelVertex) {
-                                    return BatchVertex<Vertex3d> {
-                                            modelVertex.position,
-                                            modelVertex.uv,
-                                            modelVertex.normal,
-                                            modelVertex.tangent,
-                                            modelVertex.bitangent,
-                                            0
-                                    };
-                                });
-                                std::stringstream ss;
-                                ss << "Entity_" << i;
-                                auto newEntity = Batch3d(scene.get());
-                                newEntity.get<TagComponent>()->tag = ss.str();
-                                newEntity.getTransform().position = { 1, 1, 1 };
-                                newEntity.applyTransform();
-                                newEntity.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(meshComponent);
-                                newEntity.add<Material>(modelMesh.material);
-                                entities.emplace_back(newEntity);
-                            }
-                            RenderSystem::batchRenderer->createVIRenderModel(entities);
-                        },
-                        [](const exception& exception) {
-                            RUNTIME_INFO("ModelFile read: onError");
-                            RUNTIME_EXCEPT(exception);
-                        }
-                });
+                "assets/SamuraiHelmet/textures"
+        );
+        RUNTIME_INFO("ModelFile read: onSuccess");
+
+        vector<Batch3d> entities;
+        const auto& scene = scenes.at(sceneId);
+        for (int i = 0; i < model.meshes.size(); i++) {
+            auto modelMesh = model.meshes[i];
+            BaseMeshComponent<BatchVertex<Vertex3d>> meshComponent;
+            meshComponent.mesh = modelMesh.toMesh<BatchVertex<Vertex3d>>([](const io::ModelVertex& modelVertex) {
+                return BatchVertex<Vertex3d> {
+                        modelVertex.position,
+                        modelVertex.uv,
+                        modelVertex.normal,
+                        modelVertex.tangent,
+                        modelVertex.bitangent,
+                        0
+                };
+            });
+            std::stringstream ss;
+            ss << "Entity_" << i;
+            auto newEntity = Batch3d(scene.get());
+            newEntity.get<TagComponent>()->tag = ss.str();
+            newEntity.getTransform().position = { 1, 1, 1 };
+            newEntity.applyTransform();
+            newEntity.add<BaseMeshComponent<BatchVertex<Vertex3d>>>(meshComponent);
+            newEntity.add<Material>(modelMesh.material);
+            entities.emplace_back(newEntity);
+        }
+
+        return entities;
     }
 
     Ref<Scene> Application::newScene(const std::string& sceneName) {
@@ -671,23 +645,45 @@ namespace engine::core {
         Camera3D mainCamera("NewCamera", getAspectRatio(), scene.get());
         scene->setCamera(mainCamera);
         // setup skybox
-        setSkyCube(scene, "NewSkybox", {
-                { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
-                { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
-                { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
-                { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
-                { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
-                { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
+        u32 skyboxId = TextureBuffer::load({
+            { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
+            { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
+            { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
+            { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
+            { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
+            { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
         });
+        TextureBuffer::setDefaultParamsCubeMap(skyboxId);
+        auto skybox = SkyboxCube(
+                "NewSkybox",
+                scene.get(),
+                CubeMapTextureComponent(skyboxId, TextureType::CUBE_MAP)
+        );
+        scene->setSkybox(skybox);
+        RenderSystem::skyboxRenderer.upload(skybox.get<Skybox>());
         // setup HDR env
-        setHdrEnvCube(scene, "assets/hdr/ice_lake.hdr");
+        auto hdrEnv = HdrEnvCube(
+                "HdrEnvCube",
+                scene.get(),
+                TextureComponent(
+                        TextureBuffer::load("assets/hdr/ice_lake.hdr", io::Spectrum::HDR),
+                        TextureType::TEXTURE_2D,
+                        IntUniform { "hdrEnv", 0 })
+        );
+        scene->setHdrEnv(hdrEnv);
+        RenderSystem::hdrEnvRenderer.upload(hdrEnv.get<HdrEnv>());
         // setup light sources
         PhongLight("L_Sun_1", scene.get()).getPosition() = { -10, 10, -10 };
         PhongLight("L_Sun_2", scene.get()).getPosition() = { 10, 10, 10 };
         PhongLight("L_Sun_3", scene.get()).getPosition() = { -10, 10, 10 };
         PhongLight("L_Sun_4", scene.get()).getPosition() = { 10, 10, -10 };
         // setup geometry or mesh
-        loadModelResult = std::async(std::launch::async, &Application::loadModel, this, scene->getId());
+        ThreadPoolScheduler->execute([this, &scene]() {
+            Ref<vector<Batch3d>> batches = createRef<vector<Batch3d>>(loadModel(scene->getId()));
+            RenderScheduler->execute([&batches]() {
+                RenderSystem::batchRenderer->createVIRenderModel(*batches.get());
+            });
+        });
         return scene;
     }
 
