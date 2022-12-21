@@ -57,9 +57,8 @@ namespace engine::core {
 #endif
             _window->onPrepare();
             _window->setInCenter();
-            setSampleSize(projectProps.windowProps.sampleSize);
             graphics::enableSRGB();
-            RenderSystem::screenRenderer.onWindowResized(getWindowWidth(), getWindowHeight());
+            setSampleSize(projectProps.windowProps.sampleSize);
         });
         // setup audio
         jobSystem.audioScheduler->execute([]() {
@@ -110,7 +109,9 @@ namespace engine::core {
 
         // update graphics, window, input, tools
         jobSystem.renderScheduler->execute([this]() {
-            RenderSystem::onUpdate();
+            if (activeScene && !activeScene->isEmpty()) {
+                RenderSystem::onUpdate();
+            }
 #ifdef VISUAL
             Visual::begin();
             Visual::onUpdate(dt);
@@ -379,7 +380,7 @@ namespace engine::core {
     }
 
     void Application::onSimulationUpdate(Time dt) {
-        if (activeScene != nullptr && !activeScene->isEmpty()) {
+        if (activeScene && !activeScene->isEmpty()) {
             Physics::onUpdate(dt);
             ScriptSystem::onUpdate(dt);
             _layerStack.onUpdate(dt);
@@ -599,7 +600,7 @@ namespace engine::core {
         }
     }
 
-    vector<Batch3d> Application::loadModel(const uuid& sceneId) {
+    vector<Batch3d> Application::loadModel(const Ref<Scene>& scene) {
         // we need to flip textures as they will be loaded vice versa
         io::TextureFile::setFlipTexture(true);
         io::Model model = io::ModelFile<BatchVertex<Vertex3d>>::read(
@@ -609,7 +610,6 @@ namespace engine::core {
         RUNTIME_INFO("ModelFile read: onSuccess");
 
         vector<Batch3d> entities;
-        const auto& scene = scenes.at(sceneId);
         for (int i = 0; i < model.meshes.size(); i++) {
             auto modelMesh = model.meshes[i];
             BaseMeshComponent<BatchVertex<Vertex3d>> meshComponent;
@@ -635,6 +635,10 @@ namespace engine::core {
         }
 
         return entities;
+    }
+
+    vector<Batch3d> Application::loadModel(const uuid& sceneId) {
+        return loadModel(scenes.at(sceneId));
     }
 
     Ref<Scene> Application::newScene(const std::string& sceneName) {
@@ -678,10 +682,11 @@ namespace engine::core {
         PhongLight("L_Sun_3", scene.get()).getPosition() = { -10, 10, 10 };
         PhongLight("L_Sun_4", scene.get()).getPosition() = { 10, 10, -10 };
         // setup geometry or mesh
-        ThreadPoolScheduler->execute([this, &scene]() {
-            Ref<vector<Batch3d>> batches = createRef<vector<Batch3d>>(loadModel(scene->getId()));
-            RenderScheduler->execute([&batches]() {
-                RenderSystem::batchRenderer->createVIRenderModel(*batches.get());
+        ThreadPoolScheduler->execute([this, scene]() {
+            vector<Batch3d> batches = loadModel(scene);
+            RenderScheduler->execute([batches]() {
+                auto temp = batches;
+                RenderSystem::batchRenderer->createVIRenderModel(temp);
             });
         });
         return scene;

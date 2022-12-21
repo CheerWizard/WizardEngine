@@ -126,8 +126,8 @@ namespace engine::core {
         RingBuffer<std::function<void()>, jobs_capacity> m_JobPool;
         std::condition_variable m_WakeCondition;
         std::mutex m_WakeMutex;
-        u64 m_CurrentLabel; // tracks state of execution of main thread
-        std::atomic<u64> m_FinishedLabel; // tracks state of execution around worker threads
+        u64 m_JobsTodo;
+        std::atomic<u64> m_JobsDone;
     };
 
     template<size_t render_jobs = 32,
@@ -179,7 +179,8 @@ namespace engine::core {
 
     template<size_t jobs_capacity>
     JobScheduler<jobs_capacity>::JobScheduler(u32 workerSize, const ThreadFormat& threadFormat) {
-        m_FinishedLabel.store(0);
+        m_JobsTodo = 0;
+        m_JobsDone.store(0);
         u32 i = 0;
         while (i < workerSize) {
             setupThread(i++, threadFormat);
@@ -188,7 +189,7 @@ namespace engine::core {
 
     template<size_t jobs_capacity>
     void JobScheduler<jobs_capacity>::execute(const std::function<void()> &job) {
-        m_CurrentLabel += 1;
+        m_JobsTodo += 1;
         // try to push a new job until it is pushed
         while (!m_JobPool.pushBack(job)) {
             poll();
@@ -203,7 +204,7 @@ namespace engine::core {
         }
 
         u32 jobGroups = (jobsPerThread + jobSize - 1) / jobSize;
-        m_CurrentLabel += jobGroups;
+        m_JobsTodo += jobGroups;
         for (u32 i = 0; i < jobGroups; ++i) {
             // create single job from group
             const auto& jobGroup = [i, job, jobSize, jobsPerThread]() {
@@ -229,7 +230,7 @@ namespace engine::core {
 
     template<size_t jobs_capacity>
     bool JobScheduler<jobs_capacity>::isBusy() {
-        return m_FinishedLabel.load() < m_CurrentLabel;
+        return m_JobsDone.load() < m_JobsTodo;
     }
 
     template<size_t jobs_capacity>
@@ -253,7 +254,7 @@ namespace engine::core {
                 if (m_JobPool.popFront(job)) {
                     // execute job and update worker label state
                     job();
-                    m_FinishedLabel.fetch_add(1);
+                    m_JobsDone.fetch_add(1);
                 } else {
                     // no job, put thread to sleep
                     std::unique_lock<std::mutex> lock(m_WakeMutex);
