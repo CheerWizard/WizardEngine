@@ -196,6 +196,7 @@ namespace engine::core {
         void onGamepadRollRight(const GamepadRoll& roll);
 
         vector<Batch3d> loadModel(const uuid& sceneId);
+        vector<Batch3d> loadModel(const Ref<Scene>& scene);
 
     public:
         Ref<Scene> activeScene = nullptr;

@@ -31,6 +31,6 @@
     }
 #else
 #define ASSERT(x, msg)
-    #define RUNTIME_ASSERT(x, ...)
-    #define ENGINE_ASSERT(x, ...)
+#define RUNTIME_ASSERT(x, ...)
+#define ENGINE_ASSERT(x, ...)
 #endif

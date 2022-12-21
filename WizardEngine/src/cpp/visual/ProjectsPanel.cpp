@@ -42,7 +42,8 @@ namespace engine::visual {
             return;
         }
 
-        ImGui::Image((ImTextureID) backgroundImage, ImGui::GetWindowSize());
+        // todo add background image for this panel
+//        ImGui::Image((ImTextureID) backgroundImage, ImGui::GetWindowSize());
 
         ImGui::Columns(2);
         ImGui::SetColumnOffset(1, 230);
