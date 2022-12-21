@@ -6,6 +6,11 @@
 ### Rendering Samurai Helmet (PBR, Lighting, Materials, no Post Effects, no MSAA).
 ![wizard_engine_showcase_preview_1](https://user-images.githubusercontent.com/37471793/205491367-1858ca4d-78f9-415d-a8d2-e15b8751f06f.png)
 
+### First UI
+![wizard_test_ui_1](https://user-images.githubusercontent.com/37471793/208950156-ed7c35b7-8869-4dba-81b0-76357bcaee8c.png)
+![wizard_test_ui_2](https://user-images.githubusercontent.com/37471793/208950162-b2a507b5-8e94-4e9c-b2f4-31827a5b0840.png)
+
+
 ## Upcoming features
 1. Shadow mapping, point shadows, cascaded shadow mapping.
 2. SSAO, fixing existing MSAA.
