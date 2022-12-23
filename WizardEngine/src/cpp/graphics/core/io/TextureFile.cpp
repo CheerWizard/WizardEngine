@@ -128,4 +128,8 @@ namespace engine::io {
         stbi_set_flip_vertically_on_load(flipEnabled);
     }
 
+    void TextureFile::free(const TextureData &textureData) {
+        free(textureData.pixels);
+    }
+
 }

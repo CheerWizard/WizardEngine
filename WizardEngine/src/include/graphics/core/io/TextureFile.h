@@ -50,6 +50,7 @@ namespace engine::io {
         // returns NULL if read from file - failed
         static TextureData read(const char* filePath, Spectrum spectrum = NONE);
         static void free(void* data);
+        static void free(const TextureData& textureData);
         static TextureArrayData read(const vector<std::string>& filepaths, Spectrum spectrum = NONE);
         static void free(const TextureArrayData& textureArrayData);
     };

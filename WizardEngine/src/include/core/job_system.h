@@ -161,12 +161,15 @@ namespace engine::core {
     JobSystem<render_jobs, audio_jobs, network_jobs, thread_pool_jobs>::JobSystem() {
         // todo this code does not support 1 core CPU.
         const u32 workerSize = std::max(1u, std::thread::hardware_concurrency());
-        const u32 threadPoolSize = workerSize - 3;
-        ENGINE_ASSERT(threadPoolSize > 0, "JobSystem(): invalid condition threadPoolSize <= 0");
-        renderScheduler = createScope<JobScheduler<render_jobs>>(1, ThreadFormat(ThreadPriority::HIGHEST, "RenderThread"));
-        audioScheduler = createScope<JobScheduler<audio_jobs>>(1, ThreadFormat(ThreadPriority::HIGHEST, "AudioThread"));
-        networkScheduler = createScope<JobScheduler<network_jobs>>(1, ThreadFormat(ThreadPriority::HIGHEST, "NetworkThread"));
-        threadPoolScheduler = createScope<JobScheduler<thread_pool_jobs>>(threadPoolSize, ThreadFormat(ThreadPriority::NORMAL, "ThreadPoolWorker"));
+        u32 audioThreads = 1;
+        u32 networkThreads = 1;
+        u32 renderThreads = 1;
+        u32 poolThreads = 1;
+        ENGINE_ASSERT(workerSize > 3, "JobSystem(): invalid condition threadPoolSize <= 0");
+        renderScheduler = createScope<JobScheduler<render_jobs>>(renderThreads, ThreadFormat(ThreadPriority::HIGHEST, "RenderThread"));
+        audioScheduler = createScope<JobScheduler<audio_jobs>>(audioThreads, ThreadFormat(ThreadPriority::HIGHEST, "AudioThread"));
+        networkScheduler = createScope<JobScheduler<network_jobs>>(networkThreads, ThreadFormat(ThreadPriority::HIGHEST, "NetworkThread"));
+        threadPoolScheduler = createScope<JobScheduler<thread_pool_jobs>>(poolThreads, ThreadFormat(ThreadPriority::NORMAL, "ThreadPoolWorker"));
     }
 
     template<size_t render_jobs, size_t audio_jobs, size_t network_jobs, size_t thread_pool_jobs>
@@ -271,3 +274,4 @@ namespace engine::core {
 #define AudioScheduler engine::core::JobSystem<>::get().audioScheduler
 #define NetworkScheduler engine::core::JobSystem<>::get().networkScheduler
 #define ThreadPoolScheduler engine::core::JobSystem<>::get().threadPoolScheduler
+#define waitAllJobs() engine::core::JobSystem<>::get().waitAll()

@@ -62,6 +62,7 @@ using namespace engine::ecs;
 using namespace engine::physics;
 using namespace engine::scripting;
 using namespace engine::thread;
+using namespace engine::io;
 
 #define KEY_PRESSED(key) engine::event::EventRegistry::onKeyPressedMap[key] =
 #define KEY_RELEASED(key) engine::event::EventRegistry::onKeyReleasedMap[key] =
@@ -109,7 +110,7 @@ namespace engine::core {
         }
 
         inline const Scope<Window>& getWindow() {
-            return _window;
+            return m_Window;
         }
 
         inline unordered_map<uuid, Ref<Scene>>& getScenes() {
@@ -174,7 +175,7 @@ namespace engine::core {
         void restart();
 
         void onUpdate();
-        void onSimulationUpdate(time::Time dt);
+        void onSimulationUpdate();
         void onEventUpdate();
 
         void createGraphics();
@@ -224,7 +225,7 @@ namespace engine::core {
         bool _isRunning = true;
         // core systems
         LayerStack _layerStack;
-        Scope<Window> _window;
+        Scope<Window> m_Window;
         unordered_map<uuid, Ref<Scene>> scenes;
     };
 

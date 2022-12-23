@@ -51,40 +51,54 @@ namespace engine::visual {
     void AssetBrowser::create(void* nativeWindow) {
         _fileDialog = createRef<FileDialog>(nativeWindow);
 
+        io::TextureData dirTD = io::TextureFile::read("assets/textures/dir_icon.png");
         auto dirItem = AssetBrowserItem {
                 "",
-                TextureBuffer::load("assets/textures/dir_icon.png")
+                TextureBuffer::upload("assets/textures/dir_icon.png", dirTD)
         };
+        io::TextureFile::free(dirTD);
 
+        io::TextureData pngTD = io::TextureFile::read("assets/textures/png_icon.png");
         auto pngItem = AssetBrowserItem {
                 PNG_EXT,
-                TextureBuffer::load("assets/textures/png_icon.png")
+                TextureBuffer::upload("assets/textures/png_icon.png", pngTD)
         };
+        io::TextureFile::free(pngTD);
 
+        io::TextureData jpgTD = io::TextureFile::read("assets/textures/jpg_icon.png");
         auto jpgItem = AssetBrowserItem {
                 JPG_EXT,
-                TextureBuffer::load("assets/textures/jpg_icon.png")
+                TextureBuffer::upload("assets/textures/jpg_icon.png", jpgTD)
         };
+        io::TextureFile::free(jpgTD);
 
+        io::TextureData glslTD = io::TextureFile::read("assets/textures/glsl_icon.png");
         auto glslItem = AssetBrowserItem {
                 GLSL_EXT,
-                TextureBuffer::load("assets/textures/glsl_icon.png")
+                TextureBuffer::upload("assets/textures/glsl_icon.png", glslTD)
         };
+        io::TextureFile::free(glslTD);
 
+        io::TextureData objTD = io::TextureFile::read("assets/textures/obj_icon.png");
         auto objItem = AssetBrowserItem {
                 OBJ_EXT,
-                TextureBuffer::load("assets/textures/obj_icon.png")
+                TextureBuffer::upload("assets/textures/obj_icon.png", objTD)
         };
+        io::TextureFile::free(objTD);
 
+        io::TextureData ttfTD = io::TextureFile::read("assets/textures/ttf_icon.png");
         auto ttfItem = AssetBrowserItem {
                 TTF_EXT,
-                TextureBuffer::load("assets/textures/ttf_icon.png")
+                TextureBuffer::upload("assets/textures/ttf_icon.png", ttfTD)
         };
+        io::TextureFile::free(ttfTD);
 
+        io::TextureData cppTD = io::TextureFile::read("assets/textures/cpp_icon.png");
         auto cppItem = AssetBrowserItem {
                 CPP_EXT,
-                TextureBuffer::load("assets/textures/cpp_icon.png")
+                TextureBuffer::upload("assets/textures/cpp_icon.png", cppTD)
         };
+        io::TextureFile::free(cppTD);
 
         _items = vector<AssetBrowserItem> {
                 dirItem,

@@ -258,7 +258,7 @@ namespace test {
 //        // Assets explorer
         AssetBrowser::draw(dt);
 //        // Logger
-        Log::get().draw();
+        visual::Log::get().draw();
      }
 
     void TestLayer::updateGizmo() {

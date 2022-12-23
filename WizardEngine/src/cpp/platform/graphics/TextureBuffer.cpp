@@ -127,13 +127,12 @@ namespace engine::graphics {
         glActiveTexture(GL_TEXTURE0 + slot);
     }
 
-    u32 TextureBuffer::load(const char* filePath, io::Spectrum spectrum) {
-        if (exists(filePath)) {
-            return textureIdCache.at(filePath);
+    u32 TextureBuffer::upload(const char* filepath, const io::TextureData& textureData) {
+        if (exists(filepath)) {
+            return textureIdCache.at(filepath);
         }
 
         TextureBuffer textureBuffer;
-        auto textureData = io::TextureFile::read(filePath, spectrum);
         if (textureData.pixels) {
             textureBuffer.create(TextureType::TEXTURE_2D);
             textureBuffer.bind();
@@ -142,9 +141,8 @@ namespace engine::graphics {
         } else {
             ENGINE_WARN("Can't load NULL pixels into texture!");
         }
-        io::TextureFile::free(textureData.pixels);
 
-        textureIdCache.insert(std::pair<const char*, u32>(filePath, textureBuffer.id));
+        textureIdCache.insert(std::pair<const char*, u32>(filepath, textureBuffer.id));
         return textureBuffer.id;
     }
 
@@ -161,22 +159,16 @@ namespace engine::graphics {
         return textureBuffer.id;
     }
 
-    u32 TextureBuffer::load(const std::vector<TextureFace>& faces, io::Spectrum spectrum) {
+    u32 TextureBuffer::upload(const std::vector<std::pair<u32, io::TextureData>>& textures) {
         TextureBuffer textureBuffer(TextureType::CUBE_MAP);
         textureBuffer.bind();
-
-        for (auto& face : faces) {
-            auto textureData = io::TextureFile::read(face.filePath, spectrum);
-
-            if (textureData.pixels) {
-                loadFace(face.type, textureData);
+        for (auto& texture : textures) {
+            if (texture.second.pixels) {
+                loadFace(texture.first, texture.second);
             } else {
                 ENGINE_WARN("Can't load NULL pixels into texture!");
             }
-
-            io::TextureFile::free(textureData.pixels);
         }
-
         textureBuffer.unbind();
         return textureBuffer.id;
     }
