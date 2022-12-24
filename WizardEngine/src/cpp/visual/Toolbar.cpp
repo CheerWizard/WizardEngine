@@ -6,23 +6,23 @@ namespace engine::visual {
 
     Toolbar::Toolbar() {
         TextureData playTD = TextureFile::read("assets/textures/PlayButton.png");
-        playIcon = TextureBuffer::upload("assets/textures/PlayButton.png", playTD);
+        playIcon = TextureBuffer::upload(playTD);
         io::TextureFile::free(playTD);
 
         TextureData stopTD = TextureFile::read("assets/textures/StopButton.png");
-        stopIcon = TextureBuffer::upload("assets/textures/StopButton.png", stopTD);
+        stopIcon = TextureBuffer::upload(stopTD);
         io::TextureFile::free(stopTD);
 
         TextureData pauseTD = TextureFile::read("assets/textures/PauseButton.png");
-        pauseIcon = TextureBuffer::upload("assets/textures/PauseButton.png", pauseTD);
+        pauseIcon = TextureBuffer::upload(pauseTD);
         io::TextureFile::free(pauseTD);
 
         TextureData simulateTD = TextureFile::read("assets/textures/SimulateButton.png");
-        simulateIcon = TextureBuffer::upload("assets/textures/SimulateButton.png", simulateTD);
+        simulateIcon = TextureBuffer::upload(simulateTD);
         io::TextureFile::free(simulateTD);
 
         TextureData stepTD = TextureFile::read("assets/textures/StepButton.png");
-        stepIcon = TextureBuffer::upload("assets/textures/StepButton.png", stepTD);
+        stepIcon = TextureBuffer::upload(stepTD);
         io::TextureFile::free(stepTD);
     }
 

@@ -164,7 +164,7 @@ namespace engine::core {
         u32 audioThreads = 1;
         u32 networkThreads = 1;
         u32 renderThreads = 1;
-        u32 poolThreads = 1;
+        u32 poolThreads = workerSize - audioThreads - renderThreads - networkThreads;
         ENGINE_ASSERT(workerSize > 3, "JobSystem(): invalid condition threadPoolSize <= 0");
         renderScheduler = createScope<JobScheduler<render_jobs>>(renderThreads, ThreadFormat(ThreadPriority::HIGHEST, "RenderThread"));
         audioScheduler = createScope<JobScheduler<audio_jobs>>(audioThreads, ThreadFormat(ThreadPriority::HIGHEST, "AudioThread"));

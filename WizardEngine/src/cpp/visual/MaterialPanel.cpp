@@ -103,7 +103,7 @@ namespace engine::visual {
                                  "TGA image (*.tga)\0*.tga\0";
             *filepath = fileDialog->getImportPath(filter);
             io::TextureData td = io::TextureFile::read(filepath->c_str(), spectrum);
-            textureId = TextureBuffer::upload(filepath->c_str(), td);
+            textureId = TextureBuffer::upload(td);
             io::TextureFile::free(td.pixels);
         }
         ImGui::PopID();

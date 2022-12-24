@@ -127,11 +127,7 @@ namespace engine::graphics {
         glActiveTexture(GL_TEXTURE0 + slot);
     }
 
-    u32 TextureBuffer::upload(const char* filepath, const io::TextureData& textureData) {
-        if (exists(filepath)) {
-            return textureIdCache.at(filepath);
-        }
-
+    u32 TextureBuffer::upload(const io::TextureData& textureData) {
         TextureBuffer textureBuffer;
         if (textureData.pixels) {
             textureBuffer.create(TextureType::TEXTURE_2D);
@@ -141,21 +137,14 @@ namespace engine::graphics {
         } else {
             ENGINE_WARN("Can't load NULL pixels into texture!");
         }
-
-        textureIdCache.insert(std::pair<const char*, u32>(filepath, textureBuffer.id));
         return textureBuffer.id;
     }
 
-    u32 TextureBuffer::loadArray(const vector<std::string> &filepaths, io::Spectrum spectrum) {
-        io::TextureArrayData textureArrayData = io::TextureFile::read(filepaths, spectrum);
-
+    u32 TextureBuffer::uploadArray(const io::TextureArrayData& textureArrayData) {
         TextureBuffer textureBuffer(TextureType::TEXTURE_2D_ARRAY);
         textureBuffer.bind();
         loadArray(textureArrayData);
         textureBuffer.unbind();
-
-        io::TextureFile::free(textureArrayData);
-
         return textureBuffer.id;
     }
 
@@ -259,20 +248,6 @@ namespace engine::graphics {
             { TextureParamName::WRAP_T, TextureParamValue::CLAMP_TO_EDGE },
             { TextureParamName::WRAP_R, TextureParamValue::CLAMP_TO_EDGE },
         });
-    }
-
-    unordered_map<const char*, u32> TextureBuffer::textureIdCache;
-
-    bool TextureBuffer::exists(const char *filepath) {
-        return textureIdCache.find(filepath) != textureIdCache.end();
-    }
-
-    void TextureBuffer::clearTextureIdCache() {
-        textureIdCache.clear();
-    }
-
-    u32 TextureBuffer::getTextureId(const char *filepath) {
-        return textureIdCache.at(filepath);
     }
 
 }

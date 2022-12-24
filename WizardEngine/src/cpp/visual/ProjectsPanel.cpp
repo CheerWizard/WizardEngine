@@ -23,7 +23,7 @@ namespace engine::visual {
     ProjectsPanel::ProjectsPanel() {
         ProjectManager::loadProjects();
         TextureData td = TextureFile::read("WizardTest.png");
-        backgroundImage = TextureBuffer::upload("WizardTest.png", td);
+        backgroundImage = TextureBuffer::upload(td);
         TextureFile::free(td);
     }
 

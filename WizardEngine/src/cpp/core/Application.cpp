@@ -646,66 +646,61 @@ namespace engine::core {
         auto scene = createRef<Scene>(sceneName);
 
         ThreadPoolScheduler->execute([this, scene]() {
+            // setup camera
+            addScene(scene);
+            Camera3D mainCamera("NewCamera", getAspectRatio(), scene.get());
+            scene->setCamera(mainCamera);
+            // setup light sources
+            PhongLight("L_Sun_1", scene.get()).getPosition() = { -10, 10, -10 };
+            PhongLight("L_Sun_2", scene.get()).getPosition() = { 10, 10, 10 };
+            PhongLight("L_Sun_3", scene.get()).getPosition() = { -10, 10, 10 };
+            PhongLight("L_Sun_4", scene.get()).getPosition() = { 10, 10, -10 };
+            // setup skybox
+            std::vector<std::pair<u32, TextureData>> textures = {
+                    { TextureFaceType::FRONT, TextureFile::read("assets/materials/skybox/front.jpg") },
+                    { TextureFaceType::BACK, TextureFile::read("assets/materials/skybox/back.jpg") },
+                    { TextureFaceType::RIGHT, TextureFile::read("assets/materials/skybox/right.jpg") },
+                    { TextureFaceType::LEFT, TextureFile::read("assets/materials/skybox/left.jpg") },
+                    { TextureFaceType::BOTTOM, TextureFile::read("assets/materials/skybox/bottom.jpg") },
+                    { TextureFaceType::TOP, TextureFile::read("assets/materials/skybox/top.jpg") },
+            };
+            RenderScheduler->execute([scene, &textures]() {
+                u32 skyboxId = TextureBuffer::upload(textures);
+                auto skybox = SkyboxCube(
+                        "NewSkybox",
+                        scene.get(),
+                        CubeMapTextureComponent(skyboxId, TextureType::CUBE_MAP)
+                );
+                TextureBuffer::setDefaultParamsCubeMap(skyboxId);
+                scene->setSkybox(skybox);
+                auto* sky_box = skybox.get<Skybox>();
+                RenderSystem::skyboxRenderer.upload(sky_box);
+            });
+            // setup HDR env
+            TextureData td = TextureFile::read("assets/hdr/ice_lake.hdr", io::Spectrum::HDR);
+            RenderScheduler->execute([scene, &td]() {
+                auto hdrEnv = HdrEnvCube(
+                        "HdrEnvCube",
+                        scene.get(),
+                        TextureComponent(
+                                TextureBuffer::upload(td),
+                                TextureType::TEXTURE_2D,
+                                IntUniform { "hdrEnv", 0 })
+                );
+                scene->setHdrEnv(hdrEnv);
+                auto* hdr_env = hdrEnv.get<HdrEnv>();
+                RenderSystem::hdrEnvRenderer.upload(hdr_env);
+            });
             // setup geometry or mesh
             vector<Batch3d> batches = loadModel(scene);
-            RenderScheduler->execute([batches]() {
-                auto temp = batches;
-                RenderSystem::batchRenderer->createVIRenderModel(temp);
+            RenderScheduler->execute([&batches]() {
+                RenderSystem::batchRenderer->createVIRenderModel(batches);
             });
-            // setup skybox
-            {
-                std::vector<std::pair<u32, TextureData>> textures;
-                textures.emplace_back(TextureFaceType::FRONT, TextureFile::read("assets/materials/skybox/front.jpg"));
-                textures.emplace_back(TextureFaceType::BACK, TextureFile::read("assets/materials/skybox/back.jpg"));
-                textures.emplace_back(TextureFaceType::RIGHT, TextureFile::read("assets/materials/skybox/right.jpg"));
-                textures.emplace_back(TextureFaceType::LEFT, TextureFile::read("assets/materials/skybox/left.jpg"));
-                textures.emplace_back(TextureFaceType::BOTTOM, TextureFile::read("assets/materials/skybox/bottom.jpg"));
-                RenderScheduler->execute([scene, textures]() {
-                    u32 skyboxId = TextureBuffer::upload(textures);
-                    auto skybox = SkyboxCube(
-                            "NewSkybox",
-                            scene.get(),
-                            CubeMapTextureComponent(skyboxId, TextureType::CUBE_MAP)
-                    );
-                    TextureBuffer::setDefaultParamsCubeMap(skyboxId);
-                    scene->setSkybox(skybox);
-                    auto* sky_box = skybox.get<Skybox>();
-                    RenderSystem::skyboxRenderer.upload(sky_box);
-                });
-                // setup camera
-                addScene(scene);
-                Camera3D mainCamera("NewCamera", getAspectRatio(), scene.get());
-                scene->setCamera(mainCamera);
-                // wait while render thread uploads data and clean it
-                RenderScheduler->wait();
-                for (const auto& texture : textures) {
-                    TextureFile::free(texture.second.pixels);
-                }
-            }
-            // setup HDR env
-            {
-                TextureData td = TextureFile::read("assets/hdr/ice_lake.hdr", io::Spectrum::HDR);
-                RenderScheduler->execute([scene, td]() {
-                    auto hdrEnv = HdrEnvCube(
-                            "HdrEnvCube",
-                            scene.get(),
-                            TextureComponent(
-                                    TextureBuffer::upload("assets/hdr/ice_lake.hdr", td),
-                                    TextureType::TEXTURE_2D,
-                                    IntUniform { "hdrEnv", 0 })
-                    );
-                    scene->setHdrEnv(hdrEnv);
-                    auto* hdr_env = hdrEnv.get<HdrEnv>();
-                    RenderSystem::hdrEnvRenderer.upload(hdr_env);
-                });
-                // setup light sources
-                PhongLight("L_Sun_1", scene.get()).getPosition() = { -10, 10, -10 };
-                PhongLight("L_Sun_2", scene.get()).getPosition() = { 10, 10, 10 };
-                PhongLight("L_Sun_3", scene.get()).getPosition() = { -10, 10, 10 };
-                PhongLight("L_Sun_4", scene.get()).getPosition() = { 10, 10, -10 };
-                // wait while render thread uploads data and clean it
-                RenderScheduler->wait();
-                TextureFile::free(td.pixels);
+            // wait while render thread uploads data and clean it
+            RenderScheduler->wait();
+            TextureFile::free(td.pixels);
+            for (const auto& texture : textures) {
+                TextureFile::free(texture.second.pixels);
             }
         });
 
