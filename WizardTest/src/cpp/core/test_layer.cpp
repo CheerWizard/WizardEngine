@@ -10,10 +10,12 @@
 namespace test {
 
     void TestLayer::init() {
+        sceneHierarchy = new SceneHierarchy(Application::get().getNativeWindow(), this);
     }
 
     TestLayer::~TestLayer() {
         AssetBrowser::destroy();
+        delete sceneHierarchy;
     }
 
     void TestLayer::onPrepare() {
@@ -245,7 +247,7 @@ namespace test {
         // toolbar
         Toolbar::get().draw();
 //        // Scene hierarchy and properties
-        sceneHierarchy.onUpdate(dt);
+        sceneHierarchy->onUpdate(dt);
 //        // Scene view port
         sceneViewport.setRenderTarget(RenderSystem::finalRenderTargetId);
         sceneViewport.onUpdate(dt);

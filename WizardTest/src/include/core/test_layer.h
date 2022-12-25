@@ -93,7 +93,7 @@ namespace test {
                     512,
                     512
         };
-        SceneHierarchy sceneHierarchy = SceneHierarchy(this);
+        SceneHierarchy* sceneHierarchy;
     };
 
 }

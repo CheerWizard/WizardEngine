@@ -30,6 +30,15 @@ namespace engine::visual {
 
     using namespace math;
     using namespace physics;
+    using namespace engine::core;
+
+    Ref<FileDialog> SceneHierarchy::s_FileDialog = nullptr;
+    unordered_map<entity_id, CubemapItems> SceneHierarchy::s_CubemapItemStorage;
+    unordered_map<entity_id, HdrEnvItem> SceneHierarchy::s_HdrEnvStorage;
+
+    SceneHierarchy::SceneHierarchy(void *nativeWindow, SceneHierarchyCallback *callback) : _callback(callback) {
+        s_FileDialog = createRef<FileDialog>(nativeWindow);
+    }
 
     void SceneHierarchy::drawScene(const Ref<Scene>& scene) {
         ImGuiTreeNodeFlags sceneHeaderFlags = 0;
@@ -392,7 +401,7 @@ namespace engine::visual {
     }
 
     template<typename T, typename UIFunction>
-    static void drawComponent(const std::string& name, const ecs::Entity &entity, UIFunction uiFunction) {
+    void drawComponent(const std::string& name, const ecs::Entity &entity, UIFunction uiFunction) {
         if (!entity.template has<T>()) return;
 
         const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen
@@ -613,6 +622,67 @@ namespace engine::visual {
             drawFloatSlider("zNear", camera3DComponent.viewProjection.perspectiveMatrix.zNear, { 0, 1 }, DEFAULT_Z_NEAR);
             drawFloatSlider("zFar", camera3DComponent.viewProjection.perspectiveMatrix.zFar, { 0, 5000 }, DEFAULT_Z_FAR);
             drawFloatSlider("FOV", camera3DComponent.viewProjection.perspectiveMatrix.fieldOfView, { 0, 360 }, DEFAULT_FIELD_OF_VIEW);
+        });
+        // skybox
+        drawComponent<Skybox>("Skybox", entity, [&entity](Skybox& skybox) {
+            // transform
+            auto& model = skybox.transform.modelMatrix;
+            drawVec3Controller("Translation", model.position);
+            drawVec3Controller("Rotation", model.rotation);
+            drawVec3Controller("Scale", model.scale, 1.0f);
+            model.apply();
+            // cube map textures
+            CubemapItems& cubemapItems = s_CubemapItemStorage[entity.getId()];
+            for (int i = 0 ; i < 6 ; i++) {
+                auto& item = cubemapItems[i];
+                Line::draw(item.title);
+                Text::label(item.title);
+                ImGui::PushID(i);
+                if (ImGui::ImageButton(
+                        reinterpret_cast<ImTextureID>(item.textureId),
+                        { 128, 128 },
+                        { 1, 1 },
+                        { 0, 0 })
+                        ) {
+                    const char* filter = "PNG image (*.png)\0*.png\0"
+                                         "JPG image (*.jpg)\0*.jpg\0"
+                                         "TGA image (*.tga)\0*.tga\0";
+                    item.filepath = s_FileDialog->getImportPath(filter);
+                    io::TextureData td = io::TextureFile::read(item.filepath.c_str());
+                    item.textureId = TextureBuffer::upload(td);
+                    io::TextureFile::free(td.pixels);
+                }
+                ImGui::PopID();
+            }
+        });
+        // HDR env
+        drawComponent<HdrEnv>("HDR Environment", entity, [&entity](HdrEnv& hdrEnv) {
+            // transform
+            auto& model = hdrEnv.transform.modelMatrix;
+            drawVec3Controller("Translation", model.position);
+            drawVec3Controller("Rotation", model.rotation);
+            drawVec3Controller("Scale", model.scale, 1.0f);
+            model.apply();
+            // HDR Texture
+            HdrEnvItem& item = s_HdrEnvStorage[entity.getId()];
+            Line::draw("HDR Texture");
+            Text::label("HDR Texture");
+            ImGui::PushID(0);
+            if (ImGui::ImageButton(
+                    reinterpret_cast<ImTextureID>(item.textureId),
+                    { 128, 128 },
+                    { 1, 1 },
+                    { 0, 0 })
+                    ) {
+                const char* filter = "PNG image (*.png)\0*.png\0"
+                                     "JPG image (*.jpg)\0*.jpg\0"
+                                     "TGA image (*.tga)\0*.tga\0";
+                item.filepath = s_FileDialog->getImportPath(filter);
+                io::TextureData td = io::TextureFile::read(item.filepath.c_str());
+                item.textureId = TextureBuffer::upload(td);
+                io::TextureFile::free(td.pixels);
+            }
+            ImGui::PopID();
         });
         // velocity
         drawComponent<Velocity>("Velocity", entity, [](Velocity& velocity) {
