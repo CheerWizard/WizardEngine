@@ -65,9 +65,7 @@ namespace engine::visual {
 
     public:
         SceneHierarchy(void* nativeWindow, SceneHierarchyCallback* callback);
-        ~SceneHierarchy() {
-            destroy();
-        }
+        ~SceneHierarchy();
 
     public:
         void onUpdate(time::Time dt);
@@ -94,9 +92,6 @@ namespace engine::visual {
         static void drawComponents(Entity &entity);
         template<typename T>
         static void drawTextComponent(graphics::TextComponent<T>& textComponent);
-
-    private:
-        void destroy();
 
     private:
         Entity _selectedEntity;

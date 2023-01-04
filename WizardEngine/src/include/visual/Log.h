@@ -13,6 +13,8 @@
 #include <core/vector.h>
 #include <imgui.h>
 
+#define VisualLog engine::visual::Log::get()
+
 namespace engine::visual {
 
     enum LogLevel {

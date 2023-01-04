@@ -71,7 +71,7 @@ namespace engine::graphics {
 
         script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry &registry) {
             registry.each<TextureComponent>([&shader](TextureComponent* texture) {
-                shader.getFShader().updateUniformBuffer(texture->sampler, 0);
+                shader.getFragmentShader().updateUniformBuffer(texture->sampler, 0);
                 TextureBuffer::bind(texture->textureId, texture->typeId);
                 TextureBuffer::activate(texture->sampler.value);
             });
@@ -80,7 +80,7 @@ namespace engine::graphics {
         script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
             auto texture = entity.get<TextureComponent>();
             if (texture) {
-                shader.getFShader().updateUniformBuffer(texture->sampler, 0);
+                shader.getFragmentShader().updateUniformBuffer(texture->sampler, 0);
                 TextureBuffer::bind(texture->textureId, texture->typeId);
                 TextureBuffer::activate(texture->sampler.value);
             }

@@ -118,6 +118,9 @@ namespace engine::visual {
 
     void AssetBrowser::destroy() {
         callback = nullptr;
+        for (const AssetBrowserItem& item : _items) {
+            TextureBuffer::destroy(item.iconId);
+        }
     }
 
     void AssetBrowser::draw(Time dt) {
@@ -443,15 +446,6 @@ namespace engine::visual {
 
                 if (ImGui::MenuItem("Open in ZBrush")) {
                     engine::terminal::openZBrushTask(_rightClickedAssetPath.string());
-                }
-            }
-
-            if (IS_SHADER(assetExtension)) {
-                if (ImGui::MenuItem("Recompile")) {
-                    auto fileName = engine::filesystem::getFileName(_rightClickedAssetPath.string());
-                    if (engine::string::removePrefix(fileName, { "v_", "f_", "g_" })) {
-                        RECOMPILE_SHADER_PROGRAM(fileName);
-                    }
                 }
             }
 

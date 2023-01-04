@@ -9,21 +9,21 @@
 
 namespace engine::shader {
 
+    u32 ShaderType::NONE = GL_NONE;
+    u32 ShaderType::VERTEX = GL_VERTEX_SHADER;
+    u32 ShaderType::FRAGMENT = GL_FRAGMENT_SHADER;
+    u32 ShaderType::GEOMETRY = GL_GEOMETRY_SHADER;
+    u32 ShaderType::COMPUTE = GL_COMPUTE_SHADER;
+    u32 ShaderType::TESS_CONTROL = GL_TESS_CONTROL_SHADER;
+    u32 ShaderType::TESS_EVAL = GL_TESS_EVALUATION_SHADER;
+
+    Shader::Shader(u32 shaderType) : type(shaderType) {
+        id = glCreateShader(shaderType);
+    }
+
     void Shader::bindUbf(const char *blockName, u32 blockIndex) const {
         GLuint uniformBlockIndex = glGetUniformBlockIndex(id, blockName);
         glUniformBlockBinding(id, uniformBlockIndex, blockIndex);
-    }
-
-    void Shader::createVShader() {
-        id = glCreateShader(GL_VERTEX_SHADER);
-    }
-
-    void Shader::createFShader() {
-        id = glCreateShader(GL_FRAGMENT_SHADER);
-    }
-
-    void Shader::createGShader() {
-        id = glCreateShader(GL_GEOMETRY_SHADER);
     }
 
     void Shader::attach() const {
@@ -67,18 +67,6 @@ namespace engine::shader {
 
     void ShaderProgram::stop() {
         glUseProgram(0);
-    }
-
-    std::string ShaderProgram::toStringShaderType(const u32& type) {
-        switch (type) {
-            case GL_VERTEX_SHADER:
-                return "Vertex";
-            case GL_FRAGMENT_SHADER:
-                return "Fragment";
-            default:
-                ENGINE_ERR("Cannot convert shader type to string! programId : {0}", id);
-                return "Undefined";
-        }
     }
 
     uint32_t ShaderProgram::bindAttribute(const char* attrName) const {

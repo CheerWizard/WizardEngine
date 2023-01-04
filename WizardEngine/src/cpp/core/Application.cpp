@@ -13,7 +13,7 @@ namespace engine::core {
     void Application::run() {
         onCreate();
         while (_isRunning) {
-            onUpdate();
+            update();
         }
         onDestroy();
     }
@@ -21,18 +21,21 @@ namespace engine::core {
     void Application::onCreate() {
         PROFILE_FUNCTION();
         ENGINE_INFO("onCreate()");
+        jobSystem = createScope<JobSystem<>>();
         // setup window, input, graphics
         RenderScheduler->execute([this]() {
-            m_Window = createScope<Window>(projectProps.windowProps);
-            loadGamepadMappings("assets/mappings/game_controller.txt");
-            io::TextureFile::setFlipTexture(false);
             if (!ProjectProps::createFromFile("properties.yaml", projectProps)) {
                 ENGINE_WARN("Application: Unable to create properties from properties.yaml");
             }
+            m_Window = createScope<Window>(projectProps.windowProps);
+            // set keycodes mapping
+            loadGamepadMappings("assets/mappings/game_controller.txt");
+            // set window icon
+            io::TextureFile::setFlipTexture(false);
             if (!projectProps.icon.empty()) {
                 setWindowIcon(projectProps.icon);
             }
-
+            // init renderers
             createGraphics();
             initHDR();
             initBlur();
@@ -52,6 +55,7 @@ namespace engine::core {
             Visual::openDockspace = projectProps.windowProps.dockspace;
             AssetBrowser::create(getNativeWindow());
             MaterialPanel::create(getNativeWindow());
+            onVisualCreate();
 #endif
         });
         // setup audio
@@ -64,12 +68,11 @@ namespace engine::core {
         // setup something heavy
         ThreadPoolScheduler->execute([this]() {
             if (projectProps.launcher != "") {
-                setActiveScene(io::LocalAssetManager::loadScene(projectProps.launcher.c_str()));
+                setActiveScene(io::LocalAssetManager::read(projectProps.launcher.c_str()));
             } else {
                 ENGINE_WARN("Application: Launcher scene not specified in properties.yaml!");
             }
         });
-        // prepare default settings for window, frames, layers
         RenderScheduler->execute([this]() {
             m_Window->onPrepare();
             m_Window->setInCenter();
@@ -77,13 +80,14 @@ namespace engine::core {
         });
         waitAllJobs();
         Input::create(m_Window->getNativeWindow());
-        _layerStack.onPrepare();
+    }
+
+    void Application::onVisualCreate() {
     }
 
     void Application::onDestroy() {
         PROFILE_FUNCTION();
         ENGINE_INFO("onDestroy()");
-
         RenderScheduler->execute([]() {
             RenderSystem::onDestroy();
 #ifdef VISUAL
@@ -95,13 +99,12 @@ namespace engine::core {
             audio::DeviceManager::clear();
         });
         ScriptSystem::onDestroy();
-        RenderScheduler->wait();
-        AudioScheduler->wait();
+        waitAllJobs();
     }
 
-    void Application::onUpdate() {
+    void Application::update() {
         PROFILE_FUNCTION();
-        Timer timer("Application::onUpdate()", 30);
+        Timer timer("Application::update()", 30);
         // update simulation systems
         ThreadPoolScheduler->execute([this]() {
             onSimulationUpdate();
@@ -115,7 +118,7 @@ namespace engine::core {
 #ifdef VISUAL
             Visual::begin();
             Visual::onUpdate(dt);
-            _layerStack.onVisualDraw(dt);
+            onVisualDraw();
             Visual::end();
 #endif
         });
@@ -134,19 +137,11 @@ namespace engine::core {
         PROFILE_ON_FRAME_UPDATED();
     }
 
-    void Application::pushFront(Layer *layer) {
-        ENGINE_INFO("Pushing layer : {0}", layer->getTag());
-        _layerStack.pushFront(layer);
-    }
-
-    void Application::pushBack(Layer *layer) {
-        ENGINE_INFO("Pushing overlay : {0}", layer->getTag());
-        _layerStack.pushBack(layer);
+    void Application::onUpdate() {
     }
 
     void Application::onWindowClosed() {
         ENGINE_INFO("Application : onWindowClosed()");
-        _layerStack.onWindowClosed();
         EventRegistry::onWindowClosed.function();
 #ifdef VISUAL
         Visual::onWindowClosed();
@@ -159,7 +154,6 @@ namespace engine::core {
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
         if (width == 0 || height == 0) return;
 
-        _layerStack.onWindowResized(width, height);
         if (activeScene) {
             activeScene->getCamera().setAspectRatio(width, height);
         }
@@ -179,7 +173,6 @@ namespace engine::core {
         if (Visual::blocksKeyboard())
             return;
 #endif
-        _layerStack.onKeyPressed(keyCode);
         EventRegistry::onKeyPressedMap[keyCode].function(keyCode);
     }
 
@@ -190,7 +183,6 @@ namespace engine::core {
         if (Visual::blocksKeyboard())
             return;
 #endif
-        _layerStack.onKeyHold(keyCode);
         if (activeScene) {
             auto& camera = activeScene->getCamera();
             switch (keyCode) {
@@ -230,7 +222,6 @@ namespace engine::core {
         if (Visual::blocksKeyboard())
             return;
 #endif
-        _layerStack.onKeyReleased(keyCode);
         EventRegistry::onKeyReleasedMap[keyCode].function(keyCode);
         EventRegistry::onKeyHoldMap[keyCode] = false;
     }
@@ -242,7 +233,6 @@ namespace engine::core {
         if (Visual::blocksMouse())
             return;
 #endif
-        _layerStack.onMousePressed(mouseCode);
         EventRegistry::onMousePressedMap[mouseCode].function(mouseCode);
         EventRegistry::mouseHoldMap[mouseCode] = true;
     }
@@ -254,7 +244,6 @@ namespace engine::core {
         if (Visual::blocksMouse())
             return;
 #endif
-        _layerStack.onMouseRelease(mouseCode);
         EventRegistry::onMouseReleasedMap[mouseCode].function(mouseCode);
         EventRegistry::mouseHoldMap[mouseCode] = false;
     }
@@ -266,7 +255,6 @@ namespace engine::core {
         if (Visual::blocksMouse())
             return;
 #endif
-        _layerStack.onMouseScrolled(xOffset, yOffset);
         EventRegistry::onMouseScrolled.function(xOffset, yOffset);
     }
 
@@ -277,7 +265,6 @@ namespace engine::core {
         if (Visual::blocksMousePos())
             return;
 #endif
-        _layerStack.onCursorMoved(xPos, yPos);
         EventRegistry::onCursorMoved.function(xPos, yPos);
     }
 
@@ -288,7 +275,6 @@ namespace engine::core {
         if (Visual::blocksTextInput())
             return;
 #endif
-        _layerStack.onKeyTyped(keyCode);
     }
 
     float Application::getAspectRatio() const {
@@ -297,7 +283,7 @@ namespace engine::core {
 
     void Application::setActiveScene(const Ref<Scene>& scene) {
         PROFILE_FUNCTION();
-        scenes[scene->getId()] = scene;
+        LocalAssetManager::setScene(scene);
         activeScene = scene;
         selectedEntity = Entity(activeScene.get());
         hoveredEntity = Entity(activeScene.get());
@@ -384,7 +370,7 @@ namespace engine::core {
         if (activeScene && !activeScene->isEmpty()) {
             Physics::onUpdate(dt);
             ScriptSystem::onUpdate(dt);
-            _layerStack.onUpdate(dt);
+            onUpdate();
 
             auto& camera = activeScene->getCamera();
             camera.onUpdate(dt);
@@ -579,26 +565,8 @@ namespace engine::core {
         RenderSystem::textureMixer = { textureMixerFrameFormat };
     }
 
-    void Application::onVisualDraw(time::Time dt) {
+    void Application::onVisualDraw() {
         // this method will be called only from derived class that defines VISUAL macro
-    }
-
-    void Application::addScene(const Ref<Scene>& scene) {
-        scenes[scene->getId()] = scene;
-    }
-
-    void Application::removeScene(const uuid& sceneId) {
-        scenes.erase(sceneId);
-    }
-
-    void Application::clearScenes() {
-        scenes.clear();
-    }
-
-    void Application::addScenes(const vector<Ref<Scene>> &newScenes) {
-        for (const auto& newScene : newScenes) {
-            scenes[newScene->getId()] = newScene;
-        }
     }
 
     vector<Batch3d> Application::loadModel(const Ref<Scene>& scene) {
@@ -639,7 +607,7 @@ namespace engine::core {
     }
 
     vector<Batch3d> Application::loadModel(const uuid& sceneId) {
-        return loadModel(scenes.at(sceneId));
+        return loadModel(LocalAssetManager::getScene(sceneId));
     }
 
     Ref<Scene> Application::newScene(const std::string& sceneName) {
@@ -647,7 +615,7 @@ namespace engine::core {
 
         ThreadPoolScheduler->execute([this, scene]() {
             // setup camera
-            addScene(scene);
+            LocalAssetManager::addScene(scene);
             Camera3D mainCamera("NewCamera", getAspectRatio(), scene.get());
             scene->setCamera(mainCamera);
             // setup light sources
@@ -727,14 +695,8 @@ namespace engine::core {
         };
         // setup batch and instanced renderers
         auto batchShader = shader::BaseShaderProgram(
-                io::ShaderProps {
-                        "batch",
-                        "v_batch.glsl",
-                        "scene_phong.glsl",
-                        ENGINE_SHADERS_PATH
-                },
-                BaseShader(),
-                BaseShader(),
+                ENGINE_SHADERS_PATH + "/" + "v_batch.glsl",
+                ENGINE_SHADERS_PATH + "/" + "scene_phong.glsl",
                 { camera3dUboScript(), lightScript() }
         );
         batchShader.setInstancesPerDraw(4);
@@ -763,14 +725,8 @@ namespace engine::core {
             }
         };
         auto instanceShader = shader::BaseShaderProgram(
-                io::ShaderProps {
-                        "instance",
-                        "v_instance.glsl",
-                        "scene_phong.glsl",
-                        ENGINE_SHADERS_PATH
-                },
-                BaseShader(),
-                BaseShader(),
+                ENGINE_SHADERS_PATH + "/" + "v_instance.glsl",
+                ENGINE_SHADERS_PATH + "/" + "scene_phong.glsl",
                 { camera3dUboScript(), lightScript() }
         );
         instanceShader.setInstancesPerDraw(4);

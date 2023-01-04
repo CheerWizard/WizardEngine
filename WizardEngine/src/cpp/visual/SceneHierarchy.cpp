@@ -4,17 +4,12 @@
 
 #include <visual/SceneHierarchy.h>
 
-#include <ecs/Components.h>
-
-#include <graphics/transform/TransformComponents.h>
 #include <graphics/light/LightComponents.h>
 #include <graphics/outline/Outline.h>
-#include <graphics/text/Text.h>
 #include <visual/MaterialPanel.h>
 
 #include <physics/Physics.h>
 
-#include <imgui.h>
 #include <imgui_stdlib.h>
 #include <imgui_internal.h>
 
@@ -38,6 +33,18 @@ namespace engine::visual {
 
     SceneHierarchy::SceneHierarchy(void *nativeWindow, SceneHierarchyCallback *callback) : _callback(callback) {
         s_FileDialog = createRef<FileDialog>(nativeWindow);
+    }
+
+    SceneHierarchy::~SceneHierarchy() noexcept {
+        _callback = nullptr;
+        for (const auto& entry : s_CubemapItemStorage) {
+            for (const auto& item : entry.second.items) {
+                TextureBuffer::destroy(item.textureId);
+            }
+        }
+        for (const auto& entry : s_HdrEnvStorage) {
+            TextureBuffer::destroy(entry.second.textureId);
+        }
     }
 
     void SceneHierarchy::drawScene(const Ref<Scene>& scene) {
@@ -73,7 +80,7 @@ namespace engine::visual {
                     }
 
                     if (ImGui::MenuItem("Delete Scene")) {
-                        Application::get().removeScene(scene->getId());
+                        LocalAssetManager::removeScene(scene->getId());
                         if (_callback)
                             _callback->onSceneRemoved(scene);
                         selectedScene = nullptr;
@@ -724,9 +731,9 @@ namespace engine::visual {
         ImGui::Begin(ICON_FA_OBJECT_GROUP " Scene Hierarchy", &open);
         auto& app = Application::get();
 
-        for (auto& [sceneId, scene] : app.getScenes()) {
+        for (const auto& entry : LocalAssetManager::getScenes()) {
             ImGui::Spacing();
-            drawScene(scene);
+            drawScene(entry.second);
         }
 
         if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) {
@@ -737,7 +744,7 @@ namespace engine::visual {
         if (ImGui::BeginPopupContextWindow(nullptr, 1, false)) {
             if (ImGui::MenuItem("Create Empty Scene")) {
                 std::stringstream ss;
-                ss << "New Scene " << app.getScenes().size();
+                ss << "New Scene " << LocalAssetManager::getSceneSize();
                 app.newScene(ss.str());
             }
             if (selectedScene) {
@@ -761,9 +768,5 @@ namespace engine::visual {
         }
         ImGui::End();
         ImGui::PopStyleVar();
-    }
-
-    void SceneHierarchy::destroy() {
-        removeCallback();
     }
 }

@@ -15,11 +15,6 @@ namespace engine::visual {
         ~Toolbar();
 
     public:
-        static Toolbar& get() {
-            static Toolbar instance;
-            return instance;
-        }
-
         void draw();
 
     public:

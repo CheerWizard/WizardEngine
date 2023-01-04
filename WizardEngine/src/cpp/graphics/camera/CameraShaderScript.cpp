@@ -14,12 +14,12 @@ namespace engine::shader {
         script.updateEntity = [](const BaseShaderProgram& shader, const ecs::Entity& entity) {
             auto camera = entity.get<Camera2dComponent>();
             if (camera) {
-                shader.getVShader().updateUniformBuffer(camera->viewProjection, 0);
+                shader.getVertexShader().updateUniformBuffer(camera->viewProjection, 0);
             }
         };
         script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry& registry) {
             registry.each<Camera2dComponent>([&shader](Camera2dComponent* camera) {
-                shader.getVShader().updateUniformBuffer(camera->viewProjection, 0);
+                shader.getVertexShader().updateUniformBuffer(camera->viewProjection, 0);
             });
         };
         return script;
@@ -32,14 +32,14 @@ namespace engine::shader {
             if (camera) {
                 auto& viewPosition = camera->viewProjection.viewMatrix.position;
                 shader.setUniform(viewPosition);
-                shader.getVShader().updateUniformBuffer(camera->viewProjection, 0);
+                shader.getVertexShader().updateUniformBuffer(camera->viewProjection, 0);
             }
         };
         script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry& registry) {
             registry.each<Camera3dComponent>([&shader](Camera3dComponent* camera) {
                 auto& viewPosition = camera->viewProjection.viewMatrix.position;
                 shader.setUniform(viewPosition);
-                shader.getVShader().updateUniformBuffer(camera->viewProjection, 0);
+                shader.getVertexShader().updateUniformBuffer(camera->viewProjection, 0);
             });
         };
         return script;

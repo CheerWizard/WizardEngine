@@ -28,7 +28,7 @@ namespace engine::visual {
     }
 
     ProjectsPanel::~ProjectsPanel() {
-        ProjectManager::saveProjects();
+        saveProjects();
     }
 
     void ProjectsPanel::draw() {
@@ -140,9 +140,8 @@ namespace engine::visual {
                     ImGui::InvisibleButton("padding-publish-top", { 205, 2 });
 
                     if (ImGui::Button(ICON_FA_FOLDER_OPEN" Open", { 205, 34 })) {
-                        selectedProject.loadScenes();
-                        Application::get().addScenes(selectedProject.scenes);
                         ProjectManager::setCurrentProject(selectedProject);
+                        ProjectManager::loadScenes();
                         AssetBrowser::setProject(selectedProject);
                     }
 
@@ -169,6 +168,10 @@ namespace engine::visual {
 
         ImGui::PopStyleVar();
         ImGui::End();
+    }
+
+    void ProjectsPanel::saveProjects() {
+        ProjectManager::saveProjects();
     }
 
 }

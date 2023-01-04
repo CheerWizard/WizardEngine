@@ -5,12 +5,18 @@
 #pragma once
 
 #include <imgui.h>
+
 #include <core/primitives.h>
 #include <core/vector.h>
+
 #include <event/Events.h>
+
 #include <graphics/core/shader/Uniform.h>
 #include <graphics/camera/Camera.h>
 #include <graphics/transform/TransformComponents.h>
+
+#include <platform/tools/FileDialog.h>
+
 #include <time/Time.h>
 
 namespace engine::visual {
@@ -19,6 +25,7 @@ namespace engine::visual {
     using namespace shader;
     using namespace math;
     using namespace time;
+    using namespace tools;
 
     class ENGINE_API Visual final {
 
@@ -65,6 +72,7 @@ namespace engine::visual {
         static vector<ImFont*> fonts;
         static int windowFlags;
         static int dockspaceFlags;
+        static Ref<FileDialog> s_FileDialog;
     };
 
     using namespace graphics;

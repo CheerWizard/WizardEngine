@@ -35,8 +35,4 @@ namespace engine::shader {
         _shaders.erase(name);
     }
 
-    void ShaderSource::recompile(const std::string &name) {
-        get(name)->recompile(name);
-    }
-
 }

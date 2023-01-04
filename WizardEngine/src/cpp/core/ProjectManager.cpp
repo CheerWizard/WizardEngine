@@ -4,17 +4,20 @@
 
 #include <core/ProjectManager.h>
 #include <core/filesystem.h>
+#include <core/Application.h>
+
 #include <tools/terminal.h>
+
 #include <scripting/ScriptManager.h>
+
 #include <serialization/AssetManager.h>
 
-#include <sstream>
 #include <fstream>
 #include <regex>
 
 namespace engine::core {
 
-    void ProjectProps::serialize(YAML::Emitter &out) {
+    void ProjectProps::serialize(YAML::Emitter &out) const {
         out << YAML::BeginMap;
 
         out << YAML::Key << "properties";
@@ -197,7 +200,7 @@ namespace engine::core {
         // copy project template into projects path
         engine::filesystem::copyRecursive("../WizardEngine/project_template", projectPath.str().c_str());
         // create asset space
-        ENGINE_INFO("Creating empty asset space for {0} project", newProject.name);
+        ENGINE_INFO("Creating empty asset space for {0} project", newProject.name.c_str());
         engine::filesystem::newDirectory(newProject.getAssetsPath());
         engine::filesystem::newDirectory(newProject.getAudioPath());
         engine::filesystem::newDirectory(newProject.getFontsPath());
@@ -327,21 +330,21 @@ namespace engine::core {
 
     void ProjectManager::postBuild(const Project &project, ProjectVersion projectVersion) {
         if (!filesystem::copyRecursive((project.getFullPath() + "/WizardEngine.dll").c_str(), project.getBuildPath(projectVersion).c_str())) {
-            ENGINE_ERR("Unable to copy WizardEngine.dll into '{0}'", project.getBuildPath(projectVersion));
+            ENGINE_ERR("Unable to copy WizardEngine.dll into '{0}'", project.getBuildPath(projectVersion).c_str());
         }
         if (!filesystem::copyRecursive((project.getFullPath() + "/assimp-vc143-mtd.dll").c_str(), project.getBuildPath(projectVersion).c_str())) {
-            ENGINE_ERR("Unable to copy assimp-vc143-mtd.dll into '{0}'", project.getBuildPath(projectVersion));
+            ENGINE_ERR("Unable to copy assimp-vc143-mtd.dll into '{0}'", project.getBuildPath(projectVersion).c_str());
         }
         if (!filesystem::copyRecursive((project.getFullPath() + "/OpenAL32.dll").c_str(), project.getBuildPath(projectVersion).c_str())) {
-            ENGINE_ERR("Unable to copy OpenAL32.dll into '{0}'", project.getBuildPath(projectVersion));
+            ENGINE_ERR("Unable to copy OpenAL32.dll into '{0}'", project.getBuildPath(projectVersion).c_str());
         }
         if (!filesystem::copyRecursive((project.getFullPath() + "/yaml-cppd.dll").c_str(), project.getBuildPath(projectVersion).c_str())) {
-            ENGINE_ERR("Unable to copy yaml-cppd.dll into '{0}'", project.getBuildPath(projectVersion));
+            ENGINE_ERR("Unable to copy yaml-cppd.dll into '{0}'", project.getBuildPath(projectVersion).c_str());
         }
         // copy assets used for project
         if (!filesystem::copyRecursive(project.getAssetsPath().c_str(), (project.getBuildPath(projectVersion) + "/assets").c_str())) {
-            ENGINE_ERR("Unable to copy assets directory into '{0}'", project.getBuildPath(projectVersion));
-            ENGINE_INFO("Creating empty asset space for {0} project", project.name);
+            ENGINE_ERR("Unable to copy assets directory into '{0}'", project.getBuildPath(projectVersion).c_str());
+            ENGINE_INFO("Creating empty asset space for {0} project", project.name.c_str());
             engine::filesystem::newDirectory(project.getAssetsPath());
             engine::filesystem::newDirectory(project.getAudioPath());
             engine::filesystem::newDirectory(project.getFontsPath());
@@ -352,7 +355,7 @@ namespace engine::core {
         }
         // copy props
         if (!filesystem::copyRecursive(project.getPropsPath().c_str(), project.getBuildPath(projectVersion).c_str())) {
-            ENGINE_ERR("Unable to copy properties.yaml into {0}", project.getBuildPath(projectVersion));
+            ENGINE_ERR("Unable to copy properties.yaml into {0}", project.getBuildPath(projectVersion).c_str());
         }
         // remove scripts assets from build path
         std::string scriptsBinaryPath = project.getBuildPath(projectVersion) + "/assets/scripts";
@@ -360,13 +363,13 @@ namespace engine::core {
         engine::filesystem::remove(scriptsBinaryPath);
         // copy core engine shaders used for project
         if (!filesystem::copyRecursive(project.getCoreShadersPath().c_str(), (project.getBuildPath(projectVersion) + "/core_shaders").c_str())) {
-            ENGINE_ERR("Unable to copy core_shaders directory into '{0}'", project.getBuildPath(projectVersion));
+            ENGINE_ERR("Unable to copy core_shaders directory into '{0}'", project.getBuildPath(projectVersion).c_str());
         }
     }
 
     void ProjectManager::postBuildScripts(const Project &project, ProjectVersion projectVersion) {
         if (!filesystem::copyRecursive(getScriptEngineBuildPath(project, projectVersion).c_str(), project.getBuildPath(projectVersion).c_str())) {
-            ENGINE_ERR("Unable to copy ScriptEngine.dll into '{0}'", project.getBuildPath(projectVersion));
+            ENGINE_ERR("Unable to copy ScriptEngine.dll into '{0}'", project.getBuildPath(projectVersion).c_str());
         }
         loadScripts(project, projectVersion);
     }
@@ -381,18 +384,9 @@ namespace engine::core {
     }
 
     void ProjectManager::run(const Project& project, ProjectVersion projectVersion) {
-        // todo crashes inside thread runnable lambda
-//        thread::VoidTask<const Project&> task = {
-//                project.name,
-//                project.name,
-//                runImpl
-//        };
-//        task.run(project);
-        runImpl(project, projectVersion);
-    }
-
-    void ProjectManager::runImpl(const Project& project, ProjectVersion projectVersion) {
-        terminal::exe(project.getExePath(projectVersion));
+        ThreadPoolScheduler->execute([&project, &projectVersion]() {
+            terminal::exe(project.getExePath(projectVersion));
+        });
     }
 
     void ProjectManager::saveProjects() {
@@ -407,7 +401,7 @@ namespace engine::core {
         for (u32 i = 0 ; i < projects.size() ; i++) {
             const auto& project = projects[i];
             ENGINE_INFO("ProjectManager: saving project name = {0}, workspace = {1}",
-                        project.name, project.workspacePath);
+                        project.name.c_str(), project.workspacePath.c_str());
             file << project.name;
             if (i == projects.size() - 1) break;
             file << "\n";
@@ -434,7 +428,7 @@ namespace engine::core {
 
         for (const auto& project : projects) {
             ENGINE_INFO("ProjectManager: project loaded name = {0}, workspace = {1}",
-                        project.name, project.workspacePath);
+                        project.name.c_str(), project.workspacePath.c_str());
         }
 
         file.close();
@@ -534,7 +528,7 @@ namespace engine::core {
         script = std::regex_replace(script, std::regex("class " + oldName), "class " + newName);
         script = std::regex_replace(script,std::regex("(" + oldName + ")"),newName);
         script = std::regex_replace(script, std::regex("\n"), "");
-        engine::filesystem::write(oldPath, script.c_str());
+        engine::filesystem::write(oldPath, script);
         engine::filesystem::rename(oldPath, newName + ".cpp");
     }
 
@@ -545,14 +539,12 @@ namespace engine::core {
         engine::filesystem::write(filePath, scriptTemplate);
     }
 
-    void Project::loadScenes() {
-        io::LocalAssetManager::assetsPath = getAssetsPath();
-        scenes = io::LocalAssetManager::loadAll();
+    void ProjectManager::saveScenes() {
+        io::LocalAssetManager::writeAll(currentProject.getAssetsPath().c_str());
     }
 
-    void Project::saveScenes() const {
-        io::LocalAssetManager::assetsPath = getAssetsPath();
-        io::LocalAssetManager::saveAll(scenes);
+    void ProjectManager::loadScenes() {
+        io::LocalAssetManager::readAll(currentProject.getAssetsPath().c_str());
     }
 
 }

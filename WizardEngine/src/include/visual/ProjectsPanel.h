@@ -24,6 +24,7 @@ namespace engine::visual {
 
     public:
         static ProjectsPanel& get();
+        static void saveProjects();
         void draw();
 
     public:

@@ -27,7 +27,7 @@ namespace engine::core {
 
         ProjectProps() = default;
 
-        void serialize(YAML::Emitter &out);
+        void serialize(YAML::Emitter &out) const;
         void deserialize(const YAML::Node &parent);
         void save(const char* filepath);
         static bool createFromFile(const char* filepath, ProjectProps& props);
@@ -36,7 +36,6 @@ namespace engine::core {
     struct ENGINE_API Project {
         std::string name;
         std::string workspacePath;
-        vector<Ref<Scene>> scenes;
         ProjectProps props;
 
         Project() = default;
@@ -58,9 +57,6 @@ namespace engine::core {
         [[nodiscard]] inline std::string getBuildPath(ProjectVersion version) const;
         [[nodiscard]] inline std::string getZipPath(ProjectVersion version) const;
         [[nodiscard]] inline std::string getPropsPath() const;
-
-        void loadScenes();
-        void saveScenes() const;
 
     private:
         std::string getFullPath(const char* assetPath) const;
@@ -109,8 +105,10 @@ namespace engine::core {
 
         static void newScript(const std::string& filePath, const std::string& name);
 
+        static void saveScenes();
+        static void loadScenes();
+
     private:
-        static void runImpl(const Project& project, ProjectVersion projectVersion);
         static void postBuild(const Project& project, ProjectVersion projectVersion);
         static std::string getScriptEngineBuildPath(const Project& project, ProjectVersion projectVersion);
         static void postBuildScripts(const Project& project, ProjectVersion projectVersion);

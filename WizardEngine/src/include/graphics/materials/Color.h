@@ -22,5 +22,4 @@ namespace engine::graphics {
     };
 
     ShaderScript colorScript();
-
 }

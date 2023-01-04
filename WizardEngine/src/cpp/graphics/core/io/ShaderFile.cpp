@@ -8,39 +8,19 @@
 
 namespace engine::io {
 
-    ShaderPropsMap ShaderFile::shaderPropsMap = {};
-
-    ShaderSources ShaderFile::readAssetWithIncludes(const ShaderProps& props) {
-        shaderPropsMap[props.name] = props;
-        return {
-            readAssetWithIncludes(props.assetPath, props.vFileName, props.includeToken),
-            readAssetWithIncludes(props.assetPath, props.fFileName, props.includeToken),
-            readAssetWithIncludes(props.assetPath, props.gFileName, props.includeToken)
-        };
+    ShaderFile::~ShaderFile() {
+        clear();
     }
 
-    std::string ShaderFile::readAssetWithIncludes(
-            const std::string &assetPath,
-            const std::string &fileName,
-            const std::string &includeToken
-    ) {
-        // creating a full path to shader
-        std::stringstream ss;
-        ss << assetPath << "/" << fileName;
-        auto fullPath = ss.str();
-        return filesystem::readWithIncludes(fullPath, includeToken);
+    const std::string& ShaderFile::readShader(const std::string &filepath) {
+        if (s_ShadersStorage.find(filepath) == s_ShadersStorage.end()) {
+            s_ShadersStorage[filepath] = filesystem::readWithIncludes(filepath, "#include");
+        }
+        return s_ShadersStorage.at(filepath);
     }
 
     void ShaderFile::clear() {
-        shaderPropsMap.clear();
-    }
-
-    ShaderSources ShaderFile::readAssetWithIncludes(const std::string &name) {
-        return readAssetWithIncludes(shaderPropsMap[name]);
-    }
-
-    const ShaderProps &ShaderFile::getShaderProps(const std::string &name) {
-        return shaderPropsMap[name];
+        s_ShadersStorage.clear();
     }
 
 }
