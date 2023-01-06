@@ -101,3 +101,4 @@ Below is list of resources I am using.
 - https://www.gamedev.net/
 - https://www.khronos.org/opengl/wiki/
 - https://wickedengine.net
+- https://github.com/ocornut/imgui/issues/306
