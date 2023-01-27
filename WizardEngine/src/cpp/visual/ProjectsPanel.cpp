@@ -103,8 +103,9 @@ namespace engine::visual {
                 ImGui::PopStyleColor();
 
                 if (Button::textButton(ICON_FA_MAGIC" Create", { 205, 34 }, 2, 2)) {
-                    ProjectManager::create(newProjectName.c_str(), newWorkspace.c_str());
+                    Project* newProject = ProjectManager::create(newProjectName.c_str(), newWorkspace.c_str());
                     ProjectManager::saveProjects();
+                    ProjectManager::setCurrentProject(*newProject);
                 }
                 ImGui::Spacing();
             }

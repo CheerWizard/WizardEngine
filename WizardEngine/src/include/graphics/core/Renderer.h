@@ -53,7 +53,7 @@ namespace engine::graphics {
         explicit Renderer(
                 const BaseShaderProgram& shaderProgram,
                 u32 drawType = DrawType::TRIANGLE,
-                const AttributeCategory& attributeCategory = VERTEX
+                u8 attributeCategory = AttributeCategory::VERTEX
         ) : shaderProgram(shaderProgram), drawType(drawType) {
             create(attributeCategory);
         }
@@ -100,7 +100,7 @@ namespace engine::graphics {
         void createRenderModels(const vector<BaseMeshComponent<T>>& baseMeshComponents);
 
     protected:
-        void create(const AttributeCategory& attributeCategory);
+        void create(u8 attributeCategory);
         VRenderModel& createRenderModel(const uint32_t& vertexCount);
         VIRenderModel& createRenderModel(const uint32_t& vertexCount, const uint32_t& indexCount);
 
@@ -122,7 +122,7 @@ namespace engine::graphics {
         BatchRenderer(
                 const BaseShaderProgram& shaderProgram,
                 u32 drawType = DrawType::TRIANGLE,
-                const AttributeCategory& attributeCategory = VERTEX
+                u8 attributeCategory = AttributeCategory::VERTEX
         ) : Renderer(shaderProgram, drawType, attributeCategory) {}
 
     public:
@@ -140,7 +140,7 @@ namespace engine::graphics {
         InstanceRenderer(
                 const BaseShaderProgram& shaderProgram,
                 u32 drawType = DrawType::TRIANGLE,
-                const AttributeCategory& attributeCategory = VERTEX
+                u8 attributeCategory = AttributeCategory::VERTEX
         ) : Renderer(shaderProgram, drawType, attributeCategory) {}
 
     public:

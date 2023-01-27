@@ -264,7 +264,7 @@ namespace engine::visual {
                         }
                         break;
                         CASE(CPP_EXT):
-                        ProjectManager::openScripts(_project);
+                            ProjectManager::openScriptsSln(_project);
                         break;
                     }
                 }

@@ -8,10 +8,6 @@
 
 #include <tools/terminal.h>
 
-#include <scripting/ScriptManager.h>
-
-#include <serialization/AssetManager.h>
-
 #include <fstream>
 #include <regex>
 
@@ -171,14 +167,14 @@ namespace engine::core {
     }
 
     vector<Project> ProjectManager::projects;
-    Project ProjectManager::currentProject;
+    Project* ProjectManager::currentProject = nullptr;
 
-    Project ProjectManager::create(const char *projectName, const char *workspacePath) {
+    Project* ProjectManager::create(const char *projectName, const char *workspacePath) {
         // validate that new project already exists in memory
-        for (const auto& project : projects) {
+        for (auto& project : projects) {
             if (engine::string::equals(project.name.c_str(), projectName)) {
                 ENGINE_ERR("ProjectManager: Can't create {0} project. It's already in memory", projectName);
-                return project;
+                return &project;
             }
         }
         // create project directory using its name
@@ -217,10 +213,10 @@ namespace engine::core {
         build(newProject, V_RELEASE);
         buildScripts(newProject, V_DEBUG);
         buildScripts(newProject, V_RELEASE);
-        return newProject;
+        return &projects.at(projects.size());
     }
 
-    const Project &ProjectManager::getCurrentProject() {
+    const Project* ProjectManager::getCurrentProject() {
         return currentProject;
     }
 
@@ -390,61 +386,92 @@ namespace engine::core {
     }
 
     void ProjectManager::saveProjects() {
-        if (projects.empty()) {
-            ENGINE_WARN("ProjectManager::saveProjects: no projects available to save");
-            return;
+        // save recent projects list into cfg
+        {
+            if (projects.empty()) {
+                ENGINE_WARN("ProjectManager::saveProjects: no projects available to save");
+                return;
+            }
+
+            std::ofstream file("projects.cfg");
+
+            file << projects[0].workspacePath << "\n";
+            for (u32 i = 0 ; i < projects.size() ; i++) {
+                const auto& project = projects[i];
+                ENGINE_INFO("ProjectManager: saving project name = {0}, workspace = {1}",
+                            project.name.c_str(), project.workspacePath.c_str());
+                file << project.name;
+                if (i == projects.size() - 1) break;
+                file << "\n";
+            }
+
+            file.close();
         }
+        // save last opened project into cfg
+        {
+            if (!currentProject) {
+                ENGINE_WARN("ProjectManager::saveProjects: no current project available to save");
+                return;
+            }
 
-        std::ofstream file("projects.cfg");
-
-        file << projects[0].workspacePath << "\n";
-        for (u32 i = 0 ; i < projects.size() ; i++) {
-            const auto& project = projects[i];
-            ENGINE_INFO("ProjectManager: saving project name = {0}, workspace = {1}",
-                        project.name.c_str(), project.workspacePath.c_str());
-            file << project.name;
-            if (i == projects.size() - 1) break;
-            file << "\n";
+            std::ofstream file("project.cfg");
+            file << currentProject->name << "\n";
+            file.close();
         }
-
-        file.close();
     }
 
     void ProjectManager::loadProjects() {
-        std::ifstream file("projects.cfg");
-        if (!file.is_open()) {
-            ENGINE_ERR("ProjectManager: Unable to load projects from {0}", "projects.cfg");
-            return;
+        // load recent projects list from cfg
+        {
+            std::ifstream file("projects.cfg");
+            if (!file.is_open()) {
+                ENGINE_ERR("ProjectManager: Unable to load projects from {0}", "projects.cfg");
+                return;
+            }
+
+            std::string workspacePath;
+            std::getline(file, workspacePath);
+
+            std::string projectName;
+            projects.clear();
+            while (std::getline(file, projectName)) {
+                projects.emplace_back(projectName, workspacePath);
+            }
+
+            for (const auto& project : projects) {
+                ENGINE_INFO("ProjectManager: project loaded name = {0}, workspace = {1}",
+                            project.name.c_str(), project.workspacePath.c_str());
+            }
+
+            file.close();
         }
+        // load last open project from cfg
+        {
+            std::ifstream file("project.cfg");
+            if (!file.is_open()) {
+                ENGINE_ERR("ProjectManager: Unable to load last opened project from project.cfg");
+                return;
+            }
 
-        std::string workspacePath;
-        std::getline(file, workspacePath);
+            std::string projectName;
+            std::getline(file, projectName);
+            setCurrentProject(projectName.c_str());
 
-        std::string projectName;
-        projects.clear();
-        while (std::getline(file, projectName)) {
-            projects.emplace_back(projectName, workspacePath);
+            file.close();
         }
-
-        for (const auto& project : projects) {
-            ENGINE_INFO("ProjectManager: project loaded name = {0}, workspace = {1}",
-                        project.name.c_str(), project.workspacePath.c_str());
-        }
-
-        file.close();
     }
 
     void ProjectManager::setCurrentProject(const char* projectName) {
-        for (const Project& project : projects) {
+        for (Project& project : projects) {
             if (engine::string::equals(projectName, project.name.c_str())) {
-                currentProject = project;
+                currentProject = &project;
                 return;
             }
         }
     }
 
-    void ProjectManager::setCurrentProject(const Project& project) {
-        currentProject = project;
+    void ProjectManager::setCurrentProject(Project& project) {
+        currentProject = &project;
     }
 
     const vector<Project> &ProjectManager::getAll() {
@@ -463,7 +490,7 @@ namespace engine::core {
         return false;
     }
 
-    void ProjectManager::open(const char *projectName) {
+    void ProjectManager::openSln(const char *projectName) {
         for (const auto& project : projects) {
             if (engine::string::equals(projectName, project.name.c_str())) {
                 engine::terminal::openVisualStudio(project.getSlnPath());
@@ -471,15 +498,15 @@ namespace engine::core {
         }
     }
 
-    void ProjectManager::openScripts(const char *projectName) {
+    void ProjectManager::openScriptsSln(const char *projectName) {
         for (const auto& project : projects) {
             if (engine::string::equals(projectName, project.name.c_str())) {
-                openScripts(project);
+                openScriptsSln(project);
             }
         }
     }
 
-    void ProjectManager::openScripts(const Project& project) {
+    void ProjectManager::openScriptsSln(const Project& project) {
         std::stringstream ss;
         ss << project.getFullPath() << "/ScriptEngine/ScriptEngine.sln";
         engine::terminal::openVisualStudio(ss.str());
@@ -533,18 +560,22 @@ namespace engine::core {
     }
 
     void ProjectManager::newScript(const std::string &filePath, const std::string &name) {
-        std::string scriptTemplate = engine::filesystem::read(currentProject.getFullPath() + "/ScriptEngine/Template.cpp");
+        std::string scriptTemplate = engine::filesystem::read(currentProject->getFullPath() + "/ScriptEngine/Template.cpp");
         scriptTemplate = std::regex_replace(scriptTemplate, std::regex("Template"), name);
         scriptTemplate = std::regex_replace(scriptTemplate, std::regex("\n"), "");
         engine::filesystem::write(filePath, scriptTemplate);
     }
 
     void ProjectManager::saveScenes() {
-        io::LocalAssetManager::writeAll(currentProject.getAssetsPath().c_str());
+        io::LocalAssetManager::writeAll(currentProject->getAssetsPath().c_str());
     }
 
     void ProjectManager::loadScenes() {
-        io::LocalAssetManager::readAll(currentProject.getAssetsPath().c_str());
+        io::LocalAssetManager::readAll(currentProject->getAssetsPath().c_str());
+    }
+
+    void ProjectManager::closeProject() {
+        currentProject = nullptr;
     }
 
 }

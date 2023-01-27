@@ -65,19 +65,19 @@ namespace engine::core {
     class ENGINE_API ProjectManager final {
 
     public:
-        static Project create(
+        static Project* create(
                 const char* projectName,
                 const char* workspacePath
         );
         static bool destroy(const char* projectName);
-        static void open(const char* projectName);
-        static void openScripts(const char* projectName);
-        static void openScripts(const Project& project);
+        static void openSln(const char* projectName);
+        static void openScriptsSln(const char* projectName);
+        static void openScriptsSln(const Project& project);
         static void closeProject();
 
-        inline static const Project& getCurrentProject();
+        inline static const Project* getCurrentProject();
         inline static void setCurrentProject(const char* projectName);
-        inline static void setCurrentProject(const Project& project);
+        inline static void setCurrentProject(Project& project);
         inline static const vector<Project>& getAll();
 
         static void cmake(const char* projectName, ProjectVersion projectVersion);
@@ -115,7 +115,7 @@ namespace engine::core {
 
     private:
         static vector<Project> projects;
-        static Project currentProject;
+        static Project* currentProject;
     };
 
 }

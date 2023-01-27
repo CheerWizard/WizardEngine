@@ -6,7 +6,7 @@
 
 namespace engine::graphics {
 
-    void Renderer::create(const AttributeCategory& attributeCategory) {
+    void Renderer::create(u8 attributeCategory) {
         shaderProgram.bindVertexFormat();
         shaderProgram.getVertexFormat().setAttrCategory(attributeCategory);
     }

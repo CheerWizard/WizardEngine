@@ -26,14 +26,14 @@ namespace engine::shader {
         MAT4 = 16
     };
 
-    enum AttributeCategory : u8 {
-        VERTEX = 0,
-        INSTANCE = 1
+    struct ENGINE_API AttributeCategory final {
+        static u8 VERTEX;
+        static u8 INSTANCE;
     };
 
-    enum AttributeBool : u8 {
-        A_FALSE = 0,
-        A_TRUE = 1
+    struct ENGINE_API AttributeBool final {
+        static u8 FALSE;
+        static u8 TRUE;
     };
 
     struct ENGINE_API VertexAttribute {
@@ -41,8 +41,8 @@ namespace engine::shader {
         u32 location;
         u32 offset = 0;
         ElementCount elementCount = SINGLE;
-        AttributeBool normalized = A_FALSE;
-        AttributeCategory category = VERTEX;
+        u8 normalized = AttributeBool::FALSE;
+        u8 category = AttributeCategory::VERTEX;
     };
 
     inline size_t elementSize(const VertexAttribute &vertexAttribute) {

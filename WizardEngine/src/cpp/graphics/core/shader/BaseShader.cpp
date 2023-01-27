@@ -261,12 +261,12 @@ namespace engine::shader {
         m_VertexFormat = VertexFormat();
         for (auto i = 0 ; i < vShaderTokens.size() ; i++) {
             if (vShaderTokens[i] == "in") {
-                auto attrCategory = VERTEX;
+                auto attrCategory = AttributeCategory::VERTEX;
                 // find attr category token, if exists.
                 if (vShaderTokens[i + 3] == "//") {
                     auto subToken = string::split(vShaderTokens[i + 4], "!");
                     if (!subToken.empty() && subToken[0] == "instance") {
-                        attrCategory = INSTANCE;
+                        attrCategory = AttributeCategory::INSTANCE;
                     }
                 }
 
@@ -279,7 +279,7 @@ namespace engine::shader {
                         0,
                         0,
                         attrElementCount,
-                        A_FALSE,
+                        AttributeBool::FALSE,
                         attrCategory
                 };
                 ENGINE_INFO("Adding new vertex attribute - elementCount : {0}, name : {1}", attrElementCount, attrName);

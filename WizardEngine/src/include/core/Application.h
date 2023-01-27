@@ -93,6 +93,7 @@ using namespace engine::io;
 #include <visual/LightPanel.h>
 #include <visual/SceneHierarchy.h>
 #include <visual/Toolbar.h>
+#include <visual/NodeEditor.h>
 
 using namespace engine::visual;
 #endif
