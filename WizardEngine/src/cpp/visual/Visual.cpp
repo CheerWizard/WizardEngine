@@ -39,7 +39,7 @@ namespace engine::visual {
 
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-        ImNodes::CreateContext();
+        NodeEditor::create();
         IO.IniFilename = "Visual.ini";
 
         IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
@@ -173,6 +173,7 @@ namespace engine::visual {
         style->Colors[ImGuiCol_ModalWindowDimBg]      = ImVec4(1.00f, 0.98f, 0.95f, 0.73f);
 
         ImGui::StyleColorsDark(style);
+        NodeEditor::setTheme();
     }
 
     void Visual::begin() {
@@ -198,7 +199,7 @@ namespace engine::visual {
     void Visual::release() {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
-        ImNodes::DestroyContext();
+        NodeEditor::destroy();
         ImGui::DestroyContext();
     }
 

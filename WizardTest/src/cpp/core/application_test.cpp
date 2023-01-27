@@ -91,30 +91,10 @@ namespace test {
         m_SceneHierarchy = new SceneHierarchy(getNativeWindow(), this);
         m_Toolbar = new Toolbar();
 
-        Node n0 = { 0, "Node0" };
-        Node n1 = { 1, "Node1" };
-        Node n2 = { 2, "Node2" };
-
-        n0.addInput(0);
-        n0.addOutput(1);
-
-        n1.addInput(2);
-        n1.addOutput(3);
-
-        n2.addInput(4);
-        n2.addOutput(5);
-
-        Link l0 = { 0, 1, 2 };
-        Link l1 = { 1, 3, 4 };
-        Link l2 = { 2, 5, 0 };
-
-        NodeEditor::get().addNode(n0);
-        NodeEditor::get().addNode(n1);
-        NodeEditor::get().addNode(n2);
-
-        NodeEditor::get().addLink(l0);
-        NodeEditor::get().addLink(l1);
-        NodeEditor::get().addLink(l2);
+        bool graphLoaded = NodeEditor::get().load("graph");
+        if (!graphLoaded) {
+            NodeEditor::get().setActiveGraph(NodeEditor::get().addGraph({ 0, "graph" }));
+        }
     }
 
     void Application::onDestroy() {
