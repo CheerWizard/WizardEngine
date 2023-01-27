@@ -6,41 +6,80 @@
 
 namespace engine::shader {
 
-    void BaseShaderProgram::construct(const io::ShaderProps &props) {
-        auto sources = io::ShaderFile::readAssetWithIncludes(props);
-        // required shader, if failed - skip construction!
-        if (sources.vSrc.empty()) {
-            state = FAILED_READ_FILE;
-            return;
-        }
-        ENGINE_INFO("Vertex shader {0}: ", props.vFileName);
-        ENGINE_INFO(sources.vSrc);
-        // required shader, if failed - skip construction!
-        if (sources.fSrc.empty()) {
-            state = FAILED_READ_FILE;
-            return;
-        }
-        ENGINE_INFO("Fragment shader {0}: ", props.fFileName);
-        ENGINE_INFO(sources.fSrc);
-
-        _vShader.setSrc(sources.vSrc.c_str());
-        _fShader.setSrc(sources.fSrc.c_str());
-
-        // optional shader, if failed - continue construction
-        if (sources.gSrc.empty()) {
-            ENGINE_WARN("Geometry shader failed to read from file : {0}", props.gFileName);
-        } else {
-            ENGINE_INFO("Geometry shader {0}: ", props.gFileName);
-            ENGINE_INFO(sources.gSrc);
-        }
-        _gShader.setSrc(sources.gSrc.c_str());
-
+    BaseShaderProgram::BaseShaderProgram(
+            const std::string &vFilepath,
+            const std::string &fFilepath,
+            const std::initializer_list<ShaderScript> &scripts) : m_Scripts(scripts) {
+        createRequiredShader(vFilepath, m_VertexShader, ShaderType::VERTEX);
+        createRequiredShader(fFilepath, m_FragmentShader, ShaderType::FRAGMENT);
         if (invalidate()) {
             parseVertexFormat();
-            _vShader.initUbf();
-            _fShader.initUbf();
-            parseUniformBlockFormat(_vShader);
-            parseUniformBlockFormat(_fShader);
+            m_VertexShader.initUbf();
+            m_FragmentShader.initUbf();
+            parseUniformBlockFormat(m_VertexShader);
+            parseUniformBlockFormat(m_FragmentShader);
+            state = ShaderState::READY;
+        }
+    }
+
+    BaseShaderProgram::BaseShaderProgram(
+            const std::string &vFilepath,
+            const std::string &fFilepath,
+            const std::string &gFilepath,
+            const std::initializer_list<ShaderScript> &scripts) : m_Scripts(scripts) {
+        createRequiredShader(vFilepath, m_VertexShader, ShaderType::VERTEX);
+        createRequiredShader(fFilepath, m_FragmentShader, ShaderType::FRAGMENT);
+        createOptionalShader(gFilepath, m_GeometryShader, ShaderType::GEOMETRY);
+        if (invalidate()) {
+            parseVertexFormat();
+            m_VertexShader.initUbf();
+            m_FragmentShader.initUbf();
+            parseUniformBlockFormat(m_VertexShader);
+            parseUniformBlockFormat(m_FragmentShader);
+            state = ShaderState::READY;
+        }
+    }
+
+    BaseShaderProgram::BaseShaderProgram(
+            const std::string &vFilepath,
+            const std::string &fFilepath,
+            const std::string &gFilepath,
+            const std::string &cFilepath,
+            const std::initializer_list<ShaderScript> &scripts) : m_Scripts(scripts) {
+        createRequiredShader(vFilepath, m_VertexShader, ShaderType::VERTEX);
+        createRequiredShader(fFilepath, m_FragmentShader, ShaderType::FRAGMENT);
+        createOptionalShader(gFilepath, m_GeometryShader, ShaderType::GEOMETRY);
+        createOptionalShader(cFilepath, m_ComputeShader, ShaderType::COMPUTE);
+        if (invalidate()) {
+            parseVertexFormat();
+            m_VertexShader.initUbf();
+            m_FragmentShader.initUbf();
+            parseUniformBlockFormat(m_VertexShader);
+            parseUniformBlockFormat(m_FragmentShader);
+            state = ShaderState::READY;
+        }
+    }
+
+    BaseShaderProgram::BaseShaderProgram(
+            const std::string &vFilepath,
+            const std::string &fFilepath,
+            const std::string &gFilepath,
+            const std::string &cFilepath,
+            const std::string &tcFilepath,
+            const std::string &teFilepath,
+            const std::initializer_list<ShaderScript> &scripts) : m_Scripts(scripts) {
+        createRequiredShader(vFilepath, m_VertexShader, ShaderType::VERTEX);
+        createRequiredShader(fFilepath, m_FragmentShader, ShaderType::FRAGMENT);
+        createOptionalShader(gFilepath, m_GeometryShader, ShaderType::GEOMETRY);
+        createOptionalShader(cFilepath, m_ComputeShader, ShaderType::COMPUTE);
+        createOptionalShader(tcFilepath, m_TessControlShader, ShaderType::TESS_CONTROL);
+        createOptionalShader(teFilepath, m_TessEvalShader, ShaderType::TESS_EVAL);
+        if (invalidate()) {
+            parseVertexFormat();
+            m_VertexShader.initUbf();
+            m_FragmentShader.initUbf();
+            parseUniformBlockFormat(m_VertexShader);
+            parseUniformBlockFormat(m_FragmentShader);
             state = ShaderState::READY;
         }
     }
@@ -100,49 +139,53 @@ namespace engine::shader {
     }
 
     void BaseShaderProgram::detachShaders() {
-        _vShader.detach();
-        _fShader.detach();
+        m_VertexShader.detach();
+        m_FragmentShader.detach();
     }
 
     void BaseShaderProgram::releaseShaders() {
-        _vShader.release();
-        _fShader.release();
+        m_VertexShader.release();
+        m_FragmentShader.release();
     }
 
     bool BaseShaderProgram::invalidate() {
         create();
 
-        _vShader.setProgramId(id);
-        _fShader.setProgramId(id);
-        _gShader.setProgramId(id);
+        m_VertexShader.setProgramId(id);
+        m_FragmentShader.setProgramId(id);
+        m_GeometryShader.setProgramId(id);
+        m_ComputeShader.setProgramId(id);
 
         // required shader, if compilation failed - skip invalidation
-        _vShader.createVShader();
-        if (!_vShader.compile()) {
+        if (m_VertexShader.valid() && m_VertexShader.compile()) {
+            m_VertexShader.attach();
+        } else {
             ENGINE_ERR("Vertex shader compilation failure!");
             state = FAILED_COMPILE;
             return false;
         }
-        _vShader.attach();
 
         // required shader, if compilation failed - skip invalidation
-        _fShader.createFShader();
-        if (!_fShader.compile()) {
+        if (m_FragmentShader.valid() && m_FragmentShader.compile()) {
+            m_FragmentShader.attach();
+        } else {
             ENGINE_ERR("Fragment shader compilation failure!");
             state = FAILED_COMPILE;
             return false;
         }
-        _fShader.attach();
 
         // optional shader, if compilation failed - continue invalidation
-        if (_gShader.hasSrc()) {
-            _gShader.createGShader();
+        if (m_GeometryShader.valid() && m_GeometryShader.compile()) {
+            m_GeometryShader.attach();
+        } else {
+            ENGINE_WARN("Geometry shader compilation failure!");
+        }
 
-            if (!_gShader.compile()) {
-                ENGINE_WARN("Geometry shader compilation failure!");
-            } else {
-                _gShader.attach();
-            }
+        // optional shader, if compilation failed - continue invalidation
+        if (m_ComputeShader.valid() && m_ComputeShader.compile()) {
+            m_ComputeShader.attach();
+        } else {
+            ENGINE_WARN("Compute shader compilation failure!");
         }
 
         if (!link()) {
@@ -154,7 +197,7 @@ namespace engine::shader {
     }
 
     void BaseShaderProgram::bindVertexFormat() {
-        for (VertexAttribute& attribute : vertexFormat.getAttributes()) {
+        for (VertexAttribute& attribute : m_VertexFormat.getAttributes()) {
             attribute.location = bindAttribute(attribute.name.data());
         }
     }
@@ -212,18 +255,18 @@ namespace engine::shader {
 
     void BaseShaderProgram::parseVertexFormat() {
         ENGINE_INFO("Shader is trying to find attributes...");
-        std::string copy = _vShader.getSrc();
+        std::string copy = m_VertexShader.getSrc();
         auto vShaderTokens = string::split(copy, " ");
 
-        vertexFormat = VertexFormat();
+        m_VertexFormat = VertexFormat();
         for (auto i = 0 ; i < vShaderTokens.size() ; i++) {
             if (vShaderTokens[i] == "in") {
-                auto attrCategory = VERTEX;
+                auto attrCategory = AttributeCategory::VERTEX;
                 // find attr category token, if exists.
                 if (vShaderTokens[i + 3] == "//") {
                     auto subToken = string::split(vShaderTokens[i + 4], "!");
                     if (!subToken.empty() && subToken[0] == "instance") {
-                        attrCategory = INSTANCE;
+                        attrCategory = AttributeCategory::INSTANCE;
                     }
                 }
 
@@ -236,15 +279,15 @@ namespace engine::shader {
                         0,
                         0,
                         attrElementCount,
-                        A_FALSE,
+                        AttributeBool::FALSE,
                         attrCategory
                 };
                 ENGINE_INFO("Adding new vertex attribute - elementCount : {0}, name : {1}", attrElementCount, attrName);
-                vertexFormat.add(attr);
+                m_VertexFormat.add(attr);
             }
         }
 
-        if (vertexFormat.isEmpty()) {
+        if (m_VertexFormat.isEmpty()) {
             ENGINE_WARN("Vertex Shader doesn't has vertex attributes!");
             state = NO_VERTEX_ATTRS;
         }
@@ -258,7 +301,7 @@ namespace engine::shader {
         std::string copy = shader.getSrc();
         auto shaderTokens = string::split(copy, "\r\n; ");
 
-        auto uniformBlockFormat = UniformBlockFormat(uniformBlockSlots++);
+        auto uniformBlockFormat = UniformBlockFormat(m_UniformBlocks++);
 
         auto uniformStructs = std::unordered_map<std::string, UniformStructAttribute>();
         // find all structs and uniform blocks!
@@ -378,13 +421,13 @@ namespace engine::shader {
     }
 
     void BaseShaderProgram::update(ecs::Registry& registry) {
-        for (const auto& script : scripts) {
+        for (const auto& script : m_Scripts) {
             script.updateRegistry(*this, registry);
         }
     }
 
     void BaseShaderProgram::update(const ecs::Entity &entity) {
-        for (const auto& script : scripts) {
+        for (const auto& script : m_Scripts) {
             script.updateEntity(*this, entity);
         }
     }
@@ -394,13 +437,7 @@ namespace engine::shader {
         detachShaders();
         releaseShaders();
         destroy();
-        vertexFormat.clear();
-    }
-
-    void BaseShaderProgram::recompile(const std::string& name) {
-        state = ShaderState::NOT_READY;
-        release();
-        construct(io::ShaderFile::getShaderProps(name));
+        m_VertexFormat.clear();
     }
 
     bool BaseShaderProgram::isReady() {
@@ -408,10 +445,34 @@ namespace engine::shader {
     }
 
     void BaseShaderProgram::addScript(const ShaderScript& script) {
-        scripts.emplace_back(script);
+        m_Scripts.emplace_back(script);
     }
 
     void BaseShaderProgram::clearScripts() {
-        scripts.clear();
+        m_Scripts.clear();
+    }
+
+    void BaseShaderProgram::createRequiredShader(const std::string& filepath, BaseShader& shader, u32 shaderType) {
+        ENGINE_INFO("Create required shader {0}: ", filepath);
+        const auto& src = io::ShaderFile::get().readShader(filepath);
+        if (src.empty()) {
+            state = FAILED_READ_FILE;
+            return;
+        }
+        ENGINE_INFO("Shader {0}: \n {1}", filepath, src);
+        shader = BaseShader(shaderType);
+        shader.setSrc(src.c_str());
+    }
+
+    void BaseShaderProgram::createOptionalShader(const std::string& filepath, BaseShader& shader, u32 shaderType) {
+        ENGINE_INFO("Create optional shader {0}: ", filepath);
+        const auto& src = io::ShaderFile::get().readShader(filepath);
+        if (src.empty()) {
+            ENGINE_WARN("Shader failed to read from file : {0}", filepath);
+            return;
+        }
+        ENGINE_INFO("Shader {0}: \n {1}", filepath, src);
+        shader = BaseShader(shaderType);
+        shader.setSrc(src.c_str());
     }
 }

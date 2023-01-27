@@ -10,7 +10,6 @@
 #include "unordered_map"
 
 #define GET_SHADER_PROGRAM(name) engine::shader::ShaderSource::get().get(name)
-#define RECOMPILE_SHADER_PROGRAM(name) engine::shader::ShaderSource::get().recompile(name)
 
 namespace engine::shader {
 
@@ -53,7 +52,6 @@ namespace engine::shader {
         [[nodiscard]] bool exists(const std::string& name) const;
         void remove(const std::string& name);
         void clear();
-        void recompile(const std::string& name);
 
     public:
         const core::Ref<BaseShaderProgram>& operator[](const std::string &name) {

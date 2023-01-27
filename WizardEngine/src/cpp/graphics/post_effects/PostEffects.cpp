@@ -10,14 +10,8 @@ namespace engine::graphics {
     : PostEffectRenderer() {
         // init shader
         shaderProgram = shader::BaseShaderProgram(
-                io::ShaderProps {
-                        "hdr",
-                        "primitive_quad.glsl",
-                        "/post_processing/f_hdr.glsl",
-                        ENGINE_SHADERS_PATH
-                },
-                BaseShader(),
-                BaseShader()
+                ENGINE_SHADERS_PATH + "/" + "primitive_quad.glsl",
+                ENGINE_SHADERS_PATH + "/" + "post_processing/f_hdr.glsl"
         );
         // init frame buffer
         frameBuffer = createRef<FrameBuffer>();
@@ -30,14 +24,8 @@ namespace engine::graphics {
     : PostEffectRenderer() {
         // init shader
         shaderProgram = shader::BaseShaderProgram(
-                io::ShaderProps {
-                        "blur",
-                        "primitive_quad.glsl",
-                        "/post_processing/f_blur.glsl",
-                        ENGINE_SHADERS_PATH
-                },
-                BaseShader(),
-                BaseShader()
+                ENGINE_SHADERS_PATH + "/" + "primitive_quad.glsl",
+                ENGINE_SHADERS_PATH + "/" + "post_processing/f_blur.glsl"
         );
         // init frame buffer
         frameBuffer = createRef<FrameBuffer>();
@@ -50,14 +38,8 @@ namespace engine::graphics {
     : PostEffectRenderer() {
         // init shader
         shaderProgram = shader::BaseShaderProgram(
-                io::ShaderProps {
-                        "sharpen",
-                        "primitive_quad.glsl",
-                        "/post_processing/f_sharpen.glsl",
-                        ENGINE_SHADERS_PATH
-                },
-                BaseShader(),
-                BaseShader()
+                ENGINE_SHADERS_PATH + "/" + "primitive_quad.glsl",
+                ENGINE_SHADERS_PATH + "/" + "post_processing/f_sharpen.glsl"
         );
         // init frame buffer
         frameBuffer = createRef<FrameBuffer>();
@@ -70,14 +52,8 @@ namespace engine::graphics {
     : PostEffectRenderer() {
         // init shader
         shaderProgram = shader::BaseShaderProgram(
-                io::ShaderProps {
-                        "edge_detection",
-                        "primitive_quad.glsl",
-                        "/post_processing/f_edge_detection.glsl",
-                        ENGINE_SHADERS_PATH
-                },
-                BaseShader(),
-                BaseShader()
+                ENGINE_SHADERS_PATH + "/" + "primitive_quad.glsl",
+                ENGINE_SHADERS_PATH + "/" + "post_processing/f_edge_detection.glsl"
         );
         // init frame buffer
         frameBuffer = createRef<FrameBuffer>();
@@ -90,14 +66,8 @@ namespace engine::graphics {
     : PostEffectRenderer() {
         // init shader
         shaderProgram = shader::BaseShaderProgram(
-                io::ShaderProps {
-                        "gaussian_blur",
-                        "primitive_quad.glsl",
-                        "/post_processing/f_gaussian_blur.glsl",
-                        ENGINE_SHADERS_PATH
-                },
-                BaseShader(),
-                BaseShader()
+                ENGINE_SHADERS_PATH + "/" + "primitive_quad.glsl",
+                ENGINE_SHADERS_PATH + "/" + "post_processing/f_gaussian_blur.glsl"
         );
         // init frame buffer
         frameBuffer = createRef<FrameBuffer>();

@@ -27,7 +27,7 @@ namespace engine::core {
 
         ProjectProps() = default;
 
-        void serialize(YAML::Emitter &out);
+        void serialize(YAML::Emitter &out) const;
         void deserialize(const YAML::Node &parent);
         void save(const char* filepath);
         static bool createFromFile(const char* filepath, ProjectProps& props);
@@ -36,7 +36,6 @@ namespace engine::core {
     struct ENGINE_API Project {
         std::string name;
         std::string workspacePath;
-        vector<Ref<Scene>> scenes;
         ProjectProps props;
 
         Project() = default;
@@ -59,9 +58,6 @@ namespace engine::core {
         [[nodiscard]] inline std::string getZipPath(ProjectVersion version) const;
         [[nodiscard]] inline std::string getPropsPath() const;
 
-        void loadScenes();
-        void saveScenes() const;
-
     private:
         std::string getFullPath(const char* assetPath) const;
     };
@@ -69,19 +65,19 @@ namespace engine::core {
     class ENGINE_API ProjectManager final {
 
     public:
-        static Project create(
+        static Project* create(
                 const char* projectName,
                 const char* workspacePath
         );
         static bool destroy(const char* projectName);
-        static void open(const char* projectName);
-        static void openScripts(const char* projectName);
-        static void openScripts(const Project& project);
+        static void openSln(const char* projectName);
+        static void openScriptsSln(const char* projectName);
+        static void openScriptsSln(const Project& project);
         static void closeProject();
 
-        inline static const Project& getCurrentProject();
+        inline static const Project* getCurrentProject();
         inline static void setCurrentProject(const char* projectName);
-        inline static void setCurrentProject(const Project& project);
+        inline static void setCurrentProject(Project& project);
         inline static const vector<Project>& getAll();
 
         static void cmake(const char* projectName, ProjectVersion projectVersion);
@@ -109,15 +105,17 @@ namespace engine::core {
 
         static void newScript(const std::string& filePath, const std::string& name);
 
+        static void saveScenes();
+        static void loadScenes();
+
     private:
-        static void runImpl(const Project& project, ProjectVersion projectVersion);
         static void postBuild(const Project& project, ProjectVersion projectVersion);
         static std::string getScriptEngineBuildPath(const Project& project, ProjectVersion projectVersion);
         static void postBuildScripts(const Project& project, ProjectVersion projectVersion);
 
     private:
         static vector<Project> projects;
-        static Project currentProject;
+        static Project* currentProject;
     };
 
 }

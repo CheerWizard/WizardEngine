@@ -5,7 +5,6 @@
 #pragma once
 
 #include <core/core.h>
-#include <core/LayerStack.h>
 #include <core/String.h>
 #include <core/Memory.h>
 #include <core/ProjectManager.h>
@@ -53,6 +52,13 @@
 
 #include <thread/Thread.h>
 
+#define Jobs engine::core::Application::get().jobSystem
+#define RenderScheduler Jobs->renderScheduler
+#define AudioScheduler Jobs->audioScheduler
+#define NetworkScheduler Jobs->networkScheduler
+#define ThreadPoolScheduler Jobs->threadPoolScheduler
+#define waitAllJobs() Jobs->waitAll()
+
 using namespace engine::core;
 using namespace engine::graphics;
 using namespace engine::event;
@@ -62,6 +68,7 @@ using namespace engine::ecs;
 using namespace engine::physics;
 using namespace engine::scripting;
 using namespace engine::thread;
+using namespace engine::io;
 
 #define KEY_PRESSED(key) engine::event::EventRegistry::onKeyPressedMap[key] =
 #define KEY_RELEASED(key) engine::event::EventRegistry::onKeyReleasedMap[key] =
@@ -86,6 +93,7 @@ using namespace engine::thread;
 #include <visual/LightPanel.h>
 #include <visual/SceneHierarchy.h>
 #include <visual/Toolbar.h>
+#include <visual/NodeEditor.h>
 
 using namespace engine::visual;
 #endif
@@ -109,39 +117,37 @@ namespace engine::core {
         }
 
         inline const Scope<Window>& getWindow() {
-            return _window;
-        }
-
-        inline unordered_map<uuid, Ref<Scene>>& getScenes() {
-            return scenes;
+            return m_Window;
         }
 
     public:
         // window events
-        void onWindowClosed();
-        void onWindowResized(u32 width, u32 height);
+        virtual void onWindowClosed();
+        virtual void onWindowResized(u32 width, u32 height);
         // input keyboard events
-        void onKeyPressed(event::KeyCode keyCode);
-        void onKeyHold(event::KeyCode keyCode);
-        void onKeyReleased(event::KeyCode keyCode);
-        void onKeyTyped(event::KeyCode keyCode);
+        virtual void onKeyPressed(event::KeyCode keyCode);
+        virtual void onKeyHold(event::KeyCode keyCode);
+        virtual void onKeyReleased(event::KeyCode keyCode);
+        virtual void onKeyTyped(event::KeyCode keyCode);
         // input mouse events
-        void onMousePressed(event::MouseCode mouseCode);
-        void onMouseRelease(event::MouseCode mouseCode);
-        void onMouseScrolled(double xOffset, double yOffset);
+        virtual void onMousePressed(event::MouseCode mouseCode);
+        virtual void onMouseRelease(event::MouseCode mouseCode);
+        virtual void onMouseScrolled(double xOffset, double yOffset);
         // input mouse cursor events
-        void onCursorMoved(double xPos, double yPos);
+        virtual void onCursorMoved(double xPos, double yPos);
         // input gamepad events
-        void onGamepadConnected(s32 joystickId);
-        void onGamepadDisconnected(s32 joystickId);
+        virtual void onGamepadConnected(s32 joystickId);
+        virtual void onGamepadDisconnected(s32 joystickId);
         // render system callbacks
         void onFrameBegin(const Ref<FrameBuffer> &frameBuffer) override;
         void onFrameEnd(const Ref<FrameBuffer> &frameBuffer) override;
 
     protected:
         virtual void onCreate();
+        virtual void onVisualCreate();
+        virtual void onUpdate();
+        virtual void onVisualDraw();
         virtual void onDestroy();
-        virtual void onVisualDraw(time::Time dt);
 
     public:
         [[nodiscard]] float getAspectRatio() const;
@@ -154,10 +160,6 @@ namespace engine::core {
         void setSampleSize(int samples);
 
         void setActiveScene(const Ref<Scene>& activeScene);
-        void addScene(const Ref<Scene>& scene);
-        void addScenes(const vector<Ref<Scene>>& scenes);
-        void removeScene(const uuid& sceneId);
-        void clearScenes();
 
         void loadGamepadMappings(const char* mappingsFilePath);
 
@@ -165,16 +167,12 @@ namespace engine::core {
         Ref<Renderer> createBatchRenderer();
         Ref<Renderer> createInstanceRenderer();
 
-    protected:
-        void pushFront(Layer* layer);
-        void pushBack(Layer* overlay);
-
     private:
         void shutdown();
         void restart();
 
-        void onUpdate();
-        void onSimulationUpdate(time::Time dt);
+        void update();
+        void onSimulationUpdate();
         void onEventUpdate();
 
         void createGraphics();
@@ -199,6 +197,7 @@ namespace engine::core {
         vector<Batch3d> loadModel(const Ref<Scene>& scene);
 
     public:
+        Scope<JobSystem<>> jobSystem;
         Ref<Scene> activeScene = nullptr;
         Ref<FrameBuffer> activeSceneFrame;
         Ref<FrameBuffer> msaaFrame;
@@ -223,9 +222,7 @@ namespace engine::core {
         static Application* instance;
         bool _isRunning = true;
         // core systems
-        LayerStack _layerStack;
-        Scope<Window> _window;
-        unordered_map<uuid, Ref<Scene>> scenes;
+        Scope<Window> m_Window;
     };
 
     Application* createApplication();

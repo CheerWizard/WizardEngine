@@ -130,21 +130,16 @@ namespace engine::core {
         std::atomic<u64> m_JobsDone;
     };
 
-    template<size_t render_jobs = 32,
-            size_t audio_jobs = 32,
-            size_t network_jobs = 32,
-            size_t thread_pool_jobs = 32>
+    template<size_t render_jobs = 8,
+            size_t audio_jobs = 8,
+            size_t network_jobs = 8,
+            size_t thread_pool_jobs = 100>
     class JobSystem final {
 
-    private:
+    public:
         JobSystem();
 
     public:
-        static JobSystem& get() {
-            static JobSystem instance;
-            return instance;
-        }
-
         void waitAll();
 
     public:
@@ -161,12 +156,15 @@ namespace engine::core {
     JobSystem<render_jobs, audio_jobs, network_jobs, thread_pool_jobs>::JobSystem() {
         // todo this code does not support 1 core CPU.
         const u32 workerSize = std::max(1u, std::thread::hardware_concurrency());
-        const u32 threadPoolSize = workerSize - 3;
-        ENGINE_ASSERT(threadPoolSize > 0, "JobSystem(): invalid condition threadPoolSize <= 0");
-        renderScheduler = createScope<JobScheduler<render_jobs>>(1, ThreadFormat(ThreadPriority::HIGHEST, "RenderThread"));
-        audioScheduler = createScope<JobScheduler<audio_jobs>>(1, ThreadFormat(ThreadPriority::HIGHEST, "AudioThread"));
-        networkScheduler = createScope<JobScheduler<network_jobs>>(1, ThreadFormat(ThreadPriority::HIGHEST, "NetworkThread"));
-        threadPoolScheduler = createScope<JobScheduler<thread_pool_jobs>>(threadPoolSize, ThreadFormat(ThreadPriority::NORMAL, "ThreadPoolWorker"));
+        u32 renderThreads = 1;
+        u32 audioThreads = 1;
+        u32 networkThreads = 1;
+        u32 poolThreads = workerSize - renderThreads - audioThreads - networkThreads;
+        ENGINE_ASSERT(workerSize > 3, "JobSystem(): invalid condition threadPoolSize <= 0");
+        renderScheduler = createScope<JobScheduler<render_jobs>>(renderThreads, ThreadFormat(ThreadPriority::HIGHEST, "RenderThread"));
+        audioScheduler = createScope<JobScheduler<audio_jobs>>(audioThreads, ThreadFormat(ThreadPriority::HIGHEST, "AudioThread"));
+        networkScheduler = createScope<JobScheduler<network_jobs>>(networkThreads, ThreadFormat(ThreadPriority::HIGHEST, "NetworkThread"));
+        threadPoolScheduler = createScope<JobScheduler<thread_pool_jobs>>(poolThreads, ThreadFormat(ThreadPriority::NORMAL, "ThreadPoolWorker"));
     }
 
     template<size_t render_jobs, size_t audio_jobs, size_t network_jobs, size_t thread_pool_jobs>
@@ -181,9 +179,8 @@ namespace engine::core {
     JobScheduler<jobs_capacity>::JobScheduler(u32 workerSize, const ThreadFormat& threadFormat) {
         m_JobsTodo = 0;
         m_JobsDone.store(0);
-        u32 i = 0;
-        while (i < workerSize) {
-            setupThread(i++, threadFormat);
+        for (int i = 0; i < workerSize ; i++) {
+            setupThread(i, threadFormat);
         }
     }
 
@@ -266,8 +263,3 @@ namespace engine::core {
         worker.detach();
     }
 }
-
-#define RenderScheduler engine::core::JobSystem<>::get().renderScheduler
-#define AudioScheduler engine::core::JobSystem<>::get().audioScheduler
-#define NetworkScheduler engine::core::JobSystem<>::get().networkScheduler
-#define ThreadPoolScheduler engine::core::JobSystem<>::get().threadPoolScheduler

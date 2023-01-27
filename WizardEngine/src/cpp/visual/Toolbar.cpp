@@ -5,11 +5,25 @@
 namespace engine::visual {
 
     Toolbar::Toolbar() {
-        playIcon = TextureBuffer::load("assets/textures/PlayButton.png");
-        stopIcon = TextureBuffer::load("assets/textures/StopButton.png");
-        pauseIcon = TextureBuffer::load("assets/textures/PauseButton.png");
-        simulateIcon = TextureBuffer::load("assets/textures/SimulateButton.png");
-        stepIcon = TextureBuffer::load("assets/textures/StepButton.png");
+        TextureData playTD = TextureFile::read("assets/textures/PlayButton.png");
+        playIcon = TextureBuffer::upload(playTD);
+        io::TextureFile::free(playTD);
+
+        TextureData stopTD = TextureFile::read("assets/textures/StopButton.png");
+        stopIcon = TextureBuffer::upload(stopTD);
+        io::TextureFile::free(stopTD);
+
+        TextureData pauseTD = TextureFile::read("assets/textures/PauseButton.png");
+        pauseIcon = TextureBuffer::upload(pauseTD);
+        io::TextureFile::free(pauseTD);
+
+        TextureData simulateTD = TextureFile::read("assets/textures/SimulateButton.png");
+        simulateIcon = TextureBuffer::upload(simulateTD);
+        io::TextureFile::free(simulateTD);
+
+        TextureData stepTD = TextureFile::read("assets/textures/StepButton.png");
+        stepIcon = TextureBuffer::upload(stepTD);
+        io::TextureFile::free(stepTD);
     }
 
     Toolbar::~Toolbar() {

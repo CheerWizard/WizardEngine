@@ -8,10 +8,13 @@
 #include <core/String.h>
 #include <ecs/Scene.h>
 #include <graphics/text/Text.h>
+#include <platform/tools/FileDialog.h>
 
 namespace engine::visual {
 
     using namespace ecs;
+    using namespace engine::graphics;
+    using namespace engine::tools;
 
     class ENGINE_API SceneHierarchyCallback {
     public:
@@ -37,13 +40,32 @@ namespace engine::visual {
         int frontFaceTypeIndex = 0;
     };
 
+    struct ENGINE_API CubemapItem final {
+        const char* title;
+        u32 textureId = invalidTextureId;
+        std::string filepath = "";
+
+        CubemapItem(const char* title) : title(title) {}
+    };
+
+    struct ENGINE_API CubemapItems final {
+        CubemapItem items[6] = { "Front", "Back", "Left", "Right", "Top", "Bottom" };
+
+        CubemapItem& operator [](int i) {
+            return items[i];
+        }
+    };
+
+    struct ENGINE_API HdrEnvItem final {
+        u32 textureId = invalidTextureId;
+        std::string filepath = "";
+    };
+
     class ENGINE_API SceneHierarchy final {
 
     public:
-        SceneHierarchy(SceneHierarchyCallback* callback) : _callback(callback) {}
-        ~SceneHierarchy() {
-            destroy();
-        }
+        SceneHierarchy(void* nativeWindow, SceneHierarchyCallback* callback);
+        ~SceneHierarchy();
 
     public:
         void onUpdate(time::Time dt);
@@ -72,14 +94,15 @@ namespace engine::visual {
         static void drawTextComponent(graphics::TextComponent<T>& textComponent);
 
     private:
-        void destroy();
-
-    private:
         Entity _selectedEntity;
         Ref<Scene> selectedScene = nullptr;
         SceneHierarchyCallback* _callback = nullptr;
         bool sceneRenameMode = false;
         bool entityRenameMode = false;
+
+        static Ref<FileDialog> s_FileDialog;
+        static unordered_map<entity_id, CubemapItems> s_CubemapItemStorage;
+        static unordered_map<entity_id, HdrEnvItem> s_HdrEnvStorage;
     };
 
     template<typename T>
@@ -92,5 +115,4 @@ namespace engine::visual {
         drawFloatSlider(textComponent.transparency);
         drawColorPicker(textComponent.color);
     }
-
 }

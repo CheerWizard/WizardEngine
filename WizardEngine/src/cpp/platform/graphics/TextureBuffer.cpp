@@ -127,13 +127,8 @@ namespace engine::graphics {
         glActiveTexture(GL_TEXTURE0 + slot);
     }
 
-    u32 TextureBuffer::load(const char* filePath, io::Spectrum spectrum) {
-        if (exists(filePath)) {
-            return textureIdCache.at(filePath);
-        }
-
+    u32 TextureBuffer::upload(const io::TextureData& textureData) {
         TextureBuffer textureBuffer;
-        auto textureData = io::TextureFile::read(filePath, spectrum);
         if (textureData.pixels) {
             textureBuffer.create(TextureType::TEXTURE_2D);
             textureBuffer.bind();
@@ -142,41 +137,27 @@ namespace engine::graphics {
         } else {
             ENGINE_WARN("Can't load NULL pixels into texture!");
         }
-        io::TextureFile::free(textureData.pixels);
-
-        textureIdCache.insert(std::pair<const char*, u32>(filePath, textureBuffer.id));
         return textureBuffer.id;
     }
 
-    u32 TextureBuffer::loadArray(const vector<std::string> &filepaths, io::Spectrum spectrum) {
-        io::TextureArrayData textureArrayData = io::TextureFile::read(filepaths, spectrum);
-
+    u32 TextureBuffer::uploadArray(const io::TextureArrayData& textureArrayData) {
         TextureBuffer textureBuffer(TextureType::TEXTURE_2D_ARRAY);
         textureBuffer.bind();
         loadArray(textureArrayData);
         textureBuffer.unbind();
-
-        io::TextureFile::free(textureArrayData);
-
         return textureBuffer.id;
     }
 
-    u32 TextureBuffer::load(const std::vector<TextureFace>& faces, io::Spectrum spectrum) {
+    u32 TextureBuffer::upload(const std::vector<std::pair<u32, io::TextureData>>& textures) {
         TextureBuffer textureBuffer(TextureType::CUBE_MAP);
         textureBuffer.bind();
-
-        for (auto& face : faces) {
-            auto textureData = io::TextureFile::read(face.filePath, spectrum);
-
-            if (textureData.pixels) {
-                loadFace(face.type, textureData);
+        for (auto& texture : textures) {
+            if (texture.second.pixels) {
+                loadFace(texture.first, texture.second);
             } else {
                 ENGINE_WARN("Can't load NULL pixels into texture!");
             }
-
-            io::TextureFile::free(textureData.pixels);
         }
-
         textureBuffer.unbind();
         return textureBuffer.id;
     }
@@ -267,20 +248,6 @@ namespace engine::graphics {
             { TextureParamName::WRAP_T, TextureParamValue::CLAMP_TO_EDGE },
             { TextureParamName::WRAP_R, TextureParamValue::CLAMP_TO_EDGE },
         });
-    }
-
-    unordered_map<const char*, u32> TextureBuffer::textureIdCache;
-
-    bool TextureBuffer::exists(const char *filepath) {
-        return textureIdCache.find(filepath) != textureIdCache.end();
-    }
-
-    void TextureBuffer::clearTextureIdCache() {
-        textureIdCache.clear();
-    }
-
-    u32 TextureBuffer::getTextureId(const char *filepath) {
-        return textureIdCache.at(filepath);
     }
 
 }

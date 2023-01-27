@@ -209,21 +209,17 @@ namespace test::ecs {
     }
 
     void test_serializeComponents() {
-        serialize_component(Position) {
+        component(Position) {
+            serializable()
+
             f32 x = 0;
             f32 y = 0;
 
             Position(const f32& x, const f32& y)
             : x(x), y(y) {}
-
-            void serialize(YAML::Emitter &out) override {
-            }
-
-            void deserialize(const YAML::Node &parent) override {
-            }
         };
 
-        serialize_component(Color) {
+        component(Color) {
             f32 r = 0;
             f32 g = 0;
             f32 b = 0;
@@ -231,55 +227,31 @@ namespace test::ecs {
 
             Color(const f32& r, const f32& g, const f32& b, const f32& a)
             : r(r), g(g), b(b), a(a) {}
-
-            void serialize(YAML::Emitter &out) override {
-            }
-
-            void deserialize(const YAML::Node &parent) override {
-            }
         };
 
-        serialize_component(Vertex) {
+        component(Vertex) {
             Position position;
             Color color;
 
             Vertex(const Position& position, const Color& color)
             : position(position), color(color) {}
-
-            void serialize(YAML::Emitter &out) override {
-            }
-
-            void deserialize(const YAML::Node &parent) override {
-            }
         };
 
-        serialize_component(Polygon) {
+        component(Polygon) {
             Vertex* vertices = nullptr;
             size_t vertexCount = 0;
 
             Polygon(Vertex* vertices, const size_t& vertexCount)
             : vertices(vertices), vertexCount(vertexCount) {}
-
-            void serialize(YAML::Emitter &out) override {
-            }
-
-            void deserialize(const YAML::Node &parent) override {
-            }
         };
 
-        serialize_component(Mesh) {
+        component(Mesh) {
             Polygon polygon;
             u32* indices = nullptr;
             size_t indexCount = 0;
 
             Mesh(const Polygon& polygon, u32* indices, const size_t& indexCount)
             : polygon(polygon), indices(indices), indexCount(indexCount) {}
-
-            void serialize(YAML::Emitter &out) override {
-            }
-
-            void deserialize(const YAML::Node &parent) override {
-            }
         };
 
         Registry registry;

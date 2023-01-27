@@ -26,26 +26,14 @@ namespace engine::graphics {
 
     void HdrEnvRenderer::init() {
         generateCubemapShader = shader::BaseShaderProgram(
-                io::ShaderProps {
-                        "generate_cubemap",
-                        "v_hdr_env.glsl",
-                        "f_hdr_env.glsl",
-                        ENGINE_SHADERS_PATH
-                },
-                BaseShader(),
-                BaseShader()
+                ENGINE_SHADERS_PATH + "/" + "v_hdr_env.glsl",
+                ENGINE_SHADERS_PATH + "/" + "f_hdr_env.glsl"
         );
         generateCubemapShader.bindVertexFormat();
 
         cubemapShader = shader::BaseShaderProgram(
-                io::ShaderProps {
-                        "cubemap",
-                        "v_hdr_skycube.glsl",
-                        "f_hdr_skycube.glsl",
-                        ENGINE_SHADERS_PATH
-                },
-                BaseShader(),
-                BaseShader()
+                ENGINE_SHADERS_PATH + "/" + "v_hdr_skycube.glsl",
+                ENGINE_SHADERS_PATH + "/" + "f_hdr_skycube.glsl"
         );
         cubemapShader.bindVertexFormat();
 

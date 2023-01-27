@@ -9,14 +9,8 @@ namespace engine::graphics {
     TextureMixer::TextureMixer(const FrameBufferFormat& frameBufferFormat) {
         // init shader
         shaderProgram = shader::BaseShaderProgram(
-                io::ShaderProps {
-                        "texture_mixer",
-                        "primitive_quad.glsl",
-                        "f_mix.glsl",
-                        ENGINE_SHADERS_PATH
-                },
-                BaseShader(),
-                BaseShader()
+                ENGINE_SHADERS_PATH + "/" + "primitive_quad.glsl",
+                ENGINE_SHADERS_PATH + "/" + "f_mix.glsl"
         );
         // init frame buffer
         frameBuffer = createRef<FrameBuffer>();

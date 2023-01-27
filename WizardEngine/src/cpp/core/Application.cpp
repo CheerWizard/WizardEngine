@@ -13,7 +13,7 @@ namespace engine::core {
     void Application::run() {
         onCreate();
         while (_isRunning) {
-            onUpdate();
+            update();
         }
         onDestroy();
     }
@@ -21,21 +21,21 @@ namespace engine::core {
     void Application::onCreate() {
         PROFILE_FUNCTION();
         ENGINE_INFO("onCreate()");
-        // setup job system
-        auto& jobSystem = JobSystem<>::get();
+        jobSystem = createScope<JobSystem<>>();
         // setup window, input, graphics
-        jobSystem.renderScheduler->execute([this]() {
-            io::TextureFile::setFlipTexture(false);
+        RenderScheduler->execute([this]() {
             if (!ProjectProps::createFromFile("properties.yaml", projectProps)) {
                 ENGINE_WARN("Application: Unable to create properties from properties.yaml");
             }
-            _window = createScope<Window>(projectProps.windowProps);
+            m_Window = createScope<Window>(projectProps.windowProps);
+            // set keycodes mapping
             loadGamepadMappings("assets/mappings/game_controller.txt");
-            if (projectProps.icon != "") {
+            // set window icon
+            io::TextureFile::setFlipTexture(false);
+            if (!projectProps.icon.empty()) {
                 setWindowIcon(projectProps.icon);
             }
-
-            Input::create(_window->getNativeWindow());
+            // init renderers
             createGraphics();
             initHDR();
             initBlur();
@@ -47,6 +47,7 @@ namespace engine::core {
             createBatchRenderer();
             createInstanceRenderer();
             RenderSystem::hdrEnvRenderer.init();
+            graphics::enableSRGB();
             // setup ImGui
 #ifdef VISUAL
             Visual::init(getNativeWindow());
@@ -54,99 +55,93 @@ namespace engine::core {
             Visual::openDockspace = projectProps.windowProps.dockspace;
             AssetBrowser::create(getNativeWindow());
             MaterialPanel::create(getNativeWindow());
+            onVisualCreate();
 #endif
-            _window->onPrepare();
-            _window->setInCenter();
-            graphics::enableSRGB();
-            setSampleSize(projectProps.windowProps.sampleSize);
         });
         // setup audio
-        jobSystem.audioScheduler->execute([]() {
+        AudioScheduler->execute([]() {
             audio::DeviceManager::createContext();
         });
         // setup network
-        jobSystem.networkScheduler->execute([]() {
+        NetworkScheduler->execute([]() {
         });
         // setup something heavy
-        jobSystem.threadPoolScheduler->execute([]() {
+        ThreadPoolScheduler->execute([this]() {
+            if (projectProps.launcher != "") {
+                setActiveScene(io::LocalAssetManager::read(projectProps.launcher.c_str()));
+            } else {
+                ENGINE_WARN("Application: Launcher scene not specified in properties.yaml!");
+            }
         });
-        // at least do some job on main thread
-        if (projectProps.launcher != "") {
-            setActiveScene(io::LocalAssetManager::loadScene(projectProps.launcher.c_str()));
-        } else {
-            ENGINE_WARN("Application: Launcher scene not specified in properties.yaml!");
-        }
-        // we must sync with other jobs to continue further.
-        // otherwise, we will cause race conditions and bugs in onPrepare()
-        jobSystem.waitAll();
-        _layerStack.onPrepare();
+        RenderScheduler->execute([this]() {
+            m_Window->onPrepare();
+            m_Window->setInCenter();
+            setSampleSize(projectProps.windowProps.sampleSize);
+        });
+        waitAllJobs();
+        Input::create(m_Window->getNativeWindow());
+    }
+
+    void Application::onVisualCreate() {
     }
 
     void Application::onDestroy() {
         PROFILE_FUNCTION();
         ENGINE_INFO("onDestroy()");
-        JobSystem<>::get().renderScheduler->execute([]() {
+        RenderScheduler->execute([]() {
             RenderSystem::onDestroy();
 #ifdef VISUAL
             Visual::release();
 #endif
         });
-        JobSystem<>::get().audioScheduler->execute([]() {
+        AudioScheduler->execute([]() {
             audio::MediaPlayer::clear();
             audio::DeviceManager::clear();
         });
         ScriptSystem::onDestroy();
-        JobSystem<>::get().renderScheduler->wait();
-        JobSystem<>::get().audioScheduler->wait();
+        waitAllJobs();
     }
 
-    void Application::onUpdate() {
+    void Application::update() {
         PROFILE_FUNCTION();
-        // measure dt time
-        Timer timer("Application::onUpdate()", 30);
-
-        auto& jobSystem = JobSystem<>::get();
-
-        // update graphics, window, input, tools
-        jobSystem.renderScheduler->execute([this]() {
+        Timer timer("Application::update()", 30);
+        // update simulation systems
+        ThreadPoolScheduler->execute([this]() {
+            onSimulationUpdate();
+        });
+        // update render systems
+        RenderScheduler->execute([this]() {
             if (activeScene && !activeScene->isEmpty()) {
                 RenderSystem::onUpdate();
             }
+            // update ImGui tools
 #ifdef VISUAL
             Visual::begin();
             Visual::onUpdate(dt);
-            _layerStack.onVisualDraw(dt);
+            onVisualDraw();
             Visual::end();
 #endif
-            // poll events + swap chain
-            if (enableMouseCursor) {
-                Input::updateMousePosition();
-            }
-            onEventUpdate();
-            _window->onUpdate();
         });
-        // update simulation systems
-        onSimulationUpdate(dt);
-        jobSystem.renderScheduler->wait();
-
+        // update monitor and inputs
+        if (enableMouseCursor) {
+            Input::updateMousePosition();
+        }
+        onEventUpdate();
+        RenderScheduler->execute([this]() {
+            m_Window->onUpdate();
+        });
+        // sync simulation with delta time
+        RenderScheduler->wait();
+        ThreadPoolScheduler->wait();
         dt = timer.stop();
-
         PROFILE_ON_FRAME_UPDATED();
     }
 
-    void Application::pushFront(Layer *layer) {
-        ENGINE_INFO("Pushing layer : {0}", layer->getTag());
-        _layerStack.pushFront(layer);
-    }
-
-    void Application::pushBack(Layer *layer) {
-        ENGINE_INFO("Pushing overlay : {0}", layer->getTag());
-        _layerStack.pushBack(layer);
+    void Application::onUpdate() {
     }
 
     void Application::onWindowClosed() {
         ENGINE_INFO("Application : onWindowClosed()");
-        _layerStack.onWindowClosed();
         EventRegistry::onWindowClosed.function();
 #ifdef VISUAL
         Visual::onWindowClosed();
@@ -159,7 +154,6 @@ namespace engine::core {
         ENGINE_INFO("Application : onWindowResized({0}, {1})", width, height);
         if (width == 0 || height == 0) return;
 
-        _layerStack.onWindowResized(width, height);
         if (activeScene) {
             activeScene->getCamera().setAspectRatio(width, height);
         }
@@ -179,7 +173,6 @@ namespace engine::core {
         if (Visual::blocksKeyboard())
             return;
 #endif
-        _layerStack.onKeyPressed(keyCode);
         EventRegistry::onKeyPressedMap[keyCode].function(keyCode);
     }
 
@@ -190,7 +183,6 @@ namespace engine::core {
         if (Visual::blocksKeyboard())
             return;
 #endif
-        _layerStack.onKeyHold(keyCode);
         if (activeScene) {
             auto& camera = activeScene->getCamera();
             switch (keyCode) {
@@ -230,7 +222,6 @@ namespace engine::core {
         if (Visual::blocksKeyboard())
             return;
 #endif
-        _layerStack.onKeyReleased(keyCode);
         EventRegistry::onKeyReleasedMap[keyCode].function(keyCode);
         EventRegistry::onKeyHoldMap[keyCode] = false;
     }
@@ -242,7 +233,6 @@ namespace engine::core {
         if (Visual::blocksMouse())
             return;
 #endif
-        _layerStack.onMousePressed(mouseCode);
         EventRegistry::onMousePressedMap[mouseCode].function(mouseCode);
         EventRegistry::mouseHoldMap[mouseCode] = true;
     }
@@ -254,7 +244,6 @@ namespace engine::core {
         if (Visual::blocksMouse())
             return;
 #endif
-        _layerStack.onMouseRelease(mouseCode);
         EventRegistry::onMouseReleasedMap[mouseCode].function(mouseCode);
         EventRegistry::mouseHoldMap[mouseCode] = false;
     }
@@ -266,7 +255,6 @@ namespace engine::core {
         if (Visual::blocksMouse())
             return;
 #endif
-        _layerStack.onMouseScrolled(xOffset, yOffset);
         EventRegistry::onMouseScrolled.function(xOffset, yOffset);
     }
 
@@ -277,7 +265,6 @@ namespace engine::core {
         if (Visual::blocksMousePos())
             return;
 #endif
-        _layerStack.onCursorMoved(xPos, yPos);
         EventRegistry::onCursorMoved.function(xPos, yPos);
     }
 
@@ -288,16 +275,15 @@ namespace engine::core {
         if (Visual::blocksTextInput())
             return;
 #endif
-        _layerStack.onKeyTyped(keyCode);
     }
 
     float Application::getAspectRatio() const {
-        return _window->getAspectRatio();
+        return m_Window->getAspectRatio();
     }
 
     void Application::setActiveScene(const Ref<Scene>& scene) {
         PROFILE_FUNCTION();
-        scenes[scene->getId()] = scene;
+        LocalAssetManager::setScene(scene);
         activeScene = scene;
         selectedEntity = Entity(activeScene.get());
         hoveredEntity = Entity(activeScene.get());
@@ -305,7 +291,6 @@ namespace engine::core {
         RenderSystem::activeScene = activeScene;
         ScriptSystem::activeScene = activeScene;
         Physics::activeScene = activeScene;
-        RenderSystem::onUpdate();
     }
 
     void Application::restart() {
@@ -314,59 +299,61 @@ namespace engine::core {
     }
 
     int Application::getWindowWidth() {
-        return _window->getWidth();
+        return m_Window->getWidth();
     }
 
     int Application::getWindowHeight() {
-        return _window->getHeight();
+        return m_Window->getHeight();
     }
 
     int Application::getRefreshRate() {
-        return _window->getRefreshRate();
+        return m_Window->getRefreshRate();
     }
 
     void *Application::getNativeWindow() {
-        return _window->getNativeWindow();
+        return m_Window->getNativeWindow();
     }
 
     void Application::setWindowIcon(const std::string &filePath) {
-        _window->setWindowIcon(filePath);
+        m_Window->setWindowIcon(filePath);
     }
 
     Ref<tools::FileDialog> Application::createFileDialog() {
-        return createRef<tools::FileDialog>(_window->getNativeWindow());
+        return createRef<tools::FileDialog>(m_Window->getNativeWindow());
     }
 
     void Application::setSampleSize(int samples) {
-        _window->setSampleSize(samples);
+        m_Window->setSampleSize(samples);
         // update active scene frame format
-        FrameBufferFormat activeSceneFrameFormat;
-        activeSceneFrameFormat.colorAttachments = {
-                { ColorFormat::RGBA8, ColorFormat::RGBA },
-                { ColorFormat::RGBA8, ColorFormat::RGBA },
-                { ColorFormat::RED_I32, ColorFormat::RED_INTEGER }
-        };
-        activeSceneFrameFormat.renderBufferAttachment = { DepthStencilFormat::DEPTH24STENCIL8 };
-        activeSceneFrameFormat.width = _window->getWidth();
-        activeSceneFrameFormat.height = _window->getHeight();
-        activeSceneFrameFormat.samples = 1;
-        activeSceneFrame->updateFormat(activeSceneFrameFormat);
-        // update msaa frame format
-        FrameBufferFormat msaaFormat(activeSceneFrameFormat);
-        msaaFormat.samples = samples;
-        msaaFrame->updateFormat(msaaFormat);
-        // update shadows frame format
-        FrameBufferFormat shadowsFormat;
-        shadowsFormat.depthAttachment = { DepthFormat::DEPTH, DepthFormat::U_DEPTH };
-        shadowsFormat.width = 1024;
-        shadowsFormat.height = 1024;
-        shadowsFrame->updateFormat(shadowsFormat);
-        // resolve size issue
-        onWindowResized(_window->getWidth(), _window->getHeight());
+        RenderScheduler->execute([this, samples]() {
+            FrameBufferFormat activeSceneFrameFormat;
+            activeSceneFrameFormat.colorAttachments = {
+                    { ColorFormat::RGBA8, ColorFormat::RGBA },
+                    { ColorFormat::RGBA8, ColorFormat::RGBA },
+                    { ColorFormat::RED_I32, ColorFormat::RED_INTEGER }
+            };
+            activeSceneFrameFormat.renderBufferAttachment = { DepthStencilFormat::DEPTH24STENCIL8 };
+            activeSceneFrameFormat.width = m_Window->getWidth();
+            activeSceneFrameFormat.height = m_Window->getHeight();
+            activeSceneFrameFormat.samples = 1;
+            activeSceneFrame->updateFormat(activeSceneFrameFormat);
+            // update msaa frame format
+            FrameBufferFormat msaaFormat(activeSceneFrameFormat);
+            msaaFormat.samples = samples;
+            msaaFrame->updateFormat(msaaFormat);
+            // update shadows frame format
+            FrameBufferFormat shadowsFormat;
+            shadowsFormat.depthAttachment = { DepthFormat::DEPTH, DepthFormat::U_DEPTH };
+            shadowsFormat.width = 1024;
+            shadowsFormat.height = 1024;
+            shadowsFrame->updateFormat(shadowsFormat);
+            // resolve size issue
+            onWindowResized(m_Window->getWidth(), m_Window->getHeight());
+        });
     }
 
     void Application::createGraphics() {
-        graphics::initContext(_window->getNativeWindow());
+        graphics::initContext(m_Window->getNativeWindow());
         setClearColor(0, 0, 0, 1);
         activeSceneFrame = createRef<FrameBuffer>();
         msaaFrame = createRef<FrameBuffer>();
@@ -379,11 +366,11 @@ namespace engine::core {
         RenderSystem::skyboxRenderer.init();
     }
 
-    void Application::onSimulationUpdate(Time dt) {
+    void Application::onSimulationUpdate() {
         if (activeScene && !activeScene->isEmpty()) {
             Physics::onUpdate(dt);
             ScriptSystem::onUpdate(dt);
-            _layerStack.onUpdate(dt);
+            onUpdate();
 
             auto& camera = activeScene->getCamera();
             camera.onUpdate(dt);
@@ -434,7 +421,7 @@ namespace engine::core {
     }
 
     void Application::loadGamepadMappings(const char *mappingsFilePath) {
-        _window->loadGamepadMappings(mappingsFilePath);
+        m_Window->loadGamepadMappings(mappingsFilePath);
     }
 
     void Application::onEventUpdate() {
@@ -514,8 +501,8 @@ namespace engine::core {
         hdrFrameFormat.colorAttachments = {
                 { ColorFormat::RGBA16F, ColorFormat::RGBA, PixelsType::FLOAT },
         };
-        hdrFrameFormat.width = _window->getWidth();
-        hdrFrameFormat.height = _window->getHeight();
+        hdrFrameFormat.width = m_Window->getWidth();
+        hdrFrameFormat.height = m_Window->getHeight();
         RenderSystem::hdrEffectRenderer = { hdrFrameFormat };
         hdrEffect = RenderSystem::hdrEffectRenderer.getHdrEffect();
     }
@@ -525,8 +512,8 @@ namespace engine::core {
         blurFrameFormat.colorAttachments = {
                 { ColorFormat::RGBA8, ColorFormat::RGBA },
         };
-        blurFrameFormat.width = _window->getWidth();
-        blurFrameFormat.height = _window->getHeight();
+        blurFrameFormat.width = m_Window->getWidth();
+        blurFrameFormat.height = m_Window->getHeight();
         BlurEffectRenderer blurEffectRenderer(blurFrameFormat);
         blurEffect = blurEffectRenderer.getBlurEffect();
         RenderSystem::postEffectRenderers.emplace_back(blurEffectRenderer);
@@ -537,8 +524,8 @@ namespace engine::core {
         sharpenFrameFormat.colorAttachments = {
                 { ColorFormat::RGBA8, ColorFormat::RGBA },
         };
-        sharpenFrameFormat.width = _window->getWidth();
-        sharpenFrameFormat.height = _window->getHeight();
+        sharpenFrameFormat.width = m_Window->getWidth();
+        sharpenFrameFormat.height = m_Window->getHeight();
         SharpenEffectRenderer sharpenEffectRenderer(sharpenFrameFormat);
         sharpenEffect = sharpenEffectRenderer.getSharpenEffect();
         RenderSystem::postEffectRenderers.emplace_back(sharpenEffectRenderer);
@@ -549,8 +536,8 @@ namespace engine::core {
         edgeDetectionFrameFormat.colorAttachments = {
                 { ColorFormat::RGBA8, ColorFormat::RGBA },
         };
-        edgeDetectionFrameFormat.width = _window->getWidth();
-        edgeDetectionFrameFormat.height = _window->getHeight();
+        edgeDetectionFrameFormat.width = m_Window->getWidth();
+        edgeDetectionFrameFormat.height = m_Window->getHeight();
         EdgeDetectionEffectRenderer edgeDetectionEffectRenderer(edgeDetectionFrameFormat);
         edgeDetectionEffect = edgeDetectionEffectRenderer.getEdgeDetectionEffect();
         RenderSystem::postEffectRenderers.emplace_back(edgeDetectionEffectRenderer);
@@ -561,8 +548,8 @@ namespace engine::core {
         gaussianBlurFrameFormat.colorAttachments = {
                 { ColorFormat::RGBA8, ColorFormat::RGBA },
         };
-        gaussianBlurFrameFormat.width = _window->getWidth();
-        gaussianBlurFrameFormat.height = _window->getHeight();
+        gaussianBlurFrameFormat.width = m_Window->getWidth();
+        gaussianBlurFrameFormat.height = m_Window->getHeight();
         GaussianBlurEffectRenderer gaussianBlurEffectRenderer(gaussianBlurFrameFormat);
         gaussianBlurEffect = gaussianBlurEffectRenderer.getGaussianBlurEffect();
         RenderSystem::gaussianBlurRenderer = gaussianBlurEffectRenderer;
@@ -573,31 +560,13 @@ namespace engine::core {
         textureMixerFrameFormat.colorAttachments = {
                 { ColorFormat::RGBA8, ColorFormat::RGBA },
         };
-        textureMixerFrameFormat.width = _window->getWidth();
-        textureMixerFrameFormat.height = _window->getHeight();
+        textureMixerFrameFormat.width = m_Window->getWidth();
+        textureMixerFrameFormat.height = m_Window->getHeight();
         RenderSystem::textureMixer = { textureMixerFrameFormat };
     }
 
-    void Application::onVisualDraw(time::Time dt) {
+    void Application::onVisualDraw() {
         // this method will be called only from derived class that defines VISUAL macro
-    }
-
-    void Application::addScene(const Ref<Scene>& scene) {
-        scenes[scene->getId()] = scene;
-    }
-
-    void Application::removeScene(const uuid& sceneId) {
-        scenes.erase(sceneId);
-    }
-
-    void Application::clearScenes() {
-        scenes.clear();
-    }
-
-    void Application::addScenes(const vector<Ref<Scene>> &newScenes) {
-        for (const auto& newScene : newScenes) {
-            scenes[newScene->getId()] = newScene;
-        }
     }
 
     vector<Batch3d> Application::loadModel(const Ref<Scene>& scene) {
@@ -638,57 +607,71 @@ namespace engine::core {
     }
 
     vector<Batch3d> Application::loadModel(const uuid& sceneId) {
-        return loadModel(scenes.at(sceneId));
+        return loadModel(LocalAssetManager::getScene(sceneId));
     }
 
     Ref<Scene> Application::newScene(const std::string& sceneName) {
-        // setup scene, entities, components
         auto scene = createRef<Scene>(sceneName);
-        addScene(scene);
-        // setup scene camera
-        Camera3D mainCamera("NewCamera", getAspectRatio(), scene.get());
-        scene->setCamera(mainCamera);
-        // setup skybox
-        u32 skyboxId = TextureBuffer::load({
-            { "assets/materials/skybox/front.jpg", TextureFaceType::FRONT },
-            { "assets/materials/skybox/back.jpg", TextureFaceType::BACK },
-            { "assets/materials/skybox/left.jpg", TextureFaceType::LEFT },
-            { "assets/materials/skybox/right.jpg", TextureFaceType::RIGHT },
-            { "assets/materials/skybox/top.jpg", TextureFaceType::TOP },
-            { "assets/materials/skybox/bottom.jpg", TextureFaceType::BOTTOM }
-        });
-        TextureBuffer::setDefaultParamsCubeMap(skyboxId);
-        auto skybox = SkyboxCube(
-                "NewSkybox",
-                scene.get(),
-                CubeMapTextureComponent(skyboxId, TextureType::CUBE_MAP)
-        );
-        scene->setSkybox(skybox);
-        RenderSystem::skyboxRenderer.upload(skybox.get<Skybox>());
-        // setup HDR env
-        auto hdrEnv = HdrEnvCube(
-                "HdrEnvCube",
-                scene.get(),
-                TextureComponent(
-                        TextureBuffer::load("assets/hdr/ice_lake.hdr", io::Spectrum::HDR),
-                        TextureType::TEXTURE_2D,
-                        IntUniform { "hdrEnv", 0 })
-        );
-        scene->setHdrEnv(hdrEnv);
-        RenderSystem::hdrEnvRenderer.upload(hdrEnv.get<HdrEnv>());
-        // setup light sources
-        PhongLight("L_Sun_1", scene.get()).getPosition() = { -10, 10, -10 };
-        PhongLight("L_Sun_2", scene.get()).getPosition() = { 10, 10, 10 };
-        PhongLight("L_Sun_3", scene.get()).getPosition() = { -10, 10, 10 };
-        PhongLight("L_Sun_4", scene.get()).getPosition() = { 10, 10, -10 };
-        // setup geometry or mesh
+
         ThreadPoolScheduler->execute([this, scene]() {
-            vector<Batch3d> batches = loadModel(scene);
-            RenderScheduler->execute([batches]() {
-                auto temp = batches;
-                RenderSystem::batchRenderer->createVIRenderModel(temp);
+            // setup camera
+            LocalAssetManager::addScene(scene);
+            Camera3D mainCamera("NewCamera", getAspectRatio(), scene.get());
+            scene->setCamera(mainCamera);
+            // setup light sources
+            PhongLight("L_Sun_1", scene.get()).getPosition() = { -10, 10, -10 };
+            PhongLight("L_Sun_2", scene.get()).getPosition() = { 10, 10, 10 };
+            PhongLight("L_Sun_3", scene.get()).getPosition() = { -10, 10, 10 };
+            PhongLight("L_Sun_4", scene.get()).getPosition() = { 10, 10, -10 };
+            // setup skybox
+            std::vector<std::pair<u32, TextureData>> textures = {
+                    { TextureFaceType::FRONT, TextureFile::read("assets/materials/skybox/front.jpg") },
+                    { TextureFaceType::BACK, TextureFile::read("assets/materials/skybox/back.jpg") },
+                    { TextureFaceType::RIGHT, TextureFile::read("assets/materials/skybox/right.jpg") },
+                    { TextureFaceType::LEFT, TextureFile::read("assets/materials/skybox/left.jpg") },
+                    { TextureFaceType::BOTTOM, TextureFile::read("assets/materials/skybox/bottom.jpg") },
+                    { TextureFaceType::TOP, TextureFile::read("assets/materials/skybox/top.jpg") },
+            };
+            RenderScheduler->execute([scene, &textures]() {
+                u32 skyboxId = TextureBuffer::upload(textures);
+                auto skybox = SkyboxCube(
+                        "NewSkybox",
+                        scene.get(),
+                        CubeMapTextureComponent(skyboxId, TextureType::CUBE_MAP)
+                );
+                TextureBuffer::setDefaultParamsCubeMap(skyboxId);
+                scene->setSkybox(skybox);
+                auto* sky_box = skybox.get<Skybox>();
+                RenderSystem::skyboxRenderer.upload(sky_box);
             });
+            // setup HDR env
+            TextureData td = TextureFile::read("assets/hdr/ice_lake.hdr", io::Spectrum::HDR);
+            RenderScheduler->execute([scene, &td]() {
+                auto hdrEnv = HdrEnvCube(
+                        "HdrEnvCube",
+                        scene.get(),
+                        TextureComponent(
+                                TextureBuffer::upload(td),
+                                TextureType::TEXTURE_2D,
+                                IntUniform { "hdrEnv", 0 })
+                );
+                scene->setHdrEnv(hdrEnv);
+                auto* hdr_env = hdrEnv.get<HdrEnv>();
+                RenderSystem::hdrEnvRenderer.upload(hdr_env);
+            });
+            // setup geometry or mesh
+            vector<Batch3d> batches = loadModel(scene);
+            RenderScheduler->execute([&batches]() {
+                RenderSystem::batchRenderer->createVIRenderModel(batches);
+            });
+            // wait while render thread uploads data and clean it
+            RenderScheduler->wait();
+            TextureFile::free(td.pixels);
+            for (const auto& texture : textures) {
+                TextureFile::free(texture.second.pixels);
+            }
         });
+
         return scene;
     }
 
@@ -712,14 +695,8 @@ namespace engine::core {
         };
         // setup batch and instanced renderers
         auto batchShader = shader::BaseShaderProgram(
-                io::ShaderProps {
-                        "batch",
-                        "v_batch.glsl",
-                        "scene_phong.glsl",
-                        ENGINE_SHADERS_PATH
-                },
-                BaseShader(),
-                BaseShader(),
+                ENGINE_SHADERS_PATH + "/" + "v_batch.glsl",
+                ENGINE_SHADERS_PATH + "/" + "scene_phong.glsl",
                 { camera3dUboScript(), lightScript() }
         );
         batchShader.setInstancesPerDraw(4);
@@ -748,14 +725,8 @@ namespace engine::core {
             }
         };
         auto instanceShader = shader::BaseShaderProgram(
-                io::ShaderProps {
-                        "instance",
-                        "v_instance.glsl",
-                        "scene_phong.glsl",
-                        ENGINE_SHADERS_PATH
-                },
-                BaseShader(),
-                BaseShader(),
+                ENGINE_SHADERS_PATH + "/" + "v_instance.glsl",
+                ENGINE_SHADERS_PATH + "/" + "scene_phong.glsl",
                 { camera3dUboScript(), lightScript() }
         );
         instanceShader.setInstancesPerDraw(4);

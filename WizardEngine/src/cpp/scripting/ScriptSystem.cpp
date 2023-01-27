@@ -33,6 +33,9 @@ namespace engine::scripting {
 
     void ScriptSystem::onDestroy() {
         PROFILE_FUNCTION();
+        if (!activeScene)
+            return;
+
         activeScene->getRegistry().each<NativeScript>([](NativeScript* sc) {
             sc->onDestroyFunction();
         });

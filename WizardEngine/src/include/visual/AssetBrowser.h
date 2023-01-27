@@ -39,6 +39,10 @@ namespace engine::visual {
 
     class ENGINE_API AssetBrowser final {
 
+    private:
+        AssetBrowser() = default;
+        ~AssetBrowser() = default;
+
     public:
         static void create(void* nativeWindow);
         static void destroy();

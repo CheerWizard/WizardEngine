@@ -4,17 +4,12 @@
 
 #include <visual/SceneHierarchy.h>
 
-#include <ecs/Components.h>
-
-#include <graphics/transform/TransformComponents.h>
 #include <graphics/light/LightComponents.h>
 #include <graphics/outline/Outline.h>
-#include <graphics/text/Text.h>
 #include <visual/MaterialPanel.h>
 
 #include <physics/Physics.h>
 
-#include <imgui.h>
 #include <imgui_stdlib.h>
 #include <imgui_internal.h>
 
@@ -30,6 +25,27 @@ namespace engine::visual {
 
     using namespace math;
     using namespace physics;
+    using namespace engine::core;
+
+    Ref<FileDialog> SceneHierarchy::s_FileDialog = nullptr;
+    unordered_map<entity_id, CubemapItems> SceneHierarchy::s_CubemapItemStorage;
+    unordered_map<entity_id, HdrEnvItem> SceneHierarchy::s_HdrEnvStorage;
+
+    SceneHierarchy::SceneHierarchy(void *nativeWindow, SceneHierarchyCallback *callback) : _callback(callback) {
+        s_FileDialog = createRef<FileDialog>(nativeWindow);
+    }
+
+    SceneHierarchy::~SceneHierarchy() noexcept {
+        _callback = nullptr;
+        for (const auto& entry : s_CubemapItemStorage) {
+            for (const auto& item : entry.second.items) {
+                TextureBuffer::destroy(item.textureId);
+            }
+        }
+        for (const auto& entry : s_HdrEnvStorage) {
+            TextureBuffer::destroy(entry.second.textureId);
+        }
+    }
 
     void SceneHierarchy::drawScene(const Ref<Scene>& scene) {
         ImGuiTreeNodeFlags sceneHeaderFlags = 0;
@@ -64,7 +80,7 @@ namespace engine::visual {
                     }
 
                     if (ImGui::MenuItem("Delete Scene")) {
-                        Application::get().removeScene(scene->getId());
+                        LocalAssetManager::removeScene(scene->getId());
                         if (_callback)
                             _callback->onSceneRemoved(scene);
                         selectedScene = nullptr;
@@ -392,7 +408,7 @@ namespace engine::visual {
     }
 
     template<typename T, typename UIFunction>
-    static void drawComponent(const std::string& name, const ecs::Entity &entity, UIFunction uiFunction) {
+    void drawComponent(const std::string& name, const ecs::Entity &entity, UIFunction uiFunction) {
         if (!entity.template has<T>()) return;
 
         const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen
@@ -614,6 +630,67 @@ namespace engine::visual {
             drawFloatSlider("zFar", camera3DComponent.viewProjection.perspectiveMatrix.zFar, { 0, 5000 }, DEFAULT_Z_FAR);
             drawFloatSlider("FOV", camera3DComponent.viewProjection.perspectiveMatrix.fieldOfView, { 0, 360 }, DEFAULT_FIELD_OF_VIEW);
         });
+        // skybox
+        drawComponent<Skybox>("Skybox", entity, [&entity](Skybox& skybox) {
+            // transform
+            auto& model = skybox.transform.modelMatrix;
+            drawVec3Controller("Translation", model.position);
+            drawVec3Controller("Rotation", model.rotation);
+            drawVec3Controller("Scale", model.scale, 1.0f);
+            model.apply();
+            // cube map textures
+            CubemapItems& cubemapItems = s_CubemapItemStorage[entity.getId()];
+            for (int i = 0 ; i < 6 ; i++) {
+                auto& item = cubemapItems[i];
+                Line::draw(item.title);
+                Text::label(item.title);
+                ImGui::PushID(i);
+                if (ImGui::ImageButton(
+                        reinterpret_cast<ImTextureID>(item.textureId),
+                        { 128, 128 },
+                        { 1, 1 },
+                        { 0, 0 })
+                        ) {
+                    const char* filter = "PNG image (*.png)\0*.png\0"
+                                         "JPG image (*.jpg)\0*.jpg\0"
+                                         "TGA image (*.tga)\0*.tga\0";
+                    item.filepath = s_FileDialog->getImportPath(filter);
+                    io::TextureData td = io::TextureFile::read(item.filepath.c_str());
+                    item.textureId = TextureBuffer::upload(td);
+                    io::TextureFile::free(td.pixels);
+                }
+                ImGui::PopID();
+            }
+        });
+        // HDR env
+        drawComponent<HdrEnv>("HDR Environment", entity, [&entity](HdrEnv& hdrEnv) {
+            // transform
+            auto& model = hdrEnv.transform.modelMatrix;
+            drawVec3Controller("Translation", model.position);
+            drawVec3Controller("Rotation", model.rotation);
+            drawVec3Controller("Scale", model.scale, 1.0f);
+            model.apply();
+            // HDR Texture
+            HdrEnvItem& item = s_HdrEnvStorage[entity.getId()];
+            Line::draw("HDR Texture");
+            Text::label("HDR Texture");
+            ImGui::PushID(0);
+            if (ImGui::ImageButton(
+                    reinterpret_cast<ImTextureID>(item.textureId),
+                    { 128, 128 },
+                    { 1, 1 },
+                    { 0, 0 })
+                    ) {
+                const char* filter = "PNG image (*.png)\0*.png\0"
+                                     "JPG image (*.jpg)\0*.jpg\0"
+                                     "TGA image (*.tga)\0*.tga\0";
+                item.filepath = s_FileDialog->getImportPath(filter);
+                io::TextureData td = io::TextureFile::read(item.filepath.c_str());
+                item.textureId = TextureBuffer::upload(td);
+                io::TextureFile::free(td.pixels);
+            }
+            ImGui::PopID();
+        });
         // velocity
         drawComponent<Velocity>("Velocity", entity, [](Velocity& velocity) {
             drawVec3Controller("velocity", velocity.velocity);
@@ -654,9 +731,9 @@ namespace engine::visual {
         ImGui::Begin(ICON_FA_OBJECT_GROUP " Scene Hierarchy", &open);
         auto& app = Application::get();
 
-        for (auto& [sceneId, scene] : app.getScenes()) {
+        for (const auto& entry : LocalAssetManager::getScenes()) {
             ImGui::Spacing();
-            drawScene(scene);
+            drawScene(entry.second);
         }
 
         if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) {
@@ -667,7 +744,7 @@ namespace engine::visual {
         if (ImGui::BeginPopupContextWindow(nullptr, 1, false)) {
             if (ImGui::MenuItem("Create Empty Scene")) {
                 std::stringstream ss;
-                ss << "New Scene " << app.getScenes().size();
+                ss << "New Scene " << LocalAssetManager::getSceneSize();
                 app.newScene(ss.str());
             }
             if (selectedScene) {
@@ -691,9 +768,5 @@ namespace engine::visual {
         }
         ImGui::End();
         ImGui::PopStyleVar();
-    }
-
-    void SceneHierarchy::destroy() {
-        removeCallback();
     }
 }

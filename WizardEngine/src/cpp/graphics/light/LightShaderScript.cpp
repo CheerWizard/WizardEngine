@@ -189,43 +189,43 @@ namespace engine::graphics {
 
     void updateUboLight(const BaseShaderProgram& shader, PhongLightComponent& light) {
         uint32_t i = 0;
-        shader.getFShader().updateUniformBuffer(light.position, i++);
-        shader.getFShader().updateUniformBuffer(light.ambient, i++);
-        shader.getFShader().updateUniformBuffer(light.diffuse, i++);
-        shader.getFShader().updateUniformBuffer(light.specular, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.position, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.ambient, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.diffuse, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.specular, i++);
     }
 
     void updateUboLight(const BaseShaderProgram& shader, PointLightComponent& light) {
         uint32_t i = 4;
-        shader.getFShader().updateUniformBuffer(light.position, i++);
-        shader.getFShader().updateUniformBuffer(light.ambient, i++);
-        shader.getFShader().updateUniformBuffer(light.diffuse, i++);
-        shader.getFShader().updateUniformBuffer(light.specular, i++);
-        shader.getFShader().updateUniformBuffer(light.constant, i++);
-        shader.getFShader().updateUniformBuffer(light.linear, i++);
-        shader.getFShader().updateUniformBuffer(light.quadratic, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.position, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.ambient, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.diffuse, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.specular, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.constant, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.linear, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.quadratic, i++);
     }
 
     void updateUboLight(const BaseShaderProgram& shader, DirectLightComponent& light) {
         uint32_t i = 0;
-        shader.getFShader().updateUniformBuffer(light.direction, i++);
-        shader.getFShader().updateUniformBuffer(light.ambient, i++);
-        shader.getFShader().updateUniformBuffer(light.diffuse, i++);
-        shader.getFShader().updateUniformBuffer(light.specular, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.direction, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.ambient, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.diffuse, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.specular, i++);
     }
 
     void updateUboLight(const BaseShaderProgram& shader, FlashLightComponent& light) {
         uint32_t i = 0;
-        shader.getFShader().updateUniformBuffer(light.position, i++);
-        shader.getFShader().updateUniformBuffer(light.direction, i++);
-        shader.getFShader().updateUniformBuffer(light.cutoff, i++);
-        shader.getFShader().updateUniformBuffer(light.outerCutoff, i++);
-        shader.getFShader().updateUniformBuffer(light.ambient, i++);
-        shader.getFShader().updateUniformBuffer(light.diffuse, i++);
-        shader.getFShader().updateUniformBuffer(light.specular, i++);
-        shader.getFShader().updateUniformBuffer(light.constant, i++);
-        shader.getFShader().updateUniformBuffer(light.linear, i++);
-        shader.getFShader().updateUniformBuffer(light.quadratic, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.position, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.direction, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.cutoff, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.outerCutoff, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.ambient, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.diffuse, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.specular, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.constant, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.linear, i++);
+        shader.getFragmentShader().updateUniformBuffer(light.quadratic, i++);
     }
 
 }

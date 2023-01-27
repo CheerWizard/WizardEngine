@@ -9,14 +9,8 @@ namespace engine::graphics {
 
     void ScreenRenderer::init() {
         shaderProgram = shader::BaseShaderProgram(
-                io::ShaderProps {
-                        "screen",
-                        "primitive_quad.glsl",
-                        "f_screen.glsl",
-                        ENGINE_SHADERS_PATH
-                },
-                BaseShader(),
-                BaseShader()
+                ENGINE_SHADERS_PATH + "/" + "primitive_quad.glsl",
+                ENGINE_SHADERS_PATH + "/" + "f_screen.glsl"
         );
     }
 

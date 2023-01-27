@@ -24,6 +24,7 @@ namespace engine::visual {
         }
 
         void clearLog();
+        void clearHistory();
         void addLog(const char* fmt, ...) IM_FMTARGS(2);
         void draw(float&& width, float&& height);
         void execCommand(const char* command_line);

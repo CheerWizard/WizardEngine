@@ -12,7 +12,6 @@
 namespace engine::thread {
 
     void current_sleep(const uint32_t &millis) {
-        ENGINE_WARN("Sleeping current thread on {0} ms!", millis);
         std::this_thread::sleep_for(std::chrono::milliseconds(millis));
     }
 

@@ -167,7 +167,8 @@ namespace engine::io {
         BitmapFile::write(bitmapPath, { imageWidth, imageHeight, buffer, &paddedSize });
         delete[] buffer;
         // map font file path with characters map
-        u32 fontTextureId = TextureBuffer::load(bitmapPath);
+        TextureData td = TextureFile::read(bitmapPath);
+        u32 fontTextureId = TextureBuffer::upload(td);
         fonts.insert(std::pair<u32, Characters>(fontTextureId, characters));
         // write into widths .txt file
         filesystem::write(widthsPath, widths, 128);

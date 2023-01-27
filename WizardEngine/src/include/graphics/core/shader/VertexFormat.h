@@ -29,7 +29,7 @@ namespace engine::shader {
         void clear();
         void remove(const uint32_t &index);
         bool isEmpty();
-        void setAttrCategory(const AttributeCategory& attributeCategory);
+        void setAttrCategory(u8 attributeCategory);
 
     private:
         std::vector<VertexAttribute> _attributes;

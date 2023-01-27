@@ -30,14 +30,8 @@ namespace engine::graphics {
 
     void SkyboxRenderer::init() {
         shaderProgram = shader::BaseShaderProgram(
-                io::ShaderProps {
-                        "skybox",
-                        "v_cubemap.glsl",
-                        "f_cubemap.glsl",
-                        ENGINE_SHADERS_PATH
-                },
-                BaseShader(),
-                BaseShader()
+                ENGINE_SHADERS_PATH + "/" + "v_cubemap.glsl",
+                ENGINE_SHADERS_PATH + "/" + "f_cubemap.glsl"
         );
         shaderProgram.bindVertexFormat();
     }
@@ -71,7 +65,7 @@ namespace engine::graphics {
 
         shaderProgram.start();
         // update camera
-        shaderProgram.getVShader().updateUniformBuffer(camera.getViewProjection(), 0);
+        shaderProgram.getVertexShader().updateUniformBuffer(camera.getViewProjection(), 0);
         // update textures
         auto textures = skybox->textures;
         shaderProgram.setUniform(textures.sampler);

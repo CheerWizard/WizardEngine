@@ -48,22 +48,18 @@ namespace engine::graphics {
         static void setDefaultParamsCubeMap(u32 id);
         static void disableByteAlignment();
         // read from file and load into texture buffer
-        static u32 load(const char* filePath, io::Spectrum spectrum = io::Spectrum::NONE);
-        static u32 load(const vector<TextureFace>& faces, io::Spectrum spectrum = io::Spectrum::NONE);
-        static u32 loadArray(const vector<std::string>& filepaths, io::Spectrum spectrum = io::Spectrum::NONE);
+        static u32 upload(const io::TextureData& textureData);
+        static u32 upload(const vector<std::pair<u32, io::TextureData>>& textures);
+        static u32 uploadArray(const io::TextureArrayData& textureArrayData);
         static u32 generateCubeMap(int width, int height,
                                    int internalFormat, u32 dataFormat, u32 pixelsType);
         // load texture data into texture buffer
         static void load(const io::TextureData &textureData);
         static void loadFace(u32 type, const io::TextureData& textureData);
         static void loadArray(const io::TextureArrayData& textureArrayData);
-        static bool exists(const char* filepath);
-        static void clearTextureIdCache();
-        static u32 getTextureId(const char* filepath);
 
     private:
         u32 id = 0;
         u32 type = 0;
-        static unordered_map<const char*, u32> textureIdCache;
     };
 }

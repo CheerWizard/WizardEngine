@@ -126,7 +126,8 @@ namespace engine::graphics {
         enableDepthTest();
         // skybox and HDR env
         setDepthTestOperator(TestOperator::LESS_EQUAL); // we need to pass depth test for some skybox pixels
-        hdrEnvRenderer.render(activeScene->getHdrEnv(), activeScene->getCamera());
+        // todo HDR env not working yet
+//        hdrEnvRenderer.render(activeScene->getHdrEnv(), activeScene->getCamera());
         skyboxRenderer.render(activeScene->getSkybox(), activeScene->getCamera());
         setDepthTestOperator(TestOperator::LESS);
         // notify that scene frame end drawing

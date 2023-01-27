@@ -16,6 +16,8 @@
 #include <imgui_internal.h>
 #include <ImGuizmo.h>
 
+#include <imnodes.h>
+
 #include <core/Application.h>
 
 #define IO ImGui::GetIO()
@@ -30,12 +32,14 @@ namespace engine::visual {
     bool Visual::blockEvents = true;
     int Visual::windowFlags;
     int Visual::dockspaceFlags;
+    Ref<FileDialog> Visual::s_FileDialog;
 
     void Visual::init(void* nativeWindow) {
         PROFILE_FUNCTION()
 
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
+        ImNodes::CreateContext();
         IO.IniFilename = "Visual.ini";
 
         IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
@@ -79,6 +83,8 @@ namespace engine::visual {
         // Setup Platform/Renderer bindings
         ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*) nativeWindow, true);
         ImGui_ImplOpenGL3_Init("#version 400 core");
+
+        s_FileDialog = createRef<FileDialog>(nativeWindow);
     }
 
     u32 Visual::addFont(const char *filepath, f32 fontSize) {
@@ -116,7 +122,6 @@ namespace engine::visual {
         IO.Fonts->Build();
 
         ImGuiStyle* style = &ImGui::GetStyle();
-        ImGui::StyleColorsLight(style);
 
         style->WindowPadding            = ImVec2(15, 15);
         style->WindowRounding           = 5.0f;
@@ -166,6 +171,8 @@ namespace engine::visual {
         style->Colors[ImGuiCol_PlotHistogramHovered]  = ImVec4(0.25f, 1.00f, 1.00f, 1.00f);
         style->Colors[ImGuiCol_TextSelectedBg]        = ImVec4(0.25f, 1.00f, 1.00f, 0.43f);
         style->Colors[ImGuiCol_ModalWindowDimBg]      = ImVec4(1.00f, 0.98f, 0.95f, 0.73f);
+
+        ImGui::StyleColorsDark(style);
     }
 
     void Visual::begin() {
@@ -191,6 +198,7 @@ namespace engine::visual {
     void Visual::release() {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
+        ImNodes::DestroyContext();
         ImGui::DestroyContext();
     }
 
@@ -291,20 +299,22 @@ namespace engine::visual {
                 if (ImGui::MenuItem("New", "Ctrl+N")) {
                     auto& app = Application::get();
                     std::stringstream ss;
-                    ss << "New Scene " << app.getScenes().size();
+                    ss << "New Scene " << LocalAssetManager::getSceneSize();
                     app.newScene(ss.str());
                 }
 
                 if (ImGui::MenuItem("Open...", "Ctrl+O")) {
-                    //todo: import scene using file dialog
+                    auto importPath = s_FileDialog->getImportPath("YAML Scene (*.yaml)\0*.yaml\0");
+                    LocalAssetManager::read(importPath.c_str());
                 }
 
                 if (ImGui::MenuItem("Save All", "Ctrl+S")) {
-                    //todo: serialize into assets/scenes directory using .yaml or binary
+                    LocalAssetManager::writeAll("assets/scenes");
                 }
 
                 if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) {
-                    //todo: serialize into .yaml or binary file and export out using file dialog
+                    auto exportPath = s_FileDialog->getExportPath("YAML Scene (*.yaml)\0*.yaml\0");
+                    LocalAssetManager::write(Application::get().activeScene, exportPath.c_str());
                 }
 
                 ImGui::EndMenu();

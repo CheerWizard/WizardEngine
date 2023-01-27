@@ -22,11 +22,13 @@ namespace engine::visual {
 
     ProjectsPanel::ProjectsPanel() {
         ProjectManager::loadProjects();
-        backgroundImage = TextureBuffer::load("WizardTest.png");
+        TextureData td = TextureFile::read("WizardTest.png");
+        backgroundImage = TextureBuffer::upload(td);
+        TextureFile::free(td);
     }
 
     ProjectsPanel::~ProjectsPanel() {
-        ProjectManager::saveProjects();
+        saveProjects();
     }
 
     void ProjectsPanel::draw() {
@@ -101,8 +103,9 @@ namespace engine::visual {
                 ImGui::PopStyleColor();
 
                 if (Button::textButton(ICON_FA_MAGIC" Create", { 205, 34 }, 2, 2)) {
-                    ProjectManager::create(newProjectName.c_str(), newWorkspace.c_str());
+                    Project* newProject = ProjectManager::create(newProjectName.c_str(), newWorkspace.c_str());
                     ProjectManager::saveProjects();
+                    ProjectManager::setCurrentProject(*newProject);
                 }
                 ImGui::Spacing();
             }
@@ -138,9 +141,8 @@ namespace engine::visual {
                     ImGui::InvisibleButton("padding-publish-top", { 205, 2 });
 
                     if (ImGui::Button(ICON_FA_FOLDER_OPEN" Open", { 205, 34 })) {
-                        selectedProject.loadScenes();
-                        Application::get().addScenes(selectedProject.scenes);
                         ProjectManager::setCurrentProject(selectedProject);
+                        ProjectManager::loadScenes();
                         AssetBrowser::setProject(selectedProject);
                     }
 
@@ -167,6 +169,10 @@ namespace engine::visual {
 
         ImGui::PopStyleVar();
         ImGui::End();
+    }
+
+    void ProjectsPanel::saveProjects() {
+        ProjectManager::saveProjects();
     }
 
 }

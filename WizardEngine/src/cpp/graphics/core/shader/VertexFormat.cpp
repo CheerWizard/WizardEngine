@@ -47,7 +47,7 @@ namespace engine::shader {
         return _attributes.empty();
     }
 
-    void VertexFormat::setAttrCategory(const AttributeCategory& attributeCategory) {
+    void VertexFormat::setAttrCategory(u8 attributeCategory) {
         for (auto& attribute : _attributes) {
             attribute.category = attributeCategory;
         }

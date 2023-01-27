@@ -27,11 +27,21 @@ namespace engine::shader {
         NOT_READY = 6
     };
 
+    struct ENGINE_API ShaderType final {
+        static u32 NONE;
+        static u32 VERTEX;
+        static u32 FRAGMENT;
+        static u32 GEOMETRY;
+        static u32 COMPUTE;
+        static u32 TESS_CONTROL;
+        static u32 TESS_EVAL;
+    };
+
     class ENGINE_API Shader {
 
     public:
         Shader() = default;
-        Shader(const char* src) : src(src) {}
+        Shader(u32 shaderType);
         ~Shader() = default;
 
     public:
@@ -48,9 +58,6 @@ namespace engine::shader {
         }
 
     public:
-        void createVShader();
-        void createFShader();
-        void createGShader();
         void attach() const;
         void detach() const;
         void destroy() const;
@@ -61,6 +68,7 @@ namespace engine::shader {
     protected:
         u32 id = 0;
         u32 programId = 0;
+        u32 type = 0;
         std::string src;
     };
 
@@ -168,9 +176,6 @@ namespace engine::shader {
         int getUniformArrayElementLocation(const char* name, u32 index) const;
         int getUniformArrayStructLocation(const char* structName, const char* fieldName, u32 index) const;
         int getUniformStructLocation(const char* structName, const char* fieldName) const;
-
-    protected:
-        std::string toStringShaderType(const u32& type);
 
     protected:
         u32 id = 0;

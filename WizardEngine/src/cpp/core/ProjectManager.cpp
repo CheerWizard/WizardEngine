@@ -4,17 +4,16 @@
 
 #include <core/ProjectManager.h>
 #include <core/filesystem.h>
-#include <tools/terminal.h>
-#include <scripting/ScriptManager.h>
-#include <serialization/AssetManager.h>
+#include <core/Application.h>
 
-#include <sstream>
+#include <tools/terminal.h>
+
 #include <fstream>
 #include <regex>
 
 namespace engine::core {
 
-    void ProjectProps::serialize(YAML::Emitter &out) {
+    void ProjectProps::serialize(YAML::Emitter &out) const {
         out << YAML::BeginMap;
 
         out << YAML::Key << "properties";
@@ -168,14 +167,14 @@ namespace engine::core {
     }
 
     vector<Project> ProjectManager::projects;
-    Project ProjectManager::currentProject;
+    Project* ProjectManager::currentProject = nullptr;
 
-    Project ProjectManager::create(const char *projectName, const char *workspacePath) {
+    Project* ProjectManager::create(const char *projectName, const char *workspacePath) {
         // validate that new project already exists in memory
-        for (const auto& project : projects) {
+        for (auto& project : projects) {
             if (engine::string::equals(project.name.c_str(), projectName)) {
                 ENGINE_ERR("ProjectManager: Can't create {0} project. It's already in memory", projectName);
-                return project;
+                return &project;
             }
         }
         // create project directory using its name
@@ -197,7 +196,7 @@ namespace engine::core {
         // copy project template into projects path
         engine::filesystem::copyRecursive("../WizardEngine/project_template", projectPath.str().c_str());
         // create asset space
-        ENGINE_INFO("Creating empty asset space for {0} project", newProject.name);
+        ENGINE_INFO("Creating empty asset space for {0} project", newProject.name.c_str());
         engine::filesystem::newDirectory(newProject.getAssetsPath());
         engine::filesystem::newDirectory(newProject.getAudioPath());
         engine::filesystem::newDirectory(newProject.getFontsPath());
@@ -214,10 +213,10 @@ namespace engine::core {
         build(newProject, V_RELEASE);
         buildScripts(newProject, V_DEBUG);
         buildScripts(newProject, V_RELEASE);
-        return newProject;
+        return &projects.at(projects.size());
     }
 
-    const Project &ProjectManager::getCurrentProject() {
+    const Project* ProjectManager::getCurrentProject() {
         return currentProject;
     }
 
@@ -327,21 +326,21 @@ namespace engine::core {
 
     void ProjectManager::postBuild(const Project &project, ProjectVersion projectVersion) {
         if (!filesystem::copyRecursive((project.getFullPath() + "/WizardEngine.dll").c_str(), project.getBuildPath(projectVersion).c_str())) {
-            ENGINE_ERR("Unable to copy WizardEngine.dll into '{0}'", project.getBuildPath(projectVersion));
+            ENGINE_ERR("Unable to copy WizardEngine.dll into '{0}'", project.getBuildPath(projectVersion).c_str());
         }
         if (!filesystem::copyRecursive((project.getFullPath() + "/assimp-vc143-mtd.dll").c_str(), project.getBuildPath(projectVersion).c_str())) {
-            ENGINE_ERR("Unable to copy assimp-vc143-mtd.dll into '{0}'", project.getBuildPath(projectVersion));
+            ENGINE_ERR("Unable to copy assimp-vc143-mtd.dll into '{0}'", project.getBuildPath(projectVersion).c_str());
         }
         if (!filesystem::copyRecursive((project.getFullPath() + "/OpenAL32.dll").c_str(), project.getBuildPath(projectVersion).c_str())) {
-            ENGINE_ERR("Unable to copy OpenAL32.dll into '{0}'", project.getBuildPath(projectVersion));
+            ENGINE_ERR("Unable to copy OpenAL32.dll into '{0}'", project.getBuildPath(projectVersion).c_str());
         }
         if (!filesystem::copyRecursive((project.getFullPath() + "/yaml-cppd.dll").c_str(), project.getBuildPath(projectVersion).c_str())) {
-            ENGINE_ERR("Unable to copy yaml-cppd.dll into '{0}'", project.getBuildPath(projectVersion));
+            ENGINE_ERR("Unable to copy yaml-cppd.dll into '{0}'", project.getBuildPath(projectVersion).c_str());
         }
         // copy assets used for project
         if (!filesystem::copyRecursive(project.getAssetsPath().c_str(), (project.getBuildPath(projectVersion) + "/assets").c_str())) {
-            ENGINE_ERR("Unable to copy assets directory into '{0}'", project.getBuildPath(projectVersion));
-            ENGINE_INFO("Creating empty asset space for {0} project", project.name);
+            ENGINE_ERR("Unable to copy assets directory into '{0}'", project.getBuildPath(projectVersion).c_str());
+            ENGINE_INFO("Creating empty asset space for {0} project", project.name.c_str());
             engine::filesystem::newDirectory(project.getAssetsPath());
             engine::filesystem::newDirectory(project.getAudioPath());
             engine::filesystem::newDirectory(project.getFontsPath());
@@ -352,7 +351,7 @@ namespace engine::core {
         }
         // copy props
         if (!filesystem::copyRecursive(project.getPropsPath().c_str(), project.getBuildPath(projectVersion).c_str())) {
-            ENGINE_ERR("Unable to copy properties.yaml into {0}", project.getBuildPath(projectVersion));
+            ENGINE_ERR("Unable to copy properties.yaml into {0}", project.getBuildPath(projectVersion).c_str());
         }
         // remove scripts assets from build path
         std::string scriptsBinaryPath = project.getBuildPath(projectVersion) + "/assets/scripts";
@@ -360,13 +359,13 @@ namespace engine::core {
         engine::filesystem::remove(scriptsBinaryPath);
         // copy core engine shaders used for project
         if (!filesystem::copyRecursive(project.getCoreShadersPath().c_str(), (project.getBuildPath(projectVersion) + "/core_shaders").c_str())) {
-            ENGINE_ERR("Unable to copy core_shaders directory into '{0}'", project.getBuildPath(projectVersion));
+            ENGINE_ERR("Unable to copy core_shaders directory into '{0}'", project.getBuildPath(projectVersion).c_str());
         }
     }
 
     void ProjectManager::postBuildScripts(const Project &project, ProjectVersion projectVersion) {
         if (!filesystem::copyRecursive(getScriptEngineBuildPath(project, projectVersion).c_str(), project.getBuildPath(projectVersion).c_str())) {
-            ENGINE_ERR("Unable to copy ScriptEngine.dll into '{0}'", project.getBuildPath(projectVersion));
+            ENGINE_ERR("Unable to copy ScriptEngine.dll into '{0}'", project.getBuildPath(projectVersion).c_str());
         }
         loadScripts(project, projectVersion);
     }
@@ -381,76 +380,98 @@ namespace engine::core {
     }
 
     void ProjectManager::run(const Project& project, ProjectVersion projectVersion) {
-        // todo crashes inside thread runnable lambda
-//        thread::VoidTask<const Project&> task = {
-//                project.name,
-//                project.name,
-//                runImpl
-//        };
-//        task.run(project);
-        runImpl(project, projectVersion);
-    }
-
-    void ProjectManager::runImpl(const Project& project, ProjectVersion projectVersion) {
-        terminal::exe(project.getExePath(projectVersion));
+        ThreadPoolScheduler->execute([&project, &projectVersion]() {
+            terminal::exe(project.getExePath(projectVersion));
+        });
     }
 
     void ProjectManager::saveProjects() {
-        if (projects.empty()) {
-            ENGINE_WARN("ProjectManager::saveProjects: no projects available to save");
-            return;
+        // save recent projects list into cfg
+        {
+            if (projects.empty()) {
+                ENGINE_WARN("ProjectManager::saveProjects: no projects available to save");
+                return;
+            }
+
+            std::ofstream file("projects.cfg");
+
+            file << projects[0].workspacePath << "\n";
+            for (u32 i = 0 ; i < projects.size() ; i++) {
+                const auto& project = projects[i];
+                ENGINE_INFO("ProjectManager: saving project name = {0}, workspace = {1}",
+                            project.name.c_str(), project.workspacePath.c_str());
+                file << project.name;
+                if (i == projects.size() - 1) break;
+                file << "\n";
+            }
+
+            file.close();
         }
+        // save last opened project into cfg
+        {
+            if (!currentProject) {
+                ENGINE_WARN("ProjectManager::saveProjects: no current project available to save");
+                return;
+            }
 
-        std::ofstream file("projects.cfg");
-
-        file << projects[0].workspacePath << "\n";
-        for (u32 i = 0 ; i < projects.size() ; i++) {
-            const auto& project = projects[i];
-            ENGINE_INFO("ProjectManager: saving project name = {0}, workspace = {1}",
-                        project.name, project.workspacePath);
-            file << project.name;
-            if (i == projects.size() - 1) break;
-            file << "\n";
+            std::ofstream file("project.cfg");
+            file << currentProject->name << "\n";
+            file.close();
         }
-
-        file.close();
     }
 
     void ProjectManager::loadProjects() {
-        std::ifstream file("projects.cfg");
-        if (!file.is_open()) {
-            ENGINE_ERR("ProjectManager: Unable to load projects from {0}", "projects.cfg");
-            return;
+        // load recent projects list from cfg
+        {
+            std::ifstream file("projects.cfg");
+            if (!file.is_open()) {
+                ENGINE_ERR("ProjectManager: Unable to load projects from {0}", "projects.cfg");
+                return;
+            }
+
+            std::string workspacePath;
+            std::getline(file, workspacePath);
+
+            std::string projectName;
+            projects.clear();
+            while (std::getline(file, projectName)) {
+                projects.emplace_back(projectName, workspacePath);
+            }
+
+            for (const auto& project : projects) {
+                ENGINE_INFO("ProjectManager: project loaded name = {0}, workspace = {1}",
+                            project.name.c_str(), project.workspacePath.c_str());
+            }
+
+            file.close();
         }
+        // load last open project from cfg
+        {
+            std::ifstream file("project.cfg");
+            if (!file.is_open()) {
+                ENGINE_ERR("ProjectManager: Unable to load last opened project from project.cfg");
+                return;
+            }
 
-        std::string workspacePath;
-        std::getline(file, workspacePath);
+            std::string projectName;
+            std::getline(file, projectName);
+            setCurrentProject(projectName.c_str());
 
-        std::string projectName;
-        projects.clear();
-        while (std::getline(file, projectName)) {
-            projects.emplace_back(projectName, workspacePath);
+            file.close();
         }
-
-        for (const auto& project : projects) {
-            ENGINE_INFO("ProjectManager: project loaded name = {0}, workspace = {1}",
-                        project.name, project.workspacePath);
-        }
-
-        file.close();
     }
 
     void ProjectManager::setCurrentProject(const char* projectName) {
-        for (const Project& project : projects) {
+        for (Project& project : projects) {
             if (engine::string::equals(projectName, project.name.c_str())) {
-                currentProject = project;
+                currentProject = &project;
                 return;
             }
         }
     }
 
-    void ProjectManager::setCurrentProject(const Project& project) {
-        currentProject = project;
+    void ProjectManager::setCurrentProject(Project& project) {
+        currentProject = &project;
     }
 
     const vector<Project> &ProjectManager::getAll() {
@@ -469,7 +490,7 @@ namespace engine::core {
         return false;
     }
 
-    void ProjectManager::open(const char *projectName) {
+    void ProjectManager::openSln(const char *projectName) {
         for (const auto& project : projects) {
             if (engine::string::equals(projectName, project.name.c_str())) {
                 engine::terminal::openVisualStudio(project.getSlnPath());
@@ -477,15 +498,15 @@ namespace engine::core {
         }
     }
 
-    void ProjectManager::openScripts(const char *projectName) {
+    void ProjectManager::openScriptsSln(const char *projectName) {
         for (const auto& project : projects) {
             if (engine::string::equals(projectName, project.name.c_str())) {
-                openScripts(project);
+                openScriptsSln(project);
             }
         }
     }
 
-    void ProjectManager::openScripts(const Project& project) {
+    void ProjectManager::openScriptsSln(const Project& project) {
         std::stringstream ss;
         ss << project.getFullPath() << "/ScriptEngine/ScriptEngine.sln";
         engine::terminal::openVisualStudio(ss.str());
@@ -534,25 +555,27 @@ namespace engine::core {
         script = std::regex_replace(script, std::regex("class " + oldName), "class " + newName);
         script = std::regex_replace(script,std::regex("(" + oldName + ")"),newName);
         script = std::regex_replace(script, std::regex("\n"), "");
-        engine::filesystem::write(oldPath, script.c_str());
+        engine::filesystem::write(oldPath, script);
         engine::filesystem::rename(oldPath, newName + ".cpp");
     }
 
     void ProjectManager::newScript(const std::string &filePath, const std::string &name) {
-        std::string scriptTemplate = engine::filesystem::read(currentProject.getFullPath() + "/ScriptEngine/Template.cpp");
+        std::string scriptTemplate = engine::filesystem::read(currentProject->getFullPath() + "/ScriptEngine/Template.cpp");
         scriptTemplate = std::regex_replace(scriptTemplate, std::regex("Template"), name);
         scriptTemplate = std::regex_replace(scriptTemplate, std::regex("\n"), "");
         engine::filesystem::write(filePath, scriptTemplate);
     }
 
-    void Project::loadScenes() {
-        io::LocalAssetManager::assetsPath = getAssetsPath();
-        scenes = io::LocalAssetManager::loadAll();
+    void ProjectManager::saveScenes() {
+        io::LocalAssetManager::writeAll(currentProject->getAssetsPath().c_str());
     }
 
-    void Project::saveScenes() const {
-        io::LocalAssetManager::assetsPath = getAssetsPath();
-        io::LocalAssetManager::saveAll(scenes);
+    void ProjectManager::loadScenes() {
+        io::LocalAssetManager::readAll(currentProject->getAssetsPath().c_str());
+    }
+
+    void ProjectManager::closeProject() {
+        currentProject = nullptr;
     }
 
 }

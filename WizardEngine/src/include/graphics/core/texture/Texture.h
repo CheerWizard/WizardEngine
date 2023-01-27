@@ -102,14 +102,6 @@ namespace engine::graphics {
         static u32 BOTTOM;
     };
 
-    struct ENGINE_API TextureFace {
-        const char* filePath;
-        u32 type;
-
-        TextureFace(const char* filePath, u32 type)
-        : filePath(filePath), type(type) {}
-    };
-
     constexpr u32 invalidTextureId = 0;
 
     component(TextureComponent) {

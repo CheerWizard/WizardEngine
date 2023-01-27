@@ -6,7 +6,6 @@
 
 #include <graphics/core/io/ShaderFile.h>
 #include <ecs/Entity.h>
-
 #include <platform/graphics/Shader.h>
 #include <platform/graphics/UniformBuffer.h>
 
@@ -26,7 +25,7 @@ namespace engine::shader {
 
     public:
         BaseShader() : Shader() {}
-        BaseShader(const char* src) : Shader(src) {}
+        BaseShader(u32 shaderType) : Shader(shaderType) {}
         ~BaseShader() = default;
 
     public:
@@ -43,6 +42,10 @@ namespace engine::shader {
             bindUbf(uniformBlockFormat.getName().data(), uniformBlockFormat.getId());
         }
 
+        [[nodiscard]] inline const bool valid() const {
+            return type != ShaderType::NONE;
+        }
+
         void initUbf();
         void applyUbf(const UniformBlockFormat& uniformBlockFormat);
 
@@ -57,9 +60,8 @@ namespace engine::shader {
 
         void release();
 
-    protected:
+    private:
         UniformBuffer uniformBuffer;
-
     };
 
     class ENGINE_API BaseShaderProgram final : public ShaderProgram {
@@ -68,68 +70,80 @@ namespace engine::shader {
         BaseShaderProgram() = default;
 
         BaseShaderProgram(
-                const io::ShaderProps &props,
+                const std::string& vFilepath,
+                const std::string& fFilepath,
                 const std::initializer_list<ShaderScript>& scripts = {}
-        ) : scripts(scripts) {
-            construct(props);
-        }
+        );
 
         BaseShaderProgram(
-                const io::ShaderProps &props,
-                const BaseShader &vShader,
+                const std::string& vFilepath,
+                const std::string& fFilepath,
+                const std::string& gFilepath,
                 const std::initializer_list<ShaderScript>& scripts = {}
-        ) : _vShader(vShader), scripts(scripts) {
-            construct(props);
-        }
+        );
 
         BaseShaderProgram(
-                const io::ShaderProps &props,
-                const BaseShader &vShader,
-                const BaseShader &fShader,
+                const std::string& vFilepath,
+                const std::string& fFilepath,
+                const std::string& gFilepath,
+                const std::string& cFilepath,
                 const std::initializer_list<ShaderScript>& scripts = {}
-        ) : _vShader(vShader), _fShader(fShader), scripts(scripts) {
-            construct(props);
-        }
+        );
 
         BaseShaderProgram(
-                const io::ShaderProps &props,
-                const BaseShader &vShader,
-                const BaseShader &fShader,
-                const BaseShader &gShader,
+                const std::string& vFilepath,
+                const std::string& fFilepath,
+                const std::string& gFilepath,
+                const std::string& cFilepath,
+                const std::string& tcFilepath,
+                const std::string& teFilepath,
                 const std::initializer_list<ShaderScript>& scripts = {}
-        ) : _vShader(vShader), _fShader(fShader), _gShader(gShader), scripts(scripts) {
-            construct(props);
-        }
+        );
 
         ~BaseShaderProgram() = default;
 
     public:
         [[nodiscard]] inline const VertexFormat& getVertexFormat() const {
-            return vertexFormat;
+            return m_VertexFormat;
         }
 
-        [[nodiscard]] inline const BaseShader& getVShader() const {
-            return _vShader;
+        [[nodiscard]] inline const BaseShader& getVertexShader() const {
+            return m_VertexShader;
         }
 
-        [[nodiscard]] inline const BaseShader& getFShader() const {
-            return _fShader;
+        [[nodiscard]] inline const BaseShader& getFragmentShader() const {
+            return m_FragmentShader;
+        }
+
+        [[nodiscard]] inline BaseShader& getGeometryShader() {
+            return m_GeometryShader;
+        }
+
+        [[nodiscard]] inline BaseShader& getComputeShader() {
+            return m_ComputeShader;
+        }
+
+        [[nodiscard]] inline BaseShader& getTessControlShader() {
+            return m_TessControlShader;
+        }
+
+        [[nodiscard]] inline BaseShader& getTessEvalShader() {
+            return m_TessEvalShader;
         }
 
         inline VertexFormat& getVertexFormat() {
-            return vertexFormat;
+            return m_VertexFormat;
         }
 
         inline void setInstancesPerDraw(u32 instancesPerDraw) {
-            this->instancesPerDraw = instancesPerDraw;
+            m_InstancesPerDraw = instancesPerDraw;
         }
 
         [[nodiscard]] inline u32 getInstancesPerDraw() const {
-            return instancesPerDraw;
+            return m_InstancesPerDraw;
         }
 
     public:
-        void construct(const io::ShaderProps& props);
         void detachShaders();
         void releaseShaders();
         bool invalidate();
@@ -139,7 +153,6 @@ namespace engine::shader {
         void update(ecs::Registry& registry);
         void update(const ecs::Entity& entity);
         void release();
-        void recompile(const std::string& name);
         bool isReady();
 
         void addScript(const ShaderScript& script);
@@ -147,14 +160,19 @@ namespace engine::shader {
 
     private:
         static ElementCount toElementCount(const std::string &elementCountStr);
+        void createRequiredShader(const std::string& filepath, BaseShader& shader, u32 shaderType);
+        void createOptionalShader(const std::string& filepath, BaseShader& shader, u32 shaderType);
 
     private:
-        BaseShader _vShader; // Vertex Shader
-        BaseShader _fShader; // Fragment/Pixel Shader
-        BaseShader _gShader; // Geometry shader
-        VertexFormat vertexFormat;
-        uint32_t uniformBlockSlots = 0;
-        u32 instancesPerDraw = 128;
-        vector<ShaderScript> scripts;
+        BaseShader m_VertexShader;
+        BaseShader m_FragmentShader;
+        BaseShader m_GeometryShader;
+        BaseShader m_ComputeShader;
+        BaseShader m_TessControlShader;
+        BaseShader m_TessEvalShader;
+        VertexFormat m_VertexFormat;
+        uint32_t m_UniformBlocks = 0;
+        u32 m_InstancesPerDraw = 128;
+        vector<ShaderScript> m_Scripts;
     };
 }

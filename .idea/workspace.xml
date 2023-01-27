@@ -9,6 +9,7 @@
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
     <generated>
       <config projectName="Wizard" targetName="t-telldir" />
+      <config projectName="Wizard" targetName="WizardSamples" />
       <config projectName="Wizard" targetName="ContinuousCoverage" />
       <config projectName="Wizard" targetName="NightlyTest" />
       <config projectName="Wizard" targetName="WizardTest" />
@@ -78,26 +79,34 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Working on material and light panels.">
+    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Fixing job system issues #5">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/core/Application.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/core/Application.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/RenderSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/RenderSystem.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/tools/FileDialog.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/tools/FileDialog.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/MaterialPanel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/MaterialPanel.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/Widgets.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/Widgets.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/core/ProjectManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/core/ProjectManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/Renderer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/Renderer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/shader/BaseShader.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/shader/BaseShader.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/shader/VertexFormat.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/shader/VertexFormat.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/graphics/graphics_context.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/graphics/graphics_context.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/AssetBrowser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/AssetBrowser.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/ProjectsPanel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/ProjectsPanel.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/Visual.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/Visual.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/core/Application.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/core/Application.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/RenderSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/RenderSystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/platform/tools/FileDialog.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/platform/tools/FileDialog.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/visual/MaterialPanel.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/visual/MaterialPanel.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/visual/Widgets.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/visual/Widgets.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/core/ProjectManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/core/ProjectManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/Renderer.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/Renderer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/shader/VertexAttribute.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/shader/VertexAttribute.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/shader/VertexFormat.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/shader/VertexFormat.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/assimp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/assimp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/freetype" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/freetype" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/glfw" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/glfw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/imgui/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/imgui/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardTest/properties.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/properties.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardTest/src/cpp/core/test_layer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/src/cpp/core/test_layer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardSamples/src/cpp/ecs/ecs_test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardSamples/src/cpp/ecs/ecs_test.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardSamples/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardSamples/src/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardTest/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardTest/src/cpp/core/application_test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/src/cpp/core/application_test.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prebuild/imgui/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/prebuild/imgui/CMakeLists.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,10 +160,18 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/WizardEngine/src/cpp/visual/ProjectsPanel.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/WizardEngine/export_cmake/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/WizardTest/Visual.ini" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/WizardTest/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/WizardEngine/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/WizardEngine/src/include/visual/NodeEditor.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/WizardEngine/src/cpp/visual/NodeEditor.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/WizardEngine/src/include/visual/ImageLayout.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/WizardTest/src/cpp/core/application_test.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/WizardEngine/src/cpp/visual/ImageLayout.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/WizardEngine/src/cpp/core/ProjectManager.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/WizardEngine/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/WizardEngine/export_cmake/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -174,15 +191,17 @@
     <property name="cf.first.check.clang-format" value="false" />
     <property name="cidr.known.project.marker" value="true" />
     <property name="cmake.loaded.for.project" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/WizardTest/assets/SamuraiHelmet/textures" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../imnodes" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardTest\assets\SamuraiHelmet\textures" />
-      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardTest\assets" />
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\vendor\imgui" />
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\Wizard\Visual\Debug\WizardEngine" />
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\lib" />
+      <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardEngine\vendor\vulkan" />
       <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardTest" />
-      <recent name="C:\Users\Lenovo\CLionProjects\WizardEngine\WizardTest" />
-      <recent name="C:\Users\Lenovo\CLionProjects\WizardEngine\WizardStudio" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\mecha\CLionProjects\Wizard\WizardTest\assets\CerberusGun\Textures" />
@@ -339,6 +358,11 @@
       </method>
     </configuration>
     <configuration name="WizardEngine" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="WizardEngine" CONFIG_NAME="debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WizardSamples" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="WizardSamples" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="WizardSamples">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -581,6 +605,7 @@
       <item itemvalue="CMake Application.spdlog" />
       <item itemvalue="CMake Application.stb" />
       <item itemvalue="CMake Application.zip" />
+      <item itemvalue="CMake Application.WizardSamples" />
       <item itemvalue="CMake Application.WizardTest" />
       <item itemvalue="Shell Script.compile-external-libs.sh" />
       <item itemvalue="Shell Script.download-external-libs.sh" />
@@ -1043,55 +1068,42 @@
       <workItem from="1670012178588" duration="4873000" />
       <workItem from="1670074441356" duration="14231000" />
       <workItem from="1670144579662" duration="11447000" />
-    </task>
-    <task id="LOCAL-00161" summary="Linux Socket support merge">
-      <created>1652961044065</created>
-      <option name="number" value="00161" />
-      <option name="presentableId" value="LOCAL-00161" />
-      <option name="project" value="LOCAL" />
-      <updated>1652961044065</updated>
-    </task>
-    <task id="LOCAL-00162" summary="Linux Socket API support">
-      <created>1652966671962</created>
-      <option name="number" value="00162" />
-      <option name="presentableId" value="LOCAL-00162" />
-      <option name="project" value="LOCAL" />
-      <updated>1652966671962</updated>
-    </task>
-    <task id="LOCAL-00163" summary="Linux Socket API support">
-      <created>1652968448603</created>
-      <option name="number" value="00163" />
-      <option name="presentableId" value="LOCAL-00163" />
-      <option name="project" value="LOCAL" />
-      <updated>1652968448603</updated>
-    </task>
-    <task id="LOCAL-00164" summary="Fixed prebuild of ImGui">
-      <created>1653125123976</created>
-      <option name="number" value="00164" />
-      <option name="presentableId" value="LOCAL-00164" />
-      <option name="project" value="LOCAL" />
-      <updated>1653125123976</updated>
-    </task>
-    <task id="LOCAL-00165" summary="Fixed prebuild of ImGui">
-      <created>1653125247622</created>
-      <option name="number" value="00165" />
-      <option name="presentableId" value="LOCAL-00165" />
-      <option name="project" value="LOCAL" />
-      <updated>1653125247622</updated>
-    </task>
-    <task id="LOCAL-00166" summary="ECS YAML serialization">
-      <created>1653292889014</created>
-      <option name="number" value="00166" />
-      <option name="presentableId" value="LOCAL-00166" />
-      <option name="project" value="LOCAL" />
-      <updated>1653292889014</updated>
-    </task>
-    <task id="LOCAL-00167" summary="Update gamepad event registry.">
-      <created>1653334130923</created>
-      <option name="number" value="00167" />
-      <option name="presentableId" value="LOCAL-00167" />
-      <option name="project" value="LOCAL" />
-      <updated>1653334130923</updated>
+      <workItem from="1671286637064" duration="1894000" />
+      <workItem from="1671346736150" duration="6999000" />
+      <workItem from="1671357306445" duration="3837000" />
+      <workItem from="1671369777700" duration="5838000" />
+      <workItem from="1671396474103" duration="4053000" />
+      <workItem from="1671450377363" duration="965000" />
+      <workItem from="1671451533763" duration="131000" />
+      <workItem from="1671479874803" duration="1822000" />
+      <workItem from="1671491564246" duration="3000" />
+      <workItem from="1671523286500" duration="5508000" />
+      <workItem from="1671548547248" duration="15700000" />
+      <workItem from="1671628134548" duration="7919000" />
+      <workItem from="1671707938803" duration="39000" />
+      <workItem from="1671782093645" duration="2248000" />
+      <workItem from="1671796724676" duration="1151000" />
+      <workItem from="1671806916006" duration="3567000" />
+      <workItem from="1671813264644" duration="17164000" />
+      <workItem from="1671878143633" duration="13263000" />
+      <workItem from="1671902149960" duration="4928000" />
+      <workItem from="1671959740190" duration="1564000" />
+      <workItem from="1671992819580" duration="1239000" />
+      <workItem from="1673379151576" duration="2996000" />
+      <workItem from="1673382229709" duration="152000" />
+      <workItem from="1673443711194" duration="16000" />
+      <workItem from="1673447259147" duration="24000" />
+      <workItem from="1673458480880" duration="1264000" />
+      <workItem from="1673462549093" duration="660000" />
+      <workItem from="1673475665349" duration="81000" />
+      <workItem from="1673623269850" duration="350000" />
+      <workItem from="1673630861159" duration="48000" />
+      <workItem from="1673637511064" duration="683000" />
+      <workItem from="1674302836116" duration="807000" />
+      <workItem from="1674390598921" duration="7000" />
+      <workItem from="1674658296931" duration="6463000" />
+      <workItem from="1674761634911" duration="7056000" />
+      <workItem from="1674835482105" duration="10212000" />
     </task>
     <task id="LOCAL-00168" summary="Update gamepad event registry.">
       <created>1653423793397</created>
@@ -1387,7 +1399,56 @@
       <option name="project" value="LOCAL" />
       <updated>1670090532677</updated>
     </task>
-    <option name="localTasksCounter" value="210" />
+    <task id="LOCAL-00210" summary="Fixing issues in ImGui tools #4">
+      <created>1671231299931</created>
+      <option name="number" value="00210" />
+      <option name="presentableId" value="LOCAL-00210" />
+      <option name="project" value="LOCAL" />
+      <updated>1671231299932</updated>
+    </task>
+    <task id="LOCAL-00211" summary="Fixing issues in ImGui tools #6">
+      <created>1671361285442</created>
+      <option name="number" value="00211" />
+      <option name="presentableId" value="LOCAL-00211" />
+      <option name="project" value="LOCAL" />
+      <updated>1671361285442</updated>
+    </task>
+    <task id="LOCAL-00212" summary="Fixing job system issues #1">
+      <created>1671569809758</created>
+      <option name="number" value="00212" />
+      <option name="presentableId" value="LOCAL-00212" />
+      <option name="project" value="LOCAL" />
+      <updated>1671569809759</updated>
+    </task>
+    <task id="LOCAL-00213" summary="Fixing job system issues #2">
+      <created>1671638514284</created>
+      <option name="number" value="00213" />
+      <option name="presentableId" value="LOCAL-00213" />
+      <option name="project" value="LOCAL" />
+      <updated>1671638514285</updated>
+    </task>
+    <task id="LOCAL-00214" summary="Fixing job system issues #3">
+      <created>1671835191217</created>
+      <option name="number" value="00214" />
+      <option name="presentableId" value="LOCAL-00214" />
+      <option name="project" value="LOCAL" />
+      <updated>1671835191218</updated>
+    </task>
+    <task id="LOCAL-00215" summary="Fixing job system issues #4">
+      <created>1671894443305</created>
+      <option name="number" value="00215" />
+      <option name="presentableId" value="LOCAL-00215" />
+      <option name="project" value="LOCAL" />
+      <updated>1671894443305</updated>
+    </task>
+    <task id="LOCAL-00216" summary="Fixing job system issues #5">
+      <created>1671962158667</created>
+      <option name="number" value="00216" />
+      <option name="presentableId" value="LOCAL-00216" />
+      <option name="project" value="LOCAL" />
+      <updated>1671962158667</updated>
+    </task>
+    <option name="localTasksCounter" value="217" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1428,13 +1489,6 @@
       <path value="$PROJECT_DIR$/ScriptDLL/engine/spdlog" />
       <path value="$PROJECT_DIR$/ScriptDLL/engine/stb/stb" />
     </ignored-roots>
-    <MESSAGE value="Fixed crash of deleting serialized component.&#10;Added WizardSamples project for unit testing of WizardEngine details.&#10;SceneService for dispatching and processing scene requests on server side." />
-    <MESSAGE value="Updated serialization : Uniform, all matrices, Text, Outline, Light, Transform, AudioListener, AudioSource." />
-    <MESSAGE value="Updated serialization : array, IndexData, VertexData, Lines, Texture, Text, Circle." />
-    <MESSAGE value="Beginning with project management system.&#10;Serializing Vertex structs." />
-    <MESSAGE value="Project Template System, replaced GLM library with my own Math System." />
-    <MESSAGE value="Initial work to fix visual bug with matrices." />
-    <MESSAGE value="Fixed visual 3D projection issue, caused by incorrect matrix multiplication order. Changed order (projection * view) into (view * projection)." />
     <MESSAGE value="Ray Casting, Advanced Camera, refactored EventRegistry, can't add more than 1 color attachment to scene FBO." />
     <MESSAGE value="Fixed mouse cursor update position, when moving, zooming and rotating camera." />
     <MESSAGE value="Material System, Phong, SolidPhong, Mouse Picking, Ray Cast, updated EventRegistry, updated Math functions, little updates in Renderers, updated Light System" />
@@ -1453,7 +1507,14 @@
     <MESSAGE value="Fixing compilation failure in material shader" />
     <MESSAGE value="Fixing model importing" />
     <MESSAGE value="Working on material and light panels." />
-    <option name="LAST_COMMIT_MESSAGE" value="Working on material and light panels." />
+    <MESSAGE value="Fixing issues in ImGui tools #4" />
+    <MESSAGE value="Fixing issues in ImGui tools #6" />
+    <MESSAGE value="Fixing job system issues #1" />
+    <MESSAGE value="Fixing job system issues #2" />
+    <MESSAGE value="Fixing job system issues #3" />
+    <MESSAGE value="Fixing job system issues #4" />
+    <MESSAGE value="Fixing job system issues #5" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixing job system issues #5" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1525,7 +1586,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/WizardEngine/src/cpp/visual/Log.cpp</url>
-          <line>78</line>
+          <line>72</line>
           <option name="timeStamp" value="70" />
         </line-breakpoint>
       </breakpoints>

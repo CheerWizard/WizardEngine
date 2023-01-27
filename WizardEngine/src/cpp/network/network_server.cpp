@@ -27,7 +27,7 @@ namespace engine::network {
         auto scene = createRef<ecs::Scene>();
         io::SceneSerializable body(scene);
         body.deserialize(gdNode);
-        io::LocalAssetManager::saveScene(scene);
+        io::LocalAssetManager::write(scene, "assets/scenes");
         // send response back to client
         GDHeader header(SERVER_TO_CLIENT, SERVER_SAVE_SCENE);
         GDResponse responseBody;
@@ -41,7 +41,9 @@ namespace engine::network {
         GDString sceneName;
         sceneName.deserialize(gdNode);
         // load scene from asset manager
-        auto scene = io::LocalAssetManager::loadScene(sceneName.value.c_str());
+        std::stringstream ss("assets/scenes/");
+        ss << sceneName.value << ".yaml";
+        auto scene = io::LocalAssetManager::read(ss.str().c_str());
         // send scene back to client
         GDHeader header(SERVER_TO_CLIENT, SERVER_LOAD_SCENE);
         io::SceneSerializable body(scene);

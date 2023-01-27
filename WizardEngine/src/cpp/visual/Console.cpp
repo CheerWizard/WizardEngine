@@ -23,8 +23,7 @@ namespace engine::visual {
 
     Console::~Console() {
         clearLog();
-        for (int i = 0; i < History.Size; i++)
-            free(History[i]);
+        clearHistory();
     }
 
     int Console::Stricmp(const char* s1, const char* s2) {
@@ -60,6 +59,11 @@ namespace engine::visual {
         for (int i = 0; i < Items.Size; i++)
             free(Items[i]);
         Items.clear();
+    }
+
+    void Console::clearHistory() {
+        for (int i = 0; i < History.Size; i++)
+            free(History[i]);
     }
 
     void Console::addLog(const char* fmt, ...) {
