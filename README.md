@@ -12,14 +12,16 @@
 
 
 ## Upcoming features
-1. Shadow mapping, point shadows, cascaded shadow mapping.
-2. SSAO, fixing existing MSAA.
-3. Ray tracing both CPU and GPU based.
-4. Skeletal/skin animation import and processing.
-5. Fixing existing light sources like direction, point, flash, HDR env.
-6. UI menubar with "Scene" and "Project" menu navigation features.
-7. Fixing rest of UI issues.
-8. Job System - concurrency and parallelism.
+- [ ] Shadow mapping, point shadows, cascaded shadow mapping.
+- [ ] SSAO, fixing existing MSAA.
+- [ ] Ray tracing both CPU and GPU based.
+- [ ] Skeletal/skin animation import and processing.
+- [ ] Fixing existing light sources like direction, point, flash, HDR env.
+- [x] UI menubar with "Scene" and "Project" menu navigation features.
+- [x] Fixing rest of UI issues.
+- [x] Job System - concurrency and parallelism. 
+- [ ] Node Editor UI presentation (without Scripting logic yet)
+- [ ] Vulkan SDK migration
 
 ## Manual build instructions
 
