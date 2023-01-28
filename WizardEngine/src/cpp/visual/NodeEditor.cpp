@@ -5,6 +5,7 @@
 #include <io/Logger.h>
 
 #include <event/KeyCodes.h>
+#include <event/MouseCodes.h>
 
 #include <imnodes.h>
 #include <fstream>
@@ -100,6 +101,8 @@ namespace engine::visual {
         ImNodesStyle& style = ImNodes::GetStyle();
         style.Colors[ImNodesCol_TitleBar] = IM_COL32(232, 27, 86, 255);
         style.Colors[ImNodesCol_TitleBarSelected] = IM_COL32(241, 108, 146, 255);
+        // track mouse pos
+        m_PreviousMousePos = ImGui::GetCursorPos();
         // new node
         if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImNodes::IsEditorHovered())
         {
@@ -132,6 +135,10 @@ namespace engine::visual {
             // paste
             else if (ImGui::IsKeyDown(event::KeyCode::LeftControl) && ImGui::IsKeyPressed(event::KeyCode::V)) {
 
+            }
+            // draw cut line
+            else if (ImGui::IsKeyDown(event::KeyCode::LeftControl) && ImGui::IsMouseDown(event::MouseCode::ButtonLeft)) {
+                ImGui::GetWindowDrawList()->AddLine(m_PreviousMousePos, ImGui::GetCursorPos(), IM_COL32(1, 1, 1, 1));
             }
         }
         // nodes

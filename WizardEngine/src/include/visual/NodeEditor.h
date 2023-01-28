@@ -117,6 +117,7 @@ namespace engine::visual {
         std::vector<int> m_SelectedLinks;
         std::vector<Node> m_CopiedNodes;
         std::vector<Link> m_CopiedLinks;
+        ImVec2 m_PreviousMousePos;
     };
 
     class ENGINE_API NodeEditor final {

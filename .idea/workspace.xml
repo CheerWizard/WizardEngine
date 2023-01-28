@@ -79,11 +79,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Node Editor setup + small refactoring">
+    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Node Editor: Creating nodes, binary and .ini serialization of graphs, selection, select + delete, Cut/Copy/Paste nodes.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/NodeEditor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/NodeEditor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/Visual.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/Visual.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/visual/NodeEditor.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/visual/NodeEditor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/assimp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/assimp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/freetype" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/freetype" afterDir="false" />
@@ -91,7 +89,6 @@
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardTest/src/cpp/core/application_test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/src/cpp/core/application_test.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -349,11 +346,6 @@
       </method>
     </configuration>
     <configuration name="WizardTest" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="WizardTest" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="WizardTest">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -1092,14 +1084,8 @@
       <workItem from="1674835482105" duration="10513000" />
       <workItem from="1674846393389" duration="202000" />
       <workItem from="1674850032239" duration="10797000" />
-      <workItem from="1674861917740" duration="1177000" />
-    </task>
-    <task id="LOCAL-00169" summary="GDP messaging, Network integration with YAML Serialization, entrypoint for Multiplayer.">
-      <created>1653841781502</created>
-      <option name="number" value="00169" />
-      <option name="presentableId" value="LOCAL-00169" />
-      <option name="project" value="LOCAL" />
-      <updated>1653841781502</updated>
+      <workItem from="1674861917740" duration="1465000" />
+      <workItem from="1674887990474" duration="1149000" />
     </task>
     <task id="LOCAL-00170" summary="Fixed UDP client messaging">
       <created>1653912858476</created>
@@ -1437,7 +1423,14 @@
       <option name="project" value="LOCAL" />
       <updated>1674846092422</updated>
     </task>
-    <option name="localTasksCounter" value="218" />
+    <task id="LOCAL-00218" summary="Node Editor: Creating nodes, binary and .ini serialization of graphs, selection, select + delete, Cut/Copy/Paste nodes.">
+      <created>1674863377271</created>
+      <option name="number" value="00218" />
+      <option name="presentableId" value="LOCAL-00218" />
+      <option name="project" value="LOCAL" />
+      <updated>1674863377271</updated>
+    </task>
+    <option name="localTasksCounter" value="219" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1478,7 +1471,6 @@
       <path value="$PROJECT_DIR$/ScriptDLL/engine/spdlog" />
       <path value="$PROJECT_DIR$/ScriptDLL/engine/stb/stb" />
     </ignored-roots>
-    <MESSAGE value="Fixed mouse cursor update position, when moving, zooming and rotating camera." />
     <MESSAGE value="Material System, Phong, SolidPhong, Mouse Picking, Ray Cast, updated EventRegistry, updated Math functions, little updates in Renderers, updated Light System" />
     <MESSAGE value="Fixed TextureBuffer::load, TextureBuffer creation functions." />
     <MESSAGE value="Material System, refactored Render System, HDR/LDR, blinn-phong lighting, diffuse map, specular map, normal map, parallax map, gamma correction, making Batching/Instancing render faster. Fixed a lot of crash and memory issues with Render System." />
@@ -1503,7 +1495,8 @@
     <MESSAGE value="Fixing job system issues #4" />
     <MESSAGE value="Fixing job system issues #5" />
     <MESSAGE value="Node Editor setup + small refactoring" />
-    <option name="LAST_COMMIT_MESSAGE" value="Node Editor setup + small refactoring" />
+    <MESSAGE value="Node Editor: Creating nodes, binary and .ini serialization of graphs, selection, select + delete, Cut/Copy/Paste nodes." />
+    <option name="LAST_COMMIT_MESSAGE" value="Node Editor: Creating nodes, binary and .ini serialization of graphs, selection, select + delete, Cut/Copy/Paste nodes." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
