@@ -2,10 +2,20 @@
 
 #include <core/core.h>
 
+#include <imgui.h>
+
 #include <vector>
 #include <functional>
+#include <set>
 
 namespace engine::visual {
+
+    template<typename T>
+    struct IdComparator final {
+        bool operator() (const T& a, const T& b) const {
+            return a.getId() < b.getId();
+        }
+    };
 
     class ENGINE_API Socket final {
 
@@ -16,6 +26,7 @@ namespace engine::visual {
 
     public:
         [[nodiscard]] inline int getId() const { return m_Id; }
+        inline void setId(int id) { m_Id = id; }
 
         bool loadBin(std::fstream& file);
         bool saveBin(std::fstream& file);
@@ -37,6 +48,7 @@ namespace engine::visual {
         [[nodiscard]] inline int getId() const { return m_Id; }
         [[nodiscard]] inline int getBegin() const { return m_Begin; }
         [[nodiscard]] inline int getEnd() const { return m_End; }
+        inline void setId(int id) { m_Id = id; }
 
         inline void setBegin(int id) { m_Begin = id; }
         inline void setEnd(int id) { m_End = id; }
@@ -56,11 +68,16 @@ namespace engine::visual {
         Node() = default;
         Node(int id) : m_Id(id) {}
         Node(int id, const char* name) : m_Id(id), m_Name(name) {}
+        Node(int id, float x, float y) : m_Id(id), m_Pos(x, y) {}
+        Node(int id, const ImVec2& pos) : m_Id(id), m_Pos(pos) {}
         ~Node() = default;
 
     public:
         [[nodiscard]] inline int getId() const { return m_Id; }
         [[nodiscard]] inline const char* getName() const { return m_Name.c_str(); }
+        [[nodiscard]] inline const ImVec2& getPos() const { return m_Pos; }
+
+        inline void setId(int id) { m_Id = id; }
 
         void addInput(Socket&& socket);
         void addInput(const Socket& socket);
@@ -70,14 +87,18 @@ namespace engine::visual {
         void inputs(const std::function<void(Socket&)>& handle);
         void outputs(const std::function<void(Socket&)>& handle);
 
+        [[nodiscard]] int getLastInputId() const;
+        [[nodiscard]] int getLastOutputId() const;
+
         bool loadBin(std::fstream& file);
         bool saveBin(std::fstream& file);
 
     private:
         int m_Id = 0;
+        ImVec2 m_Pos = { 0, 0 };
         std::string m_Name = "Undefined";
-        std::vector<Socket> m_Inputs;
-        std::vector<Socket> m_Outputs;
+        std::set<Socket, IdComparator<Socket>> m_Inputs;
+        std::set<Socket, IdComparator<Socket>> m_Outputs;
     };
 
     class ENGINE_API Graph final {
@@ -109,15 +130,39 @@ namespace engine::visual {
         void onNodeHovered(int id);
 
     private:
+        void newNode();
+
+        void deleteSelected();
+        void copySelected();
+        void cutSelected();
+        void pasteSelected();
+
+        void beginCutline();
+        void drawCutline();
+        void endCutline();
+
+        void zoomCanvas();
+        void moveCanvas();
+
+    private:
         int m_Id = 0;
         std::string m_Name;
-        std::vector<Node> m_Nodes;
-        std::vector<Link> m_Links;
+
+        ImVec2 m_CutlinePos = { 0, 0 };
+        bool m_CutlineBegin = false;
+
+        ImVec2 m_Cursor = { 0, 0 };
+
+        float m_PastePadding = 0.25f;
+
+        std::set<Node, IdComparator<Node>> m_Nodes;
+        std::set<Link, IdComparator<Link>> m_Links;
+
+        std::set<Node, IdComparator<Node>> m_TempNodes;
+        std::set<Link, IdComparator<Link>> m_TempLinks;
+
         std::vector<int> m_SelectedNodes;
         std::vector<int> m_SelectedLinks;
-        std::vector<Node> m_CopiedNodes;
-        std::vector<Link> m_CopiedLinks;
-        ImVec2 m_PreviousMousePos;
     };
 
     class ENGINE_API NodeEditor final {
@@ -135,7 +180,9 @@ namespace engine::visual {
         static void setTheme();
 
         inline void setActiveGraph(Graph* graph) { m_ActiveGraph = graph; }
-        inline void setActiveGraph(int index) { m_ActiveGraph = &m_Graphs.at(index); }
+        inline void setActiveGraph(int index) {
+            m_ActiveGraph = &m_Graphs.at(index);
+        }
         [[nodiscard]] inline Graph* getActiveGraph() { return m_ActiveGraph; }
 
         void draw();
@@ -145,8 +192,6 @@ namespace engine::visual {
 
         int addGraph(Graph&& graph);
         int addGraph(const Graph& graph);
-
-        void onNodeHovered(int id);
 
     private:
         Graph* m_ActiveGraph = nullptr;

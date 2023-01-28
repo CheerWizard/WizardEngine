@@ -79,7 +79,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Node Editor: Creating nodes, binary and .ini serialization of graphs, selection, select + delete, Cut/Copy/Paste nodes.">
+    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="NodeEditor : Cutline">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/NodeEditor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/NodeEditor.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/visual/NodeEditor.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/visual/NodeEditor.h" afterDir="false" />
@@ -89,6 +89,7 @@
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardTest/src/cpp/core/application_test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/src/cpp/core/application_test.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -346,6 +347,11 @@
       </method>
     </configuration>
     <configuration name="WizardTest" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Wizard" TARGET_NAME="WizardTest" CONFIG_NAME="debug" RUN_TARGET_PROJECT_NAME="Wizard" RUN_TARGET_NAME="WizardTest">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -1085,14 +1091,9 @@
       <workItem from="1674846393389" duration="202000" />
       <workItem from="1674850032239" duration="10797000" />
       <workItem from="1674861917740" duration="1465000" />
-      <workItem from="1674887990474" duration="1149000" />
-    </task>
-    <task id="LOCAL-00170" summary="Fixed UDP client messaging">
-      <created>1653912858476</created>
-      <option name="number" value="00170" />
-      <option name="presentableId" value="LOCAL-00170" />
-      <option name="project" value="LOCAL" />
-      <updated>1653912858476</updated>
+      <workItem from="1674887990474" duration="1167000" />
+      <workItem from="1674903948577" duration="14077000" />
+      <workItem from="1674925535479" duration="6582000" />
     </task>
     <task id="LOCAL-00171" summary="Fixed TCP client-server-client messaging.">
       <created>1653923976781</created>
@@ -1430,7 +1431,14 @@
       <option name="project" value="LOCAL" />
       <updated>1674863377271</updated>
     </task>
-    <option name="localTasksCounter" value="219" />
+    <task id="LOCAL-00219" summary="NodeEditor : Cutline">
+      <created>1674889160686</created>
+      <option name="number" value="00219" />
+      <option name="presentableId" value="LOCAL-00219" />
+      <option name="project" value="LOCAL" />
+      <updated>1674889160686</updated>
+    </task>
+    <option name="localTasksCounter" value="220" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1471,7 +1479,6 @@
       <path value="$PROJECT_DIR$/ScriptDLL/engine/spdlog" />
       <path value="$PROJECT_DIR$/ScriptDLL/engine/stb/stb" />
     </ignored-roots>
-    <MESSAGE value="Material System, Phong, SolidPhong, Mouse Picking, Ray Cast, updated EventRegistry, updated Math functions, little updates in Renderers, updated Light System" />
     <MESSAGE value="Fixed TextureBuffer::load, TextureBuffer creation functions." />
     <MESSAGE value="Material System, refactored Render System, HDR/LDR, blinn-phong lighting, diffuse map, specular map, normal map, parallax map, gamma correction, making Batching/Instancing render faster. Fixed a lot of crash and memory issues with Render System." />
     <MESSAGE value="Post Effects Rendering, MRT support, a couple of refactoring of Shader API and Render API. &#10;Added next post effects : HDR/LDR, Blur, Edge Detection, Sharpen, Gaussian Blur.&#10;Added TextureMixer as a renderer that receives texture id list as an input, mixes all textures inside pixel shader and outputs it in separate frame buffer texture attachment.&#10;Added ImGui as Visual support, if macro VISUAL is defined inside the app you are building. This system has different widgets, console, themes.&#10;Added primitive vertex shader that allows to draw geometry without using VBO, VAO, IBO." />
@@ -1496,7 +1503,8 @@
     <MESSAGE value="Fixing job system issues #5" />
     <MESSAGE value="Node Editor setup + small refactoring" />
     <MESSAGE value="Node Editor: Creating nodes, binary and .ini serialization of graphs, selection, select + delete, Cut/Copy/Paste nodes." />
-    <option name="LAST_COMMIT_MESSAGE" value="Node Editor: Creating nodes, binary and .ini serialization of graphs, selection, select + delete, Cut/Copy/Paste nodes." />
+    <MESSAGE value="NodeEditor : Cutline" />
+    <option name="LAST_COMMIT_MESSAGE" value="NodeEditor : Cutline" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

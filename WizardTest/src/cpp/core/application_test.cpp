@@ -91,9 +91,9 @@ namespace test {
         m_SceneHierarchy = new SceneHierarchy(getNativeWindow(), this);
         m_Toolbar = new Toolbar();
 
-        bool graphLoaded = NodeEditor::get().load("graph");
-        if (!graphLoaded) {
-            NodeEditor::get().setActiveGraph(NodeEditor::get().addGraph({ 0, "graph" }));
+        if (!NodeEditor::get().load("graph")) {
+            int graphIndex = NodeEditor::get().addGraph({ 0, "graph" });
+            NodeEditor::get().setActiveGraph(graphIndex);
         }
     }
 
