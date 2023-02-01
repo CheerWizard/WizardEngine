@@ -199,33 +199,33 @@ namespace engine::yaml {
         value = parent[key].as<T>();
     }
 
-    template<typename T, typename Function>
-    void serialize(YAML::Emitter& out, const char* key, const array<T>& array, const Function& function) {
+    template<typename T>
+    void serialize(YAML::Emitter& out, const char* key, const array<T>& arr) {
         out << YAML::BeginMap;
         out << YAML::Key << key;
 
-        serialize(out, "offset", array.offset);
-        serialize(out, "size", array.size);
+        serialize(out, "offset", arr.offset);
+        serialize(out, "size", arr.size);
 
         out << YAML::Key << "values" << YAML::Value << YAML::Flow;
         out << YAML::BeginSeq;
-        array.forEach([&out, &function](const T& item) {
-            function(out, item);
-        });
+        int size = arr.size;
+        T* v = arr.values;
+        for (int i = 0 ; i < size ; i++) {
+            v[i].serialize(out);
+        }
         out << YAML::EndSeq;
 
         out << YAML::EndMap;
     }
 
     template<typename T>
-    void serialize(YAML::Emitter& out, const char* key, const array<T>& array) {
-        serialize(out, key, array, [](YAML::Emitter& out, const T& item) {
-            out << item;
-        });
-    }
-
-    template<typename T>
-    void deserialize(const YAML::Node& parent, const char* key, array<T>& array) {
-        array = parent[key].as<engine::core::array<T>>();
+    void deserialize(const YAML::Node& parent, const char* key, array<T>& arr) {
+        auto root = parent[key];
+        if (root) {
+            deserialize(root, "offset", arr.offset);
+            deserialize(root, "size", arr.size);
+            int size = arr.size;
+        }
     }
 }

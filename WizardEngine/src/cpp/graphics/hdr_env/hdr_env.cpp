@@ -24,6 +24,20 @@ namespace engine::graphics {
         }
     }
 
+    void HdrEnv::read(std::fstream &file) {
+        ::read(file, type);
+        transform.read(file);
+        texture.read(file);
+        geometry.read(file);
+    }
+
+    void HdrEnv::write(std::fstream &file) {
+        ::write(file, type);
+        transform.write(file);
+        texture.write(file);
+        geometry.write(file);
+    }
+
     void HdrEnvRenderer::init() {
         generateCubemapShader = shader::BaseShaderProgram(
                 ENGINE_SHADERS_PATH + "/" + "v_hdr_env.glsl",

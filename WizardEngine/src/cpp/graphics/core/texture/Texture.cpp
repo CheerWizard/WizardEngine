@@ -25,6 +25,18 @@ namespace engine::graphics {
         }
     }
 
+    void TextureComponent::read(std::fstream &file) {
+        ::read(file, textureId);
+        ::read(file, typeId);
+        ::read(file, sampler.value);
+    }
+
+    void TextureComponent::write(std::fstream &file) {
+        ::write(file, textureId);
+        ::write(file, typeId);
+        ::write(file, sampler.value);
+    }
+
     void CubeMapTextureComponent::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap;
         out << YAML::Key << "CubeMapTextureComponent";
@@ -41,6 +53,18 @@ namespace engine::graphics {
             yaml::deserialize(root, "typeId", typeId);
             yaml::deserialize(root, "sampler", sampler);
         }
+    }
+
+    void CubeMapTextureComponent::read(std::fstream &file) {
+        ::read(file, textureId);
+        ::read(file, typeId);
+        ::read(file, sampler.value);
+    }
+
+    void CubeMapTextureComponent::write(std::fstream &file) {
+        ::write(file, textureId);
+        ::write(file, typeId);
+        ::write(file, sampler.value);
     }
 
     ShaderScript textureScript() {

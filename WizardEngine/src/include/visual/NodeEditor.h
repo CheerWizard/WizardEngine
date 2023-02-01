@@ -1,6 +1,8 @@
 #pragma once
 
 #include <core/core.h>
+#include <core/Memory.h>
+#include <platform/tools/FileDialog.h>
 
 #include <imgui.h>
 
@@ -8,7 +10,12 @@
 #include <functional>
 #include <set>
 
+#define COLOR(r, g, b, a) IM_COL32(255 * r, 255 * g, 255 * b, 255 * a)
+
 namespace engine::visual {
+
+    using namespace core;
+    using namespace tools;
 
     template<typename T>
     struct IdComparator final {
@@ -56,6 +63,8 @@ namespace engine::visual {
         bool loadBin(std::fstream& file);
         bool saveBin(std::fstream& file);
 
+        void draw();
+
     private:
         int m_Id = 0;
         int m_Begin = 0;
@@ -93,10 +102,13 @@ namespace engine::visual {
         bool loadBin(std::fstream& file);
         bool saveBin(std::fstream& file);
 
+        void updatePos();
+        void draw();
+
     private:
         int m_Id = 0;
         ImVec2 m_Pos = { 0, 0 };
-        std::string m_Name = "Undefined";
+        std::string m_Name = "Untitled";
         std::set<Socket, IdComparator<Socket>> m_Inputs;
         std::set<Socket, IdComparator<Socket>> m_Outputs;
     };
@@ -142,11 +154,10 @@ namespace engine::visual {
         void endCutline();
 
         void zoomCanvas();
-        void moveCanvas();
 
     private:
         int m_Id = 0;
-        std::string m_Name;
+        std::string m_Name = "Untitled";
 
         ImVec2 m_CutlinePos = { 0, 0 };
         bool m_CutlineBegin = false;
@@ -154,6 +165,8 @@ namespace engine::visual {
         ImVec2 m_Cursor = { 0, 0 };
 
         float m_PastePadding = 0.25f;
+
+        bool m_ShowContextMenu = false;
 
         std::set<Node, IdComparator<Node>> m_Nodes;
         std::set<Link, IdComparator<Link>> m_Links;
@@ -174,7 +187,7 @@ namespace engine::visual {
     public:
         static NodeEditor& get();
 
-        static void create();
+        static void create(void* nativeWindow);
         static void destroy();
 
         static void setTheme();
@@ -192,8 +205,21 @@ namespace engine::visual {
 
         int addGraph(Graph&& graph);
         int addGraph(const Graph& graph);
+        // graph files
+        void newGraph();
+        void openGraph();
+        void saveGraph();
+        void saveAsGraph();
+        // clipboard/edit
+        void cutGraphItems();
+        void copyGraphItems();
+        void pasteGraphItems();
+        void deleteGraphItems();
+        void undoGraphItems();
+        void redoGraphItems();
 
     private:
+        static Ref<FileDialog> s_FileDialog;
         Graph* m_ActiveGraph = nullptr;
         std::vector<Graph> m_Graphs;
     };

@@ -28,6 +28,16 @@ namespace engine::graphics {
         }
     }
 
+    void Skybox::read(std::fstream &file) {
+        ::read(file, type);
+        ::read(file, type);
+        ::read(file, type);
+    }
+
+    void Skybox::write(std::fstream &file) {
+
+    }
+
     void SkyboxRenderer::init() {
         shaderProgram = shader::BaseShaderProgram(
                 ENGINE_SHADERS_PATH + "/" + "v_cubemap.glsl",

@@ -20,6 +20,14 @@ namespace engine::graphics {
         }
     }
 
+    void Camera2dComponent::read(std::fstream &file) {
+        math::read(file, viewProjection);
+    }
+
+    void Camera2dComponent::write(std::fstream &file) {
+        math::write(file, viewProjection);
+    }
+
     void Camera3dComponent::serialize(YAML::Emitter &out) {
         out << YAML::Key << "Camera3dComponent";
         out << YAML::BeginMap;
@@ -32,5 +40,13 @@ namespace engine::graphics {
         if (root) {
             math::deserialize(root, "viewProjection", viewProjection);
         }
+    }
+
+    void Camera3dComponent::read(std::fstream &file) {
+        math::read(file, viewProjection);
+    }
+
+    void Camera3dComponent::write(std::fstream &file) {
+        math::write(file, viewProjection);
     }
 }

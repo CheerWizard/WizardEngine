@@ -52,6 +52,30 @@ namespace engine::audio {
         }
     }
 
+    void AudioSourceComponent::read(std::fstream &file) {
+        ::read(file, sourceId);
+        ::read(file, position);
+        ::read(file, velocity);
+        ::read(file, gain);
+        ::read(file, pitch);
+        ::read(file, looping);
+        ::read(file, refDistance);
+        ::read(file, maxDistance);
+        ::read(file, rollOffFactor);
+    }
+
+    void AudioSourceComponent::write(std::fstream &file) {
+        ::write(file, sourceId);
+        ::write(file, position);
+        ::write(file, velocity);
+        ::write(file, gain);
+        ::write(file, pitch);
+        ::write(file, looping);
+        ::write(file, refDistance);
+        ::write(file, maxDistance);
+        ::write(file, rollOffFactor);
+    }
+
     void Source::create(const u8& bufferCount) {
         alCall(alGenSources, 1, &id);
         if (bufferCount == 1) {

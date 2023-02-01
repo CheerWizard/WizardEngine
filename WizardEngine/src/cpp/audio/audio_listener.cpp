@@ -25,6 +25,16 @@ namespace engine::audio {
         }
     }
 
+    void Orientation::write(std::fstream& file) {
+        ::write(file, lookVec);
+        ::write(file, upVec);
+    }
+
+    void Orientation::read(std::fstream& file) {
+        ::read(file, lookVec);
+        ::read(file, upVec);
+    }
+
     void AudioListenerComponent::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap;
         out << YAML::Key << "AudioListenerComponent";
@@ -43,6 +53,18 @@ namespace engine::audio {
             position = root["position"].as<vec3f>();
             velocity = root["velocity"].as<vec3f>();
         }
+    }
+
+    void AudioListenerComponent::write(std::fstream& file) {
+        orientation.write(file);
+        ::write(file, position);
+        ::write(file, velocity);
+    }
+
+    void AudioListenerComponent::read(std::fstream& file) {
+        orientation.read(file);
+        ::read(file, position);
+        ::read(file, velocity);
     }
 
     void Listener::setComponent(const AudioListenerComponent &component) {

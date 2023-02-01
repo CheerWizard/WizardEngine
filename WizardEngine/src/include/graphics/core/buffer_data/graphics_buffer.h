@@ -26,7 +26,6 @@ namespace engine::graphics {
     protected:
         u32 totalCount = 0;
         u32 count = 0;
-
     };
 
 }

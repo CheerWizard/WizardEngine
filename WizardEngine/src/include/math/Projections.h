@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <yaml/yaml.h>
+#include <serialization/serialization.h>
 
 #define DEFAULT_FIELD_OF_VIEW 60.0f
 #define DEFAULT_Z_NEAR 0.01f
@@ -59,8 +59,12 @@ namespace engine::math {
 
     void serialize(YAML::Emitter& out, const char* key, const OrthographicMatrix& projection);
     void deserialize(const YAML::Node& parent, const char* key, OrthographicMatrix& projection);
+    void write(std::fstream& file, const OrthographicMatrix& value);
+    void read(std::fstream& file, OrthographicMatrix& value);
 
     void serialize(YAML::Emitter& out, const char* key, const PerspectiveMatrix& projection);
     void deserialize(const YAML::Node& parent, const char* key, PerspectiveMatrix& projection);
+    void write(std::fstream& file, const PerspectiveMatrix& value);
+    void read(std::fstream& file, PerspectiveMatrix& value);
 
 }

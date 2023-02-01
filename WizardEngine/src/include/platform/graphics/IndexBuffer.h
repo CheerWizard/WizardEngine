@@ -36,7 +36,6 @@ namespace engine::graphics {
 
     private:
         u32 id = 0;
-
     };
 
 }

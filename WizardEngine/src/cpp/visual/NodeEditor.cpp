@@ -4,13 +4,19 @@
 
 #include <io/Logger.h>
 
+#include <serialization/serialization.h>
+
 #include <event/KeyCodes.h>
 #include <event/MouseCodes.h>
 
 #include <imnodes.h>
 #include <fstream>
+#include <imnodes_internal.h>
 
 namespace engine::visual {
+
+    ImNodesContext* context = NULL;
+    ImDrawList* canvas = NULL;
 
     void Node::addInput(Socket&& socket) {
         m_Inputs.insert(socket);
@@ -57,9 +63,11 @@ namespace engine::visual {
     }
 
     bool Node::loadBin(std::fstream& file) {
+        read(file, m_Id);
+        read(file, m_Name);
         // input sockets
         size_t num_inputs;
-        file.read(reinterpret_cast<char*>(&num_inputs), static_cast<std::streamsize>(sizeof(size_t)));
+        read(file, num_inputs);
         for (int i = 0 ; i < num_inputs ; i++) {
             Socket input;
             input.loadBin(file);
@@ -67,37 +75,81 @@ namespace engine::visual {
         }
         // output sockets
         size_t num_outputs;
-        file.read(reinterpret_cast<char*>(&num_outputs), static_cast<std::streamsize>(sizeof(size_t)));
+        read(file, num_outputs);
         for (int i = 0 ; i < num_outputs ; i++) {
             Socket output;
             output.loadBin(file);
             m_Outputs.insert(output);
         }
-        // title
-        file.read(reinterpret_cast<char*>(m_Name.data()),static_cast<std::streamsize>(sizeof(std::string)));
-        // id
-        file.read(reinterpret_cast<char*>(&m_Id),static_cast<std::streamsize>(sizeof(int)));
         return true;
     }
 
     bool Node::saveBin(std::fstream &file) {
+        write(file, m_Id);
+        write(file, m_Name);
         // input sockets
-        size_t num_inputs;
-        file.write(reinterpret_cast<char*>(&num_inputs), static_cast<std::streamsize>(sizeof(size_t)));
+        size_t inputs = m_Inputs.size();
+        write(file, inputs);
         for (auto input : m_Inputs) {
             input.saveBin(file);
         }
         // output sockets
-        size_t num_outputs;
-        file.write(reinterpret_cast<char*>(&num_outputs), static_cast<std::streamsize>(sizeof(size_t)));
+        size_t outputs = m_Outputs.size();
+        write(file, outputs);
         for (auto output : m_Outputs) {
             output.saveBin(file);
         }
-        // title
-        file.write(reinterpret_cast<char*>(m_Name.data()),static_cast<std::streamsize>(sizeof(std::string)));
-        // id
-        file.write(reinterpret_cast<char*>(&m_Id),static_cast<std::streamsize>(sizeof(int)));
         return true;
+    }
+
+    void Node::updatePos() {
+        m_Pos = ImNodes::GetNodeScreenSpacePos(m_Id);
+    }
+
+    void Node::draw() {
+        ImNodes::BeginNode(m_Id);
+
+        updatePos();
+
+        // title
+        ImNodes::BeginNodeTitleBar();
+        std::string title = " " + m_Name;
+        title = ICON_FA_PRINT + title;
+        ImGui::TextUnformatted(m_Name.c_str());
+        ImNodes::EndNodeTitleBar();
+
+        // content
+
+        // position
+        // x pos
+        ImGui::Text("X");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(32);
+        ImGui::DragFloat("##pos_x", &m_Pos.x);
+        ImGui::PopItemWidth();
+
+        ImGui::SameLine();
+
+        // y pos
+        ImGui::Text("Y");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(32);
+        ImGui::DragFloat("##pos_y", &m_Pos.y);
+        ImGui::PopItemWidth();
+        // position
+
+        // inputs
+        inputs([](Socket& socket) {
+            ImNodes::BeginInputAttribute(socket.getId());
+            ImNodes::EndInputAttribute();
+        });
+        // outputs
+        outputs([](Socket& socket) {
+            ImNodes::BeginOutputAttribute(socket.getId());
+            ImNodes::EndOutputAttribute();
+        });
+
+        ImNodes::EndNode();
     }
 
     void nodeHoveredCallback(int id, void* userData) {
@@ -106,29 +158,39 @@ namespace engine::visual {
 
     void Graph::draw() {
         std::string title = " " + m_Name;
-        title = ICON_FA_LANGUAGE + title;
+        title = ICON_FA_OBJECT_GROUP + title;
         ImGui::Begin(title.data());
-
-        ImGui::TextUnformatted("A -- add node");
-        ImGui::TextUnformatted(
-                "Close the executable and rerun it -- your nodes should be exactly "
-                "where you left them!");
-
-        ImGui::VSliderFloat("Paste Padding", { 22, 100 }, &m_PastePadding, 0, 1);
-
+        // settings
+        ImGui::PushItemWidth(100);
+        ImGui::SliderFloat("Paste Padding", &m_PastePadding, 0, 1, "%.1f");
+        ImGui::PopItemWidth();
+        // node editor content
         ImNodes::BeginNodeEditor();
-        // set the titlebar color for all nodes
-        ImNodesStyle& style = ImNodes::GetStyle();
-        style.Colors[ImNodesCol_TitleBar] = IM_COL32(232, 27, 86, 255);
-        style.Colors[ImNodesCol_TitleBarSelected] = IM_COL32(241, 108, 146, 255);
+        // context menu
+        if (m_ShowContextMenu) {
+            if (ImGui::BeginPopupContextWindow("scrolling_region")) {
+                if (ImGui::BeginMenu("Node")) {
+                    if (ImGui::MenuItem("Test")) {
+                        newNode();
+                    }
+
+                    ImGui::EndMenu();
+                }
+
+                ImGui::EndPopup();
+            }
+        }
         // track mouse pos
-        m_Cursor = ImGui::GetMousePos();
-        // new node
+        m_Cursor = context->MousePos;
+        // dispatch editor content events
         if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImNodes::IsEditorHovered())
         {
             // create new node
             if (ImGui::IsMouseReleased(event::MouseCode::ButtonRight)) {
-                newNode();
+                m_ShowContextMenu = true;
+            }
+            else if (ImGui::IsMouseReleased(event::MouseCode::ButtonLeft)) {
+                m_ShowContextMenu = false;
             }
             // delete selected nodes/links
             else if (ImGui::IsKeyReleased(event::KeyCode::Delete)) {
@@ -146,74 +208,31 @@ namespace engine::visual {
             else if (ImGui::IsKeyDown(event::KeyCode::LeftControl) && ImGui::IsKeyPressed(event::KeyCode::V)) {
                 pasteSelected();
             }
-            // begin cutline
-            else if (ImGui::IsKeyPressed(event::KeyCode::X) && !m_CutlineBegin) {
-                beginCutline();
-            }
             // draw cutline
             else if (ImGui::IsKeyDown(event::KeyCode::X)) {
-                drawCutline();
+                if (m_CutlineBegin) {
+                    drawCutline();
+                } else {
+                    beginCutline();
+                }
             }
             // end cutline
             else if (ImGui::IsKeyReleased(event::KeyCode::X)) {
                 endCutline();
             }
         }
-        // nodes
+        // draw nodes
         for (auto node : m_Nodes) {
-            // set the titlebar color of an individual node
-            ImNodes::PushColorStyle(
-                    ImNodesCol_TitleBar, IM_COL32(11, 109, 191, 255));
-            ImNodes::PushColorStyle(
-                    ImNodesCol_TitleBarSelected, IM_COL32(81, 148, 204, 255));
-
-            ImNodes::BeginNode(node.getId());
-            // title
-            ImNodes::BeginNodeTitleBar();
-            ImGui::TextUnformatted(node.getName());
-            ImNodes::EndNodeTitleBar();
-            // content
-            ImGui::Dummy(ImVec2(80.0f, 45.0f));
-            // inputs
-            node.inputs([](Socket& socket) {
-                ImNodes::BeginInputAttribute(socket.getId());
-                ImGui::Text("Input");
-                ImNodes::EndInputAttribute();
-            });
-            // outputs
-            node.outputs([](Socket& socket) {
-                ImNodes::BeginOutputAttribute(socket.getId());
-                ImGui::Text("Output");
-                ImNodes::EndOutputAttribute();
-            });
-
-            ImNodes::EndNode();
-
-            ImNodes::PopColorStyle();
-            ImNodes::PopColorStyle();
+            node.draw();
         }
-        // links
-        for (auto& link : m_Links) {
-            ImNodes::Link(link.getId(), link.getBegin(), link.getEnd());
+        // draw links
+        for (auto link : m_Links) {
+            link.draw();
         }
-        // show mini map
-        ImNodes::MiniMap(0.2f, ImNodesMiniMapLocation_BottomLeft, nodeHoveredCallback, this);
+        // draw minimap
+        ImNodes::MiniMap(0.1f, ImNodesMiniMapLocation_BottomLeft, nodeHoveredCallback, this);
+        // node editor content
         ImNodes::EndNodeEditor();
-        // check links
-//        // link creation
-//        {
-//            int begin, end;
-//            if (ImNodes::IsLinkCreated(&begin, &end)) {
-//                m_Links.emplace_back((int) m_Links.size(), begin, end);
-//            }
-//        }
-//        // link deletion
-//        {
-//            int linkId;
-//            if (ImNodes::IsLinkDestroyed(&linkId)) {
-//                removeLink(linkId);
-//            }
-//        }
         // node selection
         const int num_selected_nodes = ImNodes::NumSelectedNodes();
         m_SelectedNodes.resize(num_selected_nodes);
@@ -260,7 +279,7 @@ namespace engine::visual {
     }
 
     bool Graph::saveBin() {
-        std::string binFile = m_Name + ".bytes";
+        std::string binFile = m_Name + ".graph";
 
         std::fstream file(binFile, std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
 
@@ -269,21 +288,19 @@ namespace engine::visual {
             return false;
         }
 
+        write(file, m_Id);
         // nodes
-        const size_t num_nodes = m_Nodes.size();
-        file.write(reinterpret_cast<const char*>(&num_nodes), static_cast<std::streamsize>(sizeof(size_t)));
+        size_t num_nodes = m_Nodes.size();
+        write(file, num_nodes);
         for (auto node : m_Nodes) {
             node.saveBin(file);
         }
         // links
-        const size_t num_links = m_Links.size();
-        file.write(reinterpret_cast<const char*>(&num_links), static_cast<std::streamsize>(sizeof(size_t)));
+        size_t num_links = m_Links.size();
+        write(file, num_links);
         for (auto link : m_Links) {
             link.saveBin(file);
         }
-        // id
-        file.write(reinterpret_cast<const char*>(&m_Id), static_cast<std::streamsize>(sizeof(int)));
-
         return true;
     }
 
@@ -299,16 +316,18 @@ namespace engine::visual {
     }
 
     bool Graph::loadBin() {
-        std::string binFile = m_Name + ".bytes";
+        std::string binFile = m_Name + ".graph";
         std::fstream file(binFile, std::ios_base::in | std::ios_base::binary);
 
         if (!file.is_open()) {
             ENGINE_ERR("NodeEditor: Failed to load graph {0}", binFile.c_str());
             return false;
         }
+
+        read(file, m_Id);
         // nodes
         size_t num_nodes;
-        file.read(reinterpret_cast<char*>(&num_nodes), static_cast<std::streamsize>(sizeof(size_t)));
+        read(file, num_nodes);
         for (int i = 0 ; i < num_nodes ; i++) {
             Node node;
             node.loadBin(file);
@@ -316,15 +335,12 @@ namespace engine::visual {
         }
         // links
         size_t num_links;
-        file.read(reinterpret_cast<char*>(&num_links), static_cast<std::streamsize>(sizeof(size_t)));
+        read(file, num_links);
         for (int i = 0 ; i < num_links ; i++) {
             Link link;
             link.loadBin(file);
             m_Links.insert(link);
         }
-        // id
-        file.read(reinterpret_cast<char*>(&m_Id), static_cast<std::streamsize>(sizeof(int)));
-
         return true;
     }
 
@@ -339,12 +355,12 @@ namespace engine::visual {
     void Graph::newNode() {
         int newId = 0;
         int newInputId = 0;
-        int newOutputId = 0;
+        int newOutputId = 1;
 
         if (m_Nodes.rbegin() != m_Nodes.rend()) {
             newId = m_Nodes.rbegin()->getId() + 1;
-            newInputId = m_Nodes.rbegin()->getLastInputId() + 1;
-            newOutputId = m_Nodes.rbegin()->getLastOutputId() + 1;
+            newInputId = m_Nodes.rbegin()->getLastInputId() + 2;
+            newOutputId = m_Nodes.rbegin()->getLastOutputId() + 2;
         }
 
         Node node = { newId, m_Cursor };
@@ -385,7 +401,7 @@ namespace engine::visual {
         for (auto node : m_TempNodes) {
             int newId = 0;
             int newInputId = 0;
-            int newOutputId = 0;
+            int newOutputId = 1;
             ImVec2 newPos = {
                     node.getPos().x + m_Cursor.x * m_PastePadding,
                     node.getPos().y + m_Cursor.y * m_PastePadding
@@ -393,8 +409,8 @@ namespace engine::visual {
 
             if (m_Nodes.rbegin() != m_Nodes.rend()) {
                 newId = m_Nodes.rbegin()->getId() + 1;
-                newInputId = m_Nodes.rbegin()->getLastInputId() + 1;
-                newOutputId = m_Nodes.rbegin()->getLastOutputId() + 1;
+                newInputId = m_Nodes.rbegin()->getLastInputId() + 2;
+                newOutputId = m_Nodes.rbegin()->getLastOutputId() + 2;
             }
 
             node.setId(newId);
@@ -432,12 +448,13 @@ namespace engine::visual {
     }
 
     void Graph::beginCutline() {
-        m_CutlinePos = ImGui::GetMousePos();
+        m_CutlinePos = ImGui::GetCursorScreenPos();
         m_CutlineBegin = true;
     }
 
     void Graph::drawCutline() {
-        ImGui::GetWindowDrawList()->AddLine(m_CutlinePos, m_Cursor, IM_COL32(1, 1, 1, 1));
+        context->CanvasDrawList->AddLine(m_CutlinePos, m_Cursor, IM_COL32(1, 1, 1, 1), 2);
+        ImGui::SetTooltip("Cutline [%f;%f] -> [%f;%f]", m_CutlinePos.x, m_CutlinePos.y, m_Cursor.x, m_Cursor.y);
     }
 
     void Graph::endCutline() {
@@ -447,8 +464,7 @@ namespace engine::visual {
     void Graph::zoomCanvas() {
     }
 
-    void Graph::moveCanvas() {
-    }
+    Ref<FileDialog> NodeEditor::s_FileDialog = nullptr;
 
     NodeEditor &NodeEditor::get() {
         static NodeEditor instance;
@@ -495,8 +511,10 @@ namespace engine::visual {
         return m_Graphs.size() - 1;
     }
 
-    void NodeEditor::create() {
-        ImNodes::CreateContext();
+    void NodeEditor::create(void* nativeWindow) {
+        context = ImNodes::CreateContext();
+        canvas = context->CanvasDrawList;
+        s_FileDialog = createRef<FileDialog>(nativeWindow);
         ImNodes::GetIO().LinkDetachWithModifierClick.Modifier = &ImGui::GetIO().KeyCtrl;
         ImNodes::PushAttributeFlag(ImNodesAttributeFlags_EnableLinkDetachWithDragClick);
     }
@@ -505,35 +523,105 @@ namespace engine::visual {
         get().save();
         ImNodes::PopAttributeFlag();
         ImNodes::DestroyContext();
+        context = NULL;
+        canvas = NULL;
     }
 
     void NodeEditor::setTheme() {
         ImNodesStyle* style = &ImNodes::GetStyle();
-        // todo update node editor styles
-        ImNodes::StyleColorsDark(style);
+        style->PinCircleRadius = 6;
+        style->LinkThickness = 3;
+
+        style->Colors[ImNodesCol_TitleBar] = COLOR(0.1, 0, 0.5, 1);
+        style->Colors[ImNodesCol_TitleBarHovered] = COLOR(0.1, 0, 0.7, 1);
+        style->Colors[ImNodesCol_TitleBarSelected] = COLOR(0.1, 0, 0.5, 1);
+
+        style->Colors[ImNodesCol_NodeBackground] = COLOR(0.1, 0.1, 0.1, 1);
+        style->Colors[ImNodesCol_NodeBackgroundHovered] = COLOR(0.2, 0.2, 0.2, 1);
+        style->Colors[ImNodesCol_NodeBackgroundSelected] = COLOR(0.4, 0.4, 0.4, 1);
+        style->Colors[ImNodesCol_NodeOutline] = COLOR(0, 0, 0, 0);
+
+        style->Colors[ImNodesCol_Link] = COLOR(0.1, 0, 0.5, 1);
+        style->Colors[ImNodesCol_LinkHovered] = COLOR(0.1, 0, 0.7, 1);
+        style->Colors[ImNodesCol_LinkSelected] = COLOR(0.1, 0, 0.5, 1);
+
+        style->Colors[ImNodesCol_BoxSelectorOutline] = COLOR(0, 0, 1, 1);
+        style->Colors[ImNodesCol_BoxSelector] = COLOR(0.1, 0, 0.5, 1);
+
+        style->Colors[ImNodesCol_Pin] = COLOR(0, 1, 0, 1);
+        style->Colors[ImNodesCol_PinHovered] = COLOR(0, 0.5, 0, 1);
+    }
+
+    void NodeEditor::newGraph() {
+        int newId = 0;
+        if (m_Graphs.rbegin() != m_Graphs.rend()) {
+            newId = m_Graphs.rbegin()->getId() + 1;
+        }
+        m_Graphs.emplace_back(newId);
+        m_ActiveGraph = &m_Graphs.back();
+    }
+
+    void NodeEditor::openGraph() {
+        auto importPath = s_FileDialog->getImportPath("Graph (*.graph)\0*.graph\0");
+    }
+
+    void NodeEditor::saveGraph() {
+        save();
+    }
+
+    void NodeEditor::saveAsGraph() {
+        auto exportPath = s_FileDialog->getExportPath("Graph (*.graph)\0*.graph\0");
+    }
+
+    void NodeEditor::cutGraphItems() {
+
+    }
+
+    void NodeEditor::copyGraphItems() {
+
+    }
+
+    void NodeEditor::pasteGraphItems() {
+
+    }
+
+    void NodeEditor::deleteGraphItems() {
+
+    }
+
+    void NodeEditor::undoGraphItems() {
+
+    }
+
+    void NodeEditor::redoGraphItems() {
+
     }
 
     bool Socket::loadBin(std::fstream& file) {
-        file.read(reinterpret_cast<char*>(&m_Id), static_cast<std::streamsize>(sizeof(int)));
+        read(file, m_Id);
         return true;
     }
 
     bool Socket::saveBin(std::fstream &file) {
-        file.write(reinterpret_cast<const char*>(&m_Id), static_cast<std::streamsize>(sizeof(int)));
+        write(file, m_Id);
         return true;
     }
 
     bool Link::loadBin(std::fstream &file) {
-        file.read(reinterpret_cast<char*>(&m_Id), static_cast<std::streamsize>(sizeof(int)));
-        file.read(reinterpret_cast<char*>(&m_Begin), static_cast<std::streamsize>(sizeof(int)));
-        file.read(reinterpret_cast<char*>(&m_End), static_cast<std::streamsize>(sizeof(int)));
+        read(file, m_Id);
+        read(file, m_Begin);
+        read(file, m_End);
         return true;
     }
 
     bool Link::saveBin(std::fstream &file) {
-        file.write(reinterpret_cast<const char*>(&m_Id), static_cast<std::streamsize>(sizeof(int)));
-        file.write(reinterpret_cast<const char*>(&m_Begin), static_cast<std::streamsize>(sizeof(int)));
-        file.write(reinterpret_cast<const char*>(&m_End), static_cast<std::streamsize>(sizeof(int)));
+        write(file, m_Id);
+        write(file, m_Begin);
+        write(file, m_End);
         return true;
+    }
+
+    void Link::draw() {
+        ImNodes::Link(m_Id, m_Begin, m_End);
     }
 }

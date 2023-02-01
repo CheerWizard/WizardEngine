@@ -1,7 +1,3 @@
-//
-// Created by mecha on 07.09.2022.
-//
-
 // dynamic library
 // defined for library
 #ifdef ENGINE_DLL_BUILD

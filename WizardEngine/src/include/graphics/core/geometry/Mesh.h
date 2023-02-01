@@ -12,6 +12,7 @@ namespace engine::graphics {
     using namespace math;
 
     struct Vertex3d {
+        serializable()
         vec3f position = { 0.5f, 0.5f, 0.5f };
         vec2f uv = {0.25f, -0.25f };
         vec3f normal = { 0, 0, 0 };
@@ -21,6 +22,7 @@ namespace engine::graphics {
 
     template<typename T>
     struct BaseMesh {
+        serializable()
         array<T> vertexData;
         IndexData indexData;
 
@@ -49,7 +51,39 @@ namespace engine::graphics {
         return { toVertexData, indexData };
     }
 
+    template<typename T>
+    void BaseMesh<T>::serialize(YAML::Emitter &out) {
+        out << YAML::Key << "BaseMesh";
+        out << YAML::BeginMap;
+        yaml::serialize(out, "vertexData", vertexData);
+        yaml::serialize(out, "indexData", indexData);
+        out << YAML::EndMap;
+    }
+
+    template<typename T>
+    void BaseMesh<T>::deserialize(const YAML::Node &parent) {
+        auto root = parent["BaseMesh"];
+        if (root) {
+            yaml::deserialize(root, "vertexData", vertexData);
+            yaml::deserialize(root, "indexData", indexData);
+        }
+    }
+
+    template<typename T>
+    void BaseMesh<T>::read(std::fstream &file) {
+        ::read(file, vertexData);
+        ::read(file, indexData);
+    }
+
+    template<typename T>
+    void BaseMesh<T>::write(std::fstream &file) {
+        ::write(file, vertexData);
+        ::write(file, indexData);
+    }
+
     template_component(BaseMeshComponent, T) {
+        serializable()
+
         BaseMesh<T> mesh;
         u32 vertexStart = 0;
         u32 indexStart = 0;
@@ -125,5 +159,47 @@ namespace engine::graphics {
             auto& index = indexData.values[j];
             index += vertexData.offset;
         }
+    }
+
+    template<typename T>
+    void BaseMeshComponent<T>::serialize(YAML::Emitter &out) {
+        out << YAML::Key << "BaseMeshComponent";
+        out << YAML::BeginMap;
+        yaml::serialize(out, "vertexStart", vertexStart);
+        yaml::serialize(out, "indexStart", indexStart);
+        yaml::serialize(out, "isUpdated", isUpdated);
+        yaml::serialize(out, "drawType", drawType);
+        mesh.serialize(out);
+        out << YAML::EndMap;
+    }
+
+    template<typename T>
+    void BaseMeshComponent<T>::deserialize(const YAML::Node &parent) {
+        auto root = parent["BaseMeshComponent"];
+        if (root) {
+            yaml::deserialize(root, "vertexStart", vertexStart);
+            yaml::deserialize(root, "indexStart", indexStart);
+            yaml::deserialize(root, "isUpdated", isUpdated);
+            yaml::deserialize(root, "drawType", drawType);
+            mesh.deserialize(parent);
+        }
+    }
+
+    template<typename T>
+    void BaseMeshComponent<T>::read(std::fstream &file) {
+        ::read(file, mesh);
+        ::read(file, vertexStart);
+        ::read(file, indexStart);
+        ::read(file, isUpdated);
+        ::read(file, drawType);
+    }
+
+    template<typename T>
+    void BaseMeshComponent<T>::write(std::fstream &file) {
+        ::write(file, mesh);
+        ::write(file, vertexStart);
+        ::write(file, indexStart);
+        ::write(file, isUpdated);
+        ::write(file, drawType);
     }
 }

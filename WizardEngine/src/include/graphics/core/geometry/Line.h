@@ -11,11 +11,9 @@ namespace engine::graphics {
     using namespace math;
 
     struct LineVertex {
+        serializable()
         vec3f position = { 0.5, 0.5, 0.5 };
         vec4f color = { 0, 1, 0, 1 };
-
-        void encode(YAML::Node& node) const;
-        void decode(const YAML::Node& node, u32 index);
     };
 
     struct InstanceLine : VertexDataComponent<InstanceVertex<LineVertex>> {
@@ -32,16 +30,6 @@ namespace engine::graphics {
             vertexData = toVertexData<LineVertex, BatchVertex<LineVertex>>(linesVertices);
             this->drawType = DrawType::LINE;
         }
-    };
-
-    component(BatchLineSerializable) {
-        serializable()
-        BatchLine line;
-    };
-
-    component(InstanceLineSerializable) {
-        serializable()
-        InstanceLine line;
     };
 
 }

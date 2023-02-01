@@ -28,6 +28,8 @@ namespace engine::graphics {
     };
 
     template_component(VertexDataComponent, T) {
+        serializable()
+
         array<T> vertexData;
         bool isUpdated = true;
         u8 renderModelId = 0;
@@ -77,6 +79,40 @@ namespace engine::graphics {
     VertexDataComponent<TO>
     VertexDataComponent<T>::toVertexDataComponent(const std::function<TO(const T &)>& vertexMapper) {
         return VertexDataComponent<TO>{ vertexData.toVertexData(vertexMapper) };
+    }
+
+    template<typename T>
+    void VertexDataComponent<T>::serialize(YAML::Emitter &out) {
+        out << YAML::Key << "VertexDataComponent";
+        out << YAML::BeginMap;
+        yaml::serialize(out, "renderModelId", renderModelId);
+        yaml::serialize(out, "drawType", (u16) drawType);
+        yaml::serialize(out, "vertexData", vertexData);
+        out << YAML::EndMap;
+    }
+
+    template<typename T>
+    void VertexDataComponent<T>::deserialize(const YAML::Node &parent) {
+        auto root = parent["VertexDataComponent"];
+        if (root) {
+            yaml::deserialize(root, "renderModelId", renderModelId);
+            yaml::deserialize(root, "drawType", drawType);
+            yaml::deserialize(root, "vertexData", vertexData);
+        }
+    }
+
+    template<typename T>
+    void VertexDataComponent<T>::read(std::fstream &file) {
+        ::read(file, renderModelId);
+        ::read(file, drawType);
+        ::read(file, vertexData);
+    }
+
+    template<typename T>
+    void VertexDataComponent<T>::write(std::fstream &file) {
+        ::write(file, renderModelId);
+        ::write(file, drawType);
+        ::write(file, vertexData);
     }
 }
 

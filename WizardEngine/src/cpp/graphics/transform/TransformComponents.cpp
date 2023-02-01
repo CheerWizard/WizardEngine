@@ -20,6 +20,14 @@ namespace engine::graphics {
         }
     }
 
+    void Transform2dComponent::read(std::fstream &file) {
+        ::read(file, modelMatrix);
+    }
+
+    void Transform2dComponent::write(std::fstream &file) {
+        ::write(file, modelMatrix);
+    }
+
     void Transform3dComponent::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap;
         out << YAML::Key << "Transform3dComponent";
@@ -32,5 +40,13 @@ namespace engine::graphics {
         if (root) {
             math::deserialize(root, "modelMatrix", modelMatrix);
         }
+    }
+
+    void Transform3dComponent::read(std::fstream &file) {
+        ::read(file, modelMatrix);
+    }
+
+    void Transform3dComponent::write(std::fstream &file) {
+        ::write(file, modelMatrix);
     }
 }

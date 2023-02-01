@@ -21,5 +21,12 @@ namespace engine::ecs {
         ENGINE_TRACE("Deserialized TAG = {0}", tag);
     }
 
+    void TagComponent::read(std::fstream &file) {
+        ::read(file, tag);
+    }
+
+    void TagComponent::write(std::fstream &file) {
+        ::write(file, tag);
+    }
 
 }

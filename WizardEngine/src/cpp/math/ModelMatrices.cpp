@@ -42,6 +42,30 @@ namespace engine::math {
         }
     }
 
+    void write(std::fstream& file, const ModelMatrix2d& value) {
+        ::write(file, value.position);
+        ::write(file, value.rotation);
+        ::write(file, value.scale);
+    }
+
+    void read(std::fstream& file, ModelMatrix2d& value) {
+        ::read(file, value.position);
+        ::read(file, value.rotation);
+        ::read(file, value.scale);
+    }
+
+    void write(std::fstream& file, const ModelMatrix3d& value) {
+        ::write(file, value.position);
+        ::write(file, value.rotation);
+        ::write(file, value.scale);
+    }
+
+    void read(std::fstream& file, ModelMatrix3d& value) {
+        ::read(file, value.position);
+        ::read(file, value.rotation);
+        ::read(file, value.scale);
+    }
+
     void ModelMatrix2d::apply() {
         auto identity = math::mat4f();
         auto translationMatrix = math::translate(identity, math::vec3f(position, 1));

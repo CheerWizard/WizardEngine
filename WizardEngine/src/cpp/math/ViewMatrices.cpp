@@ -47,6 +47,32 @@ namespace engine::math {
         }
     }
 
+    void write(std::fstream& file, const ViewMatrix2d& value) {
+        ::write(file, value.position);
+        ::write(file, value.rotation);
+    }
+
+    void read(std::fstream& file, ViewMatrix2d& value) {
+        ::read(file, value.position);
+        ::read(file, value.rotation);
+    }
+
+    void write(std::fstream& file, const ViewMatrix3d& value) {
+        ::write(file, value.position.value);
+        ::write(file, value.pitch);
+        ::write(file, value.yaw);
+        ::write(file, value.roll);
+        ::write(file, value.scale);
+    }
+
+    void read(std::fstream& file, ViewMatrix3d& value) {
+        ::read(file, value.position.value);
+        ::read(file, value.pitch);
+        ::read(file, value.yaw);
+        ::read(file, value.roll);
+        ::read(file, value.scale);
+    }
+
     glm::quat ViewMatrix3d::orientation() const {
         return { glm::vec3(-pitch, -yaw, 0) };
     }

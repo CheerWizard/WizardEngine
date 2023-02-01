@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <yaml/yaml.h>
+#include <serialization/serialization.h>
 
 #define DEFAULT_TRANSLATION_3D {0.5, 0.5, 0.5}
 #define DEFAULT_ROTATION_3D {0, 0, 0}
@@ -76,8 +76,12 @@ namespace engine::math {
 
     void serialize(YAML::Emitter& out, const char* key, const ModelMatrix2d& model);
     void deserialize(const YAML::Node& parent, const char* key, ModelMatrix2d& model);
+    void write(std::fstream& file, const ModelMatrix2d& value);
+    void read(std::fstream& file, ModelMatrix2d& value);
 
     void serialize(YAML::Emitter& out, const char* key, const ModelMatrix3d& model);
     void deserialize(const YAML::Node& parent, const char* key, ModelMatrix3d& model);
+    void write(std::fstream& file, const ModelMatrix3d& value);
+    void read(std::fstream& file, ModelMatrix3d& value);
 
 }

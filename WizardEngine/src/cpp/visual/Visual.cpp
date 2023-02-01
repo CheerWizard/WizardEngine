@@ -39,7 +39,7 @@ namespace engine::visual {
 
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-        NodeEditor::create();
+        NodeEditor::create(nativeWindow);
         IO.IniFilename = "Visual.ini";
 
         IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
@@ -293,7 +293,7 @@ namespace engine::visual {
             ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
-        // Menu Bar
+        // Toolbar
         if (ImGui::BeginMenuBar()) {
             // Scene Menu
             if (ImGui::BeginMenu("Scene")) {
@@ -304,10 +304,14 @@ namespace engine::visual {
                     app.newScene(ss.str());
                 }
 
+                ImGui::Separator();
+
                 if (ImGui::MenuItem("Open...", "Ctrl+O")) {
                     auto importPath = s_FileDialog->getImportPath("YAML Scene (*.yaml)\0*.yaml\0");
                     LocalAssetManager::read(importPath.c_str());
                 }
+
+                ImGui::Separator();
 
                 if (ImGui::MenuItem("Save All", "Ctrl+S")) {
                     LocalAssetManager::writeAll("assets/scenes");
@@ -326,13 +330,19 @@ namespace engine::visual {
                     ProjectsPanel::get().enableDraw = true;
                 }
 
+                ImGui::Separator();
+
                 if (ImGui::MenuItem("New", "Ctrl+N")) {
                     ProjectsPanel::get().enableDraw = true;
                 }
 
+                ImGui::Separator();
+
                 if (ImGui::MenuItem("Open...", "Ctrl+O")) {
                     ProjectsPanel::get().enableDraw = true;
                 }
+
+                ImGui::Separator();
 
                 if (ImGui::MenuItem("Save", "Ctrl+S")) {
                     ProjectsPanel::get().enableDraw = true;
@@ -344,7 +354,68 @@ namespace engine::visual {
 
                 ImGui::EndMenu();
             }
-            // Menu Bar
+            // Node Editor Menu
+            if (ImGui::BeginMenu("Node Editor")) {
+                // graphs
+                if (ImGui::BeginMenu("Graphs")) {
+                    if (ImGui::MenuItem("New", "Ctrl+N")) {
+                        NodeEditor::get().newGraph();
+                    }
+
+                    ImGui::Separator();
+
+                    if (ImGui::MenuItem("Open...", "Ctrl+O")) {
+                        NodeEditor::get().openGraph();
+                    }
+
+                    ImGui::Separator();
+
+                    if (ImGui::MenuItem("Save", "Ctrl+Shift+S")) {
+                        NodeEditor::get().saveGraph();
+                    }
+
+                    if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) {
+                        NodeEditor::get().saveAsGraph();
+                    }
+
+                    ImGui::EndMenu();
+                }
+                // edit items
+                if (ImGui::BeginMenu("Edit")) {
+                    if (ImGui::MenuItem("Cut", "Ctrl+X")) {
+                        NodeEditor::get().cutGraphItems();
+                    }
+
+                    if (ImGui::MenuItem("Copy", "Ctrl+C")) {
+                        NodeEditor::get().copyGraphItems();
+                    }
+
+                    if (ImGui::MenuItem("Paste", "Ctrl+V")) {
+                        NodeEditor::get().pasteGraphItems();
+                    }
+
+                    ImGui::Separator();
+
+                    if (ImGui::MenuItem("Delete", "Del")) {
+                        NodeEditor::get().deleteGraphItems();
+                    }
+
+                    ImGui::Separator();
+
+                    if (ImGui::MenuItem("Undo", "Ctrl+Z")) {
+                        NodeEditor::get().undoGraphItems();
+                    }
+
+                    if (ImGui::MenuItem("Redo", "Ctrl+Shift+Z")) {
+                        NodeEditor::get().redoGraphItems();
+                    }
+
+                    ImGui::EndMenu();
+                }
+
+                ImGui::EndMenu();
+            }
+            // Toolbar
             ImGui::EndMenuBar();
         }
 

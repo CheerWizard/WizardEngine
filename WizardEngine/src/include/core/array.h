@@ -4,9 +4,9 @@
 
 #pragma once
 
+#include <core/core.h>
 #include <cstdint>
 #include <functional>
-#include <core/core.h>
 
 namespace engine::core {
 
