@@ -61,6 +61,54 @@ namespace engine::graphics {
         }
     }
 
+    void Material::read(std::fstream &file) {
+        ::read(file, color.value);
+        ::read(file, brightness.value);
+        ::read(file, gamma.value);
+        ::read(file, heightScale.value);
+        ::read(file, minLayers.value);
+        ::read(file, maxLayers.value);
+        ::read(file, metallic.value);
+        ::read(file, roughness.value);
+        ::read(file, ao.value);
+        ::read(file, enableAlbedoMap.value);
+        ::read(file, enableNormalMap.value);
+        ::read(file, enableParallaxMap.value);
+        ::read(file, enableMetallicMap.value);
+        ::read(file, enableRoughnessMap.value);
+        ::read(file, enableAOMap.value);
+        albedoSlot.read(file);
+        normalSlot.read(file);
+        depthSlot.read(file);
+        metallicSlot.read(file);
+        roughnessSlot.read(file);
+        aoSlot.read(file);
+    }
+
+    void Material::write(std::fstream &file) {
+        ::write(file, color.value);
+        ::write(file, brightness.value);
+        ::write(file, gamma.value);
+        ::write(file, heightScale.value);
+        ::write(file, minLayers.value);
+        ::write(file, maxLayers.value);
+        ::write(file, metallic.value);
+        ::write(file, roughness.value);
+        ::write(file, ao.value);
+        ::write(file, enableAlbedoMap.value);
+        ::write(file, enableNormalMap.value);
+        ::write(file, enableParallaxMap.value);
+        ::write(file, enableMetallicMap.value);
+        ::write(file, enableRoughnessMap.value);
+        ::write(file, enableAOMap.value);
+        albedoSlot.write(file);
+        normalSlot.write(file);
+        depthSlot.write(file);
+        metallicSlot.write(file);
+        roughnessSlot.write(file);
+        aoSlot.write(file);
+    }
+
     void MaterialShader::setMaterial(u32 index, Material *material) {
         shaderProgram.setUniformArrayStructField(index, material->name, material->color);
         shaderProgram.setUniformArrayStructField(index, material->name, material->gamma);

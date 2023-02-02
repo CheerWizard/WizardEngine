@@ -56,7 +56,7 @@ namespace engine::network {
 
     template<class V>
     struct GDPrimitive {
-        decl_serializable()
+        serializable_unexposed()
         V value;
         GDPrimitive() = default;
         GDPrimitive(const V& value) : value(value) {}
@@ -94,7 +94,7 @@ namespace engine::network {
 
     template<class V>
     struct GDPrimitives {
-        decl_serializable()
+        serializable_unexposed()
         vector<V> values;
         GDPrimitives(const std::initializer_list<V>& values) : values(values) {}
     };
@@ -141,7 +141,7 @@ namespace engine::network {
      * */
     template<class V>
     struct GDSerializables {
-        decl_serializable()
+        serializable_unexposed()
         vector<V> serializables;
         GDSerializables(const std::initializer_list<V>& serializables) : serializables(serializables) {}
     };

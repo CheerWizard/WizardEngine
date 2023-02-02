@@ -1,7 +1,3 @@
-//
-// Created by mecha on 23.09.2021.
-//
-
 #include <math/ViewProjections.h>
 
 namespace engine::math {
@@ -42,26 +38,6 @@ namespace engine::math {
         }
     }
 
-    void write(std::fstream& file, const ViewProjection2d& vp) {
-        write(file, vp.viewMatrix);
-        write(file, vp.orthographicMatrix);
-    }
-
-    void read(std::fstream& file, ViewProjection2d& vp) {
-        read(file, vp.viewMatrix);
-        read(file, vp.orthographicMatrix);
-    }
-
-    void write(std::fstream& file, const ViewProjection3d& vp) {
-        write(file, vp.viewMatrix);
-        write(file, vp.perspectiveMatrix);
-    }
-
-    void read(std::fstream& file, ViewProjection3d& vp) {
-        read(file, vp.viewMatrix);
-        read(file, vp.perspectiveMatrix);
-    }
-
     void ViewProjection2d::apply() {
         orthographicMatrix.apply();
         viewMatrix.apply();
@@ -72,5 +48,25 @@ namespace engine::math {
         perspectiveMatrix.apply();
         viewMatrix.apply();
         value = viewMatrix.value * perspectiveMatrix.value;
+    }
+
+    void write(std::fstream& file, ViewProjection2d& vp) {
+        write(file, vp.viewMatrix);
+        write(file, vp.orthographicMatrix);
+    }
+
+    void read(std::fstream& file, ViewProjection2d& vp) {
+        read(file, vp.viewMatrix);
+        read(file, vp.orthographicMatrix);
+    }
+
+    void write(std::fstream& file, ViewProjection3d& vp) {
+        write(file, vp.viewMatrix);
+        write(file, vp.perspectiveMatrix);
+    }
+
+    void read(std::fstream& file, ViewProjection3d& vp) {
+        read(file, vp.viewMatrix);
+        read(file, vp.perspectiveMatrix);
     }
 }

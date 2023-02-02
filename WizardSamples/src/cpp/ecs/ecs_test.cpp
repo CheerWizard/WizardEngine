@@ -210,8 +210,6 @@ namespace test::ecs {
 
     void test_serializeComponents() {
         component(Position) {
-            serializable()
-
             f32 x = 0;
             f32 y = 0;
 

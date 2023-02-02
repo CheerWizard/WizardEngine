@@ -1,10 +1,32 @@
-//
-// Created by mecha on 06.06.2022.
-//
-
 #include <graphics/core/geometry/Circle.h>
 
 namespace engine::graphics {
+
+    void CircleVertex::serialize(YAML::Emitter &out) {
+        out << YAML::Key << "CircleVertex";
+        out << YAML::BeginMap;
+        yaml::serialize(out, "position", position);
+        yaml::serialize(out, "uv", uv);
+        out << YAML::EndMap;
+    }
+
+    void CircleVertex::deserialize(const YAML::Node &parent) {
+        auto root = parent["CircleVertex"];
+        if (root) {
+            yaml::deserialize(root, "position", position);
+            yaml::deserialize(root, "uv", uv);
+        }
+    }
+
+    void CircleVertex::read(std::fstream &file) {
+        ::read(file, position);
+        ::read(file, uv);
+    }
+
+    void CircleVertex::write(std::fstream &file) {
+        ::write(file, position);
+        ::write(file, uv);
+    }
 
     void CircleComponent::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap;
@@ -24,6 +46,18 @@ namespace engine::graphics {
             yaml::deserialize(root, "thickness", thickness);
             yaml::deserialize(root, "fade", fade);
         }
+    }
+
+    void CircleComponent::read(std::fstream &file) {
+        ::read(file, color);
+        ::read(file, thickness);
+        ::read(file, fade);
+    }
+
+    void CircleComponent::write(std::fstream &file) {
+        ::write(file, color);
+        ::write(file, thickness);
+        ::write(file, fade);
     }
 
 }

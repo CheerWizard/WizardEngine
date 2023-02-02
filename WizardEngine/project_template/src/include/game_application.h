@@ -1,7 +1,3 @@
-//
-// Created by mecha on 05.04.2022.
-//
-
 #pragma once
 
 #include <core/Application.h>

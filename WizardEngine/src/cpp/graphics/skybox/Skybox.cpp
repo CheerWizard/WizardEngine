@@ -1,7 +1,3 @@
-//
-// Created by mecha on 17.08.2022.
-//
-
 #include <graphics/skybox/Skybox.h>
 #include <graphics/camera/CameraComponents.h>
 
@@ -30,12 +26,16 @@ namespace engine::graphics {
 
     void Skybox::read(std::fstream &file) {
         ::read(file, type);
-        ::read(file, type);
-        ::read(file, type);
+        geometry.read(file);
+        textures.read(file);
+        transform.read(file);
     }
 
     void Skybox::write(std::fstream &file) {
-
+        ::write(file, type);
+        geometry.write(file);
+        textures.write(file);
+        transform.write(file);
     }
 
     void SkyboxRenderer::init() {

@@ -1,7 +1,3 @@
-//
-// Created by mecha on 26.03.2022.
-//
-
 #include <graphics/text/Text.h>
 
 namespace engine::graphics {
@@ -18,6 +14,14 @@ namespace engine::graphics {
         if (root) {
             math::deserialize(root, "viewProjection", viewProjection);
         }
+    }
+
+    void TextProjection::read(std::fstream &file) {
+        math::read(file, viewProjection);
+    }
+
+    void TextProjection::write(std::fstream &file) {
+        math::write(file, viewProjection);
     }
 
     ShaderScript textProjectionScript() {

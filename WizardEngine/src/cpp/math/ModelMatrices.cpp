@@ -1,7 +1,3 @@
-//
-// Created by mecha on 23.09.2021.
-//
-
 #include <math/ModelMatrices.h>
 
 namespace engine::math {
@@ -40,30 +36,6 @@ namespace engine::math {
             yaml::deserialize(parent, "rotation", model.rotation);
             yaml::deserialize(parent, "scale", model.scale);
         }
-    }
-
-    void write(std::fstream& file, const ModelMatrix2d& value) {
-        ::write(file, value.position);
-        ::write(file, value.rotation);
-        ::write(file, value.scale);
-    }
-
-    void read(std::fstream& file, ModelMatrix2d& value) {
-        ::read(file, value.position);
-        ::read(file, value.rotation);
-        ::read(file, value.scale);
-    }
-
-    void write(std::fstream& file, const ModelMatrix3d& value) {
-        ::write(file, value.position);
-        ::write(file, value.rotation);
-        ::write(file, value.scale);
-    }
-
-    void read(std::fstream& file, ModelMatrix3d& value) {
-        ::read(file, value.position);
-        ::read(file, value.rotation);
-        ::read(file, value.scale);
     }
 
     void ModelMatrix2d::apply() {
@@ -106,5 +78,29 @@ namespace engine::math {
         value.v1 = { model[1][0], model[1][1], model[1][2], model[1][3] };
         value.v2 = { model[2][0], model[2][1], model[2][2], model[2][3] };
         value.v3 = { model[3][0], model[3][1], model[3][2], model[3][3] };
+    }
+
+    void write(std::fstream& file, ModelMatrix2d& value) {
+        ::write(file, value.position);
+        ::write(file, value.rotation);
+        ::write(file, value.scale);
+    }
+
+    void write(std::fstream& file, ModelMatrix3d& value) {
+        ::write(file, value.position);
+        ::write(file, value.rotation);
+        ::write(file, value.scale);
+    }
+
+    void read(std::fstream& file, ModelMatrix2d& value) {
+        ::read(file, value.position);
+        ::read(file, value.rotation);
+        ::read(file, value.scale);
+    }
+
+    void read(std::fstream& file, ModelMatrix3d& value) {
+        ::read(file, value.position);
+        ::read(file, value.rotation);
+        ::read(file, value.scale);
     }
 }

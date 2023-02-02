@@ -13,6 +13,7 @@ namespace engine::graphics {
     using namespace math;
 
     struct CircleVertex {
+        serializable()
         vec3f position = { 0.5, 0.5, 0.5 };
         vec2f uv = { 0, 0 };
     };

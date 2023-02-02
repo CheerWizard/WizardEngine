@@ -1,7 +1,3 @@
-//
-// Created by mecha on 26.09.2021.
-//
-
 #pragma once
 
 #include <platform/graphics/RenderCommands.h>
@@ -28,7 +24,7 @@ namespace engine::graphics {
     };
 
     template_component(VertexDataComponent, T) {
-        serializable()
+        serializable_unexposed()
 
         array<T> vertexData;
         bool isUpdated = true;

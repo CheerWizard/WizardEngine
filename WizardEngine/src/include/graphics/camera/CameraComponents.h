@@ -1,7 +1,3 @@
-//
-// Created by mecha on 26.10.2021.
-//
-
 #pragma once
 
 #include <math/ViewProjections.h>

@@ -1,10 +1,7 @@
-//
-// Created by mecha on 06.06.2022.
-//
-
 #pragma once
 
 #include <core/core.h>
+#include <core/primitives.h>
 #include <cstdint>
 #include <functional>
 

@@ -1,15 +1,9 @@
-//
-// Created by mecha on 21.05.2022.
-//
-
 #include <core/filesystem.h>
 #include <serialization/EntitySerializer.h>
 
 #include <graphics/transform/TransformComponents.h>
 #include <graphics/camera/CameraComponents.h>
 #include <graphics/skybox/Skybox.h>
-
-#include <scripting/ScriptComponents.h>
 
 namespace engine::io {
 
@@ -27,8 +21,26 @@ namespace engine::io {
         deserializeComponent<graphics::Transform3dComponent>(parent);
         deserializeComponent<graphics::Camera2dComponent>(parent);
         deserializeComponent<graphics::Camera3dComponent>(parent);
-        deserializeComponent<scripting::CppScript>(parent);
         deserializeComponent<graphics::Skybox>(parent);
+    }
+
+    void EntitySerializable::write(std::fstream& file) {
+        uuid id = entity.getUUID();
+        ::write(file, id);
+        writeComponents(file);
+    }
+
+    void EntitySerializable::read(std::fstream& file) {
+        uuid id = 0;
+        ::read(file, id);
+        entity.setUUID(id);
+        readComponents(file);
+    }
+
+    void EntitySerializable::writeComponents(std::fstream &file) {
+    }
+
+    void EntitySerializable::readComponents(std::fstream &file) {
     }
 
     void EntitySerializable::serializeComponents(YAML::Emitter &out) {
@@ -37,7 +49,6 @@ namespace engine::io {
         serializeComponent<graphics::Transform3dComponent>(out);
         serializeComponent<graphics::Camera2dComponent>(out);
         serializeComponent<graphics::Camera3dComponent>(out);
-        serializeComponent<scripting::CppScript>(out);
         serializeComponent<graphics::Skybox>(out);
     }
 
@@ -46,6 +57,12 @@ namespace engine::io {
     }
 
     void EntitySerializer::serializeBinary(const char *filepath) {
+        std::fstream file(filepath);
+        if (!file.is_open()) {
+            ENGINE_ERR("EntitySerializer: Failed to write binary into {0}", filepath);
+            return;
+        }
+        entity.write(file);
     }
 
     void EntitySerializer::deserializeText(const YAML::Node &entityNode) {
@@ -53,6 +70,12 @@ namespace engine::io {
     }
 
     void EntitySerializer::deserializeBinary(const char *filepath) {
+        std::fstream file(filepath);
+        if (!file.is_open()) {
+            ENGINE_ERR("EntitySerializer: Failed to read from binary {0}", filepath);
+            return;
+        }
+        entity.read(file);
     }
 
     const char *EntitySerializer::serializeText() {

@@ -1,34 +1,45 @@
-//
-// Created by mecha on 05.10.2022.
-//
-
 #include <scripting/ScriptManager.h>
 
 #include <Windows.h>
 
 namespace engine::scripting {
 
-    void* ScriptManager::library = nullptr;
-    std::string ScriptManager::path = "ScriptEngine.dll";
+    void* ScriptManager::s_Library = nullptr;
+    vector<Scriptable*> ScriptManager::s_Scripts;
 
     void ScriptManager::init(const std::string& libPath) {
-        // load library
-        library = static_cast<HINSTANCE>(LoadLibrary(libPath.c_str()));
-        if (!library) {
+        s_Library = static_cast<HINSTANCE>(LoadLibrary(libPath.c_str()));
+        if (!s_Library) {
             ENGINE_ERR("ScriptManager::load: Failed to load library {0}", libPath);
         }
     }
 
     Scriptable* ScriptManager::load(const std::string &scriptName) {
-        // load object
         std::string functionName = "new" + scriptName;
-        return ((newScriptable) GetProcAddress(static_cast<HINSTANCE>(library), functionName.c_str()))();
+        Scriptable* newScript = ((newScriptable) GetProcAddress(static_cast<HINSTANCE>(s_Library), functionName.c_str()))();
+        newScript->onCreate();
+        s_Scripts.emplace_back(newScript);
+        return newScript;
     }
 
     void ScriptManager::free() {
-        if (library) {
-            FreeLibrary(static_cast<HINSTANCE>(library));
-            library = nullptr;
+        for (auto script : s_Scripts) {
+            if (script) {
+                script->onDestroy();
+                delete script;
+            }
+        }
+        s_Scripts.clear();
+
+        if (s_Library) {
+            FreeLibrary(static_cast<HINSTANCE>(s_Library));
+            s_Library = nullptr;
+        }
+    }
+
+    void ScriptManager::update(Time dt) {
+        for (auto script : s_Scripts) {
+            script->onUpdate(dt);
         }
     }
 }

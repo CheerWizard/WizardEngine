@@ -254,6 +254,18 @@ namespace engine::graphics {
         }
     }
 
+    void CullingComponent::read(std::fstream &file) {
+        ::read(file, enabled);
+        ::read(file, faceType);
+        ::read(file, frontFaceType);
+    }
+
+    void CullingComponent::write(std::fstream &file) {
+        ::write(file, enabled);
+        ::write(file, faceType);
+        ::write(file, frontFaceType);
+    }
+
     void PolygonModeComponent::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap;
         out << YAML::Key << "PolygonModeComponent";
@@ -268,6 +280,16 @@ namespace engine::graphics {
             yaml::deserialize(root, "face", face);
             yaml::deserialize(root, "mode", mode);
         }
+    }
+
+    void PolygonModeComponent::read(std::fstream &file) {
+        ::read(file, face);
+        ::read(file, mode);
+    }
+
+    void PolygonModeComponent::write(std::fstream &file) {
+        ::write(file, face);
+        ::write(file, mode);
     }
 
     void setViewPort(int x, int y, int w, int h) {

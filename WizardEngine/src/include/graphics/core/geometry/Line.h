@@ -1,7 +1,3 @@
-//
-// Created by mecha on 18.03.2022.
-//
-
 #pragma once
 
 #include <graphics/core/buffer_data/VertexData.h>

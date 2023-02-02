@@ -1,10 +1,32 @@
-//
-// Created by mecha on 06.06.2022.
-//
-
 #include <graphics/outline/Outline.h>
 
 namespace engine::graphics {
+
+    void OutlineVertex::serialize(YAML::Emitter &out) {
+        out << YAML::Key << "OutlineVertex";
+        out << YAML::BeginMap;
+        yaml::serialize(out, "position", position);
+        yaml::serialize(out, "normal", normal);
+        out << YAML::EndMap;
+    }
+
+    void OutlineVertex::deserialize(const YAML::Node& parent) {
+        auto root = parent["OutlineVertex"];
+        if (root) {
+            yaml::deserialize(root, "position", position);
+            yaml::deserialize(root, "normal", normal);
+        }
+    }
+
+    void OutlineVertex::read(std::fstream &file) {
+        ::read(file, position);
+        ::read(file, normal);
+    }
+
+    void OutlineVertex::write(std::fstream &file) {
+        ::write(file, position);
+        ::write(file, normal);
+    }
 
     void OutlineComponent::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap;
@@ -24,4 +46,13 @@ namespace engine::graphics {
         }
     }
 
+    void OutlineComponent::read(std::fstream &file) {
+        ::read(file, color);
+        ::read(file, thickness);
+    }
+
+    void OutlineComponent::write(std::fstream &file) {
+        ::write(file, color);
+        ::write(file, thickness);
+    }
 }

@@ -23,6 +23,8 @@ namespace engine::io {
     public:
         void serialize(YAML::Emitter &out);
         void deserialize(const YAML::Node &parent);
+        void write(std::fstream& file);
+        void read(std::fstream& file);
 
     private:
         void serializeComponents(YAML::Emitter& out);
@@ -30,6 +32,9 @@ namespace engine::io {
         void deserializeComponent(const YAML::Node &entityNode);
         template<typename T>
         void serializeComponent(YAML::Emitter& out);
+
+        void writeComponents(std::fstream& file);
+        void readComponents(std::fstream& file);
 
     private:
         ecs::Entity entity;

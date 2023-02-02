@@ -98,7 +98,7 @@ namespace engine::core {
             audio::MediaPlayer::clear();
             audio::DeviceManager::clear();
         });
-        ScriptSystem::onDestroy();
+        ScriptManager::free();
         waitAllJobs();
     }
 
@@ -289,7 +289,6 @@ namespace engine::core {
         hoveredEntity = Entity(activeScene.get());
         bindCamera(activeScene->getCamera());
         RenderSystem::activeScene = activeScene;
-        ScriptSystem::activeScene = activeScene;
         Physics::activeScene = activeScene;
     }
 
@@ -369,7 +368,7 @@ namespace engine::core {
     void Application::onSimulationUpdate() {
         if (activeScene && !activeScene->isEmpty()) {
             Physics::onUpdate(dt);
-            ScriptSystem::onUpdate(dt);
+            ScriptManager::update(dt);
             onUpdate();
 
             auto& camera = activeScene->getCamera();

@@ -20,6 +20,8 @@ public:
     virtual void onDestroy() {}
     virtual void serialize(YAML::Emitter& out) {}
     virtual void deserialize(const YAML::Node& parent) {}
+    virtual void read(std::fstream& file) {}
+    virtual void write(std::fstream& file) {}
 
 public:
     Entity root;

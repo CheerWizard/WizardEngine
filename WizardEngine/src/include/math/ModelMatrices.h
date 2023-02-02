@@ -76,12 +76,12 @@ namespace engine::math {
 
     void serialize(YAML::Emitter& out, const char* key, const ModelMatrix2d& model);
     void deserialize(const YAML::Node& parent, const char* key, ModelMatrix2d& model);
-    void write(std::fstream& file, const ModelMatrix2d& value);
-    void read(std::fstream& file, ModelMatrix2d& value);
 
     void serialize(YAML::Emitter& out, const char* key, const ModelMatrix3d& model);
     void deserialize(const YAML::Node& parent, const char* key, ModelMatrix3d& model);
-    void write(std::fstream& file, const ModelMatrix3d& value);
-    void read(std::fstream& file, ModelMatrix3d& value);
 
+    void write(std::fstream& file, ModelMatrix2d& value);
+    void write(std::fstream& file, ModelMatrix3d& value);
+    void read(std::fstream& file, ModelMatrix2d& value);
+    void read(std::fstream& file, ModelMatrix3d& value);
 }

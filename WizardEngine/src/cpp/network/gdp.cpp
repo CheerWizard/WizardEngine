@@ -19,6 +19,16 @@ namespace engine::network {
         type = parent["type"].as<u32>();
     }
 
+    void GDHeader::read(std::fstream &file) {
+        ::read(file, address);
+        ::read(file, type);
+    }
+
+    void GDHeader::write(std::fstream &file) {
+        ::write(file, address);
+        ::write(file, type);
+    }
+
     bool GDSerializer::deserialize(char *gameData, std::pair<YAML::Node, GDHeader>& gdNodeHeader) {
         try {
             YAML::Node gdNode = YAML::Load(gameData)["GameData"];
@@ -56,5 +66,15 @@ namespace engine::network {
     void GDResponse::deserialize(const YAML::Node &parent) {
         statusCode = parent["statusCode"].as<u16>();
         message = parent["message"].as<std::string>().c_str();
+    }
+
+    void GDResponse::read(std::fstream &file) {
+        ::read(file, statusCode);
+        ::read(file, message);
+    }
+
+    void GDResponse::write(std::fstream &file) {
+        ::write(file, statusCode);
+        ::write(file, message);
     }
 }

@@ -24,6 +24,16 @@ namespace engine::graphics {
         }
     }
 
+    void LightComponent::read(std::fstream &file) {
+        ::read(file, position);
+        ::read(file, color);
+    }
+
+    void LightComponent::write(std::fstream &file) {
+        ::write(file, position);
+        ::write(file, color);
+    }
+
     ShaderScript lightScript() {
         auto script = ShaderScript();
         script.updateRegistry = [](const BaseShaderProgram& shader, ecs::Registry& registry) {
@@ -97,6 +107,22 @@ namespace engine::graphics {
         }
     }
 
+    void PhongLightComponent::read(std::fstream &file) {
+        ::read(file, position);
+        ::read(file, color);
+        ::read(file, ambient);
+        ::read(file, diffuse);
+        ::read(file, specular);
+    }
+
+    void PhongLightComponent::write(std::fstream &file) {
+        ::write(file, position);
+        ::write(file, color);
+        ::write(file, ambient);
+        ::write(file, diffuse);
+        ::write(file, specular);
+    }
+
     void DirectLightComponent::serialize(YAML::Emitter &out) {
         out << YAML::BeginMap;
         out << YAML::Key << "DirectLightComponent";
@@ -117,6 +143,20 @@ namespace engine::graphics {
             yaml::deserialize(root, "diffuse", diffuse);
             yaml::deserialize(root, "specular", specular);
         }
+    }
+
+    void DirectLightComponent::read(std::fstream &file) {
+        ::read(file, direction);
+        ::read(file, ambient);
+        ::read(file, diffuse);
+        ::read(file, specular);
+    }
+
+    void DirectLightComponent::write(std::fstream &file) {
+        ::write(file, direction);
+        ::write(file, ambient);
+        ::write(file, diffuse);
+        ::write(file, specular);
     }
 
     void PointLightComponent::serialize(YAML::Emitter &out) {
@@ -145,6 +185,26 @@ namespace engine::graphics {
             yaml::deserialize(root, "linear", linear);
             yaml::deserialize(root, "quadratic", quadratic);
         }
+    }
+
+    void PointLightComponent::read(std::fstream &file) {
+        ::read(file, position);
+        ::read(file, ambient);
+        ::read(file, diffuse);
+        ::read(file, specular);
+        ::read(file, constant);
+        ::read(file, linear);
+        ::read(file, quadratic);
+    }
+
+    void PointLightComponent::write(std::fstream &file) {
+        ::write(file, position);
+        ::write(file, ambient);
+        ::write(file, diffuse);
+        ::write(file, specular);
+        ::write(file, constant);
+        ::write(file, linear);
+        ::write(file, quadratic);
     }
 
     void FlashLightComponent::serialize(YAML::Emitter &out) {
@@ -181,4 +241,29 @@ namespace engine::graphics {
         }
     }
 
+    void FlashLightComponent::read(std::fstream &file) {
+        ::read(file, position);
+        ::read(file, direction);
+        ::read(file, cutoff);
+        ::read(file, outerCutoff);
+        ::read(file, ambient);
+        ::read(file, diffuse);
+        ::read(file, specular);
+        ::read(file, constant);
+        ::read(file, linear);
+        ::read(file, quadratic);
+    }
+
+    void FlashLightComponent::write(std::fstream &file) {
+        ::write(file, position);
+        ::write(file, direction);
+        ::write(file, cutoff);
+        ::write(file, outerCutoff);
+        ::write(file, ambient);
+        ::write(file, diffuse);
+        ::write(file, specular);
+        ::write(file, constant);
+        ::write(file, linear);
+        ::write(file, quadratic);
+    }
 }

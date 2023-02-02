@@ -1,7 +1,3 @@
-//
-// Created by mecha on 21.05.2022.
-//
-
 #include <graphics/transform/TransformComponents.h>
 
 namespace engine::graphics {
@@ -21,11 +17,11 @@ namespace engine::graphics {
     }
 
     void Transform2dComponent::read(std::fstream &file) {
-        ::read(file, modelMatrix);
+        math::read(file, modelMatrix);
     }
 
     void Transform2dComponent::write(std::fstream &file) {
-        ::write(file, modelMatrix);
+        math::write(file, modelMatrix);
     }
 
     void Transform3dComponent::serialize(YAML::Emitter &out) {

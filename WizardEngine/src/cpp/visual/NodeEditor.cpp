@@ -65,6 +65,8 @@ namespace engine::visual {
     bool Node::loadBin(std::fstream& file) {
         read(file, m_Id);
         read(file, m_Name);
+        read(file, m_Pos.x);
+        read(file, m_Pos.y);
         // input sockets
         size_t num_inputs;
         read(file, num_inputs);
@@ -87,6 +89,8 @@ namespace engine::visual {
     bool Node::saveBin(std::fstream &file) {
         write(file, m_Id);
         write(file, m_Name);
+        write(file, m_Pos.x);
+        write(file, m_Pos.y);
         // input sockets
         size_t inputs = m_Inputs.size();
         write(file, inputs);
@@ -280,7 +284,6 @@ namespace engine::visual {
 
     bool Graph::saveBin() {
         std::string binFile = m_Name + ".graph";
-
         std::fstream file(binFile, std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
 
         if (!file.is_open()) {

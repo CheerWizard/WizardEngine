@@ -1,7 +1,3 @@
-//
-// Created by mecha on 28.08.2021.
-//
-
 #pragma once
 
 #include <core/core.h>
@@ -36,7 +32,6 @@
 #include <graphics/hdr_env/hdr_env.h>
 #include <graphics/camera/CameraShaderScript.h>
 
-#include <scripting/ScriptSystem.h>
 #include <scripting/ScriptManager.h>
 
 #include <audio/audio_device_manager.h>

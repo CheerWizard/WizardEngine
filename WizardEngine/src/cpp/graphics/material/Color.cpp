@@ -26,4 +26,26 @@ namespace engine::graphics {
         return script;
     }
 
+    void ColorComponent::serialize(YAML::Emitter &out) {
+        out << YAML::Key << "ColorComponent";
+        out << YAML::BeginMap;
+        yaml::serialize(out, "color", color);
+        out << YAML::EndMap;
+    }
+
+    void ColorComponent::deserialize(const YAML::Node &parent) {
+        auto root = parent["ColorComponent"];
+        if (root) {
+            yaml::deserialize(root, "color", color);
+        }
+    }
+
+    void ColorComponent::read(std::fstream &file) {
+        ::read(file, color.value);
+    }
+
+    void ColorComponent::write(std::fstream &file) {
+        ::write(file, color.value);
+    }
+
 }

@@ -22,7 +22,7 @@ namespace engine::graphics {
 
     template<typename T>
     struct BaseMesh {
-        serializable()
+        serializable_unexposed()
         array<T> vertexData;
         IndexData indexData;
 
@@ -82,7 +82,7 @@ namespace engine::graphics {
     }
 
     template_component(BaseMeshComponent, T) {
-        serializable()
+        serializable_unexposed()
 
         BaseMesh<T> mesh;
         u32 vertexStart = 0;

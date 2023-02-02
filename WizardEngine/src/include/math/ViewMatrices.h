@@ -45,11 +45,12 @@ namespace engine::math {
 
     void serialize(YAML::Emitter& out, const char* key, const ViewMatrix2d& vm);
     void deserialize(const YAML::Node& parent, const char* key, ViewMatrix2d& vm);
-    void write(std::fstream& file, const ViewMatrix2d& value);
-    void read(std::fstream& file, ViewMatrix2d& value);
 
     void serialize(YAML::Emitter& out, const char* key, const ViewMatrix3d& vm);
     void deserialize(const YAML::Node& parent, const char* key, ViewMatrix3d& vm);
-    void write(std::fstream& file, const ViewMatrix3d& value);
+
+    void write(std::fstream& file, ViewMatrix2d& value);
+    void read(std::fstream& file, ViewMatrix2d& value);
+    void write(std::fstream& file, ViewMatrix3d& value);
     void read(std::fstream& file, ViewMatrix3d& value);
 }

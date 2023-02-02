@@ -1,7 +1,3 @@
-//
-// Created by mecha on 23.03.2022.
-//
-
 #pragma once
 
 #include <graphics/core/buffer_data/VertexData.h>
@@ -13,7 +9,8 @@ namespace engine::graphics {
     using namespace shader;
     using namespace math;
 
-    struct ENGINE_API OutlineVertex {
+    struct OutlineVertex {
+        serializable()
         vec3f position = { 0.5, 0.5, 0.5 };
         vec3f normal = { 0.5, 0.5, 0.5 };
     };

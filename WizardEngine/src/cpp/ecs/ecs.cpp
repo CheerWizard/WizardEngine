@@ -59,7 +59,6 @@ namespace engine::ecs {
         entityId = invalid_entity_id;
     }
 
-    // todo crash when trying to remove existing component
     void Registry::removeComponentInternal(component_id componentId, u32 componentIndex) {
         auto destroyFunction = BaseComponent::getDestroyFunction(componentId);
         component_data data = components[componentId];

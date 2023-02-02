@@ -1,7 +1,3 @@
-//
-// Created by mecha on 26.03.2022.
-//
-
 #pragma once
 
 #include <ecs/Entity.h>
@@ -16,7 +12,8 @@ namespace engine::graphics {
     using namespace math;
 
     template_component(TextComponent, T) {
-        decl_serializable()
+        serializable_unexposed()
+
         std::string text;
         Vec4fUniform color = { "color", { 1, 1, 1, 1 } };
         Transform3dComponent transform;

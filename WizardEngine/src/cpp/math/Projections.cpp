@@ -52,7 +52,7 @@ namespace engine::math {
         }
     }
 
-    void write(std::fstream& file, const OrthographicMatrix& value) {
+    void write(std::fstream& file, OrthographicMatrix& value) {
         ::write(file, value.top);
         ::write(file, value.left);
         ::write(file, value.right);
@@ -66,7 +66,7 @@ namespace engine::math {
         ::read(file, value.bottom);
     }
 
-    void write(std::fstream& file, const PerspectiveMatrix& value) {
+    void write(std::fstream& file, PerspectiveMatrix& value) {
         ::write(file, value.aspectRatio);
         ::write(file, value.fieldOfView);
         ::write(file, value.zFar);

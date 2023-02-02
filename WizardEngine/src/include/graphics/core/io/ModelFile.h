@@ -26,7 +26,8 @@ namespace engine::io {
         int normalIndex;
     };
 
-    struct ENGINE_API ModelVertex {
+    struct ModelVertex {
+        serializable()
         vec3f position = { 0.5f, 0.5f, 0.5f };
         vec2f uv = { 0, 0 };
         vec3f normal = { 0, 0, 0 };
@@ -34,7 +35,7 @@ namespace engine::io {
         vec3f bitangent = { 0, 0, 0 };
     };
 
-    struct ENGINE_API ModelMesh : BaseMesh<ModelVertex> {
+    struct ModelMesh : BaseMesh<ModelVertex> {
         Material material;
     };
 
@@ -280,17 +281,20 @@ namespace engine::io {
     }
 
     template<typename T>
-    u32 ModelFile<T>::extractTexture(const std::string& texturesPath,
-                                     aiMaterial* material,
-                                     aiTextureType textureType, bool& enableTexture) {
+    u32 ModelFile<T>::extractTexture(
+            const std::string& texturesPath,
+            aiMaterial* material,
+            aiTextureType textureType,
+            bool& enableTexture
+    ) {
         aiString texture_file;
         material->Get(AI_MATKEY_TEXTURE(textureType, 0), texture_file);
-//        if(auto texture = scene->GetEmbeddedTexture(texture_file.C_Str())) {
         std::string textureName = engine::filesystem::getFileNameWithExtension(texture_file.data);
         std::stringstream ss;
         ss << texturesPath << "/" << textureName;
         std::string textureFullPath = ss.str();
-        u32 textureId = TextureBuffer::load(textureFullPath.c_str());
+        TextureData td = TextureFile::read(textureFullPath.c_str());
+        u32 textureId = TextureBuffer::upload(td);
         enableTexture = textureId != invalidTextureId;
         return textureId;
     }

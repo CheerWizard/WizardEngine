@@ -1,7 +1,3 @@
-//
-// Created by mecha on 25.03.2022.
-//
-
 #pragma once
 
 #include <ecs/Entity.h>
@@ -19,6 +15,7 @@ namespace engine::graphics {
     };
 
     struct SkyboxVertex {
+        serializable()
         math::vec3f position = { 0.5, 0.5 , 0.5 };
     };
 

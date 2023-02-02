@@ -59,12 +59,11 @@ namespace engine::math {
 
     void serialize(YAML::Emitter& out, const char* key, const OrthographicMatrix& projection);
     void deserialize(const YAML::Node& parent, const char* key, OrthographicMatrix& projection);
-    void write(std::fstream& file, const OrthographicMatrix& value);
-    void read(std::fstream& file, OrthographicMatrix& value);
-
     void serialize(YAML::Emitter& out, const char* key, const PerspectiveMatrix& projection);
     void deserialize(const YAML::Node& parent, const char* key, PerspectiveMatrix& projection);
-    void write(std::fstream& file, const PerspectiveMatrix& value);
-    void read(std::fstream& file, PerspectiveMatrix& value);
 
+    void write(std::fstream& file, OrthographicMatrix& value);
+    void read(std::fstream& file, OrthographicMatrix& value);
+    void write(std::fstream& file, PerspectiveMatrix& value);
+    void read(std::fstream& file, PerspectiveMatrix& value);
 }

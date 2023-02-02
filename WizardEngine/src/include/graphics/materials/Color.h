@@ -1,7 +1,3 @@
-//
-// Created by mecha on 26.08.2022.
-//
-
 #pragma once
 
 #include <graphics/core/shader/BaseShader.h>
