@@ -19,7 +19,7 @@ namespace engine::visual {
     ImDrawList* canvas = NULL;
 
     void Node::addInput(Socket&& socket) {
-        m_Inputs.insert(socket);
+        m_Inputs.emplace(socket);
     }
 
     void Node::addInput(const Socket& socket) {
@@ -27,7 +27,7 @@ namespace engine::visual {
     }
 
     void Node::addOutput(Socket &&socket) {
-        m_Outputs.insert(socket);
+        m_Outputs.emplace(socket);
     }
 
     void Node::addOutput(const Socket& socket) {
@@ -83,6 +83,9 @@ namespace engine::visual {
             output.loadBin(file);
             m_Outputs.insert(output);
         }
+
+        ImNodes::SetNodeScreenSpacePos(m_Id, m_Pos);
+
         return true;
     }
 
@@ -111,6 +114,10 @@ namespace engine::visual {
     }
 
     void Node::draw() {
+        // styling
+        u32 nodeOutlineColor = ImNodes::IsNodeSelected(m_Id) ? COL_NODE_SELECTED : COL_NODE_OUTLINE;
+        ImNodes::PushColorStyle(ImNodesCol_NodeOutline, nodeOutlineColor);
+
         ImNodes::BeginNode(m_Id);
 
         updatePos();
@@ -154,6 +161,9 @@ namespace engine::visual {
         });
 
         ImNodes::EndNode();
+
+        // end styling
+        ImNodes::PopColorStyle();
     }
 
     void nodeHoveredCallback(int id, void* userData) {
@@ -165,9 +175,7 @@ namespace engine::visual {
         title = ICON_FA_OBJECT_GROUP + title;
         ImGui::Begin(title.data());
         // settings
-        ImGui::PushItemWidth(100);
-        ImGui::SliderFloat("Paste Padding", &m_PastePadding, 0, 1, "%.1f");
-        ImGui::PopItemWidth();
+
         // node editor content
         ImNodes::BeginNodeEditor();
         // context menu
@@ -189,11 +197,11 @@ namespace engine::visual {
         // dispatch editor content events
         if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImNodes::IsEditorHovered())
         {
-            // create new node
-            if (ImGui::IsMouseReleased(event::MouseCode::ButtonRight)) {
+            // show/hide context menu
+            if (ImGui::IsMouseReleased(event::ButtonRight)) {
                 m_ShowContextMenu = true;
             }
-            else if (ImGui::IsMouseReleased(event::MouseCode::ButtonLeft)) {
+            else if (ImGui::IsMouseReleased(event::ButtonLeft)) {
                 m_ShowContextMenu = false;
             }
             // delete selected nodes/links
@@ -225,24 +233,30 @@ namespace engine::visual {
                 endCutline();
             }
         }
+
         // draw nodes
         for (auto node : m_Nodes) {
             node.draw();
         }
+
         // draw links
         for (auto link : m_Links) {
             link.draw();
         }
+
         // draw minimap
         ImNodes::MiniMap(0.1f, ImNodesMiniMapLocation_BottomLeft, nodeHoveredCallback, this);
-        // node editor content
+
+        // end node editor content
         ImNodes::EndNodeEditor();
+
         // node selection
         const int num_selected_nodes = ImNodes::NumSelectedNodes();
         m_SelectedNodes.resize(num_selected_nodes);
         if (num_selected_nodes > 0) {
             ImNodes::GetSelectedNodes(m_SelectedNodes.data());
         }
+
         // link selection
         const int num_selected_links = ImNodes::NumSelectedLinks();
         m_SelectedLinks.resize(num_selected_links);
@@ -250,19 +264,32 @@ namespace engine::visual {
             ImNodes::GetSelectedLinks(m_SelectedLinks.data());
         }
 
+        // new link connection
+        int beginPinId = 0;
+        int endPinId = 0;
+        bool createdBySnap = false;
+        if (ImNodes::IsLinkCreated(&beginPinId, &endPinId, &createdBySnap)) {
+            newLink(beginPinId, endPinId);
+        }
+
+        // link dropped -> show context menu
+        if (ImNodes::IsLinkDropped(&beginPinId)) {
+            m_ShowContextMenu = true;
+        }
+
         ImGui::End();
     }
 
     void Graph::addNode(Node&& node) {
-        m_Nodes.insert(node);
+        m_Nodes.emplace(node);
     }
 
     void Graph::addNode(const Node& node) {
         m_Nodes.insert(node);
     }
 
-    void Graph::addLink(Link&& link) {
-        m_Links.insert(link);
+    void Graph::addLink(Link&& link...) {
+        m_Links.emplace(link);
     }
 
     void Graph::addLink(const Link& link) {
@@ -282,12 +309,11 @@ namespace engine::visual {
         return true;
     }
 
-    bool Graph::saveBin() {
-        std::string binFile = m_Name + ".graph";
-        std::fstream file(binFile, std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
+    bool Graph::saveBin(const char* filepath) {
+        std::fstream file(filepath, std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
 
         if (!file.is_open()) {
-            ENGINE_ERR("NodeEditor: Failed to save graph {0}", binFile.c_str());
+            ENGINE_ERR("NodeEditor: Failed to save graph {0}", filepath);
             return false;
         }
 
@@ -304,6 +330,8 @@ namespace engine::visual {
         for (auto link : m_Links) {
             link.saveBin(file);
         }
+
+        file.close();
         return true;
     }
 
@@ -318,12 +346,11 @@ namespace engine::visual {
         return true;
     }
 
-    bool Graph::loadBin() {
-        std::string binFile = m_Name + ".graph";
-        std::fstream file(binFile, std::ios_base::in | std::ios_base::binary);
+    bool Graph::loadBin(const char* filepath) {
+        std::fstream file(filepath, std::ios_base::in | std::ios_base::binary);
 
         if (!file.is_open()) {
-            ENGINE_ERR("NodeEditor: Failed to load graph {0}", binFile.c_str());
+            ENGINE_ERR("NodeEditor: Failed to load graph {0}", filepath);
             return false;
         }
 
@@ -344,6 +371,8 @@ namespace engine::visual {
             link.loadBin(file);
             m_Links.insert(link);
         }
+
+        file.close();
         return true;
     }
 
@@ -372,6 +401,16 @@ namespace engine::visual {
         addNode(node);
 
         ImNodes::SetNodeScreenSpacePos(newId, node.getPos());
+    }
+
+    void Graph::newLink(int beginId, int endId) {
+        int newId = 0;
+
+        if (m_Links.rbegin() != m_Links.rend()) {
+            newId = m_Links.rbegin()->getId() + 1;
+        }
+
+        addLink(newId, beginId, endId, this);
     }
 
     void Graph::deleteSelected() {
@@ -442,11 +481,7 @@ namespace engine::visual {
                 newEnd = m_Links.rbegin()->getEnd() + 1;
             }
 
-            link.setId(newId);
-            link.setBegin(newBegin);
-            link.setEnd(newEnd);
-
-            m_Links.insert(link);
+            m_Links.emplace(newId, newBegin, newEnd, this);
         }
     }
 
@@ -465,6 +500,15 @@ namespace engine::visual {
     }
 
     void Graph::zoomCanvas() {
+
+    }
+
+    void Graph::undo() {
+
+    }
+
+    void Graph::redo() {
+
     }
 
     Ref<FileDialog> NodeEditor::s_FileDialog = nullptr;
@@ -480,9 +524,11 @@ namespace engine::visual {
         }
     }
 
-    bool NodeEditor::save() {
+    bool NodeEditor::saveAll() {
         for (auto& graph : m_Graphs) {
-            if (!graph.saveBin()) {
+            std::string filepath = graph.getName();
+            filepath.append(".graph");
+            if (!graph.saveBin(filepath.c_str())) {
                 return false;
             }
         }
@@ -490,18 +536,6 @@ namespace engine::visual {
             return m_ActiveGraph->saveIni();
         }
         return true;
-    }
-
-    bool NodeEditor::load(const char* graphName) {
-        m_Graphs.emplace_back(0, graphName);
-        auto& graph = m_Graphs.back();
-        if (graph.loadIni() && graph.loadBin()) {
-            m_ActiveGraph = &graph;
-            return true;
-        } else {
-            m_Graphs.pop_back();
-            return false;
-        }
     }
 
     int NodeEditor::addGraph(Graph && graph) {
@@ -523,7 +557,7 @@ namespace engine::visual {
     }
 
     void NodeEditor::destroy() {
-        get().save();
+        get().saveAll();
         ImNodes::PopAttributeFlag();
         ImNodes::DestroyContext();
         context = NULL;
@@ -534,25 +568,28 @@ namespace engine::visual {
         ImNodesStyle* style = &ImNodes::GetStyle();
         style->PinCircleRadius = 6;
         style->LinkThickness = 3;
+        style->NodeBorderThickness = 2;
+        style->NodeCornerRounding = 4;
+        style->NodePadding = { 16, 16 };
 
-        style->Colors[ImNodesCol_TitleBar] = COLOR(0.1, 0, 0.5, 1);
-        style->Colors[ImNodesCol_TitleBarHovered] = COLOR(0.1, 0, 0.7, 1);
-        style->Colors[ImNodesCol_TitleBarSelected] = COLOR(0.1, 0, 0.5, 1);
+        style->Colors[ImNodesCol_TitleBar] = COLOR(0.2, 0, 0, 1);
+        style->Colors[ImNodesCol_TitleBarHovered] = COLOR(0.25, 0, 0, 1);
+        style->Colors[ImNodesCol_TitleBarSelected] = COLOR(0.3, 0, 0, 1);
 
         style->Colors[ImNodesCol_NodeBackground] = COLOR(0.1, 0.1, 0.1, 1);
-        style->Colors[ImNodesCol_NodeBackgroundHovered] = COLOR(0.2, 0.2, 0.2, 1);
-        style->Colors[ImNodesCol_NodeBackgroundSelected] = COLOR(0.4, 0.4, 0.4, 1);
-        style->Colors[ImNodesCol_NodeOutline] = COLOR(0, 0, 0, 0);
+        style->Colors[ImNodesCol_NodeBackgroundHovered] = COLOR(0.15, 0.15, 0.15, 1);
+        style->Colors[ImNodesCol_NodeBackgroundSelected] = COLOR(0.2, 0.2, 0.2, 1);
+        style->Colors[ImNodesCol_NodeOutline] = COL_NODE_OUTLINE;
 
-        style->Colors[ImNodesCol_Link] = COLOR(0.1, 0, 0.5, 1);
-        style->Colors[ImNodesCol_LinkHovered] = COLOR(0.1, 0, 0.7, 1);
-        style->Colors[ImNodesCol_LinkSelected] = COLOR(0.1, 0, 0.5, 1);
+        style->Colors[ImNodesCol_Link] = COLOR(0.2, 0, 0, 1);
+        style->Colors[ImNodesCol_LinkHovered] = COLOR(0.25, 0, 0, 1);
+        style->Colors[ImNodesCol_LinkSelected] = COLOR(0.3, 0, 0, 1);
 
-        style->Colors[ImNodesCol_BoxSelectorOutline] = COLOR(0, 0, 1, 1);
-        style->Colors[ImNodesCol_BoxSelector] = COLOR(0.1, 0, 0.5, 1);
+        style->Colors[ImNodesCol_BoxSelector] = COLOR(0, 0, 0, 0.25);
+        style->Colors[ImNodesCol_BoxSelectorOutline] = COLOR(1, 0.2, 0, 1);
 
-        style->Colors[ImNodesCol_Pin] = COLOR(0, 1, 0, 1);
-        style->Colors[ImNodesCol_PinHovered] = COLOR(0, 0.5, 0, 1);
+        style->Colors[ImNodesCol_Pin] = COLOR(0.2, 0, 0, 1);
+        style->Colors[ImNodesCol_PinHovered] = COLOR(0.25, 0, 0, 1);
     }
 
     void NodeEditor::newGraph() {
@@ -566,38 +603,63 @@ namespace engine::visual {
 
     void NodeEditor::openGraph() {
         auto importPath = s_FileDialog->getImportPath("Graph (*.graph)\0*.graph\0");
+        if (importPath.empty()) {
+            ENGINE_WARN("NodeEditor::openGraph: import closed");
+            return;
+        }
+        newGraph();
+        m_ActiveGraph->loadBin(importPath.c_str());
     }
 
     void NodeEditor::saveGraph() {
-        save();
+        std::string filepath = m_ActiveGraph->getName();
+        filepath.append(".graph");
+        m_ActiveGraph->saveBin(filepath.c_str());
     }
 
     void NodeEditor::saveAsGraph() {
         auto exportPath = s_FileDialog->getExportPath("Graph (*.graph)\0*.graph\0");
+        if (exportPath.empty()) {
+            ENGINE_WARN("NodeEditor::openGraph: import closed");
+            return;
+        }
+        m_ActiveGraph->saveBin(exportPath.c_str());
     }
 
     void NodeEditor::cutGraphItems() {
-
+        if (m_ActiveGraph) {
+            m_ActiveGraph->cutSelected();
+        }
     }
 
     void NodeEditor::copyGraphItems() {
-
+        if (m_ActiveGraph) {
+            m_ActiveGraph->copySelected();
+        }
     }
 
     void NodeEditor::pasteGraphItems() {
-
+        if (m_ActiveGraph) {
+            m_ActiveGraph->pasteSelected();
+        }
     }
 
     void NodeEditor::deleteGraphItems() {
-
+        if (m_ActiveGraph) {
+            m_ActiveGraph->deleteSelected();
+        }
     }
 
     void NodeEditor::undoGraphItems() {
-
+        if (m_ActiveGraph) {
+            m_ActiveGraph->undo();
+        }
     }
 
     void NodeEditor::redoGraphItems() {
-
+        if (m_ActiveGraph) {
+            m_ActiveGraph->redo();
+        }
     }
 
     bool Socket::loadBin(std::fstream& file) {
@@ -625,6 +687,13 @@ namespace engine::visual {
     }
 
     void Link::draw() {
+        // styling
+        u32 linkOutlineColor = ImNodes::IsLinkSelected(m_Id) ? COL_LINK_SELECTED : COL_LINK_OUTLINE;
+        ImNodes::PushColorStyle(ImNodesCol_LinkSelected, linkOutlineColor);
+
         ImNodes::Link(m_Id, m_Begin, m_End);
+
+        // end styling
+        ImNodes::PopColorStyle();
     }
 }

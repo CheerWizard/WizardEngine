@@ -90,11 +90,7 @@ namespace test {
     void Application::onVisualCreate() {
         m_SceneHierarchy = new SceneHierarchy(getNativeWindow(), this);
         m_Toolbar = new Toolbar();
-
-        if (!NodeEditor::get().load("graph")) {
-            int graphIndex = NodeEditor::get().addGraph({ 0, "graph" });
-            NodeEditor::get().setActiveGraph(graphIndex);
-        }
+        NodeEditor::get();
     }
 
     void Application::onDestroy() {

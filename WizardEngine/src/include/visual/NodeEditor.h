@@ -12,6 +12,16 @@
 
 #define COLOR(r, g, b, a) IM_COL32(255 * r, 255 * g, 255 * b, 255 * a)
 
+// Node styling
+
+#define COL_NODE_OUTLINE COLOR(0, 0, 0, 0)
+#define COL_NODE_SELECTED COLOR(1, 0.2, 0, 1)
+
+// Link styling
+
+#define COL_LINK_OUTLINE COLOR(0, 0, 0, 0)
+#define COL_LINK_SELECTED COLOR(1, 0.2, 0, 1)
+
 namespace engine::visual {
 
     using namespace core;
@@ -42,6 +52,8 @@ namespace engine::visual {
         int m_Id = 0;
     };
 
+    class Graph;
+
     class ENGINE_API Link final {
 
     public:
@@ -49,16 +61,19 @@ namespace engine::visual {
         Link(int id) : m_Id(id) {}
         Link(int id, int beginPinId, int endPinId)
         : m_Id(id), m_Begin(beginPinId), m_End(endPinId) {}
+        Link(int id, int beginPinId, int endPinId, Graph* graph)
+        : m_Id(id), m_Begin(beginPinId), m_End(endPinId), m_Graph(graph) {}
         ~Link() = default;
 
     public:
         [[nodiscard]] inline int getId() const { return m_Id; }
         [[nodiscard]] inline int getBegin() const { return m_Begin; }
         [[nodiscard]] inline int getEnd() const { return m_End; }
-        inline void setId(int id) { m_Id = id; }
 
+        inline void setId(int id) { m_Id = id; }
         inline void setBegin(int id) { m_Begin = id; }
         inline void setEnd(int id) { m_End = id; }
+        inline void setGraph(Graph* graph) { m_Graph = graph; }
 
         bool loadBin(std::fstream& file);
         bool saveBin(std::fstream& file);
@@ -69,6 +84,7 @@ namespace engine::visual {
         int m_Id = 0;
         int m_Begin = 0;
         int m_End = 0;
+        Graph* m_Graph = nullptr;
     };
 
     class ENGINE_API Node final {
@@ -123,9 +139,11 @@ namespace engine::visual {
         [[nodiscard]] inline int getId() const { return m_Id; }
         [[nodiscard]] inline const char* getName() const { return m_Name.c_str(); }
 
+        inline void showContextMenu(bool show) { m_ShowContextMenu = show; }
+
         void addNode(Node&& node);
         void addNode(const Node& node);
-        void addLink(Link&& link);
+        void addLink(Link && link...);
         void addLink(const Link& link);
 
         void removeNode(int id);
@@ -133,22 +151,26 @@ namespace engine::visual {
 
         void draw();
 
-        bool saveBin();
-        bool loadBin();
+        bool saveBin(const char* filepath);
+        bool loadBin(const char* filepath);
 
         bool saveIni();
         bool loadIni();
 
         void onNodeHovered(int id);
 
-    private:
         void newNode();
+        void newLink(int beginId, int endId);
 
         void deleteSelected();
         void copySelected();
         void cutSelected();
         void pasteSelected();
 
+        void undo();
+        void redo();
+
+    private:
         void beginCutline();
         void drawCutline();
         void endCutline();
@@ -164,7 +186,7 @@ namespace engine::visual {
 
         ImVec2 m_Cursor = { 0, 0 };
 
-        float m_PastePadding = 0.25f;
+        float m_PastePadding = 1.0f;
 
         bool m_ShowContextMenu = false;
 
@@ -200,11 +222,11 @@ namespace engine::visual {
 
         void draw();
 
-        bool save();
-        bool load(const char* graphName);
+        bool saveAll();
 
         int addGraph(Graph&& graph);
         int addGraph(const Graph& graph);
+
         // graph files
         void newGraph();
         void openGraph();

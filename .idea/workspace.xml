@@ -79,63 +79,17 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Binary serialization and refactoring #1">
+    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Binary serialization and refactoring #2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/project_template/src/cpp/game_application.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/project_template/src/cpp/game_application.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/project_template/src/cpp/game_layer.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/project_template/src/include/game_application.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/project_template/src/include/game_application.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/project_template/src/include/game_layer.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/core/Application.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/core/Application.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/ecs/ecs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/ecs/ecs.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/geometry/Circle.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/core/geometry/Circle.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/light/LightComponents.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/light/LightComponents.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/material/Color.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/material/Color.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/material/Material.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/material/Material.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/outline/Outline.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/outline/Outline.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/skybox/Skybox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/skybox/Skybox.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/text/Text.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/text/Text.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/transform/TransformComponents.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/graphics/transform/TransformComponents.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/math/ModelMatrices.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/math/ModelMatrices.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/math/Projections.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/math/Projections.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/math/ViewMatrices.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/math/ViewMatrices.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/math/ViewProjections.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/math/ViewProjections.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/network/gdp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/network/gdp.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/graphics/RenderCommands.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/platform/graphics/RenderCommands.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/scripting/ScriptComponents.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/scripting/ScriptManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/scripting/ScriptManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/scripting/ScriptSystem.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/serialization/EntitySerializer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/serialization/EntitySerializer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/NodeEditor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/NodeEditor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/core/Application.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/core/Application.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/core/array.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/core/array.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/camera/CameraComponents.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/camera/CameraComponents.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/buffer_data/VertexData.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/buffer_data/VertexData.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/geometry/Circle.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/geometry/Circle.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/geometry/Line.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/geometry/Line.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/geometry/Mesh.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/geometry/Mesh.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/io/ModelFile.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/core/io/ModelFile.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/materials/Color.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/materials/Color.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/outline/Outline.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/outline/Outline.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/skybox/Skybox.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/skybox/Skybox.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/text/Text.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/text/Text.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/math/ModelMatrices.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/math/ModelMatrices.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/math/Projections.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/math/Projections.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/math/ViewMatrices.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/math/ViewMatrices.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/math/ViewProjections.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/math/ViewProjections.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/network/gdp.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/network/gdp.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/scripting/ScriptComponents.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/scripting/ScriptManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/scripting/ScriptManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/scripting/ScriptSystem.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/scripting/Scriptable.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/scripting/Scriptable.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/serialization/EntitySerializer.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/serialization/EntitySerializer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/serialization/serialization.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/serialization/serialization.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/visual/NodeEditor.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/visual/NodeEditor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/assimp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/assimp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/freetype" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/freetype" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/glfw" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/glfw" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardSamples/src/cpp/ecs/ecs_test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardSamples/src/cpp/ecs/ecs_test.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardTest/src/cpp/core/application_test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/src/cpp/core/application_test.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -772,14 +726,9 @@
       <workItem from="1675198092949" duration="5106000" />
       <workItem from="1675232868500" duration="2464000" />
       <workItem from="1675267126449" duration="7431000" />
-      <workItem from="1675322792277" duration="23612000" />
-    </task>
-    <task id="LOCAL-00173" summary="Fixed scene serialization">
-      <created>1653997016171</created>
-      <option name="number" value="00173" />
-      <option name="presentableId" value="LOCAL-00173" />
-      <option name="project" value="LOCAL" />
-      <updated>1653997016171</updated>
+      <workItem from="1675322792277" duration="23633000" />
+      <workItem from="1675349011486" duration="473000" />
+      <workItem from="1675368200950" duration="12602000" />
     </task>
     <task id="LOCAL-00174" summary="UUID component for identifying loaded/saved world">
       <created>1654013875439</created>
@@ -1117,7 +1066,14 @@
       <option name="project" value="LOCAL" />
       <updated>1675277611508</updated>
     </task>
-    <option name="localTasksCounter" value="222" />
+    <task id="LOCAL-00222" summary="Binary serialization and refactoring #2">
+      <created>1675348816235</created>
+      <option name="number" value="00222" />
+      <option name="presentableId" value="LOCAL-00222" />
+      <option name="project" value="LOCAL" />
+      <updated>1675348816235</updated>
+    </task>
+    <option name="localTasksCounter" value="223" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1158,7 +1114,6 @@
       <path value="$PROJECT_DIR$/ScriptDLL/engine/spdlog" />
       <path value="$PROJECT_DIR$/ScriptDLL/engine/stb/stb" />
     </ignored-roots>
-    <MESSAGE value="Post Effects Rendering, MRT support, a couple of refactoring of Shader API and Render API. &#10;Added next post effects : HDR/LDR, Blur, Edge Detection, Sharpen, Gaussian Blur.&#10;Added TextureMixer as a renderer that receives texture id list as an input, mixes all textures inside pixel shader and outputs it in separate frame buffer texture attachment.&#10;Added ImGui as Visual support, if macro VISUAL is defined inside the app you are building. This system has different widgets, console, themes.&#10;Added primitive vertex shader that allows to draw geometry without using VBO, VAO, IBO." />
     <MESSAGE value="Basic Physics, simulation of objects velocity, collision detection for SphereCollider, AABBCollider, PlaneCollider, callbacks and respond to detected/undetected collision. When objects are collided, they will be reflected into different direction based on direction they had during simulation." />
     <MESSAGE value="Custom Profiler, GPU Debugger, few more Visuals, support of Gizmos UI with ImGuizmo, Timer, TextureArray" />
     <MESSAGE value="Moving WizardEngine into DLL library, fixing all conflicts after DLL migration, added RCC++, naming and convention changes." />
@@ -1183,7 +1138,8 @@
     <MESSAGE value="NodeEditor : Cutline" />
     <MESSAGE value="NodeEditor : Cutline, Copy/Cut/Paste" />
     <MESSAGE value="Binary serialization and refactoring #1" />
-    <option name="LAST_COMMIT_MESSAGE" value="Binary serialization and refactoring #1" />
+    <MESSAGE value="Binary serialization and refactoring #2" />
+    <option name="LAST_COMMIT_MESSAGE" value="Binary serialization and refactoring #2" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1260,8 +1216,8 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/WizardEngine/src/cpp/visual/NodeEditor.cpp</url>
-          <line>346</line>
-          <option name="timeStamp" value="73" />
+          <line>412</line>
+          <option name="timeStamp" value="74" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
