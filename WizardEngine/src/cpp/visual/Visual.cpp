@@ -440,6 +440,7 @@ namespace engine::visual {
 
     void Visual::onUpdate(Time dt) {
         IO.DeltaTime = dt.seconds();
+        blockEvents = blockEvents || NodeEditor::get().blockEvents;
     }
 
     void Panel::begin(const char* title, const vec2f& size) {

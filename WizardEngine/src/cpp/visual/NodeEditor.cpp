@@ -1,17 +1,12 @@
 #include <visual/NodeEditor.h>
-
 #include <visual/FontAwesome4.h>
 
-#include <io/Logger.h>
-
-#include <serialization/serialization.h>
-
-#include <event/KeyCodes.h>
 #include <event/MouseCodes.h>
 
 #include <imnodes.h>
-#include <fstream>
 #include <imnodes_internal.h>
+
+#include <fstream>
 
 namespace engine::visual {
 
@@ -179,7 +174,7 @@ namespace engine::visual {
         // node editor content
         ImNodes::BeginNodeEditor();
         // context menu
-        if (m_ShowContextMenu) {
+        if (m_ShowContextMenu || m_LinkDropped) {
             if (ImGui::BeginPopupContextWindow("scrolling_region")) {
                 if (ImGui::BeginMenu("Node")) {
                     if (ImGui::MenuItem("Test")) {
@@ -250,6 +245,17 @@ namespace engine::visual {
         // end node editor content
         ImNodes::EndNodeEditor();
 
+        // new link connection
+        int beginPinId = 0;
+        int endPinId = 0;
+        bool createdBySnap = false;
+        if (ImNodes::IsLinkCreated(&beginPinId, &endPinId, &createdBySnap)) {
+            newLink(beginPinId, endPinId);
+        }
+
+        // link dropped -> show context menu
+        m_LinkDropped = ImNodes::IsLinkDropped(&beginPinId);
+
         // node selection
         const int num_selected_nodes = ImNodes::NumSelectedNodes();
         m_SelectedNodes.resize(num_selected_nodes);
@@ -264,19 +270,6 @@ namespace engine::visual {
             ImNodes::GetSelectedLinks(m_SelectedLinks.data());
         }
 
-        // new link connection
-        int beginPinId = 0;
-        int endPinId = 0;
-        bool createdBySnap = false;
-        if (ImNodes::IsLinkCreated(&beginPinId, &endPinId, &createdBySnap)) {
-            newLink(beginPinId, endPinId);
-        }
-
-        // link dropped -> show context menu
-        if (ImNodes::IsLinkDropped(&beginPinId)) {
-            m_ShowContextMenu = true;
-        }
-
         ImGui::End();
     }
 
@@ -288,7 +281,7 @@ namespace engine::visual {
         m_Nodes.insert(node);
     }
 
-    void Graph::addLink(Link&& link...) {
+    void Graph::addLink(Link&& link) {
         m_Links.emplace(link);
     }
 
@@ -401,6 +394,7 @@ namespace engine::visual {
         addNode(node);
 
         ImNodes::SetNodeScreenSpacePos(newId, node.getPos());
+        ImNodes::SnapNodeToGrid(newId);
     }
 
     void Graph::newLink(int beginId, int endId) {
@@ -410,7 +404,7 @@ namespace engine::visual {
             newId = m_Links.rbegin()->getId() + 1;
         }
 
-        addLink(newId, beginId, endId, this);
+        m_Links.emplace(newId, beginId, endId, this);
     }
 
     void Graph::deleteSelected() {
@@ -468,6 +462,7 @@ namespace engine::visual {
             m_Nodes.insert(node);
 
             ImNodes::SetNodeScreenSpacePos(newId, newPos);
+            ImNodes::SnapNodeToGrid(newId);
         }
 
         for (auto link : m_TempLinks) {
@@ -521,7 +516,49 @@ namespace engine::visual {
     void NodeEditor::draw() {
         if (m_ActiveGraph) {
             m_ActiveGraph->draw();
+            drawViewPort();
+            drawTextEditor();
         }
+    }
+
+    void NodeEditor::drawViewPort() {
+        auto& scene = m_ActiveGraph->getScene();
+        u32 renderTargetId = m_ActiveGraph->getRenderTargetId();
+
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1.f, 1.f));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
+        ImGui::Begin("ViewPort");
+
+        auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+        auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+        auto viewportOffset = ImGui::GetWindowPos();
+
+        bool viewportFocused = ImGui::IsWindowFocused();
+        bool viewportHovered = ImGui::IsWindowHovered();
+        NodeEditor::get().blockEvents = !viewportHovered || !viewportFocused;
+
+        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+
+        if (scene) {
+            scene->viewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+            scene->viewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+            scene->viewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+        }
+
+        ImGui::Image(
+                (ImTextureID)(renderTargetId),
+                viewportPanelSize,
+                { 0, 1 },
+                { 1, 0 }
+        );
+
+        ImGui::End();
+        ImGui::PopStyleVar();
+        ImGui::PopStyleVar();
+    }
+
+    void NodeEditor::drawTextEditor() {
+        m_TextEditor.Render("Preview", { 100, 300 });
     }
 
     bool NodeEditor::saveAll() {

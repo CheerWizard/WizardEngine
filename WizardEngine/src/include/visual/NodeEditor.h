@@ -4,7 +4,10 @@
 #include <core/Memory.h>
 #include <platform/tools/FileDialog.h>
 
+#include <ecs/Scene.h>
+
 #include <imgui.h>
+#include <TextEditor.h>
 
 #include <vector>
 #include <functional>
@@ -26,6 +29,7 @@ namespace engine::visual {
 
     using namespace core;
     using namespace tools;
+    using namespace ecs;
 
     template<typename T>
     struct IdComparator final {
@@ -58,11 +62,15 @@ namespace engine::visual {
 
     public:
         Link() = default;
+
         Link(int id) : m_Id(id) {}
+
         Link(int id, int beginPinId, int endPinId)
         : m_Id(id), m_Begin(beginPinId), m_End(endPinId) {}
+
         Link(int id, int beginPinId, int endPinId, Graph* graph)
         : m_Id(id), m_Begin(beginPinId), m_End(endPinId), m_Graph(graph) {}
+
         ~Link() = default;
 
     public:
@@ -138,12 +146,14 @@ namespace engine::visual {
     public:
         [[nodiscard]] inline int getId() const { return m_Id; }
         [[nodiscard]] inline const char* getName() const { return m_Name.c_str(); }
+        [[nodiscard]] inline u32 getRenderTargetId() const { return m_RenderTargetId; }
+        [[nodiscard]] inline Ref<Scene>& getScene() { return m_Scene; };
 
         inline void showContextMenu(bool show) { m_ShowContextMenu = show; }
 
         void addNode(Node&& node);
         void addNode(const Node& node);
-        void addLink(Link && link...);
+        void addLink(Link&& link);
         void addLink(const Link& link);
 
         void removeNode(int id);
@@ -189,6 +199,7 @@ namespace engine::visual {
         float m_PastePadding = 1.0f;
 
         bool m_ShowContextMenu = false;
+        bool m_LinkDropped = false;
 
         std::set<Node, IdComparator<Node>> m_Nodes;
         std::set<Link, IdComparator<Link>> m_Links;
@@ -198,6 +209,9 @@ namespace engine::visual {
 
         std::vector<int> m_SelectedNodes;
         std::vector<int> m_SelectedLinks;
+
+        Ref<Scene> m_Scene;
+        u32 m_RenderTargetId = 0;
     };
 
     class ENGINE_API NodeEditor final {
@@ -241,9 +255,16 @@ namespace engine::visual {
         void redoGraphItems();
 
     private:
+        void drawViewPort();
+        void drawTextEditor();
+
+    public:
+        bool blockEvents = false;
+
+    private:
         static Ref<FileDialog> s_FileDialog;
         Graph* m_ActiveGraph = nullptr;
         std::vector<Graph> m_Graphs;
+        TextEditor m_TextEditor;
     };
-
 }

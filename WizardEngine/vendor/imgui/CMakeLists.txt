@@ -13,6 +13,8 @@ file(GLOB_RECURSE PROJECT_SRC
         imnodes.h
         imnodes.cpp
         imnodes_internal.h
+        TextEditor.cpp
+        TextEditor.h
 )
 add_library(${PROJECT_NAME} ${PROJECT_SRC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)

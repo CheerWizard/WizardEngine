@@ -1,7 +1,3 @@
-//
-// Created by mecha on 29.10.2021.
-//
-
 #pragma once
 
 #include <ecs/Entity.h>

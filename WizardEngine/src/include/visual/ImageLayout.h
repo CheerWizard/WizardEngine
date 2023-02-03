@@ -1,7 +1,3 @@
-//
-// Created by mecha on 01.10.2021.
-//
-
 #pragma once
 
 #include <ecs/Scene.h>
@@ -63,8 +59,6 @@ namespace engine::visual {
         }
 
     public:
-        virtual void onMousePressed(event::MouseCode mouseCode);
-        virtual void onMouseRelease(event::MouseCode mouseCode);
         virtual void onMouseScrolled(double xOffset, double yOffset);
 
         inline void setScene(const Ref<Scene>& actualScene) {
@@ -79,9 +73,6 @@ namespace engine::visual {
         ImageLayoutProps props;
         ImageLayoutCallback* _callback = nullptr;
         u32 id = 0;
-        bool viewportHovered = false;
-        bool viewportFocused = false;
-        bool _isHoldingMouse = false;
         bool _isVisible = true;
         bool _isFocused = false;
     };

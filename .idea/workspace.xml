@@ -79,17 +79,23 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Binary serialization and refactoring #2">
+    <list default="true" id="bc58c567-cdc6-465b-9127-ab556f72b818" name="Changes" comment="Fixing Node Editor issues #1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/ImageLayout.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/ImageLayout.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/NodeEditor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/NodeEditor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/Visual.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/cpp/visual/Visual.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/ecs/Scene.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/ecs/Scene.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/graphics/camera/Camera.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/graphics/camera/Camera.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/visual/ImageLayout.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/visual/ImageLayout.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/visual/NodeEditor.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/visual/NodeEditor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/src/include/visual/Visual.h" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/src/include/visual/Visual.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/assimp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/assimp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/freetype" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/freetype" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/glfw" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/glfw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/imgui/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/imgui/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/openal-soft" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/spdlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" beforeDir="false" afterPath="$PROJECT_DIR$/WizardEngine/vendor/stb/stb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WizardTest/src/cpp/core/application_test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WizardTest/src/cpp/core/application_test.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,7 +181,7 @@
     <property name="cf.first.check.clang-format" value="false" />
     <property name="cidr.known.project.marker" value="true" />
     <property name="cmake.loaded.for.project" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../imnodes" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/WizardEngine/vendor/imgui" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
@@ -728,14 +734,9 @@
       <workItem from="1675267126449" duration="7431000" />
       <workItem from="1675322792277" duration="23633000" />
       <workItem from="1675349011486" duration="473000" />
-      <workItem from="1675368200950" duration="12602000" />
-    </task>
-    <task id="LOCAL-00174" summary="UUID component for identifying loaded/saved world">
-      <created>1654013875439</created>
-      <option name="number" value="00174" />
-      <option name="presentableId" value="LOCAL-00174" />
-      <option name="project" value="LOCAL" />
-      <updated>1654013875439</updated>
+      <workItem from="1675368200950" duration="12803000" />
+      <workItem from="1675412536664" duration="6672000" />
+      <workItem from="1675429500218" duration="5111000" />
     </task>
     <task id="LOCAL-00175" summary="UUID component for identifying loaded/saved world">
       <created>1654016574608</created>
@@ -1073,7 +1074,14 @@
       <option name="project" value="LOCAL" />
       <updated>1675348816235</updated>
     </task>
-    <option name="localTasksCounter" value="223" />
+    <task id="LOCAL-00223" summary="Fixing Node Editor issues #1">
+      <created>1675381936073</created>
+      <option name="number" value="00223" />
+      <option name="presentableId" value="LOCAL-00223" />
+      <option name="project" value="LOCAL" />
+      <updated>1675381936073</updated>
+    </task>
+    <option name="localTasksCounter" value="224" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1114,7 +1122,6 @@
       <path value="$PROJECT_DIR$/ScriptDLL/engine/spdlog" />
       <path value="$PROJECT_DIR$/ScriptDLL/engine/stb/stb" />
     </ignored-roots>
-    <MESSAGE value="Basic Physics, simulation of objects velocity, collision detection for SphereCollider, AABBCollider, PlaneCollider, callbacks and respond to detected/undetected collision. When objects are collided, they will be reflected into different direction based on direction they had during simulation." />
     <MESSAGE value="Custom Profiler, GPU Debugger, few more Visuals, support of Gizmos UI with ImGuizmo, Timer, TextureArray" />
     <MESSAGE value="Moving WizardEngine into DLL library, fixing all conflicts after DLL migration, added RCC++, naming and convention changes." />
     <MESSAGE value="More features for Project Managment System. &#10;Updated Asset Managment and Scene systems.&#10;Added visual Logger and other visual tools for editor.&#10;Changed theme for WizardStudio&#10;Changed AssetBrowser for WizardStudio.&#10;Added Runtime Compile/Build/Run system.&#10;Added Runtime Build Zipping feature for game distribution." />
@@ -1139,7 +1146,8 @@
     <MESSAGE value="NodeEditor : Cutline, Copy/Cut/Paste" />
     <MESSAGE value="Binary serialization and refactoring #1" />
     <MESSAGE value="Binary serialization and refactoring #2" />
-    <option name="LAST_COMMIT_MESSAGE" value="Binary serialization and refactoring #2" />
+    <MESSAGE value="Fixing Node Editor issues #1" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixing Node Editor issues #1" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1213,11 +1221,6 @@
           <url>file://$PROJECT_DIR$/WizardEngine/src/cpp/visual/Log.cpp</url>
           <line>72</line>
           <option name="timeStamp" value="70" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/WizardEngine/src/cpp/visual/NodeEditor.cpp</url>
-          <line>412</line>
-          <option name="timeStamp" value="74" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

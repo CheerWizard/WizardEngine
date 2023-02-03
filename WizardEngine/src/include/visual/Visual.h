@@ -1,7 +1,3 @@
-//
-// Created by mecha on 01.09.2022.
-//
-
 #pragma once
 
 #include <imgui.h>

@@ -23,8 +23,8 @@ namespace engine::visual {
         auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
         auto viewportOffset = ImGui::GetWindowPos();
 
-        viewportFocused = ImGui::IsWindowFocused();
-        viewportHovered = ImGui::IsWindowHovered();
+        bool viewportFocused = ImGui::IsWindowFocused();
+        bool viewportHovered = ImGui::IsWindowHovered();
         Visual::blockEvents = !viewportHovered || !viewportFocused;
 
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
@@ -44,14 +44,6 @@ namespace engine::visual {
 
         ImGui::End();
         ImGui::PopStyleVar();
-    }
-
-    void ImageLayout::onMousePressed(event::MouseCode mouseCode) {
-        _isHoldingMouse = true;
-    }
-
-    void ImageLayout::onMouseRelease(event::MouseCode mouseCode) {
-        _isHoldingMouse = false;
     }
 
     void ImageLayout::onMouseScrolled(double xOffset, double yOffset) {
